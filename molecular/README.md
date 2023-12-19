@@ -47,7 +47,7 @@ Overall, a molecular record belongs to a `sampleId` (which belongs to a `patient
 | type                 | WGS           | The type of molecular experiment done, either `WGS` or `PANEL`                                                                            |
 | refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                   |
 | date                 | 2022-01-14    | The date on which the molecular results were obtained                                                                                     |
-| evidenceSource       | CKB           | The name of the provider of the evidence. Currently always `CKB`                                                                          |
+| evidenceSource       | CKB_EVIDENCE  | The name of the provider of the evidence. Currently always `CKB_EVIDENCE`                                                                 |
 | externalTrialSource  | ICLUSION      | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `ICLUSION` |
 | containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                             |
 | hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                            |
@@ -219,7 +219,7 @@ The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 Every variant, copy number and disruption is annotated with `geneRole`, `proteinEffect` and `isAssociatedWithDrugResistance`. Furthermore,
 every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistance`.
 
-The annotation algo tries to find the best matching entry from SERVE's mapping of the `CKB` database as follows:
+The annotation algo tries to find the best matching entry from SERVE's mapping of the `CKB_EVIDENCE` database as follows:
 
 - For variants the algo searches in the following order:
     - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
@@ -241,7 +241,7 @@ Do note that gene matching only ever populates the `geneRole` field. Any gene-le
 
 #### Evidence annotation
 
-Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB`
+Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB_EVIDENCE`
 except for
 external trials which is populated by `ICLUSION`. The evidence annotations occur in the following order:
 
@@ -304,7 +304,7 @@ Molecular base data:
 | type                 | Hard-coded to `WGS`                            |
 | refGenomeVersion     | Extracted from ORANGE field `refGenomeVersion` | 
 | date                 | The ORANGE field `experimentDate`              |
-| evidenceSource       | Hard-coded to `CKB`                            |
+| evidenceSource       | Hard-coded to `CKB_EVIDENCE`                   |
 | externalTrialSource  | Hard-coded to `ICLUSION`                       |
 | containsTumorCells   | The PURPLE field `containsTumorCells`          |
 | hasSufficientQuality | The PURPLE field `hasSufficientQuality`        |

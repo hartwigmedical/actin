@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
 
@@ -18,12 +18,20 @@ class CurationResponseTest {
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.MEDICATION_NAME, "input", "medication name", true
         )
-        assertThat(response).isEqualTo(CurationResponse(configs, ExtractionEvaluation(medicationNameEvaluatedInputs = setOf("input"))))
+        assertThat(response).isEqualTo(
+            CurationResponse(
+                configs,
+                ExtractionEvaluation(medicationNameEvaluatedInputs = setOf("input"))
+            )
+        )
     }
 
     @Test
     fun `Should create curation response with multiple result warning for config that should be unique`() {
-        val configs = setOf(MedicationNameConfig("input", false, "test"), MedicationNameConfig("input", false, "another"))
+        val configs = setOf(
+            MedicationNameConfig("input", false, "test"),
+            MedicationNameConfig("input", false, "another")
+        )
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.MEDICATION_NAME, "input", "medication name", true
         )
@@ -50,7 +58,12 @@ class CurationResponseTest {
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.LESION_LOCATION, "input", "lesion location", false
         )
-        assertThat(response).isEqualTo(CurationResponse(configs, ExtractionEvaluation(lesionLocationEvaluatedInputs = setOf("input"))))
+        assertThat(response).isEqualTo(
+            CurationResponse(
+                configs,
+                ExtractionEvaluation(lesionLocationEvaluatedInputs = setOf("input"))
+            )
+        )
     }
 
     @Test
@@ -96,6 +109,6 @@ class CurationResponseTest {
                 )
             )
         )
-        assertThat(response).isEqualTo(CurationResponse(emptySet<Translation>(), expectedEvaluation))
+        assertThat(response).isEqualTo(CurationResponse(emptySet<Translation<String>>(), expectedEvaluation))
     }
 }

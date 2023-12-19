@@ -1,25 +1,23 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.curation.CurationValidator
-import org.apache.logging.log4j.LogManager
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 
-class IntoleranceConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<IntoleranceConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): IntoleranceConfig {
+class IntoleranceConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<IntoleranceConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<IntoleranceConfig> {
         val input = parts[fields["input"]!!]
-        val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
-        // TODO Should consider how to model "we know for certain this patient has no intolerances".
-        if (!input.equals(INTOLERANCE_INPUT_TO_IGNORE_FOR_DOID_CURATION, ignoreCase = true) && !curationValidator.isValidDiseaseDoidSet(
-                doids
-            )
-        ) {
-            LOGGER.warn("Intolerance config with input '{}' contains at least one invalid doid: '{}'", input, doids)
+        val (doids, doidValidationErrors) = if (!input.equals(INTOLERANCE_INPUT_TO_IGNORE_FOR_DOID_CURATION, ignoreCase = true)) {
+            validateDoids(CurationCategory.INTOLERANCE, input, "doids", fields, parts) { curationDoidValidator.isValidDiseaseDoidSet(it) }
+        } else {
+            null to emptyList()
         }
-        return IntoleranceConfig(input = input, name = parts[fields["name"]!!], doids = doids)
+        // TODO Should consider how to model "we know for certain this patient has no intolerances".
+        return ValidatedCurationConfig(
+            IntoleranceConfig(input = input, name = parts[fields["name"]!!], doids = doids ?: emptySet()), doidValidationErrors
+        )
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(IntoleranceConfigFactory::class.java)
         private const val INTOLERANCE_INPUT_TO_IGNORE_FOR_DOID_CURATION = "Geen"
     }
 

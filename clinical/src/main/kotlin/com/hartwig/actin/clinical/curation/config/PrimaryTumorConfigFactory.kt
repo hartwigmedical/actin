@@ -1,28 +1,29 @@
 package com.hartwig.actin.clinical.curation.config
 
-import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.curation.CurationValidator
-import org.apache.logging.log4j.LogManager
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 
-class PrimaryTumorConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<PrimaryTumorConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): PrimaryTumorConfig {
+class PrimaryTumorConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<PrimaryTumorConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<PrimaryTumorConfig> {
         val input = parts[fields["input"]!!]
-        val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
-        if (!curationValidator.isValidCancerDoidSet(doids)) {
-            LOGGER.warn("Primary tumor config with input '{}' contains at least one invalid doid: '{}'", input, doids)
-        }
-        return PrimaryTumorConfig(
-            input = input,
-            primaryTumorLocation = parts[fields["primaryTumorLocation"]!!],
-            primaryTumorSubLocation = parts[fields["primaryTumorSubLocation"]!!],
-            primaryTumorType = parts[fields["primaryTumorType"]!!],
-            primaryTumorSubType = parts[fields["primaryTumorSubType"]!!],
-            primaryTumorExtraDetails = parts[fields["primaryTumorExtraDetails"]!!],
-            doids = doids
-        )
-    }
+        val (doids, doidValidationErrors) = validateDoids(
+            CurationCategory.PRIMARY_TUMOR,
+            input,
+            "doids",
+            fields,
+            parts
+        ) { curationDoidValidator.isValidCancerDoidSet(it) }
 
-    companion object {
-        private val LOGGER = LogManager.getLogger(PrimaryTumorConfigFactory::class.java)
+        return ValidatedCurationConfig(
+            PrimaryTumorConfig(
+                input = input,
+                primaryTumorLocation = parts[fields["primaryTumorLocation"]!!],
+                primaryTumorSubLocation = parts[fields["primaryTumorSubLocation"]!!],
+                primaryTumorType = parts[fields["primaryTumorType"]!!],
+                primaryTumorSubType = parts[fields["primaryTumorSubType"]!!],
+                primaryTumorExtraDetails = parts[fields["primaryTumorExtraDetails"]!!],
+                doids = doids ?: emptySet()
+            ), doidValidationErrors
+        )
     }
 }

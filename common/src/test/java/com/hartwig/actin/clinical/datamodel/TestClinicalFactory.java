@@ -20,9 +20,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails;
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry;
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage;
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage;
 import com.hartwig.actin.clinical.interpretation.LabMeasurement;
 
 import org.jetbrains.annotations.NotNull;
@@ -63,9 +65,7 @@ public final class TestClinicalFactory {
     public static ClinicalRecord createProperTestClinicalRecord() {
         return ImmutableClinicalRecord.builder()
                 .from(createMinimalTestClinicalRecord())
-                .tumor(createTestTumorDetails())
-                .clinicalStatus(createTestClinicalStatus())
-                .treatmentHistory(createTreatmentHistory())
+                .tumor(createTestTumorDetails()).clinicalStatus(createTestClinicalStatus()).oncologicalHistory(createTreatmentHistory())
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())
                 .priorMolecularTests(createTestPriorMolecularTests())
@@ -87,7 +87,7 @@ public final class TestClinicalFactory {
                 .from(createMinimalTestClinicalRecord())
                 .tumor(createTestTumorDetails())
                 .clinicalStatus(createTestClinicalStatus())
-                .treatmentHistory(createExhaustiveTreatmentHistory())
+                .oncologicalHistory(createExhaustiveTreatmentHistory())
                 .priorSecondPrimaries(createTestPriorSecondPrimaries())
                 .priorOtherConditions(createTestPriorOtherConditions())
                 .priorMolecularTests(createTestPriorMolecularTests())
@@ -203,7 +203,18 @@ public final class TestClinicalFactory {
                 .isTrial(false)
                 .build();
 
-        return List.of(treatmentHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT),
+        TreatmentHistoryEntry folfirinoxEntry = treatmentHistoryEntry(Set.of(folfirinox), 2020, Intent.NEOADJUVANT);
+        Set<TreatmentStage> switchToTreatments =
+                Set.of(ImmutableTreatmentStage.builder().treatment(folfirinoxAndPembrolizumab).cycles(3).build());
+        TreatmentStage maintenanceTreatment = ImmutableTreatmentStage.builder().treatment(folfirinoxLocoRegional).build();
+
+        TreatmentHistoryEntry entryWithSwitchAndMaintenance = ImmutableTreatmentHistoryEntry.copyOf(folfirinoxEntry)
+                .withTreatmentHistoryDetails(ImmutableTreatmentHistoryDetails.copyOf(folfirinoxEntry.treatmentHistoryDetails())
+                        .withCycles(4)
+                        .withSwitchToTreatments(switchToTreatments)
+                        .withMaintenanceTreatment(maintenanceTreatment));
+
+        return List.of(entryWithSwitchAndMaintenance,
                 surgeryHistoryEntry,
                 treatmentHistoryEntry(Set.of(radiotherapy, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
                 treatmentHistoryEntry(Set.of(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE));
@@ -216,15 +227,27 @@ public final class TestClinicalFactory {
                 ImmutableTreatmentHistoryEntry.builder().addTreatments(ImmutableDrugTreatment.builder().name("Therapy").build()).build();
 
         TreatmentHistoryEntry hasStartYearHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-                .startYear(2020)
+                .startYear(2019)
                 .addTreatments(ImmutableDrugTreatment.builder().name("Therapy1").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry hasStartYearHistoryEntry2 = ImmutableTreatmentHistoryEntry.builder()
+                .startYear(2023)
+                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy4").addDrugs(irinotecan).build())
+                .build();
+
+        TreatmentHistoryEntry hasEndYearMonthHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
+                .startYear(null)
+                .startMonth(null)
+                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(2020).stopMonth(6).build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy2").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry hasStartYearMonthEndYearMonthHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
                 .startYear(2020)
                 .startMonth(8)
                 .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(2021).stopMonth(3).build())
-                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy2").addDrugs(irinotecan).build())
+                .addTreatments(ImmutableDrugTreatment.builder().name("Therapy3").addDrugs(irinotecan).build())
                 .build();
 
         TreatmentHistoryEntry namedTrialHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
@@ -268,7 +291,9 @@ public final class TestClinicalFactory {
 
         return List.of(hasNoDateHistoryEntry,
                 hasStartYearHistoryEntry,
+                hasStartYearHistoryEntry2,
                 hasStartYearMonthEndYearMonthHistoryEntry,
+                hasEndYearMonthHistoryEntry,
                 namedTrialHistoryEntry,
                 unknownDetailsHistoryEntry,
                 hasCyclesStopReasonHistoryEntry,

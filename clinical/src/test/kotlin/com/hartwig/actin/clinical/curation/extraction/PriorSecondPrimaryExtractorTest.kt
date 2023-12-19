@@ -4,22 +4,52 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
+import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.TumorStatus
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
+private const val SECOND_PRIMARY_INPUT = "Second primary input"
+
+private const val TUMOR_LOCATION_INTERPRETATION = "Tumor location interpretation"
+
+private const val TREATMENT_HISTORY_INPUT = "Treatment history input"
+
 class PriorSecondPrimaryExtractorTest {
-    private val extractor = PriorSecondPrimaryExtractor(TestCurationFactory.createProperTestCurationDatabase())
+    private val extractor = PriorSecondPrimaryExtractor(
+        TestCurationFactory.curationDatabase(
+            SecondPrimaryConfig(
+                input = SECOND_PRIMARY_INPUT,
+                ignore = false,
+                curated = ImmutablePriorSecondPrimary.builder().status(TumorStatus.ACTIVE).tumorType("tumorType")
+                    .tumorSubType("tumorSubType")
+                    .treatmentHistory("treatmentHistory")
+                    .tumorLocation(TUMOR_LOCATION_INTERPRETATION)
+                    .tumorSubLocation("tumorSubLocation")
+                    .build()
+            )
+        ), TestCurationFactory.curationDatabase(
+            TreatmentHistoryEntryConfig(
+                input = TREATMENT_HISTORY_INPUT,
+                ignore = false,
+                curated = ImmutableTreatmentHistoryEntry.builder().build()
+            )
+        )
+    )
 
     @Test
-    fun `Should curate prior second primaries`() {
-        val inputs = listOf("Breast cancer Jan-2018", CANNOT_CURATE)
+    fun `Should curate prior second primaries from second primary config`() {
+        val inputs = listOf(SECOND_PRIMARY_INPUT, CANNOT_CURATE)
         val questionnaire = emptyQuestionnaire().copy(secondaryPrimaries = inputs)
         val (priorSecondPrimaries, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(priorSecondPrimaries).hasSize(1)
-        assertThat(priorSecondPrimaries[0].tumorLocation()).isEqualTo("Breast")
+        assertThat(priorSecondPrimaries[0].tumorLocation()).isEqualTo(TUMOR_LOCATION_INTERPRETATION)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
@@ -30,6 +60,14 @@ class PriorSecondPrimaryExtractorTest {
             )
         )
         assertThat(evaluation.secondPrimaryEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
+    }
+
+    @Test
+    fun `Should suppress warnings when prior second primaries from treatment history`() {
+        val inputs = listOf(TREATMENT_HISTORY_INPUT)
+        val questionnaire = emptyQuestionnaire().copy(secondaryPrimaries = inputs)
+        val (_, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(evaluation.warnings).isEmpty()
     }
 
     @Test

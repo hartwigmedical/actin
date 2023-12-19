@@ -21,6 +21,17 @@ public class TreatmentHistoryEntryTest {
             treatmentHistoryEntryWithDrugTypes(Collections.emptySet());
     private static final ImmutableTreatmentHistoryEntry TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE =
             treatmentHistoryEntryWithDrugTypes(Set.of(DrugType.PLATINUM_COMPOUND));
+    public static final ImmutableTreatmentStage SWITCH_TREATMENT_STAGE =
+            treatmentStage("SWITCH TREATMENT", TreatmentCategory.TARGETED_THERAPY, DrugType.ALK_INHIBITOR);
+    public static final ImmutableTreatmentStage MAINTENANCE_TREATMENT_STAGE =
+            treatmentStage("MAINTENANCE TREATMENT", TreatmentCategory.SUPPORTIVE_TREATMENT, DrugType.STEROID);
+    public static final ImmutableTreatmentHistoryEntry TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE =
+            ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
+                    .withTreatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder()
+                            .addSwitchToTreatments(SWITCH_TREATMENT_STAGE)
+                            .maintenanceTreatment(MAINTENANCE_TREATMENT_STAGE)
+                            .build());
+    
     private static final Radiotherapy RADIOTHERAPY = ImmutableRadiotherapy.builder().name("radiotherapy").build();
     private static final String TREATMENT_1 = "TREATMENT_1";
     private static final String TREATMENT_2 = "TREATMENT_2";
@@ -83,10 +94,40 @@ public class TreatmentHistoryEntryTest {
                                 .build());
         assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemotherapy;Radiotherapy;Chemo drug;Ablation");
     }
+
+    @Test
+    public void shouldIncludeSwitchAndMaintenanceTreatmentsWhenPresent() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.allTreatments()).isEqualTo(Set.of(
+                TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.treatments().iterator().next(),
+                SWITCH_TREATMENT_STAGE.treatment(),
+                MAINTENANCE_TREATMENT_STAGE.treatment()));
+    }
+
+    @Test
+    public void shouldDisplayBaseNameWithoutSwitchAndMaintenanceTreatments() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.treatmentDisplay()).isEqualTo("Test treatment");
+    }
     
     @Test
     public void shouldReturnTreatmentCategories() {
         assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY);
+    }
+
+    @Test
+    public void shouldIncludeSwitchAndMaintenanceTreatmentCategoriesInTreatmentCategories() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.categories()).containsExactlyInAnyOrder(TreatmentCategory.CHEMOTHERAPY,
+                TreatmentCategory.TARGETED_THERAPY,
+                TreatmentCategory.SUPPORTIVE_TREATMENT);
+    }
+
+    @NotNull
+    private static ImmutableTreatmentStage treatmentStage(String name, TreatmentCategory category, DrugType drugType) {
+        return ImmutableTreatmentStage.builder()
+                .treatment(ImmutableDrugTreatment.builder()
+                        .name(name)
+                        .addDrugs(ImmutableDrug.builder().name(name + " drug").category(category).addDrugTypes(drugType).build())
+                        .build())
+                .build();
     }
 
     @Test
@@ -105,6 +146,16 @@ public class TreatmentHistoryEntryTest {
     }
 
     @Test
+    public void shouldReturnTrueForTypeThatMatchesSwitchTreatment() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.isOfType(DrugType.ALK_INHIBITOR)).isTrue();
+    }
+
+    @Test
+    public void shouldReturnTrueForTypeThatMatchesMaintenanceTreatment() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.isOfType(DrugType.STEROID)).isTrue();
+    }
+
+    @Test
     public void shouldReturnTrueWhenTypeConfigured() {
         assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.hasTypeConfigured()).isTrue();
     }
@@ -118,6 +169,18 @@ public class TreatmentHistoryEntryTest {
     public void shouldReturnNullForTypeNotConfiguredWhenMatchingAgainstSetOfTypes() {
         assertThat(TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE.matchesTypeFromSet(Set.of(DrugType.ANTIMETABOLITE,
                 DrugType.PLATINUM_COMPOUND))).isNull();
+    }
+
+    @Test
+    public void shouldReturnTrueForSwitchTypeThatMatchesSetOfTypes() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.matchesTypeFromSet(Set.of(DrugType.ANTIMETABOLITE,
+                DrugType.ALK_INHIBITOR))).isTrue();
+    }
+
+    @Test
+    public void shouldReturnTrueForMaintenanceTypeThatMatchesSetOfTypes() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.matchesTypeFromSet(Set.of(DrugType.ANTIMETABOLITE,
+                DrugType.STEROID))).isTrue();
     }
 
     @Test

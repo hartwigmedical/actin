@@ -1,136 +1,46 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.ClinicalIngestion.Companion.toPatientId
-import com.hartwig.actin.clinical.curation.ANATOMICAL
-import com.hartwig.actin.clinical.curation.CHEMICAL
-import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
-import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
-import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
-import com.hartwig.actin.clinical.curation.THERAPEUTIC
+import com.google.common.io.Resources
+import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
-import com.hartwig.actin.clinical.curation.TestCurationFactory
-import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.Gender
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
-import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.MedicationStatus
-import com.hartwig.actin.clinical.datamodel.PatientDetails
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
-import com.hartwig.actin.clinical.datamodel.Surgery
-import com.hartwig.actin.clinical.datamodel.SurgeryStatus
-import com.hartwig.actin.clinical.datamodel.Toxicity
-import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.TumorStage
-import com.hartwig.actin.clinical.datamodel.VitalFunction
-import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import com.hartwig.actin.clinical.feed.TestFeedFactory
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertNull
-import junit.framework.TestCase.assertTrue
+import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
+import com.hartwig.actin.clinical.feed.FeedModel
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.doid.config.ImmutableDoidManualConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
+
+val EXPECTED_CLINICAL_RECORD: String =
+    "${Resources.getResource("clinical_record").path}/ACTN01029999.clinical.json"
 
 class ClinicalIngestionTest {
 
     @Test
-    fun `Should generate patient ids`() {
-        assertEquals("ACTN01029999", toPatientId("ACTN-01-02-9999"))
-        assertEquals("ACTN01029999", toPatientId("01-02-9999"))
-    }
-
-    @Test
-    fun `Should ingest minimal test data with no warnings and WARN_NO_QUESTIONNAIRE status`() {
-        val results = createMinimalTestIngestionResults()
-        assertEquals(1, results.size.toLong())
-        assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
-        assertThat(results[0].status).isEqualTo(IngestionStatus.WARN_NO_QUESTIONNAIRE)
-        assertThat(results[0].curationResults).isEmpty()
-        assertThat(results[0].clinicalRecord).isNotNull()
-    }
-
-    @Test
-    fun `Should ingest proper test data with warnings and WARN_CURATION_REQUIRED status`() {
-        val results = createProperTestIngestionResults()
-        assertThat(results).hasSize(1)
-        assertThat(results[0].patientId).isEqualTo(TEST_PATIENT)
-        assertThat(results[0].status).isEqualTo(IngestionStatus.WARN_CURATION_REQUIRED)
-        assertThat(results[0].curationResults).containsExactlyInAnyOrder(
-            CurationResult(
-                "Toxicity Translation",
-                listOf(
-                    CurationRequirement("Nausea", "No translation found for toxicity: 'Nausea'"),
-                    CurationRequirement("Pain", "No translation found for toxicity: 'Pain'")
+    fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
+        val curationDatabase = CurationDatabaseContext.create(
+            CURATION_DIRECTORY,
+            CurationDoidValidator(
+                TestDoidModelFactory.createWithDoidManualConfig(
+                    ImmutableDoidManualConfig.builder()
+                        .putAdditionalDoidsPerDoid("2513", CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
+                        .putAdditionalDoidsPerDoid("299", CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
+                        .putAdditionalDoidsPerDoid("5082", CurationDoidValidator.DISEASE_DOID)
+                        .putAdditionalDoidsPerDoid("11335", CurationDoidValidator.DISEASE_DOID)
+                        .putAdditionalDoidsPerDoid("0060500", CurationDoidValidator.DISEASE_DOID).build()
                 )
             ),
-            CurationResult("Toxicity", listOf(CurationRequirement("toxic", "Could not find toxicity config for input 'toxic'"))),
-            CurationResult(
-                "Primary Tumor",
-                listOf(CurationRequirement("ovary | serous", "Could not find primary tumor config for input 'ovary | serous'"))
-            ),
-            CurationResult("Infection", listOf(CurationRequirement("No", "Could not find infection config for input 'No'"))),
-            CurationResult("ECG", listOf(CurationRequirement("Sinus", "Could not find ECG config for input 'Sinus'"))),
-            CurationResult(
-                "Oncological History",
-                listOf(
-                    CurationRequirement("cisplatin", "Could not find treatment history or second primary config for input 'cisplatin'"),
-                    CurationRequirement("nivolumab", "Could not find treatment history or second primary config for input 'nivolumab'"),
-                    CurationRequirement("surgery", "Could not find treatment history or second primary config for input 'surgery'")
-                )
-            ),
-            CurationResult(
-                "Second Primary",
-                listOf(
-                    CurationRequirement("surgery", "Could not find second primary or treatment history config for input 'surgery'"),
-                    CurationRequirement(
-                        "sarcoma | Feb 2020",
-                        "Could not find second primary or treatment history config for input 'sarcoma | Feb 2020'"
-                    )
-                )
-            ),
-            CurationResult(
-                "Non Oncological History",
-                listOf(CurationRequirement("diabetes", "Could not find non-oncological history config for input 'diabetes'"))
-            ),
-            CurationResult(
-                "Molecular Test",
-                listOf(
-                    CurationRequirement("ERBB2 3+", "Could not find IHC molecular test config for input 'ERBB2 3+'"),
-                    CurationRequirement("Positive", "Could not find PD-L1 molecular test config for input 'Positive'")
-                )
-            ),
-            CurationResult(
-                "Laboratory Translation",
-                listOf(
-                    CurationRequirement(
-                        "LAB1",
-                        "Could not find laboratory translation for lab value with code 'LAB1' and name 'Lab Value 1'"
-                    ),
-                    CurationRequirement(
-                        "LAB2",
-                        "Could not find laboratory translation for lab value with code 'LAB2' and name 'Lab Value 2'"
-                    ),
-                    CurationRequirement(
-                        "LAB3",
-                        "Could not find laboratory translation for lab value with code 'LAB3' and name 'Lab Value 3'"
-                    ),
-                    CurationRequirement(
-                        "LAB4",
-                        "Could not find laboratory translation for lab value with code 'LAB4' and name 'Lab Value 4'"
-                    )
-                )
-            ),
-            CurationResult(
-                "Intolerance", listOf(CurationRequirement("Pills", "Could not find intolerance config for input 'Pills'"))
-            )
+            TestTreatmentDatabaseFactory.createProper()
         )
+        val ingestion = ClinicalIngestion.create(
+            FeedModel.fromFeedDirectory(FEED_DIRECTORY),
+            curationDatabase,
+            TestAtcFactory.createProperAtcModel()
+        )
+
         val record = results[0].clinicalRecord
         assertEquals(TEST_PATIENT, record.patientId())
         assertPatientDetails(record.patient())
@@ -297,12 +207,16 @@ class ClinicalIngestionTest {
             ).run()
         }
 
-        private fun createProperTestIngestionResults(): List<IngestionResult> {
-            return ClinicalIngestion(
-                TestFeedFactory.createProperTestFeedModel(),
-                TestCurationFactory.createProperTestCurationDatabase(),
-                TestAtcFactory.createProperAtcModel()
-            ).run()
-        }
+        val validationErrors = curationDatabase.validate()
+        assertThat(validationErrors).isEmpty()
+
+        val ingestionResult = ingestion.run()
+        assertThat(ingestionResult).isNotNull
+        val patientResults = ingestionResult.patientResults
+        assertThat(patientResults[0].status).isEqualTo(PatientIngestionStatus.PASS)
+        assertThat(patientResults).hasSize(1)
+        assertThat(patientResults[0].patientId).isEqualTo("ACTN01029999")
+        assertThat(patientResults[0].curationResults).isEmpty()
+        assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
     }
 }

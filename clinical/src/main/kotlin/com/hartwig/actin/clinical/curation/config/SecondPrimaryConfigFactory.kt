@@ -1,29 +1,52 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.curation.CurationValidator
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.util.ResourceFile
-import org.apache.logging.log4j.LogManager
 
-class SecondPrimaryConfigFactory(private val curationValidator: CurationValidator) : CurationConfigFactory<SecondPrimaryConfig> {
-    override fun create(fields: Map<String, Int>, parts: Array<String>): SecondPrimaryConfig {
+class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<SecondPrimaryConfig> {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SecondPrimaryConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        return SecondPrimaryConfig(
-            input = input,
-            ignore = ignore,
-            curated = if (!ignore) curatedPriorSecondPrimary(fields, input, parts) else null
-        )
+        if (!ignore) {
+            val (validatedTumorStatus, tumorStatusValidationErrors) = validateMandatoryEnum<TumorStatus>(
+                CurationCategory.SECOND_PRIMARY,
+                input,
+                "status",
+                fields,
+                parts
+            ) { TumorStatus.valueOf(it) }
+            val (validatedDoids, doidValidationErrors) = validateDoids(
+                CurationCategory.SECOND_PRIMARY,
+                input,
+                "doids",
+                fields,
+                parts
+            ) { curationDoidValidator.isValidCancerDoidSet(it) }
+            val curatedPriorSecondPrimary =
+                validatedTumorStatus?.let { validatedDoids?.let { doids -> curatedPriorSecondPrimary(it, fields, parts, doids) } }
+            return ValidatedCurationConfig(
+                SecondPrimaryConfig(
+                    input = input,
+                    ignore = false,
+                    curated = curatedPriorSecondPrimary
+                ), tumorStatusValidationErrors + doidValidationErrors
+            )
+        } else {
+            return ValidatedCurationConfig(SecondPrimaryConfig(input = input, ignore = true, curated = null))
+        }
     }
 
-    private fun curatedPriorSecondPrimary(fields: Map<String, Int>, input: String, parts: Array<String>): PriorSecondPrimary {
-        val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
-        if (!curationValidator.isValidCancerDoidSet(doids)) {
-            LOGGER.warn("Second primary config with input '{}' contains at least one invalid doid: '{}'", input, doids)
-        }
+    private fun curatedPriorSecondPrimary(
+        tumorStatus: TumorStatus,
+        fields: Map<String, Int>,
+        parts: Array<String>,
+        doids: Set<String>
+    ): PriorSecondPrimary {
         return ImmutablePriorSecondPrimary.builder()
             .tumorLocation(parts[fields["tumorLocation"]!!])
             .tumorSubLocation(parts[fields["tumorSubLocation"]!!])
@@ -35,11 +58,7 @@ class SecondPrimaryConfigFactory(private val curationValidator: CurationValidato
             .treatmentHistory(parts[fields["treatmentHistory"]!!])
             .lastTreatmentYear(ResourceFile.optionalInteger(parts[fields["lastTreatmentYear"]!!]))
             .lastTreatmentMonth(ResourceFile.optionalInteger(parts[fields["lastTreatmentMonth"]!!]))
-            .status(TumorStatus.valueOf(parts[fields["status"]!!]))
+            .status(tumorStatus)
             .build()
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(SecondPrimaryConfigFactory::class.java)
     }
 }

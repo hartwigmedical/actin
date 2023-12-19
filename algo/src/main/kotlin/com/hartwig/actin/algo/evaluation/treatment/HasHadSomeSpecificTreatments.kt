@@ -12,13 +12,12 @@ class HasHadSomeSpecificTreatments(private val treatments: List<Treatment>, priv
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val namesToMatch = treatments.map { it.name().lowercase() }.toSet()
-        val matchTreatments = record.clinical().treatmentHistory()
-            .filter { it.treatments().any { treatment -> treatment.name().lowercase() in namesToMatch } }
-        val trialMatchCount = if (treatments.any {
-                it.categories().isEmpty() || it.categories().any(TreatmentSummaryForCategory::categoryAllowsTrialMatches)
-            }) {
-            record.clinical().treatmentHistory().count(TreatmentHistoryEntry::isTrial)
-        } else 0
+        val matchTreatments = record.clinical().oncologicalHistory()
+            .filter { it.allTreatments().any { treatment -> treatment.name().lowercase() in namesToMatch } }
+        val allowTrialMatches = treatments.any {
+            it.categories().isEmpty() || it.categories().any(TreatmentSummaryForCategory::categoryAllowsTrialMatches)
+        }
+        val trialMatchCount = if (allowTrialMatches) record.clinical().oncologicalHistory().count(TreatmentHistoryEntry::isTrial) else 0
 
         val treatmentListing = concatItems(treatments)
         return when {

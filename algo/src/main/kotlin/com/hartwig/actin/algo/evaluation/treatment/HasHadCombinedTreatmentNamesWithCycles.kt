@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
@@ -17,7 +18,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatments
-            .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical().treatmentHistory(), treatment.name()) }
+            .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical().oncologicalHistory(), treatment.name()) }
             .groupBy { it.result() }
 
         val builder: ImmutableEvaluation.Builder = EvaluationFactory.unrecoverable()
@@ -25,23 +26,27 @@ class HasHadCombinedTreatmentNamesWithCycles(
             evaluationsByResult.containsKey(EvaluationResult.FAIL) -> {
                 val failEvaluations = evaluationsByResult[EvaluationResult.FAIL]!!
                 builder.result(EvaluationResult.FAIL)
-                    .addAllFailSpecificMessages(getMessagesForEvaluations(failEvaluations) { obj: Evaluation -> obj.failSpecificMessages() })
-                    .addAllFailGeneralMessages(getMessagesForEvaluations(failEvaluations) { obj: Evaluation -> obj.failGeneralMessages() })
+                    .addAllFailSpecificMessages(getMessagesForEvaluations(failEvaluations, Evaluation::failSpecificMessages))
+                    .addAllFailGeneralMessages(getMessagesForEvaluations(failEvaluations, Evaluation::failGeneralMessages))
                     .build()
             }
 
             evaluationsByResult.containsKey(EvaluationResult.UNDETERMINED) -> {
                 val undeterminedEvaluations = evaluationsByResult[EvaluationResult.UNDETERMINED]!!
                 builder.result(EvaluationResult.UNDETERMINED)
-                    .addAllUndeterminedSpecificMessages(getMessagesForEvaluations(undeterminedEvaluations) { obj: Evaluation -> obj.undeterminedSpecificMessages() })
-                    .addAllUndeterminedGeneralMessages(getMessagesForEvaluations(undeterminedEvaluations) { obj: Evaluation -> obj.undeterminedGeneralMessages() })
+                    .addAllUndeterminedSpecificMessages(
+                        getMessagesForEvaluations(undeterminedEvaluations, Evaluation::undeterminedSpecificMessages)
+                    )
+                    .addAllUndeterminedGeneralMessages(
+                        getMessagesForEvaluations(undeterminedEvaluations, Evaluation::undeterminedGeneralMessages)
+                    )
                     .build()
             }
 
             evaluationsByResult.containsKey(EvaluationResult.PASS) && evaluationsByResult.size == 1 -> {
                 val passEvaluations = evaluationsByResult[EvaluationResult.PASS]!!
                 builder.result(EvaluationResult.PASS)
-                    .addAllPassSpecificMessages(getMessagesForEvaluations(passEvaluations) { obj: Evaluation -> obj.passSpecificMessages() })
+                    .addAllPassSpecificMessages(getMessagesForEvaluations(passEvaluations, Evaluation::passSpecificMessages))
                     .addPassGeneralMessages("Found matching treatments")
                     .build()
             }
@@ -54,8 +59,10 @@ class HasHadCombinedTreatmentNamesWithCycles(
 
     private fun evaluatePriorTreatmentsMatchingName(treatmentHistory: List<TreatmentHistoryEntry>, treatmentName: String): Evaluation {
         val query = treatmentName.lowercase()
-        val matchingHistoryEntries: Map<EvaluationResult, List<TreatmentHistoryEntry>> = treatmentHistory.filter { entry ->
-            entry.treatments().flatMap { it.synonyms() + it.name() }.any { it.lowercase() == query }
+        val matchingHistoryEntries: Map<EvaluationResult, List<TreatmentHistoryEntry>> = treatmentHistory.mapNotNull { entry ->
+            portionOfTreatmentHistoryEntryMatchingPredicate(entry) { treatment ->
+                (treatment.synonyms() + treatment.name()).any { it.lowercase() == query }
+            }
         }
             .groupBy {
                 when (it.treatmentHistoryDetails()?.cycles()) {

@@ -18,17 +18,29 @@ public class TreatmentHistoryAscendingDateComparatorTest {
 
     @Test
     public void shouldSortByAscendingStartDateThenByAscendingEndDateThenByName() {
-        TreatmentHistoryEntry treatment1 = create("treatment A", 2018, null, null, null);
-        TreatmentHistoryEntry treatment2 = create("treatment A", 2020, 2, null, null);
-        TreatmentHistoryEntry treatment3 = create("treatment A", 2020, 3, 2021, 6);
-        TreatmentHistoryEntry treatment4 = create("treatment B", 2020, 3, 2021, 6);
-        TreatmentHistoryEntry treatment5 = create("treatment A", 2020, 3, 2021, null);
-        TreatmentHistoryEntry treatment6 = create("treatment A", 2020, 3, null, null);
-        TreatmentHistoryEntry treatment7 = create("treatment A", 2021, 1, null, null);
-        TreatmentHistoryEntry treatment8 = create("treatment A", null, null, null, null);
+        TreatmentHistoryEntry treatment1 = create("treatment A", null, null, 2018, null);
+        TreatmentHistoryEntry treatment2 = create("treatment A", 2018, null, null, null);
+        TreatmentHistoryEntry treatment3 = create("treatment A", null, null, 2020, 1);
+        TreatmentHistoryEntry treatment4 = create("treatment A", 2020, 2, null, null);
+        TreatmentHistoryEntry treatment5 = create("treatment A", 2020, 3, 2021, 6);
+        TreatmentHistoryEntry treatment6 = create("treatment B", 2020, 3, 2021, 6);
+        TreatmentHistoryEntry treatment7 = create("treatment A", 2020, 3, 2021, null);
+        TreatmentHistoryEntry treatment8 = create("treatment A", 2020, 3, null, null);
+        TreatmentHistoryEntry treatment9 = create("treatment A", null, null, 2020, 4);
+        TreatmentHistoryEntry treatment10 = create("treatment A", 2021, 1, null, null);
+        TreatmentHistoryEntry treatment11 = create("treatment A", null, null, null, null);
 
-        List<TreatmentHistoryEntry> treatments =
-                Lists.newArrayList(treatment8, treatment6, treatment3, treatment7, treatment4, treatment1, treatment5, treatment2);
+        List<TreatmentHistoryEntry> treatments = Lists.newArrayList(treatment11,
+                treatment10,
+                treatment9,
+                treatment8,
+                treatment7,
+                treatment6,
+                treatment5,
+                treatment4,
+                treatment3,
+                treatment2,
+                treatment1);
         treatments.sort(new TreatmentHistoryAscendingDateComparator());
 
         assertEquals(treatment1, treatments.get(0));
@@ -39,6 +51,9 @@ public class TreatmentHistoryAscendingDateComparatorTest {
         assertEquals(treatment6, treatments.get(5));
         assertEquals(treatment7, treatments.get(6));
         assertEquals(treatment8, treatments.get(7));
+        assertEquals(treatment9, treatments.get(8));
+        assertEquals(treatment10, treatments.get(9));
+        assertEquals(treatment11, treatments.get(10));
     }
 
     @NotNull

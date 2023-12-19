@@ -1,16 +1,17 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class TreatmentHistoryEntryConfigFactoryTest {
 
     @Test
-    fun `Should not generate treatment history entry config for unknown treatment`() {
+    fun `Should return validation error for treatment history entry config for unknown treatment`() {
         val input = "Unknown therapy 2022"
         val treatmentName = "Unknown therapy"
         val parts = partsWithMappedValues(
@@ -20,12 +21,20 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "startYear" to "2022"
             )
         )
-        assertThat(assertThrows(IllegalStateException::class.java) {
-            factory.create(fields, parts)
-        }.message).isEqualTo("Treatment with name UNKNOWN_THERAPY does not exist in database. Please add with one of the following templates: " +
-                "[{\"name\":\"UNKNOWN_THERAPY\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
-                "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"categories\":[]," +
-                "\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]")
+        val config = factory.create(fields, parts)
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                input,
+                "treatmentName",
+                "UNKNOWN_THERAPY",
+                "treatment",
+                "Treatment with name UNKNOWN_THERAPY does not exist in database. Please add with one of the following templates: " +
+                        "[{\"name\":\"UNKNOWN_THERAPY\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
+                        "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"categories\":[]," +
+                        "\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
+            )
+        )
     }
 
     @Test
@@ -40,7 +49,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
 
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
@@ -72,7 +81,8 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 .build()
         )
 
-        assertThat(config).isEqualTo(expected)
+        assertThat(config.config).isEqualTo(expected)
+        assertThat(config.errors).isEmpty()
     }
 
     @Test
@@ -87,12 +97,20 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "isTrial" to "1"
             )
         )
-        assertThat(assertThrows(IllegalStateException::class.java) {
-            factory.create(fields, parts)
-        }.message).isEqualTo("Treatment with name TRIAL_NAME does not exist in database. Please add with one of the following templates: " +
-                "[{\"name\":\"TRIAL_NAME\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
-                "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"TRIAL_NAME\"," +
-                "\"categories\":[],\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]")
+        val config = factory.create(fields, parts)
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                input,
+                "treatmentName",
+                "TRIAL_NAME",
+                "treatment",
+                "Treatment with name TRIAL_NAME does not exist in database. Please add with one of the following templates: " +
+                        "[{\"name\":\"TRIAL_NAME\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
+                        "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"TRIAL_NAME\"," +
+                        "\"categories\":[],\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
+            )
+        )
     }
 
     @Test
@@ -105,7 +123,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "treatmentName" to treatmentName
             )
         )
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo("NA")
         assertThat(config.ignore).isTrue
         assertThat(config.curated).isNull()
@@ -123,7 +141,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
 
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
@@ -131,6 +149,50 @@ class TreatmentHistoryEntryConfigFactoryTest {
         val treatments = config.curated!!.treatments()
         assertThat(treatments).hasSize(2)
             .isEqualTo(treatmentNames.mapNotNull(treatmentDatabase::findTreatmentByName).toSet())
+    }
+
+    @Test
+    fun `Should generate treatment history entry with switch to other treatment and maintenance treatment`() {
+        val input = "Radiotherapy 2023 with switch to CAPOX 2 cycles 4/2023 and maintenance ablation 8/2023"
+        val parts = partsWithMappedValues(
+            mapOf(
+                "input" to input,
+                "treatmentName" to TestTreatmentDatabaseFactory.RADIOTHERAPY,
+                "startYear" to "2023",
+                "maintenanceTreatment" to TestTreatmentDatabaseFactory.ABLATION,
+                "maintenanceTreatmentStartYear" to "2023",
+                "maintenanceTreatmentStartMonth" to "8",
+                "switchToTreatment" to TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN,
+                "switchToTreatmentStartYear" to "2023",
+                "switchToTreatmentStartMonth" to "4",
+                "switchToTreatmentCycles" to "2"
+            )
+        )
+
+        val config = factory.create(fields, parts)
+        assertThat(config.config.input).isEqualTo(input)
+        assertThat(config.config.ignore).isFalse
+        val curated = config.config.curated
+        assertThat(curated).isNotNull
+
+        val treatments = curated!!.treatments()
+        assertThat(treatments).containsExactly(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.RADIOTHERAPY))
+        val treatmentDetails = curated.treatmentHistoryDetails()!!
+        assertThat(treatmentDetails.switchToTreatments()).containsExactly(
+            ImmutableTreatmentStage.builder()
+                .treatment(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN)!!)
+                .startYear(2023)
+                .startMonth(4)
+                .cycles(2)
+                .build()
+        )
+        assertThat(treatmentDetails.maintenanceTreatment()).isEqualTo(
+            ImmutableTreatmentStage.builder()
+                .treatment(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.ABLATION)!!)
+                .startYear(2023)
+                .startMonth(8)
+                .build()
+        )
     }
 
     private fun partsWithMappedValues(overrides: Map<String, String>): Array<String> {
@@ -157,6 +219,13 @@ class TreatmentHistoryEntryConfigFactoryTest {
             "stopReason" to 12,
             "isTrial" to 13,
             "trialAcronym" to 14,
+            "maintenanceTreatment" to 15,
+            "maintenanceTreatmentStartYear" to 16,
+            "maintenanceTreatmentStartMonth" to 17,
+            "switchToTreatment" to 18,
+            "switchToTreatmentStartYear" to 19,
+            "switchToTreatmentStartMonth" to 20,
+            "switchToTreatmentCycles" to 21
         )
 
         private val factory = TreatmentHistoryEntryConfigFactory(treatmentDatabase)

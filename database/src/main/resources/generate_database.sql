@@ -47,7 +47,7 @@ CREATE TABLE `clinicalStatus`
     `activeInfectionDescription` varchar(50),
     `hasToxicitiesGrade2` BOOLEAN,
     `hasSigAberrationLatestECG` BOOLEAN,
-    `ecgAberrationDescription` varchar(50),
+    `ecgAberrationDescription` varchar(120),
     `qtcfValue` int,
     `qtcfUnit` varchar(50),
     `jtcValue` int,
@@ -82,6 +82,13 @@ CREATE TABLE `treatmentHistoryEntry`
     `stopReason` varchar(50),
     `stopReasonDetail` varchar(200),
     `toxicities` varchar(200),
+    `maintenanceTreatment` varchar(100),
+    `maintenanceTreatmentStartYear` int,
+    `maintenanceTreatmentStartMonth` int,
+    `switchToTreatment` varchar(100),
+    `switchToTreatmentStartYear` int,
+    `switchToTreatmentStartMonth` int,
+    `switchToTreatmentCycles` int,
     PRIMARY KEY (`id`)
 );
 
@@ -621,7 +628,7 @@ CREATE TABLE `evaluation`
     `recoverable` BOOLEAN NOT NULL,
     `inclusionMolecularEvents` varchar(300) NOT NULL,
     `exclusionMolecularEvents` varchar(300) NOT NULL,
-    `passSpecificMessages` varchar(1000) NOT NULL,
+    `passSpecificMessages` varchar(1500) NOT NULL,
     `passGeneralMessages` varchar(1000) NOT NULL,
     `warnSpecificMessages` varchar(2000) NOT NULL,
     `warnGeneralMessages` varchar(1000) NOT NULL,
