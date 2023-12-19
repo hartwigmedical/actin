@@ -1,19 +1,12 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.Displayable;
+import com.hartwig.actin.Displayable
 
-import org.jetbrains.annotations.NotNull;
-
-public enum ExperimentType implements Displayable {
+enum class ExperimentType(private val display: String) : Displayable {
     TARGETED("Panel analysis"),
     WHOLE_GENOME("WGS");
 
-    @NotNull
-    private final String display;
-
-    ExperimentType(@NotNull final String display) { this.display = display; }
-
-    @Override
-    @NotNull
-    public String display() { return display; }
+    override fun display(): String {
+        return display
+    }
 }

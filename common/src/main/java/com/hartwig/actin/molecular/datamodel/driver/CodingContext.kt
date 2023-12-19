@@ -1,6 +1,6 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-public enum CodingContext {
+enum class CodingContext {
     ENHANCER,
     UTR_5P,
     CODING,

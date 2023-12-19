@@ -1,86 +1,70 @@
-package com.hartwig.actin.molecular.interpretation;
+package com.hartwig.actin.molecular.interpretation
 
-import java.util.Set;
+import com.google.common.collect.Sets
+import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.filter.GeneFilterFactory.createAlwaysValid
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.molecular.filter.GeneFilter;
-import com.hartwig.actin.molecular.filter.GeneFilterFactory;
-
-import org.jetbrains.annotations.NotNull;
-
-public class MolecularInputChecker {
-
-    private static final String TERMINATION_CODON = "Ter";
-    private static final Set<String> VALID_PROTEIN_ENDINGS = Sets.newHashSet("del", "dup", "ins", "=", "*", "fs", "ext*?");
-
-    @NotNull
-    private final GeneFilter geneFilter;
-
-    @NotNull
-    public static MolecularInputChecker createAnyGeneValid() {
-        return new MolecularInputChecker(GeneFilterFactory.createAlwaysValid());
+class MolecularInputChecker(private val geneFilter: GeneFilter) {
+    fun isGene(string: String): Boolean {
+        return geneFilter.include(string)
     }
 
-    public MolecularInputChecker(@NotNull final GeneFilter geneFilter) {
-        this.geneFilter = geneFilter;
-    }
-
-    public boolean isGene(@NotNull String string) {
-        return geneFilter.include(string);
-    }
-
-    public static boolean isHlaAllele(@NotNull String string) {
-        int asterixIndex = string.indexOf("*");
-        int semicolonIndex = string.indexOf(":");
-        return asterixIndex == 1 && semicolonIndex > asterixIndex;
-    }
-
-    public static boolean isProteinImpact(@NotNull String string) {
-        if (string.equals("?")) {
-            return true;
+    companion object {
+        private const val TERMINATION_CODON = "Ter"
+        private val VALID_PROTEIN_ENDINGS: Set<String> = Sets.newHashSet("del", "dup", "ins", "=", "*", "fs", "ext*?")
+        fun createAnyGeneValid(): MolecularInputChecker {
+            return MolecularInputChecker(createAlwaysValid())
         }
 
-        if (string.length() < 3) {
-            return false;
+        @JvmStatic
+        fun isHlaAllele(string: String): Boolean {
+            val asterixIndex = string.indexOf("*")
+            val semicolonIndex = string.indexOf(":")
+            return asterixIndex == 1 && semicolonIndex > asterixIndex
         }
 
-        char first = string.charAt(0);
-        boolean hasValidStart = Character.isUpperCase(first) || string.startsWith(TERMINATION_CODON);
-
-        char last = string.charAt(string.length() - 1);
-        boolean hasValidEnd = hasSpecificValidProteinEnding(string) || Character.isUpperCase(last);
-
-        String mid = string.substring(1, string.length() - 1);
-        boolean hasValidMid = hasSpecificValidProteinEnding(string) || mid.contains("_") || isPositiveNumber(mid);
-
-        return hasValidStart && hasValidEnd && hasValidMid;
-    }
-
-    private static boolean hasSpecificValidProteinEnding(@NotNull String string) {
-        for (String validProteinEnding : VALID_PROTEIN_ENDINGS) {
-            if (string.endsWith(validProteinEnding)) {
-                return true;
+        @JvmStatic
+        fun isProteinImpact(string: String): Boolean {
+            if (string == "?") {
+                return true
             }
+            if (string.length < 3) {
+                return false
+            }
+            val first = string[0]
+            val hasValidStart = Character.isUpperCase(first) || string.startsWith(TERMINATION_CODON)
+            val last = string[string.length - 1]
+            val hasValidEnd = hasSpecificValidProteinEnding(string) || Character.isUpperCase(last)
+            val mid = string.substring(1, string.length - 1)
+            val hasValidMid = hasSpecificValidProteinEnding(string) || mid.contains("_") || isPositiveNumber(mid)
+            return hasValidStart && hasValidEnd && hasValidMid
         }
-        return false;
-    }
 
-    public static boolean isCodon(@NotNull String string) {
-        if (string.length() < 2) {
-            return false;
+        private fun hasSpecificValidProteinEnding(string: String): Boolean {
+            for (validProteinEnding in VALID_PROTEIN_ENDINGS) {
+                if (string.endsWith(validProteinEnding)) {
+                    return true
+                }
+            }
+            return false
         }
 
-        char first = string.charAt(0);
-        String codon = string.substring(1);
+        @JvmStatic
+        fun isCodon(string: String): Boolean {
+            if (string.length < 2) {
+                return false
+            }
+            val first = string[0]
+            val codon = string.substring(1)
+            return Character.isUpperCase(first) && isPositiveNumber(codon)
+        }
 
-        return Character.isUpperCase(first) && isPositiveNumber(codon);
-    }
-
-    private static boolean isPositiveNumber(@NotNull String codon) {
-        try {
-            return Integer.parseInt(codon) > 0;
-        } catch (NumberFormatException exception) {
-            return false;
+        private fun isPositiveNumber(codon: String): Boolean {
+            return try {
+                codon.toInt() > 0
+            } catch (exception: NumberFormatException) {
+                false
+            }
         }
     }
 }

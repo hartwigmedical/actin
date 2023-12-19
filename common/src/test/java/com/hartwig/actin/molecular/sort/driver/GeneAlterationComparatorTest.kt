@@ -1,67 +1,49 @@
-package com.hartwig.actin.molecular.sort.driver;
+package com.hartwig.actin.molecular.sort.driver
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Lists
+import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration;
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole;
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
-
-public class GeneAlterationComparatorTest {
-
+class GeneAlterationComparatorTest {
     @Test
-    public void canSortGeneAlterations() {
-        GeneAlteration alteration1 = create("gene A", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION);
-        GeneAlteration alteration2 = create("gene A", GeneRole.TSG, ProteinEffect.GAIN_OF_FUNCTION);
-        GeneAlteration alteration3= create("gene A", GeneRole.TSG, ProteinEffect.NO_EFFECT);
-        GeneAlteration alteration4 = create("gene B", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION);
-
-        List<GeneAlteration> alterations = Lists.newArrayList(alteration2, alteration1, alteration4, alteration3);
-        alterations.sort(new GeneAlterationComparator());
-
-        assertEquals(alteration1, alterations.get(0));
-        assertEquals(alteration2, alterations.get(1));
-        assertEquals(alteration3, alterations.get(2));
-        assertEquals(alteration4, alterations.get(3));
+    fun canSortGeneAlterations() {
+        val alteration1 = create("gene A", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION)
+        val alteration2 = create("gene A", GeneRole.TSG, ProteinEffect.GAIN_OF_FUNCTION)
+        val alteration3 = create("gene A", GeneRole.TSG, ProteinEffect.NO_EFFECT)
+        val alteration4 = create("gene B", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION)
+        val alterations: List<GeneAlteration> = Lists.newArrayList(alteration2, alteration1, alteration4, alteration3)
+        alterations.sort(GeneAlterationComparator())
+        Assert.assertEquals(alteration1, alterations[0])
+        Assert.assertEquals(alteration2, alterations[1])
+        Assert.assertEquals(alteration3, alterations[2])
+        Assert.assertEquals(alteration4, alterations[3])
     }
 
-    @NotNull
-    private static GeneAlteration create(@NotNull String gene, @NotNull GeneRole geneRole, @NotNull ProteinEffect proteinEffect) {
-        return new GeneAlteration() {
-            @NotNull
-            @Override
-            public String gene() {
-                return gene;
-            }
+    companion object {
+        private fun create(gene: String, geneRole: GeneRole, proteinEffect: ProteinEffect): GeneAlteration {
+            return object : GeneAlteration {
+                override fun gene(): String {
+                    return gene
+                }
 
-            @NotNull
-            @Override
-            public GeneRole geneRole() {
-                return geneRole;
-            }
+                override fun geneRole(): GeneRole {
+                    return geneRole
+                }
 
-            @NotNull
-            @Override
-            public ProteinEffect proteinEffect() {
-                return proteinEffect;
-            }
+                override fun proteinEffect(): ProteinEffect {
+                    return proteinEffect
+                }
 
-            @Nullable
-            @Override
-            public Boolean isAssociatedWithDrugResistance() {
-                return null;
-            }
+                override val isAssociatedWithDrugResistance: Boolean?
+                    get() = null
 
-            @Override
-            public String toString() {
-                return gene + " " + geneRole + " " + proteinEffect;
+                override fun toString(): String {
+                    return "$gene $geneRole $proteinEffect"
+                }
             }
-        };
+        }
     }
 }

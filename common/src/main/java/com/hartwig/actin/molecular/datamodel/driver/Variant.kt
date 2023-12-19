@@ -1,35 +1,23 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import java.util.Set;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Variant implements Driver, GeneAlteration {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class Variant : Driver, GeneAlteration {
+    abstract fun type(): VariantType
+    abstract fun variantCopyNumber(): Double
+    abstract fun totalCopyNumber(): Double
 
-    @NotNull
-    public abstract VariantType type();
+    @JvmField
+    abstract val isBiallelic: Boolean
 
-    public abstract double variantCopyNumber();
-
-    public abstract double totalCopyNumber();
-
-    public abstract boolean isBiallelic();
-
-    public abstract boolean isHotspot();
-
-    public abstract double clonalLikelihood();
-
-    @Nullable
-    public abstract Set<Integer> phaseGroups();
-
-    @NotNull
-    public abstract TranscriptImpact canonicalImpact();
-
-    @NotNull
-    public abstract Set<TranscriptImpact> otherImpacts();
-
+    @JvmField
+    abstract val isHotspot: Boolean
+    abstract fun clonalLikelihood(): Double
+    abstract fun phaseGroups(): Set<Int?>?
+    abstract fun canonicalImpact(): TranscriptImpact
+    abstract fun otherImpacts(): Set<TranscriptImpact?>
 }

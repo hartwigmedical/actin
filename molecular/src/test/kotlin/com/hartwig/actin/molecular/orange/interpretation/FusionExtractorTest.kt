@@ -43,7 +43,7 @@ class FusionExtractorTest {
         assertEquals(1, fusions.size.toLong())
 
         val fusion = fusions.iterator().next()
-        assertTrue(fusion.isReportable())
+        assertTrue(fusion.isReportable)
         assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood())
         assertEquals("gene start", fusion.geneStart())
         assertEquals("trans start", fusion.geneTranscriptStart())

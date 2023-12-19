@@ -1,6 +1,6 @@
-package com.hartwig.actin.molecular.datamodel;
+package com.hartwig.actin.molecular.datamodel
 
-public enum RefGenomeVersion {
+enum class RefGenomeVersion {
     V37,
     V38
 }

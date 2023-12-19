@@ -1,6 +1,6 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-public enum ProteinEffect {
+enum class ProteinEffect {
     UNKNOWN,
     AMBIGUOUS,
     NO_EFFECT,

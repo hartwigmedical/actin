@@ -1,15 +1,10 @@
-package com.hartwig.actin.molecular.datamodel.immunology;
+package com.hartwig.actin.molecular.datamodel.immunology
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class TestHlaAlleleFactory {
-
-    private TestHlaAlleleFactory() {
-    }
-
-    @NotNull
-    public static ImmutableHlaAllele.Builder builder() {
-        return ImmutableHlaAllele.builder().name(Strings.EMPTY).tumorCopyNumber(0D).hasSomaticMutations(false);
+object TestHlaAlleleFactory {
+    @JvmStatic
+    fun builder(): ImmutableHlaAllele.Builder {
+        return ImmutableHlaAllele.builder().name(Strings.EMPTY).tumorCopyNumber(0.0).hasSomaticMutations(false)
     }
 }

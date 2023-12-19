@@ -58,7 +58,7 @@ class OrangeInterpreterTest {
         assertEquals(1, drivers.viruses().size.toLong())
 
         val immunology = record.immunology()
-        assertTrue(immunology.isReliable())
+        assertTrue(immunology.isReliable)
         assertEquals(1, immunology.hlaAlleles().size.toLong())
         assertEquals(1, record.pharmaco().size.toLong())
     }

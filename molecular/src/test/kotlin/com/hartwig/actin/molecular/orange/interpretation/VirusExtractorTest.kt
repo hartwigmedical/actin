@@ -44,17 +44,17 @@ class VirusExtractorTest {
         assertEquals(2, viruses.size.toLong())
 
         val virus1 = findByName(viruses, "virus 1")
-        assertTrue(virus1.isReportable())
+        assertTrue(virus1.isReportable)
         assertEquals(DriverLikelihood.HIGH, virus1.driverLikelihood())
         assertEquals(VirusType.HUMAN_PAPILLOMA_VIRUS, virus1.type())
-        assertTrue(virus1.isReliable())
+        assertTrue(virus1.isReliable)
         assertEquals(2, virus1.integrations().toLong())
 
         val virus2 = findByName(viruses, "virus 2")
-        assertFalse(virus2.isReportable())
+        assertFalse(virus2.isReportable)
         assertEquals(DriverLikelihood.LOW, virus2.driverLikelihood())
         assertEquals(VirusType.OTHER, virus2.type())
-        assertFalse(virus2.isReliable())
+        assertFalse(virus2.isReliable)
         assertEquals(0, virus2.integrations().toLong())
     }
 

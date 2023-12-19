@@ -1,11 +1,13 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-public enum DriverLikelihood {
+import java.util.*
+
+enum class DriverLikelihood {
     HIGH,
     MEDIUM,
     LOW;
 
-    public String toString() {
-        return name().substring(0, 1).toUpperCase() + name().substring(1).toLowerCase();
+    override fun toString(): String {
+        return name.substring(0, 1).uppercase(Locale.getDefault()) + name.substring(1).lowercase(Locale.getDefault())
     }
 }

@@ -1,35 +1,29 @@
-package com.hartwig.actin.molecular.sort.driver;
+package com.hartwig.actin.molecular.sort.driver
 
-import java.util.Comparator;
+import com.hartwig.actin.molecular.datamodel.driver.Driver
+import com.hartwig.actin.molecular.sort.evidence.ActionableEvidenceComparator
+import java.lang.Boolean
+import kotlin.Comparator
+import kotlin.Int
 
-import com.hartwig.actin.molecular.datamodel.driver.Driver;
-import com.hartwig.actin.molecular.sort.evidence.ActionableEvidenceComparator;
-
-import org.jetbrains.annotations.NotNull;
-
-public class DriverComparator implements Comparator<Driver> {
-
-    private static final DriverLikelihoodComparator DRIVER_LIKELIHOOD_COMPARATOR = new DriverLikelihoodComparator();
-
-    private static final ActionableEvidenceComparator ACTIONABLE_EVIDENCE_COMPARATOR = new ActionableEvidenceComparator();
-
-    @Override
-    public int compare(@NotNull Driver driver1, @NotNull  Driver driver2) {
-        int reportableCompare = Boolean.compare(driver2.isReportable(), driver1.isReportable());
+class DriverComparator : Comparator<Driver> {
+    override fun compare(driver1: Driver, driver2: Driver): Int {
+        val reportableCompare = Boolean.compare(driver2.isReportable, driver1.isReportable)
         if (reportableCompare != 0) {
-            return reportableCompare;
+            return reportableCompare
         }
-
-        int likelihoodCompare = DRIVER_LIKELIHOOD_COMPARATOR.compare(driver1.driverLikelihood(), driver2.driverLikelihood());
+        val likelihoodCompare = DRIVER_LIKELIHOOD_COMPARATOR.compare(driver1.driverLikelihood(), driver2.driverLikelihood())
         if (likelihoodCompare != 0) {
-            return likelihoodCompare;
+            return likelihoodCompare
         }
+        val eventCompare = driver1.event().compareTo(driver2.event())
+        return if (eventCompare != 0) {
+            eventCompare
+        } else ACTIONABLE_EVIDENCE_COMPARATOR.compare(driver1.evidence(), driver2.evidence())
+    }
 
-        int eventCompare = driver1.event().compareTo(driver2.event());
-        if (eventCompare != 0) {
-            return eventCompare;
-        }
-
-        return ACTIONABLE_EVIDENCE_COMPARATOR.compare(driver1.evidence(), driver2.evidence());
+    companion object {
+        private val DRIVER_LIKELIHOOD_COMPARATOR = DriverLikelihoodComparator()
+        private val ACTIONABLE_EVIDENCE_COMPARATOR = ActionableEvidenceComparator()
     }
 }

@@ -1,37 +1,28 @@
-package com.hartwig.actin.molecular.sort.driver;
+package com.hartwig.actin.molecular.sort.driver
 
-import java.util.Comparator;
+import com.hartwig.actin.molecular.datamodel.driver.Fusion
 
-import com.hartwig.actin.molecular.datamodel.driver.Fusion;
-
-import org.jetbrains.annotations.NotNull;
-
-public class FusionComparator implements Comparator<Fusion> {
-
-    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
-
-    @Override
-    public int compare(@NotNull Fusion fusion1, @NotNull Fusion fusion2) {
-        int driverCompare = DRIVER_COMPARATOR.compare(fusion1, fusion2);
+class FusionComparator : Comparator<Fusion> {
+    override fun compare(fusion1: Fusion, fusion2: Fusion): Int {
+        val driverCompare = DRIVER_COMPARATOR.compare(fusion1, fusion2)
         if (driverCompare != 0) {
-            return driverCompare;
+            return driverCompare
         }
-
-        int geneStartCompare = fusion1.geneStart().compareTo(fusion2.geneStart());
+        val geneStartCompare = fusion1.geneStart().compareTo(fusion2.geneStart())
         if (geneStartCompare != 0) {
-            return geneStartCompare;
+            return geneStartCompare
         }
-
-        int geneEndCompare = fusion1.geneEnd().compareTo(fusion2.geneEnd());
+        val geneEndCompare = fusion1.geneEnd().compareTo(fusion2.geneEnd())
         if (geneEndCompare != 0) {
-            return geneEndCompare;
+            return geneEndCompare
         }
+        val geneTranscriptStartCompare = fusion1.geneTranscriptStart().compareTo(fusion2.geneTranscriptStart())
+        return if (geneTranscriptStartCompare != 0) {
+            geneTranscriptStartCompare
+        } else fusion1.geneTranscriptEnd().compareTo(fusion2.geneTranscriptEnd())
+    }
 
-        int geneTranscriptStartCompare = fusion1.geneTranscriptStart().compareTo(fusion2.geneTranscriptStart());
-        if (geneTranscriptStartCompare != 0) {
-            return geneTranscriptStartCompare;
-        }
-
-        return fusion1.geneTranscriptEnd().compareTo(fusion2.geneTranscriptEnd());
+    companion object {
+        private val DRIVER_COMPARATOR = DriverComparator()
     }
 }

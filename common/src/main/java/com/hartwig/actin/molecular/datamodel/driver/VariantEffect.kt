@@ -1,6 +1,6 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-public enum VariantEffect {
+enum class VariantEffect {
     STOP_GAINED,
     STOP_LOST,
     START_LOST,

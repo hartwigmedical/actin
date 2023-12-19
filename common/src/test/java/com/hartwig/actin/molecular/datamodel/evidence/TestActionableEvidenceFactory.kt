@@ -1,66 +1,60 @@
-package com.hartwig.actin.molecular.datamodel.evidence;
+package com.hartwig.actin.molecular.datamodel.evidence
 
-import org.jetbrains.annotations.NotNull;
-
-public final class TestActionableEvidenceFactory {
-
-    private TestActionableEvidenceFactory() {
+object TestActionableEvidenceFactory {
+    @JvmStatic
+    fun builder(): ImmutableActionableEvidence.Builder {
+        return ImmutableActionableEvidence.builder()
     }
 
-    @NotNull
-    public static ImmutableActionableEvidence.Builder builder() {
-        return ImmutableActionableEvidence.builder();
+    @JvmStatic
+    fun createEmpty(): ActionableEvidence {
+        return builder().build()
     }
 
-    @NotNull
-    public static ActionableEvidence createEmpty() {
-        return builder().build();
-    }
-
-    @NotNull
-    public static ActionableEvidence createExhaustive() {
+    @JvmStatic
+    fun createExhaustive(): ActionableEvidence {
         return builder().addApprovedTreatments("approved")
-                .addExternalEligibleTrials("external trial")
-                .addOnLabelExperimentalTreatments("on-label experimental")
-                .addOffLabelExperimentalTreatments("off-label experimental")
-                .addPreClinicalTreatments("pre-clinical")
-                .addKnownResistantTreatments("known resistant")
-                .addSuspectResistantTreatments("suspect resistant")
-                .build();
+            .addExternalEligibleTrials("external trial")
+            .addOnLabelExperimentalTreatments("on-label experimental")
+            .addOffLabelExperimentalTreatments("off-label experimental")
+            .addPreClinicalTreatments("pre-clinical")
+            .addKnownResistantTreatments("known resistant")
+            .addSuspectResistantTreatments("suspect resistant")
+            .build()
     }
 
-    @NotNull
-    public static ActionableEvidence withApprovedTreatment(@NotNull String treatment) {
-        return builder().addApprovedTreatments(treatment).build();
+    @JvmStatic
+    fun withApprovedTreatment(treatment: String): ActionableEvidence {
+        return builder().addApprovedTreatments(treatment).build()
     }
 
-    @NotNull
-    public static ActionableEvidence withExternalEligibleTrial(@NotNull String treatment) {
-        return builder().addExternalEligibleTrials(treatment).build();
+    @JvmStatic
+    fun withExternalEligibleTrial(treatment: String): ActionableEvidence {
+        return builder().addExternalEligibleTrials(treatment).build()
     }
 
-    @NotNull
-    public static ActionableEvidence withOnLabelExperimentalTreatment(@NotNull String treatment) {
-        return builder().addOnLabelExperimentalTreatments(treatment).build();
+    @JvmStatic
+    fun withOnLabelExperimentalTreatment(treatment: String): ActionableEvidence {
+        return builder().addOnLabelExperimentalTreatments(treatment).build()
     }
 
-    @NotNull
-    public static ActionableEvidence withOffLabelExperimentalTreatment(@NotNull String treatment) {
-        return builder().addOffLabelExperimentalTreatments(treatment).build();
+    @JvmStatic
+    fun withOffLabelExperimentalTreatment(treatment: String): ActionableEvidence {
+        return builder().addOffLabelExperimentalTreatments(treatment).build()
     }
 
-    @NotNull
-    public static ActionableEvidence withPreClinicalTreatment(@NotNull String treatment) {
-        return builder().addPreClinicalTreatments(treatment).build();
+    @JvmStatic
+    fun withPreClinicalTreatment(treatment: String): ActionableEvidence {
+        return builder().addPreClinicalTreatments(treatment).build()
     }
 
-    @NotNull
-    public static ActionableEvidence withKnownResistantTreatment(@NotNull String treatment) {
-        return builder().addKnownResistantTreatments(treatment).build();
+    @JvmStatic
+    fun withKnownResistantTreatment(treatment: String): ActionableEvidence {
+        return builder().addKnownResistantTreatments(treatment).build()
     }
 
-    @NotNull
-    public static ActionableEvidence withSuspectResistantTreatment(@NotNull String treatment) {
-        return builder().addSuspectResistantTreatments(treatment).build();
+    @JvmStatic
+    fun withSuspectResistantTreatment(treatment: String): ActionableEvidence {
+        return builder().addSuspectResistantTreatments(treatment).build()
     }
 }

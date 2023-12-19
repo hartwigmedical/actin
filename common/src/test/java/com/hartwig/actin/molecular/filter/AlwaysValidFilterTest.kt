@@ -1,15 +1,13 @@
-package com.hartwig.actin.molecular.filter;
+package com.hartwig.actin.molecular.filter
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class AlwaysValidFilterTest {
-
-    @Test
-    public void isAlwaysValid() {
-        AlwaysValidFilter filter = new AlwaysValidFilter();
-
-        assertTrue(filter.include("not a gene"));
-    }
+class AlwaysValidFilterTest {
+    @get:Test
+    val isAlwaysValid: Unit
+        get() {
+            val filter = AlwaysValidFilter()
+            Assert.assertTrue(filter.include("not a gene"))
+        }
 }

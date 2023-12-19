@@ -1,54 +1,27 @@
-package com.hartwig.actin.molecular.datamodel.characteristics;
+package com.hartwig.actin.molecular.datamodel.characteristics
 
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class MolecularCharacteristics {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class MolecularCharacteristics {
+    abstract fun purity(): Double?
+    abstract fun ploidy(): Double?
+    abstract fun predictedTumorOrigin(): PredictedTumorOrigin?
 
-    @Nullable
-    public abstract Double purity();
-
-    @Nullable
-    public abstract Double ploidy();
-
-    @Nullable
-    public abstract PredictedTumorOrigin predictedTumorOrigin();
-
-    @Nullable
-    public abstract Boolean isMicrosatelliteUnstable();
-
-    @Nullable
-    public abstract ActionableEvidence microsatelliteEvidence();
-
-    @Nullable
-    public abstract Double homologousRepairScore();
-
-    @Nullable
-    public abstract Boolean isHomologousRepairDeficient();
-
-    @Nullable
-    public abstract ActionableEvidence homologousRepairEvidence();
-
-    @Nullable
-    public abstract Double tumorMutationalBurden();
-
-    @Nullable
-    public abstract Boolean hasHighTumorMutationalBurden();
-
-    @Nullable
-    public abstract ActionableEvidence tumorMutationalBurdenEvidence();
-
-    @Nullable
-    public abstract Integer tumorMutationalLoad();
-
-    @Nullable
-    public abstract Boolean hasHighTumorMutationalLoad();
-
-    @Nullable
-    public abstract ActionableEvidence tumorMutationalLoadEvidence();
+    @kotlin.jvm.JvmField
+    abstract val isMicrosatelliteUnstable: Boolean?
+    abstract fun microsatelliteEvidence(): ActionableEvidence?
+    abstract fun homologousRepairScore(): Double?
+    abstract val isHomologousRepairDeficient: Boolean?
+    abstract fun homologousRepairEvidence(): ActionableEvidence?
+    abstract fun tumorMutationalBurden(): Double?
+    abstract fun hasHighTumorMutationalBurden(): Boolean?
+    abstract fun tumorMutationalBurdenEvidence(): ActionableEvidence?
+    abstract fun tumorMutationalLoad(): Int?
+    abstract fun hasHighTumorMutationalLoad(): Boolean?
+    abstract fun tumorMutationalLoadEvidence(): ActionableEvidence?
 }

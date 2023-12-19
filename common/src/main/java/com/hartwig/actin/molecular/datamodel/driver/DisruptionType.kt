@@ -1,6 +1,6 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-public enum DisruptionType {
+enum class DisruptionType {
     BND,
     DEL,
     DUP,

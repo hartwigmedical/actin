@@ -61,14 +61,14 @@ class CopyNumberExtractorTest {
         assertEquals(3, copyNumbers.size.toLong())
 
         val gene1 = findByGene(copyNumbers, "gene 1")
-        assertTrue(gene1.isReportable())
+        assertTrue(gene1.isReportable)
         assertEquals(DriverLikelihood.HIGH, gene1.driverLikelihood())
         assertEquals(CopyNumberType.LOSS, gene1.type())
         assertEquals(0, gene1.minCopies().toLong())
         assertEquals(1, gene1.maxCopies().toLong())
 
         val gene2 = findByGene(copyNumbers, "gene 2")
-        assertFalse(gene2.isReportable())
+        assertFalse(gene2.isReportable)
         assertNull(gene2.driverLikelihood())
         assertEquals(CopyNumberType.FULL_GAIN, gene2.type())
         assertEquals(20, gene2.minCopies().toLong())

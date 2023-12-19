@@ -1,25 +1,20 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class TestDisruptionFactory {
-
-    private TestDisruptionFactory() {
-    }
-
-    @NotNull
-    public static ImmutableDisruption.Builder builder() {
+object TestDisruptionFactory {
+    @JvmStatic
+    fun builder(): ImmutableDisruption.Builder {
         return ImmutableDisruption.builder()
-                .from(TestDriverFactory.createEmptyDriver())
-                .gene(Strings.EMPTY)
-                .geneRole(GeneRole.UNKNOWN)
-                .proteinEffect(ProteinEffect.UNKNOWN)
-                .type(DisruptionType.BND)
-                .junctionCopyNumber(0)
-                .undisruptedCopyNumber(0)
-                .regionType(RegionType.INTRONIC)
-                .codingContext(CodingContext.NON_CODING)
-                .clusterGroup(0);
+            .from(TestDriverFactory.createEmptyDriver())
+            .gene(Strings.EMPTY)
+            .geneRole(GeneRole.UNKNOWN)
+            .proteinEffect(ProteinEffect.UNKNOWN)
+            .type(DisruptionType.BND)
+            .junctionCopyNumber(0)
+            .undisruptedCopyNumber(0)
+            .regionType(RegionType.INTRONIC)
+            .codingContext(CodingContext.NON_CODING)
+            .clusterGroup(0)
     }
 }

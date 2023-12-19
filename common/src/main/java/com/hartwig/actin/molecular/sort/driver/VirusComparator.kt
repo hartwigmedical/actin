@@ -1,27 +1,20 @@
-package com.hartwig.actin.molecular.sort.driver;
+package com.hartwig.actin.molecular.sort.driver
 
-import java.util.Comparator;
+import com.hartwig.actin.molecular.datamodel.driver.Virus
 
-import com.hartwig.actin.molecular.datamodel.driver.Virus;
-
-import org.jetbrains.annotations.NotNull;
-
-public class VirusComparator implements Comparator<Virus> {
-
-    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
-
-    @Override
-    public int compare(@NotNull Virus virus1, @NotNull Virus virus2) {
-        int driverCompare = DRIVER_COMPARATOR.compare(virus1, virus2);
+class VirusComparator : Comparator<Virus> {
+    override fun compare(virus1: Virus, virus2: Virus): Int {
+        val driverCompare = DRIVER_COMPARATOR.compare(virus1, virus2)
         if (driverCompare != 0) {
-            return driverCompare;
+            return driverCompare
         }
+        val typeCompare = virus1.type().toString().compareTo(virus2.type().toString())
+        return if (typeCompare != 0) {
+            typeCompare
+        } else virus1.name().compareTo(virus2.name())
+    }
 
-        int typeCompare = virus1.type().toString().compareTo(virus2.type().toString());
-        if (typeCompare != 0) {
-            return typeCompare;
-        }
-
-        return virus1.name().compareTo(virus2.name());
+    companion object {
+        private val DRIVER_COMPARATOR = DriverComparator()
     }
 }

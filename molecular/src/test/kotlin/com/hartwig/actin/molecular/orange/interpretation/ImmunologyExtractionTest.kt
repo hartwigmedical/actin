@@ -35,7 +35,7 @@ class ImmunologyExtractionTest {
         val orange = withLilacData(ImmunologyExtraction.LILAC_QC_PASS, allele1, allele2)
 
         val immunology = ImmunologyExtraction.extract(orange)
-        assertTrue(immunology.isReliable())
+        assertTrue(immunology.isReliable)
         assertEquals(2, immunology.hlaAlleles().size.toLong())
 
         val hlaAllele1 = findByName(immunology.hlaAlleles(), "allele 1")

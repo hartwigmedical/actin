@@ -1,6 +1,6 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-public enum RegionType {
+enum class RegionType {
     INTRONIC,
     EXONIC,
     UPSTREAM,

@@ -1,6 +1,6 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-public enum GeneRole {
+enum class GeneRole {
     BOTH,
     ONCO,
     TSG,

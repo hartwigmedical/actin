@@ -1,29 +1,22 @@
-package com.hartwig.actin.molecular.sort.driver;
+package com.hartwig.actin.molecular.sort.driver
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Lists
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood;
-import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory;
-
-import org.junit.Test;
-
-public class CopyNumberComparatorTest {
-
+class CopyNumberComparatorTest {
     @Test
-    public void canSortCopyNumbers() {
-        CopyNumber driver1 = TestCopyNumberFactory.builder().driverLikelihood(DriverLikelihood.HIGH).gene("MYC").build();
-        CopyNumber driver2 = TestCopyNumberFactory.builder().driverLikelihood(DriverLikelihood.MEDIUM).gene("MYC").build();
-        CopyNumber driver3 = TestCopyNumberFactory.builder().driverLikelihood(DriverLikelihood.MEDIUM).gene("NTRK").build();
-
-        List<CopyNumber> copyNumberDrivers = Lists.newArrayList(driver2, driver1, driver3);
-        copyNumberDrivers.sort(new CopyNumberComparator());
-
-        assertEquals(driver1, copyNumberDrivers.get(0));
-        assertEquals(driver2, copyNumberDrivers.get(1));
-        assertEquals(driver3, copyNumberDrivers.get(2));
+    fun canSortCopyNumbers() {
+        val driver1: CopyNumber = TestCopyNumberFactory.builder().driverLikelihood(DriverLikelihood.HIGH).gene("MYC").build()
+        val driver2: CopyNumber = TestCopyNumberFactory.builder().driverLikelihood(DriverLikelihood.MEDIUM).gene("MYC").build()
+        val driver3: CopyNumber = TestCopyNumberFactory.builder().driverLikelihood(DriverLikelihood.MEDIUM).gene("NTRK").build()
+        val copyNumberDrivers: List<CopyNumber> = Lists.newArrayList(driver2, driver1, driver3)
+        copyNumberDrivers.sort(CopyNumberComparator())
+        Assert.assertEquals(driver1, copyNumberDrivers[0])
+        Assert.assertEquals(driver2, copyNumberDrivers[1])
+        Assert.assertEquals(driver3, copyNumberDrivers[2])
     }
 }

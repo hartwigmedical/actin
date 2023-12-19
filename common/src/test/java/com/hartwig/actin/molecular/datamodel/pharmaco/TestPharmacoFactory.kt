@@ -1,15 +1,10 @@
-package com.hartwig.actin.molecular.datamodel.pharmaco;
+package com.hartwig.actin.molecular.datamodel.pharmaco
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class TestPharmacoFactory {
-
-    private TestPharmacoFactory() {
-    }
-
-    @NotNull
-    public static ImmutableHaplotype.Builder builder() {
-        return ImmutableHaplotype.builder().name(Strings.EMPTY).function(Strings.EMPTY);
+object TestPharmacoFactory {
+    @JvmStatic
+    fun builder(): ImmutableHaplotype.Builder {
+        return ImmutableHaplotype.builder().name(Strings.EMPTY).function(Strings.EMPTY)
     }
 }

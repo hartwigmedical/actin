@@ -1,30 +1,25 @@
-package com.hartwig.actin.molecular.filter;
+package com.hartwig.actin.molecular.filter
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.molecular.filter.GeneFilterFactory.createAlwaysValid
+import com.hartwig.actin.molecular.filter.GeneFilterFactory.createFromKnownGenes
+import com.hartwig.serve.datamodel.common.GeneRole
+import com.hartwig.serve.datamodel.gene.ImmutableKnownGene
+import com.hartwig.serve.datamodel.gene.KnownGene
+import org.junit.Assert
+import org.junit.Test
+import java.util.Set
 
-import java.util.Set;
-
-import com.hartwig.serve.datamodel.common.GeneRole;
-import com.hartwig.serve.datamodel.gene.ImmutableKnownGene;
-import com.hartwig.serve.datamodel.gene.KnownGene;
-
-import org.junit.Test;
-
-public class GeneFilterFactoryTest {
-
+class GeneFilterFactoryTest {
     @Test
-    public void canCreateAlwaysValid() {
-        assertNotNull(GeneFilterFactory.createAlwaysValid());
+    fun canCreateAlwaysValid() {
+        Assert.assertNotNull(createAlwaysValid())
     }
 
     @Test
-    public void canCreateFromKnownGenes() {
-        KnownGene knownGene = ImmutableKnownGene.builder().gene("gene A").geneRole(GeneRole.UNKNOWN).build();
-        GeneFilter filter = GeneFilterFactory.createFromKnownGenes(Set.of(knownGene));
-
-        assertTrue(filter.include("gene A"));
-        assertFalse(filter.include("gene B"));
+    fun canCreateFromKnownGenes() {
+        val knownGene: KnownGene = ImmutableKnownGene.builder().gene("gene A").geneRole(GeneRole.UNKNOWN).build()
+        val filter = createFromKnownGenes(Set.of(knownGene))
+        Assert.assertTrue(filter.include("gene A"))
+        Assert.assertFalse(filter.include("gene B"))
     }
 }

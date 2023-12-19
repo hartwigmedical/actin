@@ -1,10 +1,8 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import com.hartwig.actin.Displayable;
+import com.hartwig.actin.Displayable
 
-import org.jetbrains.annotations.NotNull;
-
-public enum FusionDriverType implements Displayable {
+enum class FusionDriverType(private val display: String) : Displayable {
     NONE("None"),
     KNOWN_PAIR("Known fusion"),
     KNOWN_PAIR_IG("IG known fusion"),
@@ -15,16 +13,7 @@ public enum FusionDriverType implements Displayable {
     PROMISCUOUS_IG("IG promiscuous fusion"),
     PROMISCUOUS_ENHANCER_TARGET("Promiscuous enhancer target fusion");
 
-    @NotNull
-    private final String display;
-
-    FusionDriverType(@NotNull final String display) {
-        this.display = display;
-    }
-
-    @Override
-    @NotNull
-    public String display() {
-        return display;
+    override fun display(): String {
+        return display
     }
 }

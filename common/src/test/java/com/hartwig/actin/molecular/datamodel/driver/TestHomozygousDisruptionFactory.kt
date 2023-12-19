@@ -1,19 +1,14 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class TestHomozygousDisruptionFactory {
-
-    private TestHomozygousDisruptionFactory() {
-    }
-
-    @NotNull
-    public static ImmutableHomozygousDisruption.Builder builder() {
+object TestHomozygousDisruptionFactory {
+    @JvmStatic
+    fun builder(): ImmutableHomozygousDisruption.Builder {
         return ImmutableHomozygousDisruption.builder()
-                .from(TestDriverFactory.createEmptyDriver())
-                .gene(Strings.EMPTY)
-                .geneRole(GeneRole.UNKNOWN)
-                .proteinEffect(ProteinEffect.UNKNOWN);
+            .from(TestDriverFactory.createEmptyDriver())
+            .gene(Strings.EMPTY)
+            .geneRole(GeneRole.UNKNOWN)
+            .proteinEffect(ProteinEffect.UNKNOWN)
     }
 }

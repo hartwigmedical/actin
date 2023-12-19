@@ -1,20 +1,15 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class TestVirusFactory {
-
-    private TestVirusFactory() {
-    }
-
-    @NotNull
-    public static ImmutableVirus.Builder builder() {
+object TestVirusFactory {
+    @JvmStatic
+    fun builder(): ImmutableVirus.Builder {
         return ImmutableVirus.builder()
-                .from(TestDriverFactory.createEmptyDriver())
-                .name(Strings.EMPTY)
-                .type(VirusType.OTHER)
-                .isReliable(false)
-                .integrations(0);
+            .from(TestDriverFactory.createEmptyDriver())
+            .name(Strings.EMPTY)
+            .type(VirusType.OTHER)
+            .isReliable(false)
+            .integrations(0)
     }
 }

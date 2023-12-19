@@ -1,19 +1,14 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class TestTranscriptImpactFactory {
-
-    private TestTranscriptImpactFactory() {
-    }
-
-    @NotNull
-    public static ImmutableTranscriptImpact.Builder builder() {
+object TestTranscriptImpactFactory {
+    @JvmStatic
+    fun builder(): ImmutableTranscriptImpact.Builder {
         return ImmutableTranscriptImpact.builder()
-                .transcriptId(Strings.EMPTY)
-                .hgvsCodingImpact(Strings.EMPTY)
-                .hgvsProteinImpact(Strings.EMPTY)
-                .isSpliceRegion(false);
+            .transcriptId(Strings.EMPTY)
+            .hgvsCodingImpact(Strings.EMPTY)
+            .hgvsProteinImpact(Strings.EMPTY)
+            .isSpliceRegion(false)
     }
 }

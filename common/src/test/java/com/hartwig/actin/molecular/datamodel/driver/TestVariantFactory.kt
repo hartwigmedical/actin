@@ -1,26 +1,21 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class TestVariantFactory {
-
-    private TestVariantFactory() {
-    }
-
-    @NotNull
-    public static ImmutableVariant.Builder builder() {
+object TestVariantFactory {
+    @JvmStatic
+    fun builder(): ImmutableVariant.Builder {
         return ImmutableVariant.builder()
-                .from(TestDriverFactory.createEmptyDriver())
-                .gene(Strings.EMPTY)
-                .geneRole(GeneRole.UNKNOWN)
-                .proteinEffect(ProteinEffect.UNKNOWN)
-                .type(VariantType.SNV)
-                .variantCopyNumber(0D)
-                .totalCopyNumber(0D)
-                .isBiallelic(false)
-                .isHotspot(false)
-                .clonalLikelihood(0D)
-                .canonicalImpact(TestTranscriptImpactFactory.builder().build());
+            .from(TestDriverFactory.createEmptyDriver())
+            .gene(Strings.EMPTY)
+            .geneRole(GeneRole.UNKNOWN)
+            .proteinEffect(ProteinEffect.UNKNOWN)
+            .type(VariantType.SNV)
+            .variantCopyNumber(0.0)
+            .totalCopyNumber(0.0)
+            .isBiallelic(false)
+            .isHotspot(false)
+            .clonalLikelihood(0.0)
+            .canonicalImpact(TestTranscriptImpactFactory.builder().build())
     }
 }

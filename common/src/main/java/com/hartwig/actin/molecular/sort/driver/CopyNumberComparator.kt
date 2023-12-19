@@ -1,24 +1,17 @@
-package com.hartwig.actin.molecular.sort.driver;
+package com.hartwig.actin.molecular.sort.driver
 
-import java.util.Comparator;
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber;
+class CopyNumberComparator : Comparator<CopyNumber> {
+    override fun compare(copyNumber1: CopyNumber, copyNumber2: CopyNumber): Int {
+        val driverCompare = DRIVER_COMPARATOR.compare(copyNumber1, copyNumber2)
+        return if (driverCompare != 0) {
+            driverCompare
+        } else GENE_ALTERATION_COMPARATOR.compare(copyNumber1, copyNumber2)
+    }
 
-import org.jetbrains.annotations.NotNull;
-
-public class CopyNumberComparator implements Comparator<CopyNumber> {
-
-    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
-
-    private static final GeneAlterationComparator GENE_ALTERATION_COMPARATOR = new GeneAlterationComparator();
-
-    @Override
-    public int compare(@NotNull CopyNumber copyNumber1, @NotNull CopyNumber copyNumber2) {
-        int driverCompare = DRIVER_COMPARATOR.compare(copyNumber1, copyNumber2);
-        if (driverCompare != 0) {
-            return driverCompare;
-        }
-
-        return GENE_ALTERATION_COMPARATOR.compare(copyNumber1, copyNumber2);
+    companion object {
+        private val DRIVER_COMPARATOR = DriverComparator()
+        private val GENE_ALTERATION_COMPARATOR = GeneAlterationComparator()
     }
 }

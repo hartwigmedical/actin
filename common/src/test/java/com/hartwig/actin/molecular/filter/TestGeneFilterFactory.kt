@@ -1,26 +1,19 @@
-package com.hartwig.actin.molecular.filter;
+package com.hartwig.actin.molecular.filter
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Sets
 
-import org.jetbrains.annotations.NotNull;
-
-public final class TestGeneFilterFactory {
-
-    private TestGeneFilterFactory() {
+object TestGeneFilterFactory {
+    @JvmStatic
+    fun createAlwaysValid(): GeneFilter {
+        return AlwaysValidFilter()
     }
 
-    @NotNull
-    public static GeneFilter createAlwaysValid() {
-        return new AlwaysValidFilter();
+    fun createNeverValid(): GeneFilter {
+        return SpecificGenesFilter(Sets.newHashSet())
     }
 
-    @NotNull
-    public static GeneFilter createNeverValid() {
-        return new SpecificGenesFilter(Sets.newHashSet());
-    }
-
-    @NotNull
-    public static GeneFilter createValidForGenes(@NotNull String... genes) {
-        return new SpecificGenesFilter(Sets.newHashSet(genes));
+    @JvmStatic
+    fun createValidForGenes(vararg genes: String): GeneFilter {
+        return SpecificGenesFilter(Sets.newHashSet(*genes))
     }
 }

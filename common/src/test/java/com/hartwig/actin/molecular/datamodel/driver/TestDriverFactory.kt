@@ -1,42 +1,24 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+internal object TestDriverFactory {
+    fun createEmptyDriver(): Driver {
+        return object : Driver {
+            override val isReportable: Boolean
+                get() = false
 
-final class TestDriverFactory {
-
-    private TestDriverFactory() {
-    }
-
-    @NotNull
-    public static Driver createEmptyDriver() {
-        return new Driver() {
-            @Override
-            public boolean isReportable() {
-                return false;
+            override fun event(): String {
+                return org.apache.logging.log4j.util.Strings.EMPTY
             }
 
-            @NotNull
-            @Override
-            public String event() {
-                return Strings.EMPTY;
+            override fun driverLikelihood(): DriverLikelihood? {
+                return null
             }
 
-            @Nullable
-            @Override
-            public DriverLikelihood driverLikelihood() {
-                return null;
+            override fun evidence(): ActionableEvidence {
+                return ImmutableActionableEvidence.builder().build()
             }
-
-            @NotNull
-            @Override
-            public ActionableEvidence evidence() {
-                return ImmutableActionableEvidence.builder().build();
-            }
-        };
+        }
     }
 }

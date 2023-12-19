@@ -1,24 +1,15 @@
-package com.hartwig.actin.molecular.filter;
+package com.hartwig.actin.molecular.filter
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import com.hartwig.serve.datamodel.gene.KnownGene
+import java.util.stream.Collectors
 
-import com.hartwig.serve.datamodel.gene.KnownGene;
-
-import org.jetbrains.annotations.NotNull;
-
-public final class GeneFilterFactory {
-
-    private GeneFilterFactory() {
+object GeneFilterFactory {
+    @JvmStatic
+    fun createAlwaysValid(): GeneFilter {
+        return AlwaysValidFilter()
     }
 
-    @NotNull
-    public static GeneFilter createAlwaysValid() {
-        return new AlwaysValidFilter();
-    }
-
-    @NotNull
-    public static GeneFilter createFromKnownGenes(@NotNull Collection<KnownGene> knownGenes) {
-        return new SpecificGenesFilter(knownGenes.stream().map(KnownGene::gene).collect(Collectors.toSet()));
+    fun createFromKnownGenes(knownGenes: Collection<KnownGene>): GeneFilter {
+        return SpecificGenesFilter(knownGenes.stream().map { obj: KnownGene -> obj.gene() }.collect(Collectors.toSet()))
     }
 }

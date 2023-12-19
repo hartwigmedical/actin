@@ -28,7 +28,7 @@ class HomozygousDisruptionExtractorTest {
         assertEquals(1, homDisruptions.size.toLong())
 
         val homDisruption = homDisruptions.iterator().next()
-        assertTrue(homDisruption.isReportable())
+        assertTrue(homDisruption.isReportable)
         assertEquals(DriverLikelihood.HIGH, homDisruption.driverLikelihood())
         assertEquals("gene 1", homDisruption.gene())
     }

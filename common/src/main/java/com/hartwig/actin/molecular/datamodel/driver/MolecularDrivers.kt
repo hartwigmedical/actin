@@ -1,30 +1,16 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-import java.util.Set;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class MolecularDrivers {
-
-    @NotNull
-    public abstract Set<Variant> variants();
-
-    @NotNull
-    public abstract Set<CopyNumber> copyNumbers();
-
-    @NotNull
-    public abstract Set<HomozygousDisruption> homozygousDisruptions();
-
-    @NotNull
-    public abstract Set<Disruption> disruptions();
-
-    @NotNull
-    public abstract Set<Fusion> fusions();
-
-    @NotNull
-    public abstract Set<Virus> viruses();
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class MolecularDrivers {
+    abstract fun variants(): Set<Variant?>
+    abstract fun copyNumbers(): Set<CopyNumber?>
+    abstract fun homozygousDisruptions(): Set<HomozygousDisruption?>
+    abstract fun disruptions(): Set<Disruption?>
+    abstract fun fusions(): Set<Fusion?>
+    abstract fun viruses(): Set<Virus?>
 }

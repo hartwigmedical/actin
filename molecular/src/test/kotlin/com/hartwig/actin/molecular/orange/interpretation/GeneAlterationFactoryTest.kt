@@ -19,7 +19,7 @@ class GeneAlterationFactoryTest {
         assertEquals("gene", nullAlteration.gene())
         assertEquals(GeneRole.UNKNOWN, nullAlteration.geneRole())
         assertEquals(ProteinEffect.UNKNOWN, nullAlteration.proteinEffect())
-        assertNull(nullAlteration.isAssociatedWithDrugResistance())
+        assertNull(nullAlteration.isAssociatedWithDrugResistance)
     }
 
     @Test
@@ -47,7 +47,7 @@ class GeneAlterationFactoryTest {
                 true
             )
         )
-        assertTrue(withDrugAssociation.isAssociatedWithDrugResistance() == true)
+        assertTrue(withDrugAssociation.isAssociatedWithDrugResistance == true)
 
         val withNoDrugAssociation = GeneAlterationFactory.convertAlteration(
             Strings.EMPTY,
@@ -57,6 +57,6 @@ class GeneAlterationFactoryTest {
                 false
             )
         )
-        assertFalse(withNoDrugAssociation.isAssociatedWithDrugResistance() == true)
+        assertFalse(withNoDrugAssociation.isAssociatedWithDrugResistance == true)
     }
 }

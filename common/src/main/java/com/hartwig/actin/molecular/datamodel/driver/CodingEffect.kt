@@ -1,10 +1,9 @@
-package com.hartwig.actin.molecular.datamodel.driver;
+package com.hartwig.actin.molecular.datamodel.driver
 
-public enum CodingEffect {
+enum class CodingEffect {
     NONSENSE_OR_FRAMESHIFT,
     SPLICE,
     MISSENSE,
     SYNONYMOUS,
     NONE
 }
-

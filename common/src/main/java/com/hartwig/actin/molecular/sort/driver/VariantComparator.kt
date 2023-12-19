@@ -1,35 +1,26 @@
-package com.hartwig.actin.molecular.sort.driver;
+package com.hartwig.actin.molecular.sort.driver
 
-import java.util.Comparator;
+import com.hartwig.actin.molecular.datamodel.driver.Variant
 
-import com.hartwig.actin.molecular.datamodel.driver.Variant;
-
-import org.jetbrains.annotations.NotNull;
-
-public class VariantComparator implements Comparator<Variant> {
-
-    private static final DriverComparator DRIVER_COMPARATOR = new DriverComparator();
-
-    private static final GeneAlterationComparator GENE_ALTERATION_COMPARATOR = new GeneAlterationComparator();
-
-    @Override
-    public int compare(@NotNull Variant variant1, @NotNull Variant variant2) {
-        int driverCompare = DRIVER_COMPARATOR.compare(variant1, variant2);
+class VariantComparator : Comparator<Variant> {
+    override fun compare(variant1: Variant, variant2: Variant): Int {
+        val driverCompare = DRIVER_COMPARATOR.compare(variant1, variant2)
         if (driverCompare != 0) {
-            return driverCompare;
+            return driverCompare
         }
-
-        int geneAlterationCompare = GENE_ALTERATION_COMPARATOR.compare(variant1, variant2);
+        val geneAlterationCompare = GENE_ALTERATION_COMPARATOR.compare(variant1, variant2)
         if (geneAlterationCompare != 0) {
-            return geneAlterationCompare;
+            return geneAlterationCompare
         }
+        val canonicalProteinImpactCompare =
+            variant1.canonicalImpact().hgvsProteinImpact().compareTo(variant2.canonicalImpact().hgvsProteinImpact())
+        return if (canonicalProteinImpactCompare != 0) {
+            canonicalProteinImpactCompare
+        } else variant1.canonicalImpact().hgvsCodingImpact().compareTo(variant2.canonicalImpact().hgvsCodingImpact())
+    }
 
-        int canonicalProteinImpactCompare =
-                variant1.canonicalImpact().hgvsProteinImpact().compareTo(variant2.canonicalImpact().hgvsProteinImpact());
-        if (canonicalProteinImpactCompare != 0) {
-            return canonicalProteinImpactCompare;
-        }
-
-        return variant1.canonicalImpact().hgvsCodingImpact().compareTo(variant2.canonicalImpact().hgvsCodingImpact());
+    companion object {
+        private val DRIVER_COMPARATOR = DriverComparator()
+        private val GENE_ALTERATION_COMPARATOR = GeneAlterationComparator()
     }
 }
