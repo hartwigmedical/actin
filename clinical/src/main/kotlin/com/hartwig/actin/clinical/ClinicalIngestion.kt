@@ -195,7 +195,7 @@ class ClinicalIngestion(
             bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
             priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabaseContext),
             toxicityExtractor = ToxicityExtractor.create(curationDatabaseContext),
-            intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext),
+            intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext, atcModel),
             priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(curationDatabaseContext),
             medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel),
             labValueExtractor = LabValueExtractor.create(curationDatabaseContext)
