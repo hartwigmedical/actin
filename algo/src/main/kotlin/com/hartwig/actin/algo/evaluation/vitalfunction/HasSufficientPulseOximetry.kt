@@ -12,7 +12,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
     override fun evaluate(record: PatientRecord): Evaluation {
         val pulseOximetries = VitalFunctionSelector.selectMedianPerDay(
             record.clinical().vitalFunctions(), VitalFunctionCategory.SPO2,
-            null, MAX_PULSE_OXIMETRY_TO_USE
+            UNIT_TO_SELECT, MAX_PULSE_OXIMETRY_TO_USE
         )
 
         if (pulseOximetries.isEmpty()) {
@@ -41,6 +41,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
     }
 
     companion object {
+        const val UNIT_TO_SELECT: String = "percent"
         private const val MAX_PULSE_OXIMETRY_TO_USE = 5
     }
 }
