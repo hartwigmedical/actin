@@ -134,7 +134,7 @@ data class CurationDatabaseContext(
                 CurationDatabaseReader.COMPLICATION_TSV,
                 ComplicationConfigFactory(),
                 CurationCategory.COMPLICATION
-            ) { it.nonOncologicalHistoryEvaluatedInputs },
+            ) { it.complicationEvaluatedInputs },
             intoleranceCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.INTOLERANCE_TSV,
