@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.extraction
 
+import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
@@ -11,7 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 
-class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<IntoleranceConfig>) {
+class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<IntoleranceConfig>, private val atcModel: AtcModel) {
 
     fun extract(patientId: String, intoleranceEntries: List<IntoleranceEntry>): ExtractionResult<List<Intolerance>> {
         return intoleranceEntries.map { entry: IntoleranceEntry ->
@@ -36,10 +37,9 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                 val builder = ImmutableIntolerance.builder().from(it)
                 curationResponse.config()?.let { config ->
                     builder.name(config.name).doids(config.doids)
-                }
-                // TODO: add ATC code of medication to subcategories
-                if (it.category().equals("medication", ignoreCase = true)) {
-                    builder.subcategories(emptySet())
+                    if (it.category().equals("medication", ignoreCase = true)) {
+                        builder.subcategories(atcModel.resolveByName(config.name.lowercase()))
+                    }
                 }
                 ExtractionResult(listOf(builder.build()), curationResponse.extractionEvaluation)
             }
@@ -49,6 +49,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
     }
 
     companion object {
-        fun create(curationDatabaseContext: CurationDatabaseContext) = IntoleranceExtractor(curationDatabaseContext.intoleranceCuration)
+        fun create(curationDatabaseContext: CurationDatabaseContext, atcModel: AtcModel) =
+            IntoleranceExtractor(curationDatabaseContext.intoleranceCuration, atcModel)
     }
 }

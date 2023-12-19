@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestCurationFactory
@@ -41,6 +42,14 @@ class IntoleranceConfigFactoryTest {
         } returns false
         val config: ValidatedCurationConfig<IntoleranceConfig> =
             IntoleranceConfigFactory(doidValidator).create(fields, arrayOf("input", "name", DOID))
-        assertThat(config.errors).containsExactly(CurationConfigValidationError("Intolerance config with input 'input' contains at least one invalid doid: '[123]'"))
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.INTOLERANCE.categoryName,
+                "input",
+                "doids",
+                "[$DOID]",
+                "doids"
+            )
+        )
     }
 }

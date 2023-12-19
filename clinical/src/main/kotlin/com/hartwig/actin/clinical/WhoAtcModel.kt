@@ -10,14 +10,15 @@ import java.io.File
 import java.nio.file.Files
 
 interface AtcModel {
-    fun resolve(rawAtcCode: String): AtcClassification?
+    fun resolveByCode(rawAtcCode: String): AtcClassification?
+    fun resolveByName(name: String): Set<String>
 }
 
 private const val ATC_LENGTH_4_LEVELS = 5
 
 class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
 
-    override fun resolve(rawAtcCode: String): AtcClassification? {
+    override fun resolveByCode(rawAtcCode: String): AtcClassification? {
         return if (rawAtcCode.trim().isNotEmpty() && rawAtcCode[0].lowercaseChar() in 'a'..'z') {
             return if (rawAtcCode.length >= ATC_LENGTH_4_LEVELS) {
                 ImmutableAtcClassification.builder()
@@ -35,6 +36,9 @@ class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
             null
         }
     }
+
+    override fun resolveByName(name: String): Set<String> =
+        atcMap.filterValues { it == name }.keys
 
     private fun maybeAtcLevel(levelCode: String?): AtcLevel? =
         levelCode?.let { atcLevel(it) }

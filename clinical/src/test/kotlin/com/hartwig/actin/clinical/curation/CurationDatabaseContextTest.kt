@@ -10,11 +10,20 @@ import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private const val NOT_IMPORTANT = "not important"
+
 class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all databases validation errors`() {
-        val expectedUnusedConfig = IntRange(0, 15).map { CurationConfigValidationError(it.toString()) }
+        val expectedUnusedConfig = IntRange(0, 15).map {
+            CurationConfigValidationError(
+                NOT_IMPORTANT,
+                NOT_IMPORTANT,
+                NOT_IMPORTANT, it.toString(),
+                NOT_IMPORTANT
+            )
+        }
         val context = CurationDatabaseContext(
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[1]),
@@ -43,7 +52,7 @@ class CurationDatabaseContextTest {
 
     @Test
     fun `Should combine all unused configs in curation databases`() {
-        val expectedUnusedConfig = IntRange(0, 20).map { UnusedCurationConfig(CurationCategory.TOXICITY, it.toString()) }
+        val expectedUnusedConfig = IntRange(0, 20).map { UnusedCurationConfig(CurationCategory.TOXICITY.name, it.toString()) }
         val context = CurationDatabaseContext(
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[0]),
             curationDatabaseWithUnusedConfig(expectedUnusedConfig[1]),

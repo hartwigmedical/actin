@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
@@ -34,7 +35,7 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
         if (ignore) return null to emptyList()
 
         return when (isLVEF(fields, parts)) {
-            true -> validateDouble(input, "lvefValue", fields, parts)
+            true -> validateDouble(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "lvefValue", fields, parts)
             false -> null to emptyList()
         }
     }
@@ -47,39 +48,35 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
         parts: Array<String>
     ): Pair<PriorOtherCondition?, List<CurationConfigValidationError>> {
         return if (!ignore && !isLVEF(fields, parts)) {
-            val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
+            val (doids, doidValidationErrors) = validateDoids(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY,
+                input,
+                "doids",
+                fields,
+                parts
+            ) { curationDoidValidator.isValidDiseaseDoidSet(it) }
             val (isContraindicationForTherapy, isContraindicationForTherapyValidationErrors) = validateBoolean(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 input,
                 "isContraindicationForTherapy",
                 fields,
                 parts
             )
-            val (year, yearValidationErrors) = validateInteger(input, "year", fields, parts)
-            val (month, monthValidationErrors) = validateInteger(input, "month", fields, parts)
+            val (year, yearValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "year", fields, parts)
+            val (month, monthValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "month", fields, parts)
 
             ImmutablePriorOtherCondition.builder()
                 .name(parts[fields["name"]!!])
                 .year(year)
                 .month(month)
-                .doids(doids)
+                .doids(doids ?: emptySet())
                 .category(parts[fields["category"]!!])
                 .isContraindicationForTherapy(isContraindicationForTherapy ?: false)
-                .build() to validateDoids(
-                doids,
-                input
-            ) + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
+                .build() to doidValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
         } else {
             null to emptyList()
         }
     }
-
-    private fun validateDoids(
-        doids: Set<String>,
-        input: String
-    ) = if (!curationDoidValidator.isValidDiseaseDoidSet(doids)) {
-        listOf(CurationConfigValidationError("Non-oncological history config with input '$input' contains at least one invalid doid: '$doids'"))
-    } else emptyList()
-
 
     private fun isLVEF(fields: Map<String, Int>, parts: Array<String>): Boolean {
         return parts[fields["isLVEF"]!!] == "1"

@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.doid.config.ImmutableDoidManualConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -20,15 +21,28 @@ class ClinicalIngestionTest {
 
     @Test
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
+        val curationDatabase = CurationDatabaseContext.create(
+            CURATION_DIRECTORY,
+            CurationDoidValidator(
+                TestDoidModelFactory.createWithDoidManualConfig(
+                    ImmutableDoidManualConfig.builder()
+                        .putAdditionalDoidsPerDoid("2513", CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
+                        .putAdditionalDoidsPerDoid("299", CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
+                        .putAdditionalDoidsPerDoid("5082", CurationDoidValidator.DISEASE_DOID)
+                        .putAdditionalDoidsPerDoid("11335", CurationDoidValidator.DISEASE_DOID)
+                        .putAdditionalDoidsPerDoid("0060500", CurationDoidValidator.DISEASE_DOID).build()
+                )
+            ),
+            TestTreatmentDatabaseFactory.createProper()
+        )
         val ingestion = ClinicalIngestion.create(
             FeedModel.fromFeedDirectory(FEED_DIRECTORY),
-            CurationDatabaseContext.create(
-                CURATION_DIRECTORY,
-                CurationDoidValidator(TestDoidModelFactory.createMinimalTestDoidModel()),
-                TestTreatmentDatabaseFactory.createProper()
-            ),
+            curationDatabase,
             TestAtcFactory.createProperAtcModel()
         )
+
+        val validationErrors = curationDatabase.validate()
+        assertThat(validationErrors).isEmpty()
 
         val ingestionResult = ingestion.run()
         assertThat(ingestionResult).isNotNull

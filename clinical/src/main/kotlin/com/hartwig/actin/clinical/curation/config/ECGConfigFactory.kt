@@ -1,15 +1,18 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
+
 class ECGConfigFactory : CurationConfigFactory<ECGConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ECGConfig> {
+        val input = parts[fields["input"]!!]
         val isQTCF = parts[fields["isQTCF"]!!] == "1"
-        val (qtcfValue: Int?, qtcfUnit: String?, qtcfValidationErrors) = extractMeasurement("qtcf", isQTCF, parts, fields)
+        val (qtcfValue: Int?, qtcfUnit: String?, qtcfValidationErrors) = extractMeasurement(input, "qtcf", isQTCF, parts, fields)
         val isJTC = parts[fields["isJTC"]!!] == "1"
-        val (jtcValue: Int?, jtcUnit: String?, jtcValidationErrors) = extractMeasurement("jtc", isJTC, parts, fields)
+        val (jtcValue: Int?, jtcUnit: String?, jtcValidationErrors) = extractMeasurement(input, "jtc", isJTC, parts, fields)
         val interpretation = parts[fields["interpretation"]!!]
         return ValidatedCurationConfig(
             ECGConfig(
-                input = parts[fields["input"]!!],
+                input = input,
                 ignore = interpretation == "NULL",
                 interpretation = interpretation,
                 isQTCF = isQTCF,
@@ -23,14 +26,10 @@ class ECGConfigFactory : CurationConfigFactory<ECGConfig> {
     }
 
     private fun extractMeasurement(
-        measurementPrefix: String, isOfType: Boolean, parts: Array<String>, fields: Map<String, Int>
-    ) = if (isOfType) {
-        val text = parts[fields["${measurementPrefix}Value"]!!]
-        val validatedInt = text.toIntOrNull()
-        if (validatedInt != null) {
-            Triple(validatedInt, parts[fields["${measurementPrefix}Unit"]!!], emptyList())
-        } else {
-            Triple(null, null, listOf(CurationConfigValidationError("The input '$text' for '$measurementPrefix' is not a valid integer")))
-        }
+        input: String, measurementPrefix: String, isOfType: Boolean, parts: Array<String>, fields: Map<String, Int>
+    ): Triple<Int?, String?, List<CurationConfigValidationError>> = if (isOfType) {
+        val fieldName = "${measurementPrefix}Value"
+        val validatedInt = validateInteger(CurationCategory.ECG, input, fieldName, fields, parts)
+        Triple(validatedInt.first, validatedInt.first?.let { parts[fields["${measurementPrefix}Unit"]!!] }, validatedInt.second)
     } else Triple(null, null, emptyList())
 }

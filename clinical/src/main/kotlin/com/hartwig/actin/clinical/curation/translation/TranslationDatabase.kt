@@ -15,7 +15,7 @@ class TranslationDatabase<T>(
         val evaluatedInputs = evaluations.flatMap(evaluatedInputFunction).map { it.input }
         return translations.values.filter { !evaluatedInputs.contains(it.input) }
             .map {
-                UnusedCurationConfig(category, it.input.toString())
+                UnusedCurationConfig(category.categoryName, it.input.toString())
             }
     }
 }

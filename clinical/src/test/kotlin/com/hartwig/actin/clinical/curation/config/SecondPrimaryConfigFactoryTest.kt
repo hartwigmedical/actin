@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestCurationFactory
@@ -74,7 +75,11 @@ class SecondPrimaryConfigFactoryTest {
         assertThat(config.errors)
             .containsExactly(
                 CurationConfigValidationError(
-                    "Second primary config with input 'input' contains at least one invalid doid: '[123]'"
+                    CurationCategory.SECOND_PRIMARY.categoryName,
+                    "input",
+                    "doids",
+                    "[123]",
+                    "doids"
                 )
             )
     }
@@ -104,8 +109,12 @@ class SecondPrimaryConfigFactoryTest {
         assertThat(config.errors)
             .containsExactly(
                 CurationConfigValidationError(
-                    "Invalid enum value 'not a status' for enum 'TumorStatus' from input 'input'. " +
-                            "Accepted values are [ACTIVE, INACTIVE, EXPECTATIVE]"
+                    CurationCategory.SECOND_PRIMARY.categoryName,
+                    "input",
+                    "status",
+                    "not a status",
+                    "TumorStatus",
+                    "Accepted values are [ACTIVE, INACTIVE, EXPECTATIVE]"
                 )
             )
     }

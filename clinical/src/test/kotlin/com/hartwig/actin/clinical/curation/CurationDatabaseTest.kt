@@ -34,6 +34,11 @@ class CurationDatabaseTest {
             emptyList(),
             CurationCategory.INFECTION
         ) { it.ecgEvaluatedInputs }
-        assertThat(database.reportUnusedConfig(emptyList())).containsExactly(UnusedCurationConfig(CurationCategory.INFECTION, INPUT))
+        assertThat(database.reportUnusedConfig(emptyList())).containsExactly(
+            UnusedCurationConfig(
+                CurationCategory.INFECTION.categoryName,
+                INPUT
+            )
+        )
     }
 }

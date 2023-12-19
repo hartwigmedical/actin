@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestCurationFactory
@@ -55,8 +56,19 @@ class NonOncologicalHistoryConfigFactoryTest {
             arrayOf("input", "name", "year", "month", "123", "category", "0", "", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("'year' had invalid value of 'year' for input 'input'"),
-            CurationConfigValidationError("'month' had invalid value of 'month' for input 'input'")
+            CurationConfigValidationError(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                "input",
+                "year",
+                "year",
+                "integer"
+            ), CurationConfigValidationError(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                "input",
+                "month",
+                "month",
+                "integer"
+            )
         )
     }
 
@@ -65,10 +77,16 @@ class NonOncologicalHistoryConfigFactoryTest {
         val doidValidator = setupDoidValidator()
         val config = NonOncologicalHistoryConfigFactory(doidValidator).create(
             fields,
-            arrayOf("input", "name", "2023", "12", "123", "category", "1", "value", "1")
+            arrayOf("input", "name", "2023", "12", "123", "category", "1", "invalid", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("'lvefValue' had invalid value of 'value' for input 'input'"),
+            CurationConfigValidationError(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                "input",
+                "lvefValue",
+                "invalid",
+                "double"
+            )
         )
     }
 
@@ -80,7 +98,13 @@ class NonOncologicalHistoryConfigFactoryTest {
             arrayOf("input", "name", "2023", "12", "123", "category", "string", "1.0", "no")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("'isContraindicationForTherapy' had invalid value of 'no' for input 'input'"),
+            CurationConfigValidationError(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                "input",
+                "isContraindicationForTherapy",
+                "no",
+                "boolean"
+            )
         )
     }
 
@@ -92,7 +116,13 @@ class NonOncologicalHistoryConfigFactoryTest {
             arrayOf("input", "name", "2023", "12", "123", "category", "0", "1.0", "1")
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("Non-oncological history config with input 'input' contains at least one invalid doid: '[123]'"),
+            CurationConfigValidationError(
+                CurationCategory.NON_ONCOLOGICAL_HISTORY.categoryName,
+                "input",
+                "doids",
+                "[123]",
+                "doids"
+            )
         )
     }
 
