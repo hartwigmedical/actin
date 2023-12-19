@@ -1,0 +1,222 @@
+{
+  "patientId": "ACTN01029999",
+  "patient": {
+    "gender": "MALE",
+    "birthYear": 1953,
+    "registrationDate": {
+      "year": 2020,
+      "month": 7,
+      "day": 13
+    },
+    "questionnaireDate": {
+      "year": 2021,
+      "month": 8,
+      "day": 16
+    },
+    "otherMolecularPatientId": null
+  },
+  "tumor": {
+    "primaryTumorLocation": "Unknown",
+    "primaryTumorSubLocation": "CUP",
+    "primaryTumorType": "Carcinoma",
+    "primaryTumorSubType": "",
+    "primaryTumorExtraDetails": "",
+    "doids": [
+      "299"
+    ],
+    "stage": null,
+    "hasMeasurableDisease": true,
+    "hasBrainLesions": null,
+    "hasActiveBrainLesions": null,
+    "hasCnsLesions": null,
+    "hasActiveCnsLesions": null,
+    "hasBoneLesions": true,
+    "hasLiverLesions": true,
+    "hasLungLesions": null,
+    "hasLymphNodeLesions": null,
+    "otherLesions": null,
+    "biopsyLocation": null
+  },
+  "clinicalStatus": {
+    "who": 2,
+    "infectionStatus": null,
+    "ecg": {
+      "hasSigAberrationLatestECG": true,
+      "aberrationDescription": "Sinus tachycardia",
+      "qtcfMeasure": null,
+      "jtcMeasure": null
+    },
+    "lvef": null,
+    "hasComplications": null
+  },
+  "oncologicalHistory": [],
+  "priorSecondPrimaries": [],
+  "priorOtherConditions": [
+    {
+      "name": "Liver cirrhosis and sarcoidosis",
+      "year": 2019,
+      "month": 7,
+      "doids": [
+        "11335",
+        "5082"
+      ],
+      "category": "Liver disease",
+      "isContraindicationForTherapy": false
+    }
+  ],
+  "priorMolecularTests": [],
+  "complications": null,
+  "labValues": [
+    {
+      "date": {
+        "year": 2019,
+        "month": 6,
+        "day": 27
+      },
+      "code": "AC2",
+      "name": "Adrenocorticotropic hormone",
+      "comparator": "",
+      "value": 5.5,
+      "unit": "BILLIONS_PER_LITER",
+      "refLimitLow": 3.5,
+      "refLimitUp": 10.0,
+      "isOutsideRef": false
+    }
+  ],
+  "toxicities": [
+    {
+      "name": "Nausea",
+      "categories": [],
+      "evaluatedDate": {
+        "year": 2021,
+        "month": 6,
+        "day": 6
+      },
+      "source": "EHR",
+      "grade": 0
+    },
+    {
+      "name": "Pain",
+      "categories": [],
+      "evaluatedDate": {
+        "year": 2021,
+        "month": 8,
+        "day": 8
+      },
+      "source": "EHR",
+      "grade": 0
+    },
+    {
+      "name": "Neuropathy",
+      "categories": [
+        "Neuro"
+      ],
+      "evaluatedDate": {
+        "year": 2021,
+        "month": 8,
+        "day": 16
+      },
+      "source": "QUESTIONNAIRE",
+      "grade": 3
+    }
+  ],
+  "intolerances": [
+    {
+      "name": "Simvastatine",
+      "doids": [
+        "0060500"
+      ],
+      "category": "Medication",
+      "subcategories": [],
+      "type": "Allergy",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Low"
+    }
+  ],
+  "surgeries": [
+    {
+      "endDate": {
+        "year": 2020,
+        "month": 8,
+        "day": 28
+      },
+      "status": "PLANNED"
+    }
+  ],
+  "bodyWeights": [
+    {
+      "date": {
+        "year": 2020,
+        "month": 8,
+        "day": 11
+      },
+      "value": 61.1,
+      "unit": "kilogram"
+    },
+    {
+      "date": {
+        "year": 2020,
+        "month": 8,
+        "day": 20
+      },
+      "value": 58.9,
+      "unit": "kilogram"
+    }
+  ],
+  "vitalFunctions": [
+    {
+      "date": {
+        "year": 2019,
+        "month": 4,
+        "day": 28
+      },
+      "category": "NON_INVASIVE_BLOOD_PRESSURE",
+      "subcategory": "Systolic blood pressure",
+      "value": 108.0,
+      "unit": "mm[Hg]"
+    }
+  ],
+  "bloodTransfusions": [
+    {
+      "date": {
+        "year": 2021,
+        "month": 12,
+        "day": 17
+      },
+      "product": "Thrombocyte concentrate"
+    }
+  ],
+  "medications": [
+    {
+      "name": "Pembrolizumab",
+      "status": null,
+      "administrationRoute": "Oral",
+      "dosage": {
+        "dosageMin": 200.0,
+        "dosageMax": 200.0,
+        "dosageUnit": "mg",
+        "frequency": 30.0,
+        "frequencyUnit": "min",
+        "periodBetweenValue": 0.0,
+        "periodBetweenUnit": "mo",
+        "ifNeeded": false
+      },
+      "startDate": {
+        "year": 2019,
+        "month": 6,
+        "day": 7
+      },
+      "stopDate": {
+        "year": 2019,
+        "month": 6,
+        "day": 7
+      },
+      "cypInteractions": [],
+      "qtProlongatingRisk": "NONE",
+      "atc": null,
+      "isSelfCare": false,
+      "isTrialMedication": true
+    }
+  ]
+}
