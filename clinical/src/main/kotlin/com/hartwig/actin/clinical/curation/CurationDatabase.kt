@@ -18,10 +18,10 @@ class CurationDatabase<T : CurationConfig>(
 
     fun reportUnusedConfig(evaluations: List<ExtractionEvaluation>): List<UnusedCurationConfig> {
         val evaluatedInputs = evaluations.flatMap(evaluatedInputFunction)
-        return configs.values.flatten()
-            .filter { !evaluatedInputs.contains(it.input) }
+        return configs.keys
+            .filter { !evaluatedInputs.contains(it) }
             .map {
-                UnusedCurationConfig(category.categoryName, it.input)
+                UnusedCurationConfig(category.categoryName, it)
             }
     }
 
