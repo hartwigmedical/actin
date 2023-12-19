@@ -41,7 +41,6 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                         builder.subcategories(atcModel.resolveByName(config.name.lowercase()))
                     }
                 }
-
                 ExtractionResult(listOf(builder.build()), curationResponse.extractionEvaluation)
             }
             .fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { (intolerances, aggregatedEval), (intolerance, eval) ->
