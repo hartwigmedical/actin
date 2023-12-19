@@ -240,16 +240,19 @@ class ClinicalIngestionTest {
         }
 
         private fun assertVitalFunctions(vitalFunctions: List<VitalFunction>) {
-            assertEquals(2, vitalFunctions.size.toLong())
+            assertEquals(3, vitalFunctions.size.toLong())
             val vitalFunction = vitalFunctions[0]
             assertEquals(LocalDate.of(2021, 2, 27), vitalFunction.date())
             assertEquals(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE, vitalFunction.category())
-            assertEquals("systolic", vitalFunction.subcategory())
+            assertEquals("Systolic blood pressure", vitalFunction.subcategory())
             assertEquals(120.0, vitalFunction.value(), EPSILON)
             assertEquals("mm[Hg]", vitalFunction.unit())
             val vitalFunction2 = vitalFunctions[1]
             assertEquals(1200.0, vitalFunction2.value(), EPSILON)
             assertEquals("<ignore>", vitalFunction2.unit())
+            val vitalFunction3 = vitalFunctions[2]
+            assertEquals(120.0, vitalFunction3.value(), EPSILON)
+            assertEquals("Diastolic blood pressure", vitalFunction3.subcategory())
         }
 
         private fun assertBloodTransfusions(bloodTransfusions: List<BloodTransfusion>) {
