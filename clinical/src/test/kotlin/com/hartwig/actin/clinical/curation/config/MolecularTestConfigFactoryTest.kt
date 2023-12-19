@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -49,7 +50,11 @@ class MolecularTestConfigFactoryTest {
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "'impliesPotentialIndeterminateStatus' had invalid value of 'invalid' for input 'input'"
+                CurationCategory.MOLECULAR_TEST.categoryName,
+                "input",
+                "impliesPotentialIndeterminateStatus",
+                "invalid",
+                "boolean"
             )
         )
         assertThat(config.config.input).isEqualTo("input")

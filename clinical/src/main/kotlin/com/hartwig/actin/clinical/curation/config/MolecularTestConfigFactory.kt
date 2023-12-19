@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
@@ -10,7 +11,7 @@ class MolecularTestConfigFactory : CurationConfigFactory<MolecularTestConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["test"]!!])
         val input = parts[fields["input"]!!]
         val (impliesPotentialIndeterminateStatus, impliesPotentialIndeterminateStatusValidationErrors)
-                = validateBoolean(input, "impliesPotentialIndeterminateStatus", fields, parts)
+                = validateBoolean(CurationCategory.MOLECULAR_TEST, input, "impliesPotentialIndeterminateStatus", fields, parts)
         val priorMolecularTest = impliesPotentialIndeterminateStatus?.let { curateObject(it, fields, parts) }
         return ValidatedCurationConfig(
             MolecularTestConfig(

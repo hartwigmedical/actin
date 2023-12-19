@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestCurationFactory
@@ -54,7 +55,13 @@ class PrimaryTumorConfigFactoryTest {
             )
         )
         assertThat(config.errors).containsExactly(
-            CurationConfigValidationError("Primary tumor config with input 'input' contains at least one invalid doid: '[123]'")
+            CurationConfigValidationError(
+                CurationCategory.PRIMARY_TUMOR.categoryName,
+                "input",
+                "doids",
+                "[123]",
+                "doids"
+            )
         )
     }
 }

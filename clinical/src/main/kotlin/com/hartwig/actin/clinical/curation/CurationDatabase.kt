@@ -21,7 +21,7 @@ class CurationDatabase<T : CurationConfig>(
         return configs.values.flatten()
             .filter { !evaluatedInputs.contains(it.input) }
             .map {
-                UnusedCurationConfig(category, it.input)
+                UnusedCurationConfig(category.categoryName, it.input)
             }
     }
 

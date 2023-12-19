@@ -1,12 +1,18 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.curation.CurationUtil
 
 class PrimaryTumorConfigFactory(private val curationDoidValidator: CurationDoidValidator) : CurationConfigFactory<PrimaryTumorConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<PrimaryTumorConfig> {
         val input = parts[fields["input"]!!]
-        val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
+        val (doids, doidValidationErrors) = validateDoids(
+            CurationCategory.PRIMARY_TUMOR,
+            input,
+            "doids",
+            fields,
+            parts
+        ) { curationDoidValidator.isValidCancerDoidSet(it) }
 
         return ValidatedCurationConfig(
             PrimaryTumorConfig(
@@ -16,10 +22,8 @@ class PrimaryTumorConfigFactory(private val curationDoidValidator: CurationDoidV
                 primaryTumorType = parts[fields["primaryTumorType"]!!],
                 primaryTumorSubType = parts[fields["primaryTumorSubType"]!!],
                 primaryTumorExtraDetails = parts[fields["primaryTumorExtraDetails"]!!],
-                doids = doids
-            ), if (!curationDoidValidator.isValidCancerDoidSet(doids)) {
-                listOf(CurationConfigValidationError("Primary tumor config with input '$input' contains at least one invalid doid: '$doids'"))
-            } else emptyList()
+                doids = doids ?: emptySet()
+            ), doidValidationErrors
         )
     }
 }
