@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
@@ -11,47 +12,57 @@ class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoid
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<SecondPrimaryConfig> {
         val input = parts[fields["input"]!!]
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
-        val doids = CurationUtil.toDOIDs(parts[fields["doids"]!!])
-        val (validatedTumorStatus, tumorStatusValidationErrors) = if (!ignore) validateEnum<TumorStatus>(parts[fields["status"]!!], input) {
-            TumorStatus.valueOf(
-                it
+        if (!ignore) {
+            val (validatedTumorStatus, tumorStatusValidationErrors) = validateMandatoryEnum<TumorStatus>(
+                CurationCategory.SECOND_PRIMARY,
+                input,
+                "status",
+                fields,
+                parts
+            ) {
+                TumorStatus.valueOf(
+                    it
+                )
+            }
+            val (validatedDoids, doidValidationErrors) = validateDoids(
+                CurationCategory.SECOND_PRIMARY,
+                input,
+                "doids",
+                fields,
+                parts
+            ) { curationDoidValidator.isValidCancerDoidSet(it) }
+            val curatedPriorSecondPrimary =
+                validatedTumorStatus?.let { validatedDoids?.let { doids -> curatedPriorSecondPrimary(it, fields, parts, doids) } }
+            return ValidatedCurationConfig(
+                SecondPrimaryConfig(
+                    input = input,
+                    ignore = false,
+                    curated = curatedPriorSecondPrimary
+                ), tumorStatusValidationErrors + doidValidationErrors
             )
-        } else null to emptyList()
-        val curatedPriorSecondPrimary = validatedTumorStatus?.let { curatedPriorSecondPrimary(ignore, it, fields, parts, doids) }
-        return ValidatedCurationConfig(
-            SecondPrimaryConfig(
-                input = input,
-                ignore = ignore,
-                curated = curatedPriorSecondPrimary
-            ), tumorStatusValidationErrors + if (!ignore && !curationDoidValidator.isValidCancerDoidSet(doids)) {
-                listOf(CurationConfigValidationError("Second primary config with input '$input' contains at least one invalid doid: '$doids'"))
-            } else emptyList()
-        )
+        } else {
+            return ValidatedCurationConfig(SecondPrimaryConfig(input = input, ignore = true, curated = null))
+        }
     }
 
     private fun curatedPriorSecondPrimary(
-        ignore: Boolean,
         tumorStatus: TumorStatus,
         fields: Map<String, Int>,
         parts: Array<String>,
         doids: Set<String>
-    ): PriorSecondPrimary? {
-        return if (!ignore) {
-            ImmutablePriorSecondPrimary.builder()
-                .tumorLocation(parts[fields["tumorLocation"]!!])
-                .tumorSubLocation(parts[fields["tumorSubLocation"]!!])
-                .tumorType(parts[fields["tumorType"]!!])
-                .tumorSubType(parts[fields["tumorSubType"]!!])
-                .doids(doids)
-                .diagnosedYear(ResourceFile.optionalInteger(parts[fields["diagnosedYear"]!!]))
-                .diagnosedMonth(ResourceFile.optionalInteger(parts[fields["diagnosedMonth"]!!]))
-                .treatmentHistory(parts[fields["treatmentHistory"]!!])
-                .lastTreatmentYear(ResourceFile.optionalInteger(parts[fields["lastTreatmentYear"]!!]))
-                .lastTreatmentMonth(ResourceFile.optionalInteger(parts[fields["lastTreatmentMonth"]!!]))
-                .status(tumorStatus)
-                .build()
-        } else {
-            null
-        }
+    ): PriorSecondPrimary {
+        return ImmutablePriorSecondPrimary.builder()
+            .tumorLocation(parts[fields["tumorLocation"]!!])
+            .tumorSubLocation(parts[fields["tumorSubLocation"]!!])
+            .tumorType(parts[fields["tumorType"]!!])
+            .tumorSubType(parts[fields["tumorSubType"]!!])
+            .doids(doids)
+            .diagnosedYear(ResourceFile.optionalInteger(parts[fields["diagnosedYear"]!!]))
+            .diagnosedMonth(ResourceFile.optionalInteger(parts[fields["diagnosedMonth"]!!]))
+            .treatmentHistory(parts[fields["treatmentHistory"]!!])
+            .lastTreatmentYear(ResourceFile.optionalInteger(parts[fields["lastTreatmentYear"]!!]))
+            .lastTreatmentMonth(ResourceFile.optionalInteger(parts[fields["lastTreatmentMonth"]!!]))
+            .status(tumorStatus)
+            .build()
     }
 }

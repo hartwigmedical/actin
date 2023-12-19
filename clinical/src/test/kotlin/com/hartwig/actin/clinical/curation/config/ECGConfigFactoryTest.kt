@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -26,14 +27,28 @@ class ECGConfigFactoryTest {
     @Test
     fun `Should return validation error when qtcf is not a number`() {
         val config: ValidatedCurationConfig<ECGConfig> =
-            ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "string", "ms", "1", "1", "ms"))
-        assertThat(config.errors).containsExactly(CurationConfigValidationError("The input 'string' for 'qtcf' is not a valid integer"))
+            ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "invalid", "ms", "1", "1", "ms"))
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.ECG.categoryName,
+                "input",
+                "qtcfValue",
+                "invalid",
+                "integer"
+            )
+        )
     }
 
     @Test
     fun `Should return validation error when jtc is not a number`() {
         val config: ValidatedCurationConfig<ECGConfig> =
-            ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "1", "string", "ms"))
-        assertThat(config.errors).containsExactly(CurationConfigValidationError("The input 'string' for 'jtc' is not a valid integer"))
+            ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "1", "invalid", "ms"))
+        assertThat(config.errors).containsExactly(   CurationConfigValidationError(
+            CurationCategory.ECG.categoryName,
+            "input",
+            "jtcValue",
+            "invalid",
+            "integer"
+        ))
     }
 }

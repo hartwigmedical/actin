@@ -52,7 +52,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         if (validationErrors.isNotEmpty()) {
             LOGGER.warn("Curation input had validation errors:")
             for (validationError in validationErrors) {
-                LOGGER.warn(" ${validationError.message}")
+                LOGGER.warn(" $validationError")
             }
             LOGGER.warn("Please correct all errors before running the ingestion again. Exiting 1")
             writeIngestionResults(outputDirectory, IngestionResult(validationErrors))

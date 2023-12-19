@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
@@ -35,8 +36,12 @@ class QTProlongatingConfigFactoryTest {
         val config = QTProlongatingConfigFactory().create(fields, arrayOf("name", "not known"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "Invalid enum value 'NOT KNOWN' for enum 'QTProlongatingRisk' from input 'name'. " +
-                        "Accepted values are [KNOWN, POSSIBLE, CONDITIONAL, NONE, UNKNOWN]"
+                CurationCategory.QT_PROLONGATION.categoryName,
+                "name",
+                "Risk",
+                "not known",
+                "QTProlongatingRisk",
+                "Accepted values are [KNOWN, POSSIBLE, CONDITIONAL, NONE, UNKNOWN]"
             )
         )
     }

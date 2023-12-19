@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 
@@ -8,13 +9,14 @@ class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["name"]!!])
         val input = parts[fields["input"]!!]
         val (impliesUnknownComplicationState, impliesUnknownComplicationStateValidationErrors) = validateBoolean(
+            CurationCategory.COMPLICATION,
             input,
             "impliesUnknownComplicationState",
             fields,
             parts
         )
-        val (year, yearValidationErrors) = validateInteger(input, "year", fields, parts)
-        val (month, monthValidationErrors) = validateInteger(input, "month", fields, parts)
+        val (year, yearValidationErrors) = validateInteger(CurationCategory.COMPLICATION, input, "year", fields, parts)
+        val (month, monthValidationErrors) = validateInteger(CurationCategory.COMPLICATION, input, "month", fields, parts)
         val curated = toCuratedComplication(fields, parts, year, month)
         return ValidatedCurationConfig(
             ComplicationConfig(

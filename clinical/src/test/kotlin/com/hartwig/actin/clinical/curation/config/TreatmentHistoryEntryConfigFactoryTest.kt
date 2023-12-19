@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
@@ -23,6 +24,11 @@ class TreatmentHistoryEntryConfigFactoryTest {
         val config = factory.create(fields, parts)
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
+                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                input,
+                "treatmentName",
+                "UNKNOWN_THERAPY",
+                "treatment",
                 "Treatment with name UNKNOWN_THERAPY does not exist in database. Please add with one of the following templates: " +
                         "[{\"name\":\"UNKNOWN_THERAPY\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
                         "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"categories\":[]," +
@@ -94,6 +100,11 @@ class TreatmentHistoryEntryConfigFactoryTest {
         val config = factory.create(fields, parts)
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
+                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                input,
+                "treatmentName",
+                "TRIAL_NAME",
+                "treatment",
                 "Treatment with name TRIAL_NAME does not exist in database. Please add with one of the following templates: " +
                         "[{\"name\":\"TRIAL_NAME\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
                         "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"TRIAL_NAME\"," +

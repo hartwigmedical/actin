@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical
 
-import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
@@ -53,4 +52,4 @@ data class PatientIngestionResult(
 
 data class CurationRequirement(val feedInput: String, val message: String)
 data class CurationResult(val categoryName: String, val requirements: List<CurationRequirement>)
-data class UnusedCurationConfig(val category: CurationCategory, val input: String)
+data class UnusedCurationConfig(val categoryName: String, val input: String)

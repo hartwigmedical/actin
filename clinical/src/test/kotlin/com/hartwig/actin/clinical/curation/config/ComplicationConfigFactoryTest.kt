@@ -36,11 +36,10 @@ class ComplicationConfigFactoryTest {
     fun `Should return validation error when year is not a number`() {
         assertThat(
             ComplicationConfigFactory().create(
-                fields,
-                arrayOf("input", "1", "name", "categories", "year", "12")
+                fields, arrayOf("input", "1", "name", "categories", "year", "12")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("'year' had invalid value of 'year' for input 'input'")
+            CurationConfigValidationError("Complication", "input", "year", "year", "integer")
         )
     }
 
@@ -48,11 +47,10 @@ class ComplicationConfigFactoryTest {
     fun `Should return validation error when month is not a number`() {
         assertThat(
             ComplicationConfigFactory().create(
-                fields,
-                arrayOf("input", "1", "name", "categories", "2023", "month")
+                fields, arrayOf("input", "1", "name", "categories", "2023", "month")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("'month' had invalid value of 'month' for input 'input'")
+            CurationConfigValidationError("Complication", "input", "month", "month", "integer")
         )
     }
 
@@ -60,11 +58,10 @@ class ComplicationConfigFactoryTest {
     fun `Should return validation error when impliesUnknownComplicationState is not boolean`() {
         assertThat(
             ComplicationConfigFactory().create(
-                fields,
-                arrayOf("input", "A", "name", "categories", "2023", "12")
+                fields, arrayOf("input", "A", "name", "categories", "2023", "12")
             ).errors
         ).containsExactly(
-            CurationConfigValidationError("'impliesUnknownComplicationState' had invalid value of 'A' for input 'input'")
+            CurationConfigValidationError("Complication", "input", "impliesUnknownComplicationState", "A", "boolean")
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
@@ -24,7 +25,12 @@ class LesionLocationConfigFactoryTest {
         val config = LesionLocationConfigFactory().create(fields, arrayOf("input", "location", "hair"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                "Invalid enum value 'HAIR' for enum 'LesionLocationCategory' from input 'input'. Accepted values are [BONE, LIVER, CNS, BRAIN, LUNG, LYMPH_NODE]"
+                CurationCategory.LESION_LOCATION.categoryName,
+                "input",
+                "category",
+                "hair",
+                "LesionLocationCategory",
+                "Accepted values are [BONE, LIVER, CNS, BRAIN, LUNG, LYMPH_NODE]"
             )
         )
     }
