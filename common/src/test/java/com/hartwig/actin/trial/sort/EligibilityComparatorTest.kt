@@ -1,9 +1,9 @@
-package com.hartwig.actin.treatment.sort
+package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.treatment.datamodel.CriterionReference
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.CriterionReference
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

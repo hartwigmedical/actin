@@ -1,15 +1,15 @@
-package com.hartwig.actin.treatment.serialization
+package com.hartwig.actin.trial.serialization
 
 import com.google.common.io.Resources
-import com.hartwig.actin.treatment.datamodel.Cohort
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.TestTrialFactory
-import com.hartwig.actin.treatment.datamodel.Trial
-import com.hartwig.actin.treatment.serialization.TrialJson.fromJson
-import com.hartwig.actin.treatment.serialization.TrialJson.readFromDir
-import com.hartwig.actin.treatment.serialization.TrialJson.toJson
+import com.hartwig.actin.trial.datamodel.Cohort
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.TestTrialFactory
+import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.trial.serialization.TrialJson.fromJson
+import com.hartwig.actin.trial.serialization.TrialJson.readFromDir
+import com.hartwig.actin.trial.serialization.TrialJson.toJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

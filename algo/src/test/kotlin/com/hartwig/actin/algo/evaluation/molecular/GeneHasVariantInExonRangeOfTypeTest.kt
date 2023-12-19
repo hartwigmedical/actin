@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
-import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput
+import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import org.junit.Assert
 import org.junit.Test
 

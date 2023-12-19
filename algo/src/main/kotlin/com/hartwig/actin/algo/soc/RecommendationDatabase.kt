@@ -4,9 +4,9 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.ImmutableEligibilityFunction
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 

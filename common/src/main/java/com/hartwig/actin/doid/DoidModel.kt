@@ -1,88 +1,52 @@
 package com.hartwig.actin.doid
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Multimap
-import com.google.common.collect.Sets
 import com.hartwig.actin.doid.config.AdenoSquamousMapping
 import com.hartwig.actin.doid.config.DoidManualConfig
-import java.util.*
 
-class DoidModel internal constructor(
-    private val childToParentsMap: Multimap<String, String>, private val termPerDoidMap: Map<String, String>,
-    private val doidPerLowerCaseTermMap: Map<String, String>, private val doidManualConfig: DoidManualConfig
+data class DoidModel(
+    val childToParentsMap: Map<String, List<String>>,
+    val termForDoidMap: Map<String, String>,
+    val doidForLowerCaseTermMap: Map<String, String>,
+    private val doidManualConfig: DoidManualConfig
 ) {
-    @VisibleForTesting
-    fun childToParentsMap(): Multimap<String, String> {
-        return childToParentsMap
+
+    fun doidWithParents(doid: String): Set<String> {
+        val expandedDoids = expandedWithAllParents(doid)
+        val additionalDoids = expandedDoids.mapNotNull { doidManualConfig.additionalDoidsPerDoid[it] }
+            .flatMap(::expandedWithAllParents)
+            .toSet()
+        return expandedDoids + additionalDoids
     }
 
-    @VisibleForTesting
-    fun termForDoidMap(): Map<String, String> {
-        return termPerDoidMap
+    fun mainCancerDoids(doid: String): Set<String> {
+        return doidWithParents(doid).intersect(doidManualConfig.mainCancerDoids)
     }
 
-    @VisibleForTesting
-    fun doidForLowerCaseTermMap(): Map<String, String> {
-        return doidPerLowerCaseTermMap
-    }
-
-    fun doidWithParents(doid: String): Set<String?> {
-        val expandedDoids: MutableSet<String?> = Sets.newHashSet()
-        for (expandedDoid in expandedWithAllParents(doid)) {
-            expandedDoids.add(expandedDoid)
-            val additionalDoid = doidManualConfig.additionalDoidsPerDoid()[expandedDoid]
-            if (additionalDoid != null) {
-                expandedDoids.addAll(expandedWithAllParents(additionalDoid))
-            }
-        }
-        return expandedDoids
-    }
-
-    fun mainCancerDoids(doid: String): Set<String?> {
-        val doids = doidWithParents(doid)
-        val matches: MutableSet<String?> = Sets.newHashSet()
-        for (mainCancerDoid in doidManualConfig.mainCancerDoids()) {
-            if (doids.contains(mainCancerDoid)) {
-                matches.add(mainCancerDoid)
-            }
-        }
-        return matches
-    }
-
-    fun adenoSquamousMappingsForDoid(doidToFind: String): Set<AdenoSquamousMapping?> {
-        val mappings: MutableSet<AdenoSquamousMapping?> = Sets.newHashSet()
-        for (doid in doidWithParents(doidToFind)) {
-            for (mapping in doidManualConfig.adenoSquamousMappings()) {
-                if (mapping!!.adenoDoid() == doid || mapping.squamousDoid() == doid) {
-                    mappings.add(mapping)
-                }
-            }
-        }
-        return mappings
+    fun adenoSquamousMappingsForDoid(doidToFind: String): Set<AdenoSquamousMapping> {
+        val expandedDoids = doidWithParents(doidToFind)
+        return doidManualConfig.adenoSquamousMappings.filter { it.adenoDoid in expandedDoids || it.squamousDoid in expandedDoids }.toSet()
     }
 
     fun resolveTermForDoid(doid: String): String? {
-        return termPerDoidMap[doid]
+        return termForDoidMap[doid]
     }
 
     fun resolveDoidForTerm(term: String): String? {
-        return doidPerLowerCaseTermMap[term.lowercase(Locale.getDefault())]
+        return doidForLowerCaseTermMap[term.lowercase()]
     }
 
-    private fun expandedWithAllParents(doid: String): Set<String?> {
-        val doids: MutableSet<String?> = Sets.newHashSet(doid)
-        addParents(doid, doids)
-        return doids
+    private fun expandedWithAllParents(doid: String): Set<String> {
+        return expandedDoidSet(setOf(doid), emptySet())
     }
 
-    private fun addParents(child: String, result: MutableSet<String?>) {
-        if (!childToParentsMap.containsKey(child)) {
-            return
+    private tailrec fun expandedDoidSet(doidsToExpand: Set<String>, expandedDoids: Set<String>): Set<String> {
+        if (doidsToExpand.isEmpty()) {
+            return expandedDoids
         }
-        for (parent in childToParentsMap[child]) {
-            if (result.add(parent)) {
-                addParents(parent, result)
-            }
+        val nextDoid = doidsToExpand.first()
+        val newDoids = if (nextDoid in expandedDoids) emptySet() else {
+            childToParentsMap[nextDoid] ?: emptySet()
         }
+        return expandedDoidSet(doidsToExpand + newDoids - nextDoid, expandedDoids + nextDoid)
     }
 }

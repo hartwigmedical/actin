@@ -1,82 +1,39 @@
 package com.hartwig.actin.doid
 
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.Maps
-import com.google.common.collect.Multimap
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.doid.config.TestDoidManualConfigFactory.createMinimalTestDoidManualConfig
 import com.hartwig.actin.doid.config.TestDoidManualConfigFactory.createWithOneMainCancerDoid
-import java.util.*
 
 object TestDoidModelFactory {
     fun createMinimalTestDoidModel(): DoidModel {
-        return create(
-            ArrayListMultimap.create(),
-            Maps.newHashMap(),
-            Maps.newHashMap(),
-            createMinimalTestDoidManualConfig()
-        )
+        return create()
     }
 
     fun createWithOneParentChild(parent: String, child: String): DoidModel {
-        val childToParentsMap: Multimap<String, String> = ArrayListMultimap.create()
-        childToParentsMap.put(child, parent)
-        return createWithChildToParentsMap(childToParentsMap)
+        return create(mapOf(child to listOf(parent)))
     }
 
     fun createWithChildToParentMap(childToParentMap: Map<String, String>): DoidModel {
-        val childToParentsMap: Multimap<String, String> = ArrayListMultimap.create()
-        for ((key, value) in childToParentMap) {
-            childToParentsMap.put(key, value)
-        }
-        return createWithChildToParentsMap(childToParentsMap)
+        return create(childToParentMap.mapValues { listOf(it.value) })
     }
 
-    fun createWithMainCancerTypeAndChildToParentMap(
-        mainCancerDoid: String,
-        childToParentMap: Map<String, String>
-    ): DoidModel {
-        val childToParentsMap: Multimap<String, String> = ArrayListMultimap.create()
-        for ((key, value) in childToParentMap) {
-            childToParentsMap.put(key, value)
-        }
-        return create(
-            childToParentsMap,
-            Maps.newHashMap(),
-            Maps.newHashMap(),
-            createWithOneMainCancerDoid(mainCancerDoid)
-        )
+    fun createWithMainCancerTypeAndChildToParentMap(mainCancerDoid: String, childToParentMap: Map<String, String>): DoidModel {
+        return createWithChildToParentMap(childToParentMap).copy(doidManualConfig = createWithOneMainCancerDoid(mainCancerDoid))
     }
 
     fun createWithOneDoidAndTerm(doid: String, term: String): DoidModel {
-        val termPerDoidMap: MutableMap<String, String> = Maps.newHashMap()
-        termPerDoidMap[doid] = term
-        val doidPerLowerCaseTermMap: MutableMap<String, String> = Maps.newHashMap()
-        doidPerLowerCaseTermMap[term.lowercase(Locale.getDefault())] = doid
-        return create(
-            ArrayListMultimap.create(),
-            termPerDoidMap,
-            doidPerLowerCaseTermMap,
-            createMinimalTestDoidManualConfig()
-        )
+        return create(termPerDoidMap = mapOf(doid to term), doidPerLowerCaseTermMap = mapOf(term.lowercase() to doid))
     }
 
     fun createWithDoidManualConfig(config: DoidManualConfig): DoidModel {
-        return create(ArrayListMultimap.create(), Maps.newHashMap(), Maps.newHashMap(), config)
-    }
-
-    private fun createWithChildToParentsMap(childToParentsMap: Multimap<String, String>): DoidModel {
-        return create(
-            childToParentsMap,
-            Maps.newHashMap(),
-            Maps.newHashMap(),
-            createMinimalTestDoidManualConfig()
-        )
+        return create(config = config)
     }
 
     private fun create(
-        childToParentsMap: Multimap<String, String>, termPerDoidMap: Map<String, String>,
-        doidPerLowerCaseTermMap: Map<String, String>, config: DoidManualConfig
+        childToParentsMap: Map<String, List<String>> = emptyMap(),
+        termPerDoidMap: Map<String, String> = emptyMap(),
+        doidPerLowerCaseTermMap: Map<String, String> = emptyMap(),
+        config: DoidManualConfig = createMinimalTestDoidManualConfig()
     ): DoidModel {
         return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, config)
     }

@@ -4,19 +4,6 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.treatment.datamodel.Cohort
-import com.hartwig.actin.treatment.datamodel.CriterionReference
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.ImmutableCohort
-import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibility
-import com.hartwig.actin.treatment.datamodel.ImmutableTrial
-import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification
-import com.hartwig.actin.treatment.datamodel.TrialIdentification
-import com.hartwig.actin.treatment.input.FunctionInputResolver
-import com.hartwig.actin.treatment.sort.CohortComparator
-import com.hartwig.actin.treatment.sort.CriterionReferenceComparator
-import com.hartwig.actin.treatment.sort.EligibilityComparator
 import com.hartwig.actin.trial.TrialIngestionResult
 import com.hartwig.actin.trial.TrialIngestionStatus
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
@@ -24,6 +11,19 @@ import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.CTCModel
+import com.hartwig.actin.trial.datamodel.Cohort
+import com.hartwig.actin.trial.datamodel.CriterionReference
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.ImmutableCohort
+import com.hartwig.actin.trial.datamodel.ImmutableCriterionReference
+import com.hartwig.actin.trial.datamodel.ImmutableEligibility
+import com.hartwig.actin.trial.datamodel.ImmutableTrial
+import com.hartwig.actin.trial.datamodel.ImmutableTrialIdentification
+import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.trial.input.FunctionInputResolver
+import com.hartwig.actin.trial.sort.CohortComparator
+import com.hartwig.actin.trial.sort.CriterionReferenceComparator
+import com.hartwig.actin.trial.sort.EligibilityComparator
 
 class TrialIngestion(
     private val trialConfigModel: TrialConfigModel,

@@ -1,15 +1,15 @@
 package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.database.Tables
-import com.hartwig.actin.treatment.datamodel.Cohort
-import com.hartwig.actin.treatment.datamodel.CohortMetadata
-import com.hartwig.actin.treatment.datamodel.CriterionReference
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.Trial
-import com.hartwig.actin.treatment.datamodel.TrialIdentification
-import com.hartwig.actin.treatment.input.composite.CompositeRules
-import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay
+import com.hartwig.actin.trial.datamodel.Cohort
+import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.trial.datamodel.CriterionReference
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext
 
 internal class TrialDAO(private val context: DSLContext) {

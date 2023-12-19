@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory.create
-import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification
+import com.hartwig.actin.trial.datamodel.ImmutableTrialIdentification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

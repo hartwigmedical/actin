@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput
+import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
 class HasCancerOfUnknownPrimary (private val doidModel: DoidModel, private val categoryOfCUP: TumorTypeInput) : EvaluationFunction {
 

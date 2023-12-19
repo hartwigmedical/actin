@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import java.io.BufferedWriter
 import java.io.File
 import java.io.IOException

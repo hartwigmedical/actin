@@ -1,7 +1,5 @@
 package com.hartwig.actin.trial.ctc
 
-import com.hartwig.actin.treatment.datamodel.CohortMetadata
-import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
 import com.hartwig.actin.trial.CTCDatabaseValidationError
 import com.hartwig.actin.trial.CohortDefinitionValidationError
 import com.hartwig.actin.trial.CtcDatabaseValidation
@@ -10,6 +8,8 @@ import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
+import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.trial.datamodel.ImmutableCohortMetadata
 import org.apache.logging.log4j.LogManager
 
 class CTCModel(private val ctcDatabase: CTCDatabase) {

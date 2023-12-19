@@ -1,44 +1,53 @@
 package com.hartwig.actin.doid
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.doid.datamodel.Edge
-import com.hartwig.actin.doid.datamodel.ImmutableDoidEntry
 import com.hartwig.actin.doid.datamodel.Node
-import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import com.hartwig.actin.doid.datamodel.TestDoidEntryFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DoidModelFactoryTest {
+
     @Test
-    fun canGenerateModelFromDoidEntry() {
-        val edges: MutableList<Edge> = Lists.newArrayList()
-        edges.add(createParentChildEdge("200", "300"))
-        edges.add(createParentChildEdge("300", "400"))
-        edges.add(createContainmentEdge("400", "500"))
-        val nodes: MutableList<Node> = Lists.newArrayList()
-        nodes.add(createNode("200", "tumor A"))
-        nodes.add(createNode("300", null))
-        val entry: DoidEntry =
-            ImmutableDoidEntry.builder().from(TestDoidEntryFactory.createMinimalTestDoidEntry()).edges(edges).nodes(nodes).build()
+    fun `Should generate model from doid entry`() {
+        val edges = listOf(
+            createParentChildEdge("200", "300"),
+            createParentChildEdge("300", "400"),
+            createContainmentEdge("400", "500")
+        )
+        val nodes = listOf(
+            createNode("200", "tumor A"),
+            createNode("300", null)
+        )
+        val entry = TestDoidEntryFactory.createMinimalTestDoidEntry().copy(edges = edges, nodes = nodes)
         val model = DoidModelFactory.createFromDoidEntry(entry)
-        Assert.assertEquals(2, model.childToParentsMap().size().toLong())
-        val relations299 = model.childToParentsMap()["200"]
-        Assert.assertEquals(1, relations299.size.toLong())
-        Assert.assertTrue(relations299.contains("300"))
-        val relations305 = model.childToParentsMap()["300"]
-        Assert.assertEquals(1, relations305.size.toLong())
-        Assert.assertTrue(relations305.contains("400"))
-        Assert.assertEquals(1, model.termForDoidMap().size.toLong())
-        Assert.assertEquals("tumor A", model.termForDoidMap()["200"])
-        Assert.assertNull(model.termForDoidMap()["300"])
-        Assert.assertEquals(1, model.doidForLowerCaseTermMap().size.toLong())
-        Assert.assertEquals("200", model.doidForLowerCaseTermMap()["tumor a"])
-        Assert.assertNull(model.doidForLowerCaseTermMap()["tumor b"])
+
+        assertThat(model.childToParentsMap).hasSize(2)
+        val relations299 = model.childToParentsMap["200"]
+        assertThat(relations299).hasSize(1)
+        assertThat(relations299).contains("300")
+        val relations305 = model.childToParentsMap["300"]
+        assertThat(relations305).hasSize(1)
+        assertThat(relations305).contains("400")
+
+        assertThat(model.termForDoidMap).hasSize(1)
+        assertThat(model.termForDoidMap["200"]).isEqualTo("tumor A")
+        assertThat(model.termForDoidMap["300"]).isNull()
+
+        assertThat(model.doidForLowerCaseTermMap).hasSize(1)
+        assertThat(model.doidForLowerCaseTermMap["tumor a"]).isEqualTo("200")
+        assertThat(model.doidForLowerCaseTermMap["tumor b"]).isNull()
     }
 
     companion object {
         private fun createNode(doid: String, term: String?): Node {
-            return ImmutableNode.builder().doid(doid).url(Strings.EMPTY).term(term).build()
+            return Node(
+                doid = doid,
+                url = "",
+                term = term,
+                metadata = null,
+                type = null
+            )
         }
 
         private fun createParentChildEdge(child: String, parent: String): Edge {
@@ -50,13 +59,13 @@ class DoidModelFactoryTest {
         }
 
         private fun createEdge(subjectDoid: String, pred: String, objectDoid: String): Edge {
-            return ImmutableEdge.builder()
-                .subject(Strings.EMPTY)
-                .subjectDoid(subjectDoid)
-                .`object`(Strings.EMPTY)
-                .objectDoid(objectDoid)
-                .predicate(pred)
-                .build()
+            return Edge(
+                subject = "",
+                subjectDoid = subjectDoid,
+                `object` = "",
+                objectDoid = objectDoid,
+                predicate = pred
+            )
         }
     }
 }

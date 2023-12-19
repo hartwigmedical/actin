@@ -1,7 +1,7 @@
-package com.hartwig.actin.treatment.util
+package com.hartwig.actin.trial.util
 
-import com.hartwig.actin.treatment.datamodel.TestTrialFactory
-import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay.format
+import com.hartwig.actin.trial.datamodel.TestTrialFactory
+import com.hartwig.actin.trial.util.EligibilityFunctionDisplay.format
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

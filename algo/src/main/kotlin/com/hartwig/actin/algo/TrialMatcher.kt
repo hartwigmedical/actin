@@ -14,9 +14,9 @@ import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.sort.CohortMatchComparator
 import com.hartwig.actin.algo.sort.TrialMatchComparator
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.Trial
-import com.hartwig.actin.treatment.sort.EligibilityComparator
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.trial.sort.EligibilityComparator
 
 class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFactory) {
     fun determineEligibility(patient: PatientRecord, trials: List<Trial>): List<TrialMatch> {

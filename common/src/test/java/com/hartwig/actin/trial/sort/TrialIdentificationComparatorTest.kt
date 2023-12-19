@@ -1,6 +1,6 @@
-package com.hartwig.actin.treatment.sort
+package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.treatment.datamodel.TrialIdentification
+import com.hartwig.actin.trial.datamodel.TrialIdentification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

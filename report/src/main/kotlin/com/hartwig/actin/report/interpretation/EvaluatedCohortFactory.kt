@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.treatment.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.Eligibility
 
 object EvaluatedCohortFactory {
     fun create(treatmentMatch: TreatmentMatch): List<EvaluatedCohort> {

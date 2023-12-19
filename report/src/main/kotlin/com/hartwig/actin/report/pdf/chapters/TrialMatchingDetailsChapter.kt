@@ -12,11 +12,11 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
-import com.hartwig.actin.treatment.datamodel.CohortMetadata
-import com.hartwig.actin.treatment.datamodel.CriterionReference
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.TrialIdentification
-import com.hartwig.actin.treatment.sort.CriterionReferenceComparator
+import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.trial.datamodel.CriterionReference
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak

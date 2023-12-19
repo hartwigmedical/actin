@@ -1,106 +1,69 @@
 package com.hartwig.actin.doid.serialization
 
-import com.google.common.collect.Maps
 import com.hartwig.actin.util.json.JsonDatamodelChecker
 
-internal object DatamodelCheckerFactory {
+object DatamodelCheckerFactory {
     fun rootObjectChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["graphs"] = true
-        return JsonDatamodelChecker("RootObject", map)
+        return JsonDatamodelChecker("RootObject", mapOf("graphs" to true))
     }
 
     fun graphsChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["nodes"] = true
-        map["edges"] = true
-        map["id"] = true
-        map["meta"] = true
-        map["equivalentNodesSets"] = true
-        map["logicalDefinitionAxioms"] = true
-        map["domainRangeAxioms"] = true
-        map["propertyChainAxioms"] = true
-        return JsonDatamodelChecker("Graphs", map)
+        val properties = listOf(
+            "nodes",
+            "edges",
+            "id",
+            "meta",
+            "equivalentNodesSets",
+            "logicalDefinitionAxioms",
+            "domainRangeAxioms",
+            "propertyChainAxioms"
+        )
+        return datamodelChecker("Graphs", properties)
     }
 
     fun nodeChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["type"] = false
-        map["lbl"] = false
-        map["id"] = true
-        map["meta"] = false
-        return JsonDatamodelChecker("Node", map)
+        return datamodelChecker("Node", listOf("type", "lbl", "id", "meta"))
     }
 
     fun edgeChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["sub"] = true
-        map["pred"] = true
-        map["obj"] = true
-        return JsonDatamodelChecker("Edge", map)
+        return datamodelChecker("Edge", listOf("sub", "pred", "obj"))
     }
 
     fun graphMetadataChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["xrefs"] = true
-        map["basicPropertyValues"] = true
-        map["version"] = false
-        map["subsets"] = true
-        return JsonDatamodelChecker("GraphMetadata", map)
+        return datamodelChecker("GraphMetadata", listOf("xrefs", "basicPropertyValues", "version", "subsets"))
     }
 
     fun logicalDefinitionAxiomChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["definedClassId"] = true
-        map["genusIds"] = true
-        map["restrictions"] = true
-        return JsonDatamodelChecker("LogicalDefinitionAxiom", map)
+        return datamodelChecker("LogicalDefinitionAxiom", listOf("definedClassId", "genusIds", "restrictions"))
     }
 
     fun restrictionChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["propertyId"] = true
-        map["fillerId"] = true
-        return JsonDatamodelChecker("Restriction", map)
+        return datamodelChecker("Restriction", listOf("propertyId", "fillerId"))
     }
 
     fun synonymChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["pred"] = true
-        map["val"] = true
-        map["xrefs"] = true
-        return JsonDatamodelChecker("Synonym", map)
+        return datamodelChecker("Synonym", listOf("pred", "val", "xrefs"))
     }
 
     fun definitionChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["xrefs"] = true
-        map["val"] = true
-        return JsonDatamodelChecker("Definition", map)
+        return datamodelChecker("Definition", listOf("xrefs", "val"))
     }
 
     fun basicPropertyValueChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["pred"] = true
-        map["val"] = true
-        return JsonDatamodelChecker("BasicPropertyValue", map)
+        return datamodelChecker("BasicPropertyValue", listOf("pred", "val"))
     }
 
     fun metadataXrefChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["val"] = true
-        return JsonDatamodelChecker("MetadataXref", map)
+        return datamodelChecker("MetadataXref", listOf("val"))
     }
 
     fun metadataChecker(): JsonDatamodelChecker {
-        val map: MutableMap<String, Boolean> = Maps.newHashMap()
-        map["xrefs"] = false
-        map["synonyms"] = false
-        map["basicPropertyValues"] = false
-        map["definition"] = false
-        map["subsets"] = false
-        map["deprecated"] = false
-        map["comments"] = false
-        return JsonDatamodelChecker("Metadata", map)
+        return datamodelChecker(
+            "Metadata", listOf(
+                "xrefs", "synonyms", "basicPropertyValues", "definition", "subsets", "deprecated", "comments"
+            )
+        )
     }
+
+    private fun datamodelChecker(name: String, properties: List<String>) = JsonDatamodelChecker(name, properties.associateWith { true })
 }

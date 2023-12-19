@@ -4,9 +4,9 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.extractDifferences
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.mapKeyDifferences
-import com.hartwig.actin.treatment.datamodel.CriterionReference
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.CriterionReference
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import org.apache.logging.log4j.LogManager
 
 object EvaluationComparison {

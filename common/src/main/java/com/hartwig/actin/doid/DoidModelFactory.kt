@@ -1,49 +1,32 @@
 package com.hartwig.actin.doid
 
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.Maps
-import com.google.common.collect.Multimap
 import com.hartwig.actin.doid.config.DoidManualConfigFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import org.apache.logging.log4j.LogManager
-import java.util.*
 
 object DoidModelFactory {
     private val LOGGER = LogManager.getLogger(DoidModelFactory::class.java)
 
-    @JvmStatic
     fun createFromDoidEntry(doidEntry: DoidEntry): DoidModel {
-        val childToParentsMap: Multimap<String, String> = ArrayListMultimap.create()
-        for (edge in doidEntry.edges()) {
-            if (edge!!.predicate() == "is_a") {
-                val child = edge.subjectDoid()
-                val parent = edge.objectDoid()
-                if (childToParentsMap.containsKey(child)) {
-                    val parents = childToParentsMap[child]
-                    if (!parents.contains(parent)) {
-                        parents.add(parent)
-                    }
-                } else {
-                    childToParentsMap.put(child, parent)
-                }
+        val childToParentsMap = doidEntry.edges.filter { it.predicate == "is_a" }
+            .map { edge ->
+                val child = edge.subjectDoid
+                val parent = edge.objectDoid
+                child to parent
             }
-        }
+            .distinct()
+            .groupBy(Pair<String, String>::first, Pair<String, String>::second)
 
         // Assume both doid and term are unique.
-        val termPerDoidMap: MutableMap<String, String> = Maps.newHashMap()
-        val doidPerLowerCaseTermMap: MutableMap<String, String> = Maps.newHashMap()
-        for (node in doidEntry.nodes()) {
-            val term = node!!.term()
-            if (term != null) {
-                termPerDoidMap[node.doid()] = term
-                val lowerCaseTerm = term.lowercase(Locale.getDefault())
-                if (doidPerLowerCaseTermMap.containsKey(lowerCaseTerm)) {
-                    LOGGER.warn("DOID term (in lower-case) is not unique: '{}'", term)
-                } else {
-                    doidPerLowerCaseTermMap[lowerCaseTerm] = node.doid()
+        val (termPerDoidMap, doidPerLowerCaseTermMap) = doidEntry.nodes.filter { it.term != null }
+            .fold(Pair(emptyMap<String, String>(), emptyMap<String, String>())) { (doidsToTerms, termsToDoids), node ->
+                val lowerCaseTerm = node.term!!.lowercase()
+                if (termsToDoids.containsKey(lowerCaseTerm)) {
+                    LOGGER.warn("DOID term (in lower-case) is not unique: '{}'", node.term)
                 }
+                Pair(doidsToTerms + mapOf(node.doid to node.term), termsToDoids + mapOf(lowerCaseTerm to node.doid))
             }
-        }
+
         return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, DoidManualConfigFactory.create())
     }
 }

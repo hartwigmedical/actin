@@ -4,16 +4,16 @@ import com.google.common.io.Resources
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
-import com.hartwig.actin.treatment.datamodel.Cohort
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.Trial
 import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidator
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.ctc.TestCTCModelFactory
+import com.hartwig.actin.trial.datamodel.Cohort
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.Trial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

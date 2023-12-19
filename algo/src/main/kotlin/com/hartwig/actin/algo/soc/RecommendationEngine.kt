@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
 
 class RecommendationEngine private constructor(
     private val doidModel: DoidModel,

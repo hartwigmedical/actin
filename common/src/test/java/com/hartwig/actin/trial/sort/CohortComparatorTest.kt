@@ -1,7 +1,7 @@
-package com.hartwig.actin.treatment.sort
+package com.hartwig.actin.trial.sort
 
-import com.hartwig.actin.treatment.datamodel.Cohort
-import com.hartwig.actin.treatment.datamodel.CohortMetadata
+import com.hartwig.actin.trial.datamodel.Cohort
+import com.hartwig.actin.trial.datamodel.CohortMetadata
 import org.junit.Assert
 import org.junit.Test
 

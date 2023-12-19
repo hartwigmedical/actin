@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.extractDifferences
 import com.hartwig.actin.algo.matchcomparison.DifferenceExtractionUtil.mapKeyDifferences
-import com.hartwig.actin.treatment.datamodel.TrialIdentification
+import com.hartwig.actin.trial.datamodel.TrialIdentification
 import org.apache.logging.log4j.LogManager
 
 object TreatmentMatchComparison {

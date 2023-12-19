@@ -1,10 +1,10 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.Trial
-import com.hartwig.actin.treatment.input.composite.CompositeRules
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.apache.logging.log4j.LogManager
 
 object EligibilityRuleUsageEvaluator {

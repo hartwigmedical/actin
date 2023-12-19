@@ -1,15 +1,15 @@
 package com.hartwig.actin.algo.datamodel
 
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.treatment.datamodel.CohortMetadata
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
-import com.hartwig.actin.treatment.datamodel.ImmutableCriterionReference
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibility
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
-import com.hartwig.actin.treatment.datamodel.ImmutableTrialIdentification
-import com.hartwig.actin.treatment.sort.EligibilityComparator
+import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.ImmutableCohortMetadata
+import com.hartwig.actin.trial.datamodel.ImmutableCriterionReference
+import com.hartwig.actin.trial.datamodel.ImmutableEligibility
+import com.hartwig.actin.trial.datamodel.ImmutableEligibilityFunction
+import com.hartwig.actin.trial.datamodel.ImmutableTrialIdentification
+import com.hartwig.actin.trial.sort.EligibilityComparator
 import java.time.LocalDate
 
 object TestTreatmentMatchFactory {

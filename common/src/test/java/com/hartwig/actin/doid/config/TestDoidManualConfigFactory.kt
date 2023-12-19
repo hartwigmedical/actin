@@ -1,23 +1,24 @@
 package com.hartwig.actin.doid.config
 
 object TestDoidManualConfigFactory {
-    @JvmStatic
+
     fun createMinimalTestDoidManualConfig(): DoidManualConfig {
-        return ImmutableDoidManualConfig.builder().build()
+        return DoidManualConfig(
+            mainCancerDoids = emptySet(),
+            adenoSquamousMappings = emptySet(),
+            additionalDoidsPerDoid = emptyMap()
+        )
     }
 
-    @JvmStatic
     fun createWithOneMainCancerDoid(mainCancerDoid: String): DoidManualConfig {
-        return ImmutableDoidManualConfig.builder().addMainCancerDoids(mainCancerDoid).build()
+        return createMinimalTestDoidManualConfig().copy(mainCancerDoids = setOf(mainCancerDoid))
     }
 
-    @JvmStatic
     fun createWithOneAdenoSquamousMapping(mapping: AdenoSquamousMapping): DoidManualConfig {
-        return ImmutableDoidManualConfig.builder().addAdenoSquamousMappings(mapping).build()
+        return createMinimalTestDoidManualConfig().copy(adenoSquamousMappings = setOf(mapping))
     }
 
-    @JvmStatic
     fun createWithOneAdditionalDoid(baseDoid: String, expandedDoid: String): DoidManualConfig {
-        return ImmutableDoidManualConfig.builder().putAdditionalDoidsPerDoid(baseDoid, expandedDoid).build()
+        return createMinimalTestDoidManualConfig().copy(additionalDoidsPerDoid = mapOf(baseDoid to expandedDoid))
     }
 }

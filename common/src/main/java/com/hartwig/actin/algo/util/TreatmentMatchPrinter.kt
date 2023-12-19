@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer
 import com.hartwig.actin.algo.interpretation.TrialMatchSummarizer
-import com.hartwig.actin.treatment.datamodel.CohortMetadata
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.TrialIdentification
+import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.TrialIdentification
 import com.hartwig.actin.util.DatamodelPrinter
 
 class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.sort
 
 import com.hartwig.actin.algo.datamodel.CohortMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.treatment.sort.TrialIdentificationComparator
+import com.hartwig.actin.trial.sort.TrialIdentificationComparator
 import kotlin.Int
 
 class TrialMatchComparator : Comparator<TrialMatch> {

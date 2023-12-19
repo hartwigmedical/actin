@@ -1,15 +1,15 @@
-package com.hartwig.actin.treatment.input
+package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.input.composite.CompositeInput
-import com.hartwig.actin.treatment.input.composite.CompositeRules
-import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput
-import com.hartwig.actin.treatment.input.single.FunctionInput
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.input.composite.CompositeInput
+import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
+import com.hartwig.actin.trial.input.single.FunctionInput
 
 class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
 

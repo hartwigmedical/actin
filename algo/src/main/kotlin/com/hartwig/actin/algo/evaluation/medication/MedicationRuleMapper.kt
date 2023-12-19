@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.medication.MedicationCategories
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private val selector: MedicationSelector

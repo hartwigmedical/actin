@@ -9,10 +9,10 @@ import com.hartwig.actin.algo.evaluation.composite.WarnIf
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.input.FunctionInputResolver
-import com.hartwig.actin.treatment.input.composite.CompositeRules
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.input.FunctionInputResolver
+import com.hartwig.actin.trial.input.composite.CompositeRules
 
 class EvaluationFunctionFactory(
     private val functionCreatorMap: Map<EligibilityRule, FunctionCreator>,

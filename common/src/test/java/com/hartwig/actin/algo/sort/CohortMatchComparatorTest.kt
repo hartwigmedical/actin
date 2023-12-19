@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.sort
 
 import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.treatment.datamodel.ImmutableCohortMetadata
+import com.hartwig.actin.trial.datamodel.ImmutableCohortMetadata
 import org.apache.logging.log4j.util.Strings
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

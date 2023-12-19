@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
 
 interface FunctionCreator {
 

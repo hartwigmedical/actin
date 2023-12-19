@@ -1,55 +1,66 @@
 package com.hartwig.actin.doid.serialization
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.common.collect.Lists
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonToken
+import com.hartwig.actin.doid.datamodel.BasicPropertyValue
 import com.hartwig.actin.doid.datamodel.Definition
+import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.datamodel.Edge
-import com.hartwig.actin.doid.datamodel.ImmutableBasicPropertyValue
+import com.hartwig.actin.doid.datamodel.GraphMetadata
+import com.hartwig.actin.doid.datamodel.LogicalDefinitionAxioms
 import com.hartwig.actin.doid.datamodel.Metadata
 import com.hartwig.actin.doid.datamodel.Node
 import com.hartwig.actin.doid.datamodel.Restriction
+import com.hartwig.actin.doid.datamodel.Synonym
+import com.hartwig.actin.doid.datamodel.Xref
+import com.hartwig.actin.util.json.Json.array
+import com.hartwig.actin.util.json.Json.`object`
+import com.hartwig.actin.util.json.Json.optionalArray
+import com.hartwig.actin.util.json.Json.optionalBool
+import com.hartwig.actin.util.json.Json.optionalObject
+import com.hartwig.actin.util.json.Json.optionalString
+import com.hartwig.actin.util.json.Json.optionalStringList
+import com.hartwig.actin.util.json.Json.string
+import com.hartwig.actin.util.json.Json.stringList
+import com.hartwig.actin.util.json.JsonDatamodelChecker
 import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.util.Strings
-import java.io.IOException
+import java.io.FileReader
 
 object DoidJson {
     private val LOGGER = LogManager.getLogger(DoidJson::class.java)
 
-    @JvmField
-    @VisibleForTesting
-    val ID_TO_READ = "http://purl.obolibrary.org/obo/doid.owl"
+    const val ID_TO_READ = "http://purl.obolibrary.org/obo/doid.owl"
 
-    @JvmField
-    @VisibleForTesting
-    val DOID_URL_PREFIX = "http://purl.obolibrary.org/obo/DOID_"
+    const val DOID_URL_PREFIX = "http://purl.obolibrary.org/obo/DOID_"
 
-    @JvmStatic
-    @Throws(IOException::class)
     fun readDoidOwlEntry(doidJson: String): DoidEntry {
         val reader = JsonReader(FileReader(doidJson))
-        reader.setLenient(true)
-        val rootObject: JsonObject = JsonParser.parseReader(reader).getAsJsonObject()
+        reader.isLenient = true
+        val rootObject: JsonObject = JsonParser.parseReader(reader).asJsonObject
         DatamodelCheckerFactory.rootObjectChecker().check(rootObject)
+
         var entry: DoidEntry? = null
         val graphsChecker: JsonDatamodelChecker = DatamodelCheckerFactory.graphsChecker()
         for (element in array(rootObject, "graphs")) {
-            val graph: JsonObject = element.getAsJsonObject()
+            val graph: JsonObject = element.asJsonObject
             graphsChecker.check(graph)
             val id: String = string(graph, "id")
             if (id == ID_TO_READ) {
                 LOGGER.debug(" Reading DOID entry with ID '{}'", id)
-                entry = ImmutableDoidEntry.builder()
-                    .id(id)
-                    .nodes(extractNodes(array(graph, "nodes")))
-                    .edges(extractEdges(array(graph, "edges")))
-                    .metadata(extractGraphMetadata(`object`(graph, "meta")))
-                    .logicalDefinitionAxioms(extractLogicalDefinitionAxioms(array(graph, "logicalDefinitionAxioms")))
-                    .equivalentNodesSets(optionalStringList(graph, "equivalentNodesSets"))
-                    .domainRangeAxioms(optionalStringList(graph, "domainRangeAxioms"))
-                    .propertyChainAxioms(optionalStringList(graph, "propertyChainAxioms"))
-                    .build()
+                entry = DoidEntry(
+                    id = id,
+                    nodes = extractNodes(array(graph, "nodes")),
+                    edges = extractEdges(array(graph, "edges")),
+                    metadata = extractGraphMetadata(`object`(graph, "meta")),
+                    logicalDefinitionAxioms = extractLogicalDefinitionAxioms(array(graph, "logicalDefinitionAxioms")),
+                    equivalentNodesSets = optionalStringList(graph, "equivalentNodesSets"),
+                    domainRangeAxioms = optionalStringList(graph, "domainRangeAxioms"),
+                    propertyChainAxioms = optionalStringList(graph, "propertyChainAxioms")
+                )
             }
         }
         if (reader.peek() != JsonToken.END_DOCUMENT) {
@@ -59,124 +70,105 @@ object DoidJson {
         return entry
     }
 
-    @JvmStatic
-    @VisibleForTesting
     fun extractDoid(url: String): String {
-        return if (url.startsWith(DOID_URL_PREFIX)) url.substring(DOID_URL_PREFIX.length) else Strings.EMPTY
+        return if (url.startsWith(DOID_URL_PREFIX)) url.substring(DOID_URL_PREFIX.length) else ""
     }
 
     private fun extractNodes(nodeArray: JsonArray): List<Node> {
-        val nodes: MutableList<Node> = Lists.newArrayList()
         val nodeChecker: JsonDatamodelChecker = DatamodelCheckerFactory.nodeChecker()
-        for (nodeElement in nodeArray) {
+        return nodeArray.map { nodeElement ->
             val node: JsonObject = nodeElement.asJsonObject
             nodeChecker.check(node)
             val id: String = string(node, "id")
-            nodes.add(
-                ImmutableNode.builder()
-                    .doid(extractDoid(id))
-                    .url(id)
-                    .metadata(extractMetadata(optionalObject(node, "meta")))
-                    .type(optionalString(node, "type"))
-                    .term(optionalString(node, "lbl"))
-                    .build()
+            Node(
+                doid = extractDoid(id),
+                url = id,
+                metadata = extractMetadata(optionalObject(node, "meta")),
+                type = optionalString(node, "type"),
+                term = optionalString(node, "lbl")
             )
         }
-        return nodes
     }
 
     private fun extractEdges(edgeArray: JsonArray): List<Edge> {
-        val edges: MutableList<Edge> = Lists.newArrayList()
         val edgeChecker: JsonDatamodelChecker = DatamodelCheckerFactory.edgeChecker()
-        for (edgeElement in edgeArray) {
+        return edgeArray.map { edgeElement ->
             val edge: JsonObject = edgeElement.asJsonObject
             edgeChecker.check(edge)
             val `object`: String = string(edge, "obj")
             val subject: String = string(edge, "sub")
-            edges.add(
-                ImmutableEdge.builder()
-                    .subject(subject)
-                    .subjectDoid(extractDoid(subject))
-                    .`object`(`object`)
-                    .objectDoid(extractDoid(`object`))
-                    .predicate(string(edge, "pred"))
-                    .build()
+            Edge(
+                subject = subject,
+                subjectDoid = extractDoid(subject),
+                `object` = `object`,
+                objectDoid = extractDoid(`object`),
+                predicate = string(edge, "pred")
             )
         }
-        return edges
     }
 
-    private fun extractGraphMetadata(metadata: JsonObject?): GraphMetadata {
+    private fun extractGraphMetadata(metadata: JsonObject): GraphMetadata {
         DatamodelCheckerFactory.graphMetadataChecker().check(metadata)
-        val xrefArray: JsonArray = optionalArray(metadata, "xrefs")
-        val xrefs: MutableList<Xref> = Lists.newArrayList<Xref>()
-        if (xrefArray != null) {
+        val xrefs = optionalArray(metadata, "xrefs")?.let { xrefArray ->
             val xrefChecker: JsonDatamodelChecker = DatamodelCheckerFactory.metadataXrefChecker()
-            for (xrefElement in xrefArray) {
+            xrefArray.map { xrefElement ->
                 val xref: JsonObject = xrefElement.asJsonObject
                 xrefChecker.check(xref)
-                xrefs.add(ImmutableXref.builder().`val`(string(xref, "val")).build())
+                Xref(`val` = string(xref, "val"))
             }
-        }
-        return ImmutableGraphMetadata.builder()
-            .basicPropertyValues(extractBasicPropertyValues(optionalArray(metadata, "basicPropertyValues")))
-            .subsets(optionalStringList(metadata, "subsets"))
-            .xrefs(xrefs)
-            .version(optionalString(metadata, "version"))
-            .build()
+        } ?: emptyList()
+
+        return GraphMetadata(
+            basicPropertyValues = extractBasicPropertyValues(optionalArray(metadata, "basicPropertyValues")),
+            subsets = optionalStringList(metadata, "subsets"),
+            xrefs = xrefs,
+            version = optionalString(metadata, "version")
+        )
     }
 
     private fun extractBasicPropertyValues(basicPropertyValueArray: JsonArray?): List<BasicPropertyValue>? {
         if (basicPropertyValueArray == null) {
             return null
         }
-        val basicPropertyValues: MutableList<BasicPropertyValue> = Lists.newArrayList<BasicPropertyValue>()
         val basicPropertyValuesChecker: JsonDatamodelChecker = DatamodelCheckerFactory.basicPropertyValueChecker()
-        for (basicPropertyElement in basicPropertyValueArray) {
+
+        return basicPropertyValueArray.map { basicPropertyElement ->
             val basicProperty: JsonObject = basicPropertyElement.asJsonObject
             basicPropertyValuesChecker.check(basicProperty)
-            basicPropertyValues.add(
-                ImmutableBasicPropertyValue.builder()
-                    .pred(string(basicProperty, "pred"))
-                    .`val`(string(basicProperty, "val"))
-                    .build()
+            BasicPropertyValue(
+                pred = string(basicProperty, "pred"),
+                `val` = string(basicProperty, "val")
             )
         }
-        return basicPropertyValues
     }
 
     private fun extractLogicalDefinitionAxioms(logicalDefinitionAxiomArray: JsonArray?): List<LogicalDefinitionAxioms>? {
         if (logicalDefinitionAxiomArray == null) {
             return null
         }
-        val logicalDefinitionAxioms: MutableList<LogicalDefinitionAxioms> = Lists.newArrayList<LogicalDefinitionAxioms>()
         val logicalDefinitionAxiomsChecker: JsonDatamodelChecker = DatamodelCheckerFactory.logicalDefinitionAxiomChecker()
-        for (logicalDefinitionAxiomElement in logicalDefinitionAxiomArray) {
+
+        return logicalDefinitionAxiomArray.map { logicalDefinitionAxiomElement ->
             val logicalDefinitionAxiom: JsonObject = logicalDefinitionAxiomElement.asJsonObject
             logicalDefinitionAxiomsChecker.check(logicalDefinitionAxiom)
+
             val restrictionChecker: JsonDatamodelChecker = DatamodelCheckerFactory.restrictionChecker()
-            val restrictions: MutableList<Restriction> = Lists.newArrayList()
-            for (restrictionElement in array(logicalDefinitionAxiom, "restrictions")) {
-                if (restrictionElement.isJsonObject()) {
-                    val restriction: JsonObject = restrictionElement.getAsJsonObject()
+            val restrictions = array(logicalDefinitionAxiom, "restrictions").filter(JsonElement::isJsonObject)
+                .map { restrictionElement ->
+                    val restriction: JsonObject = restrictionElement.asJsonObject
                     restrictionChecker.check(restriction)
-                    restrictions.add(
-                        ImmutableRestriction.builder()
-                            .propertyId(string(restriction, "propertyId"))
-                            .fillerId(string(restriction, "fillerId"))
-                            .build()
+                    Restriction(
+                        propertyId = string(restriction, "propertyId"),
+                        fillerId = string(restriction, "fillerId")
                     )
                 }
-            }
-            logicalDefinitionAxioms.add(
-                ImmutableLogicalDefinitionAxioms.builder()
-                    .definedClassId(string(logicalDefinitionAxiom, "definedClassId"))
-                    .genusIds(stringList(logicalDefinitionAxiom, "genusIds"))
-                    .restrictions(restrictions)
-                    .build()
+
+            LogicalDefinitionAxioms(
+                definedClassId = string(logicalDefinitionAxiom, "definedClassId"),
+                genusIds = stringList(logicalDefinitionAxiom, "genusIds"),
+                restrictions = restrictions
             )
         }
-        return logicalDefinitionAxioms
     }
 
     private fun extractMetadata(metadata: JsonObject?): Metadata? {
@@ -184,41 +176,39 @@ object DoidJson {
             return null
         }
         DatamodelCheckerFactory.metadataChecker().check(metadata)
-        val xrefArray: JsonArray = optionalArray(metadata, "xrefs")
-        val xrefs: MutableList<Xref> = Lists.newArrayList<Xref>()
-        if (xrefArray != null) {
+        val xrefs = optionalArray(metadata, "xrefs")?.let { xrefArray ->
             val xrefChecker: JsonDatamodelChecker = DatamodelCheckerFactory.metadataXrefChecker()
-            for (xrefElement in xrefArray) {
+            xrefArray.map { xrefElement ->
                 val xref: JsonObject = xrefElement.asJsonObject
                 xrefChecker.check(xref)
-                xrefs.add(ImmutableXref.builder().`val`(string(xref, "val")).build())
+                Xref(`val` = string(xref, "val"))
             }
-        }
-        return ImmutableMetadata.builder()
-            .synonyms(extractSynonyms(optionalArray(metadata, "synonyms")))
-            .basicPropertyValues(extractBasicPropertyValues(optionalArray(metadata, "basicPropertyValues")))
-            .definition(extractDefinition(optionalObject(metadata, "definition")))
-            .subsets(optionalStringList(metadata, "subsets"))
-            .xrefs(xrefs)
-            .snomedConceptId(extractSnomedConceptId(xrefs))
-            .deprecated(optionalBool(metadata, "deprecated"))
-            .comments(optionalStringList(metadata, "comments"))
-            .build()
+        } ?: emptyList()
+
+        return Metadata(
+            synonyms = extractSynonyms(optionalArray(metadata, "synonyms")),
+            basicPropertyValues = extractBasicPropertyValues(optionalArray(metadata, "basicPropertyValues")),
+            definition = extractDefinition(optionalObject(metadata, "definition")),
+            subsets = optionalStringList(metadata, "subsets"),
+            xrefs = xrefs,
+            snomedConceptId = extractSnomedConceptId(xrefs),
+            deprecated = optionalBool(metadata, "deprecated"),
+            comments = optionalStringList(metadata, "comments"),
+        )
     }
 
-    @VisibleForTesting
-    fun extractSnomedConceptId(xrefs: List<Xref?>?): String? {
+    fun extractSnomedConceptId(xrefs: List<Xref>?): String? {
         if (xrefs == null) {
             return null
         }
         for (xref in xrefs) {
             // Format to look for is SNOMEDCT_US_2020_03_01:109355002
-            if (xref.`val`().contains("SNOMED")) {
-                val parts: Array<String> = xref.`val`().split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            if (xref.`val`.contains("SNOMED")) {
+                val parts = xref.`val`.split(":".toRegex()).dropLastWhile { it.isEmpty() }
                 if (parts.size == 2 && isLong(parts[1])) {
                     return parts[1]
                 } else {
-                    LOGGER.warn("Unexpected SNOMED entry found: {}", xref.`val`())
+                    LOGGER.warn("Unexpected SNOMED entry found: {}", xref.`val`)
                 }
             }
         }
@@ -239,19 +229,15 @@ object DoidJson {
             return null
         }
         val synonymChecker: JsonDatamodelChecker = DatamodelCheckerFactory.synonymChecker()
-        val synonyms: MutableList<Synonym> = Lists.newArrayList<Synonym>()
-        for (synonymElement in synonymArray) {
+        return synonymArray.map { synonymElement ->
             val synonym: JsonObject = synonymElement.asJsonObject
             synonymChecker.check(synonym)
-            synonyms.add(
-                ImmutableSynonym.builder()
-                    .pred(string(synonym, "pred"))
-                    .`val`(string(synonym, "val"))
-                    .xrefs(stringList(synonym, "xrefs"))
-                    .build()
+            Synonym(
+                pred = string(synonym, "pred"),
+                `val` = string(synonym, "val"),
+                xrefs = stringList(synonym, "xrefs")
             )
         }
-        return synonyms
     }
 
     private fun extractDefinition(definition: JsonObject?): Definition? {
@@ -259,6 +245,9 @@ object DoidJson {
             return null
         }
         DatamodelCheckerFactory.definitionChecker().check(definition)
-        return ImmutableDefinition.builder().`val`(string(definition, "val")).xrefs(stringList(definition, "xrefs")).build()
+        return Definition(
+            `val` = string(definition, "val"),
+            xrefs = stringList(definition, "xrefs")
+        )
     }
 }
