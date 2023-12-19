@@ -43,7 +43,7 @@ class ECGConfigFactoryTest {
     fun `Should return validation error when jtc is not a number`() {
         val config: ValidatedCurationConfig<ECGConfig> =
             ECGConfigFactory().create(fields, arrayOf("input", "interpretation", "1", "1", "ms", "1", "invalid", "ms"))
-        assertThat(config.errors).containsExactly(   CurationConfigValidationError(
+        assertThat(config.errors).containsExactly(CurationConfigValidationError(
             CurationCategory.ECG.categoryName,
             "input",
             "jtcValue",

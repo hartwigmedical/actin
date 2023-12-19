@@ -19,11 +19,7 @@ class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoid
                 "status",
                 fields,
                 parts
-            ) {
-                TumorStatus.valueOf(
-                    it
-                )
-            }
+            ) { TumorStatus.valueOf(it) }
             val (validatedDoids, doidValidationErrors) = validateDoids(
                 CurationCategory.SECOND_PRIMARY,
                 input,

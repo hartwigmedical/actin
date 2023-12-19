@@ -45,7 +45,7 @@ fun validateBoolean(
     fields: Map<String, Int>,
     parts: Array<String>
 ): Pair<Boolean?, List<CurationConfigValidationError>> {
-    return validate(curationCategory, input, fields, fieldName, Boolean::class.java.simpleName, parts) { it.toValidatedBoolean() }
+    return validate(curationCategory, input, fieldName, Boolean::class.java.simpleName, fields, parts) { it.toValidatedBoolean() }
 }
 
 fun validateInteger(
@@ -55,7 +55,7 @@ fun validateInteger(
     fields: Map<String, Int>,
     parts: Array<String>
 ): Pair<Int?, List<CurationConfigValidationError>> {
-    return validate(curationCategory, input, fields, fieldName, Integer::class.java.simpleName, parts) { it.toIntOrNull() }
+    return validate(curationCategory, input, fieldName, Integer::class.java.simpleName, fields, parts) { it.toIntOrNull() }
 }
 
 fun validateDouble(
@@ -65,7 +65,7 @@ fun validateDouble(
     fields: Map<String, Int>,
     parts: Array<String>
 ): Pair<Double?, List<CurationConfigValidationError>> {
-    return validate(curationCategory, input, fields, fieldName, Double::class.java.simpleName, parts) { it.toDoubleOrNull() }
+    return validate(curationCategory, input, fieldName, Double::class.java.simpleName, fields, parts) { it.toDoubleOrNull() }
 }
 
 inline fun <reified T : Enum<T>> validateOptionalEnum(
@@ -137,9 +137,9 @@ inline fun <reified T : Enum<T>> enumContains(name: String): Boolean {
 private fun <T> validate(
     curationCategory: CurationCategory,
     input: String,
-    fields: Map<String, Int>,
     fieldName: String,
     validType: String,
+    fields: Map<String, Int>,
     parts: Array<String>,
     extractionFunction: (String) -> T?
 ): Pair<T?, List<CurationConfigValidationError>> {
