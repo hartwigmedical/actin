@@ -81,7 +81,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()),
             if (!externalEligibleTrials.isEmpty) EligibleExternalTrialsGenerator(
-                report.molecular.externalTrialSource(), externalEligibleTrials, keyWidth, valueWidth
+                report.molecular.externalTrialSource(), externalEligibleTrials, contentWidth()
             ) else null
         )
 
