@@ -71,8 +71,13 @@ object BodyWeightFunctions {
     }
 
     private fun selectMedianBodyWeightPerDay(record: PatientRecord): List<BodyWeight> {
-        return record.clinical().bodyWeights().filter { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }.groupBy { it.date() }
-            .map { selectMedianBodyWeightValue(it.value) }.sortedWith(BodyWeightDescendingDateComparator()).take(MAX_ENTRIES).toList()
+        return record.clinical().bodyWeights()
+            .filter { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
+            .groupBy { it.date() }
+            .map { selectMedianBodyWeightValue(it.value) }
+            .sortedWith(BodyWeightDescendingDateComparator())
+            .take(MAX_ENTRIES)
+            .toList()
     }
 
     private fun selectMedianBodyWeightValue(bodyWeights: List<BodyWeight>): BodyWeight {
