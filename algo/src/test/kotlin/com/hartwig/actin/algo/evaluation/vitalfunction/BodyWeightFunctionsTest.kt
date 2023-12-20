@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evalu
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class BodyWeightFunctionsTest {
 
-    private val referenceDate = LocalDate.of(2023, 11, 10)
+    private val referenceDate = LocalDateTime.of(2023, 11, 10, 12, 30, 0)
 
     @Test
     fun `Should evaluate to undetermined on no body weight documented`() {

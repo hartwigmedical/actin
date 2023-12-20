@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed
 import com.hartwig.actin.clinical.datamodel.Gender
 import org.apache.logging.log4j.util.Strings
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class FeedLine(private val fields: Map<String, Int>, private val parts: Array<String>) {
     fun string(column: String): String {
@@ -25,6 +26,14 @@ class FeedLine(private val fields: Map<String, Int>, private val parts: Array<St
 
     fun date(column: String): LocalDate {
         return FeedParseFunctions.parseDate(string(column))
+    }
+
+    fun vitalFunctionDate(column: String): LocalDateTime {
+        return FeedParseFunctions.parseDateTime(string(column))
+    }
+
+    fun bodyWeightDate(column: String): LocalDateTime {
+        return FeedParseFunctions.parseDateTime(string(column))
     }
 
     fun optionalDate(column: String): LocalDate? {

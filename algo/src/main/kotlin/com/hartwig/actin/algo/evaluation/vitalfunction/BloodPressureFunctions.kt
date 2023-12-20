@@ -31,7 +31,7 @@ object BloodPressureFunctions {
                 if (referenceIsMinimum) {
                     EvaluationFactory.recoverableFail(specificMessage, generalMessage)
                 } else {
-                    EvaluationFactory.pass(specificMessage, generalMessage)
+                    EvaluationFactory.recoverablePass(specificMessage, generalMessage)
                 }
             }
 
@@ -40,7 +40,7 @@ object BloodPressureFunctions {
                         "equal to $referenceBloodPressure mmHg"
                 val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) equal to $referenceBloodPressure mmHg"
 
-                return EvaluationFactory.pass(specificMessage, generalMessage)
+                return EvaluationFactory.recoverablePass(specificMessage, generalMessage)
             }
 
             else -> {
@@ -48,7 +48,7 @@ object BloodPressureFunctions {
                 val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) above $referenceBloodPressure mmHg"
 
                 if (referenceIsMinimum) {
-                    EvaluationFactory.pass(specificMessage, generalMessage)
+                    EvaluationFactory.recoverablePass(specificMessage, generalMessage)
                 } else {
                     EvaluationFactory.recoverableFail(specificMessage, generalMessage)
                 }

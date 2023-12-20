@@ -5,11 +5,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HasSufficientBloodPressureTest {
 
-    private val referenceDate = LocalDate.of(2020, 11, 19)
+    private val referenceDate = LocalDateTime.of(2020, 11, 19, 12, 30, 0)
     private val function = HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 100)
 
     @Test

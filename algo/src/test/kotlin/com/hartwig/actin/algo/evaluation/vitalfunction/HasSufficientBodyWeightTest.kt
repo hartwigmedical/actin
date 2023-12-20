@@ -4,12 +4,12 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HasSufficientBodyWeightTest {
 
     private val function = HasSufficientBodyWeight(40.0)
-    private val referenceDate = LocalDate.of(2023, 11, 10)
+    private val referenceDate = LocalDateTime.of(2023, 11, 10, 12, 30, 0)
 
     @Test
     fun `Should fail on median weight too low`() {

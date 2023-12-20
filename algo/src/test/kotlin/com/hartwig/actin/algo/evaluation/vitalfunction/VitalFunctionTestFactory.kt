@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import org.apache.logging.log4j.util.Strings
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 internal object VitalFunctionTestFactory {
     fun withBodyWeights(bodyWeights: List<BodyWeight>): PatientRecord {
@@ -26,7 +26,7 @@ internal object VitalFunctionTestFactory {
     }
 
     fun bodyWeight(): ImmutableBodyWeight.Builder {
-        return ImmutableBodyWeight.builder().date(LocalDate.of(2017, 7, 7)).value(0.0).unit(Strings.EMPTY)
+        return ImmutableBodyWeight.builder().date(LocalDateTime.of(2017, 7, 7, 12, 30, 0)).value(0.0).unit(Strings.EMPTY)
     }
 
     fun withVitalFunctions(vitalFunctions: List<VitalFunction>): PatientRecord {
@@ -42,6 +42,7 @@ internal object VitalFunctionTestFactory {
     }
 
     fun vitalFunction(): ImmutableVitalFunction.Builder {
-        return ImmutableVitalFunction.builder().date(LocalDate.of(2017, 7, 7)).subcategory(Strings.EMPTY).value(0.0).unit(Strings.EMPTY)
+        return ImmutableVitalFunction.builder().date(LocalDateTime.of(2017, 7, 7, 12, 30, 0)).subcategory(Strings.EMPTY).value(0.0)
+            .unit(Strings.EMPTY)
     }
 }

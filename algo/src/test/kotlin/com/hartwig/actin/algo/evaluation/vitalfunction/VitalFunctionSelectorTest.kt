@@ -9,12 +9,12 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.NON_INVASIVE_B
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.SPO2
 import org.junit.Assert
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class VitalFunctionSelectorTest {
-    private val date1 = LocalDate.now()
-    private val date2 = LocalDate.now().minusDays(5)
-    private val date3 = LocalDate.now().minusMonths(2)
+    private val date1 = LocalDateTime.now()
+    private val date2 = date1.minusDays(5)
+    private val date3 = date1.minusMonths(2)
 
     // Testing selectMedianFunction
     @Test

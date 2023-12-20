@@ -9,7 +9,7 @@ class BodyWeightEntryCreator : FeedEntryCreator<BodyWeightEntry> {
             subject = line.trimmed("subject"),
             valueQuantityValue = line.number("valueQuantity_value"),
             valueQuantityUnit = line.string("valueQuantity_unit"),
-            effectiveDateTime = line.date("effectiveDateTime")
+            effectiveDateTime = line.bodyWeightDate("effectiveDateTime")
         )
     }
 

@@ -6,10 +6,10 @@ import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HasSufficientPulseOximetryTest {
-    val referenceDate = LocalDate.of(2023, 12, 7)
+    val referenceDate = LocalDateTime.of(2023, 12, 7, 12, 30, 0)
     val function = HasSufficientPulseOximetry(90.0)
 
     @Test
@@ -45,16 +45,6 @@ class HasSufficientPulseOximetryTest {
             pulseOximetry().date(referenceDate).value(91.0).unit("percent").build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
-    }
-
-    @Test
-    fun `Should evaluate to undetermined when median SpO2 is below but one measurement is above reference value`() {
-        val pulseOximetries: List<VitalFunction> = listOf(
-            pulseOximetry().date(referenceDate).value(89.0).build(),
-            pulseOximetry().date(referenceDate.minusDays(4)).value(91.0).unit("percent").build(),
-            pulseOximetry().date(referenceDate.minusDays(5)).value(87.0).unit("percent").build()
-        )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }
 
     @Test

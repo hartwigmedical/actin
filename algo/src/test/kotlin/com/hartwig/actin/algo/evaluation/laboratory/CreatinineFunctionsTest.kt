@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import org.apache.logging.log4j.util.Strings
 import org.junit.Assert
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class CreatinineFunctionsTest {
     @Test
@@ -64,8 +64,8 @@ class CreatinineFunctionsTest {
     @Test
     fun canDetermineWeight() {
         val weights = listOf(
-            ImmutableBodyWeight.builder().date(LocalDate.of(2020, 1, 1)).value(50.0).unit(Strings.EMPTY).build(),
-            ImmutableBodyWeight.builder().date(LocalDate.of(2021, 1, 1)).value(60.0).unit(Strings.EMPTY).build()
+            ImmutableBodyWeight.builder().date(LocalDateTime.of(2020, 1, 1, 12, 30, 0)).value(50.0).unit(Strings.EMPTY).build(),
+            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 1, 1, 12, 30, 0)).value(60.0).unit(Strings.EMPTY).build()
         )
         Assert.assertEquals(60.0, CreatinineFunctions.determineWeight(weights)!!, EPSILON)
         Assert.assertNull(CreatinineFunctions.determineWeight(emptyList()))

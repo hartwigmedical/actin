@@ -5,11 +5,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import org.junit.Assert
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HasBMIUpToLimitTest {
     private val function: HasBMIUpToLimit = HasBMIUpToLimit(40)
-    private val now = LocalDate.now()
+    private val now = LocalDateTime.now()
     private val lastYear = now.minusYears(1)
 
     @Test

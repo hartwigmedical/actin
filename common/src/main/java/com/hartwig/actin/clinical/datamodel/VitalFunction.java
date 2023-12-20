@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.datamodel;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class VitalFunction {
 
     @NotNull
-    public abstract LocalDate date();
+    public abstract LocalDateTime date();
 
     @NotNull
     public abstract VitalFunctionCategory category();

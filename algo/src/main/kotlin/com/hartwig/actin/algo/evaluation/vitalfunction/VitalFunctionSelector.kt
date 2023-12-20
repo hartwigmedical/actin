@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 internal object VitalFunctionSelector {
     private const val MAX_BLOOD_PRESSURES_TO_USE = 5
@@ -26,7 +26,7 @@ internal object VitalFunctionSelector {
         return if (result.isEmpty()) result else {
             val mostRecent = result[0].date()
             result.takeWhile {
-                mostRecent != LocalDate.now().plusMonths(1)
+                mostRecent != LocalDateTime.now().plusMonths(1)
                         && !it.date().isBefore(mostRecent.minusMonths(MAX_AGE_MONTHS.toLong()))
             }
         }
@@ -45,7 +45,7 @@ internal object VitalFunctionSelector {
         return if (result.isEmpty()) result else {
             val mostRecent = result[0].date()
             result.takeWhile {
-                mostRecent != LocalDate.now().plusMonths(1)
+                mostRecent != LocalDateTime.now().plusMonths(1)
                         && !it.date().isBefore(mostRecent.minusMonths(MAX_AGE_MONTHS.toLong()))
             }
         }

@@ -6,11 +6,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HasRestingHeartRateWithinBoundsTest {
 
-    val referenceDate = LocalDate.of(2023, 12, 11)
+    val referenceDate = LocalDateTime.of(2023, 12, 11, 12, 30, 0)
     val function = HasRestingHeartRateWithinBounds(60.0, 80.0)
 
     @Test

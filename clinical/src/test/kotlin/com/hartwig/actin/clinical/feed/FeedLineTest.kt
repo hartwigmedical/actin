@@ -8,6 +8,7 @@ import junit.framework.TestCase.assertTrue
 import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class FeedLineTest {
     @Test
@@ -33,6 +34,8 @@ class FeedLineTest {
 
         assertEquals(Gender.MALE, line.gender("gender"))
         assertEquals(LocalDate.of(2019, 1, 1), line.date("date"))
+        assertEquals(LocalDateTime.of(2019, 1, 1, 0, 0, 0, 0), line.vitalFunctionDate("date"))
+        assertEquals(LocalDateTime.of(2019, 1, 1, 0, 0, 0, 0), line.bodyWeightDate("date"))
         assertEquals(LocalDate.of(2019, 1, 1), line.optionalDate("date"))
 
         assertEquals(1.0, line.number("number"), EPSILON)

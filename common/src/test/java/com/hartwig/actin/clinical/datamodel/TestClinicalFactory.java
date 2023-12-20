@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.datamodel;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 public final class TestClinicalFactory {
 
     private static final LocalDate TODAY = LocalDate.now();
+    private static final LocalDateTime TODAY_TIME = LocalDateTime.now();
 
     private static final int DAYS_SINCE_QUESTIONNAIRE = 10;
     private static final int DAYS_SINCE_REGISTRATION = 15;
@@ -526,8 +528,16 @@ public final class TestClinicalFactory {
     private static List<BodyWeight> createTestBodyWeights() {
         List<BodyWeight> bodyWeights = Lists.newArrayList();
 
-        bodyWeights.add(ImmutableBodyWeight.builder().date(TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_1)).value(70D).unit("Kilogram").build());
-        bodyWeights.add(ImmutableBodyWeight.builder().date(TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_2)).value(68D).unit("Kilogram").build());
+        bodyWeights.add(ImmutableBodyWeight.builder()
+                .date(TODAY_TIME.minusDays(DAYS_SINCE_BODY_WEIGHT_1))
+                .value(70D)
+                .unit("Kilogram")
+                .build());
+        bodyWeights.add(ImmutableBodyWeight.builder()
+                .date(TODAY_TIME.minusDays(DAYS_SINCE_BODY_WEIGHT_2))
+                .value(68D)
+                .unit("Kilogram")
+                .build());
 
         return bodyWeights;
     }
@@ -536,8 +546,7 @@ public final class TestClinicalFactory {
     private static List<VitalFunction> createTestVitalFunctions() {
         List<VitalFunction> vitalFunctions = Lists.newArrayList();
 
-        vitalFunctions.add(ImmutableVitalFunction.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_BLOOD_PRESSURE))
+        vitalFunctions.add(ImmutableVitalFunction.builder().date(TODAY_TIME.minusDays(DAYS_SINCE_BLOOD_PRESSURE))
                 .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
                 .subcategory("Mean blood pressure")
                 .value(99)

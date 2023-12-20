@@ -10,11 +10,11 @@ import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class BloodPressureFunctionsTest {
 
-    private val referenceDate = LocalDate.of(2020, 11, 19)
+    private val referenceDate = LocalDateTime.of(2020, 11, 19, 12, 30, 0)
 
     @Test
     fun `Should evaluate to undetermined when no blood pressures known`() {
