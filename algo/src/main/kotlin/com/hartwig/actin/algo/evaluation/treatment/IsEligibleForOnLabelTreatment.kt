@@ -8,11 +8,10 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 
 class IsEligibleForOnLabelTreatment : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumor = record.clinical().tumor()
-        return if (tumorIsCUP(tumor)) {
+        return if (tumorIsCUP(record.clinical().tumor())) {
             EvaluationFactory.undetermined(
                 "Tumor type is CUP and eligibility for on-label treatment is therefore undetermined",
-                "Tumor type CUP - Eligibility for on-label treatment undetermined"
+                "Tumor type CUP hence eligibility for on-label treatment undetermined"
             )
         } else if (record.clinical().oncologicalHistory().isEmpty()) {
             EvaluationFactory.undetermined(
@@ -28,8 +27,6 @@ class IsEligibleForOnLabelTreatment : EvaluationFunction {
     }
 
     private fun tumorIsCUP(tumor: TumorDetails): Boolean {
-        val location = tumor.primaryTumorLocation()
-        val subLocation = tumor.primaryTumorSubLocation()
-        return location != null && subLocation != null && location == "Unknown" && subLocation == "CUP"
+        return tumor.primaryTumorLocation() == "Unknown" && tumor.primaryTumorSubLocation() == "CUP"
     }
 }
