@@ -619,9 +619,6 @@ Note for all TOXICITY rules:
 | HAS_BODY_WEIGHT_OF_AT_MOST_X           | bodyWeight > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median body weight (in kg) <= X               |
 | HAS_BMI_OF_AT_MOST_X                   | Patient BMI estimate from body weight <= X for patients between 1.5 and 2.0 m                                                                                                       |
 
-For Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up
-to 5 most recent values would be sufficient to `PASS`.
-
 ##### Rules related to blood transfusions
 
 | Rule                                                | When does a patient pass evaluation?                                                                                                                                                                          |
