@@ -420,7 +420,7 @@ public class MolecularRecordJson {
                     eligibleTrial -> ImmutableEligibleTrial.builder()
                             .title(string(eligibleTrial, "title"))
                             .countries(stringList(eligibleTrial, "countries"))
-                            .website(string(eligibleTrial, "website"))
+                            .website(string(eligibleTrial, "https://clinicaltrials.gov/study/NCT04898634"))
                             .build());
         }
 

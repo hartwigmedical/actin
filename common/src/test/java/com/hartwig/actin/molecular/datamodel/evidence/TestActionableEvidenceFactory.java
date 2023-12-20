@@ -25,7 +25,7 @@ public final class TestActionableEvidenceFactory {
                 .addExternalEligibleTrials(ImmutableEligibleTrial.builder()
                         .title("external trial")
                         .countries(emptySet())
-                        .website("website")
+                        .website("https://clinicaltrials.gov/study/NCT04898634")
                         .build())
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")
@@ -45,7 +45,7 @@ public final class TestActionableEvidenceFactory {
         return builder().addExternalEligibleTrials(ImmutableEligibleTrial.builder()
                 .title(treatment)
                 .countries(emptySet())
-                .website("website")
+                .website("https://clinicaltrials.gov/study/NCT04898634")
                 .build()).build();
     }
 

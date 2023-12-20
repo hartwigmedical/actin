@@ -178,7 +178,7 @@ public final class TestMolecularFactory {
                         .isReportable(true)
                         .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("Trial 1"))
+                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("A Phase 1/2 Randomized, Umbrella Study to Evaluate the Safety and Efficacy of Pembrolizumab Plus Enfortumab Vedotin (EV) in Combination With Investigational Agents Versus Pembrolizumab Plus EV, as First-Line Treatment for Participants With Advanced Urothelial Carcinoma (KEYMAKER-U04): Substudy 04B"))
                         .gene("PTEN")
                         .geneRole(GeneRole.TSG)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)

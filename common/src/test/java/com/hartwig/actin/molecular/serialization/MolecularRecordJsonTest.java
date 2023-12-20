@@ -117,7 +117,7 @@ public class MolecularRecordJsonTest {
                 .addExternalEligibleTrials(ImmutableEligibleTrial.builder()
                         .title("PARP trial")
                         .countries(Sets.newHashSet("Netherlands", "Germany"))
-                        .website("website")
+                        .website("https://clinicaltrials.gov/study/NCT04898634")
                         .build())
                 .addOnLabelExperimentalTreatments("PARP on label")
                 .addOffLabelExperimentalTreatments("PARP off label")

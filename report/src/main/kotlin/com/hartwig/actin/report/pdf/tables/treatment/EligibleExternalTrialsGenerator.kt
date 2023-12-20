@@ -7,6 +7,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.COMMA_SEPARATOR
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EligibleExternalTrialsGenerator(
@@ -19,19 +20,26 @@ class EligibleExternalTrialsGenerator(
 
     override fun contents(): Table {
         val colWidth = width / 5
-        val table = Tables.createFixedWidthCols(colWidth, colWidth*2, colWidth, colWidth)
+        val table = Tables.createFixedWidthCols(colWidth, (colWidth*2.25).toFloat(), (0.75 *colWidth).toFloat(), colWidth)
         table.addHeaderCell(Cells.createHeader("Event"))
         table.addHeaderCell(Cells.createHeader("Trial title"))
         table.addHeaderCell(Cells.createHeader("NCT id"))
         table.addHeaderCell(Cells.createHeader("Potentially recruiting countries"))
 
-        externalTrialsPerEvent.keySet().sorted().distinct().forEach { event ->
+        externalTrialsPerEvent.forEach { event, eligibleTrial ->
             table.addCell(Cells.createContent(event))
-            val trialList = externalTrialsPerEvent[event].joinToString(COMMA_SEPARATOR)
-            table.addCell(Cells.createContent(trialList))
-            table.addCell(Cells.createContent("nct id"))
-            table.addCell(Cells.createContent("countries"))
+            table.addCell(Cells.createContent(shortenTitle(eligibleTrial.title())))
+            table.addCell(Cells.createContent(eligibleTrial.website().substring(33))).setAction(PdfAction.createURI(eligibleTrial.website()))
+            table.addCell(Cells.createContent(eligibleTrial.countries().joinToString(COMMA_SEPARATOR)))
         }
         return makeWrapping(table)
+    }
+
+    private fun shortenTitle(title: String): String {
+        return if (title.length > 180) {
+            title.take(90).substringBeforeLast(" ") + " ... " + title.takeLast(90).substringAfter(" ")
+        } else {
+            title
+        }
     }
 }
