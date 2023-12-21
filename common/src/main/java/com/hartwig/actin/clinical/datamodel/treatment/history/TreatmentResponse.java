@@ -1,7 +1,5 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history;
 
-import com.hartwig.actin.util.ApplicationConfig;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +13,7 @@ public enum TreatmentResponse {
 
     @Nullable
     public static TreatmentResponse createFromString(@NotNull String input) {
-        switch (input.toUpperCase(ApplicationConfig.LOCALE)) {
+        switch (input.toUpperCase()) {
             case "PD":
                 return PROGRESSIVE_DISEASE;
             case "SD":

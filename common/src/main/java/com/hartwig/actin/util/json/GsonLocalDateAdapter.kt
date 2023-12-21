@@ -4,28 +4,26 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
-import java.io.IOException
 import java.time.LocalDate
 
-internal class GsonLocalDateAdapter() : TypeAdapter<LocalDate?>() {
-    @Throws(IOException::class)
-    public override fun write(writer: JsonWriter, localDate: LocalDate?) {
+class GsonLocalDateAdapter : TypeAdapter<LocalDate?>() {
+
+    override fun write(writer: JsonWriter, localDate: LocalDate?) {
         if (localDate == null) {
             writer.nullValue()
         } else {
             writer.beginObject()
             writer.name("year")
-            writer.value(localDate.getYear().toLong())
+            writer.value(localDate.year.toLong())
             writer.name("month")
-            writer.value(localDate.getMonthValue().toLong())
+            writer.value(localDate.monthValue.toLong())
             writer.name("day")
-            writer.value(localDate.getDayOfMonth().toLong())
+            writer.value(localDate.dayOfMonth.toLong())
             writer.endObject()
         }
     }
 
-    @Throws(IOException::class)
-    public override fun read(reader: JsonReader): LocalDate? {
+    override fun read(reader: JsonReader): LocalDate? {
         val firstToken: JsonToken = reader.peek()
         if (firstToken == JsonToken.NULL) {
             return null

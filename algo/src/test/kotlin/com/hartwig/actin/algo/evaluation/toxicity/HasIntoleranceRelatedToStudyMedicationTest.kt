@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.util.ApplicationConfig
 import org.junit.Test
 
 class HasIntoleranceRelatedToStudyMedicationTest {
@@ -26,8 +25,8 @@ class HasIntoleranceRelatedToStudyMedicationTest {
 
         // Actual relevant allergy
         val relevantCategory: Intolerance = ToxicityTestFactory.intolerance()
-            .category(HasIntoleranceRelatedToStudyMedication.MEDICATION_CATEGORY.uppercase(ApplicationConfig.LOCALE))
-            .clinicalStatus(HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE.uppercase(ApplicationConfig.LOCALE))
+            .category(HasIntoleranceRelatedToStudyMedication.MEDICATION_CATEGORY.uppercase())
+            .clinicalStatus(HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE.uppercase())
             .build()
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ToxicityTestFactory.withIntolerance(relevantCategory)))
 

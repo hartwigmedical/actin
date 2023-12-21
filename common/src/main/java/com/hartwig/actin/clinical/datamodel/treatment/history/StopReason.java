@@ -1,7 +1,5 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history;
 
-import com.hartwig.actin.util.ApplicationConfig;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +9,7 @@ public enum StopReason {
 
     @Nullable
     public static StopReason createFromString(@NotNull String input) {
-        String uppercase = input.toUpperCase(ApplicationConfig.LOCALE);
+        String uppercase = input.toUpperCase();
         if (uppercase.contains("PD") || uppercase.contains("PROGRESSIVE")) {
             return PROGRESSIVE_DISEASE;
         } else if (uppercase.contains("TOXICITY")) {

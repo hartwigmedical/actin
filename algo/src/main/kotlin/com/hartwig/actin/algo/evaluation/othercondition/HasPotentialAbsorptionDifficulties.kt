@@ -11,7 +11,6 @@ import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.util.ApplicationConfig
 
 class HasPotentialAbsorptionDifficulties internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -57,13 +56,7 @@ class HasPotentialAbsorptionDifficulties internal constructor(private val doidMo
         val TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY = setOf("diarrhea", "nausea", "vomit")
 
         private fun isOfCategory(complication: Complication, categoryToFind: String): Boolean {
-            return complication.categories().any {
-                it.lowercase().contains(
-                    categoryToFind.lowercase(
-                        ApplicationConfig.LOCALE
-                    )
-                )
-            }
+            return complication.categories().any { it.lowercase().contains(categoryToFind.lowercase()) }
         }
     }
 }

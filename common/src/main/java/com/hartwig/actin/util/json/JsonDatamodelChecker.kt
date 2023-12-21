@@ -5,26 +5,22 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 class JsonDatamodelChecker(private val name: String, private val datamodel: Map<String, Boolean>) {
-    fun check(`object`: JsonObject): Boolean {
-        var correct: Boolean = true
-        val keys: Set<String> = `object`.keySet()
-        for (key: String in keys) {
-            if (!datamodel.containsKey(key)) {
-                LOGGER.warn("JSON object contains key '{}' which is not expected for '{}'", key, name)
-                correct = false
-            }
-        }
-        for (datamodelEntry: Map.Entry<String, Boolean> in datamodel.entries) {
-            val isMandatory: Boolean = datamodelEntry.value
-            if (isMandatory && !keys.contains(datamodelEntry.key)) {
-                LOGGER.warn("Mandatory key '{}' missing from JSON object in '{}'", datamodelEntry.key, name)
-                correct = false
-            }
-        }
-        return correct
+    private val logger: Logger = LogManager.getLogger(JsonDatamodelChecker::class.java)
+
+    fun check(obj: JsonObject): Boolean {
+        return objectHasNoUnexpectedKeys(obj) && objectContainsAllRequiredKeys(obj)
     }
 
-    companion object {
-        private val LOGGER: Logger = LogManager.getLogger(JsonDatamodelChecker::class.java)
+    private fun objectHasNoUnexpectedKeys(obj: JsonObject): Boolean {
+        val unexpectedKeys = obj.keySet().filterNot(datamodel::containsKey)
+        unexpectedKeys.forEach { logger.warn("JSON object contains key '{}' which is not expected for '{}'", it, name) }
+        return unexpectedKeys.isEmpty()
+    }
+
+    private fun objectContainsAllRequiredKeys(obj: JsonObject): Boolean {
+        val foundKeys = obj.keySet()
+        val missingKeys = datamodel.entries.filter { (key, required) -> required && !foundKeys.contains(key) }
+        missingKeys.forEach { (key, _) -> logger.warn("Mandatory key '{}' missing from JSON object in '{}'", key, name) }
+        return missingKeys.isEmpty()
     }
 }

@@ -11,7 +11,6 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.TestPriorOtherConditionFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.util.ApplicationConfig
 import org.junit.Test
 
 class HasIntoleranceForPD1OrPDL1InhibitorsTest {
@@ -21,7 +20,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
             val record = patient(
                 listOf(
                     ToxicityTestFactory.intolerance()
-                        .name("intolerance to " + term.uppercase(ApplicationConfig.LOCALE))
+                        .name("intolerance to " + term.uppercase())
                         .build()
                 ), DOID_AUTOIMMUNE_DISEASE_OF_CARDIOVASCULAR_SYSTEM
             )

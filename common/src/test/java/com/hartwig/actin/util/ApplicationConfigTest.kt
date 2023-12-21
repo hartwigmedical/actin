@@ -7,65 +7,57 @@ import com.hartwig.actin.util.ApplicationConfig.nonOptionalValue
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val CONFIG_DIRECTORY = Resources.getResource("config").path
+private val CONFIG_FILE = Resources.getResource("config/file.empty").path
+
 class ApplicationConfigTest {
+
     @Test
-    @Throws(ParseException::class)
-    fun canRetrieveDirectoryFromConfig() {
+    fun `Should retrieve directory from config`() {
         val options = Options()
-        options.addOption("directory", true, Strings.EMPTY)
+        options.addOption("directory", true, "")
         val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_DIRECTORY))
-        Assert.assertEquals(CONFIG_DIRECTORY, nonOptionalDir(cmd, "directory"))
+        assertThat(nonOptionalDir(cmd, "directory")).isEqualTo(CONFIG_DIRECTORY)
     }
 
     @Test(expected = ParseException::class)
-    @Throws(ParseException::class)
-    fun crashOnNonExistingDirectory() {
+    fun `Should crash on non existing directory`() {
         val options = Options()
-        options.addOption("directory", true, Strings.EMPTY)
+        options.addOption("directory", true, "")
         val cmd = DefaultParser().parse(options, arrayOf("-directory", "does not exist"))
         nonOptionalDir(cmd, "directory")
     }
 
     @Test
-    @Throws(ParseException::class)
-    fun canRetrieveFileFromConfig() {
+    fun `Should retrieve file from config`() {
         val options = Options()
-        options.addOption("file", true, Strings.EMPTY)
+        options.addOption("file", true, "")
         val cmd = DefaultParser().parse(options, arrayOf("-file", CONFIG_FILE))
-        Assert.assertEquals(CONFIG_FILE, nonOptionalFile(cmd, "file"))
+        assertThat(nonOptionalFile(cmd, "file")).isEqualTo(CONFIG_FILE)
     }
 
     @Test(expected = ParseException::class)
-    @Throws(ParseException::class)
-    fun crashOnNonExistingFile() {
+    fun `Should crash on non existing file`() {
         val options = Options()
-        options.addOption("file", true, Strings.EMPTY)
+        options.addOption("file", true, "")
         val cmd = DefaultParser().parse(options, arrayOf("-file", "does not exist"))
         nonOptionalFile(cmd, "file")
     }
 
     @Test
-    @Throws(ParseException::class)
-    fun canRetrieveValueFromConfig() {
+    fun `Should retrieve value from config`() {
         val options = Options()
-        options.addOption("value", true, Strings.EMPTY)
+        options.addOption("value", true, "")
         val cmd = DefaultParser().parse(options, arrayOf("-value", "value"))
-        Assert.assertEquals("value", nonOptionalValue(cmd, "value"))
+        assertThat(nonOptionalValue(cmd, "value")).isEqualTo("value")
     }
 
     @Test(expected = ParseException::class)
-    @Throws(ParseException::class)
-    fun crashOnNonExistingValue() {
+    fun `Should crash on non existing value`() {
         val cmd = DefaultParser().parse(Options(), arrayOf())
         nonOptionalValue(cmd, "does not exist")
-    }
-
-    companion object {
-        private val CONFIG_DIRECTORY = Resources.getResource("config").path
-        private val CONFIG_FILE = Resources.getResource("config/file.empty").path
     }
 }
