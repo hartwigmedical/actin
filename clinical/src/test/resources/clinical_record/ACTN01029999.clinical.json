@@ -146,31 +146,19 @@
   ],
   "bodyWeights": [
     {
-      "date": {
-        "year": 2020,
-        "month": 8,
-        "day": 11
-      },
+      "date": "2020-08-11T00:00:00",
       "value": 61.1,
       "unit": "kilogram"
     },
     {
-      "date": {
-        "year": 2020,
-        "month": 8,
-        "day": 20
-      },
+      "date": "2020-08-20T08:43:00",
       "value": 58.9,
       "unit": "kilogram"
     }
   ],
   "vitalFunctions": [
     {
-      "date": {
-        "year": 2019,
-        "month": 4,
-        "day": 28
-      },
+      "date": "2019-04-28T13:45:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
       "subcategory": "Systolic blood pressure",
       "value": 108.0,
