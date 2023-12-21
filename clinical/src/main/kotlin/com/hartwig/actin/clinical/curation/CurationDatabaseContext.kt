@@ -82,13 +82,10 @@ data class CurationDatabaseContext(
             molecularTestCuration,
             medicationNameCuration,
             medicationDosageCuration,
-            intoleranceCuration,
-            cypInteractionCuration,
-            qtProlongingCuration
+            intoleranceCuration
         ).flatMap { it.reportUnusedConfig(extractionEvaluations) }.toSet() + listOf(
             laboratoryTranslation,
             administrationRouteTranslation,
-            bloodTransfusionTranslation,
             toxicityTranslation,
             dosageUnitTranslation
         ).flatMap { it.reportUnusedTranslations(extractionEvaluations) }
@@ -136,8 +133,8 @@ data class CurationDatabaseContext(
                 curationDir,
                 CurationDatabaseReader.COMPLICATION_TSV,
                 ComplicationConfigFactory(),
-                CurationCategory.NON_ONCOLOGICAL_HISTORY
-            ) { it.nonOncologicalHistoryEvaluatedInputs },
+                CurationCategory.COMPLICATION
+            ) { it.complicationEvaluatedInputs },
             intoleranceCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.INTOLERANCE_TSV,
