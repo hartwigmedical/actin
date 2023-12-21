@@ -17,21 +17,23 @@ class DriverLikelihoodComparator : Comparator<DriverLikelihood?> {
             }
 
             DriverLikelihood.MEDIUM -> {
-                if (driverLikelihood2 == DriverLikelihood.HIGH) {
-                    1
-                } else if (driverLikelihood2 == DriverLikelihood.MEDIUM) {
-                    0
-                } else {
-                    -1
+                when (driverLikelihood2) {
+                    DriverLikelihood.HIGH -> {
+                        1
+                    }
+
+                    DriverLikelihood.MEDIUM -> {
+                        0
+                    }
+
+                    else -> {
+                        -1
+                    }
                 }
             }
 
             DriverLikelihood.LOW -> {
                 if (driverLikelihood2 == DriverLikelihood.LOW) 0 else 1
-            }
-
-            else -> {
-                throw IllegalStateException("Cannot interpret driver Likelihood: $driverLikelihood1")
             }
         }
     }

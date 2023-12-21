@@ -1,16 +1,14 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class Virus : Driver {
-    abstract fun name(): String
-    abstract fun type(): VirusType
-
-    @JvmField
-    abstract val isReliable: Boolean
-    abstract fun integrations(): Int
-}
+data class Virus(
+    val name: String,
+    val type: VirusType,
+    val isReliable: Boolean,
+    val integrations: Int,
+    override val isReportable: Boolean,
+    override val event: String,
+    override val driverLikelihood: DriverLikelihood?,
+    override val evidence: ActionableEvidence
+) : Driver

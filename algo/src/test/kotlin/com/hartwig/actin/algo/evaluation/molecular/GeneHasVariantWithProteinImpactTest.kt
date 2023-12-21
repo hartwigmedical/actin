@@ -21,7 +21,7 @@ class GeneHasVariantWithProteinImpactTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .build()
@@ -34,11 +34,11 @@ class GeneHasVariantWithProteinImpactTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600P").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600P").build())
                         .build()
                 )
             )
@@ -49,10 +49,10 @@ class GeneHasVariantWithProteinImpactTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene B")
                         .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600E").build())
                         .build()
                 )
             )
@@ -63,11 +63,11 @@ class GeneHasVariantWithProteinImpactTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .clonalLikelihood(1.0)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600E").build())
                         .build()
                 )
             )
@@ -78,10 +78,10 @@ class GeneHasVariantWithProteinImpactTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(false)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600E").build())
                         .build()
                 )
             )
@@ -92,11 +92,11 @@ class GeneHasVariantWithProteinImpactTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .clonalLikelihood(0.3)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600E").build())
                         .build()
                 )
             )
@@ -107,12 +107,12 @@ class GeneHasVariantWithProteinImpactTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600P").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600P").build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.createMinimal().hgvsProteinImpact("V600E").build())
                         .build()
                 )
             )

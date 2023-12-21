@@ -32,7 +32,7 @@ class EvaluatedCohortsInterpreterTest {
     @Test
     fun shouldIndicateDriverIsActionableIfExternalTrialsExist() {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
-        val driver: Driver = TestVariantFactory.builder()
+        val driver: Driver = TestVariantFactory.createMinimal()
             .event(CLOSED_COHORT)
             .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("external"))
             .build()
@@ -42,7 +42,7 @@ class EvaluatedCohortsInterpreterTest {
     @Test
     fun shouldIndicateDriverIsActionableIfApprovedTreatmentsExist() {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
-        val driver: Driver = TestVariantFactory.builder()
+        val driver: Driver = TestVariantFactory.createMinimal()
             .event(CLOSED_COHORT)
             .evidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
             .build()
@@ -56,7 +56,7 @@ class EvaluatedCohortsInterpreterTest {
         private const val ELIGIBLE_COHORT_2 = "ELIGIBLE2"
         private const val ELIGIBLE_EVENT = "event"
         private fun driverForEvent(event: String): Driver {
-            return TestVariantFactory.builder().event(event).build()
+            return TestVariantFactory.createMinimal().event(event).build()
         }
 
         private fun evaluatedCohort(

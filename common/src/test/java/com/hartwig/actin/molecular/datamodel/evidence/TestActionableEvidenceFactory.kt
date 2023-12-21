@@ -1,60 +1,48 @@
 package com.hartwig.actin.molecular.datamodel.evidence
 
 object TestActionableEvidenceFactory {
-    @JvmStatic
-    fun builder(): ImmutableActionableEvidence.Builder {
-        return ImmutableActionableEvidence.builder()
-    }
 
-    @JvmStatic
     fun createEmpty(): ActionableEvidence {
-        return builder().build()
+        return ActionableEvidence()
     }
 
-    @JvmStatic
     fun createExhaustive(): ActionableEvidence {
-        return builder().addApprovedTreatments("approved")
-            .addExternalEligibleTrials("external trial")
-            .addOnLabelExperimentalTreatments("on-label experimental")
-            .addOffLabelExperimentalTreatments("off-label experimental")
-            .addPreClinicalTreatments("pre-clinical")
-            .addKnownResistantTreatments("known resistant")
-            .addSuspectResistantTreatments("suspect resistant")
-            .build()
+        return ActionableEvidence(
+            approvedTreatments = setOf("approved"),
+            externalEligibleTrials = setOf("external trial"),
+            onLabelExperimentalTreatments = setOf("on-label experimental"),
+            offLabelExperimentalTreatments = setOf("off-label experimental"),
+            preClinicalTreatments = setOf("pre-clinical"),
+            knownResistantTreatments = setOf("known resistant"),
+            suspectResistantTreatments = setOf("suspect resistant")
+        )
     }
 
-    @JvmStatic
     fun withApprovedTreatment(treatment: String): ActionableEvidence {
-        return builder().addApprovedTreatments(treatment).build()
+        return ActionableEvidence(approvedTreatments = setOf(treatment))
     }
 
-    @JvmStatic
     fun withExternalEligibleTrial(treatment: String): ActionableEvidence {
-        return builder().addExternalEligibleTrials(treatment).build()
+        return ActionableEvidence(externalEligibleTrials = setOf(treatment))
     }
 
-    @JvmStatic
     fun withOnLabelExperimentalTreatment(treatment: String): ActionableEvidence {
-        return builder().addOnLabelExperimentalTreatments(treatment).build()
+        return ActionableEvidence(onLabelExperimentalTreatments = setOf(treatment))
     }
 
-    @JvmStatic
     fun withOffLabelExperimentalTreatment(treatment: String): ActionableEvidence {
-        return builder().addOffLabelExperimentalTreatments(treatment).build()
+        return ActionableEvidence(offLabelExperimentalTreatments = setOf(treatment))
     }
 
-    @JvmStatic
     fun withPreClinicalTreatment(treatment: String): ActionableEvidence {
-        return builder().addPreClinicalTreatments(treatment).build()
+        return ActionableEvidence(preClinicalTreatments = setOf(treatment))
     }
 
-    @JvmStatic
     fun withKnownResistantTreatment(treatment: String): ActionableEvidence {
-        return builder().addKnownResistantTreatments(treatment).build()
+        return ActionableEvidence(knownResistantTreatments = setOf(treatment))
     }
 
-    @JvmStatic
     fun withSuspectResistantTreatment(treatment: String): ActionableEvidence {
-        return builder().addSuspectResistantTreatments(treatment).build()
+        return ActionableEvidence(suspectResistantTreatments = setOf(treatment))
     }
 }

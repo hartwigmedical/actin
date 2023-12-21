@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
@@ -10,7 +11,6 @@ import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import org.junit.Test
 
 class GeneIsWildTypeTest {
@@ -23,7 +23,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .driverLikelihood(DriverLikelihood.HIGH)
@@ -36,7 +36,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .driverLikelihood(DriverLikelihood.HIGH)
@@ -49,7 +49,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .driverLikelihood(DriverLikelihood.LOW)
@@ -68,7 +68,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(
-                    TestCopyNumberFactory.builder()
+                    TestCopyNumberFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.NO_EFFECT)
@@ -80,7 +80,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(
-                    TestCopyNumberFactory.builder()
+                    TestCopyNumberFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
@@ -98,7 +98,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHomozygousDisruption(
-                    TestHomozygousDisruptionFactory.builder()
+                    TestHomozygousDisruptionFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
@@ -111,7 +111,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomozygousDisruption(
-                    TestHomozygousDisruptionFactory.builder()
+                    TestHomozygousDisruptionFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.NO_EFFECT)
@@ -124,7 +124,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHomozygousDisruption(
-                    TestHomozygousDisruptionFactory.builder()
+                    TestHomozygousDisruptionFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
@@ -143,7 +143,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withDisruption(
-                    TestDisruptionFactory.builder()
+                    TestDisruptionFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
@@ -156,7 +156,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDisruption(
-                    TestDisruptionFactory.builder()
+                    TestDisruptionFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.NO_EFFECT)
@@ -169,7 +169,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withDisruption(
-                    TestDisruptionFactory.builder()
+                    TestDisruptionFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
@@ -188,7 +188,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withFusion(
-                    TestFusionFactory.builder()
+                    TestFusionFactory.createMinimal()
                         .geneStart("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
@@ -200,7 +200,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withFusion(
-                    TestFusionFactory.builder()
+                    TestFusionFactory.createMinimal()
                         .geneEnd("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
@@ -212,7 +212,7 @@ class GeneIsWildTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withFusion(
-                    TestFusionFactory.builder()
+                    TestFusionFactory.createMinimal()
                         .geneStart("gene A")
                         .isReportable(true)
                         .proteinEffect(ProteinEffect.NO_EFFECT)

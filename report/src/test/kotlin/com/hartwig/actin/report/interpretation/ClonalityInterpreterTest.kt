@@ -15,7 +15,7 @@ class ClonalityInterpreterTest {
 
     companion object {
         private fun create(clonalLikelihood: Double): Variant {
-            return TestVariantFactory.builder().clonalLikelihood(clonalLikelihood).build()
+            return TestVariantFactory.createMinimal().clonalLikelihood(clonalLikelihood).build()
         }
     }
 }

@@ -1,8 +1,7 @@
 package com.hartwig.actin.molecular.sort.driver
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DriverLikelihoodComparatorTest {
@@ -12,11 +11,11 @@ class DriverLikelihoodComparatorTest {
         val medium = DriverLikelihood.MEDIUM
         val low = DriverLikelihood.LOW
         val nothing: DriverLikelihood? = null
-        val driverLikelihoods: List<DriverLikelihood?> = Lists.newArrayList(medium, low, high, nothing)
-        driverLikelihoods.sort(DriverLikelihoodComparator())
-        Assert.assertEquals(high, driverLikelihoods[0])
-        Assert.assertEquals(medium, driverLikelihoods[1])
-        Assert.assertEquals(low, driverLikelihoods[2])
-        Assert.assertEquals(nothing, driverLikelihoods[3])
+        val driverLikelihoods = listOf(medium, low, high, nothing).sortedWith(DriverLikelihoodComparator())
+
+        assertThat(driverLikelihoods[0]).isEqualTo(high)
+        assertThat(driverLikelihoods[1]).isEqualTo(medium)
+        assertThat(driverLikelihoods[2]).isEqualTo(low)
+        assertThat(driverLikelihoods[3]).isEqualTo(nothing)
     }
 }

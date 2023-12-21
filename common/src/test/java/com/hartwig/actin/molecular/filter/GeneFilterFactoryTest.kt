@@ -5,21 +5,21 @@ import com.hartwig.actin.molecular.filter.GeneFilterFactory.createFromKnownGenes
 import com.hartwig.serve.datamodel.common.GeneRole
 import com.hartwig.serve.datamodel.gene.ImmutableKnownGene
 import com.hartwig.serve.datamodel.gene.KnownGene
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.util.Set
 
 class GeneFilterFactoryTest {
+
     @Test
-    fun canCreateAlwaysValid() {
-        Assert.assertNotNull(createAlwaysValid())
+    fun `Should create always valid`() {
+        assertThat(createAlwaysValid()).isNull()
     }
 
     @Test
-    fun canCreateFromKnownGenes() {
+    fun `Should filter for known genes`() {
         val knownGene: KnownGene = ImmutableKnownGene.builder().gene("gene A").geneRole(GeneRole.UNKNOWN).build()
-        val filter = createFromKnownGenes(Set.of(knownGene))
-        Assert.assertTrue(filter.include("gene A"))
-        Assert.assertFalse(filter.include("gene B"))
+        val filter = createFromKnownGenes(setOf(knownGene))
+        assertThat(filter.include("gene A")).isTrue
+        assertThat(filter.include("gene B")).isFalse
     }
 }

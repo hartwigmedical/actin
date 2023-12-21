@@ -18,7 +18,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     null,
-                    TestVariantFactory.builder().gene(MolecularConstants.HRD_GENES.iterator().next()).isReportable(false).build()
+                    TestVariantFactory.createMinimal().gene(MolecularConstants.HRD_GENES.iterator().next()).isReportable(false).build()
                 )
             )
         )
@@ -27,7 +27,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     null,
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene(MolecularConstants.HRD_GENES.iterator().next())
                         .isReportable(true)
                         .isBiallelic(true)
@@ -40,7 +40,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     null,
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene(MolecularConstants.HRD_GENES.iterator().next())
                         .isReportable(true)
                         .isBiallelic(false)
@@ -53,7 +53,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     true,
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene(MolecularConstants.HRD_GENES.iterator().next())
                         .isReportable(true)
                         .isBiallelic(false)
@@ -66,7 +66,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     true,
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene(MolecularConstants.HRD_GENES.iterator().next())
                         .isReportable(true)
                         .isBiallelic(true)
@@ -79,7 +79,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
                     true,
-                    TestCopyNumberFactory.builder()
+                    TestCopyNumberFactory.createMinimal()
                         .type(CopyNumberType.LOSS)
                         .gene(MolecularConstants.HRD_GENES.iterator().next())
                         .build()
@@ -91,7 +91,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndHomozygousDisruption(
                     true,
-                    TestHomozygousDisruptionFactory.builder().gene(MolecularConstants.HRD_GENES.iterator().next()).build()
+                    TestHomozygousDisruptionFactory.createMinimal().gene(MolecularConstants.HRD_GENES.iterator().next()).build()
                 )
             )
         )
@@ -100,7 +100,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
                     true,
-                    TestDisruptionFactory.builder().gene(MolecularConstants.HRD_GENES.iterator().next()).build()
+                    TestDisruptionFactory.createMinimal().gene(MolecularConstants.HRD_GENES.iterator().next()).build()
                 )
             )
         )
@@ -109,7 +109,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     true,
-                    TestVariantFactory.builder().gene(MolecularConstants.HRD_GENES.iterator().next()).isReportable(false).build()
+                    TestVariantFactory.createMinimal().gene(MolecularConstants.HRD_GENES.iterator().next()).isReportable(false).build()
                 )
             )
         )
@@ -118,7 +118,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     true,
-                    TestVariantFactory.builder().gene("other gene").isReportable(true).isBiallelic(false).build()
+                    TestVariantFactory.createMinimal().gene("other gene").isReportable(true).isBiallelic(false).build()
                 )
             )
         )
@@ -127,7 +127,7 @@ class IsHomologousRepairDeficientTest {
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     false,
-                    TestVariantFactory.builder().gene(MolecularConstants.HRD_GENES.iterator().next()).isReportable(true).build()
+                    TestVariantFactory.createMinimal().gene(MolecularConstants.HRD_GENES.iterator().next()).isReportable(true).build()
                 )
             )
         )

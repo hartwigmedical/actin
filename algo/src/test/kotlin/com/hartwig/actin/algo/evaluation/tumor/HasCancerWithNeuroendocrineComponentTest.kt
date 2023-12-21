@@ -95,13 +95,15 @@ class HasCancerWithNeuroendocrineComponentTest {
                             ImmutableMolecularDrivers.builder()
                                 .from(base.molecular().drivers())
                                 .addCopyNumbers(
-                                    TestCopyNumberFactory.builder()
+                                    TestCopyNumberFactory.createMinimal()
                                         .type(CopyNumberType.LOSS)
                                         .isReportable(true)
                                         .gene("TP53")
                                         .build()
                                 )
-                                .addHomozygousDisruptions(TestHomozygousDisruptionFactory.builder().isReportable(true).gene("RB1").build())
+                                .addHomozygousDisruptions(
+                                    TestHomozygousDisruptionFactory.createMinimal().isReportable(true).gene("RB1").build()
+                                )
                                 .build()
                         )
                         .build()

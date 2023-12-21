@@ -1,13 +1,17 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class CopyNumber : Driver, GeneAlteration {
-    abstract fun type(): CopyNumberType
-    abstract fun minCopies(): Int
-    abstract fun maxCopies(): Int
-}
+data class CopyNumber(
+    val type: CopyNumberType,
+    val minCopies: Int,
+    val maxCopies: Int,
+    override val isReportable: Boolean,
+    override val isAssociatedWithDrugResistance: Boolean?,
+    override val event: String,
+    override val driverLikelihood: DriverLikelihood?,
+    override val evidence: ActionableEvidence,
+    override val gene: String,
+    override val geneRole: GeneRole,
+    override val proteinEffect: ProteinEffect
+) : Driver, GeneAlteration

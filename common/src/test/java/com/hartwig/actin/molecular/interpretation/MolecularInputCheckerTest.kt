@@ -5,63 +5,63 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory.createValidForGe
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isCodon
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHlaAllele
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isProteinImpact
-import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularInputCheckerTest {
+
     @Test
-    fun canDetermineWhetherGeneIsValid() {
+    fun `Should determine whether gene is valid`() {
         val alwaysValid = MolecularInputChecker(createAlwaysValid())
         val specific = MolecularInputChecker(createValidForGenes("valid"))
-        Assert.assertTrue(alwaysValid.isGene("valid"))
-        Assert.assertTrue(specific.isGene("valid"))
-        Assert.assertTrue(alwaysValid.isGene("invalid"))
-        Assert.assertFalse(specific.isGene("invalid"))
+        assertThat(alwaysValid.isGene("valid")).isTrue
+        assertThat(specific.isGene("valid")).isTrue
+        assertThat(alwaysValid.isGene("invalid")).isTrue
+        assertThat(specific.isGene("invalid")).isFalse
     }
 
     @Test
-    fun canDetermineIfStringIsHlaAllele() {
-        Assert.assertTrue(isHlaAllele("A*02:01"))
-        Assert.assertFalse(isHlaAllele("HLA-A*02:01"))
-        Assert.assertFalse(isHlaAllele("A*02"))
-        Assert.assertFalse(isHlaAllele("A:01*02"))
+    fun `Should determine if string is HLA allele`() {
+        assertThat(isHlaAllele("A*02:01")).isTrue
+        assertThat(isHlaAllele("HLA-A*02:01")).isFalse
+        assertThat(isHlaAllele("A*02")).isFalse
+        assertThat(isHlaAllele("A:01*02")).isFalse
     }
 
     @Test
-    fun canDetermineIfStringIsProteinImpact() {
-        Assert.assertTrue(isProteinImpact("?"))
-        Assert.assertTrue(isProteinImpact("V600="))
-        Assert.assertTrue(isProteinImpact("V600E"))
-        Assert.assertTrue(isProteinImpact("V600*"))
-        Assert.assertTrue(isProteinImpact("V600fs"))
-        Assert.assertTrue(isProteinImpact("M1X"))
-        Assert.assertTrue(isProteinImpact("H167_N173del"))
-        Assert.assertTrue(isProteinImpact("N771_N773dup"))
-        Assert.assertTrue(isProteinImpact("Ter1211Cext*?"))
-        Assert.assertFalse(isProteinImpact(Strings.EMPTY))
-        Assert.assertFalse(isProteinImpact("MG"))
-        Assert.assertFalse(isProteinImpact("M0X"))
-        Assert.assertFalse(isProteinImpact("not a protein impact"))
-        Assert.assertFalse(isProteinImpact("Val600Glu"))
-        Assert.assertFalse(isProteinImpact("600"))
-        Assert.assertFalse(isProteinImpact("V600"))
-        Assert.assertFalse(isProteinImpact("600E"))
-        Assert.assertFalse(isProteinImpact("v600e"))
-        Assert.assertFalse(isProteinImpact("BRAF"))
+    fun `Should determine if string is protein impact`() {
+        assertThat(isProteinImpact("?")).isTrue
+        assertThat(isProteinImpact("V600=")).isTrue
+        assertThat(isProteinImpact("V600E")).isTrue
+        assertThat(isProteinImpact("V600*")).isTrue
+        assertThat(isProteinImpact("V600fs")).isTrue
+        assertThat(isProteinImpact("M1X")).isTrue
+        assertThat(isProteinImpact("H167_N173del")).isTrue
+        assertThat(isProteinImpact("N771_N773dup")).isTrue
+        assertThat(isProteinImpact("Ter1211Cext*?")).isTrue
+        assertThat(isProteinImpact("")).isFalse
+        assertThat(isProteinImpact("MG")).isFalse
+        assertThat(isProteinImpact("M0X")).isFalse
+        assertThat(isProteinImpact("not a protein impact")).isFalse
+        assertThat(isProteinImpact("Val600Glu")).isFalse
+        assertThat(isProteinImpact("600")).isFalse
+        assertThat(isProteinImpact("V600")).isFalse
+        assertThat(isProteinImpact("600E")).isFalse
+        assertThat(isProteinImpact("v600e")).isFalse
+        assertThat(isProteinImpact("BRAF")).isFalse
     }
 
     @Test
-    fun canDetermineIfStringIsCodon() {
-        Assert.assertTrue(isCodon("V600"))
-        Assert.assertTrue(isCodon("M1"))
-        Assert.assertFalse(isCodon(Strings.EMPTY))
-        Assert.assertFalse(isCodon("M"))
-        Assert.assertFalse(isCodon("M0"))
-        Assert.assertFalse(isCodon("not a codon"))
-        Assert.assertFalse(isCodon("Val600"))
-        Assert.assertFalse(isCodon("600"))
-        Assert.assertFalse(isCodon("v600"))
-        Assert.assertFalse(isCodon("BRAF"))
+    fun `Should determine if string is codon`() {
+        assertThat(isCodon("V600")).isTrue
+        assertThat(isCodon("M1")).isTrue
+        assertThat(isCodon("")).isFalse
+        assertThat(isCodon("M")).isFalse
+        assertThat(isCodon("M0")).isFalse
+        assertThat(isCodon("not a codon")).isFalse
+        assertThat(isCodon("Val600")).isFalse
+        assertThat(isCodon("600")).isFalse
+        assertThat(isCodon("v600")).isFalse
+        assertThat(isCodon("BRAF")).isFalse
     }
 }

@@ -1,9 +1,14 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class HomozygousDisruption : Driver, GeneAlteration
+data class HomozygousDisruption(
+    override val isReportable: Boolean,
+    override val event: String,
+    override val driverLikelihood: DriverLikelihood?,
+    override val evidence: ActionableEvidence,
+    override val gene: String,
+    override val geneRole: GeneRole,
+    override val proteinEffect: ProteinEffect,
+    override val isAssociatedWithDrugResistance: Boolean?
+) : Driver, GeneAlteration

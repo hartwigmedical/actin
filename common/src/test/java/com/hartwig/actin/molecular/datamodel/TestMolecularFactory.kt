@@ -1,252 +1,280 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.google.common.collect.Sets
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCupPrediction
+import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
+import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.molecular.datamodel.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.Fusion
+import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import org.apache.logging.log4j.util.Strings
-import java.util.List
+import com.hartwig.actin.molecular.datamodel.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
+import com.hartwig.actin.molecular.datamodel.driver.VariantType
+import com.hartwig.actin.molecular.datamodel.driver.Virus
+import com.hartwig.actin.molecular.datamodel.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
+import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
+import java.time.LocalDate
 
 object TestMolecularFactory {
     private val TODAY: LocalDate = LocalDate.now()
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
-    @JvmStatic
     fun createMinimalTestMolecularRecord(): MolecularRecord {
-        return ImmutableMolecularRecord.builder()
-            .patientId(TestDataFactory.TEST_PATIENT)
-            .sampleId(TestDataFactory.TEST_SAMPLE)
-            .type(ExperimentType.WHOLE_GENOME)
-            .refGenomeVersion(RefGenomeVersion.V37)
-            .evidenceSource(Strings.EMPTY)
-            .externalTrialSource(Strings.EMPTY)
-            .containsTumorCells(true)
-            .hasSufficientQualityAndPurity(true)
-            .hasSufficientQuality(true)
-            .characteristics(ImmutableMolecularCharacteristics.builder().build())
-            .drivers(ImmutableMolecularDrivers.builder().build())
-            .immunology(ImmutableMolecularImmunology.builder().isReliable(false).build())
-            .build()
+        return MolecularRecord(
+            patientId = TestDataFactory.TEST_PATIENT,
+            sampleId = TestDataFactory.TEST_SAMPLE,
+            type = ExperimentType.WHOLE_GENOME,
+            refGenomeVersion = RefGenomeVersion.V37,
+            evidenceSource = "",
+            externalTrialSource = "",
+            containsTumorCells = true,
+            hasSufficientQualityAndPurity = true,
+            hasSufficientQuality = true,
+            characteristics = createMinimalTestCharacteristics(),
+            drivers = createMinimalMolecularDrivers(),
+            immunology = MolecularImmunology(isReliable = false, hlaAlleles = emptySet()),
+            date = null,
+            pharmaco = emptySet()
+        )
     }
 
-    @JvmStatic
     fun createProperTestMolecularRecord(): MolecularRecord {
-        return ImmutableMolecularRecord.builder()
-            .from(createMinimalTestMolecularRecord())
-            .date(TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()))
-            .evidenceSource("kb")
-            .externalTrialSource("trial kb")
-            .characteristics(createProperTestCharacteristics())
-            .drivers(createProperTestDrivers())
-            .immunology(createProperTestImmunology())
-            .pharmaco(createProperTestPharmaco())
-            .build()
+        return createMinimalTestMolecularRecord().copy(
+            date = TODAY.minusDays(DAYS_SINCE_MOLECULAR_ANALYSIS.toLong()),
+            evidenceSource = "kb",
+            externalTrialSource = "trial kb",
+            characteristics = createProperTestCharacteristics(),
+            drivers = createProperTestDrivers(),
+            immunology = createProperTestImmunology(),
+            pharmaco = createProperTestPharmaco()
+        )
     }
 
-    @JvmStatic
     fun createExhaustiveTestMolecularRecord(): MolecularRecord {
-        return ImmutableMolecularRecord.builder()
-            .from(createProperTestMolecularRecord())
-            .characteristics(createExhaustiveTestCharacteristics())
-            .drivers(createExhaustiveTestDrivers())
-            .build()
+        return createProperTestMolecularRecord().copy(
+            characteristics = createExhaustiveTestCharacteristics(),
+            drivers = createExhaustiveTestDrivers()
+        )
+    }
+
+    private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
+        return MolecularCharacteristics(null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 
     private fun createProperTestCharacteristics(): MolecularCharacteristics {
-        return ImmutableMolecularCharacteristics.builder()
-            .purity(0.98)
-            .ploidy(3.1)
-            .predictedTumorOrigin(createProperPredictedTumorOrigin())
-            .isMicrosatelliteUnstable(false)
-            .homologousRepairScore(0.45)
-            .isHomologousRepairDeficient(false)
-            .tumorMutationalBurden(13.71)
-            .hasHighTumorMutationalBurden(true)
-            .tumorMutationalBurdenEvidence(TestActionableEvidenceFactory.withApprovedTreatment("Pembro"))
-            .tumorMutationalLoad(185)
-            .hasHighTumorMutationalLoad(true)
-            .build()
+        return MolecularCharacteristics(
+            purity = 0.98,
+            ploidy = 3.1,
+            predictedTumorOrigin = createProperPredictedTumorOrigin(),
+            isMicrosatelliteUnstable = false,
+            homologousRepairScore = 0.45,
+            isHomologousRepairDeficient = false,
+            tumorMutationalBurden = 13.71,
+            hasHighTumorMutationalBurden = true,
+            tumorMutationalBurdenEvidence = TestActionableEvidenceFactory.withApprovedTreatment("Pembro"),
+            tumorMutationalLoad = 185,
+            hasHighTumorMutationalLoad = true,
+            microsatelliteEvidence = null,
+            tumorMutationalLoadEvidence = null,
+            homologousRepairEvidence = null
+        )
     }
 
-    private fun createProperPredictedTumorOrigin(): ImmutablePredictedTumorOrigin {
-        return ImmutablePredictedTumorOrigin.builder()
-            .predictions(
-                List.of(
-                    ImmutableCupPrediction.builder()
-                        .cancerType("Melanoma")
-                        .likelihood(0.996)
-                        .snvPairwiseClassifier(0.979)
-                        .genomicPositionClassifier(0.99)
-                        .featureClassifier(0.972)
-                        .build(),
-                    ImmutableCupPrediction.builder()
-                        .cancerType("Lung")
-                        .likelihood(0.001)
-                        .snvPairwiseClassifier(0.0009)
-                        .genomicPositionClassifier(0.011)
-                        .featureClassifier(0.0102)
-                        .build(),
-                    ImmutableCupPrediction.builder()
-                        .cancerType("Esophagus/Stomach")
-                        .likelihood(0.0016)
-                        .snvPairwiseClassifier(0.0004)
-                        .genomicPositionClassifier(0.006)
-                        .featureClassifier(0.0002)
-                        .build()
+    private fun createProperPredictedTumorOrigin(): PredictedTumorOrigin {
+        return PredictedTumorOrigin(
+            predictions = listOf(
+                CupPrediction(
+                    cancerType = "Melanoma",
+                    likelihood = 0.996,
+                    snvPairwiseClassifier = 0.979,
+                    genomicPositionClassifier = 0.99,
+                    featureClassifier = 0.972,
+                ),
+                CupPrediction(
+                    cancerType = "Lung",
+                    likelihood = 0.001,
+                    snvPairwiseClassifier = 0.0009,
+                    genomicPositionClassifier = 0.011,
+                    featureClassifier = 0.0102
+                ),
+                CupPrediction(
+                    cancerType = "Esophagus/Stomach",
+                    likelihood = 0.0016,
+                    snvPairwiseClassifier = 0.0004,
+                    genomicPositionClassifier = 0.006,
+                    featureClassifier = 0.0002
                 )
             )
-            .build()
+        )
     }
 
     private fun createExhaustiveTestCharacteristics(): MolecularCharacteristics {
-        return ImmutableMolecularCharacteristics.builder()
-            .from(createProperTestCharacteristics())
-            .microsatelliteEvidence(TestActionableEvidenceFactory.createExhaustive())
-            .homologousRepairEvidence(TestActionableEvidenceFactory.createExhaustive())
-            .tumorMutationalBurdenEvidence(TestActionableEvidenceFactory.createExhaustive())
-            .tumorMutationalLoadEvidence(TestActionableEvidenceFactory.createExhaustive())
-            .build()
+        return createProperTestCharacteristics().copy(
+            microsatelliteEvidence = TestActionableEvidenceFactory.createExhaustive(),
+            homologousRepairEvidence = TestActionableEvidenceFactory.createExhaustive(),
+            tumorMutationalBurdenEvidence = TestActionableEvidenceFactory.createExhaustive(),
+            tumorMutationalLoadEvidence = TestActionableEvidenceFactory.createExhaustive()
+        )
     }
 
+    private fun createMinimalMolecularDrivers() = MolecularDrivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
+
     private fun createProperTestDrivers(): MolecularDrivers {
-        return ImmutableMolecularDrivers.builder()
-            .addVariants(
-                TestVariantFactory.builder()
-                    .isReportable(true)
-                    .event("BRAF V600E")
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .evidence(TestActionableEvidenceFactory.withApprovedTreatment("Vemurafenib"))
-                    .gene("BRAF")
-                    .geneRole(GeneRole.ONCO)
-                    .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-                    .isAssociatedWithDrugResistance(true)
-                    .type(VariantType.SNV)
-                    .variantCopyNumber(4.1)
-                    .totalCopyNumber(6.0)
-                    .isBiallelic(false)
-                    .isHotspot(true)
-                    .clonalLikelihood(1.0)
-                    .canonicalImpact(
-                        TestTranscriptImpactFactory.builder()
-                            .transcriptId("ENST00000288602")
-                            .hgvsCodingImpact("c.1799T>A")
-                            .hgvsProteinImpact("p.V600E")
-                            .affectedCodon(600)
-                            .isSpliceRegion(false)
-                            .addEffects(VariantEffect.MISSENSE)
-                            .codingEffect(CodingEffect.MISSENSE)
-                            .build()
-                    )
-                    .build()
+        return createMinimalMolecularDrivers().copy(
+            variants = setOf(
+                Variant(
+                    isReportable = true,
+                    event = "BRAF V600E",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestActionableEvidenceFactory.withApprovedTreatment("Vemurafenib"),
+                    gene = "BRAF",
+                    geneRole = GeneRole.ONCO,
+                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                    isAssociatedWithDrugResistance = true,
+                    type = VariantType.SNV,
+                    variantCopyNumber = 4.1,
+                    totalCopyNumber = 6.0,
+                    isBiallelic = false,
+                    isHotspot = true,
+                    clonalLikelihood = 1.0,
+                    canonicalImpact = TranscriptImpact(
+                        transcriptId = "ENST00000288602",
+                        hgvsCodingImpact = "c.1799T>A",
+                        hgvsProteinImpact = "p.V600E",
+                        affectedCodon = 600,
+                        isSpliceRegion = false,
+                        effects = setOf(VariantEffect.MISSENSE),
+                        codingEffect = CodingEffect.MISSENSE,
+                        affectedExon = null
+                    ),
+                    otherImpacts = emptySet(),
+                    phaseGroups = null
+                )
+            ),
+            copyNumbers = setOf(
+                CopyNumber(
+                    isReportable = true,
+                    event = "PTEN del",
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = TestActionableEvidenceFactory.withExternalEligibleTrial("Trial 1"),
+                    gene = "PTEN",
+                    geneRole = GeneRole.TSG,
+                    proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
+                    type = CopyNumberType.LOSS,
+                    minCopies = 0,
+                    maxCopies = 0,
+                    isAssociatedWithDrugResistance = null
+                )
             )
-            .addCopyNumbers(
-                TestCopyNumberFactory.builder()
-                    .isReportable(true)
-                    .event("PTEN del")
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("Trial 1"))
-                    .gene("PTEN")
-                    .geneRole(GeneRole.TSG)
-                    .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
-                    .type(CopyNumberType.LOSS)
-                    .minCopies(0)
-                    .maxCopies(0)
-                    .build()
-            )
-            .build()
+        )
     }
 
     private fun createProperTestImmunology(): MolecularImmunology {
-        return ImmutableMolecularImmunology.builder()
-            .isReliable(true)
-            .addHlaAlleles(TestHlaAlleleFactory.builder().name("A*02:01").tumorCopyNumber(1.2).hasSomaticMutations(false).build())
-            .build()
+        return MolecularImmunology(
+            isReliable = true,
+            hlaAlleles = setOf(HlaAllele(name = "A*02:01", tumorCopyNumber = 1.2, hasSomaticMutations = false)),
+        )
     }
 
     private fun createProperTestPharmaco(): Set<PharmacoEntry> {
-        val pharmacoEntries: MutableSet<PharmacoEntry> = Sets.newHashSet<PharmacoEntry>()
-        pharmacoEntries.add(
-            ImmutablePharmacoEntry.builder()
-                .gene("DPYD")
-                .addHaplotypes(TestPharmacoFactory.builder().name("*1 HOM").function("Normal function").build())
-                .build()
+        return setOf(
+            PharmacoEntry(
+                gene = "DPYD",
+                haplotypes = setOf(Haplotype(name = "*1 HOM", function = "Normal function")),
+            ),
+            PharmacoEntry(
+                gene = "UGT1A1",
+                haplotypes = setOf(
+                    Haplotype(name = "*1 HET", function = "Normal function"),
+                    Haplotype(name = "*28 HET", function = "Reduced function"),
+                )
+            )
         )
-        pharmacoEntries.add(
-            ImmutablePharmacoEntry.builder()
-                .gene("UGT1A1")
-                .addHaplotypes(TestPharmacoFactory.builder().name("*1 HET").function("Normal function").build())
-                .addHaplotypes(TestPharmacoFactory.builder().name("*28 HET").function("Reduced function").build())
-                .build()
-        )
-        return pharmacoEntries
     }
 
     private fun createExhaustiveTestDrivers(): MolecularDrivers {
-        return ImmutableMolecularDrivers.builder()
-            .from(createProperTestDrivers())
-            .addCopyNumbers(
-                TestCopyNumberFactory.builder()
-                    .isReportable(true)
-                    .event("MYC amp")
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .evidence(TestActionableEvidenceFactory.createExhaustive())
-                    .gene("MYC")
-                    .type(CopyNumberType.FULL_GAIN)
-                    .minCopies(38)
-                    .maxCopies(38)
-                    .build()
+        val proper = createProperTestDrivers()
+        return proper.copy(
+            copyNumbers = proper.copyNumbers + CopyNumber(
+                isReportable = true,
+                event = "MYC amp",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestActionableEvidenceFactory.createExhaustive(),
+                gene = "MYC",
+                type = CopyNumberType.FULL_GAIN,
+                minCopies = 38,
+                maxCopies = 38,
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null
+            ),
+            homozygousDisruptions = proper.homozygousDisruptions + HomozygousDisruption(
+                isReportable = true,
+                event = "PTEN hom disruption",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestActionableEvidenceFactory.createExhaustive(),
+                gene = "PTEN",
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null
+            ),
+            disruptions = proper.disruptions + Disruption(
+                isReportable = true,
+                event = "PTEN disruption",
+                driverLikelihood = DriverLikelihood.LOW,
+                evidence = TestActionableEvidenceFactory.createExhaustive(),
+                gene = "PTEN",
+                type = DisruptionType.DEL,
+                junctionCopyNumber = 1.1,
+                undisruptedCopyNumber = 1.8,
+                regionType = RegionType.EXONIC,
+                codingContext = CodingContext.CODING,
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+                clusterGroup = 0
+            ),
+            fusions = proper.fusions + Fusion(
+                isReportable = true,
+                event = "EML4 - ALK fusion",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestActionableEvidenceFactory.createExhaustive(),
+                geneStart = "EML4",
+                geneTranscriptStart = "ENST00000318522",
+                fusedExonUp = 6,
+                geneEnd = "ALK",
+                geneTranscriptEnd = "ENST00000389048",
+                fusedExonDown = 20,
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                driverType = FusionDriverType.KNOWN_PAIR,
+                isAssociatedWithDrugResistance = null
+            ),
+            viruses = proper.viruses + Virus(
+                isReportable = true,
+                event = "HPV positive",
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = TestActionableEvidenceFactory.createExhaustive(),
+                name = "Human papillomavirus type 16",
+                type = VirusType.HUMAN_PAPILLOMA_VIRUS,
+                integrations = 3,
+                isReliable = true,
             )
-            .addHomozygousDisruptions(
-                TestHomozygousDisruptionFactory.builder()
-                    .isReportable(true)
-                    .event("PTEN hom disruption")
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .evidence(TestActionableEvidenceFactory.createExhaustive())
-                    .gene("PTEN")
-                    .build()
-            )
-            .addDisruptions(
-                TestDisruptionFactory.builder()
-                    .isReportable(true)
-                    .event("PTEN disruption")
-                    .driverLikelihood(DriverLikelihood.LOW)
-                    .evidence(TestActionableEvidenceFactory.createExhaustive())
-                    .gene("PTEN")
-                    .type(DisruptionType.DEL)
-                    .junctionCopyNumber(1.1)
-                    .undisruptedCopyNumber(1.8)
-                    .regionType(RegionType.EXONIC)
-                    .codingContext(CodingContext.CODING)
-                    .build()
-            )
-            .addFusions(
-                TestFusionFactory.builder()
-                    .isReportable(true)
-                    .event("EML4 - ALK fusion")
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .evidence(TestActionableEvidenceFactory.createExhaustive())
-                    .geneStart("EML4")
-                    .geneTranscriptStart("ENST00000318522")
-                    .fusedExonUp(6)
-                    .geneEnd("ALK")
-                    .geneTranscriptEnd("ENST00000389048")
-                    .fusedExonDown(20)
-                    .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-                    .driverType(FusionDriverType.KNOWN_PAIR)
-                    .build()
-            )
-            .addViruses(
-                TestVirusFactory.builder()
-                    .isReportable(true)
-                    .event("HPV positive")
-                    .driverLikelihood(DriverLikelihood.HIGH)
-                    .evidence(TestActionableEvidenceFactory.createExhaustive())
-                    .name("Human papillomavirus type 16")
-                    .type(VirusType.HUMAN_PAPILLOMA_VIRUS)
-                    .integrations(3)
-                    .isReliable(true)
-                    .build()
-            )
-            .build()
+        )
     }
 }

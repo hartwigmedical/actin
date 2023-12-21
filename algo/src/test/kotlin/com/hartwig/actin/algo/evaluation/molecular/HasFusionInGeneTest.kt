@@ -111,7 +111,7 @@ class HasFusionInGeneTest {
         private const val MATCHING_GENE = "gene A"
 
         private fun matchingFusionBuilder(): ImmutableFusion.Builder {
-            return TestFusionFactory.builder()
+            return TestFusionFactory.createMinimal()
                 .geneStart(MATCHING_GENE)
                 .isReportable(true)
                 .driverLikelihood(DriverLikelihood.HIGH)

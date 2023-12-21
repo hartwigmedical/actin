@@ -15,7 +15,7 @@ class GeneIsAmplifiedMinCopiesTest {
     fun canEvaluate() {
         val function = GeneIsAmplifiedMinCopies("gene A", 5)
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
-        val passingAmp: CopyNumber = TestCopyNumberFactory.builder()
+        val passingAmp: CopyNumber = TestCopyNumberFactory.createMinimal()
             .gene("gene A")
             .geneRole(GeneRole.ONCO)
             .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
@@ -31,7 +31,7 @@ class GeneIsAmplifiedMinCopiesTest {
             function.evaluate(
                 MolecularTestFactory.withPloidyAndCopyNumber(
                     3.0,
-                    TestCopyNumberFactory.builder().from(passingAmp).geneRole(GeneRole.TSG).build()
+                    TestCopyNumberFactory.createMinimal().from(passingAmp).geneRole(GeneRole.TSG).build()
                 )
             )
         )
@@ -40,7 +40,7 @@ class GeneIsAmplifiedMinCopiesTest {
             function.evaluate(
                 MolecularTestFactory.withPloidyAndCopyNumber(
                     3.0,
-                    TestCopyNumberFactory.builder().from(passingAmp).proteinEffect(ProteinEffect.LOSS_OF_FUNCTION).build()
+                    TestCopyNumberFactory.createMinimal().from(passingAmp).proteinEffect(ProteinEffect.LOSS_OF_FUNCTION).build()
                 )
             )
         )
@@ -49,7 +49,7 @@ class GeneIsAmplifiedMinCopiesTest {
             function.evaluate(
                 MolecularTestFactory.withPloidyAndCopyNumber(
                     3.0,
-                    TestCopyNumberFactory.builder().from(passingAmp).isReportable(false).build()
+                    TestCopyNumberFactory.createMinimal().from(passingAmp).isReportable(false).build()
                 )
             )
         )
@@ -58,7 +58,7 @@ class GeneIsAmplifiedMinCopiesTest {
             function.evaluate(
                 MolecularTestFactory.withPloidyAndCopyNumber(
                     3.0,
-                    TestCopyNumberFactory.builder().from(passingAmp).minCopies(8).maxCopies(8).build()
+                    TestCopyNumberFactory.createMinimal().from(passingAmp).minCopies(8).maxCopies(8).build()
                 )
             )
         )
@@ -67,7 +67,7 @@ class GeneIsAmplifiedMinCopiesTest {
             function.evaluate(
                 MolecularTestFactory.withPloidyAndCopyNumber(
                     3.0,
-                    TestCopyNumberFactory.builder().from(passingAmp).minCopies(4).maxCopies(4).build()
+                    TestCopyNumberFactory.createMinimal().from(passingAmp).minCopies(4).maxCopies(4).build()
                 )
             )
         )
@@ -76,7 +76,7 @@ class GeneIsAmplifiedMinCopiesTest {
             function.evaluate(
                 MolecularTestFactory.withPloidyAndCopyNumber(
                     3.0,
-                    TestCopyNumberFactory.builder().from(passingAmp).minCopies(3).build()
+                    TestCopyNumberFactory.createMinimal().from(passingAmp).minCopies(3).build()
                 )
             )
         )

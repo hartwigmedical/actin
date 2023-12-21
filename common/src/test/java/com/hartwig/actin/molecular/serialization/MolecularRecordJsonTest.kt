@@ -26,7 +26,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
-import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.builder
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.createEmpty
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withApprovedTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withPreClinicalTreatment
@@ -35,50 +35,51 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.fromJson
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.read
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.toJson
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 import java.io.File
-import java.io.IOException
 import java.time.LocalDate
 
 class MolecularRecordJsonTest {
+
     @Test
     fun canConvertBackAndForthJson() {
         val minimal = createMinimalTestMolecularRecord()
         val convertedMinimal = fromJson(toJson(minimal))
-        Assert.assertEquals(minimal, convertedMinimal)
+        assertThat(convertedMinimal).isEqualTo(minimal)
+        
         val proper = createProperTestMolecularRecord()
         val convertedProper = fromJson(toJson(proper))
-        Assert.assertEquals(proper, convertedProper)
+        assertThat(convertedProper).isEqualTo(proper)
+        
         val exhaustive = createExhaustiveTestMolecularRecord()
         val convertedExhaustive = fromJson(toJson(exhaustive))
-        Assert.assertEquals(exhaustive, convertedExhaustive)
+        assertThat(convertedExhaustive).isEqualTo(exhaustive)
     }
 
     @Test
-    @Throws(IOException::class)
     fun canReadMinimalMolecularJson() {
-        Assert.assertNotNull(read(MINIMAL_MOLECULAR_JSON))
+        assertThat(read(MINIMAL_MOLECULAR_JSON)).isNotNull
     }
 
     @Test
-    @Throws(IOException::class)
     fun canReadSampleMolecularJson() {
         val molecular = read(SAMPLE_MOLECULAR_JSON)
-        Assert.assertEquals("ACTN01029999", molecular.patientId())
-        Assert.assertEquals("ACTN01029999T", molecular.sampleId())
-        Assert.assertEquals(ExperimentType.WHOLE_GENOME, molecular.type())
-        Assert.assertEquals(RefGenomeVersion.V37, molecular.refGenomeVersion())
-        Assert.assertEquals(LocalDate.of(2021, 2, 23), molecular.date())
-        Assert.assertEquals("kb", molecular.evidenceSource())
-        Assert.assertEquals("trial kb", molecular.externalTrialSource())
-        Assert.assertTrue(molecular.containsTumorCells())
-        Assert.assertTrue(molecular.hasSufficientQualityAndPurity())
-        Assert.assertTrue(molecular.hasSufficientQuality())
-        assertCharacteristics(molecular.characteristics())
-        assertDrivers(molecular.drivers())
-        assertImmunology(molecular.immunology())
-        assertPharmaco(molecular.pharmaco())
+        assertThat(molecular.patientId).isEqualTo("ACTN01029999")
+        assertThat(molecular.sampleId).isEqualTo("ACTN01029999T")
+        assertThat(molecular.type).isEqualTo(ExperimentType.WHOLE_GENOME)
+        assertThat(molecular.refGenomeVersion).isEqualTo(RefGenomeVersion.V37)
+        assertThat(molecular.date).isEqualTo(LocalDate.of(2021, 2, 23))
+        assertThat(molecular.evidenceSource).isEqualTo("kb")
+        assertThat(molecular.externalTrialSource).isEqualTo("trial kb")
+        assertThat(molecular.containsTumorCells).isTrue
+        assertThat(molecular.hasSufficientQualityAndPurity).isTrue
+        assertThat(molecular.hasSufficientQuality).isTrue
+        assertCharacteristics(molecular.characteristics)
+        assertDrivers(molecular.drivers)
+        assertImmunology(molecular.immunology)
+        assertPharmaco(molecular.pharmaco)
     }
 
     companion object {
@@ -86,208 +87,212 @@ class MolecularRecordJsonTest {
         private val SAMPLE_MOLECULAR_JSON = MOLECULAR_DIRECTORY + File.separator + "sample.molecular.json"
         private val MINIMAL_MOLECULAR_JSON = MOLECULAR_DIRECTORY + File.separator + "minimal.molecular.json"
         private const val EPSILON = 1.0E-10
+
         private fun assertCharacteristics(characteristics: MolecularCharacteristics) {
-            Assert.assertEquals(0.98, characteristics.purity()!!, EPSILON)
-            Assert.assertEquals(3.1, characteristics.ploidy()!!, EPSILON)
-            val predictedTumorOrigin = characteristics.predictedTumorOrigin()
-            Assert.assertNotNull(predictedTumorOrigin)
-            Assert.assertEquals("Melanoma", predictedTumorOrigin!!.cancerType())
-            Assert.assertEquals(0.996, predictedTumorOrigin.likelihood(), EPSILON)
-            Assert.assertFalse(characteristics.isMicrosatelliteUnstable())
-            Assert.assertNull(characteristics.microsatelliteEvidence())
-            Assert.assertEquals(0.85, characteristics.homologousRepairScore()!!, EPSILON)
-            Assert.assertTrue(characteristics.isHomologousRepairDeficient!!)
-            assertEquals(
-                builder()
-                    .addExternalEligibleTrials("PARP trial")
-                    .addOnLabelExperimentalTreatments("PARP on label")
-                    .addOffLabelExperimentalTreatments("PARP off label")
-                    .build(), characteristics.homologousRepairEvidence()
+            assertThat(characteristics.purity!!).isEqualTo(0.98, Offset.offset(EPSILON))
+            assertThat(characteristics.ploidy!!).isEqualTo(3.1, Offset.offset(EPSILON))
+
+            val predictedTumorOrigin = characteristics.predictedTumorOrigin
+            assertThat(predictedTumorOrigin).isNotNull
+            assertThat(predictedTumorOrigin!!.cancerType()).isEqualTo("Melanoma")
+            assertThat(predictedTumorOrigin.likelihood()).isEqualTo(0.996, Offset.offset(EPSILON))
+
+            assertThat(characteristics.isMicrosatelliteUnstable).isFalse
+            assertThat(characteristics.microsatelliteEvidence).isNull()
+            assertThat(characteristics.homologousRepairScore!!).isEqualTo(0.85, Offset.offset(EPSILON))
+            assertThat(characteristics.isHomologousRepairDeficient!!).isTrue
+            assertThat(characteristics.homologousRepairEvidence).isEqualTo(
+                ActionableEvidence(
+                    externalEligibleTrials = setOf("PARP trial"),
+                    onLabelExperimentalTreatments = setOf("PARP on label"),
+                    offLabelExperimentalTreatments = setOf("PARP off label")
+                )
             )
-            Assert.assertEquals(4.32, characteristics.tumorMutationalBurden()!!, EPSILON)
-            Assert.assertTrue(characteristics.hasHighTumorMutationalBurden()!!)
-            Assert.assertEquals(withApprovedTreatment("Pembro"), characteristics.tumorMutationalBurdenEvidence())
-            Assert.assertEquals(243, (characteristics.tumorMutationalLoad() as Int).toLong())
-            Assert.assertTrue(characteristics.hasHighTumorMutationalLoad()!!)
-            Assert.assertNull(characteristics.tumorMutationalLoadEvidence())
+            assertThat(characteristics.tumorMutationalBurden!!).isEqualTo(4.32, Offset.offset(EPSILON))
+            assertThat(characteristics.hasHighTumorMutationalBurden!!).isTrue
+            assertThat(characteristics.tumorMutationalBurdenEvidence).isEqualTo(withApprovedTreatment("Pembro"))
+            assertThat((characteristics.tumorMutationalLoad)).isEqualTo(243)
+            assertThat(characteristics.hasHighTumorMutationalLoad!!).isTrue
+            assertThat(characteristics.tumorMutationalLoadEvidence).isNull()
         }
 
         private fun assertDrivers(drivers: MolecularDrivers) {
-            assertVariants(drivers.variants())
-            assertCopyNumbers(drivers.copyNumbers())
-            assertHomozygousDisruptions(drivers.homozygousDisruptions())
-            assertDisruptions(drivers.disruptions())
-            assertFusions(drivers.fusions())
-            assertViruses(drivers.viruses())
+            assertVariants(drivers.variants)
+            assertCopyNumbers(drivers.copyNumbers)
+            assertHomozygousDisruptions(drivers.homozygousDisruptions)
+            assertDisruptions(drivers.disruptions)
+            assertFusions(drivers.fusions)
+            assertViruses(drivers.viruses)
         }
 
-        private fun assertVariants(variants: Set<Variant?>) {
-            Assert.assertEquals(1, variants.size.toLong())
-            val variant = variants.iterator().next()
-            Assert.assertTrue(variant!!.isReportable)
-            Assert.assertEquals("BRAF V600E", variant.event())
-            Assert.assertEquals(DriverLikelihood.HIGH, variant.driverLikelihood())
-            assertEquals(
-                builder()
-                    .addKnownResistantTreatments("Anti-BRAF known")
-                    .addSuspectResistantTreatments("Anti-BRAF suspect")
-                    .build(), variant.evidence()
+        private fun assertVariants(variants: Set<Variant>) {
+            assertThat(variants).hasSize(1)
+            val variant = variants.first()
+            assertThat(variant.isReportable).isTrue
+            assertThat(variant.event).isEqualTo("BRAF V600E")
+            assertThat(variant.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+            assertThat(variant.evidence).isEqualTo(
+                ActionableEvidence(
+                    knownResistantTreatments = setOf("Anti-BRAF known"),
+                    suspectResistantTreatments = setOf("Anti-BRAF suspect")
+                )
             )
-            Assert.assertEquals("BRAF", variant.gene())
-            Assert.assertEquals(GeneRole.ONCO, variant.geneRole())
-            Assert.assertEquals(ProteinEffect.GAIN_OF_FUNCTION, variant.proteinEffect())
-            Assert.assertTrue(variant.isAssociatedWithDrugResistance!!)
-            Assert.assertEquals(4.1, variant.variantCopyNumber(), EPSILON)
-            Assert.assertEquals(6.0, variant.totalCopyNumber(), EPSILON)
-            Assert.assertFalse(variant.isBiallelic)
-            Assert.assertTrue(variant.isHotspot)
-            Assert.assertEquals(1.0, variant.clonalLikelihood(), EPSILON)
-            Assert.assertEquals(1, variant.phaseGroups()!!.size.toLong())
-            Assert.assertTrue(variant.phaseGroups()!!.contains(2))
-            val canonicalImpact = variant.canonicalImpact()
-            Assert.assertEquals("ENST00000288602", canonicalImpact.transcriptId())
-            Assert.assertEquals("c.1799T>A", canonicalImpact.hgvsCodingImpact())
-            Assert.assertEquals("p.V600E", canonicalImpact.hgvsProteinImpact())
-            Assert.assertEquals(600, (canonicalImpact.affectedCodon() as Int).toLong())
-            Assert.assertNull(canonicalImpact.affectedExon())
-            Assert.assertFalse(canonicalImpact.isSpliceRegion)
-            Assert.assertEquals(Sets.newHashSet(VariantEffect.MISSENSE), canonicalImpact.effects())
-            Assert.assertEquals(CodingEffect.MISSENSE, canonicalImpact.codingEffect())
-            Assert.assertEquals(1, variant.otherImpacts().size.toLong())
-            val otherImpact = variant.otherImpacts().iterator().next()!!
-            Assert.assertEquals("other trans", otherImpact.transcriptId())
-            Assert.assertEquals("c.other", otherImpact.hgvsCodingImpact())
-            Assert.assertEquals("p.V601K", otherImpact.hgvsProteinImpact())
-            Assert.assertNull(otherImpact.affectedCodon())
-            Assert.assertEquals(8, (otherImpact.affectedExon() as Int).toLong())
-            Assert.assertFalse(otherImpact.isSpliceRegion)
-            Assert.assertEquals(Sets.newHashSet(VariantEffect.MISSENSE, VariantEffect.SPLICE_ACCEPTOR), otherImpact.effects())
-            Assert.assertNull(otherImpact.codingEffect())
+            assertThat(variant.gene).isEqualTo("BRAF")
+            assertThat(variant.geneRole).isEqualTo(GeneRole.ONCO)
+            assertThat(variant.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
+            assertThat(variant.isAssociatedWithDrugResistance!!).isTrue
+            assertThat(variant.variantCopyNumber).isEqualTo(4.1, Offset.offset(EPSILON))
+            assertThat(variant.totalCopyNumber).isEqualTo(6.0, Offset.offset(EPSILON))
+            assertThat(variant.isBiallelic).isFalse
+            assertThat(variant.isHotspot).isTrue
+            assertThat(variant.clonalLikelihood).isEqualTo(1.0, Offset.offset(EPSILON))
+            assertThat(variant.phaseGroups!!).hasSize(1)
+            assertThat(variant.phaseGroups.contains(2)).isTrue
+
+            val canonicalImpact = variant.canonicalImpact
+            assertThat(canonicalImpact.transcriptId).isEqualTo("ENST00000288602")
+            assertThat(canonicalImpact.hgvsCodingImpact).isEqualTo("c.1799T>A")
+            assertThat(canonicalImpact.hgvsProteinImpact).isEqualTo("p.V600E")
+            assertThat((canonicalImpact.affectedCodon as Int).toLong()).isEqualTo(600)
+            assertThat(canonicalImpact.affectedExon).isNull()
+            assertThat(canonicalImpact.isSpliceRegion).isFalse
+            assertThat(canonicalImpact.effects).isEqualTo(Sets.newHashSet(VariantEffect.MISSENSE))
+            assertThat(canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
+
+            assertThat(variant.otherImpacts).hasSize(1)
+            val otherImpact = variant.otherImpacts.first()
+            assertThat(otherImpact.transcriptId).isEqualTo("other trans")
+            assertThat(otherImpact.hgvsCodingImpact).isEqualTo("c.other")
+            assertThat(otherImpact.hgvsProteinImpact).isEqualTo("p.V601K")
+            assertThat(otherImpact.affectedCodon).isNull()
+            assertThat((otherImpact.affectedExon as Int).toLong()).isEqualTo(8)
+            assertThat(otherImpact.isSpliceRegion).isFalse
+            assertThat(otherImpact.effects).isEqualTo(Sets.newHashSet(VariantEffect.MISSENSE, VariantEffect.SPLICE_ACCEPTOR))
+            assertThat(otherImpact.codingEffect).isNull()
         }
 
-        private fun assertCopyNumbers(copyNumbers: Set<CopyNumber?>) {
-            Assert.assertEquals(2, copyNumbers.size.toLong())
+        private fun assertCopyNumbers(copyNumbers: Set<CopyNumber>) {
+            assertThat(copyNumbers).hasSize(2)
             val copyNumber1 = findByEvent(copyNumbers, "MYC amp")
-            Assert.assertTrue(copyNumber1!!.isReportable)
-            Assert.assertEquals(DriverLikelihood.HIGH, copyNumber1.driverLikelihood())
-            Assert.assertEquals(withPreClinicalTreatment("MYC pre-clinical"), copyNumber1.evidence())
-            Assert.assertEquals("MYC", copyNumber1.gene())
-            Assert.assertEquals(GeneRole.UNKNOWN, copyNumber1.geneRole())
-            Assert.assertEquals(ProteinEffect.UNKNOWN, copyNumber1.proteinEffect())
-            Assert.assertNull(copyNumber1.isAssociatedWithDrugResistance)
-            Assert.assertEquals(38, copyNumber1.minCopies().toLong())
-            Assert.assertEquals(39, copyNumber1.maxCopies().toLong())
+            assertThat(copyNumber1.isReportable).isTrue
+            assertThat(copyNumber1.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+            assertThat(copyNumber1.evidence).isEqualTo(withPreClinicalTreatment("MYC pre-clinical"))
+            assertThat(copyNumber1.gene).isEqualTo("MYC")
+            assertThat(copyNumber1.geneRole).isEqualTo(GeneRole.UNKNOWN)
+            assertThat(copyNumber1.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
+            assertThat(copyNumber1.isAssociatedWithDrugResistance).isNull()
+            assertThat(copyNumber1.minCopies).isEqualTo(38)
+            assertThat(copyNumber1.maxCopies).isEqualTo(39)
+            
             val copyNumber2 = findByEvent(copyNumbers, "PTEN del")
-            Assert.assertFalse(copyNumber2!!.isReportable)
-            Assert.assertNull(copyNumber2.driverLikelihood())
-            Assert.assertEquals(createEmpty(), copyNumber2.evidence())
-            Assert.assertEquals("PTEN", copyNumber2.gene())
-            Assert.assertEquals(GeneRole.TSG, copyNumber2.geneRole())
-            Assert.assertEquals(ProteinEffect.LOSS_OF_FUNCTION, copyNumber2.proteinEffect())
-            Assert.assertFalse(copyNumber2.isAssociatedWithDrugResistance!!)
-            Assert.assertEquals(0, copyNumber2.minCopies().toLong())
-            Assert.assertEquals(2, copyNumber2.maxCopies().toLong())
+            assertThat(copyNumber2.isReportable).isFalse
+            assertThat(copyNumber2.driverLikelihood).isNull()
+            assertThat(copyNumber2.evidence).isEqualTo(createEmpty())
+            assertThat(copyNumber2.gene).isEqualTo("PTEN")
+            assertThat(copyNumber2.geneRole).isEqualTo(GeneRole.TSG)
+            assertThat(copyNumber2.proteinEffect).isEqualTo(ProteinEffect.LOSS_OF_FUNCTION)
+            assertThat(copyNumber2.isAssociatedWithDrugResistance!!).isFalse
+            assertThat(copyNumber2.minCopies).isEqualTo(0)
+            assertThat(copyNumber2.maxCopies).isEqualTo(2)
         }
 
-        private fun assertHomozygousDisruptions(homozygousDisruptions: Set<HomozygousDisruption?>) {
-            Assert.assertEquals(1, homozygousDisruptions.size.toLong())
-            val homozygousDisruption = homozygousDisruptions.iterator().next()
-            Assert.assertTrue(homozygousDisruption!!.isReportable)
-            Assert.assertEquals("PTEN hom disruption", homozygousDisruption.event())
-            Assert.assertEquals(DriverLikelihood.HIGH, homozygousDisruption.driverLikelihood())
-            Assert.assertEquals(createEmpty(), homozygousDisruption.evidence())
-            Assert.assertEquals("PTEN", homozygousDisruption.gene())
-            Assert.assertEquals(GeneRole.TSG, homozygousDisruption.geneRole())
-            Assert.assertEquals(ProteinEffect.LOSS_OF_FUNCTION, homozygousDisruption.proteinEffect())
-            Assert.assertFalse(homozygousDisruption.isAssociatedWithDrugResistance!!)
+        private fun assertHomozygousDisruptions(homozygousDisruptions: Set<HomozygousDisruption>) {
+            assertThat(homozygousDisruptions).hasSize(1)
+            val homozygousDisruption = homozygousDisruptions.first()
+            assertThat(homozygousDisruption.isReportable).isTrue
+            assertThat(homozygousDisruption.event).isEqualTo("PTEN hom disruption")
+            assertThat(homozygousDisruption.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+            assertThat(homozygousDisruption.evidence).isEqualTo(createEmpty())
+            assertThat(homozygousDisruption.gene).isEqualTo("PTEN")
+            assertThat(homozygousDisruption.geneRole).isEqualTo(GeneRole.TSG)
+            assertThat(homozygousDisruption.proteinEffect).isEqualTo(ProteinEffect.LOSS_OF_FUNCTION)
+            assertThat(homozygousDisruption.isAssociatedWithDrugResistance!!).isFalse
         }
 
-        private fun assertDisruptions(disruptions: Set<Disruption?>) {
-            Assert.assertEquals(2, disruptions.size.toLong())
+        private fun assertDisruptions(disruptions: Set<Disruption>) {
+            assertThat(disruptions).hasSize(2)
             val disruption1 = findByEvent(disruptions, "NF1 disruption 1")
-            Assert.assertTrue(disruption1!!.isReportable)
-            Assert.assertEquals(DriverLikelihood.LOW, disruption1.driverLikelihood())
-            Assert.assertEquals(createEmpty(), disruption1.evidence())
-            Assert.assertEquals("NF1", disruption1.gene())
-            Assert.assertEquals(GeneRole.UNKNOWN, disruption1.geneRole())
-            Assert.assertEquals(ProteinEffect.UNKNOWN, disruption1.proteinEffect())
-            Assert.assertNull(disruption1.isAssociatedWithDrugResistance)
-            Assert.assertEquals(DisruptionType.DEL, disruption1.type())
-            Assert.assertEquals(1.1, disruption1.junctionCopyNumber(), EPSILON)
-            Assert.assertEquals(2.0, disruption1.undisruptedCopyNumber(), EPSILON)
-            Assert.assertEquals(RegionType.INTRONIC, disruption1.regionType())
-            Assert.assertEquals(CodingContext.NON_CODING, disruption1.codingContext())
-            Assert.assertEquals(1, disruption1.clusterGroup().toLong())
+            assertThat(disruption1.isReportable).isTrue
+            assertThat(disruption1.driverLikelihood).isEqualTo(DriverLikelihood.LOW)
+            assertThat(disruption1.evidence).isEqualTo(createEmpty())
+            assertThat(disruption1.gene).isEqualTo("NF1")
+            assertThat(disruption1.geneRole).isEqualTo(GeneRole.UNKNOWN)
+            assertThat(disruption1.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
+            assertThat(disruption1.isAssociatedWithDrugResistance).isNull()
+            assertThat(disruption1.type).isEqualTo(DisruptionType.DEL)
+            assertThat(disruption1.junctionCopyNumber).isEqualTo(1.1, Offset.offset(EPSILON))
+            assertThat(disruption1.undisruptedCopyNumber).isEqualTo(2.0, Offset.offset(EPSILON))
+            assertThat(disruption1.regionType).isEqualTo(RegionType.INTRONIC)
+            assertThat(disruption1.codingContext).isEqualTo(CodingContext.NON_CODING)
+            assertThat(disruption1.clusterGroup.toLong()).isEqualTo(1)
+            
             val disruption2 = findByEvent(disruptions, "NF1 disruption 2")
-            Assert.assertFalse(disruption2!!.isReportable)
-            Assert.assertEquals(DriverLikelihood.LOW, disruption2.driverLikelihood())
-            Assert.assertEquals(createEmpty(), disruption2.evidence())
-            Assert.assertEquals("NF1", disruption2.gene())
-            Assert.assertEquals(GeneRole.UNKNOWN, disruption2.geneRole())
-            Assert.assertEquals(ProteinEffect.NO_EFFECT, disruption2.proteinEffect())
-            Assert.assertEquals(0.3, disruption2.junctionCopyNumber(), EPSILON)
-            Assert.assertEquals(2.8, disruption2.undisruptedCopyNumber(), EPSILON)
-            Assert.assertEquals(RegionType.EXONIC, disruption2.regionType())
-            Assert.assertEquals(CodingContext.CODING, disruption2.codingContext())
-            Assert.assertEquals(2, disruption2.clusterGroup().toLong())
+            assertThat(disruption2.isReportable).isFalse
+            assertThat(disruption2.driverLikelihood).isEqualTo(DriverLikelihood.LOW)
+            assertThat(disruption2.evidence).isEqualTo(createEmpty())
+            assertThat(disruption2.gene).isEqualTo("NF1")
+            assertThat(disruption2.geneRole).isEqualTo(GeneRole.UNKNOWN)
+            assertThat(disruption2.proteinEffect).isEqualTo(ProteinEffect.NO_EFFECT)
+            assertThat(disruption2.junctionCopyNumber).isEqualTo(0.3, Offset.offset(EPSILON))
+            assertThat(disruption2.undisruptedCopyNumber).isEqualTo(2.8, Offset.offset(EPSILON))
+            assertThat(disruption2.regionType).isEqualTo(RegionType.EXONIC)
+            assertThat(disruption2.codingContext).isEqualTo(CodingContext.CODING)
+            assertThat(disruption2.clusterGroup).isEqualTo(2)
         }
 
-        private fun assertFusions(fusions: Set<Fusion?>) {
-            Assert.assertEquals(1, fusions.size.toLong())
-            val fusion = fusions.iterator().next()
-            Assert.assertTrue(fusion!!.isReportable)
-            Assert.assertEquals("EML4 - ALK fusion", fusion.event())
-            Assert.assertEquals(DriverLikelihood.HIGH, fusion.driverLikelihood())
-            Assert.assertEquals(createEmpty(), fusion.evidence())
-            Assert.assertEquals("EML4", fusion.geneStart())
-            Assert.assertEquals("ENST00000318522", fusion.geneTranscriptStart())
-            Assert.assertEquals(12, fusion.fusedExonUp().toLong())
-            Assert.assertEquals("ALK", fusion.geneEnd())
-            Assert.assertEquals("ENST00000389048", fusion.geneTranscriptEnd())
-            Assert.assertEquals(20, fusion.fusedExonDown().toLong())
-            Assert.assertEquals(FusionDriverType.KNOWN_PAIR, fusion.driverType())
-            Assert.assertEquals(ProteinEffect.UNKNOWN, fusion.proteinEffect())
-            Assert.assertFalse(fusion.isAssociatedWithDrugResistance!!)
+        private fun assertFusions(fusions: Set<Fusion>) {
+            assertThat(fusions).hasSize(1)
+            val fusion = fusions.first()
+            assertThat(fusion.isReportable).isTrue
+            assertThat(fusion.event).isEqualTo("EML4 - ALK fusion")
+            assertThat(fusion.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+            assertThat(fusion.evidence).isEqualTo(createEmpty())
+            assertThat(fusion.geneStart).isEqualTo("EML4")
+            assertThat(fusion.geneTranscriptStart).isEqualTo("ENST00000318522")
+            assertThat(fusion.fusedExonUp).isEqualTo(12)
+            assertThat(fusion.geneEnd).isEqualTo("ALK")
+            assertThat(fusion.geneTranscriptEnd).isEqualTo("ENST00000389048")
+            assertThat(fusion.fusedExonDown).isEqualTo(20)
+            assertThat(fusion.driverType).isEqualTo(FusionDriverType.KNOWN_PAIR)
+            assertThat(fusion.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
+            assertThat(fusion.isAssociatedWithDrugResistance!!).isFalse
         }
 
-        private fun assertViruses(viruses: Set<Virus?>) {
-            Assert.assertEquals(1, viruses.size.toLong())
-            val virus = viruses.iterator().next()
-            Assert.assertTrue(virus!!.isReportable)
-            Assert.assertEquals("HPV positive", virus.event())
-            Assert.assertEquals(DriverLikelihood.HIGH, virus.driverLikelihood())
-            Assert.assertEquals(createEmpty(), virus.evidence())
-            Assert.assertEquals("Human papillomavirus type 16", virus.name())
-            Assert.assertEquals(VirusType.HUMAN_PAPILLOMA_VIRUS, virus.type())
-            Assert.assertTrue(virus.isReliable)
-            Assert.assertEquals(3, virus.integrations().toLong())
+        private fun assertViruses(viruses: Set<Virus>) {
+            assertThat(viruses).hasSize(1)
+            val virus = viruses.first()
+            assertThat(virus.isReportable).isTrue
+            assertThat(virus.event).isEqualTo("HPV positive")
+            assertThat(virus.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+            assertThat(virus.evidence).isEqualTo(createEmpty())
+            assertThat(virus.name).isEqualTo("Human papillomavirus type 16")
+            assertThat(virus.type).isEqualTo(VirusType.HUMAN_PAPILLOMA_VIRUS)
+            assertThat(virus.isReliable).isTrue
+            assertThat(virus.integrations.toLong()).isEqualTo(3)
         }
 
-        private fun <T : Driver?> findByEvent(drivers: Iterable<T>, eventToFind: String): T {
-            for (driver in drivers) {
-                if (driver!!.event() == eventToFind) {
-                    return driver
-                }
-            }
-            throw IllegalStateException("Could not find driver with event: $eventToFind")
+        private fun <T : Driver> findByEvent(drivers: Iterable<T>, eventToFind: String): T {
+            return drivers.find { it.event == eventToFind }
+                ?: throw IllegalStateException("Could not find driver with event: $eventToFind")
         }
 
         private fun assertImmunology(immunology: MolecularImmunology) {
-            Assert.assertEquals(1, immunology.hlaAlleles().size.toLong())
-            val hlaAllele = immunology.hlaAlleles().iterator().next()!!
-            Assert.assertEquals("A*02:01", hlaAllele.name())
-            Assert.assertEquals(1.2, hlaAllele.tumorCopyNumber(), EPSILON)
-            Assert.assertFalse(hlaAllele.hasSomaticMutations())
+            assertThat(immunology.hlaAlleles).hasSize(1)
+            val hlaAllele = immunology.hlaAlleles.first()
+            assertThat(hlaAllele.name).isEqualTo("A*02:01")
+            assertThat(hlaAllele.tumorCopyNumber).isEqualTo(1.2, Offset.offset(EPSILON))
+            assertThat(hlaAllele.hasSomaticMutations).isFalse
         }
 
         private fun assertPharmaco(pharmaco: Set<PharmacoEntry?>) {
-            Assert.assertEquals(1, pharmaco.size.toLong())
-            val entry = pharmaco.iterator().next()
-            Assert.assertEquals("DPYD", entry!!.gene())
-            Assert.assertEquals(1, entry.haplotypes().size.toLong())
-            val haplotype = entry.haplotypes().iterator().next()!!
-            Assert.assertEquals("1* HOM", haplotype.name())
-            Assert.assertEquals("Normal function", haplotype.function())
+            assertThat(pharmaco).hasSize(1)
+            val entry = pharmaco.first()
+            assertThat(entry!!.gene).isEqualTo("DPYD")
+            assertThat(entry.haplotypes).hasSize(1)
+
+            val haplotype = entry.haplotypes.first()
+            assertThat(haplotype.name).isEqualTo("1* HOM")
+            assertThat(haplotype.function).isEqualTo("Normal function")
         }
     }
 }

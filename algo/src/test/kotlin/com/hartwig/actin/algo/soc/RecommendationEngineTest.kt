@@ -269,7 +269,7 @@ class RecommendationEngineTest {
     private fun assertFirstResultIsPembrolizumabForPatientWithTreatmentHistoryAndMSI(treatmentHistory: List<String>) {
         assertThat(TYPICAL_TREATMENT_RESULTS).noneMatch { it.treatment.name() == RecommendationDatabase.TREATMENT_PEMBROLIZUMAB }
 
-        val variant: Variant = TestVariantFactory.builder().gene("MLH1").isReportable(true).isBiallelic(true).build()
+        val variant: Variant = TestVariantFactory.createMinimal().gene("MLH1").isReportable(true).isBiallelic(true).build()
         val minimal = MINIMAL_PATIENT_RECORD.molecular()
         val molecularRecord: MolecularRecord = ImmutableMolecularRecord.builder()
             .from(minimal)

@@ -24,7 +24,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .build()
@@ -37,10 +37,10 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(1).build())
                         .build()
                 )
             )
@@ -51,10 +51,10 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(6).build())
                         .build()
                 )
             )
@@ -65,11 +65,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .type(VariantType.MNV)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(1).build())
                         .build()
                 )
             )
@@ -80,11 +80,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .type(VariantType.INSERT)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(1).build())
                         .build()
                 )
             )
@@ -95,11 +95,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(false)
                         .type(VariantType.INSERT)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(1).build())
                         .build()
                 )
             )
@@ -110,13 +110,13 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .type(VariantType.INSERT)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(6).build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().affectedExon(6).build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(6).build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.createMinimal().affectedExon(6).build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.createMinimal().affectedExon(1).build())
                         .build()
                 )
             )
@@ -130,11 +130,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .type(VariantType.MNV)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(1).build())
                         .build()
                 )
             )
@@ -143,11 +143,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .type(VariantType.INSERT)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(1).build())
                         .build()
                 )
             )
@@ -169,10 +169,10 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(1).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(1).build())
                         .build()
                 )
             )

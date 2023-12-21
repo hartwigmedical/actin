@@ -1,10 +1,8 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
 interface GeneAlteration {
-    fun gene(): String
-    fun geneRole(): GeneRole
-    fun proteinEffect(): ProteinEffect
-
-    @JvmField
+    val gene: String
+    val geneRole: GeneRole
+    val proteinEffect: ProteinEffect
     val isAssociatedWithDrugResistance: Boolean?
 }

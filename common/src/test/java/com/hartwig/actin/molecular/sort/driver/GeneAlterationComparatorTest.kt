@@ -1,48 +1,43 @@
 package com.hartwig.actin.molecular.sort.driver
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class GeneAlterationComparatorTest {
+
     @Test
-    fun canSortGeneAlterations() {
+    fun `Should sort gene alterations`() {
         val alteration1 = create("gene A", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION)
         val alteration2 = create("gene A", GeneRole.TSG, ProteinEffect.GAIN_OF_FUNCTION)
         val alteration3 = create("gene A", GeneRole.TSG, ProteinEffect.NO_EFFECT)
         val alteration4 = create("gene B", GeneRole.ONCO, ProteinEffect.GAIN_OF_FUNCTION)
-        val alterations: List<GeneAlteration> = Lists.newArrayList(alteration2, alteration1, alteration4, alteration3)
-        alterations.sort(GeneAlterationComparator())
-        Assert.assertEquals(alteration1, alterations[0])
-        Assert.assertEquals(alteration2, alterations[1])
-        Assert.assertEquals(alteration3, alterations[2])
-        Assert.assertEquals(alteration4, alterations[3])
+        val alterations = listOf(alteration2, alteration1, alteration4, alteration3).sortedWith(GeneAlterationComparator())
+
+        assertThat(alterations[0]).isEqualTo(alteration1)
+        assertThat(alterations[1]).isEqualTo(alteration2)
+        assertThat(alterations[2]).isEqualTo(alteration3)
+        assertThat(alterations[3]).isEqualTo(alteration4)
     }
 
-    companion object {
-        private fun create(gene: String, geneRole: GeneRole, proteinEffect: ProteinEffect): GeneAlteration {
-            return object : GeneAlteration {
-                override fun gene(): String {
-                    return gene
-                }
+    private fun create(gene: String, geneRole: GeneRole, proteinEffect: ProteinEffect): GeneAlteration {
+        return object : GeneAlteration {
+            override val gene: String
+                get() = gene
 
-                override fun geneRole(): GeneRole {
-                    return geneRole
-                }
+            override val geneRole: GeneRole
+                get() = geneRole
 
-                override fun proteinEffect(): ProteinEffect {
-                    return proteinEffect
-                }
+            override val proteinEffect: ProteinEffect
+                get() = proteinEffect
 
-                override val isAssociatedWithDrugResistance: Boolean?
-                    get() = null
+            override val isAssociatedWithDrugResistance: Boolean?
+                get() = null
 
-                override fun toString(): String {
-                    return "$gene $geneRole $proteinEffect"
-                }
+            override fun toString(): String {
+                return "$gene $geneRole $proteinEffect"
             }
         }
     }

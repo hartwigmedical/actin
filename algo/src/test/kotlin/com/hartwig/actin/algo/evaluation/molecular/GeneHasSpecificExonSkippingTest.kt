@@ -16,19 +16,21 @@ class GeneHasSpecificExonSkippingTest {
     fun canEvaluate() {
         val function = GeneHasSpecificExonSkipping("gene A", 2)
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
-        val spliceVariant: Variant = TestVariantFactory.builder()
+        val spliceVariant: Variant = TestVariantFactory.createMinimal()
             .gene("gene A")
             .isReportable(true)
-            .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(2).isSpliceRegion(true).build())
+            .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedExon(2).isSpliceRegion(true).build())
             .build()
         assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withVariant(spliceVariant)))
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .from(spliceVariant)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(2).codingEffect(CodingEffect.SPLICE).build())
+                        .canonicalImpact(
+                            TestTranscriptImpactFactory.createMinimal().affectedExon(2).codingEffect(CodingEffect.SPLICE).build()
+                        )
                         .build()
                 )
             )
@@ -37,14 +39,14 @@ class GeneHasSpecificExonSkippingTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .from(spliceVariant)
                         .isReportable(false)
                         .build()
                 )
             )
         )
-        val exonSkippingFusion: Fusion = TestFusionFactory.builder()
+        val exonSkippingFusion: Fusion = TestFusionFactory.createMinimal()
             .isReportable(true)
             .geneStart("gene A")
             .fusedExonUp(1)
@@ -56,7 +58,7 @@ class GeneHasSpecificExonSkippingTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withFusion(
-                    TestFusionFactory.builder()
+                    TestFusionFactory.createMinimal()
                         .from(exonSkippingFusion)
                         .isReportable(false)
                         .build()
@@ -67,7 +69,7 @@ class GeneHasSpecificExonSkippingTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withFusion(
-                    TestFusionFactory.builder()
+                    TestFusionFactory.createMinimal()
                         .from(exonSkippingFusion)
                         .fusedExonDown(5)
                         .build()

@@ -178,7 +178,7 @@ class MolecularDriversSummarizerTest {
             isReportable: Boolean,
             evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
         ): Variant {
-            return TestVariantFactory.builder()
+            return TestVariantFactory.createMinimal()
                 .gene(name)
                 .event(name)
                 .driverLikelihood(driverLikelihood)
@@ -188,7 +188,7 @@ class MolecularDriversSummarizerTest {
         }
 
         private fun copyNumber(type: CopyNumberType, name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean): CopyNumber {
-            return TestCopyNumberFactory.builder()
+            return TestCopyNumberFactory.createMinimal()
                 .type(type)
                 .gene(name)
                 .event(name)
@@ -201,7 +201,7 @@ class MolecularDriversSummarizerTest {
             name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean,
             evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
         ): HomozygousDisruption {
-            return TestHomozygousDisruptionFactory.builder()
+            return TestHomozygousDisruptionFactory.createMinimal()
                 .gene(name)
                 .event(name)
                 .driverLikelihood(driverLikelihood)
@@ -214,7 +214,7 @@ class MolecularDriversSummarizerTest {
             name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
             evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
         ): Disruption {
-            return TestDisruptionFactory.builder()
+            return TestDisruptionFactory.createMinimal()
                 .gene(name)
                 .event(name)
                 .driverLikelihood(driverLikelihood)
@@ -229,7 +229,7 @@ class MolecularDriversSummarizerTest {
             isReportable: Boolean,
             evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
         ): Fusion {
-            return TestFusionFactory.builder()
+            return TestFusionFactory.createMinimal()
                 .event(event)
                 .driverLikelihood(driverLikelihood)
                 .isReportable(isReportable)
@@ -238,7 +238,7 @@ class MolecularDriversSummarizerTest {
         }
 
         private fun virus(event: String, driverLikelihood: DriverLikelihood, isReportable: Boolean): Virus {
-            return TestVirusFactory.builder()
+            return TestVirusFactory.createMinimal()
                 .event(event)
                 .driverLikelihood(driverLikelihood)
                 .isReportable(isReportable)

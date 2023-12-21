@@ -1,23 +1,23 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class Variant : Driver, GeneAlteration {
-    abstract fun type(): VariantType
-    abstract fun variantCopyNumber(): Double
-    abstract fun totalCopyNumber(): Double
-
-    @JvmField
-    abstract val isBiallelic: Boolean
-
-    @JvmField
-    abstract val isHotspot: Boolean
-    abstract fun clonalLikelihood(): Double
-    abstract fun phaseGroups(): Set<Int?>?
-    abstract fun canonicalImpact(): TranscriptImpact
-    abstract fun otherImpacts(): Set<TranscriptImpact?>
-}
+data class Variant(
+    val type: VariantType,
+    val variantCopyNumber: Double,
+    val totalCopyNumber: Double,
+    val isBiallelic: Boolean,
+    val isHotspot: Boolean,
+    val clonalLikelihood: Double,
+    val phaseGroups: Set<Int>?,
+    val canonicalImpact: TranscriptImpact,
+    val otherImpacts: Set<TranscriptImpact>,
+    override val isReportable: Boolean,
+    override val event: String,
+    override val driverLikelihood: DriverLikelihood?,
+    override val evidence: ActionableEvidence,
+    override val gene: String,
+    override val geneRole: GeneRole,
+    override val proteinEffect: ProteinEffect,
+    override val isAssociatedWithDrugResistance: Boolean?,
+) : Driver, GeneAlteration

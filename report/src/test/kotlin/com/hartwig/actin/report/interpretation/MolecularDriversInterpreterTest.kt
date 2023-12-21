@@ -94,24 +94,24 @@ class MolecularDriversInterpreterTest {
 
         private fun createDriversWithEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularDrivers {
             return ImmutableMolecularDrivers.builder()
-                .addVariants(TestVariantFactory.builder().isReportable(isReportable).evidence(evidence).event(EVENT_VARIANT).build())
-                .addCopyNumbers(TestCopyNumberFactory.builder().isReportable(isReportable).evidence(evidence).event(EVENT_CN).build())
+                .addVariants(TestVariantFactory.createMinimal().isReportable(isReportable).evidence(evidence).event(EVENT_VARIANT).build())
+                .addCopyNumbers(TestCopyNumberFactory.createMinimal().isReportable(isReportable).evidence(evidence).event(EVENT_CN).build())
                 .addHomozygousDisruptions(
-                    TestHomozygousDisruptionFactory.builder()
+                    TestHomozygousDisruptionFactory.createMinimal()
                         .isReportable(isReportable)
                         .evidence(evidence)
                         .event(EVENT_HD)
                         .build()
                 )
                 .addDisruptions(
-                    TestDisruptionFactory.builder()
+                    TestDisruptionFactory.createMinimal()
                         .isReportable(isReportable)
                         .evidence(evidence)
                         .event(EVENT_DISRUPTION)
                         .build()
                 )
-                .addFusions(TestFusionFactory.builder().isReportable(isReportable).evidence(evidence).event(EVENT_FUSION).build())
-                .addViruses(TestVirusFactory.builder().isReportable(isReportable).evidence(evidence).event(EVENT_VIRUS).build())
+                .addFusions(TestFusionFactory.createMinimal().isReportable(isReportable).evidence(evidence).event(EVENT_FUSION).build())
+                .addViruses(TestVirusFactory.createMinimal().isReportable(isReportable).evidence(evidence).event(EVENT_VIRUS).build())
                 .build()
         }
 

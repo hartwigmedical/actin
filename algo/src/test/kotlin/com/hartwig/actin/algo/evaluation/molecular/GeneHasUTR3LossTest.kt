@@ -18,13 +18,13 @@ class GeneHasUTR3LossTest {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.builder().gene("gene A").build()))
+            function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.createMinimal().gene("gene A").build()))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDisruption(
-                    TestDisruptionFactory.builder()
+                    TestDisruptionFactory.createMinimal()
                         .gene("gene A")
                         .regionType(RegionType.EXONIC)
                         .codingContext(CodingContext.UTR_3P)
@@ -34,16 +34,16 @@ class GeneHasUTR3LossTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.builder().gene("gene A").build()))
+            function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().gene("gene A").build()))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isHotspot(false)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(VariantEffect.THREE_PRIME_UTR).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().addEffects(VariantEffect.THREE_PRIME_UTR).build())
                         .build()
                 )
             )
@@ -52,11 +52,11 @@ class GeneHasUTR3LossTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(false)
                         .isHotspot(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(VariantEffect.THREE_PRIME_UTR).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().addEffects(VariantEffect.THREE_PRIME_UTR).build())
                         .build()
                 )
             )
@@ -65,11 +65,11 @@ class GeneHasUTR3LossTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .isHotspot(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().addEffects(VariantEffect.THREE_PRIME_UTR).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().addEffects(VariantEffect.THREE_PRIME_UTR).build())
                         .build()
                 )
             )

@@ -5,6 +5,7 @@ import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.filter.GeneFilterFactory.createAlwaysValid
 
 class MolecularInputChecker(private val geneFilter: GeneFilter) {
+
     fun isGene(string: String): Boolean {
         return geneFilter.include(string)
     }
@@ -12,18 +13,17 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
     companion object {
         private const val TERMINATION_CODON = "Ter"
         private val VALID_PROTEIN_ENDINGS: Set<String> = Sets.newHashSet("del", "dup", "ins", "=", "*", "fs", "ext*?")
+
         fun createAnyGeneValid(): MolecularInputChecker {
             return MolecularInputChecker(createAlwaysValid())
         }
 
-        @JvmStatic
         fun isHlaAllele(string: String): Boolean {
-            val asterixIndex = string.indexOf("*")
+            val asteriskIndex = string.indexOf("*")
             val semicolonIndex = string.indexOf(":")
-            return asterixIndex == 1 && semicolonIndex > asterixIndex
+            return asteriskIndex == 1 && semicolonIndex > asteriskIndex
         }
 
-        @JvmStatic
         fun isProteinImpact(string: String): Boolean {
             if (string == "?") {
                 return true
@@ -41,22 +41,11 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
         }
 
         private fun hasSpecificValidProteinEnding(string: String): Boolean {
-            for (validProteinEnding in VALID_PROTEIN_ENDINGS) {
-                if (string.endsWith(validProteinEnding)) {
-                    return true
-                }
-            }
-            return false
+            return VALID_PROTEIN_ENDINGS.any { string.endsWith(it) }
         }
 
-        @JvmStatic
         fun isCodon(string: String): Boolean {
-            if (string.length < 2) {
-                return false
-            }
-            val first = string[0]
-            val codon = string.substring(1)
-            return Character.isUpperCase(first) && isPositiveNumber(codon)
+            return string.length >= 2 && Character.isUpperCase(string.first()) && isPositiveNumber(string.substring(1))
         }
 
         private fun isPositiveNumber(codon: String): Boolean {

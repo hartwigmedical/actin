@@ -1,14 +1,19 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
 object TestHomozygousDisruptionFactory {
-    @JvmStatic
-    fun builder(): ImmutableHomozygousDisruption.Builder {
-        return ImmutableHomozygousDisruption.builder()
-            .from(TestDriverFactory.createEmptyDriver())
-            .gene(Strings.EMPTY)
-            .geneRole(GeneRole.UNKNOWN)
-            .proteinEffect(ProteinEffect.UNKNOWN)
+
+    fun createMinimal(): HomozygousDisruption {
+        return HomozygousDisruption(
+            isReportable = false,
+            event = "",
+            driverLikelihood = null,
+            evidence = ActionableEvidence(),
+            isAssociatedWithDrugResistance = null,
+            gene = "",
+            geneRole = GeneRole.UNKNOWN,
+            proteinEffect = ProteinEffect.UNKNOWN,
+        )
     }
 }

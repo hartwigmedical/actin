@@ -90,7 +90,7 @@ class MolecularDriverEntryFactoryTest {
 
         private fun createDriversWithEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularDrivers {
             return ImmutableMolecularDrivers.builder()
-                .addViruses(TestVirusFactory.builder().isReportable(isReportable).evidence(evidence).build())
+                .addViruses(TestVirusFactory.createMinimal().isReportable(isReportable).evidence(evidence).build())
                 .build()
         }
 

@@ -1,8 +1,7 @@
 package com.hartwig.actin.algo.sort
 
 import com.hartwig.actin.algo.datamodel.TrialMatch
-import com.hartwig.actin.trial.datamodel.ImmutableTrialIdentification
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.trial.datamodel.TrialIdentification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -19,12 +18,12 @@ class TrialMatchComparatorTest {
     companion object {
         private fun withId(id: String): TrialMatch {
             return TrialMatch(
-                identification = ImmutableTrialIdentification.builder()
-                    .trialId(id)
-                    .open(true)
-                    .acronym(Strings.EMPTY)
-                    .title(Strings.EMPTY)
-                    .build(),
+                identification = TrialIdentification(
+                    trialId = id,
+                    open = true,
+                    acronym = "",
+                    title = "",
+                ),
                 isPotentiallyEligible = true,
                 cohorts = emptyList(),
                 evaluations = emptyMap()

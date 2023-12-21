@@ -1,8 +1,7 @@
 package com.hartwig.actin.algo.sort
 
 import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.trial.datamodel.ImmutableCohortMetadata
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.trial.datamodel.CohortMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -19,14 +18,14 @@ class CohortMatchComparatorTest {
     companion object {
         private fun withId(id: String): CohortMatch {
             return CohortMatch(
-                metadata = ImmutableCohortMetadata.builder()
-                    .cohortId(id)
-                    .evaluable(true)
-                    .open(true)
-                    .slotsAvailable(true)
-                    .blacklist(false)
-                    .description(Strings.EMPTY)
-                    .build(),
+                metadata = CohortMetadata(
+                    cohortId = id,
+                    evaluable = true,
+                    open = true,
+                    slotsAvailable = true,
+                    blacklist = false,
+                    description = "",
+                ),
                 isPotentiallyEligible = true,
                 evaluations = emptyMap()
             )

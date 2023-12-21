@@ -1,14 +1,14 @@
 package com.hartwig.actin.molecular.filter
 
-import com.google.common.collect.Sets
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class SpecificGenesFilterTest {
+
     @Test
-    fun canFilterGenes() {
-        val filter = SpecificGenesFilter(Sets.newHashSet("gene A"))
-        Assert.assertTrue(filter.include("gene A"))
-        Assert.assertFalse(filter.include("gene B"))
+    fun `Should filter specific genes`() {
+        val filter = SpecificGenesFilter(setOf("gene A"))
+        assertThat(filter.include("gene A")).isTrue
+        assertThat(filter.include("gene B")).isFalse
     }
 }

@@ -7,8 +7,9 @@ import com.hartwig.actin.molecular.util.MolecularPrinter.Companion.printRecord
 import org.junit.Test
 
 class MolecularPrinterTest {
+
     @Test
-    fun canPrintMolecularRecords() {
+    fun `Should print molecular records without error`() {
         printRecord(createExhaustiveTestMolecularRecord())
         printRecord(createProperTestMolecularRecord())
         printRecord(createMinimalTestMolecularRecord())

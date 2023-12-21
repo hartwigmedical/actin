@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.util
 
-import com.google.common.collect.Multimap
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory.create
@@ -12,30 +11,30 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class MolecularPrinter private constructor(private val printer: DatamodelPrinter) {
+class MolecularPrinter(private val printer: DatamodelPrinter) {
     fun print(record: MolecularRecord) {
-        printer.print("Sample: " + record.sampleId())
-        printer.print(" Experiment type '" + record.type().display() + "' on " + formatDate(record.date()))
-        printer.print(" Contains tumor cells: " + toYesNoUnknown(record.containsTumorCells()))
-        printer.print(" Has sufficient quality and purity: " + toYesNoUnknown(record.hasSufficientQualityAndPurity()))
-        printer.print(" Purity: " + formatPercentage(record.characteristics().purity()))
-        printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics().predictedTumorOrigin()))
-        printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics().isMicrosatelliteUnstable()))
-        printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.characteristics().isHomologousRepairDeficient))
-        printer.print(" Tumor mutational burden: " + formatDouble(record.characteristics().tumorMutationalBurden()))
-        printer.print(" Tumor mutational load: " + formatInteger(record.characteristics().tumorMutationalLoad()))
+        printer.print("Sample: " + record.sampleId)
+        printer.print(" Experiment type '" + record.type.display() + "' on " + formatDate(record.date))
+        printer.print(" Contains tumor cells: " + toYesNoUnknown(record.containsTumorCells))
+        printer.print(" Has sufficient quality and purity: " + toYesNoUnknown(record.hasSufficientQualityAndPurity))
+        printer.print(" Purity: " + formatPercentage(record.characteristics.purity))
+        printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics.predictedTumorOrigin))
+        printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics.isMicrosatelliteUnstable))
+        printer.print(" Homologous repair deficient?: " + toYesNoUnknown(record.characteristics.isHomologousRepairDeficient))
+        printer.print(" Tumor mutational burden: " + formatDouble(record.characteristics.tumorMutationalBurden))
+        printer.print(" Tumor mutational load: " + formatInteger(record.characteristics.tumorMutationalLoad))
         val evidence = create(record)
-        printer.print(" Events with evidence for approved treatment: " + keys(evidence.approvedTreatmentsPerEvent()))
-        printer.print(" Events associated with external trials: " + keys(evidence.externalEligibleTrialsPerEvent()))
+        printer.print(" Events with evidence for approved treatment: " + keys(evidence.approvedTreatmentsPerEvent))
+        printer.print(" Events associated with external trials: " + keys(evidence.externalEligibleTrialsPerEvent))
         printer.print(
-            " Events with evidence for on-label experimental treatment: " + keys(evidence.onLabelExperimentalTreatmentsPerEvent())
+            " Events with evidence for on-label experimental treatment: " + keys(evidence.onLabelExperimentalTreatmentsPerEvent)
         )
         printer.print(
-            " Events with evidence for off-label experimental treatment: " + keys(evidence.offLabelExperimentalTreatmentsPerEvent())
+            " Events with evidence for off-label experimental treatment: " + keys(evidence.offLabelExperimentalTreatmentsPerEvent)
         )
-        printer.print(" Events with evidence for pre-clinical treatment: " + keys(evidence.preClinicalTreatmentsPerEvent()))
-        printer.print(" Events with known resistance evidence: " + keys(evidence.knownResistantTreatmentsPerEvent()))
-        printer.print(" Events with suspect resistance evidence: " + keys(evidence.suspectResistanceTreatmentsPerEvent()))
+        printer.print(" Events with evidence for pre-clinical treatment: " + keys(evidence.preClinicalTreatmentsPerEvent))
+        printer.print(" Events with known resistance evidence: " + keys(evidence.knownResistantTreatmentsPerEvent))
+        printer.print(" Events with suspect resistance evidence: " + keys(evidence.suspectResistantTreatmentsPerEvent))
     }
 
     companion object {
@@ -71,23 +70,27 @@ class MolecularPrinter private constructor(private val printer: DatamodelPrinter
         }
 
         private fun toYesNoUnknown(bool: Boolean?): String {
-            if (bool == null) {
-                return "Unknown"
+            return when (bool) {
+                null -> {
+                    "Unknown"
+                }
+
+                true -> {
+                    "Yes"
+                }
+
+                else -> {
+                    "No"
+                }
             }
-            return if (bool) "Yes" else "No"
         }
 
-        private fun keys(multimap: Multimap<String?, String?>): String {
-            return concat(multimap.keySet())
+        private fun keys(map: Map<String, Set<String>>): String {
+            return concat(map.keys)
         }
 
-        private fun concat(strings: Iterable<String?>): String {
-            val joiner = StringJoiner(", ")
-            for (string in strings) {
-                joiner.add(string)
-            }
-            val result = joiner.toString()
-            return if (!result.isEmpty()) result else "None"
+        private fun concat(strings: Iterable<String>): String {
+            return strings.joinToString(", ").ifEmpty { "None" }
         }
     }
 }

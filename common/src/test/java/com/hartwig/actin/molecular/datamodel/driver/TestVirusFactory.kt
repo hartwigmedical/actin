@@ -1,15 +1,19 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
 object TestVirusFactory {
-    @JvmStatic
-    fun builder(): ImmutableVirus.Builder {
-        return ImmutableVirus.builder()
-            .from(TestDriverFactory.createEmptyDriver())
-            .name(Strings.EMPTY)
-            .type(VirusType.OTHER)
-            .isReliable(false)
-            .integrations(0)
+
+    fun createMinimal(): Virus {
+        return Virus(
+            isReportable = false,
+            event = "",
+            driverLikelihood = null,
+            evidence = ActionableEvidence(),
+            name = "",
+            type = VirusType.OTHER,
+            isReliable = false,
+            integrations = 0
+        )
     }
 }

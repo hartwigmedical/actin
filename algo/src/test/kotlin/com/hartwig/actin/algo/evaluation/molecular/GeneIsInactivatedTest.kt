@@ -13,17 +13,19 @@ class GeneIsInactivatedTest {
     private val function = GeneIsInactivated(GENE)
 
     private val matchingHomDisruption: HomozygousDisruption =
-        TestHomozygousDisruptionFactory.builder().gene(GENE).isReportable(true).geneRole(GeneRole.TSG)
+        TestHomozygousDisruptionFactory.createMinimal().gene(GENE).isReportable(true).geneRole(GeneRole.TSG)
             .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION).build()
 
     private val matchingLoss: CopyNumber =
-        TestCopyNumberFactory.builder().gene(GENE).isReportable(true).geneRole(GeneRole.TSG).proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
+        TestCopyNumberFactory.createMinimal().gene(GENE).isReportable(true).geneRole(GeneRole.TSG)
+            .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
             .type(CopyNumberType.LOSS).build()
 
     private val matchingVariant: Variant =
-        TestVariantFactory.builder().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.HIGH).isBiallelic(true)
+        TestVariantFactory.createMinimal().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.HIGH).isBiallelic(true)
             .clonalLikelihood(1.0).geneRole(GeneRole.TSG).proteinEffect(ProteinEffect.LOSS_OF_FUNCTION).canonicalImpact(
-                TestTranscriptImpactFactory.builder().codingEffect(GeneIsInactivated.INACTIVATING_CODING_EFFECTS.iterator().next()).build()
+                TestTranscriptImpactFactory.createMinimal().codingEffect(GeneIsInactivated.INACTIVATING_CODING_EFFECTS.iterator().next())
+                    .build()
             ).build()
 
     @Test
@@ -148,14 +150,18 @@ class GeneIsInactivatedTest {
     fun shouldFailWhenTSGVariantHasNoCodingImpact() {
         assertResultForVariant(
             EvaluationResult.FAIL, ImmutableVariant.copyOf(matchingVariant).withCanonicalImpact(
-                TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONE).build()
+                TestTranscriptImpactFactory.createMinimal().codingEffect(CodingEffect.NONE).build()
             )
         )
     }
 
     @Test
     fun shouldPassWhenTSGVariantInHighTMLSample() {
-        assertResultForMutationalLoadAndVariant(EvaluationResult.PASS, true, TestVariantFactory.builder().from(matchingVariant).build())
+        assertResultForMutationalLoadAndVariant(
+            EvaluationResult.PASS,
+            true,
+            TestVariantFactory.createMinimal().from(matchingVariant).build()
+        )
     }
 
     @Test
@@ -178,7 +184,9 @@ class GeneIsInactivatedTest {
     @Test
     fun shouldWarnWhenTSGVariantIsNonHighDriverButBiallelicInLowTMLSample() {
         assertResultForMutationalLoadAndVariant(
-            EvaluationResult.WARN, false, TestVariantFactory.builder().from(matchingVariant).driverLikelihood(DriverLikelihood.LOW).build()
+            EvaluationResult.WARN,
+            false,
+            TestVariantFactory.createMinimal().from(matchingVariant).driverLikelihood(DriverLikelihood.LOW).build()
         )
     }
 
@@ -220,7 +228,8 @@ class GeneIsInactivatedTest {
     @Test
     fun shouldWarnWithLowDriverVariantWithInactivatingEffectAndLowDriverDisruption() {
         val disruption: Disruption =
-            TestDisruptionFactory.builder().gene(GENE).isReportable(true).clusterGroup(1).driverLikelihood(DriverLikelihood.LOW).build()
+            TestDisruptionFactory.createMinimal().gene(GENE).isReportable(true).clusterGroup(1).driverLikelihood(DriverLikelihood.LOW)
+                .build()
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariantAndDisruption(
@@ -242,8 +251,8 @@ class GeneIsInactivatedTest {
         )
     }
 
-    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): Variant = TestVariantFactory.builder().gene(GENE).isReportable(true)
-        .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
+    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): Variant = TestVariantFactory.createMinimal().gene(GENE).isReportable(true)
+        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
         .driverLikelihood(DriverLikelihood.LOW)
         .phaseGroups(phaseGroups).build()
 }

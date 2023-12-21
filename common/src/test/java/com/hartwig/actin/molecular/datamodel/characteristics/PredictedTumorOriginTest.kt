@@ -1,12 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.characteristics
 
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin.cancerType
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin.likelihood
 import org.junit.Assert
 import org.junit.Test
-import java.util.function.IntFunction
-import java.util.stream.Collectors
-import java.util.stream.IntStream
 
 class PredictedTumorOriginTest {
     @Test
@@ -18,22 +13,19 @@ class PredictedTumorOriginTest {
 
     companion object {
         private const val EPSILON = 0.001
+
         private fun withPredictions(vararg likelihoods: Double): PredictedTumorOrigin {
-            return ImmutablePredictedTumorOrigin.builder()
-                .predictions(
-                    IntStream.range(0, likelihoods.size)
-                        .mapToObj<Any>(IntFunction<Any> { i: Int ->
-                            ImmutableCupPrediction.builder()
-                                .cancerType(String.format("type %s", i + 1))
-                                .likelihood(likelihoods[i])
-                                .snvPairwiseClassifier(likelihoods[i])
-                                .genomicPositionClassifier(likelihoods[i])
-                                .featureClassifier(likelihoods[i])
-                                .build()
-                        })
-                        .collect(Collectors.toList())
-                )
-                .build()
+            return PredictedTumorOrigin(
+                predictions = likelihoods.mapIndexed { i, likelihood ->
+                    CupPrediction(
+                        cancerType = String.format("type %s", i + 1),
+                        likelihood = likelihood,
+                        snvPairwiseClassifier = likelihood,
+                        genomicPositionClassifier = likelihood,
+                        featureClassifier = likelihood,
+                    )
+                }
+            )
         }
     }
 }

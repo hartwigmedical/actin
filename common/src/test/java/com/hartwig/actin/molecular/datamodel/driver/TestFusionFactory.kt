@@ -1,19 +1,24 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
 object TestFusionFactory {
-    @JvmStatic
-    fun builder(): ImmutableFusion.Builder {
-        return ImmutableFusion.builder()
-            .from(TestDriverFactory.createEmptyDriver())
-            .geneStart(Strings.EMPTY)
-            .geneTranscriptStart(Strings.EMPTY)
-            .fusedExonUp(-1)
-            .geneEnd(Strings.EMPTY)
-            .geneTranscriptEnd(Strings.EMPTY)
-            .fusedExonDown(-1)
-            .proteinEffect(ProteinEffect.UNKNOWN)
-            .driverType(FusionDriverType.KNOWN_PAIR)
+
+    fun createMinimal(): Fusion {
+        return Fusion(
+            isReportable = false,
+            event = "",
+            driverLikelihood = null,
+            evidence = ActionableEvidence(),
+            isAssociatedWithDrugResistance = null,
+            geneStart = "",
+            geneTranscriptStart = "",
+            fusedExonUp = -1,
+            geneEnd = "",
+            geneTranscriptEnd = "",
+            fusedExonDown = -1,
+            proteinEffect = ProteinEffect.UNKNOWN,
+            driverType = FusionDriverType.KNOWN_PAIR
+        )
     }
 }

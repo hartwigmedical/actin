@@ -29,21 +29,21 @@ class GeneHasActivatingMutationTest {
     @Test
     fun shouldFailWithActivatingMutationForOtherGene() {
         assertResultForVariant(
-            EvaluationResult.FAIL, TestVariantFactory.builder().from(ACTIVATING_VARIANT).gene("gene B").build()
+            EvaluationResult.FAIL, TestVariantFactory.createMinimal().from(ACTIVATING_VARIANT).gene("gene B").build()
         )
     }
 
     @Test
     fun shouldWarnWithActivatingMutationForTSGGene() {
         assertResultForVariant(
-            EvaluationResult.WARN, TestVariantFactory.builder().from(ACTIVATING_VARIANT).geneRole(GeneRole.TSG).build()
+            EvaluationResult.WARN, TestVariantFactory.createMinimal().from(ACTIVATING_VARIANT).geneRole(GeneRole.TSG).build()
         )
     }
 
     @Test
     fun shouldWarnWithActivatingMutationWithDrugResistanceForGene() {
         assertResultForVariant(
-            EvaluationResult.WARN, TestVariantFactory.builder().from(ACTIVATING_VARIANT).isAssociatedWithDrugResistance(true).build()
+            EvaluationResult.WARN, TestVariantFactory.createMinimal().from(ACTIVATING_VARIANT).isAssociatedWithDrugResistance(true).build()
         )
     }
 
@@ -51,14 +51,15 @@ class GeneHasActivatingMutationTest {
     fun shouldWarnWithActivatingMutationForGeneWithNoProteinEffectOrHotspot() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            TestVariantFactory.builder().from(ACTIVATING_VARIANT).proteinEffect(ProteinEffect.UNKNOWN).isHotspot(false).build()
+            TestVariantFactory.createMinimal().from(ACTIVATING_VARIANT).proteinEffect(ProteinEffect.UNKNOWN).isHotspot(false).build()
         )
     }
 
     @Test
     fun shouldWarnWithActivatingMutationForGeneWithLowDriverLikelihood() {
         assertResultForVariant(
-            EvaluationResult.WARN, TestVariantFactory.builder().from(ACTIVATING_VARIANT).driverLikelihood(DriverLikelihood.LOW).build()
+            EvaluationResult.WARN,
+            TestVariantFactory.createMinimal().from(ACTIVATING_VARIANT).driverLikelihood(DriverLikelihood.LOW).build()
         )
     }
 
@@ -66,7 +67,7 @@ class GeneHasActivatingMutationTest {
     fun shouldWarnWithActivatingMutationForGeneWithLowDriverLikelihoodAndUnknownProteinEffectAndUnknownTML() {
         assertResultForVariantWithTML(
             EvaluationResult.WARN,
-            TestVariantFactory.builder().from(ACTIVATING_VARIANT).proteinEffect(ProteinEffect.UNKNOWN)
+            TestVariantFactory.createMinimal().from(ACTIVATING_VARIANT).proteinEffect(ProteinEffect.UNKNOWN)
                 .driverLikelihood(DriverLikelihood.LOW).build(),
             null
         )
@@ -76,15 +77,15 @@ class GeneHasActivatingMutationTest {
     fun shouldWarnWithNonReportableMissenseMutationForGene() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            TestVariantFactory.builder().gene(GENE).isReportable(false).isHotspot(false)
-                .canonicalImpact(TestTranscriptImpactFactory.builder().codingEffect(CodingEffect.MISSENSE).build()).build()
+            TestVariantFactory.createMinimal().gene(GENE).isReportable(false).isHotspot(false)
+                .canonicalImpact(TestTranscriptImpactFactory.createMinimal().codingEffect(CodingEffect.MISSENSE).build()).build()
         )
     }
 
     @Test
     fun shouldWarnWithNonReportableHotspotMutationForGene() {
         assertResultForVariant(
-            EvaluationResult.WARN, TestVariantFactory.builder().gene(GENE).isReportable(false).isHotspot(true).build()
+            EvaluationResult.WARN, TestVariantFactory.createMinimal().gene(GENE).isReportable(false).isHotspot(true).build()
         )
     }
 
@@ -92,7 +93,8 @@ class GeneHasActivatingMutationTest {
     fun shouldWarnWithHighDriverSubclonalActivatingMutationForGene() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            TestVariantFactory.builder().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.HIGH).clonalLikelihood(0.2).build()
+            TestVariantFactory.createMinimal().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.HIGH).clonalLikelihood(0.2)
+                .build()
         )
     }
 
@@ -100,7 +102,8 @@ class GeneHasActivatingMutationTest {
     fun shouldWarnWithLowDriverSubclonalActivatingMutationForGeneAndUnknownTML() {
         assertResultForVariantWithTML(
             EvaluationResult.WARN,
-            TestVariantFactory.builder().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.LOW).clonalLikelihood(0.2).build(),
+            TestVariantFactory.createMinimal().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.LOW).clonalLikelihood(0.2)
+                .build(),
             null
         )
     }
@@ -109,7 +112,8 @@ class GeneHasActivatingMutationTest {
     fun shouldFailWithLowDriverSubclonalActivatingMutationForGeneAndHighTML() {
         assertResultForVariantWithTML(
             EvaluationResult.FAIL,
-            TestVariantFactory.builder().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.LOW).clonalLikelihood(0.2).build(),
+            TestVariantFactory.createMinimal().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.LOW).clonalLikelihood(0.2)
+                .build(),
             true
         )
     }
@@ -123,7 +127,7 @@ class GeneHasActivatingMutationTest {
     fun shouldFailWithLowDriverActivatingMutationWithHighTMLAndUnknownProteinEffect() {
         assertResultForVariantWithTML(
             EvaluationResult.FAIL,
-            TestVariantFactory.builder().from(ACTIVATING_VARIANT).proteinEffect(ProteinEffect.UNKNOWN)
+            TestVariantFactory.createMinimal().from(ACTIVATING_VARIANT).proteinEffect(ProteinEffect.UNKNOWN)
                 .driverLikelihood(DriverLikelihood.LOW).build(),
             true
         )
@@ -133,7 +137,7 @@ class GeneHasActivatingMutationTest {
     fun shouldWarnWithLowDriverActivatingMutationWithLowTMLAndUnknownProteinEffect() {
         assertResultForVariantWithTML(
             EvaluationResult.WARN,
-            TestVariantFactory.builder().from(ACTIVATING_VARIANT).proteinEffect(ProteinEffect.UNKNOWN)
+            TestVariantFactory.createMinimal().from(ACTIVATING_VARIANT).proteinEffect(ProteinEffect.UNKNOWN)
                 .driverLikelihood(DriverLikelihood.LOW).build(),
             false
         )
@@ -155,7 +159,7 @@ class GeneHasActivatingMutationTest {
     companion object {
         private const val GENE = "gene A"
         private val ACTIVATING_VARIANT: Variant =
-            TestVariantFactory.builder().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.HIGH).geneRole(GeneRole.ONCO)
+            TestVariantFactory.createMinimal().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.HIGH).geneRole(GeneRole.ONCO)
                 .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION).isHotspot(true).isAssociatedWithDrugResistance(false).clonalLikelihood(0.8)
                 .build()
     }

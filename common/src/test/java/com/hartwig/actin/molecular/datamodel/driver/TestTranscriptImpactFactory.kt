@@ -1,14 +1,17 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
-import org.apache.logging.log4j.util.Strings
-
 object TestTranscriptImpactFactory {
-    @JvmStatic
-    fun builder(): ImmutableTranscriptImpact.Builder {
-        return ImmutableTranscriptImpact.builder()
-            .transcriptId(Strings.EMPTY)
-            .hgvsCodingImpact(Strings.EMPTY)
-            .hgvsProteinImpact(Strings.EMPTY)
-            .isSpliceRegion(false)
+
+    fun createMinimal(): TranscriptImpact {
+        return TranscriptImpact(
+            transcriptId = "",
+            hgvsCodingImpact = "",
+            hgvsProteinImpact = "",
+            isSpliceRegion = false,
+            affectedCodon = null,
+            affectedExon = null,
+            codingEffect = null,
+            effects = emptySet()
+        )
     }
 }

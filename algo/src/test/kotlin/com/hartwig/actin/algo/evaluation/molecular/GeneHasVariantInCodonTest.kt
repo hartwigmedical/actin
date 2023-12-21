@@ -21,7 +21,7 @@ class GeneHasVariantInCodonTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .isReportable(true)
                         .gene("gene A")
                         .build()
@@ -34,10 +34,10 @@ class GeneHasVariantInCodonTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(300).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedCodon(300).build())
                         .build()
                 )
             )
@@ -48,11 +48,11 @@ class GeneHasVariantInCodonTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .clonalLikelihood(1.0)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedCodon(100).build())
                         .build()
                 )
             )
@@ -63,10 +63,10 @@ class GeneHasVariantInCodonTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(false)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedCodon(100).build())
                         .build()
                 )
             )
@@ -77,11 +77,11 @@ class GeneHasVariantInCodonTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
                         .clonalLikelihood(0.3)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedCodon(100).build())
                         .build()
                 )
             )
@@ -92,12 +92,12 @@ class GeneHasVariantInCodonTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
+                    TestVariantFactory.createMinimal()
                         .gene("gene A")
                         .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(300).build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().affectedCodon(300).build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
+                        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().affectedCodon(300).build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.createMinimal().affectedCodon(300).build())
+                        .addOtherImpacts(TestTranscriptImpactFactory.createMinimal().affectedCodon(100).build())
                         .build()
                 )
             )

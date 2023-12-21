@@ -45,7 +45,7 @@ internal object TumorTestFactory {
                         ImmutableMolecularDrivers.builder()
                             .from(base.molecular().drivers())
                             .addCopyNumbers(
-                                TestCopyNumberFactory.builder()
+                                TestCopyNumberFactory.createMinimal()
                                     .isReportable(true)
                                     .gene(amplifiedGene)
                                     .geneRole(GeneRole.ONCO)
