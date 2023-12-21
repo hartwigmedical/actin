@@ -1,14 +1,13 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.util
 
-import org.junit.Test;
+import org.junit.Test
 
-public class DatamodelPrinterTest {
-
+class DatamodelPrinterTest {
     @Test
-    public void canPrintWithVaryingIndents() {
-        for (int i = 0; i < 10; i++) {
-            DatamodelPrinter printer = new DatamodelPrinter(i);
-            printer.print("hi");
+    fun canPrintWithVaryingIndents() {
+        for (i in 0..9) {
+            val printer = DatamodelPrinter(i)
+            printer.print("hi")
         }
     }
 }

@@ -1,13 +1,12 @@
-package com.hartwig.actin.util.json;
+package com.hartwig.actin.util.json
 
-import static org.junit.Assert.assertNotNull;
+import com.hartwig.actin.util.json.GsonSerializer.create
+import org.junit.Assert
+import org.junit.Test
 
-import org.junit.Test;
-
-public class GsonSerializerTest {
-
+class GsonSerializerTest {
     @Test
-    public void canCreateGsonSerializer() {
-        assertNotNull(GsonSerializer.create());
+    fun canCreateGsonSerializer() {
+        Assert.assertNotNull(create())
     }
 }

@@ -1,20 +1,16 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.util
 
-import static org.junit.Assert.assertEquals;
+import com.hartwig.actin.util.TabularFile.createFields
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.Map;
-
-import org.junit.Test;
-
-public class TabularFileTest {
-
+class TabularFileTest {
     @Test
-    public void canCreateFields() {
-        String[] header = new String[] { "header0", "header1", "header2" };
-        Map<String, Integer> fields = TabularFile.createFields(header);
-
-        assertEquals(0, (int) fields.get("header0"));
-        assertEquals(1, (int) fields.get("header1"));
-        assertEquals(2, (int) fields.get("header2"));
+    fun canCreateFields() {
+        val header = arrayOf("header0", "header1", "header2")
+        val fields = createFields(header)
+        Assert.assertEquals(0, (fields["header0"] as Int).toLong())
+        Assert.assertEquals(1, (fields["header1"] as Int).toLong())
+        Assert.assertEquals(2, (fields["header2"] as Int).toLong())
     }
 }

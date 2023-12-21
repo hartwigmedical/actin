@@ -1,35 +1,24 @@
-package com.hartwig.actin.util.json;
+package com.hartwig.actin.util.json
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.Maps
+import com.google.gson.JsonObject
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-import com.google.gson.JsonObject;
-
-import org.junit.Test;
-
-public class JsonDatamodelCheckerTest {
-
+class JsonDatamodelCheckerTest {
     @Test
-    public void canCheckExistenceOfFields() {
-        Map<String, Boolean> map = Maps.newHashMap();
-        map.put("A", true);
-        map.put("B", false);
-
-        JsonDatamodelChecker checker = new JsonDatamodelChecker("test", map);
-
-        JsonObject object = new JsonObject();
-        assertFalse(checker.check(object));
-
-        object.addProperty("A", "test A");
-        assertTrue(checker.check(object));
-
-        object.addProperty("B", "test B");
-        assertTrue(checker.check(object));
-
-        object.addProperty("C", "test C");
-        assertFalse(checker.check(object));
+    fun canCheckExistenceOfFields() {
+        val map: MutableMap<String, Boolean> = Maps.newHashMap()
+        map["A"] = true
+        map["B"] = false
+        val checker = JsonDatamodelChecker("test", map)
+        val `object` = JsonObject()
+        Assert.assertFalse(checker.check(`object`))
+        `object`.addProperty("A", "test A")
+        Assert.assertTrue(checker.check(`object`))
+        `object`.addProperty("B", "test B")
+        Assert.assertTrue(checker.check(`object`))
+        `object`.addProperty("C", "test C")
+        Assert.assertFalse(checker.check(`object`))
     }
 }

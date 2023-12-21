@@ -1,19 +1,15 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.util
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.util.Paths.forceTrailingFileSeparator
+import org.junit.Assert
+import org.junit.Test
+import java.io.File
 
-import java.io.File;
-
-import org.junit.Test;
-
-public class PathsTest {
-
+class PathsTest {
     @Test
-    public void canAppendFileSeparator() {
-        assertTrue(Paths.forceTrailingFileSeparator("hi").endsWith(File.separator));
-
-        String dir = "this" + File.separator + "dir" + File.separator;
-        assertEquals(dir, Paths.forceTrailingFileSeparator(dir));
+    fun canAppendFileSeparator() {
+        Assert.assertTrue(forceTrailingFileSeparator("hi").endsWith(File.separator))
+        val dir = "this" + File.separator + "dir" + File.separator
+        Assert.assertEquals(dir, forceTrailingFileSeparator(dir))
     }
 }

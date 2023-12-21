@@ -1,53 +1,55 @@
-package com.hartwig.actin.util;
+package com.hartwig.actin.util
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import com.hartwig.actin.util.ResourceFile.bool
+import com.hartwig.actin.util.ResourceFile.optionalBool
+import com.hartwig.actin.util.ResourceFile.optionalDate
+import com.hartwig.actin.util.ResourceFile.optionalInteger
+import com.hartwig.actin.util.ResourceFile.optionalNumber
+import com.hartwig.actin.util.ResourceFile.optionalString
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert
+import org.junit.Test
+import java.time.LocalDate
 
-import java.time.LocalDate;
-
-import org.apache.logging.log4j.util.Strings;
-import org.junit.Test;
-
-public class ResourceFileTest {
-
-    private static final double EPSILON = 1.0E-10;
-
+class ResourceFileTest {
     @Test
-    public void canParseStrings() {
-        assertNull(ResourceFile.optionalString(Strings.EMPTY));
-        assertEquals("hi", ResourceFile.optionalString("hi"));
+    fun canParseStrings() {
+        Assert.assertNull(optionalString(Strings.EMPTY))
+        Assert.assertEquals("hi", optionalString("hi"))
     }
 
     @Test
-    public void canParseBooleans() {
-        assertNull(ResourceFile.optionalBool("unknown"));
-        assertNull(ResourceFile.optionalBool(Strings.EMPTY));
-        assertTrue(ResourceFile.optionalBool("1"));
-        assertFalse(ResourceFile.optionalBool("0"));
+    fun canParseBooleans() {
+        Assert.assertNull(optionalBool("unknown"))
+        Assert.assertNull(optionalBool(Strings.EMPTY))
+        Assert.assertTrue(optionalBool("1")!!)
+        Assert.assertFalse(optionalBool("0")!!)
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void crashOnInvalidBoolean() {
-        ResourceFile.bool("True");
-    }
-
-    @Test
-    public void canParseDates() {
-        assertNull(ResourceFile.optionalDate(Strings.EMPTY));
-        assertEquals(LocalDate.of(2019, 4, 20), ResourceFile.optionalDate("2019-04-20"));
+    @Test(expected = IllegalArgumentException::class)
+    fun crashOnInvalidBoolean() {
+        bool("True")
     }
 
     @Test
-    public void canParseIntegers() {
-        assertNull(ResourceFile.optionalInteger(Strings.EMPTY));
-        assertEquals(4, (int) ResourceFile.optionalInteger("4"));
+    fun canParseDates() {
+        Assert.assertNull(optionalDate(Strings.EMPTY))
+        Assert.assertEquals(LocalDate.of(2019, 4, 20), optionalDate("2019-04-20"))
     }
 
     @Test
-    public void canParseDoubles() {
-        assertNull(ResourceFile.optionalNumber(Strings.EMPTY));
-        assertEquals(4.2, ResourceFile.optionalNumber("4.2"), EPSILON);
+    fun canParseIntegers() {
+        Assert.assertNull(optionalInteger(Strings.EMPTY))
+        Assert.assertEquals(4, (optionalInteger("4") as Int).toLong())
+    }
+
+    @Test
+    fun canParseDoubles() {
+        Assert.assertNull(optionalNumber(Strings.EMPTY))
+        Assert.assertEquals(4.2, optionalNumber("4.2")!!, EPSILON)
+    }
+
+    companion object {
+        private const val EPSILON = 1.0E-10
     }
 }
