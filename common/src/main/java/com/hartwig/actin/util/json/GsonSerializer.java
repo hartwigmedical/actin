@@ -1,6 +1,7 @@
 package com.hartwig.actin.util.json;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.google.gson.Gson;
@@ -17,7 +18,7 @@ public final class GsonSerializer {
     public static Gson create() {
         // If we don't register an explicit type adapter for LocalDate, GSON using reflection internally to create serialize these objects
         return new GsonBuilder().serializeNulls()
-                .enableComplexMapKeySerialization()
+                .enableComplexMapKeySerialization().registerTypeAdapter(LocalDateTime.class, new GsonLocalDateTimeAdapter())
                 .registerTypeAdapter(LocalDate.class, new GsonLocalDateAdapter())
                 .registerTypeHierarchyAdapter(Set.class, new GsonSetAdapter<>())
                 .create();
