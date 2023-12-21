@@ -1,6 +1,6 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-public enum BodyLocationCategory {
+enum class BodyLocationCategory {
     BONE,
     BRAIN,
     CNS,

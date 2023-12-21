@@ -1,6 +1,6 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-public enum QTProlongatingRisk {
+enum class QTProlongatingRisk {
     KNOWN,
     POSSIBLE,
     CONDITIONAL,

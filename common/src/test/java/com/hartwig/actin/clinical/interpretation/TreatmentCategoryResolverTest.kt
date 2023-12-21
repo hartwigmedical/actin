@@ -1,39 +1,35 @@
-package com.hartwig.actin.clinical.interpretation;
+package com.hartwig.actin.clinical.interpretation
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Sets
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver.fromStringList
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver.toStringList
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.Set;
-
-import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
-
-import org.apache.logging.log4j.util.Strings;
-import org.junit.Test;
-
-public class TreatmentCategoryResolverTest {
-
+class TreatmentCategoryResolverTest {
     @Test
-    public void allTreatmentCategoriesCanBeConvertedBackAndForth() {
-        for (TreatmentCategory category : TreatmentCategory.values()) {
-            Set<TreatmentCategory> set = Sets.newHashSet(category);
-            assertEquals(set, TreatmentCategoryResolver.fromStringList(TreatmentCategoryResolver.toStringList(set)));
+    fun allTreatmentCategoriesCanBeConvertedBackAndForth() {
+        for (category in TreatmentCategory.values()) {
+            val set: Set<TreatmentCategory> = Sets.newHashSet(category)
+            Assert.assertEquals(set, fromStringList(toStringList(set)))
         }
     }
 
     @Test
-    public void canConvertCategoriesToStrings() {
-        assertEquals(Strings.EMPTY, TreatmentCategoryResolver.toStringList(Sets.newHashSet()));
-        assertEquals("Chemotherapy", TreatmentCategoryResolver.toStringList(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY)));
-        assertEquals("Antiviral therapy", TreatmentCategoryResolver.toStringList(Sets.newHashSet(TreatmentCategory.ANTIVIRAL_THERAPY)));
-
-        Set<TreatmentCategory> categories = Sets.newTreeSet();
-        categories.add(TreatmentCategory.CHEMOTHERAPY);
-        categories.add(TreatmentCategory.RADIOTHERAPY);
-        assertEquals("Chemotherapy, Radiotherapy", TreatmentCategoryResolver.toStringList(categories));
+    fun canConvertCategoriesToStrings() {
+        Assert.assertEquals(Strings.EMPTY, toStringList(Sets.newHashSet()))
+        Assert.assertEquals("Chemotherapy", toStringList(Sets.newHashSet(TreatmentCategory.CHEMOTHERAPY)))
+        Assert.assertEquals("Antiviral therapy", toStringList(Sets.newHashSet(TreatmentCategory.ANTIVIRAL_THERAPY)))
+        val categories: MutableSet<TreatmentCategory> = Sets.newTreeSet()
+        categories.add(TreatmentCategory.CHEMOTHERAPY)
+        categories.add(TreatmentCategory.RADIOTHERAPY)
+        Assert.assertEquals("Chemotherapy, Radiotherapy", toStringList(categories))
     }
 
     @Test
-    public void canConvertStringsToCategories() {
-        assertEquals(Sets.newHashSet(TreatmentCategory.ANTIVIRAL_THERAPY), TreatmentCategoryResolver.fromStringList("Antiviral therapy"));
+    fun canConvertStringsToCategories() {
+        Assert.assertEquals(Sets.newHashSet(TreatmentCategory.ANTIVIRAL_THERAPY), fromStringList("Antiviral therapy"))
     }
 }

@@ -1,23 +1,12 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import com.hartwig.actin.Displayable;
+import com.hartwig.actin.Displayable
 
-import org.jetbrains.annotations.NotNull;
-
-public enum ToxicitySource implements Displayable {
+enum class ToxicitySource(private val display: String) : Displayable {
     QUESTIONNAIRE("Questionnaire"),
     EHR("EHR");
 
-    @NotNull
-    private final String display;
-
-    ToxicitySource(@NotNull final String display) {
-        this.display = display;
-    }
-
-    @Override
-    @NotNull
-    public String display() {
-        return display;
+    override fun display(): String {
+        return display
     }
 }

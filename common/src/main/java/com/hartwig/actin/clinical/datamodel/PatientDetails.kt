@@ -1,27 +1,16 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import java.time.LocalDate;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.time.LocalDate
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class PatientDetails {
-
-    @NotNull
-    public abstract Gender gender();
-
-    public abstract int birthYear();
-
-    @NotNull
-    public abstract LocalDate registrationDate();
-
-    @Nullable
-    public abstract LocalDate questionnaireDate();
-
-    @Nullable
-    public abstract String otherMolecularPatientId();
-
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class PatientDetails {
+    abstract fun gender(): Gender
+    abstract fun birthYear(): Int
+    abstract fun registrationDate(): LocalDate
+    abstract fun questionnaireDate(): LocalDate?
+    abstract fun otherMolecularPatientId(): String?
 }

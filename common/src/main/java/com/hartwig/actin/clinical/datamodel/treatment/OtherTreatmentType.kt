@@ -1,30 +1,19 @@
-package com.hartwig.actin.clinical.datamodel.treatment;
+package com.hartwig.actin.clinical.datamodel.treatment
 
-import org.jetbrains.annotations.NotNull;
+import java.util.*
 
-public enum OtherTreatmentType implements TreatmentType {
+enum class OtherTreatmentType(private val category: TreatmentCategory) : TreatmentType {
     ALLOGENIC(TreatmentCategory.TRANSPLANTATION),
     AUTOLOGOUS(TreatmentCategory.TRANSPLANTATION),
     MICROWAVE(TreatmentCategory.ABLATION),
     RADIOFREQUENCY(TreatmentCategory.ABLATION),
     HYPERTHERMIA(TreatmentCategory.ABLATION);
 
-    @NotNull
-    private final TreatmentCategory category;
-
-    OtherTreatmentType(@NotNull TreatmentCategory category) {
-        this.category = category;
+    override fun category(): TreatmentCategory {
+        return category
     }
 
-    @NotNull
-    @Override
-    public TreatmentCategory category() {
-        return category;
-    }
-
-    @NotNull
-    @Override
-    public String display() {
-        return toString().replace("_", " ").toLowerCase();
+    override fun display(): String {
+        return toString().replace("_", " ").lowercase(Locale.getDefault())
     }
 }

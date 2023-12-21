@@ -1,53 +1,36 @@
-package com.hartwig.actin.clinical.util;
+package com.hartwig.actin.clinical.util
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.TumorDetails;
-import com.hartwig.actin.util.DatamodelPrinter;
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.util.DatamodelPrinter
+import com.hartwig.actin.util.DatamodelPrinter.Companion.withDefaultIndentation
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public class ClinicalPrinter {
-
-    @NotNull
-    private final DatamodelPrinter printer;
-
-    public static void printRecord(@NotNull ClinicalRecord record) {
-        new ClinicalPrinter(DatamodelPrinter.withDefaultIndentation()).print(record);
+class ClinicalPrinter private constructor(private val printer: DatamodelPrinter) {
+    fun print(record: ClinicalRecord) {
+        printer.print("Patient: " + record.patientId())
+        printer.print("Birth year: " + record.patient().birthYear())
+        printer.print("Gender: " + record.patient().gender())
+        printer.print("Primary tumor location: " + tumorLocation(record.tumor()))
+        printer.print("Primary tumor type: " + tumorType(record.tumor()))
+        printer.print("WHO status: " + record.clinicalStatus().who())
     }
 
-    private ClinicalPrinter(@NotNull final DatamodelPrinter printer) {
-        this.printer = printer;
-    }
-
-    public void print(@NotNull ClinicalRecord record) {
-        printer.print("Patient: " + record.patientId());
-        printer.print("Birth year: " + record.patient().birthYear());
-        printer.print("Gender: " + record.patient().gender());
-        printer.print("Primary tumor location: " + tumorLocation(record.tumor()));
-        printer.print("Primary tumor type: " + tumorType(record.tumor()));
-        printer.print("WHO status: " + record.clinicalStatus().who());
-    }
-
-    @Nullable
-    private static String tumorLocation(@NotNull TumorDetails tumor) {
-        String location = tumor.primaryTumorLocation();
-        if (location == null) {
-            return null;
+    companion object {
+        @JvmStatic
+        fun printRecord(record: ClinicalRecord) {
+            ClinicalPrinter(withDefaultIndentation()).print(record)
         }
 
-        String subLocation = tumor.primaryTumorSubLocation();
-        return subLocation != null && !subLocation.isEmpty() ? location + " (" + subLocation + ")" : location;
-    }
-
-    @Nullable
-    private static String tumorType(@NotNull TumorDetails tumor) {
-        String type = tumor.primaryTumorType();
-        if (type == null) {
-            return null;
+        private fun tumorLocation(tumor: TumorDetails): String? {
+            val location = tumor.primaryTumorLocation() ?: return null
+            val subLocation = tumor.primaryTumorSubLocation()
+            return if (subLocation != null && !subLocation.isEmpty()) "$location ($subLocation)" else location
         }
 
-        String subType = tumor.primaryTumorSubType();
-        return subType != null && !subType.isEmpty() ? subType : type;
+        private fun tumorType(tumor: TumorDetails): String? {
+            val type = tumor.primaryTumorType() ?: return null
+            val subType = tumor.primaryTumorSubType()
+            return if (subType != null && !subType.isEmpty()) subType else type
+        }
     }
 }

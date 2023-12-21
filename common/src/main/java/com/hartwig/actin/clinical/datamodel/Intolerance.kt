@@ -1,37 +1,18 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import java.util.Set;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Intolerance {
-
-    @NotNull
-    public abstract String name();
-
-    @NotNull
-    public abstract Set<String> doids();
-
-    @NotNull
-    public abstract String category();
-
-    @NotNull
-    public abstract Set<String> subcategories();
-
-    @NotNull
-    public abstract String type();
-
-    @NotNull
-    public abstract String clinicalStatus();
-
-    @NotNull
-    public abstract String verificationStatus();
-
-    @NotNull
-    public abstract String criticality();
-
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class Intolerance {
+    abstract fun name(): String
+    abstract fun doids(): Set<String?>
+    abstract fun category(): String
+    abstract fun subcategories(): Set<String?>
+    abstract fun type(): String
+    abstract fun clinicalStatus(): String
+    abstract fun verificationStatus(): String
+    abstract fun criticality(): String
 }

@@ -1,39 +1,31 @@
-package com.hartwig.actin.clinical.sort;
+package com.hartwig.actin.clinical.sort
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Lists
+import com.hartwig.actin.clinical.datamodel.BodyWeight
+import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
+import org.apache.logging.log4j.util.Strings
+import org.junit.Assert
+import org.junit.Test
+import java.time.LocalDate
 
-import java.time.LocalDate;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.BodyWeight;
-import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-
-public class BodyWeightDescendingDateComparatorTest {
-
+class BodyWeightDescendingDateComparatorTest {
     @Test
-    public void canSortBodyWeights() {
-        BodyWeight weight1 = builder().date(LocalDate.of(2020, 4, 4)).value(0D).unit(Strings.EMPTY).build();
-        BodyWeight weight2 = builder().date(LocalDate.of(2020, 4, 4)).value(80D).unit("unit 1").build();
-        BodyWeight weight3 = builder().date(LocalDate.of(2020, 4, 4)).value(80D).unit("unit 2").build();
-        BodyWeight weight4 = builder().date(LocalDate.of(2021, 4, 4)).build();
-
-        List<BodyWeight> weights = Lists.newArrayList(weight1, weight2, weight4, weight3);
-
-        weights.sort(new BodyWeightDescendingDateComparator());
-
-        assertEquals(weight4, weights.get(0));
-        assertEquals(weight2, weights.get(1));
-        assertEquals(weight3, weights.get(2));
-        assertEquals(weight1, weights.get(3));
+    fun canSortBodyWeights() {
+        val weight1: BodyWeight = builder().date(LocalDate.of(2020, 4, 4)).value(0.0).unit(Strings.EMPTY).build()
+        val weight2: BodyWeight = builder().date(LocalDate.of(2020, 4, 4)).value(80.0).unit("unit 1").build()
+        val weight3: BodyWeight = builder().date(LocalDate.of(2020, 4, 4)).value(80.0).unit("unit 2").build()
+        val weight4: BodyWeight = builder().date(LocalDate.of(2021, 4, 4)).build()
+        val weights: List<BodyWeight> = Lists.newArrayList(weight1, weight2, weight4, weight3)
+        weights.sort(BodyWeightDescendingDateComparator())
+        Assert.assertEquals(weight4, weights[0])
+        Assert.assertEquals(weight2, weights[1])
+        Assert.assertEquals(weight3, weights[2])
+        Assert.assertEquals(weight1, weights[3])
     }
 
-    @NotNull
-    private static ImmutableBodyWeight.Builder builder() {
-        return ImmutableBodyWeight.builder().value(0D).unit(Strings.EMPTY);
+    companion object {
+        private fun builder(): ImmutableBodyWeight.Builder {
+            return ImmutableBodyWeight.builder().value(0.0).unit(Strings.EMPTY)
+        }
     }
 }

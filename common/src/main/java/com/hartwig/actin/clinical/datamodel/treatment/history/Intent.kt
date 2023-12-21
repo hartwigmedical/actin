@@ -1,6 +1,6 @@
-package com.hartwig.actin.clinical.datamodel.treatment.history;
+package com.hartwig.actin.clinical.datamodel.treatment.history
 
-public enum Intent {
+enum class Intent {
     ADJUVANT,
     NEOADJUVANT,
     INDUCTION,

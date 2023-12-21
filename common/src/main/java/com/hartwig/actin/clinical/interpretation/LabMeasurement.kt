@@ -1,10 +1,8 @@
-package com.hartwig.actin.clinical.interpretation;
+package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.datamodel.LabUnit;
+import com.hartwig.actin.clinical.datamodel.LabUnit
 
-import org.jetbrains.annotations.NotNull;
-
-public enum LabMeasurement {
+enum class LabMeasurement(private val code: String, private val display: String, private val defaultUnit: LabUnit) {
     ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME("APTT", "APTT", LabUnit.SECONDS),
     AMYLASE("AMYL", "amylase", LabUnit.UNITS_PER_LITER),
     ALANINE_AMINOTRANSFERASE("ALAT", "ALAT", LabUnit.UNITS_PER_LITER),
@@ -51,31 +49,15 @@ public enum LabMeasurement {
     TRIGLYCERIDE("TG", "triglycerides", LabUnit.MILLIMOLES_PER_LITER),
     TROPONIN_I_T("HSTNT", "troponin I and T", LabUnit.NANOGRAMS_PER_LITER);
 
-    @NotNull
-    private final String code;
-    @NotNull
-    private final String display;
-    @NotNull
-    private final LabUnit defaultUnit;
-
-    LabMeasurement(@NotNull final String code, @NotNull final String display, @NotNull final LabUnit defaultUnit) {
-        this.code = code;
-        this.display = display;
-        this.defaultUnit = defaultUnit;
+    fun code(): String {
+        return code
     }
 
-    @NotNull
-    public String code() {
-        return code;
+    fun display(): String {
+        return display
     }
 
-    @NotNull
-    public String display() {
-        return display;
-    }
-
-    @NotNull
-    public LabUnit defaultUnit() {
-        return defaultUnit;
+    fun defaultUnit(): LabUnit {
+        return defaultUnit
     }
 }

@@ -1,6 +1,6 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-public enum TumorStatus {
+enum class TumorStatus {
     ACTIVE,
     INACTIVE,
     EXPECTATIVE

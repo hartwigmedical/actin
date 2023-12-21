@@ -1,11 +1,9 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import com.hartwig.actin.Displayable;
+import com.hartwig.actin.Displayable
+import org.apache.logging.log4j.util.Strings
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-
-public enum LabUnit implements Displayable {
+enum class LabUnit(private val display: String) : Displayable {
     NANOGRAMS_PER_LITER("ng/L"),
     NANOGRAMS_PER_MILLILITER("ng/mL"),
     MICROGRAMS_PER_LITER("ug/L"),
@@ -51,16 +49,7 @@ public enum LabUnit implements Displayable {
     PRNT50("PRNT50"),
     NONE(Strings.EMPTY);
 
-    @NotNull
-    private final String display;
-
-    LabUnit(@NotNull final String display) {
-        this.display = display;
-    }
-
-    @Override
-    @NotNull
-    public String display() {
-        return display;
+    override fun display(): String {
+        return display
     }
 }

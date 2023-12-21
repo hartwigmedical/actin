@@ -1,6 +1,6 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-public enum SurgeryStatus {
+enum class SurgeryStatus {
     PLANNED,
     IN_PROGRESS,
     FINISHED,

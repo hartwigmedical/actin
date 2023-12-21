@@ -1,9 +1,9 @@
-package com.hartwig.actin.clinical.datamodel.treatment;
+package com.hartwig.actin.clinical.datamodel.treatment
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.*
 
-public enum DrugType implements TreatmentType {
+enum class DrugType @JvmOverloads constructor(private val category: TreatmentCategory, private val display: String? = null) :
+    TreatmentType {
     ABL_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ABL inhibitor"),
     ADENOSINE_TARGETING(TreatmentCategory.IMMUNOTHERAPY),
     ALK_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ALK inhibitor"),
@@ -118,29 +118,11 @@ public enum DrugType implements TreatmentType {
     VEGFR2_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "VEGFR2 antibody"),
     VEGFR2_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "VEGFR2 inhibitor");
 
-    @NotNull
-    private final TreatmentCategory category;
-    @Nullable
-    private final String display;
-
-    DrugType(@NotNull TreatmentCategory category) {
-        this(category, null);
+    override fun category(): TreatmentCategory {
+        return category
     }
 
-    DrugType(@NotNull TreatmentCategory category, @Nullable String display) {
-        this.category = category;
-        this.display = display;
-    }
-
-    @NotNull
-    @Override
-    public TreatmentCategory category() {
-        return category;
-    }
-
-    @NotNull
-    @Override
-    public String display() {
-        return (display != null) ? display : toString().replace("_", " ").toLowerCase();
+    override fun display(): String {
+        return display ?: toString().replace("_", " ").lowercase(Locale.getDefault())
     }
 }

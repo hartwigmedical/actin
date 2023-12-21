@@ -11,7 +11,7 @@ class TreatmentDatabaseTest {
         org.assertj.core.api.Assertions.assertThat(treatment).isNotNull()
         org.assertj.core.api.Assertions.assertThat<TreatmentCategory>(treatment!!.categories())
             .containsExactly(TreatmentCategory.CHEMOTHERAPY)
-        org.assertj.core.api.Assertions.assertThat(treatment!!.isSystemic()).isTrue()
+        org.assertj.core.api.Assertions.assertThat(treatment!!.isSystemic).isTrue()
         org.assertj.core.api.Assertions.assertThat<Drug>((treatment as DrugTreatment?).drugs())
             .extracting(java.util.function.Function<Drug, Any> { obj: Drug -> obj.name() },
                 java.util.function.Function<Drug, Any> { obj: Drug -> obj.drugTypes() })

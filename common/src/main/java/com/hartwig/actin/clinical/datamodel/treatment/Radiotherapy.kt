@@ -1,39 +1,29 @@
-package com.hartwig.actin.clinical.datamodel.treatment;
+package com.hartwig.actin.clinical.datamodel.treatment
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Radiotherapy implements Treatment {
-    public final TreatmentClass treatmentClass = TreatmentClass.RADIOTHERAPY;
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class Radiotherapy : Treatment {
+    val treatmentClass = TreatmentClass.RADIOTHERAPY
 
-    @Override
-    @Value.Default
-    public boolean isSystemic() {
-        return false;
+    @get:Value.Default
+    override val isSystemic: Boolean
+        get() = false
+
+    override fun types(): Set<TreatmentType?> {
+        val radiotherapyType = radioType()
+        return if (radiotherapyType == null) emptySet<TreatmentType>() else java.util.Set.of<TreatmentType>(radiotherapyType)
     }
 
-    @Override
-    @NotNull
-    public Set<TreatmentType> types() {
-        RadiotherapyType radiotherapyType = radioType();
-        return (radiotherapyType == null) ? Collections.emptySet() : Set.of(radiotherapyType);
+    override fun categories(): Set<TreatmentCategory> {
+        return java.util.Set.of(TreatmentCategory.RADIOTHERAPY)
     }
 
-    @Override
-    @NotNull
-    public Set<TreatmentCategory> categories() {
-        return Set.of(TreatmentCategory.RADIOTHERAPY);
-    }
+    abstract fun radioType(): RadiotherapyType?
 
-    @Nullable
-    public abstract RadiotherapyType radioType();
-
-    @Nullable
-    public abstract Boolean isInternal();
+    @JvmField
+    abstract val isInternal: Boolean?
 }

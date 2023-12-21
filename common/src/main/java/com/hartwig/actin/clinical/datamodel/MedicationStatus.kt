@@ -1,25 +1,14 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import com.hartwig.actin.Displayable;
+import com.hartwig.actin.Displayable
 
-import org.jetbrains.annotations.NotNull;
-
-public enum MedicationStatus implements Displayable {
+enum class MedicationStatus(private val display: String) : Displayable {
     ACTIVE("Active"),
     ON_HOLD("On hold"),
     CANCELLED("Cancelled"),
     UNKNOWN("Unknown");
 
-    @NotNull
-    private final String display;
-
-    MedicationStatus(@NotNull final String display) {
-        this.display = display;
-    }
-
-    @Override
-    @NotNull
-    public String display() {
-        return display;
+    override fun display(): String {
+        return display
     }
 }

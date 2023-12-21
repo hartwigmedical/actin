@@ -1,20 +1,13 @@
-package com.hartwig.actin.clinical.datamodel.treatment;
+package com.hartwig.actin.clinical.datamodel.treatment
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Type
 
-public enum TreatmentClass {
+enum class TreatmentClass(private val classType: Type) {
+    DRUG_TREATMENT(DrugTreatment::class.java),
+    OTHER_TREATMENT(OtherTreatment::class.java),
+    RADIOTHERAPY(Radiotherapy::class.java);
 
-    DRUG_TREATMENT(DrugTreatment.class),
-    OTHER_TREATMENT(OtherTreatment.class),
-    RADIOTHERAPY(Radiotherapy.class);
-
-    private final Type classType;
-
-    TreatmentClass(Type classType) {
-        this.classType = classType;
-    }
-
-    public Type treatmentClass() {
-        return classType;
+    fun treatmentClass(): Type {
+        return classType
     }
 }

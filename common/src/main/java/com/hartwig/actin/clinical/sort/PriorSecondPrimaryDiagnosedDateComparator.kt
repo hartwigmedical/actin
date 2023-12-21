@@ -1,20 +1,13 @@
-package com.hartwig.actin.clinical.sort;
+package com.hartwig.actin.clinical.sort
 
-import java.util.Comparator;
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 
-import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary;
-
-import org.jetbrains.annotations.NotNull;
-
-public class PriorSecondPrimaryDiagnosedDateComparator implements Comparator<PriorSecondPrimary> {
-
-    @Override
-    public int compare(@NotNull PriorSecondPrimary secondPrimary1, @NotNull PriorSecondPrimary secondPrimary2) {
-        Comparator<Integer> nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder());
-
-        return Comparator.comparing(PriorSecondPrimary::diagnosedYear, nullSafeComparator)
-                .thenComparing(PriorSecondPrimary::diagnosedMonth, nullSafeComparator)
-                .thenComparing(PriorSecondPrimary::tumorLocation)
-                .compare(secondPrimary1, secondPrimary2);
+class PriorSecondPrimaryDiagnosedDateComparator : Comparator<PriorSecondPrimary> {
+    override fun compare(secondPrimary1: PriorSecondPrimary, secondPrimary2: PriorSecondPrimary): Int {
+        val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int?>())
+        return Comparator.comparing({ obj: PriorSecondPrimary -> obj.diagnosedYear() }, nullSafeComparator)
+            .thenComparing({ obj: PriorSecondPrimary -> obj.diagnosedMonth() }, nullSafeComparator)
+            .thenComparing { obj: PriorSecondPrimary -> obj.tumorLocation() }
+            .compare(secondPrimary1, secondPrimary2)
     }
 }

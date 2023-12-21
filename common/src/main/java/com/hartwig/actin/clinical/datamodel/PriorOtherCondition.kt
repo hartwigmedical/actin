@@ -1,30 +1,18 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import java.util.Set;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class PriorOtherCondition {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class PriorOtherCondition {
+    abstract fun name(): String
+    abstract fun year(): Int?
+    abstract fun month(): Int?
+    abstract fun doids(): Set<String?>
+    abstract fun category(): String
 
-    @NotNull
-    public abstract String name();
-
-    @Nullable
-    public abstract Integer year();
-
-    @Nullable
-    public abstract Integer month();
-
-    @NotNull
-    public abstract Set<String> doids();
-
-    @NotNull
-    public abstract String category();
-
-    public abstract boolean isContraindicationForTherapy();
-
+    @JvmField
+    abstract val isContraindicationForTherapy: Boolean
 }

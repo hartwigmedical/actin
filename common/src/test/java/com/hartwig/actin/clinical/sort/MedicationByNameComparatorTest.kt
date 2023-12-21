@@ -1,30 +1,23 @@
-package com.hartwig.actin.clinical.sort;
+package com.hartwig.actin.clinical.sort
 
-import static org.junit.Assert.assertEquals;
+import com.google.common.collect.Lists
+import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
+import org.junit.Assert
+import org.junit.Test
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.Medication;
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory;
-
-import org.junit.Test;
-
-public class MedicationByNameComparatorTest {
-
+class MedicationByNameComparatorTest {
     @Test
-    public void canSortMedications() {
-        Medication medication1 = TestMedicationFactory.builder().name("X").build();
-        Medication medication2 = TestMedicationFactory.builder().name("X").build();
-        Medication medication3 = TestMedicationFactory.builder().name("Z").build();
-        Medication medication4 = TestMedicationFactory.builder().name("Y").build();
-        List<Medication> values = Lists.newArrayList(medication1, medication2, medication3, medication4);
-
-        values.sort(new MedicationByNameComparator());
-
-        assertEquals(medication1, values.get(0));
-        assertEquals(medication2, values.get(1));
-        assertEquals(medication4, values.get(2));
-        assertEquals(medication3, values.get(3));
+    fun canSortMedications() {
+        val medication1: Medication = TestMedicationFactory.builder().name("X").build()
+        val medication2: Medication = TestMedicationFactory.builder().name("X").build()
+        val medication3: Medication = TestMedicationFactory.builder().name("Z").build()
+        val medication4: Medication = TestMedicationFactory.builder().name("Y").build()
+        val values: List<Medication> = Lists.newArrayList(medication1, medication2, medication3, medication4)
+        values.sort(MedicationByNameComparator())
+        Assert.assertEquals(medication1, values[0])
+        Assert.assertEquals(medication2, values[1])
+        Assert.assertEquals(medication4, values[2])
+        Assert.assertEquals(medication3, values[3])
     }
 }

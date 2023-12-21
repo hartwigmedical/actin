@@ -1,66 +1,28 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import java.util.List;
-
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class ClinicalRecord {
-
-    @NotNull
-    public abstract String patientId();
-
-    @NotNull
-    public abstract PatientDetails patient();
-
-    @NotNull
-    public abstract TumorDetails tumor();
-
-    @NotNull
-    public abstract ClinicalStatus clinicalStatus();
-
-    @NotNull
-    public abstract List<TreatmentHistoryEntry> oncologicalHistory();
-
-    @NotNull
-    public abstract List<PriorSecondPrimary> priorSecondPrimaries();
-
-    @NotNull
-    public abstract List<PriorOtherCondition> priorOtherConditions();
-
-    @NotNull
-    public abstract List<PriorMolecularTest> priorMolecularTests();
-
-    @Nullable
-    public abstract List<Complication> complications();
-
-    @NotNull
-    public abstract List<LabValue> labValues();
-
-    @NotNull
-    public abstract List<Toxicity> toxicities();
-
-    @NotNull
-    public abstract List<Intolerance> intolerances();
-
-    @NotNull
-    public abstract List<Surgery> surgeries();
-
-    @NotNull
-    public abstract List<BodyWeight> bodyWeights();
-
-    @NotNull
-    public abstract List<VitalFunction> vitalFunctions();
-
-    @NotNull
-    public abstract List<BloodTransfusion> bloodTransfusions();
-
-    @NotNull
-    public abstract List<Medication> medications();
-
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class ClinicalRecord {
+    abstract fun patientId(): String
+    abstract fun patient(): PatientDetails
+    abstract fun tumor(): TumorDetails
+    abstract fun clinicalStatus(): ClinicalStatus
+    abstract fun oncologicalHistory(): List<TreatmentHistoryEntry?>
+    abstract fun priorSecondPrimaries(): List<PriorSecondPrimary?>
+    abstract fun priorOtherConditions(): List<PriorOtherCondition?>
+    abstract fun priorMolecularTests(): List<PriorMolecularTest?>
+    abstract fun complications(): List<Complication?>?
+    abstract fun labValues(): List<LabValue?>
+    abstract fun toxicities(): List<Toxicity?>
+    abstract fun intolerances(): List<Intolerance?>
+    abstract fun surgeries(): List<Surgery?>
+    abstract fun bodyWeights(): List<BodyWeight?>
+    abstract fun vitalFunctions(): List<VitalFunction?>
+    abstract fun bloodTransfusions(): List<BloodTransfusion?>
+    abstract fun medications(): List<Medication?>
 }

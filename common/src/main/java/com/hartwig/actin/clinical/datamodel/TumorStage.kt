@@ -1,36 +1,23 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import com.hartwig.actin.Displayable;
+import com.hartwig.actin.Displayable
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-public enum TumorStage implements Displayable {
+enum class TumorStage(private val category: TumorStage?) : Displayable {
     I(null),
     II(null),
-    IIA(TumorStage.II),
-    IIB(TumorStage.II),
+    IIA(II),
+    IIB(II),
     III(null),
-    IIIA(TumorStage.III),
-    IIIB(TumorStage.III),
-    IIIC(TumorStage.III),
+    IIIA(III),
+    IIIB(III),
+    IIIC(III),
     IV(null);
 
-    @Nullable
-    private final TumorStage category;
-
-    TumorStage(@Nullable final TumorStage category) {
-        this.category = category;
+    fun category(): TumorStage? {
+        return category
     }
 
-    @Nullable
-    public TumorStage category() {
-        return category;
-    }
-
-    @Override
-    @NotNull
-    public String display() {
-        return this.toString();
+    override fun display(): String {
+        return this.toString()
     }
 }

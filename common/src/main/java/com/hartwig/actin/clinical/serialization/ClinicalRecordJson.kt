@@ -1,74 +1,62 @@
-package com.hartwig.actin.clinical.serialization;
+package com.hartwig.actin.clinical.serialization
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
+import com.google.common.annotations.VisibleForTesting
+import com.google.common.collect.Lists
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
+import com.hartwig.actin.util.Paths.forceTrailingFileSeparator
+import com.hartwig.actin.util.json.GsonSerializer.create
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+import java.nio.file.Files
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord;
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord;
-import com.hartwig.actin.clinical.sort.ClinicalRecordComparator;
-import com.hartwig.actin.util.Paths;
-import com.hartwig.actin.util.json.GsonSerializer;
+object ClinicalRecordJson {
+    private const val CLINICAL_JSON_EXTENSION = ".clinical.json"
 
-import org.jetbrains.annotations.NotNull;
-
-public final class ClinicalRecordJson {
-
-    private static final String CLINICAL_JSON_EXTENSION = ".clinical.json";
-
-    private ClinicalRecordJson() {
-    }
-
-    public static void write(@NotNull List<ClinicalRecord> records, @NotNull String directory) throws IOException {
-        String path = Paths.forceTrailingFileSeparator(directory);
-        for (ClinicalRecord record : records) {
-            String jsonFile = path + record.patientId() + CLINICAL_JSON_EXTENSION;
-
-            BufferedWriter writer = new BufferedWriter(new FileWriter(jsonFile));
-            writer.write(toJson(record));
-            writer.close();
+    @Throws(IOException::class)
+    fun write(records: List<ClinicalRecord>, directory: String) {
+        val path = forceTrailingFileSeparator(directory)
+        for (record in records) {
+            val jsonFile = path + record.patientId() + CLINICAL_JSON_EXTENSION
+            val writer = BufferedWriter(FileWriter(jsonFile))
+            writer.write(toJson(record))
+            writer.close()
         }
     }
 
-    @NotNull
-    public static List<ClinicalRecord> readFromDir(@NotNull String directory) throws IOException {
-        List<ClinicalRecord> records = Lists.newArrayList();
-        File[] files = new File(directory).listFiles();
-        if (files == null) {
-            throw new IllegalArgumentException("Could not retrieve clinical json files from " + directory);
-        }
-
-        for (File file : files) {
+    @JvmStatic
+    @Throws(IOException::class)
+    fun readFromDir(directory: String): List<ClinicalRecord> {
+        val records: MutableList<ClinicalRecord> = Lists.newArrayList()
+        val files = File(directory).listFiles()
+            ?: throw IllegalArgumentException("Could not retrieve clinical json files from $directory")
+        for (file in files) {
             if (file.getName().endsWith(CLINICAL_JSON_EXTENSION)) {
-                records.add(fromJson(Files.readString(file.toPath())));
+                records.add(fromJson(Files.readString(file.toPath())))
             }
         }
-
-        records.sort(new ClinicalRecordComparator());
-
-        return records;
+        records.sort(ClinicalRecordComparator())
+        return records
     }
 
-    @NotNull
-    public static ClinicalRecord read(@NotNull String clinicalJson) throws IOException {
-        return fromJson(Files.readString(new File(clinicalJson).toPath()));
+    @JvmStatic
+    @Throws(IOException::class)
+    fun read(clinicalJson: String): ClinicalRecord {
+        return fromJson(Files.readString(File(clinicalJson).toPath()))
     }
 
+    @JvmStatic
     @VisibleForTesting
-    @NotNull
-    static String toJson(@NotNull ClinicalRecord record) {
-        return GsonSerializer.create().toJson(record);
+    fun toJson(record: ClinicalRecord): String {
+        return create().toJson(record)
     }
 
+    @JvmStatic
     @VisibleForTesting
-    @NotNull
-    static ClinicalRecord fromJson(@NotNull String json) {
-        return ClinicalGsonDeserializer.create().fromJson(json, ImmutableClinicalRecord.class);
+    fun fromJson(json: String): ClinicalRecord {
+        return ClinicalGsonDeserializer.create().fromJson(json, ImmutableClinicalRecord::class.java)
     }
-
 }

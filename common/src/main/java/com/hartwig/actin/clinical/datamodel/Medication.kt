@@ -1,53 +1,29 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.time.LocalDate
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class Medication {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class Medication {
+    abstract fun name(): String
+    abstract fun status(): MedicationStatus?
+    abstract fun administrationRoute(): String?
+    abstract fun dosage(): Dosage
+    abstract fun startDate(): LocalDate?
+    abstract fun stopDate(): LocalDate?
+    abstract fun cypInteractions(): List<CypInteraction?>
+    abstract fun qtProlongatingRisk(): QTProlongatingRisk
+    abstract fun atc(): AtcClassification?
 
-    @NotNull
-    public abstract String name();
+    @JvmField
+    abstract val isSelfCare: Boolean
 
-    @Nullable
-    public abstract MedicationStatus status();
-
-    @Nullable
-    public abstract String administrationRoute();
-
-    @NotNull
-    public abstract Dosage dosage();
-
-    @Nullable
-    public abstract LocalDate startDate();
-
-    @Nullable
-    public abstract LocalDate stopDate();
-
-    @NotNull
-    public abstract List<CypInteraction> cypInteractions();
-
-    @NotNull
-    public abstract QTProlongatingRisk qtProlongatingRisk();
-
-    @Nullable
-    public abstract AtcClassification atc();
-
-    @NotNull
-    public abstract Boolean isSelfCare();
-
-    @NotNull
-    public abstract Boolean isTrialMedication();
-
-    @NotNull
-    public Set<AtcLevel> allLevels() {
-        return atc() == null ? Collections.emptySet() : atc().allLevels();
+    @JvmField
+    abstract val isTrialMedication: Boolean
+    fun allLevels(): Set<AtcLevel> {
+        return if (atc() == null) emptySet() else atc()!!.allLevels()
     }
 }

@@ -1,61 +1,48 @@
-package com.hartwig.actin.clinical.interpretation;
+package com.hartwig.actin.clinical.interpretation
 
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Lists
+import com.google.common.collect.Maps
+import com.google.common.collect.Multimap
+import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
+import com.hartwig.actin.clinical.datamodel.LabValue
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
-import com.hartwig.actin.clinical.datamodel.LabValue;
+object LabInterpreter {
+    @JvmField
+    val MAPPINGS: MutableMap<LabMeasurement, LabMeasurement> = Maps.newHashMap()
 
-import org.jetbrains.annotations.NotNull;
-
-public final class LabInterpreter {
-
-    static final Map<LabMeasurement, LabMeasurement> MAPPINGS = Maps.newHashMap();
-
-    static {
-        MAPPINGS.put(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO_POCT, LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO);
-        MAPPINGS.put(LabMeasurement.LYMPHOCYTES_ABS_EDM, LabMeasurement.LYMPHOCYTES_ABS_EDA);
-        MAPPINGS.put(LabMeasurement.NEUTROPHILS_ABS_EDA, LabMeasurement.NEUTROPHILS_ABS);
-        MAPPINGS.put(LabMeasurement.PROTHROMBIN_TIME_POCT, LabMeasurement.PROTHROMBIN_TIME);
-        MAPPINGS.put(LabMeasurement.THROMBOCYTES_ABS_M, LabMeasurement.THROMBOCYTES_ABS);
+    init {
+        MAPPINGS[LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO_POCT] = LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO
+        MAPPINGS[LabMeasurement.LYMPHOCYTES_ABS_EDM] = LabMeasurement.LYMPHOCYTES_ABS_EDA
+        MAPPINGS[LabMeasurement.NEUTROPHILS_ABS_EDA] = LabMeasurement.NEUTROPHILS_ABS
+        MAPPINGS[LabMeasurement.PROTHROMBIN_TIME_POCT] = LabMeasurement.PROTHROMBIN_TIME
+        MAPPINGS[LabMeasurement.THROMBOCYTES_ABS_M] = LabMeasurement.THROMBOCYTES_ABS
     }
 
-    private LabInterpreter() {
-    }
-
-    @NotNull
-    public static LabInterpretation interpret(@NotNull List<LabValue> labValues) {
-        Multimap<LabMeasurement, LabValue> measurements = ArrayListMultimap.create();
-        for (LabMeasurement measurement : LabMeasurement.values()) {
-            measurements.putAll(measurement, filterByCode(labValues, measurement.code()));
+    fun interpret(labValues: List<LabValue>): LabInterpretation {
+        val measurements: Multimap<LabMeasurement, LabValue> = ArrayListMultimap.create()
+        for (measurement in LabMeasurement.values()) {
+            measurements.putAll(measurement, filterByCode(labValues, measurement.code()))
         }
-
-        for (Map.Entry<LabMeasurement, LabMeasurement> mapping : MAPPINGS.entrySet()) {
-            for (LabValue labValue : measurements.get(mapping.getKey())) {
-                measurements.put(mapping.getValue(), convert(labValue, mapping.getValue()));
+        for ((key, value) in MAPPINGS) {
+            for (labValue in measurements[key]) {
+                measurements.put(value, convert(labValue, value))
             }
         }
-
-        return LabInterpretation.fromMeasurements(measurements);
+        return LabInterpretation.Companion.fromMeasurements(measurements)
     }
 
-    @NotNull
-    private static LabValue convert(@NotNull LabValue labValue, @NotNull LabMeasurement targetMeasure) {
-        return ImmutableLabValue.builder().from(labValue).code(targetMeasure.code()).unit(targetMeasure.defaultUnit()).build();
+    private fun convert(labValue: LabValue, targetMeasure: LabMeasurement): LabValue {
+        return ImmutableLabValue.builder().from(labValue).code(targetMeasure.code()).unit(targetMeasure.defaultUnit()).build()
     }
 
-    @NotNull
-    private static List<LabValue> filterByCode(@NotNull List<LabValue> labValues, @NotNull String code) {
-        List<LabValue> filtered = Lists.newArrayList();
-        for (LabValue labValue : labValues) {
-            if (labValue.code().equals(code)) {
-                filtered.add(labValue);
+    private fun filterByCode(labValues: List<LabValue>, code: String): List<LabValue> {
+        val filtered: MutableList<LabValue> = Lists.newArrayList()
+        for (labValue in labValues) {
+            if (labValue.code() == code) {
+                filtered.add(labValue)
             }
         }
-        return filtered;
+        return filtered
     }
 }

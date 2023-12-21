@@ -45,7 +45,7 @@ class NonOncologicalHistoryConfigFactoryTest {
         assertThat(priorOtherCondition.year()).isEqualTo(2023)
         assertThat(priorOtherCondition.month()).isEqualTo(12)
         assertThat(priorOtherCondition.category()).isEqualTo("category")
-        assertThat(priorOtherCondition.isContraindicationForTherapy()).isEqualTo(true)
+        assertThat(priorOtherCondition.isContraindicationForTherapy).isEqualTo(true)
     }
 
     @Test

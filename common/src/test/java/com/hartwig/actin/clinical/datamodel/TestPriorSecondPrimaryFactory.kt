@@ -1,21 +1,16 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
+import org.apache.logging.log4j.util.Strings
 
-public final class TestPriorSecondPrimaryFactory {
-
-    private TestPriorSecondPrimaryFactory() {
-    }
-
-    @NotNull
-    public static ImmutablePriorSecondPrimary.Builder builder() {
+object TestPriorSecondPrimaryFactory {
+    @JvmStatic
+    fun builder(): ImmutablePriorSecondPrimary.Builder {
         return ImmutablePriorSecondPrimary.builder()
-                .tumorLocation(Strings.EMPTY)
-                .tumorSubLocation(Strings.EMPTY)
-                .tumorType(Strings.EMPTY)
-                .tumorSubType(Strings.EMPTY)
-                .treatmentHistory(Strings.EMPTY)
-                .status(TumorStatus.INACTIVE);
+            .tumorLocation(Strings.EMPTY)
+            .tumorSubLocation(Strings.EMPTY)
+            .tumorType(Strings.EMPTY)
+            .tumorSubType(Strings.EMPTY)
+            .treatmentHistory(Strings.EMPTY)
+            .status(TumorStatus.INACTIVE)
     }
 }

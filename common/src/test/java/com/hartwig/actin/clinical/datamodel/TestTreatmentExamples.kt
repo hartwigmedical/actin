@@ -1,38 +1,33 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
+import java.io.IOException
+import java.util.*
+import java.util.stream.Collectors
 
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment;
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry;
-
-import org.jetbrains.annotations.NotNull;
-
-public class TestTreatmentExamples {
-
-    public static void main(@NotNull String... args) throws IOException {
-        for (TreatmentHistoryEntry entry : TestClinicalFactory.createProperTestClinicalRecord().oncologicalHistory()) {
-            System.out.printf("In %s, administered the following treatment(s) with %s intent:\n", entry.startYear(), entry.intents());
-            for (Treatment treatment : entry.treatments()) {
-                String categoryString = setToString(treatment.categories());
-                System.out.printf(" - %s: %s, %ssystemic", treatment.name(), categoryString, treatment.isSystemic() ? "" : "non");
-                if (treatment instanceof DrugTreatment && !((DrugTreatment) treatment).drugs().isEmpty()) {
+object TestTreatmentExamples {
+    @Throws(IOException::class)
+    @JvmStatic
+    fun main(args: Array<String>) {
+        for (entry in TestClinicalFactory.createProperTestClinicalRecord().oncologicalHistory()) {
+            System.out.printf("In %s, administered the following treatment(s) with %s intent:\n", entry!!.startYear(), entry.intents())
+            for (treatment in entry.treatments()) {
+                val categoryString = setToString(treatment.categories())
+                System.out.printf(" - %s: %s, %ssystemic", treatment.name(), categoryString, if (treatment.isSystemic) "" else "non")
+                if (treatment is DrugTreatment && !treatment.drugs().isEmpty()) {
                     System.out.printf(", with drugs %s",
-                            ((DrugTreatment) treatment).drugs()
-                                    .stream()
-                                    .map(drug -> String.format("%s (%s)", drug.name(), setToString(drug.drugTypes())))
-                                    .collect(Collectors.joining(", ")));
+                        treatment.drugs()
+                            .stream()
+                            .map { drug: Drug -> String.format("%s (%s)", drug.name(), setToString(drug.drugTypes())) }
+                            .collect(Collectors.joining(", ")))
                 }
-                System.out.println();
+                println()
             }
         }
     }
 
-    @NotNull
-    private static <T> String setToString(@NotNull Set<T> categories) {
-        return categories.stream().map(Objects::toString).collect(Collectors.joining("/"));
+    private fun <T> setToString(categories: Set<T>): String {
+        return categories.stream().map { o: T -> Objects.toString(o) }.collect(Collectors.joining("/"))
     }
 }

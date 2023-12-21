@@ -1,11 +1,10 @@
-package com.hartwig.actin.clinical.datamodel.treatment;
+package com.hartwig.actin.clinical.datamodel.treatment
 
-import com.hartwig.actin.Displayable;
-import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
+import com.hartwig.actin.Displayable
+import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
+import java.util.*
 
-import org.jetbrains.annotations.NotNull;
-
-public enum TreatmentCategory implements Displayable {
+enum class TreatmentCategory : Displayable {
     CHEMOTHERAPY,
     RADIOTHERAPY,
     TARGETED_THERAPY,
@@ -22,9 +21,7 @@ public enum TreatmentCategory implements Displayable {
     PROPHYLACTIC_TREATMENT,
     ABLATION;
 
-    @Override
-    @NotNull
-    public String display() {
-        return TreatmentCategoryResolver.toString(this).toLowerCase();
+    override fun display(): String {
+        return TreatmentCategoryResolver.toString(this).lowercase(Locale.getDefault())
     }
 }

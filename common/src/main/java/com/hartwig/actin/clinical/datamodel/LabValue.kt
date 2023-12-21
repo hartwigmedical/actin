@@ -1,39 +1,22 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import java.time.LocalDate;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.time.LocalDate
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class LabValue {
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class LabValue {
+    abstract fun date(): LocalDate
+    abstract fun code(): String
+    abstract fun name(): String
+    abstract fun comparator(): String
+    abstract fun value(): Double
+    abstract fun unit(): LabUnit
+    abstract fun refLimitLow(): Double?
+    abstract fun refLimitUp(): Double?
 
-    @NotNull
-    public abstract LocalDate date();
-
-    @NotNull
-    public abstract String code();
-
-    @NotNull
-    public abstract String name();
-
-    @NotNull
-    public abstract String comparator();
-
-    public abstract double value();
-
-    @NotNull
-    public abstract LabUnit unit();
-
-    @Nullable
-    public abstract Double refLimitLow();
-
-    @Nullable
-    public abstract Double refLimitUp();
-
-    @Nullable
-    public abstract Boolean isOutsideRef();
-
+    @JvmField
+    abstract val isOutsideRef: Boolean?
 }

@@ -1,22 +1,18 @@
-package com.hartwig.actin.clinical.datamodel.treatment;
+package com.hartwig.actin.clinical.datamodel.treatment
 
-import org.jetbrains.annotations.NotNull;
+import java.util.*
 
-public enum RadiotherapyType implements TreatmentType {
+enum class RadiotherapyType : TreatmentType {
     BRACHYTHERAPY,
     CYBERKNIFE,
     RADIOISOTOPE,
     STEREOTACTIC;
 
-    @NotNull
-    @Override
-    public TreatmentCategory category() {
-        return TreatmentCategory.RADIOTHERAPY;
+    override fun category(): TreatmentCategory {
+        return TreatmentCategory.RADIOTHERAPY
     }
 
-    @NotNull
-    @Override
-    public String display() {
-        return toString().replace("_", " ").toLowerCase();
+    override fun display(): String {
+        return toString().replace("_", " ").lowercase(Locale.getDefault())
     }
 }

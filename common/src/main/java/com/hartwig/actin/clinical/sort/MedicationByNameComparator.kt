@@ -1,16 +1,9 @@
-package com.hartwig.actin.clinical.sort;
+package com.hartwig.actin.clinical.sort
 
-import java.util.Comparator;
+import com.hartwig.actin.clinical.datamodel.Medication
 
-import com.hartwig.actin.clinical.datamodel.Medication;
-
-import org.jetbrains.annotations.NotNull;
-
-public class MedicationByNameComparator implements Comparator<Medication> {
-
-    @Override
-    public int compare(@NotNull Medication medication1, @NotNull Medication medication2) {
-        return medication1.name().compareTo(medication2.name());
+class MedicationByNameComparator : Comparator<Medication> {
+    override fun compare(medication1: Medication, medication2: Medication): Int {
+        return medication1.name().compareTo(medication2.name())
     }
 }
-

@@ -1,38 +1,27 @@
-package com.hartwig.actin.clinical.datamodel.treatment;
+package com.hartwig.actin.clinical.datamodel.treatment
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.util.stream.Collectors
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class DrugTreatment implements Treatment {
-    public final TreatmentClass treatmentClass = TreatmentClass.DRUG_TREATMENT;
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class DrugTreatment : Treatment {
+    val treatmentClass = TreatmentClass.DRUG_TREATMENT
 
-    @Override
-    @Value.Default
-    public boolean isSystemic() {
-        return true;
+    @get:Value.Default
+    override val isSystemic: Boolean
+        get() = true
+
+    abstract fun drugs(): Set<Drug>
+    override fun categories(): Set<TreatmentCategory> {
+        return drugs().stream().map { obj: Drug -> obj.category() }.collect(Collectors.toSet())
     }
 
-    @NotNull
-    public abstract Set<Drug> drugs();
-
-    @Override
-    @NotNull
-    public Set<TreatmentCategory> categories() {
-        return drugs().stream().map(Drug::category).collect(Collectors.toSet());
+    override fun types(): Set<TreatmentType?> {
+        return drugs().stream().flatMap { drug: Drug -> drug.drugTypes().stream() }.collect(Collectors.toSet())
     }
 
-    @Override
-    @NotNull
-    public Set<TreatmentType> types() {
-        return drugs().stream().flatMap(drug -> drug.drugTypes().stream()).collect(Collectors.toSet());
-    }
-
-    @Nullable
-    public abstract Integer maxCycles();
+    abstract fun maxCycles(): Int?
 }

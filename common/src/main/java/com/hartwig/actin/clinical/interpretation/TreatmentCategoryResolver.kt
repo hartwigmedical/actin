@@ -1,46 +1,35 @@
-package com.hartwig.actin.clinical.interpretation;
+package com.hartwig.actin.clinical.interpretation
 
-import java.util.Set;
-import java.util.StringJoiner;
+import com.google.common.collect.Sets
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import java.util.*
 
-import com.google.common.collect.Sets;
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+object TreatmentCategoryResolver {
+    private const val DELIMITER = ", "
 
-import org.jetbrains.annotations.NotNull;
-
-public final class TreatmentCategoryResolver {
-
-    private static final String DELIMITER = ", ";
-
-    private TreatmentCategoryResolver() {
-    }
-
-    @NotNull
-    public static Set<TreatmentCategory> fromStringList(@NotNull String categoryStringList) {
-        Set<TreatmentCategory> categories = Sets.newTreeSet();
-        for (String categoryString : categoryStringList.split(DELIMITER)) {
-            categories.add(fromString(categoryString));
+    @JvmStatic
+    fun fromStringList(categoryStringList: String): Set<TreatmentCategory> {
+        val categories: MutableSet<TreatmentCategory> = Sets.newTreeSet()
+        for (categoryString in categoryStringList.split(DELIMITER.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+            categories.add(fromString(categoryString))
         }
-        return categories;
+        return categories
     }
 
-    @NotNull
-    public static TreatmentCategory fromString(@NotNull String categoryString) {
-        return TreatmentCategory.valueOf(categoryString.trim().replaceAll(" ", "_").toUpperCase());
+    fun fromString(categoryString: String): TreatmentCategory {
+        return TreatmentCategory.valueOf(categoryString.trim { it <= ' ' }.replace(" ".toRegex(), "_").uppercase(Locale.getDefault()))
     }
 
-    @NotNull
-    public static String toStringList(@NotNull Set<TreatmentCategory> categories) {
-        StringJoiner joiner = new StringJoiner(DELIMITER);
-        for (TreatmentCategory category : categories) {
-            joiner.add(toString(category));
+    fun toStringList(categories: Set<TreatmentCategory>): String {
+        val joiner = StringJoiner(DELIMITER)
+        for (category in categories) {
+            joiner.add(toString(category))
         }
-        return joiner.toString();
+        return joiner.toString()
     }
 
-    @NotNull
-    public static String toString(@NotNull TreatmentCategory category) {
-        String string = category.toString().replaceAll("_", " ");
-        return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
+    fun toString(category: TreatmentCategory): String {
+        val string = category.toString().replace("_".toRegex(), " ")
+        return string.substring(0, 1).uppercase(Locale.getDefault()) + string.substring(1).lowercase(Locale.getDefault())
     }
 }

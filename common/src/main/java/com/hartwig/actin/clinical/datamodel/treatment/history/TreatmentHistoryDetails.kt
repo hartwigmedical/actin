@@ -1,53 +1,25 @@
-package com.hartwig.actin.clinical.datamodel.treatment.history;
+package com.hartwig.actin.clinical.datamodel.treatment.history
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-
-import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
-import com.hartwig.actin.clinical.datamodel.ObservedToxicity;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
+import com.hartwig.actin.clinical.datamodel.ObservedToxicity
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.time.LocalDate
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class TreatmentHistoryDetails {
-
-    @Nullable
-    public abstract Integer stopYear();
-
-    @Nullable
-    public abstract Integer stopMonth();
-
-    @Nullable
-    public abstract LocalDate ongoingAsOf();
-
-    @Nullable
-    public abstract Integer cycles();
-
-    @Nullable
-    public abstract TreatmentResponse bestResponse();
-
-    @Nullable
-    public abstract StopReason stopReason();
-
-    @Nullable
-    public abstract String stopReasonDetail();
-
-    @Nullable
-    public abstract Set<ObservedToxicity> toxicities();
-
-    @Nullable
-    public abstract Set<BodyLocationCategory> bodyLocationCategories();
-
-    @Nullable
-    public abstract Set<String> bodyLocations();
-
-    @Nullable
-    public abstract List<TreatmentStage> switchToTreatments();
-
-    @Nullable
-    public abstract TreatmentStage maintenanceTreatment();
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class TreatmentHistoryDetails {
+    abstract fun stopYear(): Int?
+    abstract fun stopMonth(): Int?
+    abstract fun ongoingAsOf(): LocalDate?
+    abstract fun cycles(): Int?
+    abstract fun bestResponse(): TreatmentResponse?
+    abstract fun stopReason(): StopReason?
+    abstract fun stopReasonDetail(): String?
+    abstract fun toxicities(): Set<ObservedToxicity?>?
+    abstract fun bodyLocationCategories(): Set<BodyLocationCategory?>?
+    abstract fun bodyLocations(): Set<String?>?
+    abstract fun switchToTreatments(): List<TreatmentStage?>?
+    abstract fun maintenanceTreatment(): TreatmentStage?
 }

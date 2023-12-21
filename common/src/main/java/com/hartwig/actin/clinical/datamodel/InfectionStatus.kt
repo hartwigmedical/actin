@@ -1,15 +1,12 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class InfectionStatus {
-
-    public abstract boolean hasActiveInfection();
-
-    @Nullable
-    public abstract String description();
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class InfectionStatus {
+    abstract fun hasActiveInfection(): Boolean
+    abstract fun description(): String?
 }

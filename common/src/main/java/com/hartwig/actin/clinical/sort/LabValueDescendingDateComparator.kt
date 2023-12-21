@@ -1,28 +1,20 @@
-package com.hartwig.actin.clinical.sort;
+package com.hartwig.actin.clinical.sort
 
-import java.util.Comparator;
+import com.google.common.primitives.Doubles
+import com.hartwig.actin.clinical.datamodel.LabValue
 
-import com.google.common.primitives.Doubles;
-import com.hartwig.actin.clinical.datamodel.LabValue;
-
-import org.jetbrains.annotations.NotNull;
-
-public class LabValueDescendingDateComparator implements Comparator<LabValue> {
-
-    @Override
-    public int compare(@NotNull LabValue lab1, @NotNull LabValue lab2) {
+class LabValueDescendingDateComparator : Comparator<LabValue> {
+    override fun compare(lab1: LabValue, lab2: LabValue): Int {
         // Descending on date
-        int dateCompare = lab2.date().compareTo(lab1.date());
+        val dateCompare = lab2.date().compareTo(lab1.date())
         if (dateCompare != 0) {
-            return dateCompare;
+            return dateCompare
         }
-
-        int codeCompare = lab1.code().compareTo(lab2.code());
-        if (codeCompare != 0) {
-            return codeCompare;
-        }
+        val codeCompare = lab1.code().compareTo(lab2.code())
+        return if (codeCompare != 0) {
+            codeCompare
+        } else Doubles.compare(lab2.value(), lab1.value())
 
         // In case a code has been measured twice on the same date -> put the highest value first.
-        return Doubles.compare(lab2.value(), lab1.value());
     }
 }

@@ -1,26 +1,18 @@
-package com.hartwig.actin.clinical.interpretation;
+package com.hartwig.actin.clinical.interpretation
 
-import java.time.LocalDate;
+import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
+import com.hartwig.actin.clinical.datamodel.LabUnit
+import org.apache.logging.log4j.util.Strings
+import java.time.LocalDate
 
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue;
-import com.hartwig.actin.clinical.datamodel.LabUnit;
-
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
-
-final class LabInterpretationTestFactory {
-
-    private LabInterpretationTestFactory() {
-    }
-
-    @NotNull
-    public static ImmutableLabValue.Builder builder() {
+internal object LabInterpretationTestFactory {
+    fun builder(): ImmutableLabValue.Builder {
         return ImmutableLabValue.builder()
-                .date(LocalDate.of(2017, 10, 20))
-                .code(Strings.EMPTY)
-                .name(Strings.EMPTY)
-                .comparator(Strings.EMPTY)
-                .value(0D)
-                .unit(LabUnit.NONE);
+            .date(LocalDate.of(2017, 10, 20))
+            .code(Strings.EMPTY)
+            .name(Strings.EMPTY)
+            .comparator(Strings.EMPTY)
+            .value(0.0)
+            .unit(LabUnit.NONE)
     }
 }

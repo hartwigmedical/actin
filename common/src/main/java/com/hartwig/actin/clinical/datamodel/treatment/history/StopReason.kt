@@ -1,21 +1,21 @@
-package com.hartwig.actin.clinical.datamodel.treatment.history;
+package com.hartwig.actin.clinical.datamodel.treatment.history
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.*
 
-public enum StopReason {
+enum class StopReason {
     PROGRESSIVE_DISEASE,
     TOXICITY;
 
-    @Nullable
-    public static StopReason createFromString(@NotNull String input) {
-        String uppercase = input.toUpperCase();
-        if (uppercase.contains("PD") || uppercase.contains("PROGRESSIVE")) {
-            return PROGRESSIVE_DISEASE;
-        } else if (uppercase.contains("TOXICITY")) {
-            return TOXICITY;
-        } else {
-            return null;
+    companion object {
+        fun createFromString(input: String): StopReason? {
+            val uppercase = input.uppercase(Locale.getDefault())
+            return if (uppercase.contains("PD") || uppercase.contains("PROGRESSIVE")) {
+                PROGRESSIVE_DISEASE
+            } else if (uppercase.contains("TOXICITY")) {
+                TOXICITY
+            } else {
+                null
+            }
         }
     }
 }

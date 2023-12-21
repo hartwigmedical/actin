@@ -1,9 +1,8 @@
-package com.hartwig.actin.clinical.datamodel.treatment.history;
+package com.hartwig.actin.clinical.datamodel.treatment.history
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.*
 
-public enum TreatmentResponse {
+enum class TreatmentResponse {
     PROGRESSIVE_DISEASE,
     STABLE_DISEASE,
     MIXED,
@@ -11,23 +10,17 @@ public enum TreatmentResponse {
     COMPLETE_RESPONSE,
     REMISSION;
 
-    @Nullable
-    public static TreatmentResponse createFromString(@NotNull String input) {
-        switch (input.toUpperCase()) {
-            case "PD":
-                return PROGRESSIVE_DISEASE;
-            case "SD":
-                return STABLE_DISEASE;
-            case "MIXED":
-                return MIXED;
-            case "PR":
-                return PARTIAL_RESPONSE;
-            case "CR":  // not seen in existing curation
-                return COMPLETE_RESPONSE;
-            case "REMISSION":
-                return REMISSION;
-            default:
-                return null;
+    companion object {
+        fun createFromString(input: String): TreatmentResponse? {
+            return when (input.uppercase(Locale.getDefault())) {
+                "PD" -> PROGRESSIVE_DISEASE
+                "SD" -> STABLE_DISEASE
+                "MIXED" -> MIXED
+                "PR" -> PARTIAL_RESPONSE
+                "CR" -> COMPLETE_RESPONSE
+                "REMISSION" -> REMISSION
+                else -> null
+            }
         }
     }
 }

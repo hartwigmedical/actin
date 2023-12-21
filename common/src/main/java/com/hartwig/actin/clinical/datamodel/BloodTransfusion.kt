@@ -1,18 +1,13 @@
-package com.hartwig.actin.clinical.datamodel;
+package com.hartwig.actin.clinical.datamodel
 
-import java.time.LocalDate;
-
-import org.immutables.value.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.immutables.value.Value
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import java.time.LocalDate
 
 @Value.Immutable
-@Value.Style(passAnnotations = { NotNull.class, Nullable.class })
-public abstract class BloodTransfusion {
-
-    @NotNull
-    public abstract LocalDate date();
-
-    @NotNull
-    public abstract String product();
+@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
+abstract class BloodTransfusion {
+    abstract fun date(): LocalDate
+    abstract fun product(): String
 }
