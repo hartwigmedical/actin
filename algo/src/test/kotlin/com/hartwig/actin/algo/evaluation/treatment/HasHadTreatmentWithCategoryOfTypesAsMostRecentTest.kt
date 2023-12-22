@@ -86,4 +86,62 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         )
     }
 
+    @Test
+    fun `Should evaluate to undetermined if start year missing in a prior treatment`() {
+        val treatmentHistoryEntry = listOf(
+            treatmentHistoryEntry(
+                setOf(
+                    TreatmentTestFactory.drugTreatment(
+                        "Alectinib",
+                        TreatmentCategory.TARGETED_THERAPY,
+                        setOf(DrugType.ALK_INHIBITOR)
+                    )
+                ), 2021, 5
+            ),
+            treatmentHistoryEntry(
+                setOf(
+                    TreatmentTestFactory.drugTreatment(
+                        "Osimertinib",
+                        TreatmentCategory.TARGETED_THERAPY,
+                        setOf(DrugType.EGFR_INHIBITOR_GEN_3)
+                    )
+                )
+            )
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            HasHadTreatmentWithCategoryOfTypesAsMostRecent(
+                TreatmentCategory.TARGETED_THERAPY, DrugType.EGFR_INHIBITOR_GEN_3
+            ).evaluate(
+                withTreatmentHistory(treatmentHistoryEntry)
+            )
+        )
+    }
+
+    @Test
+    fun `Should throw error if type not specified in evaluation rule`() {
+        val treatmentHistoryEntry = listOf(
+            treatmentHistoryEntry(
+                setOf(
+                    TreatmentTestFactory.drugTreatment(
+                        "Alectinib",
+                        TreatmentCategory.TARGETED_THERAPY,
+                        setOf(DrugType.ALK_INHIBITOR)
+                    )
+                ), 2021, 5
+            )
+        )
+        try {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.PASS,
+                HasHadTreatmentWithCategoryOfTypesAsMostRecent(
+                    TreatmentCategory.CHEMOTHERAPY, null
+                ).evaluate(
+                    withTreatmentHistory(treatmentHistoryEntry)
+                )
+            )
+        } catch (_: NullPointerException) {
+            return
+        }
+    }
 }

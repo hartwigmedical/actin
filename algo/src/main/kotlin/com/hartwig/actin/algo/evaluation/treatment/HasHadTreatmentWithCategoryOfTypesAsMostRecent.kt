@@ -50,6 +50,13 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
                 )
             }
 
+            typeMatch.isNotEmpty() && typeMatch.any { it.startYear() == null } -> {
+                EvaluationFactory.undetermined(
+                    "Has received ${type?.display()} ${category.display()} but undetermined if most recent (dates missing in treatment list)",
+                    "Has received ${type?.display()} ${category.display()} but undetermined if most recent"
+                )
+            }
+
             typeMatch.isNotEmpty() && typeMatch.none { it == mostRecentAntiCancerDrug } -> {
                 EvaluationFactory.recoverableFail(
                     "Patient has received ${type?.display()} ${category.display()} but not as the most recent treatment line",
@@ -57,22 +64,10 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
                 )
             }
 
-            /*
-            TO DO
-            recoverableUndetermined if startdate of specific match is unknown
-             */
-
-//            typeCategoryMatches.numSpecificMatches() + typeCategoryMatches.numApproximateMatches + typeCategoryMatches.numPossibleTrialMatches >= 1 -> {
-//                EvaluationFactory.undetermined(
-//                    "Can't determine whether patient has received $type ${category.display()} as most recent line ",
-//                    "Undetermined if received $type ${category.display()} as most recent line"
-//                )
-//            }
-
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Patient has not received $type ${category.display()} as most recent treatment line",
-                    "Has not received $type ${category.display()} as most recent treatment"
+                    "Patient has not received $type ${category.display()} as prior therapy",
+                    "Has not received $type ${category.display()} as prior therapy"
                 )
             }
         }
