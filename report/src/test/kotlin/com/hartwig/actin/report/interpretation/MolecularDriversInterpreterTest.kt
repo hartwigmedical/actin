@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
@@ -52,7 +53,7 @@ class MolecularDriversInterpreterTest {
     fun shouldIncludeNonReportableDriversWithExternalTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
             TestActionableEvidenceFactory.withExternalEligibleTrial(
-                "trial 1"
+                "trial 1", Sets.newHashSet("country"), "website"
             )
         )
         assertCountForRecord(1, record)

@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.datamodel.evidence;
 
-import static java.util.Collections.emptySet;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +24,7 @@ public final class TestActionableEvidenceFactory {
     @NotNull
     public static ActionableEvidence createExhaustive() {
         return builder().addApprovedTreatments("approved")
-                .addExternalEligibleTrials(ExternalTrialFactory.create("external trial", emptySet(), "https://clinicaltrials.gov/study/NCT00000001"))
+                .addExternalEligibleTrials(ExternalTrialFactory.create("external trial", Sets.newHashSet("Netherlands"), "https://clinicaltrials.gov/study/NCT00000001"))
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")
                 .addPreClinicalTreatments("pre-clinical")
@@ -37,8 +39,8 @@ public final class TestActionableEvidenceFactory {
     }
 
     @NotNull
-    public static ActionableEvidence withExternalEligibleTrial(@NotNull String treatment) {
-        return builder().addExternalEligibleTrials(ExternalTrialFactory.create(treatment, emptySet(), "https://clinicaltrials.gov/study/NCT00000001")).build();
+    public static ActionableEvidence withExternalEligibleTrial(@NotNull String treatment, @NotNull Set<String> countries, @NotNull String website) {
+        return builder().addExternalEligibleTrials(ExternalTrialFactory.create(treatment, countries, website)).build();
     }
 
     @NotNull

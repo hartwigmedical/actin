@@ -21,7 +21,7 @@ class EligibleExternalTrialsGenerator(
 
     override fun contents(): Table {
         val colWidth = width / 5
-        val table = Tables.createFixedWidthCols(colWidth, (colWidth*2.05).toFloat(), (0.75 *colWidth).toFloat(), (1.2*colWidth).toFloat())
+        val table = Tables.createFixedWidthCols((0.9*colWidth).toFloat(), (colWidth*2.2).toFloat(), (0.7*colWidth).toFloat(), (1.2*colWidth).toFloat())
         table.addHeaderCell(Cells.createHeader("Event"))
         table.addHeaderCell(Cells.createHeader("Trial title"))
         table.addHeaderCell(Cells.createHeader("NCT id"))
@@ -38,8 +38,8 @@ class EligibleExternalTrialsGenerator(
     }
 
     private fun shortenTitle(title: String): String {
-        return if (title.length > 180) {
-            title.take(90).substringBeforeLast(" ") + " ... " + title.takeLast(90).substringAfter(" ")
+        return if (title.length > 170) {
+            title.take(85).substringBeforeLast(" ") + " ... " + title.takeLast(85).substringAfter(" ")
         } else {
             title
         }

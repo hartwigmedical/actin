@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
@@ -101,7 +102,7 @@ class MolecularDriversSummarizerTest {
 
     @Test
     fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
-        val externalEvidence = TestActionableEvidenceFactory.withExternalEligibleTrial("external")
+        val externalEvidence = TestActionableEvidenceFactory.withExternalEligibleTrial("external", Sets.newHashSet("country"), "website")
         val approvedTreatment = TestActionableEvidenceFactory.withApprovedTreatment("approved")
         val cohorts = listOf(
             evaluatedCohort(
