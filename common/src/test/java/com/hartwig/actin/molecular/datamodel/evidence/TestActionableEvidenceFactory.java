@@ -25,7 +25,7 @@ public final class TestActionableEvidenceFactory {
     public static ActionableEvidence createExhaustive() {
         return builder().addApprovedTreatments("approved")
                 .addExternalEligibleTrials(ExternalTrialFactory.create("external trial",
-                        Sets.newHashSet("Netherlands"),
+                        Sets.newHashSet("Netherlands", "Belgium"),
                         "https://clinicaltrials.gov/study/NCT00000001"))
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")

@@ -180,8 +180,23 @@ public final class TestMolecularFactory {
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
                                 "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)",
-                                Sets.newHashSet("Netherlands", "Belgium", "Germany"),
+                                Sets.newHashSet("Belgium", "Germany"),
                                 "https://clinicaltrials.gov/study/NCT00000002"))
+                        .gene("PTEN")
+                        .geneRole(GeneRole.TSG)
+                        .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
+                        .type(CopyNumberType.LOSS)
+                        .minCopies(0)
+                        .maxCopies(0)
+                        .build())
+                .addCopyNumbers(TestCopyNumberFactory.builder()
+                        .isReportable(true)
+                        .event("PTEN del")
+                        .driverLikelihood(DriverLikelihood.HIGH)
+                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
+                                "A Phase 3 Study to Evaluate the treatment X as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)",
+                                Sets.newHashSet("Belgium"),
+                                "https://clinicaltrials.gov/study/NCT00000005"))
                         .gene("PTEN")
                         .geneRole(GeneRole.TSG)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
