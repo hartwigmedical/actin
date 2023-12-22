@@ -68,7 +68,7 @@ class MolecularDriversGenerator(
             val strings = mutableSetOf<String>()
             for (treatment in treatments)
             {
-                strings.add(treatment.title())
+                strings.add(treatment.website().takeLast(11))
             }
             return strings.joinToString(", ")
         }

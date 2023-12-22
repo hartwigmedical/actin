@@ -16,6 +16,7 @@ import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
 import static com.hartwig.actin.util.json.Json.stringList;
+import static com.hartwig.actin.util.json.Json.stringSet;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -76,8 +77,8 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
@@ -417,11 +418,7 @@ public class MolecularRecordJson {
         @NotNull
         private static Set<ExternalTrial> toEligibleTrials(@NotNull JsonArray eligibleTrialArray) {
             return extractSetFromJson(eligibleTrialArray,
-                    eligibleTrial -> ImmutableExternalTrial.builder()
-                            .title(string(eligibleTrial, "title"))
-                            .countries(stringList(eligibleTrial, "countries"))
-                            .website(string(eligibleTrial, "website"))
-                            .build());
+                    eligibleTrial -> ExternalTrialFactory.create(string(eligibleTrial, "title"), stringSet(eligibleTrial, "countries"), string(eligibleTrial, "website")));
         }
 
         @NotNull

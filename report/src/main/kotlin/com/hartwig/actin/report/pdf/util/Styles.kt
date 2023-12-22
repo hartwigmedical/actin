@@ -103,7 +103,7 @@ object Styles {
     }
 
     fun urlStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLUE)
+        return Style().setFont(fontRegular()).setFontSize(8f).setFontColor(PALETTE_BLUE).setUnderline()
     }
 
     fun fontRegular(): PdfFont {

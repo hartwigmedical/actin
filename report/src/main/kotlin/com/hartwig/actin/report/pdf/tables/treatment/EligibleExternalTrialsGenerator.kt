@@ -21,7 +21,7 @@ class EligibleExternalTrialsGenerator(
 
     override fun contents(): Table {
         val colWidth = width / 5
-        val table = Tables.createFixedWidthCols(colWidth, (colWidth*2.25).toFloat(), (0.75 *colWidth).toFloat(), colWidth)
+        val table = Tables.createFixedWidthCols(colWidth, (colWidth*2.05).toFloat(), (0.75 *colWidth).toFloat(), (1.2*colWidth).toFloat())
         table.addHeaderCell(Cells.createHeader("Event"))
         table.addHeaderCell(Cells.createHeader("Trial title"))
         table.addHeaderCell(Cells.createHeader("NCT id"))
