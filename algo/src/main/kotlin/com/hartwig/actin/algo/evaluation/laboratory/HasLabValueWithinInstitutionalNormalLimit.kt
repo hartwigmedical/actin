@@ -17,13 +17,13 @@ class HasLabValueWithinInstitutionalNormalLimit internal constructor() : LabEval
 
         return if (isOutsideRef) {
             EvaluationFactory.recoverableFail(
-                "${labMeasurement.display()} exceeds institutional normal limits",
-                "${labMeasurement.display()} exceeds normal limits"
+                "${labMeasurement.display().replaceFirstChar { it.uppercase() }} exceeds institutional normal limits",
+                "${labMeasurement.display().replaceFirstChar { it.uppercase() }} exceeds normal limits"
             )
         } else {
             EvaluationFactory.recoverablePass(
-                "${labMeasurement.display()} within institutional normal limits",
-                "${labMeasurement.display()} within normal limits"
+                "${labMeasurement.display().replaceFirstChar { it.uppercase() }} within institutional normal limits",
+                "${labMeasurement.display().replaceFirstChar { it.uppercase() }} within normal limits"
             )
         }
     }
