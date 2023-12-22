@@ -196,7 +196,7 @@ public final class TestMolecularFactory {
                         .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
                                 "A Phase 3 Study to Evaluate the treatment X as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)",
                                 Sets.newHashSet("Belgium"),
-                                "https://clinicaltrials.gov/study/NCT00000005"))
+                                "https://clinicaltrials.gov/study/NCT00000003"))
                         .gene("PTEN")
                         .geneRole(GeneRole.TSG)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
@@ -241,7 +241,10 @@ public final class TestMolecularFactory {
                         .isReportable(true)
                         .event("MYC amp")
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(TestActionableEvidenceFactory.createExhaustive())
+                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
+                                "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
+                                Sets.newHashSet("Netherlands"),
+                                "https://clinicaltrials.gov/study/NCT00000004"))
                         .gene("MYC")
                         .type(CopyNumberType.FULL_GAIN)
                         .minCopies(38)
