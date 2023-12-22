@@ -84,20 +84,16 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()),
-            if (!dutchTrials.isEmpty) {
-                EligibleDutchExternalTrialsGenerator(
-                    report.molecular.externalTrialSource(),
-                    dutchTrials,
-                    contentWidth()
-                )
-            } else null,
-            if (!nonDutchTrials.isEmpty) {
-                EligibleOtherCountriesExternalTrialsGenerator(
-                    report.molecular.externalTrialSource(),
-                    nonDutchTrials,
-                    contentWidth()
-                )
-            } else null
+            if (!dutchTrials.isEmpty) EligibleDutchExternalTrialsGenerator(
+                report.molecular.externalTrialSource(),
+                dutchTrials,
+                contentWidth()
+            ) else null,
+            if (!nonDutchTrials.isEmpty) EligibleOtherCountriesExternalTrialsGenerator(
+                report.molecular.externalTrialSource(),
+                nonDutchTrials,
+                contentWidth()
+            ) else null
         )
 
         for (i in generators.indices) {
