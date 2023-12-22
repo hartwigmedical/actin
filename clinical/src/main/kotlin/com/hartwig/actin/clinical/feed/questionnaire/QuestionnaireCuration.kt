@@ -36,6 +36,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["JA"] = true
         OPTION_MAPPING["Ja"] = true
         OPTION_MAPPING["ja"] = true
+        OPTION_MAPPING["es"] = true
         OPTION_MAPPING["YES related to prostatecarcinoma"] = true
         OPTION_MAPPING["yes bone lesion L1 L2 with epidural extension"] = true
         OPTION_MAPPING["yes manubrium sterni"] = true
@@ -56,6 +57,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["(yes/no)"] = null
         OPTION_MAPPING["botaantasting bij weke delen massa"] = false
         OPTION_MAPPING["no total resection"] = false
+        OPTION_MAPPING["probably"] = null
 
         STAGE_MAPPING["I"] = TumorStage.I
         STAGE_MAPPING["1"] = TumorStage.I
