@@ -31,6 +31,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["na"] = null
         OPTION_MAPPING["yes"] = true
         OPTION_MAPPING["tes"] = true
+        OPTION_MAPPING["es"] = true
         OPTION_MAPPING["Yes"] = true
         OPTION_MAPPING["YES"] = true
         OPTION_MAPPING["JA"] = true
@@ -49,6 +50,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["unknonw"] = null
         OPTION_MAPPING["onknown"] = null
         OPTION_MAPPING["UNKOWN"] = null
+        OPTION_MAPPING["probably"] = null
         OPTION_MAPPING["suspect lesion"] = null
         OPTION_MAPPING["unknown after surgery"] = null
         OPTION_MAPPING["-"] = null
