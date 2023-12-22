@@ -35,7 +35,7 @@ class LesionDataTest {
         active: Boolean?
     ) {
         val lesionData = fromString(presentInput, activeInput)
-        Assert.assertEquals(present, lesionData.present())
-        Assert.assertEquals(active, lesionData.active())
+        Assert.assertEquals(present, lesionData.curated?.present())
+        Assert.assertEquals(active, lesionData.curated?.active())
     }
 }

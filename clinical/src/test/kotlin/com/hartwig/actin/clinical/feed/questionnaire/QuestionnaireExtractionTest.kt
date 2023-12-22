@@ -8,6 +8,7 @@ import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -243,8 +244,12 @@ class QuestionnaireExtractionTest {
 
     @Test
     fun canExtractFromMissingOrInvalidEntry() {
-        assertNull(QuestionnaireExtraction.extract(null))
-        assertNull(QuestionnaireExtraction.extract(entryWithText("Does not exist")))
+        val nullEntry = QuestionnaireExtraction.extract(null)
+        assertThat(nullEntry.first).isNull()
+        assertThat(nullEntry.second).isEmpty()
+        val invalidEntry = QuestionnaireExtraction.extract(entryWithText("Does not exist"))
+        assertThat(invalidEntry.first).isNull()
+        assertThat(invalidEntry.second).isEmpty()
     }
 
     companion object {
@@ -354,7 +359,7 @@ class QuestionnaireExtractionTest {
         }
 
         private fun questionnaire(text: String): Questionnaire {
-            return QuestionnaireExtraction.extract(entryWithText(text))!!
+            return QuestionnaireExtraction.extract(entryWithText(text)).first!!
         }
     }
 }

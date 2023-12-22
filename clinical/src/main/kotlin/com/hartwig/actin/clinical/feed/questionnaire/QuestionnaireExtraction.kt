@@ -11,14 +11,21 @@ object QuestionnaireExtraction {
     private const val ACTIN_QUESTIONNAIRE_KEYWORD = "ACTIN Questionnaire"
     private const val ACTIVE_LINE_OFFSET = 1
 
-    fun extract(entry: QuestionnaireEntry?): Questionnaire? {
+    fun extract(entry: QuestionnaireEntry?): Pair<Questionnaire?, List<QuestionnaireCurationError>> {
         if (entry == null || !isActualQuestionnaire(entry)) {
-            return null
+            return null to emptyList()
         }
         val mapping = QuestionnaireMapping.mapping(entry)
         val lines = QuestionnaireReader.read(entry.text, QuestionnaireMapping.keyStrings(entry))
         val brainLesionData = lesionData(lines, mapping[QuestionnaireKey.HAS_BRAIN_LESIONS]!!)
         val cnsLesionData = lesionData(lines, mapping[QuestionnaireKey.HAS_CNS_LESIONS]!!)
+        val hasMeasurableDisease = QuestionnaireCuration.toOption(value(lines, mapping[QuestionnaireKey.HAS_MEASURABLE_DISEASE]))
+        val hasBoneLesions = QuestionnaireCuration.toOption(value(lines, mapping[QuestionnaireKey.HAS_BONE_LESIONS]))
+        val hasLiverLesions = QuestionnaireCuration.toOption(value(lines, mapping[QuestionnaireKey.HAS_LIVER_LESIONS]))
+        val whoStatus = QuestionnaireCuration.toWHO(value(lines, mapping[QuestionnaireKey.WHO_STATUS]))
+        val infectionStatus = QuestionnaireCuration.toInfectionStatus(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION]))
+        val ecg = QuestionnaireCuration.toECG(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG]))
+        val stage = QuestionnaireCuration.toStage(value(lines, mapping[QuestionnaireKey.STAGE]))
         return Questionnaire(
             date = entry.authored,
             tumorLocation = value(lines, mapping[QuestionnaireKey.PRIMARY_TUMOR_LOCATION]),
@@ -27,34 +34,28 @@ object QuestionnaireExtraction {
                 mapping[QuestionnaireKey.PRIMARY_TUMOR_TYPE]
             ),
             biopsyLocation = value(lines, mapping[QuestionnaireKey.BIOPSY_LOCATION]),
-            stage = QuestionnaireCuration.toStage(value(lines, mapping[QuestionnaireKey.STAGE])),
+            stage = stage.curated,
             treatmentHistoryCurrentTumor = toList(value(lines, mapping[QuestionnaireKey.TREATMENT_HISTORY_CURRENT_TUMOR])),
             otherOncologicalHistory = toList(value(lines, mapping[QuestionnaireKey.OTHER_ONCOLOGICAL_HISTORY])),
             secondaryPrimaries = secondaryPrimaries(lines, mapping[QuestionnaireKey.SECONDARY_PRIMARY]),
             nonOncologicalHistory = toList(value(lines, mapping[QuestionnaireKey.NON_ONCOLOGICAL_HISTORY])),
             ihcTestResults = toList(value(lines, mapping[QuestionnaireKey.IHC_TEST_RESULTS])),
             pdl1TestResults = toList(value(lines, mapping[QuestionnaireKey.PDL1_TEST_RESULTS])),
-            hasMeasurableDisease = QuestionnaireCuration.toOption(value(lines, mapping[QuestionnaireKey.HAS_MEASURABLE_DISEASE])),
-            hasBrainLesions = brainLesionData.present(),
-            hasActiveBrainLesions = brainLesionData.active(),
-            hasCnsLesions = cnsLesionData.present(),
-            hasActiveCnsLesions = cnsLesionData.active(),
-            hasBoneLesions = QuestionnaireCuration.toOption(value(lines, mapping[QuestionnaireKey.HAS_BONE_LESIONS])),
-            hasLiverLesions = QuestionnaireCuration.toOption(value(lines, mapping[QuestionnaireKey.HAS_LIVER_LESIONS])),
+            hasMeasurableDisease = hasMeasurableDisease.curated,
+            hasBrainLesions = brainLesionData.curated?.present(),
+            hasActiveBrainLesions = brainLesionData.curated?.active(),
+            hasCnsLesions = cnsLesionData.curated?.present(),
+            hasActiveCnsLesions = cnsLesionData.curated?.active(),
+            hasBoneLesions = hasBoneLesions.curated,
+            hasLiverLesions = hasLiverLesions.curated,
             otherLesions = otherLesions(entry, lines, mapping),
-            whoStatus = QuestionnaireCuration.toWHO(value(lines, mapping[QuestionnaireKey.WHO_STATUS])),
+            whoStatus = whoStatus.curated,
             unresolvedToxicities = toList(value(lines, mapping[QuestionnaireKey.UNRESOLVED_TOXICITIES])),
-            infectionStatus =
-            QuestionnaireCuration.toInfectionStatus(
-                value(
-                    lines,
-                    mapping[QuestionnaireKey.SIGNIFICANT_CURRENT_INFECTION]
-                )
-            ),
-            ecg = QuestionnaireCuration.toECG(value(lines, mapping[QuestionnaireKey.SIGNIFICANT_ABERRATION_LATEST_ECG])),
+            infectionStatus = infectionStatus.curated,
+            ecg = ecg.curated,
             complications = toList(value(lines, mapping[QuestionnaireKey.COMPLICATIONS])),
             genayaSubjectNumber = optionalValue(lines, mapping[QuestionnaireKey.GENAYA_SUBJECT_NUMBER])
-        )
+        ) to hasBoneLesions.errors + hasLiverLesions.errors + hasMeasurableDisease.errors + whoStatus.errors + infectionStatus.errors + ecg.errors + stage.errors
     }
 
     fun isActualQuestionnaire(entry: QuestionnaireEntry): Boolean {
@@ -88,9 +89,9 @@ object QuestionnaireExtraction {
         }
     }
 
-    private fun lesionData(lines: Array<String>, keyString: String): LesionData {
+    private fun lesionData(lines: Array<String>, keyString: String): ValidatedQuestionnaireCuration<LesionData> {
         val extractedValues = values(lines, keyString, ACTIVE_LINE_OFFSET)
-        return if (extractedValues == null) LesionData(null, null) else LesionData.fromString(
+        return if (extractedValues == null) ValidatedQuestionnaireCuration(LesionData(null, null)) else LesionData.fromString(
             extractedValues[0],
             extractedValues[1]
         )

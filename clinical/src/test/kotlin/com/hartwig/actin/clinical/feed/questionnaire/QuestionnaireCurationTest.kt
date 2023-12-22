@@ -7,40 +7,51 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toOpt
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toSecondaryPrimaries
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toStage
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCuration.toWHO
-import org.apache.logging.log4j.util.Strings
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
 import org.junit.Test
 
 class QuestionnaireCurationTest {
     @Test
-    fun canCurateOption() {
-        Assert.assertTrue(toOption("YES")!!)
-        Assert.assertFalse(toOption("no")!!)
-        Assert.assertNull(toOption(null))
-        Assert.assertNull(toOption(Strings.EMPTY))
-        Assert.assertNull(toOption("-"))
-        Assert.assertNull(toOption("nvt"))
-        Assert.assertNull(toOption("not an option"))
+    fun shouldCurateOptionsWhenCurationExists() {
+        val curated = toOption("YES")
+        assertThat(curated.curated).isTrue()
+        assertThat(curated.errors).isEmpty()
     }
 
     @Test
-    fun canCurateStage() {
-        Assert.assertEquals(TumorStage.IIB, toStage("IIb"))
-        Assert.assertEquals(TumorStage.II, toStage("2"))
-        Assert.assertEquals(TumorStage.III, toStage("3"))
-        Assert.assertEquals(TumorStage.IV, toStage("4"))
-        Assert.assertNull(toStage(null))
-        Assert.assertNull(toStage(Strings.EMPTY))
-        Assert.assertNull(toStage("not a stage"))
+    fun shouldNotCurateOptionsAndReturnErrorWhenCurationDoesNotExist() {
+        val curated = toOption("Not an option")
+        assertThat(curated.curated).isNull()
+        assertThat(curated.errors).containsExactly(QuestionnaireCurationError("Unrecognized questionnaire option: 'Not an option'"))
     }
 
     @Test
-    fun canCurateWHO() {
-        Assert.assertEquals(1, (toWHO("1") as Int).toLong())
-        Assert.assertNull(toWHO(null))
-        Assert.assertNull(toWHO(Strings.EMPTY))
-        Assert.assertNull(toWHO("-1"))
-        Assert.assertNull(toWHO("12"))
+    fun shouldCurateTumorStageWhenCurationExists() {
+        val curated = toStage("IIb")
+        assertThat(curated.curated).isEqualTo(TumorStage.IIB)
+        assertThat(curated.errors).isEmpty()
+    }
+
+    @Test
+    fun shouldNotCurateTumorStageAndReturnErrorWhenCurationDoesNotExist() {
+        val curated = toStage("Not a stage")
+        assertThat(curated.curated).isNull()
+        assertThat(curated.errors).containsExactly(QuestionnaireCurationError("Unrecognized questionnaire tumor stage: 'Not a stage'"))
+    }
+
+    @Test
+    fun shouldCurateWhoStatusWhenCurationExists() {
+        val curated = toWHO("1")
+        assertThat(curated.curated).isEqualTo(1)
+        assertThat(curated.errors).isEmpty()
+    }
+
+    @Test
+    fun shouldNotCurateWhoStatusAndReturnErrorWhenWhoInvalid() {
+        val curated = toWHO("7")
+        assertThat(curated.curated).isEqualTo(null)
+        assertThat(curated.errors).containsExactly(QuestionnaireCurationError("WHO status not between 0 and 5: '7'"))
     }
 
     @Test
@@ -56,13 +67,24 @@ class QuestionnaireCurationTest {
     @Test
     fun shouldReturnNullForEmptyInfectionStatus() {
         val infectionStatus = toInfectionStatus("")
-        Assert.assertNull(infectionStatus)
+        assertThat(infectionStatus.curated).isNull()
+        assertThat(infectionStatus.errors).isEmpty()
     }
 
     @Test
     fun shouldReturnNullForUnknownInfectionStatus() {
         val infectionStatus = toInfectionStatus("unknown")
-        Assert.assertNull(infectionStatus)
+        assertThat(infectionStatus.curated).isNull()
+        assertThat(infectionStatus.errors).isEmpty()
+    }
+
+    @Test
+    fun shouldReturnDescriptionVerbatimForWhenCurationDoesNotExistInfectionStatus() {
+        val infectionStatus = toInfectionStatus("new infection status")
+        val curated = infectionStatus.curated!!
+        assertThat(curated.description()).isEqualTo("new infection status")
+        assertThat(curated.hasActiveInfection()).isTrue()
+        assertThat(infectionStatus.errors).isEmpty()
     }
 
     @Test
@@ -70,8 +92,9 @@ class QuestionnaireCurationTest {
         val infectionDescription = "yes"
         val infectionStatus = toInfectionStatus(infectionDescription)
         Assert.assertNotNull(infectionStatus)
-        Assert.assertTrue(infectionStatus!!.hasActiveInfection())
-        Assert.assertEquals(infectionDescription, infectionStatus.description())
+        val curated = infectionStatus.curated!!
+        Assert.assertTrue(curated.hasActiveInfection())
+        Assert.assertEquals(infectionDescription, curated.description())
     }
 
     @Test
@@ -79,8 +102,9 @@ class QuestionnaireCurationTest {
         val infectionDescription = "no"
         val infectionStatus = toInfectionStatus(infectionDescription)
         Assert.assertNotNull(infectionStatus)
-        Assert.assertFalse(infectionStatus!!.hasActiveInfection())
-        Assert.assertEquals(infectionDescription, infectionStatus.description())
+        val curated = infectionStatus.curated!!
+        Assert.assertFalse(curated.hasActiveInfection())
+        Assert.assertEquals(infectionDescription, curated.description())
     }
 
     @Test
@@ -88,18 +112,32 @@ class QuestionnaireCurationTest {
         val infectionDescription = "infection"
         val infectionStatus = toInfectionStatus(infectionDescription)
         Assert.assertNotNull(infectionStatus)
-        Assert.assertTrue(infectionStatus!!.hasActiveInfection())
-        Assert.assertEquals(infectionDescription, infectionStatus.description())
+        val curated = infectionStatus.curated!!
+        Assert.assertTrue(curated.hasActiveInfection())
+        Assert.assertEquals(infectionDescription, curated.description())
     }
 
     @Test
     fun shouldReturnNullForEmptyECG() {
-        Assert.assertNull(toECG(""))
+        val ecg = toECG("")
+        assertThat(ecg.curated).isNull()
+        assertThat(ecg.errors).isEmpty()
     }
 
     @Test
     fun shouldReturnNullForUnknownECG() {
-        Assert.assertNull(toECG("unknown"))
+        val ecg = toECG("unknown")
+        assertThat(ecg.curated).isNull()
+        assertThat(ecg.errors).isEmpty()
+    }
+
+    @Test
+    fun shouldReturnDescriptionVerbatimForWhenCurationDoesNotExistECG() {
+        val infectionStatus = toECG("new ECG value")
+        val curated = infectionStatus.curated!!
+        assertThat(curated.aberrationDescription()).isEqualTo("new ECG value")
+        assertThat(curated.hasSigAberrationLatestECG()).isTrue()
+        assertThat(infectionStatus.errors).isEmpty()
     }
 
     @Test
@@ -107,8 +145,9 @@ class QuestionnaireCurationTest {
         val description = "yes"
         val status = toECG(description)
         Assert.assertNotNull(status)
-        Assert.assertTrue(status!!.hasSigAberrationLatestECG())
-        Assert.assertEquals(description, status.aberrationDescription())
+        val curated = status.curated!!
+        Assert.assertTrue(curated.hasSigAberrationLatestECG())
+        Assert.assertEquals(description, curated.aberrationDescription())
     }
 
     @Test
@@ -116,8 +155,9 @@ class QuestionnaireCurationTest {
         val description = "no"
         val status = toECG(description)
         Assert.assertNotNull(status)
-        Assert.assertFalse(status!!.hasSigAberrationLatestECG())
-        Assert.assertEquals(description, status.aberrationDescription())
+        val curated = status.curated!!
+        Assert.assertFalse(curated.hasSigAberrationLatestECG())
+        Assert.assertEquals(description, curated.aberrationDescription())
     }
 
     @Test
@@ -125,7 +165,8 @@ class QuestionnaireCurationTest {
         val description = "ECG"
         val status = toECG(description)
         Assert.assertNotNull(status)
-        Assert.assertTrue(status!!.hasSigAberrationLatestECG())
-        Assert.assertEquals(description, status.aberrationDescription())
+        val curated = status.curated!!
+        Assert.assertTrue(curated.hasSigAberrationLatestECG())
+        Assert.assertEquals(description, curated.aberrationDescription())
     }
 }
