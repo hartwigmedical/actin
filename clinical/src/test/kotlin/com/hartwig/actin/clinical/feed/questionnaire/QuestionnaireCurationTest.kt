@@ -55,10 +55,10 @@ class QuestionnaireCurationTest {
     }
 
     @Test
-    fun shouldNotCurateWhoStatusAndReturnErrorWhenNotANumber() {
+    fun shouldNotCurateWhoStatusAndReturznErrorWhenNotANumber() {
         val curated = toWHO("string")
         assertThat(curated.curated).isEqualTo(null)
-        assertThat(curated.errors).containsExactly(QuestionnaireCurationError("WHO status not between 0 and 5: '7'"))
+        assertThat(curated.errors).containsExactly(QuestionnaireCurationError("WHO status not an integer: 'string'"))
     }
 
     @Test
