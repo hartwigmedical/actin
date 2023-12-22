@@ -29,7 +29,7 @@ class EligibleExternalTrialsGenerator(
         )
         table.addHeaderCell(Cells.createHeader("Event"))
         table.addHeaderCell(Cells.createHeader("Trial title"))
-        table.addHeaderCell(Cells.createHeader("NCT id"))
+        table.addHeaderCell(Cells.createHeader("NCT Number"))
         table.addHeaderCell(Cells.createHeader("Potentially recruiting countries"))
 
         externalTrialsPerEvent.forEach { event, eligibleTrial ->
