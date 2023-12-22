@@ -48,6 +48,20 @@ class QuestionnaireCurationTest {
     }
 
     @Test
+    fun shouldNotCurateWhoStatusAndReturnErrorWhenNotBetweenZeroAndFive() {
+        val curated = toWHO("7")
+        assertThat(curated.curated).isEqualTo(null)
+        assertThat(curated.errors).containsExactly(QuestionnaireCurationError("WHO status not between 0 and 5: '7'"))
+    }
+
+    @Test
+    fun shouldNotCurateWhoStatusAndReturnErrorWhenNotANumber() {
+        val curated = toWHO("string")
+        assertThat(curated.curated).isEqualTo(null)
+        assertThat(curated.errors).containsExactly(QuestionnaireCurationError("WHO status not between 0 and 5: '7'"))
+    }
+
+    @Test
     fun shouldNotCurateWhoStatusAndReturnErrorWhenWhoInvalid() {
         val curated = toWHO("7")
         assertThat(curated.curated).isEqualTo(null)

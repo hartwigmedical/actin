@@ -114,11 +114,18 @@ internal object QuestionnaireCuration {
         if (integer.isNullOrEmpty()) {
             return ValidatedQuestionnaireCuration(null)
         }
-        val value = integer.toInt()
-        return if (value in 0..5) {
-            ValidatedQuestionnaireCuration(value)
-        } else {
-            ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError("WHO status not between 0 and 5: '$value'")))
+        return when (val value = integer.toIntOrNull()) {
+            null -> {
+                return ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError("WHO status not an integer: '$integer'")))
+            }
+
+            in 0..5 -> {
+                ValidatedQuestionnaireCuration(value)
+            }
+
+            else -> {
+                ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError("WHO status not between 0 and 5: '$value'")))
+            }
         }
     }
 
