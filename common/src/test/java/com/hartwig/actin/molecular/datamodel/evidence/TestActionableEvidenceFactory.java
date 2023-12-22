@@ -22,11 +22,7 @@ public final class TestActionableEvidenceFactory {
     @NotNull
     public static ActionableEvidence createExhaustive() {
         return builder().addApprovedTreatments("approved")
-                .addExternalEligibleTrials(ImmutableEligibleTrial.builder()
-                        .title("external trial")
-                        .countries(emptySet())
-                        .website("https://clinicaltrials.gov/study/NCT04898634")
-                        .build())
+                .addExternalEligibleTrials(ExternalTrialFactory.create("external trial", emptySet(), "https://clinicaltrials.gov/study/NCT00000001"))
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")
                 .addPreClinicalTreatments("pre-clinical")
@@ -42,11 +38,7 @@ public final class TestActionableEvidenceFactory {
 
     @NotNull
     public static ActionableEvidence withExternalEligibleTrial(@NotNull String treatment) {
-        return builder().addExternalEligibleTrials(ImmutableEligibleTrial.builder()
-                .title(treatment)
-                .countries(emptySet())
-                .website("https://clinicaltrials.gov/study/NCT04898634")
-                .build()).build();
+        return builder().addExternalEligibleTrials(ExternalTrialFactory.create(treatment, emptySet(), "https://clinicaltrials.gov/study/NCT00000001")).build();
     }
 
     @NotNull

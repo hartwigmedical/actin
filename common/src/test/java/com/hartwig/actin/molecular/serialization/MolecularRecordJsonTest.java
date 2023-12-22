@@ -38,7 +38,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEligibleTrial;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialFactory;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
@@ -114,11 +114,7 @@ public class MolecularRecordJsonTest {
         assertNull(characteristics.microsatelliteEvidence());
         assertTrue(characteristics.isHomologousRepairDeficient());
         assertEquals(TestActionableEvidenceFactory.builder()
-                .addExternalEligibleTrials(ImmutableEligibleTrial.builder()
-                        .title("PARP trial")
-                        .countries(Sets.newHashSet("Netherlands", "Germany"))
-                        .website("https://clinicaltrials.gov/study/NCT04898634")
-                        .build())
+                .addExternalEligibleTrials(ExternalTrialFactory.create("PARP trial", Sets.newHashSet("Netherlands", "Germany"), "https://clinicaltrials.gov/study/NCT00000001"))
                 .addOnLabelExperimentalTreatments("PARP on label")
                 .addOffLabelExperimentalTreatments("PARP off label")
                 .build(), characteristics.homologousRepairEvidence());

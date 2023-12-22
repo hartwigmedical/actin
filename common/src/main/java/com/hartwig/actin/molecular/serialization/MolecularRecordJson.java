@@ -75,9 +75,9 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.EligibleTrial;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEligibleTrial;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
@@ -415,12 +415,12 @@ public class MolecularRecordJson {
         }
 
         @NotNull
-        private static Set<EligibleTrial> toEligibleTrials(@NotNull JsonArray eligibleTrialArray) {
+        private static Set<ExternalTrial> toEligibleTrials(@NotNull JsonArray eligibleTrialArray) {
             return extractSetFromJson(eligibleTrialArray,
-                    eligibleTrial -> ImmutableEligibleTrial.builder()
+                    eligibleTrial -> ImmutableExternalTrial.builder()
                             .title(string(eligibleTrial, "title"))
                             .countries(stringList(eligibleTrial, "countries"))
-                            .website(string(eligibleTrial, "https://clinicaltrials.gov/study/NCT04898634"))
+                            .website(string(eligibleTrial, "website"))
                             .build());
         }
 

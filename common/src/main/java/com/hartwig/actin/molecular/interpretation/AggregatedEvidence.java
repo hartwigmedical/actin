@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.interpretation;
 
 import com.google.common.collect.Multimap;
-import com.hartwig.actin.molecular.datamodel.evidence.EligibleTrial;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial;
 
 import org.immutables.value.Value;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ public abstract class AggregatedEvidence {
     public abstract Multimap<String, String> approvedTreatmentsPerEvent();
 
     @NotNull
-    public abstract Multimap<String, EligibleTrial> externalEligibleTrialsPerEvent();
+    public abstract Multimap<String, ExternalTrial> externalEligibleTrialsPerEvent();
 
     @NotNull
     public abstract Multimap<String, String> onLabelExperimentalTreatmentsPerEvent();

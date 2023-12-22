@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEligibleTrial
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialFactory
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.ActionableEvent
@@ -60,12 +60,7 @@ object ActionableEvidenceFactory {
         val builder = ImmutableActionableEvidence.builder()
         for (onLabelEvent in onLabelEvents) {
             if (onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive) {
-                builder.addExternalEligibleTrials(
-                    ImmutableEligibleTrial.builder()
-                        .title(onLabelEvent.treatment().name())
-                        .countries(onLabelEvent.evidenceUrls())
-                        .website(onLabelEvent.sourceUrls().iterator().next())
-                        .build())
+                builder.addExternalEligibleTrials(ExternalTrialFactory.create(onLabelEvent.treatment().name(), onLabelEvent.evidenceUrls(), onLabelEvent.sourceUrls().iterator().next()))
             }
         }
         return builder.build()

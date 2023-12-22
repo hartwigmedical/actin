@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.google.common.collect.Sets
-import com.hartwig.actin.molecular.datamodel.evidence.ImmutableEligibleTrial
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.molecular.interpretation.ImmutableAggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
@@ -15,21 +15,9 @@ class EvidenceInterpreterTest {
         val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(listOf(cohortWithInclusion))
         val evidence: AggregatedEvidence = ImmutableAggregatedEvidence.builder()
             .putApprovedTreatmentsPerEvent("approved", "treatment")
-            .putExternalEligibleTrialsPerEvent("external", ImmutableEligibleTrial.builder()
-                .title("treatment")
-                .countries(Sets.newHashSet("Netherlands", "Germany"))
-                .website("https://clinicaltrials.gov/study/NCT04898634")
-                .build())
-            .putExternalEligibleTrialsPerEvent("approved", ImmutableEligibleTrial.builder()
-                .title("treatment")
-                .countries(Sets.newHashSet("Netherlands", "Germany"))
-                .website("https://clinicaltrials.gov/study/NCT04898634")
-                .build())
-            .putExternalEligibleTrialsPerEvent("inclusion", ImmutableEligibleTrial.builder()
-                .title("treatment")
-                .countries(Sets.newHashSet("Netherlands", "Germany"))
-                .website("https://clinicaltrials.gov/study/NCT04898634")
-                .build())
+            .putExternalEligibleTrialsPerEvent("external", ExternalTrialFactory.create("treatment", Sets.newHashSet("Netherlands", "Germany"), "https://clinicaltrials.gov/study/NCT00000001"))
+            .putExternalEligibleTrialsPerEvent("approved", ExternalTrialFactory.create("treatment", Sets.newHashSet("Netherlands", "Germany"), "https://clinicaltrials.gov/study/NCT00000001"))
+            .putExternalEligibleTrialsPerEvent("inclusion", ExternalTrialFactory.create("treatment", Sets.newHashSet("Netherlands", "Germany"), "https://clinicaltrials.gov/study/NCT00000001"))
             .putOnLabelExperimentalTreatmentsPerEvent("on-label", "treatment")
             .putOnLabelExperimentalTreatmentsPerEvent("approved", "treatment")
             .putOffLabelExperimentalTreatmentsPerEvent("off-label", "treatment")

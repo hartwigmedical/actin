@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.evidence.EligibleTrial
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter
@@ -44,7 +44,7 @@ class MolecularDriversGenerator(
             table.addCell(Cells.createContent(entry.driver))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
-            table.addCell(Cells.createContent(concat2(entry.externalTrials)))
+            table.addCell(Cells.createContent(concatEligibleTrials(entry.externalTrials)))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -64,7 +64,7 @@ class MolecularDriversGenerator(
             return treatments.joinToString(", ")
         }
 
-        private fun concat2(treatments: Set<EligibleTrial>): String {
+        private fun concatEligibleTrials(treatments: Set<ExternalTrial>): String {
             val strings = mutableSetOf<String>()
             for (treatment in treatments)
             {
