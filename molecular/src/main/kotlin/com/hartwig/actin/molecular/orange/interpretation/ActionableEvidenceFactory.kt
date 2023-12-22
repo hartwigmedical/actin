@@ -60,7 +60,13 @@ object ActionableEvidenceFactory {
         val builder = ImmutableActionableEvidence.builder()
         for (onLabelEvent in onLabelEvents) {
             if (onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive) {
-                builder.addExternalEligibleTrials(ExternalTrialFactory.create(onLabelEvent.treatment().name(), onLabelEvent.evidenceUrls(), onLabelEvent.sourceUrls().iterator().next()))
+                builder.addExternalEligibleTrials(
+                    ExternalTrialFactory.create(
+                        onLabelEvent.treatment().name(),
+                        onLabelEvent.evidenceUrls(),
+                        onLabelEvent.sourceUrls().iterator().next()
+                    )
+                )
             }
         }
         return builder.build()

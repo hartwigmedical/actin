@@ -605,7 +605,12 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    private fun <T : Record?> writeTrialTreatments(inserter: EvidenceInserter<T>, topicId: Int, treatments: Set<ExternalTrial>, type: String) {
+    private fun <T : Record?> writeTrialTreatments(
+        inserter: EvidenceInserter<T>,
+        topicId: Int,
+        treatments: Set<ExternalTrial>,
+        type: String
+    ) {
         for (treatment in treatments) {
             inserter.write(topicId, treatment.title(), type)
         }

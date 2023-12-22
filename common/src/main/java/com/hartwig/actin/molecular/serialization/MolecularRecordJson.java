@@ -418,7 +418,9 @@ public class MolecularRecordJson {
         @NotNull
         private static Set<ExternalTrial> toEligibleTrials(@NotNull JsonArray eligibleTrialArray) {
             return extractSetFromJson(eligibleTrialArray,
-                    eligibleTrial -> ExternalTrialFactory.create(string(eligibleTrial, "title"), stringSet(eligibleTrial, "countries"), string(eligibleTrial, "website")));
+                    eligibleTrial -> ExternalTrialFactory.create(string(eligibleTrial, "title"),
+                            stringSet(eligibleTrial, "countries"),
+                            string(eligibleTrial, "website")));
         }
 
         @NotNull

@@ -178,7 +178,10 @@ public final class TestMolecularFactory {
                         .isReportable(true)
                         .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)", Sets.newHashSet("Netherlands", "Belgium", "Germany"), "https://clinicaltrials.gov/study/NCT00000002"))
+                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
+                                "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)",
+                                Sets.newHashSet("Netherlands", "Belgium", "Germany"),
+                                "https://clinicaltrials.gov/study/NCT00000002"))
                         .gene("PTEN")
                         .geneRole(GeneRole.TSG)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)

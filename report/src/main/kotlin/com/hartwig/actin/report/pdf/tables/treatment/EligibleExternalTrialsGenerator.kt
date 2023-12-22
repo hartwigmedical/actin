@@ -21,7 +21,12 @@ class EligibleExternalTrialsGenerator(
 
     override fun contents(): Table {
         val colWidth = width / 5
-        val table = Tables.createFixedWidthCols((0.9*colWidth).toFloat(), (colWidth*2.2).toFloat(), (0.7*colWidth).toFloat(), (1.2*colWidth).toFloat())
+        val table = Tables.createFixedWidthCols(
+            (0.9 * colWidth).toFloat(),
+            (colWidth * 2.2).toFloat(),
+            (0.7 * colWidth).toFloat(),
+            (1.2 * colWidth).toFloat()
+        )
         table.addHeaderCell(Cells.createHeader("Event"))
         table.addHeaderCell(Cells.createHeader("Trial title"))
         table.addHeaderCell(Cells.createHeader("NCT id"))
@@ -30,8 +35,11 @@ class EligibleExternalTrialsGenerator(
         externalTrialsPerEvent.forEach { event, eligibleTrial ->
             table.addCell(Cells.createContent(event))
             table.addCell(Cells.createContent(shortenTitle(eligibleTrial.title())))
-            table.addCell(Cells.createContent(eligibleTrial.website().takeLast(11)).setAction(PdfAction.createURI(eligibleTrial.website())).addStyle(
-                Styles.urlStyle()))
+            table.addCell(
+                Cells.createContent(eligibleTrial.website().takeLast(11)).setAction(PdfAction.createURI(eligibleTrial.website())).addStyle(
+                    Styles.urlStyle()
+                )
+            )
             table.addCell(Cells.createContent(eligibleTrial.countries().joinToString(COMMA_SEPARATOR)))
         }
         return makeWrapping(table)

@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.evidence;
 
 import java.util.Set;
+
 import org.jetbrains.annotations.NotNull;
 
 public class ExternalTrialFactory {
