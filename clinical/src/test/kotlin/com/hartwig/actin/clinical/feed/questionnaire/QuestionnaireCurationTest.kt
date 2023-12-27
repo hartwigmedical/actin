@@ -13,14 +13,14 @@ import org.junit.Test
 
 class QuestionnaireCurationTest {
     @Test
-    fun shouldCurateOptionsWhenCurationExists() {
+    fun `Should curate options when curation exists`() {
         val curated = toOption("YES")
         assertThat(curated.curated).isTrue()
         assertThat(curated.errors).isEmpty()
     }
 
     @Test
-    fun shouldNotCurateOptionsAndReturnErrorWhenCurationDoesNotExist() {
+    fun `Should not curate options and return error when curation does not exist`() {
         val curated = toOption("Not an option")
         assertThat(curated.curated).isNull()
         assertThat(curated.errors).containsExactly(QuestionnaireCurationError("Unrecognized questionnaire option: 'Not an option'"))
