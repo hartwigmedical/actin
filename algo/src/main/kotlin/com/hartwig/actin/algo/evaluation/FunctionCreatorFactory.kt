@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapper
 import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapper
 import com.hartwig.actin.algo.evaluation.infection.InfectionRuleMapper
 import com.hartwig.actin.algo.evaluation.laboratory.LaboratoryRuleMapper
-import com.hartwig.actin.algo.evaluation.lifestyle.LifestyleRuleMapper
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.evaluation.medication.MedicationRuleMapper
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapper
@@ -42,7 +41,6 @@ object FunctionCreatorFactory {
             GeneralRuleMapper(resources),
             InfectionRuleMapper(resources),
             LaboratoryRuleMapper(resources),
-            LifestyleRuleMapper(resources),
             MedicationRuleMapper(resources),
             MolecularRuleMapper(resources),
             OtherConditionRuleMapper(resources),
