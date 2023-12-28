@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCurationError
 
 data class IngestionResult(
     val configValidationErrors: Set<CurationConfigValidationError> = emptySet(),
@@ -21,10 +22,16 @@ data class PatientIngestionResult(
     val patientId: String,
     val status: PatientIngestionStatus,
     @Transient val clinicalRecord: ClinicalRecord,
-    val curationResults: Set<CurationResult>
+    val curationResults: Set<CurationResult>,
+    val questionnaireCurationErrors: Set<QuestionnaireCurationError>
 ) {
     companion object {
-        fun create(questionnaire: Questionnaire?, record: ClinicalRecord, warnings: List<CurationWarning>): PatientIngestionResult {
+        fun create(
+            questionnaire: Questionnaire?,
+            record: ClinicalRecord,
+            warnings: List<CurationWarning>,
+            questionnaireCurationErrors: Set<QuestionnaireCurationError>
+        ): PatientIngestionResult {
             return PatientIngestionResult(
                 record.patientId(),
                 status(questionnaire, warnings),
@@ -34,7 +41,8 @@ data class PatientIngestionResult(
                         categoryName,
                         warnings.map { CurationRequirement(it.feedInput, it.message) }
                     )
-                }.toSet()
+                }.toSet(),
+                questionnaireCurationErrors
             )
         }
 
