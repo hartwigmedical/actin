@@ -14,7 +14,7 @@ import java.time.LocalDate
 
 class QuestionnaireExtractionTest {
     @Test
-    fun shouldBeAbleToDetermineThatQuestionnaireEntryIsAQuestionnaire() {
+    fun `Should be able to determine that questionnaire entry is a questionnaire`() {
         assertTrue(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_7())))
         assertTrue(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6())))
         assertTrue(isActualQuestionnaire(entryWithText(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())))
@@ -29,7 +29,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToHandleMissingGENAYASubjectNumberFromQuestionnaire() {
+    fun `Should be able to handle missing GENAYA subject number from questionnaire`() {
         val questionnaire = questionnaire(
             TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()
                 .replace("GENAYA subjectno: GAYA-01-02-9999", "")
@@ -38,7 +38,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV1_7() {
+    fun `Should be able to extract data from questionnaire v1_7`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV1_7())
         assertPatientHistory(questionnaire)
         assertClinical(questionnaire)
@@ -47,7 +47,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV1_6() {
+    fun `Should be able to extract data from questionnaire v1_6`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV1_6())
         assertPatientHistory(questionnaire)
         assertClinical(questionnaire)
@@ -56,28 +56,20 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV1_5() {
+    fun `Should be able to extract data from questionnaire v1_5`() {
         assertExtractionForQuestionnaireV1_5(TestQuestionnaireFactory.createTestQuestionnaireValueV1_5())
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromAlternateQuestionnaireV1_5() {
+    fun `Should be able to extract data from alternate questionnaire v1_5`() {
         val rawQuestionnaire = TestQuestionnaireFactory.createTestQuestionnaireValueV1_5()
             .replace("- IHC test", "-IHC test")
             .replace("- PD L1 test", "-PD L1 test")
         assertExtractionForQuestionnaireV1_5(rawQuestionnaire)
     }
 
-    private fun assertExtractionForQuestionnaireV1_5(rawQuestionnaire: String) {
-        val questionnaire = questionnaire(rawQuestionnaire)
-        assertPatientHistory(questionnaire)
-        assertClinical(questionnaire)
-        assertMolecularTests(questionnaire)
-        assertNull(questionnaire.genayaSubjectNumber)
-    }
-
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV1_4() {
+    fun `Should be able to extract data from questionnaire v1_4`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV1_4())
         assertPatientHistory(questionnaire)
         assertClinicalBeforeV1_5(questionnaire)
@@ -88,7 +80,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV1_3() {
+    fun `Should be able to extract data from questionnaire v1_3`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV1_3())
         assertPatientHistory(questionnaire)
         assertClinicalBeforeV1_5(questionnaire)
@@ -97,7 +89,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV1_2() {
+    fun `Should be able to extract data from questionnaire v1_2`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV1_2())
         assertPatientHistory(questionnaire)
         assertClinicalBeforeV1_5(questionnaire)
@@ -106,7 +98,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV1_1() {
+    fun `Should be able to extract data from questionnaire v1_1`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV1_1())
         assertPatientHistory(questionnaire)
         assertClinicalBeforeV1_5(questionnaire)
@@ -115,7 +107,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV1_0() {
+    fun `Should be able to extract data from questionnaire v1_0`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV1_0())
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date)
         assertEquals("lung", questionnaire.tumorLocation)
@@ -161,7 +153,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV0_2() {
+    fun `Should be able to extract data from questionnaire v0_2`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV0_2())
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date)
         assertEquals("cholangio", questionnaire.tumorLocation)
@@ -201,7 +193,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun shouldBeAbleToExtractDataFromQuestionnaireV0_1() {
+    fun `Should be able to extract data from questionnaire v0_1`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV0_1())
         assertEquals(LocalDate.of(2020, 8, 28), questionnaire.date)
         assertEquals("Cholangiocarcinoom (lever, lymph retroperitoneaal)", questionnaire.tumorLocation)
@@ -243,7 +235,7 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun canExtractFromMissingOrInvalidEntry() {
+    fun `Should extract from missing or invalid entry`() {
         val nullEntry = QuestionnaireExtraction.extract(null)
         assertThat(nullEntry.first).isNull()
         assertThat(nullEntry.second).isEmpty()
@@ -360,6 +352,14 @@ class QuestionnaireExtractionTest {
 
         private fun questionnaire(text: String): Questionnaire {
             return QuestionnaireExtraction.extract(entryWithText(text)).first!!
+        }
+
+        private fun assertExtractionForQuestionnaireV1_5(rawQuestionnaire: String) {
+            val questionnaire = questionnaire(rawQuestionnaire)
+            assertPatientHistory(questionnaire)
+            assertClinical(questionnaire)
+            assertMolecularTests(questionnaire)
+            assertNull(questionnaire.genayaSubjectNumber)
         }
     }
 }
