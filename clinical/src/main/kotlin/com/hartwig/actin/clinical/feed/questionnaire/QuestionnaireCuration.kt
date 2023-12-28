@@ -80,14 +80,14 @@ internal object QuestionnaireCuration {
         STAGE_MAPPING["na"] = null
     }
 
-    fun toOption(option: String?): ValidatedQuestionnaireCuration<Boolean> {
+    fun toOption(subject: String, option: String?): ValidatedQuestionnaireCuration<Boolean> {
         if (option.isNullOrEmpty()) {
             return ValidatedQuestionnaireCuration(null)
         }
         if (!isConfiguredOption(option)) {
             return ValidatedQuestionnaireCuration(
                 null,
-                listOf(QuestionnaireCurationError("Unrecognized questionnaire option: '$option'"))
+                listOf(QuestionnaireCurationError(subject, "Unrecognized questionnaire option: '$option'"))
             )
         }
         return ValidatedQuestionnaireCuration(OPTION_MAPPING[option])
@@ -97,26 +97,26 @@ internal object QuestionnaireCuration {
         return OPTION_MAPPING.containsKey(option)
     }
 
-    fun toStage(stage: String?): ValidatedQuestionnaireCuration<TumorStage> {
+    fun toStage(subject: String, stage: String?): ValidatedQuestionnaireCuration<TumorStage> {
         if (stage.isNullOrEmpty()) {
             return ValidatedQuestionnaireCuration(null)
         }
         if (!STAGE_MAPPING.containsKey(stage)) {
             return ValidatedQuestionnaireCuration(
                 null,
-                listOf(QuestionnaireCurationError("Unrecognized questionnaire tumor stage: '$stage'"))
+                listOf(QuestionnaireCurationError(subject,"Unrecognized questionnaire tumor stage: '$stage'"))
             )
         }
         return ValidatedQuestionnaireCuration(STAGE_MAPPING[stage])
     }
 
-    fun toWHO(integer: String?): ValidatedQuestionnaireCuration<Int> {
+    fun toWHO(subject: String, integer: String?): ValidatedQuestionnaireCuration<Int> {
         if (integer.isNullOrEmpty()) {
             return ValidatedQuestionnaireCuration(null)
         }
         return when (val value = integer.toIntOrNull()) {
             null -> {
-                return ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError("WHO status not an integer: '$integer'")))
+                return ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError(subject,"WHO status not an integer: '$integer'")))
             }
 
             in 0..5 -> {
@@ -124,7 +124,7 @@ internal object QuestionnaireCuration {
             }
 
             else -> {
-                ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError("WHO status not between 0 and 5: '$value'")))
+                ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError(subject,"WHO status not between 0 and 5: '$value'")))
             }
         }
     }
@@ -133,12 +133,12 @@ internal object QuestionnaireCuration {
         return listOf(secondaryPrimary + if (lastTreatmentInfo.isEmpty()) "" else " | $lastTreatmentInfo")
     }
 
-    fun toInfectionStatus(significantCurrentInfection: String?): ValidatedQuestionnaireCuration<InfectionStatus> {
-        return buildFromDescription(significantCurrentInfection, ::buildInfectionStatus)
+    fun toInfectionStatus(subject: String,significantCurrentInfection: String?): ValidatedQuestionnaireCuration<InfectionStatus> {
+        return buildFromDescription(subject, significantCurrentInfection, ::buildInfectionStatus)
     }
 
-    fun toECG(significantAberrationLatestECG: String?): ValidatedQuestionnaireCuration<ECG> {
-        return buildFromDescription(significantAberrationLatestECG, ::buildECG)
+    fun toECG(subject: String,significantAberrationLatestECG: String?): ValidatedQuestionnaireCuration<ECG> {
+        return buildFromDescription(subject, significantAberrationLatestECG, ::buildECG)
     }
 
     private fun buildInfectionStatus(
@@ -160,11 +160,12 @@ internal object QuestionnaireCuration {
     }
 
     private fun <T> buildFromDescription(
+        subject: String,
         description: String?,
         buildFunction: (Boolean, String?) -> ValidatedQuestionnaireCuration<T>
     ): ValidatedQuestionnaireCuration<T> {
         val present: ValidatedQuestionnaireCuration<Boolean> = if (isConfiguredOption(description)) {
-            toOption(description)
+            toOption(subject, description)
         } else if (!description.isNullOrEmpty()) {
             ValidatedQuestionnaireCuration(true)
         } else {

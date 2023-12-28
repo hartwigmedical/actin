@@ -54,7 +54,7 @@ class ClinicalIngestionTest {
         assertThat(patientResults[0].curationResults).isEmpty()
         assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
         assertThat(patientResults[0].questionnaireCurationErrors)
-            .containsExactly(QuestionnaireCurationError("Unrecognized questionnaire option: 'Probably'"))
+            .containsExactly(QuestionnaireCurationError("ACTN-01-02-9999", "Unrecognized questionnaire option: 'Probably'"))
 
         assertThat(ingestionResult.unusedConfigs).containsExactly(
             UnusedCurationConfig(categoryName = "Molecular Test", input = "ihc erbb2 3+"),

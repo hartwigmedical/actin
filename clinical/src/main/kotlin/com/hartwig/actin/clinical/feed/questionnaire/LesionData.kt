@@ -10,9 +10,9 @@ internal class LesionData(private val present: Boolean?, private val active: Boo
     }
 
     companion object {
-        fun fromString(presentInput: String, activeInput: String): ValidatedQuestionnaireCuration<LesionData> {
-            val present = curateQuestionnaireOption(presentInput)
-            val active = if (present.curated != null) curateQuestionnaireOption(activeInput)
+        fun fromString(subject: String, presentInput: String, activeInput: String): ValidatedQuestionnaireCuration<LesionData> {
+            val present = curateQuestionnaireOption(subject, presentInput)
+            val active = if (present.curated != null) curateQuestionnaireOption(subject, activeInput)
             else ValidatedQuestionnaireCuration(null)
 
             return ValidatedQuestionnaireCuration(
@@ -21,8 +21,8 @@ internal class LesionData(private val present: Boolean?, private val active: Boo
             )
         }
 
-        private fun curateQuestionnaireOption(input: String): ValidatedQuestionnaireCuration<Boolean> =
-            ValidatedQuestionnaireCuration(QuestionnaireCuration.toOption(input).curated)
+        private fun curateQuestionnaireOption(subject: String, input: String): ValidatedQuestionnaireCuration<Boolean> =
+            ValidatedQuestionnaireCuration(QuestionnaireCuration.toOption(subject, input).curated)
 
     }
 }
