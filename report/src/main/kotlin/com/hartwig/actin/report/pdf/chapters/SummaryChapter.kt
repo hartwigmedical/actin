@@ -150,6 +150,8 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
             val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
                 listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
+            } else if (lymphNodeLesions.isNotEmpty()) {
+                listOf("Lymph nodes")
             } else emptyList()
 
             return if (lesions.isEmpty()) {

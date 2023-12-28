@@ -55,4 +55,12 @@ class SummaryChapterTest {
         )
         assertThat(lesions).isEqualTo("Lymph nodes (first, second)")
     }
+
+    @Test
+    fun `Should return lymph nodes when input is lymph nodes without location specification`() {
+        val lesions = SummaryChapter.lesions(
+            ImmutableTumorDetails.builder().addOtherLesions("lymph nodes").build()
+        )
+        assertThat(lesions).isEqualTo("Lymph nodes")
+    }
 }
