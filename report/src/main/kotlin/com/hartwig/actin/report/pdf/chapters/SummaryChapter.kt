@@ -140,7 +140,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             return tumor.stage()?.display() ?: Formats.VALUE_UNKNOWN
         }
 
-        private fun lesions(tumor: TumorDetails): String {
+        fun lesions(tumor: TumorDetails): String {
             val categorizedLesions = listOf(
                 "CNS" to tumor.hasCnsLesions(),
                 "Brain" to tumor.hasBrainLesions(),
@@ -160,8 +160,10 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             }.filterNot(String::isEmpty).distinctBy(String::lowercase)
 
             val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
-                "Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})"
-            } else "Lymph nodes"
+                listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
+            } else if (lymphNodeLesions.isNotEmpty()) {
+                listOf("Lymph nodes")
+            } else emptyList()
 
             return if (lesions.isEmpty()) {
                 Formats.VALUE_UNKNOWN

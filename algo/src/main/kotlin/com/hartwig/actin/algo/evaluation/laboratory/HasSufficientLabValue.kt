@@ -25,7 +25,7 @@ class HasSufficientLabValue internal constructor(
         when (result) {
             EvaluationResult.FAIL -> {
                 builder.addFailSpecificMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -33,7 +33,7 @@ class HasSufficientLabValue internal constructor(
                     } ${targetUnit.display()} is below minimum of $minValue ${targetUnit.display()}"
                 )
                 builder.addFailGeneralMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -43,13 +43,17 @@ class HasSufficientLabValue internal constructor(
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} sufficiency could not be evaluated")
-                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} undetermined")
+                builder.addUndeterminedSpecificMessages(
+                    "${
+                        labMeasurement.display().replaceFirstChar { it.uppercase() }
+                    } sufficiency could not be evaluated"
+                )
+                builder.addUndeterminedGeneralMessages("${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined")
             }
 
             EvaluationResult.PASS -> {
                 builder.addPassSpecificMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -57,7 +61,9 @@ class HasSufficientLabValue internal constructor(
                     } ${targetUnit.display()} exceeds minimum of $minValue ${targetUnit.display()}"
                 )
                 builder.addPassGeneralMessages(
-                    "${labMeasurement.display()} ${targetUnit.display()} exceeds min of $minValue ${targetUnit.display()}"
+                    "${
+                        labMeasurement.display().replaceFirstChar { it.uppercase() }
+                    } ${targetUnit.display()} exceeds min of $minValue ${targetUnit.display()}"
                 )
             }
 

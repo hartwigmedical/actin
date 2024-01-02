@@ -210,7 +210,7 @@ The fields of the ACTIN clinical datamodel are described below. "Origin" indicat
 
 Note that "if applicable" in 'origin' indicates that the field is derived from a variable of the 'optional' set.
 
-1 patient details
+#### 1 patient details
 
 | Field             | Origin                           |
 |-------------------|----------------------------------|
@@ -219,7 +219,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | registrationDate  | Patient: ACTIN registration date |
 | questionnaireDate | If applicable                    |
 
-1 tumor details
+#### 1 tumor details
 
 | Field                    | Origin                                               |
 |--------------------------|------------------------------------------------------|
@@ -241,7 +241,7 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | otherLesions             | Primary tumor details: Lesion sites                  |
 | biopsyLocation           | Molecular test details: Biopsy location              |
 
-1 clinical status
+#### 1 clinical status
 
 | Field                      | Origin                         |
 |----------------------------|--------------------------------|
@@ -256,22 +256,58 @@ Note that "if applicable" in 'origin' indicates that the field is derived from a
 | lvef                       | ECG details                    |
 | hasComplications           | Complication details           |
 
-N prior tumor treatments (TO BE UPDATED)
+#### N treatment history entries in oncological history
 
-| Field          | Origin                                          |
-|----------------|-------------------------------------------------|
-| name           | Treatment history name                          |
-| startYear      | Treatment history start date                    |
-| startMonth     | Treatment history start date                    |
-| stopYear       | Treatment history end date                      |
-| stopMonth      | Treatment history end date                      |
-| cycles         | Treatment history administered number of cycles |
-| bestResponse   | Treatment history response                      |
-| stopReason     | Treatment history stop reason                   |
-| categories     | Added in curation                               |
-| isSystemic     | Added in curation                               |
+| Field                   | Origin                       |
+|-------------------------|------------------------------|
+| treatments              | Described below              |
+| startYear               | Treatment history start date |
+| startMonth              | Treatment history start date |
+| intents                 | Treatment history intent     |
+| isTrial                 | Treatment history entry      |
+| trialAcronym            | Treatment history entry      |
+| treatmentHistoryDetails | Described below              |
 
-N prior second primaries
+Each treatment history entry references T treatments from ACTIN's treatment database:
+
+| Field      | Origin               |
+|------------|----------------------|
+| name       | Resolved in curation |
+| categories | Treatment database   |
+| types      | Treatment database   |
+| synonyms   | Treatment database   |
+| isSystemic | Treatment database   |
+
+Drug treatments inherit their categories and types from a curated set of named drugs, also maintained in ACTIN's treatment database.
+Radiotherapy treatments always have RADIOTHERAPY as their sole category and may also indicate if treatment was internal.
+
+Each treatment history entry has 0 or 1 treatment history details records:
+
+| Field                  | Origin                      |
+|------------------------|-----------------------------|
+| stopYear               | Treatment history stop date |
+| stopMonth              | Treatment history stop date |
+| ongoingAsOf            | Not set - TODO: ACTIN-463   |
+| cycles                 | Added in curation           |
+| bestResponse           | Added in curation           |
+| stopReason             | Added in curation           |
+| stopReasonDetail       | Added in curation           |
+| toxicities             | Added in curation           |
+| bodyLocationCategories | Added in curation           |
+| bodyLocations          | Added in curation           |
+| switchToTreatments     | Described below             |
+| maintenanceTreatment   | Described below             |
+
+The details may include multiple treatment stages representing switches from the original treatment plan or a maintenance treatment:
+
+| Field      | Origin                   |
+|------------|--------------------------|
+| treatment  | ACTIN treatment database |
+| cycles     | Added in curation        |
+| startYear  | Added in curation        |
+| startMonth | Added in curation        |
+
+#### N prior second primaries
 
 | Field            | Origin                                     |
 |------------------|--------------------------------------------|
@@ -285,7 +321,7 @@ N prior second primaries
 | treatmentHistory | Previous primary tumors: Treatment history |
 | status           | Previous primary tumors: Status            |
 
-N prior other conditions
+#### N prior other conditions
 
 | Field                        | Origin                      |
 |------------------------------|-----------------------------|
@@ -296,7 +332,7 @@ N prior other conditions
 | category                     | Added in curation           |
 | isContraindicationForTherapy | Added in curation           |
 
-N prior (non-WGS) molecular tests
+#### N prior (non-WGS) molecular tests
 
 | Field                                    | Origin                    |
 |------------------------------------------|---------------------------|
@@ -309,7 +345,7 @@ N prior (non-WGS) molecular tests
 | scoreValueUnit                           | Molecular test: Result    |
 | impliesPotentialPriorIndeterminateStatus | Added in curation         |
 
-N cancer related complications
+#### N cancer related complications
 
 | Field      | Origin                   |
 |------------|--------------------------|
@@ -318,7 +354,7 @@ N cancer related complications
 | year       | Complication: start date |
 | month      | Complication: start date |
 
-N lab values
+#### N lab values
 
 | Field        | Origin                                |
 |--------------|---------------------------------------|
@@ -332,7 +368,7 @@ N lab values
 | refLimitUp   | Lab values: Institutional upper limit |
 | isOutsideRef | Added in curation                     |
 
-N toxicities
+#### N toxicities
 
 | Field         | Origin            |
 |---------------|-------------------|
@@ -341,7 +377,7 @@ N toxicities
 | grade         | Toxicities: Grade |
 | source        | If applicable     |
 
-N intolerances
+#### N intolerances
 
 | Field              | Details           |
 |--------------------|-------------------|
@@ -354,14 +390,14 @@ N intolerances
 | verificationStatus | If applicable     |
 | criticality        | If applicable     |
 
-N surgeries
+#### N surgeries
 
 | Field   | Origin        |
 |---------|---------------|
 | endDate | If applicable |
 | status  | If applicable |
 
-N vital function measurements
+#### N vital function measurements
 
 | Field       | Origin                |
 |-------------|-----------------------|
@@ -371,7 +407,7 @@ N vital function measurements
 | value       | Vital function: Value |
 | unit        | Vital function: Unit  |
 
-N body weight measurements
+#### N body weight measurements
 
 | Field | Origin                                              |
 |-------|-----------------------------------------------------|
@@ -379,14 +415,14 @@ N body weight measurements
 | value | Vital function -> Body weight: Value of measurement |
 | unit  | Vital function -> Body weight: Unit of measurement  |
 
-N blood transfusions
+#### N blood transfusions
 
 | Field   | Origin                     |
 |---------|----------------------------|
 | date    | Blood transfusion: Date    |
 | product | Blood transfusion: Product |
 
-N medications
+#### N medications
 
 | Field                            | Example Value                                                     | Origin                                   |
 |----------------------------------|-------------------------------------------------------------------|------------------------------------------|
@@ -417,6 +453,41 @@ N medications
 | atc.chemicalSubstance.code       | N02AJ08                                                           | Optional/added in curation               |
 | atc.chemicalSubstance.name       | codeine and ibuprofen 	                                           | Optional/added in curation               |
 | qtProlongatingRisk               | NONE 	                                                            | Added in curation                        |
+
+## Treatment Database
+
+The treatment database is loaded from 2 JSON files that define its contents.
+
+### treatment.json
+
+treatment.json consists of an array of treatment entries with some common fields:
+
+- name: The unique identifier for the treatment.
+- synonyms: A list of synonyms for the treatment used for matching.
+- isSystemic: Boolean indicating whether the treatment is systemic or not.
+- treatmentClass: The class of treatment described by this entry - OtherTreatment, DrugTreatment, or Radiotherapy.
+
+Each treatment can be described by a set of categories (defined in TreatmentCategory) and a set of types, each of which belongs to a
+category.
+OtherTreatment entries define these directly in these fields:
+
+- categories: The list of categories that apply to the treatment, which can be inferred by the types when they're provided.
+- types: The list of types that describe the treatment.
+
+DrugTreatment entries omit the "categories" and "types" fields because these attributes are inherited from the drugs included in the "drugs"
+field.
+Each entry in "drugs" corresponds to the name of a drug defined in drug.json. A DrugTreatment may also include a "maxCycles" integer field.
+
+Radiotherapy entries also omit the "categories" and "types" fields. A Radiotherapy's category is always RADIOTHERAPY, and it may optionally
+have a RadiotherapyType provided in "radioType".
+
+### drug.json
+
+drug.json consists of an array of drug entries with the following fields:
+
+- name: The unique name of this drug used to reference it elsewhere, such as in treatment.json.
+- drugTypes: The list of entries from DrugType that describe this drug.
+- category: The TreatmentCategory of this drug.
 
 ### Version History and Download Links
 

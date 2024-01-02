@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import com.hartwig.actin.clinical.datamodel.BodyLocationCategory;
@@ -43,4 +44,10 @@ public abstract class TreatmentHistoryDetails {
 
     @Nullable
     public abstract Set<String> bodyLocations();
+
+    @Nullable
+    public abstract List<TreatmentStage> switchToTreatments();
+
+    @Nullable
+    public abstract TreatmentStage maintenanceTreatment();
 }

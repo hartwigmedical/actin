@@ -341,7 +341,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES, FunctionInput.TWO_INTEGERS);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES,
                 FunctionInput.MANY_STRINGS_TWO_INTEGERS);
-        RULE_INPUT_MAP.put(EligibilityRule.WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL, FunctionInput.NONE);
 
         RULE_INPUT_MAP.put(EligibilityRule.IS_BREASTFEEDING, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.IS_PREGNANT, FunctionInput.NONE);
@@ -383,8 +382,6 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PLANNED_SURGERY, FunctionInput.NONE);
-
-        RULE_INPUT_MAP.put(EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES, FunctionInput.NONE);
     }
 
     private FunctionInputMapping() {

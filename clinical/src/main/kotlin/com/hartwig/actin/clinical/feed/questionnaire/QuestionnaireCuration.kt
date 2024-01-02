@@ -6,10 +6,8 @@ import com.hartwig.actin.clinical.datamodel.ImmutableECG
 import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.TumorStage
-import org.apache.logging.log4j.LogManager
 
 internal object QuestionnaireCuration {
-    private val LOGGER = LogManager.getLogger(QuestionnaireCuration::class.java)
     private val OPTION_MAPPING: MutableMap<String, Boolean?> = Maps.newHashMap()
     private val STAGE_MAPPING: MutableMap<String, TumorStage?> = Maps.newHashMap()
 
@@ -36,6 +34,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["JA"] = true
         OPTION_MAPPING["Ja"] = true
         OPTION_MAPPING["ja"] = true
+        OPTION_MAPPING["es"] = true
         OPTION_MAPPING["YES related to prostatecarcinoma"] = true
         OPTION_MAPPING["yes bone lesion L1 L2 with epidural extension"] = true
         OPTION_MAPPING["yes manubrium sterni"] = true
@@ -56,6 +55,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["(yes/no)"] = null
         OPTION_MAPPING["botaantasting bij weke delen massa"] = false
         OPTION_MAPPING["no total resection"] = false
+        OPTION_MAPPING["probably"] = null
 
         STAGE_MAPPING["I"] = TumorStage.I
         STAGE_MAPPING["1"] = TumorStage.I
@@ -82,42 +82,52 @@ internal object QuestionnaireCuration {
         STAGE_MAPPING["na"] = null
     }
 
-    fun toOption(option: String?): Boolean? {
+    fun toOption(subject: String, option: String?): ValidatedQuestionnaireCuration<Boolean> {
         if (option.isNullOrEmpty()) {
-            return null
+            return ValidatedQuestionnaireCuration(null)
         }
         if (!isConfiguredOption(option)) {
-            LOGGER.warn("Unrecognized questionnaire option: '{}'", option)
-            return null
+            return ValidatedQuestionnaireCuration(
+                null,
+                listOf(QuestionnaireCurationError(subject, "Unrecognized questionnaire option: '$option'"))
+            )
         }
-        return OPTION_MAPPING[option]
+        return ValidatedQuestionnaireCuration(OPTION_MAPPING[option])
     }
 
     private fun isConfiguredOption(option: String?): Boolean {
         return OPTION_MAPPING.containsKey(option)
     }
 
-    fun toStage(stage: String?): TumorStage? {
+    fun toStage(subject: String, stage: String?): ValidatedQuestionnaireCuration<TumorStage> {
         if (stage.isNullOrEmpty()) {
-            return null
+            return ValidatedQuestionnaireCuration(null)
         }
         if (!STAGE_MAPPING.containsKey(stage)) {
-            LOGGER.warn("Unrecognized questionnaire tumor stage: '{}'", stage)
-            return null
+            return ValidatedQuestionnaireCuration(
+                null,
+                listOf(QuestionnaireCurationError(subject,"Unrecognized questionnaire tumor stage: '$stage'"))
+            )
         }
-        return STAGE_MAPPING[stage]
+        return ValidatedQuestionnaireCuration(STAGE_MAPPING[stage])
     }
 
-    fun toWHO(integer: String?): Int? {
+    fun toWHO(subject: String, integer: String?): ValidatedQuestionnaireCuration<Int> {
         if (integer.isNullOrEmpty()) {
-            return null
+            return ValidatedQuestionnaireCuration(null)
         }
-        val value = integer.toInt()
-        return if (value in 0..5) {
-            value
-        } else {
-            LOGGER.warn("WHO status not between 0 and 5: '{}'", value)
-            null
+        return when (val value = integer.toIntOrNull()) {
+            null -> {
+                return ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError(subject,"WHO status not an integer: '$integer'")))
+            }
+
+            in 0..5 -> {
+                ValidatedQuestionnaireCuration(value)
+            }
+
+            else -> {
+                ValidatedQuestionnaireCuration(null, listOf(QuestionnaireCurationError(subject,"WHO status not between 0 and 5: '$value'")))
+            }
         }
     }
 
@@ -125,35 +135,46 @@ internal object QuestionnaireCuration {
         return listOf(secondaryPrimary + if (lastTreatmentInfo.isEmpty()) "" else " | $lastTreatmentInfo")
     }
 
-    fun toInfectionStatus(significantCurrentInfection: String?): InfectionStatus? {
-        return buildFromDescription(significantCurrentInfection, ::buildInfectionStatus)
+    fun toInfectionStatus(subject: String,significantCurrentInfection: String?): ValidatedQuestionnaireCuration<InfectionStatus> {
+        return buildFromDescription(subject, significantCurrentInfection, ::buildInfectionStatus)
     }
 
-    fun toECG(significantAberrationLatestECG: String?): ECG? {
-        return buildFromDescription(significantAberrationLatestECG, ::buildECG)
+    fun toECG(subject: String,significantAberrationLatestECG: String?): ValidatedQuestionnaireCuration<ECG> {
+        return buildFromDescription(subject, significantAberrationLatestECG, ::buildECG)
     }
 
-    private fun buildInfectionStatus(hasActiveInfection: Boolean, description: String?): InfectionStatus {
-        return ImmutableInfectionStatus.builder().hasActiveInfection(hasActiveInfection).description(description).build()
+    private fun buildInfectionStatus(
+        hasActiveInfection: Boolean,
+        description: String?
+    ): ValidatedQuestionnaireCuration<InfectionStatus> {
+        return ValidatedQuestionnaireCuration(
+            ImmutableInfectionStatus.builder().hasActiveInfection(hasActiveInfection).description(description).build()
+        )
     }
 
-    private fun buildECG(hasSignificantAberrationLatestECG: Boolean, description: String?): ECG {
-        return ImmutableECG.builder()
-            .hasSigAberrationLatestECG(hasSignificantAberrationLatestECG)
-            .aberrationDescription(description)
-            .build()
+    private fun buildECG(hasSignificantAberrationLatestECG: Boolean, description: String?): ValidatedQuestionnaireCuration<ECG> {
+        return ValidatedQuestionnaireCuration(
+            ImmutableECG.builder()
+                .hasSigAberrationLatestECG(hasSignificantAberrationLatestECG)
+                .aberrationDescription(description)
+                .build()
+        )
     }
 
-    private fun <T> buildFromDescription(description: String?, buildFunction: (Boolean, String?) -> T): T? {
-        val present: Boolean? = if (isConfiguredOption(description)) {
-            toOption(description)
+    private fun <T> buildFromDescription(
+        subject: String,
+        description: String?,
+        buildFunction: (Boolean, String?) -> ValidatedQuestionnaireCuration<T>
+    ): ValidatedQuestionnaireCuration<T> {
+        val present: ValidatedQuestionnaireCuration<Boolean> = if (isConfiguredOption(description)) {
+            toOption(subject, description)
         } else if (!description.isNullOrEmpty()) {
-            true
+            ValidatedQuestionnaireCuration(true)
         } else {
-            null
+            ValidatedQuestionnaireCuration(null)
         }
-        return if (present == null) {
-            null
-        } else buildFunction(present, description)
+        return if (present.curated == null) {
+            ValidatedQuestionnaireCuration(null, present.errors)
+        } else buildFunction(present.curated, description)
     }
 }

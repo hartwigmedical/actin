@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed
 
+import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
@@ -14,6 +15,7 @@ import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import java.time.LocalDate
 
+val FEED_DIRECTORY: String = Resources.getResource("feed").path + "/"
 object TestFeedFactory {
     const val TEST_SUBJECT = "ACTN-01-02-9999"
     fun createProperTestFeedModel(): FeedModel {

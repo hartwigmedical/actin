@@ -3,13 +3,14 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class ComplicationsExtractor(private val curation: CurationDatabase) {
+class ComplicationsExtractor(private val complicationCuration: CurationDatabase<ComplicationConfig>) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<Complication>?> {
         if (questionnaire?.complications.isNullOrEmpty()) {
@@ -18,15 +19,20 @@ class ComplicationsExtractor(private val curation: CurationDatabase) {
         val (curation, validInputCount, unknownStateCount) = questionnaire!!.complications!!
             .map { CurationUtil.fullTrim(it) }
             .map {
+                val configs = complicationCuration.find(it)
                 CurationResponse.createFromConfigs(
-                    curation.findComplicationConfigs(it), patientId, CurationCategory.COMPLICATION, it, "complication"
+                    configs,
+                    patientId,
+                    CurationCategory.COMPLICATION,
+                    it,
+                    "complication"
                 )
             }
             .map {
                 Triple(
                     it,
                     if (it.configs.isNotEmpty()) 1 else 0,
-                    if (it.configs.any(ComplicationConfig::impliesUnknownComplicationState)) 1 else 0
+                    if (it.configs.any { c -> c.impliesUnknownComplicationState == true }) 1 else 0
                 )
             }
             .fold(Triple(CurationResponse<ComplicationConfig>(), 0, 0)) { acc, cur ->
@@ -40,4 +46,10 @@ class ComplicationsExtractor(private val curation: CurationDatabase) {
         return ExtractionResult(curated, curation.extractionEvaluation)
     }
 
+    companion object {
+        fun create(curationDatabaseContext: CurationDatabaseContext) =
+            ComplicationsExtractor(
+                complicationCuration = curationDatabaseContext.complicationCuration
+            )
+    }
 }

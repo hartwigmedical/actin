@@ -10,10 +10,18 @@ import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
+import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
+import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
+import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
+import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
 import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
+import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.Medication
@@ -26,46 +34,124 @@ import java.time.LocalDate
 
 private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
-private const val KNOWN_DOSAGE_INSTRUCTION = "once per day 50-60 mg every month"
-private const val KNOWN_MEDICATION_NAME = "A en B"
+
+private const val ADMINISTRATION_ROUTE_INPUT_ORAL = "Oraal"
+
+private const val DOSAGE_INPUT = "Dosage input"
+private const val DOSAGE_UNIT_TRANSLATED_MG = "mg"
+
+private val DOSAGE = ImmutableDosage.builder()
+    .dosageMin(50.0)
+    .dosageMax(60.0)
+    .dosageUnit(DOSAGE_UNIT_TRANSLATED_MG)
+    .frequency(1.0)
+    .frequencyUnit("day")
+    .periodBetweenValue(1.0)
+    .periodBetweenUnit("mo")
+    .ifNeeded(false)
+    .build()
+
+private const val TRANSLATED_ADMINISTRATION_ROUTE_ORAL = "oral"
+
+private const val CURATED_MEDICATION_NAME = "Paracetamol"
+
+private const val MEDICATION_NAME_INPUT = "PARACETAMOL"
+
+private const val PERIOD_BETWEEN_UNIT_INPUT = "Period between unit input"
+
+private const val CURATED_PERIOD_BETWEEN_UNIT = "Curated period between unit"
+
+private const val NO_MEDICATION_NAME_INPUT = "No medication name input"
+
+private const val DOSAGE_TRANSLATION_INPUT_MILLIGRAM = "milligram"
+fun createTestCypInteraction(): ImmutableCypInteraction =
+    ImmutableCypInteraction.builder().cyp("2D6").strength(CypInteraction.Strength.WEAK).type(CypInteraction.Type.INHIBITOR).build()
 
 class MedicationExtractorTest {
     private val extractor =
-        MedicationExtractor(TestCurationFactory.createProperTestCurationDatabase(), TestAtcFactory.createProperAtcModel())
+        MedicationExtractor(
+            TestCurationFactory.curationDatabase(
+                MedicationNameConfig(
+                    input = MEDICATION_NAME_INPUT,
+                    ignore = false,
+                    name = CURATED_MEDICATION_NAME
+                ),
+                MedicationNameConfig(
+                    input = NO_MEDICATION_NAME_INPUT,
+                    ignore = true,
+                    name = ""
+                )
+            ),
+            TestCurationFactory.curationDatabase(
+                MedicationDosageConfig(
+                    input = DOSAGE_INPUT,
+                    ignore = false,
+                    curated = DOSAGE
+                )
+            ),
+            TestCurationFactory.curationDatabase(
+                PeriodBetweenUnitConfig(
+                    input = PERIOD_BETWEEN_UNIT_INPUT,
+                    ignore = false,
+                    interpretation = CURATED_PERIOD_BETWEEN_UNIT
+                )
+            ),
+            TestCurationFactory.curationDatabase(
+                CypInteractionConfig(
+                    input = CURATED_MEDICATION_NAME,
+                    ignore = false,
+                    interactions = listOf(createTestCypInteraction())
+                )
+            ),
+            TestCurationFactory.curationDatabase(
+                QTProlongatingConfig(
+                    input = CURATED_MEDICATION_NAME,
+                    ignore = false,
+                    status = QTProlongatingRisk.POSSIBLE
+                )
+            ),
+            TranslationDatabase(
+                mapOf(
+                    ADMINISTRATION_ROUTE_INPUT_ORAL to Translation(
+                        ADMINISTRATION_ROUTE_INPUT_ORAL,
+                        TRANSLATED_ADMINISTRATION_ROUTE_ORAL
+                    )
+                ), CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION
+            ) { emptySet() },
+            TranslationDatabase(
+                mapOf(
+                    DOSAGE_TRANSLATION_INPUT_MILLIGRAM to Translation(
+                        DOSAGE_TRANSLATION_INPUT_MILLIGRAM,
+                        DOSAGE_UNIT_TRANSLATED_MG
+                    )
+                ), CurationCategory.DOSAGE_UNIT_TRANSLATION
+            ) { emptySet() },
+            TestAtcFactory.createProperAtcModel()
+        )
+
 
     @Test
     fun `Should extract all medication fields`() {
         val entry = TestFeedFactory.medicationEntry(
             status = "active",
-            dosageInstruction = "once per day 50-60 mg every month",
-            start = LocalDate.of(2019, 2, 2),
-            end = LocalDate.of(2019, 4, 4),
+            dosageInstruction = DOSAGE_INPUT,
+            start = LocalDate.of(2023, 12, 12),
+            end = LocalDate.of(2023, 12, 13),
             active = true,
             code5ATCCode = FULL_ATC_CODE,
-            code5ATCDisplay = "PARACETAMOL",
-            administrationRoute = "oraal"
+            code5ATCDisplay = MEDICATION_NAME_INPUT,
+            administrationRoute = ADMINISTRATION_ROUTE_INPUT_ORAL
         )
 
         assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted).containsExactly(
             ImmutableMedication.builder()
-                .name("Paracetamol")
+                .name(CURATED_MEDICATION_NAME)
                 .status(MedicationStatus.ACTIVE)
                 .administrationRoute("oral")
-                .dosage(
-                    ImmutableDosage.builder()
-                        .dosageMin(50.0)
-                        .dosageMax(60.0)
-                        .dosageUnit("mg")
-                        .frequency(1.0)
-                        .frequencyUnit("day")
-                        .periodBetweenValue(1.0)
-                        .periodBetweenUnit("mo")
-                        .ifNeeded(false)
-                        .build()
-                )
-                .startDate(LocalDate.of(2019, 2, 2))
-                .stopDate(LocalDate.of(2019, 4, 4))
-                .addCypInteractions(TestCurationFactory.createTestCypInteraction())
+                .dosage(DOSAGE)
+                .startDate(LocalDate.of(2023, 12, 12))
+                .stopDate(LocalDate.of(2023, 12, 13))
+                .addCypInteractions(createTestCypInteraction())
                 .qtProlongatingRisk(QTProlongatingRisk.POSSIBLE)
                 .atc(
                     ImmutableAtcClassification.builder()
@@ -83,7 +169,7 @@ class MedicationExtractorTest {
     }
 
     @Test
-    fun `should not return medications for entries with no ATC display or code text`() {
+    fun `Should not return medications for entries with no ATC display or code text`() {
         val entry = TestFeedFactory.medicationEntry(
             status = "",
             dosageInstruction = "Irrelevant",
@@ -95,21 +181,21 @@ class MedicationExtractorTest {
     }
 
     @Test
-    fun `should interpret as self-care when ATC code and display are empty`() {
+    fun `Should interpret as self-care when ATC code and display are empty`() {
         val entry = TestFeedFactory.medicationEntry(
             status = "",
             dosageInstruction = "",
             start = LocalDate.of(2019, 2, 2),
             end = LocalDate.of(2019, 4, 4),
             active = false,
-            codeText = "A en B"
+            codeText = MEDICATION_NAME_INPUT
         )
 
         assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted.first().isSelfCare).isTrue
     }
 
     @Test
-    fun `should interpret as trial medication when ATC display is empty and ATC code does not start with letter`() {
+    fun `Should interpret as trial medication when ATC display is empty and ATC code does not start with letter`() {
         val entry = TestFeedFactory.medicationEntry(
             status = "",
             dosageInstruction = "",
@@ -117,7 +203,7 @@ class MedicationExtractorTest {
             end = LocalDate.of(2019, 4, 4),
             active = false,
             code5ATCCode = "123",
-            codeText = "A en B"
+            codeText = MEDICATION_NAME_INPUT
         )
 
         assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted.first().isTrialMedication).isTrue
@@ -127,27 +213,21 @@ class MedicationExtractorTest {
     fun `Should interpret period between unit`() {
         assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, null).extracted).isNull()
         assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, "").extracted).isNull()
-        assertThat(extractor.curatePeriodBetweenUnit(PATIENT_ID, "mo").extracted).isEqualTo("months")
+        assertThat(
+            extractor.curatePeriodBetweenUnit(
+                PATIENT_ID,
+                PERIOD_BETWEEN_UNIT_INPUT
+            ).extracted
+        ).isEqualTo(CURATED_PERIOD_BETWEEN_UNIT)
     }
 
     @Test
     fun `Should curate known medication dosage`() {
-        val (medications, evaluation) = extractor.extract(PATIENT_ID, listOf(medicationEntryWithDosage(" $KNOWN_DOSAGE_INSTRUCTION ")))
+        val (medications, evaluation) = extractor.extract(PATIENT_ID, listOf(medicationEntryWithDosage(" $DOSAGE_INPUT ")))
         assertThat(evaluation.warnings).isEmpty()
-        assertThat(evaluation.medicationDosageEvaluatedInputs).containsExactly(KNOWN_DOSAGE_INSTRUCTION.lowercase())
+        assertThat(evaluation.medicationDosageEvaluatedInputs).containsExactly(DOSAGE_INPUT.lowercase())
         assertThat(medications).hasSize(1)
-        assertThat(medications.first().dosage()).isEqualTo(
-            ImmutableDosage.builder()
-                .dosageMin(50.0)
-                .dosageMax(60.0)
-                .dosageUnit("mg")
-                .frequency(1.0)
-                .frequencyUnit("day")
-                .periodBetweenValue(1.0)
-                .periodBetweenUnit("mo")
-                .ifNeeded(false)
-                .build()
-        )
+        assertThat(medications.first().dosage()).isEqualTo(DOSAGE)
     }
 
     @Test
@@ -180,16 +260,18 @@ class MedicationExtractorTest {
                 )
             )
         )
+        assertMedicationForName(NO_MEDICATION_NAME_INPUT, emptyList())
+        assertMedicationForName(MEDICATION_NAME_INPUT, listOf(CURATED_MEDICATION_NAME))
     }
 
     @Test
     fun `Should not extract names for medication name inputs that are mapped to configs with ignore = true`() {
-        assertMedicationForName("No medication", emptyList())
+        assertMedicationForName(NO_MEDICATION_NAME_INPUT, emptyList())
     }
 
     @Test
     fun `Should extract correct medication name for known medication name`() {
-        assertMedicationForName(KNOWN_MEDICATION_NAME, listOf("A and B"))
+        assertMedicationForName(MEDICATION_NAME_INPUT, listOf(CURATED_MEDICATION_NAME))
     }
 
     private fun assertMedicationForName(
@@ -220,27 +302,43 @@ class MedicationExtractorTest {
         assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "").extracted).isNull()
         assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "not a route").extracted).isNull()
         assertThat(extractor.translateAdministrationRoute(PATIENT_ID, "ignore").extracted).isNull()
-        val (extracted, evaluation) = extractor.translateAdministrationRoute(PATIENT_ID, "oraal")
-        assertThat(extracted).isEqualTo("oral")
+        val (extracted, evaluation) = extractor.translateAdministrationRoute(PATIENT_ID, ADMINISTRATION_ROUTE_INPUT_ORAL)
+        assertThat(extracted).isEqualTo(TRANSLATED_ADMINISTRATION_ROUTE_ORAL)
         assertThat(evaluation.warnings).isEmpty()
-        assertThat(evaluation.administrationRouteEvaluatedInputs).containsExactly(Translation("oraal", "oral"))
+        assertThat(evaluation.administrationRouteEvaluatedInputs).containsExactly(
+            Translation(
+                ADMINISTRATION_ROUTE_INPUT_ORAL,
+                TRANSLATED_ADMINISTRATION_ROUTE_ORAL
+            )
+        )
     }
 
     private fun medicationEntryWithDosage(dosageInstruction: String) = TestFeedFactory.medicationEntry(
-        "active", dosageInstruction, LocalDate.now(), LocalDate.now(), true, administrationRoute = "oraal", codeText = KNOWN_MEDICATION_NAME
+        "active",
+        dosageInstruction,
+        LocalDate.now(),
+        LocalDate.now(),
+        true,
+        administrationRoute = ADMINISTRATION_ROUTE_INPUT_ORAL,
+        codeText = MEDICATION_NAME_INPUT
     )
 
     private fun medicationEntryWithName(name: String) = TestFeedFactory.medicationEntry(
-        "active", "", LocalDate.now(), LocalDate.now(), true, administrationRoute = "ignore", codeText = name
-    ).copy(dosageInstructionDoseQuantityUnit = "milligram")
+        "active", "", LocalDate.now(), LocalDate.now(), true, administrationRoute = ADMINISTRATION_ROUTE_INPUT_ORAL, codeText = name
+    ).copy(dosageInstructionDoseQuantityUnit = DOSAGE_TRANSLATION_INPUT_MILLIGRAM)
 
     @Test
     fun `Should translate dosage unit`() {
         assertThat(extractor.translateDosageUnit(PATIENT_ID, null).extracted).isNull()
-        val (translation, evaluation) = extractor.translateDosageUnit(PATIENT_ID, "STUK")
-        assertThat(translation).isEqualTo("piece")
+        val (translation, evaluation) = extractor.translateDosageUnit(PATIENT_ID, DOSAGE_TRANSLATION_INPUT_MILLIGRAM)
+        assertThat(translation).isEqualTo(DOSAGE_UNIT_TRANSLATED_MG)
         assertThat(evaluation.warnings).isEmpty()
-        assertThat(evaluation.dosageUnitEvaluatedInputs).containsExactly(Translation("stuk", "piece"))
+        assertThat(evaluation.dosageUnitEvaluatedInputs).containsExactly(
+            Translation(
+                DOSAGE_TRANSLATION_INPUT_MILLIGRAM,
+                DOSAGE_UNIT_TRANSLATED_MG
+            )
+        )
     }
 
     @Test

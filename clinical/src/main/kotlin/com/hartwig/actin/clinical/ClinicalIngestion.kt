@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.annotations.VisibleForTesting
-import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
 import com.hartwig.actin.clinical.curation.extraction.ComplicationsExtractor
@@ -9,11 +8,11 @@ import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.curation.extraction.IntoleranceExtractor
 import com.hartwig.actin.clinical.curation.extraction.LabValueExtractor
 import com.hartwig.actin.clinical.curation.extraction.MedicationExtractor
+import com.hartwig.actin.clinical.curation.extraction.OncologicalHistoryExtractor
 import com.hartwig.actin.clinical.curation.extraction.PriorMolecularTestsExtractor
 import com.hartwig.actin.clinical.curation.extraction.PriorOtherConditionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtractor
 import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
-import com.hartwig.actin.clinical.curation.extraction.TreatmentHistoryExtractor
 import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
@@ -38,36 +37,39 @@ import org.apache.logging.log4j.LogManager
 
 data class ExtractionResult<T>(val extracted: T, val evaluation: ExtractionEvaluation)
 
-class ClinicalIngestion(private val feed: FeedModel, private val curation: CurationDatabase, atc: AtcModel) {
-    private val tumorDetailsExtractor = TumorDetailsExtractor(curation)
-    private val complicationsExtractor = ComplicationsExtractor(curation)
-    private val clinicalStatusExtractor = ClinicalStatusExtractor(curation)
-    private val treatmentHistoryExtractor = TreatmentHistoryExtractor(curation)
-    private val priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor(curation)
-    private val priorOtherConditionExtractor = PriorOtherConditionsExtractor(curation)
-    private val priorMolecularTestsExtractor = PriorMolecularTestsExtractor(curation)
-    private val labValueExtractor = LabValueExtractor(curation)
-    private val toxicityExtractor = ToxicityExtractor(curation)
-    private val intoleranceExtractor = IntoleranceExtractor(curation)
-    private val medicationExtractor = MedicationExtractor(curation, atc)
-    private val bloodTransfusionsExtractor = BloodTransfusionsExtractor(curation)
+class ClinicalIngestion(
+    private val feed: FeedModel,
+    private val curationDatabaseContext: CurationDatabaseContext,
+    private val tumorDetailsExtractor: TumorDetailsExtractor,
+    private val complicationsExtractor: ComplicationsExtractor,
+    private val clinicalStatusExtractor: ClinicalStatusExtractor,
+    private val oncologicalHistoryExtractor: OncologicalHistoryExtractor,
+    private val priorSecondPrimaryExtractor: PriorSecondPrimaryExtractor,
+    private val priorOtherConditionExtractor: PriorOtherConditionsExtractor,
+    private val priorMolecularTestsExtractor: PriorMolecularTestsExtractor,
+    private val labValueExtractor: LabValueExtractor,
+    private val toxicityExtractor: ToxicityExtractor,
+    private val intoleranceExtractor: IntoleranceExtractor,
+    private val medicationExtractor: MedicationExtractor,
+    private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
+) {
 
-    fun run(): List<IngestionResult> {
+    fun run(): IngestionResult {
         val processedPatientIds: MutableSet<String> = HashSet()
 
         LOGGER.info("Creating clinical model")
         val records = feed.subjects().map { subject ->
-            val patientId = toPatientId(subject)
+            val patientId = subject.replace("-".toRegex(), "")
             check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
+            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject))
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val complicationsExtraction = complicationsExtractor.extract(patientId, questionnaire)
             val clinicalStatusExtraction =
                 clinicalStatusExtractor.extract(patientId, questionnaire, complicationsExtraction.extracted?.isNotEmpty())
-            val treatmentHistoryExtraction = treatmentHistoryExtractor.extract(patientId, questionnaire)
+            val oncologicalHistoryExtraction = oncologicalHistoryExtractor.extract(patientId, questionnaire)
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
             val priorOtherConditionsExtraction = priorOtherConditionExtractor.extract(patientId, questionnaire)
             val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
@@ -81,12 +83,12 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 .patientId(patientId)
                 .patient(extractPatientDetails(subject, questionnaire))
                 .tumor(tumorExtraction.extracted)
+                .complications(complicationsExtraction.extracted)
                 .clinicalStatus(clinicalStatusExtraction.extracted)
-                .treatmentHistory(treatmentHistoryExtraction.extracted)
+                .oncologicalHistory(oncologicalHistoryExtraction.extracted)
                 .priorSecondPrimaries(priorSecondPrimaryExtraction.extracted)
                 .priorOtherConditions(priorOtherConditionsExtraction.extracted)
                 .priorMolecularTests(priorMolecularTestsExtraction.extracted)
-                .complications(complicationsExtraction.extracted)
                 .labValues(labValuesExtraction.extracted)
                 .toxicities(toxicityExtraction.extracted)
                 .intolerances(intoleranceExtraction.extracted)
@@ -101,7 +103,7 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 tumorExtraction,
                 complicationsExtraction,
                 clinicalStatusExtraction,
-                treatmentHistoryExtraction,
+                oncologicalHistoryExtraction,
                 priorSecondPrimaryExtraction,
                 priorOtherConditionsExtraction,
                 priorMolecularTestsExtraction,
@@ -114,18 +116,24 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
                 .map { it.evaluation }
                 .fold(ExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
 
-            Pair(IngestionResult.create(questionnaire, record, patientEvaluation.warnings.toList()), patientEvaluation)
+            Pair(
+                PatientIngestionResult.create(
+                    questionnaire,
+                    record,
+                    patientEvaluation.warnings.toList(),
+                    questionnaireCurationErrors.toSet()
+                ), patientEvaluation
+            )
         }.sortedWith { (result1, _), (result2, _) ->
             ClinicalRecordComparator().compare(
                 result1.clinicalRecord,
                 result2.clinicalRecord
             )
         }
-
-        LOGGER.info("Evaluating curation database")
-        curation.evaluate(records.fold(ExtractionEvaluation()) { acc, (_, eval) -> acc + eval }, LOGGER)
-
-        return records.map { it.first }
+        return IngestionResult(
+            unusedConfigs = curationDatabaseContext.allUnusedConfig(records.map { it.second }),
+            patientResults = records.map { it.first }
+        )
     }
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {
@@ -166,29 +174,39 @@ class ClinicalIngestion(private val feed: FeedModel, private val curation: Curat
         }
     }
 
+    private fun resolveSurgeryStatus(status: String): SurgeryStatus {
+        val valueToFind = status.trim { it <= ' ' }.replace("-".toRegex(), "_")
+        for (option in SurgeryStatus.values()) {
+            if (option.toString().equals(valueToFind, ignoreCase = true)) {
+                return option
+            }
+        }
+        LOGGER.warn("Could not resolve surgery status '{}'", status)
+        return SurgeryStatus.UNKNOWN
+    }
+
     companion object {
         private val LOGGER = LogManager.getLogger(ClinicalIngestion::class.java)
 
-        @VisibleForTesting
-        fun toPatientId(subject: String): String {
-            var adjusted = subject
-            // Subjects have been passed with unexpected subject IDs in the past (e.g. without ACTN prefix)
-            if (subject.length == 10 && !subject.startsWith("ACTN")) {
-                LOGGER.warn("Suspicious subject detected. Pre-fixing with 'ACTN': {}", subject)
-                adjusted = "ACTN$subject"
-            }
-            return adjusted.replace("-".toRegex(), "")
-        }
-
-        private fun resolveSurgeryStatus(status: String): SurgeryStatus {
-            val valueToFind = status.trim { it <= ' ' }.replace("-".toRegex(), "_")
-            for (option in SurgeryStatus.values()) {
-                if (option.toString().equals(valueToFind, ignoreCase = true)) {
-                    return option
-                }
-            }
-            LOGGER.warn("Could not resolve surgery status '{}'", status)
-            return SurgeryStatus.UNKNOWN
-        }
+        fun create(
+            feedModel: FeedModel,
+            curationDatabaseContext: CurationDatabaseContext,
+            atcModel: WhoAtcModel
+        ) = ClinicalIngestion(
+            feed = feedModel,
+            curationDatabaseContext = curationDatabaseContext,
+            priorSecondPrimaryExtractor = PriorSecondPrimaryExtractor.create(curationDatabaseContext),
+            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext),
+            complicationsExtractor = ComplicationsExtractor.create(curationDatabaseContext),
+            clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),
+            oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
+            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
+            priorMolecularTestsExtractor = PriorMolecularTestsExtractor.create(curationDatabaseContext),
+            toxicityExtractor = ToxicityExtractor.create(curationDatabaseContext),
+            intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext, atcModel),
+            priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(curationDatabaseContext),
+            medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel),
+            labValueExtractor = LabValueExtractor.create(curationDatabaseContext)
+        )
     }
 }

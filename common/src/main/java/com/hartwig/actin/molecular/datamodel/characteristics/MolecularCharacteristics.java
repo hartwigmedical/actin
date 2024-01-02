@@ -26,6 +26,9 @@ public abstract class MolecularCharacteristics {
     public abstract ActionableEvidence microsatelliteEvidence();
 
     @Nullable
+    public abstract Double homologousRepairScore();
+
+    @Nullable
     public abstract Boolean isHomologousRepairDeficient();
 
     @Nullable

@@ -3,16 +3,21 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
+import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import org.apache.logging.log4j.LogManager
 
-class TumorDetailsExtractor(private val curation: CurationDatabase) {
+class TumorDetailsExtractor(
+    private val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
+    private val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>
+) {
 
     private val logger = LogManager.getLogger(TumorDetailsExtractor::class.java)
 
@@ -21,7 +26,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
             return ExtractionResult(ImmutableTumorDetails.builder().build(), ExtractionEvaluation())
         }
         val lesionsToCheck = ((questionnaire.otherLesions ?: emptyList()) + listOfNotNull(questionnaire.biopsyLocation)).flatMap {
-            curation.findLesionConfigs(it).mapNotNull(LesionLocationConfig::category)
+            lesionLocationCuration.find(it).mapNotNull(LesionLocationConfig::category)
         }
 
         val (primaryTumorDetails, tumorExtractionResult) = curateTumorDetails(
@@ -32,7 +37,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         val (curatedOtherLesions, otherLesionsResult) = curateOtherLesions(patientId, questionnaire.otherLesions)
         val biopsyCuration = questionnaire.biopsyLocation?.let {
             CurationResponse.createFromConfigs(
-                curation.findLesionConfigs(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
+                lesionLocationCuration.find(it), patientId, CurationCategory.LESION_LOCATION, it, "lesion location", true
             )
         }
 
@@ -61,9 +66,10 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         inputTumorType: String?
     ): Pair<TumorDetails, ExtractionEvaluation> {
         val builder = ImmutableTumorDetails.builder()
-        val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())
+        val inputPrimaryTumor =
+            (tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())).lowercase()
         val primaryTumorCuration = CurationResponse.createFromConfigs(
-            curation.findTumorConfigs(inputPrimaryTumor),
+            primaryTumorCuration.find(inputPrimaryTumor),
             patientId,
             CurationCategory.PRIMARY_TUMOR,
             inputPrimaryTumor,
@@ -94,7 +100,7 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
         }
         val (configs, extractionResult) = otherLesions.asSequence()
             .map(CurationUtil::fullTrim)
-            .map { Pair(it, curation.findLesionConfigs(it)) }
+            .map { Pair(it, lesionLocationCuration.find(it)) }
             .map { (input, configs) ->
                 CurationResponse.createFromConfigs(
                     configs, patientId, CurationCategory.LESION_LOCATION, input, "lesion location"
@@ -123,5 +129,12 @@ class TumorDetailsExtractor(private val curation: CurationDatabase) {
             return true
         }
         return hasLesion
+    }
+
+    companion object {
+        fun create(curationDatabaseContext: CurationDatabaseContext) = TumorDetailsExtractor(
+            primaryTumorCuration = curationDatabaseContext.primaryTumorCuration,
+            lesionLocationCuration = curationDatabaseContext.lesionLocationCuration
+        )
     }
 }

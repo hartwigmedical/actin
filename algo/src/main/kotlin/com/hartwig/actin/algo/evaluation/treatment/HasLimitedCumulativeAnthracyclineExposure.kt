@@ -19,7 +19,7 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
         val hasSuspectPrimaryTumor = hasSuspiciousCancerType(record.clinical().tumor().doids())
 
         val anthracyclineSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.clinical().treatmentHistory(), TreatmentCategory.CHEMOTHERAPY
+            record.clinical().oncologicalHistory(), TreatmentCategory.CHEMOTHERAPY
         ) { it.isOfType(DrugType.ANTHRACYCLINE) }
 
         return when {
@@ -59,7 +59,6 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
     }
 
     companion object {
-        const val ANTHRACYCLINE_CHEMO_TYPE = "Anthracycline"
         val CANCER_DOIDS_FOR_ANTHRACYCLINE: Set<String> = setOf(
             DoidConstants.BREAST_CANCER_DOID,
             DoidConstants.LYMPH_NODE_CANCER_DOID,

@@ -7,11 +7,11 @@ import com.google.common.collect.Lists;
 import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 
-public final class TestTreatmentFactory {
+public final class TestTrialFactory {
 
     private static final String TEST_TRIAL = "test trial";
 
-    private TestTreatmentFactory() {
+    private TestTrialFactory() {
     }
 
     @NotNull

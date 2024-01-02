@@ -13,10 +13,12 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
 object TreatmentTestFactory {
 
@@ -48,15 +50,22 @@ object TreatmentTestFactory {
         stopMonth: Int? = null,
         intents: Set<Intent> = emptySet(),
         isTrial: Boolean = false,
-        numCycles: Int? = null
+        numCycles: Int? = null,
+        switchToTreatments: List<TreatmentStage>? = null,
+        maintenanceTreatment: TreatmentStage? = null
     ): TreatmentHistoryEntry {
-        val treatmentHistoryDetails = if (stopReason != null || stopYear != null || bestResponse != null) {
+        val treatmentHistoryDetails = if (listOf(
+                stopReason, bestResponse, stopYear, stopMonth, numCycles, switchToTreatments, maintenanceTreatment
+            ).any { it != null }
+        ) {
             ImmutableTreatmentHistoryDetails.builder()
                 .stopReason(stopReason)
                 .bestResponse(bestResponse)
                 .stopYear(stopYear)
                 .stopMonth(stopMonth)
                 .cycles(numCycles)
+                .switchToTreatments(switchToTreatments)
+                .maintenanceTreatment(maintenanceTreatment)
                 .build()
         } else null
         return ImmutableTreatmentHistoryEntry.builder()
@@ -66,6 +75,15 @@ object TreatmentTestFactory {
             .treatmentHistoryDetails(treatmentHistoryDetails)
             .intents(intents)
             .isTrial(isTrial)
+            .build()
+    }
+
+    fun treatmentStage(treatment: Treatment, startYear: Int? = null, startMonth: Int? = null, cycles: Int? = null): TreatmentStage {
+        return ImmutableTreatmentStage.builder()
+            .treatment(treatment)
+            .startYear(startYear)
+            .startMonth(startMonth)
+            .cycles(cycles)
             .build()
     }
 
@@ -79,7 +97,7 @@ object TreatmentTestFactory {
             .clinical(
                 ImmutableClinicalRecord.builder()
                     .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .treatmentHistory(treatmentHistory)
+                    .oncologicalHistory(treatmentHistory)
                     .build()
             )
             .build()

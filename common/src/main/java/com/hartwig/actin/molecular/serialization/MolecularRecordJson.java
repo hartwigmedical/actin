@@ -171,6 +171,7 @@ public class MolecularRecordJson {
                     .predictedTumorOrigin(toPredictedTumorOrigin(nullableObject(characteristics, "predictedTumorOrigin")))
                     .isMicrosatelliteUnstable(nullableBool(characteristics, "isMicrosatelliteUnstable"))
                     .microsatelliteEvidence(toNullableActionableEvidence(nullableObject(characteristics, "microsatelliteEvidence")))
+                    .homologousRepairScore(nullableNumber(characteristics, "homologousRepairScore"))
                     .isHomologousRepairDeficient(nullableBool(characteristics, "isHomologousRepairDeficient"))
                     .homologousRepairEvidence(toNullableActionableEvidence(nullableObject(characteristics, "homologousRepairEvidence")))
                     .tumorMutationalBurden(nullableNumber(characteristics, "tumorMutationalBurden"))

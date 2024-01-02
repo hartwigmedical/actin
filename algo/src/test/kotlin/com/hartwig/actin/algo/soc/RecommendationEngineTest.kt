@@ -438,7 +438,7 @@ class RecommendationEngineTest {
             val clinicalRecord: ClinicalRecord = ImmutableClinicalRecord.builder()
                 .from(MINIMAL_PATIENT_RECORD.clinical())
                 .tumor(tumorDetails)
-                .addAllTreatmentHistory(treatmentHistoryFromNames(pastTreatmentNames))
+                .addAllOncologicalHistory(treatmentHistoryFromNames(pastTreatmentNames))
                 .build()
             return PatientRecordFactory.fromInputs(clinicalRecord, molecularRecord)
         }
@@ -480,7 +480,7 @@ class RecommendationEngineTest {
                 .build()
 
             return ImmutablePatientRecord.copyOf(MINIMAL_CRC_PATIENT_RECORD).withClinical(
-                ImmutableClinicalRecord.copyOf(MINIMAL_CRC_PATIENT_RECORD.clinical()).withTreatmentHistory(setOf(treatmentHistoryEntry))
+                ImmutableClinicalRecord.copyOf(MINIMAL_CRC_PATIENT_RECORD.clinical()).withOncologicalHistory(setOf(treatmentHistoryEntry))
             )
         }
 

@@ -22,7 +22,7 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
         when (result) {
             EvaluationResult.FAIL -> {
                 builder.addFailSpecificMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -30,7 +30,7 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
                     } ${targetUnit.display()} exceeds maximum of $maxValue ${targetUnit.display()}"
                 )
                 builder.addFailGeneralMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -40,13 +40,21 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} requirements could not be determined")
-                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} requirements undetermined")
+                builder.addUndeterminedSpecificMessages(
+                    "${
+                        labMeasurement.display().replaceFirstChar { it.uppercase() }
+                    } requirements could not be determined"
+                )
+                builder.addUndeterminedGeneralMessages(
+                    "${
+                        labMeasurement.display().replaceFirstChar { it.uppercase() }
+                    } requirements undetermined"
+                )
             }
 
             EvaluationResult.PASS -> {
                 builder.addPassSpecificMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             convertedValue
@@ -54,7 +62,7 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
                     } below maximum of $maxValue ${targetUnit.display()}"
                 )
                 builder.addPassGeneralMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             convertedValue

@@ -99,6 +99,7 @@ public final class TestMolecularFactory {
                 .ploidy(3.1)
                 .predictedTumorOrigin(createProperPredictedTumorOrigin())
                 .isMicrosatelliteUnstable(false)
+                .homologousRepairScore(0.45)
                 .isHomologousRepairDeficient(false)
                 .tumorMutationalBurden(13.71)
                 .hasHighTumorMutationalBurden(true)

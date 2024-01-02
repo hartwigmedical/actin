@@ -3,14 +3,19 @@ package com.hartwig.actin.clinical.curation.extraction
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
-class TreatmentHistoryExtractor(private val curation: CurationDatabase) {
+class OncologicalHistoryExtractor(
+    private val treatmentHistoryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
+    private val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>
+) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<TreatmentHistoryEntry>> {
         if (questionnaire == null) {
@@ -25,7 +30,7 @@ class TreatmentHistoryExtractor(private val curation: CurationDatabase) {
             .map(CurationUtil::fullTrim)
             .map {
                 CurationResponse.createFromConfigs(
-                    curation.findTreatmentHistoryEntryConfigs(it),
+                    treatmentHistoryCuration.find(it),
                     patientId,
                     CurationCategory.ONCOLOGICAL_HISTORY,
                     it,
@@ -34,7 +39,8 @@ class TreatmentHistoryExtractor(private val curation: CurationDatabase) {
             }
             .map {
                 if (it.configs.isEmpty() &&
-                    curation.findSecondPrimaryConfigs(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first()).isNotEmpty()
+                    secondPrimaryCuration.find(it.extractionEvaluation.treatmentHistoryEntryEvaluatedInputs.first())
+                        .isNotEmpty()
                 ) {
                     it.copy(extractionEvaluation = it.extractionEvaluation.copy(warnings = emptySet()))
                 } else it
@@ -45,5 +51,13 @@ class TreatmentHistoryExtractor(private val curation: CurationDatabase) {
             treatmentHistoryCuration.configs.filterNot(CurationConfig::ignore).map { it.curated!! },
             treatmentHistoryCuration.extractionEvaluation
         )
+    }
+
+    companion object {
+        fun create(curationDatabaseContext: CurationDatabaseContext) =
+            OncologicalHistoryExtractor(
+                treatmentHistoryCuration = curationDatabaseContext.treatmentHistoryEntryCuration,
+                secondPrimaryCuration = curationDatabaseContext.secondPrimaryCuration
+            )
     }
 }

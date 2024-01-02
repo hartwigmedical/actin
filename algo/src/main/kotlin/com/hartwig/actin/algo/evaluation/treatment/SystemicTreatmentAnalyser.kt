@@ -36,7 +36,7 @@ object SystemicTreatmentAnalyser {
     }
 
     private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
-        return treatmentHistoryEntry.treatments().any(Treatment::isSystemic)
+        return treatmentHistoryEntry.allTreatments().any(Treatment::isSystemic)
     }
 
     private class TreatmentHistoryEntryStartDateComparator : Comparator<TreatmentHistoryEntry> {

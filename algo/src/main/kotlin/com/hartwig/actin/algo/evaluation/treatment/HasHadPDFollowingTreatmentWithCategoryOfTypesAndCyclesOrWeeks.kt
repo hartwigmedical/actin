@@ -17,117 +17,100 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        var hasHadTreatment = false
-        var hasPotentiallyHadTreatment = false
-        var hasHadTreatmentWithPDAndCyclesOrWeeks = false
-        var hasHadTreatmentWithPDAndUnclearCycles = false
-        var hasHadTreatmentWithPDAndUnclearWeeks = false
-        var hasHadTreatmentWithUnclearPDStatus = false
-        var hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = false
-        var hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = false
-        var hasHadTrial = false
-        for (treatmentHistoryEntry in record.clinical().treatmentHistory()) {
-            if (treatmentHistoryEntry.categories().contains(category)) {
-                if (treatmentHistoryEntry.matchesTypeFromSet(types) == true) {
-                    hasHadTreatment = true
-                    val cycles = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()
-                    val treatmentResultedInPDOption = ProgressiveDiseaseFunctions.treatmentResultedInPDOption(treatmentHistoryEntry)
-                    val durationWeeks: Long? = minWeeksBetweenDates(
-                        treatmentHistoryEntry.startYear(),
-                        treatmentHistoryEntry.startMonth(),
-                        treatmentHistoryEntry.treatmentHistoryDetails()?.stopYear(),
-                        treatmentHistoryEntry.treatmentHistoryDetails()?.stopMonth()
-                    )
-                    if (treatmentResultedInPDOption != null) {
-                        val meetsMinCycles = minCycles == null || cycles != null && cycles >= minCycles
-                        val meetsMinWeeks = when (minWeeks) {
-                            null -> true
-                            else -> durationWeeks?.let { it >= minWeeks } ?: false
-                        }
-                        if (treatmentResultedInPDOption) {
-                            if (meetsMinCycles && meetsMinWeeks) {
-                                hasHadTreatmentWithPDAndCyclesOrWeeks = true
-                            } else if (minCycles != null && cycles == null) {
-                                hasHadTreatmentWithPDAndUnclearCycles = true
-                            } else if (minWeeks != null && durationWeeks == null) {
-                                hasHadTreatmentWithPDAndUnclearWeeks = true
-                            }
-                        }
-                    } else if (minCycles == null && minWeeks == null) {
-                        hasHadTreatmentWithUnclearPDStatus = true
-                    } else if (minCycles != null && cycles == null) {
-                        hasHadTreatmentWithUnclearPDStatusAndUnclearCycles = true
-                    } else if (minWeeks != null && durationWeeks == null) {
-                        hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks = true
-                    }
-                } else if (!treatmentHistoryEntry.hasTypeConfigured()) {
-                    hasPotentiallyHadTreatment = true
-                }
-            }
-            if (TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)) {
-                hasHadTrial = true
-            }
+        val treatmentEvaluations = record.clinical().oncologicalHistory().map { treatmentHistoryEntry ->
+            val isTrial = TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
+            val categoryMatches = treatmentHistoryEntry.categories().contains(category)
+
+            TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
+                categoryMatches && treatmentHistoryEntry.matchesTypeFromSet(types) == true
+            }?.let { matchingPortionOfEntry ->
+                val cycles = matchingPortionOfEntry.treatmentHistoryDetails()?.cycles()
+                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry)
+
+                val durationWeeks: Long? = minWeeksBetweenDates(
+                    matchingPortionOfEntry.startYear(),
+                    matchingPortionOfEntry.startMonth(),
+                    matchingPortionOfEntry.treatmentHistoryDetails()?.stopYear(),
+                    matchingPortionOfEntry.treatmentHistoryDetails()?.stopMonth()
+                )
+                val meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles)
+                val meetsMinWeeks = minWeeks == null || (durationWeeks != null && durationWeeks >= minWeeks)
+
+                PDFollowingTreatmentEvaluation.create(
+                    hadTreatment = true,
+                    hadTrial = isTrial,
+                    hadPD = treatmentResultedInPD,
+                    hadCyclesOrWeeks = meetsMinCycles && meetsMinWeeks,
+                    hadUnclearCycles = minCycles != null && cycles == null,
+                    hadUnclearWeeks = minWeeks != null && durationWeeks == null
+                )
+            } ?: PDFollowingTreatmentEvaluation.create(
+                hadTreatment = if (categoryMatches && !treatmentHistoryEntry.hasTypeConfigured()) null else false,
+                hadTrial = isTrial
+            )
         }
+            .toSet()
+        
         return when {
-            hasHadTreatmentWithPDAndCyclesOrWeeks -> {
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS in treatmentEvaluations -> {
                 if (minCycles == null && minWeeks == null) {
-                    pass(hasTreatmentSpecificMessage(" with PD"), hasTreatmentGeneralMessage(" with PD"))
+                    pass(hasTreatmentSpecificMessage(), hasTreatmentGeneralMessage())
                 } else if (minCycles != null) {
                     pass(
-                        hasTreatmentSpecificMessage(" with PD and at least $minCycles cycles"),
-                        hasTreatmentGeneralMessage(" with PD and sufficient cycles")
+                        hasTreatmentSpecificMessage(" and at least $minCycles cycles"),
+                        hasTreatmentGeneralMessage(" and sufficient cycles")
                     )
                 } else {
                     pass(
-                        hasTreatmentSpecificMessage(" with PD for at least $minWeeks weeks"),
-                        hasTreatmentGeneralMessage(" with PD for sufficient weeks")
+                        hasTreatmentSpecificMessage(" for at least $minWeeks weeks"),
+                        hasTreatmentGeneralMessage(" for sufficient weeks")
                     )
                 }
             }
 
-            hasHadTreatmentWithPDAndUnclearCycles -> {
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
                 undetermined(" with PD but unknown nr of cycles")
             }
 
-            hasHadTreatmentWithPDAndUnclearWeeks -> {
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
                 undetermined(" with PD but unknown nr of weeks")
             }
 
-            hasHadTreatmentWithUnclearPDStatus -> {
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
                 undetermined(" but uncertain if there has been PD")
             }
 
-            hasHadTreatmentWithUnclearPDStatusAndUnclearCycles -> {
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
                 undetermined(" but uncertain if there has been PD & unknown nr of cycles")
             }
 
-            hasHadTreatmentWithUnclearPDStatusAndUnclearWeeks -> {
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
                 undetermined(" but uncertain if there has been PD & unclear nr of weeks")
             }
 
-            hasPotentiallyHadTreatment || hasHadTrial -> {
+            PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
                 undetermined(
                     "Unclear whether patient has received " + treatment(),
                     "Unclear if received " + category.display()
                 )
             }
 
-            hasHadTreatment -> {
-                fail("Patient has received " + treatment() + " but not with PD", "No PD after " + category.display())
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
+                fail("Patient has received ${treatment()} but not with PD", "No PD after " + category.display())
             }
 
             else -> {
-                fail("No " + treatment() + " treatment with PD", "No " + category.display())
+                fail("No ${treatment()} treatment with PD", "No " + category.display())
             }
         }
     }
 
-    private fun hasTreatmentSpecificMessage(suffix: String): String {
-        return "Patient has received " + treatment() + suffix
+    private fun hasTreatmentSpecificMessage(suffix: String = ""): String {
+        return "Patient has received ${treatment()} with PD$suffix"
     }
 
-    private fun hasTreatmentGeneralMessage(suffix: String): String {
-        return "Patient has had " + treatment() + suffix
+    private fun hasTreatmentGeneralMessage(suffix: String = ""): String {
+        return "Patient has had ${treatment()} with PD$suffix"
     }
 
     private fun undetermined(suffix: String): Evaluation {
@@ -136,5 +119,38 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 
     private fun treatment(): String {
         return "${concatItems(types)} ${category.display()} treatment"
+    }
+
+    private enum class PDFollowingTreatmentEvaluation {
+        HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS,
+        HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES,
+        HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS,
+        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS,
+        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES,
+        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS,
+        HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
+        HAS_HAD_TREATMENT,
+        NO_MATCH;
+
+        companion object {
+            fun create(
+                hadTreatment: Boolean?,
+                hadTrial: Boolean,
+                hadPD: Boolean? = false,
+                hadCyclesOrWeeks: Boolean = false,
+                hadUnclearCycles: Boolean = false,
+                hadUnclearWeeks: Boolean = false
+            ) = when {
+                hadTreatment == true && hadPD == true && hadCyclesOrWeeks -> HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS
+                hadTreatment == true && hadPD == true && hadUnclearCycles -> HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES
+                hadTreatment == true && hadPD == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS
+                hadTreatment == true && hadPD == null && hadUnclearCycles -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES
+                hadTreatment == true && hadPD == null && hadUnclearWeeks -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS
+                hadTreatment == true && hadPD == null -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS
+                hadTreatment == null || hadTrial -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
+                hadTreatment == true -> HAS_HAD_TREATMENT
+                else -> NO_MATCH
+            }
+        }
     }
 }
