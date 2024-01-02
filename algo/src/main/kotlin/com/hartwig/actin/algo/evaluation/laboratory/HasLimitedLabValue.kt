@@ -9,8 +9,9 @@ import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
-class HasLimitedLabValue(private val maxValue: Double, private val measurement: LabMeasurement, private val targetUnit: LabUnit) :
-    LabEvaluationFunction {
+class HasLimitedLabValue(
+    private val maxValue: Double, private val measurement: LabMeasurement, private val targetUnit: LabUnit
+) : LabEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit)
@@ -18,29 +19,29 @@ class HasLimitedLabValue(private val maxValue: Double, private val measurement: 
                 "Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}"
             )
 
-        return when (val result = evaluateVersusMaxValue(convertedValue, labValue.comparator(), maxValue)) {
+        return when (val result = evaluateVersusMaxValue(convertedValue, labValue.comparator, maxValue)) {
             EvaluationResult.FAIL -> {
                 EvaluationFactory.recoverableFail(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format("%.1f", convertedValue)
                     } ${targetUnit.display()} exceeds maximum of $maxValue ${targetUnit.display()}",
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format("%.1f", convertedValue)
                     } ${targetUnit.display()} exceeds max of $maxValue ${targetUnit.display()}"
                 )
             }
             EvaluationResult.UNDETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "${labMeasurement.display()} requirements could not be determined",
-                    "${labMeasurement.display()} requirements undetermined"
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} requirements could not be determined",
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} requirements undetermined"
                 )
             }
             EvaluationResult.PASS -> {
                 EvaluationFactory.recoverablePass(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format("%.1f", convertedValue)
                     } below maximum of $maxValue ${targetUnit.display()}",
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format("%.1f", convertedValue)
                     } below max of $maxValue ${targetUnit.display()}"
                 )

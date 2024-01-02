@@ -34,7 +34,6 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS to hasRecentlyReceivedAnyCancerTherapyButSomeCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES to hasRecentlyReceivedAnyCancerTherapyWithHalfLifeCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES to hasRecentlyReceivedAnyCancerTherapyButSomeWithHalfLifeCreator(),
-            EligibilityRule.WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL to willRequireAnticancerTherapyCreator(),
         )
     }
 
@@ -140,10 +139,6 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
         val mappedIgnoredCategories = categoriesToIgnore.associateWith(categories::resolve)
         return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, mappedIgnoredCategories, interpreter)
-    }
-
-    private fun willRequireAnticancerTherapyCreator(): FunctionCreator {
-        return FunctionCreator { WillRequireAnticancerTherapy() }
     }
 
     private fun createInterpreterForWashout(inputWeeks: Int): MedicationStatusInterpreter {

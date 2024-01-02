@@ -544,7 +544,6 @@ Other antianemic preparations: ATC level code equal to "B03X" <br>
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS              | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3], excluding ATC codes equal to X OR if X present in 3] use derived ATC codes | Does not include radiotherapy or surgery, these are separate rules.                                  |
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES                   | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3] and active X weeks prior to evaluation date                                 | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules. |
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3], excluding ATC codes equal to X OR if X present in 3] use derived ATC codes | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.    |
-| WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL                                   | Won't be evaluated.                                                                                                                                                                                                                                                                                                        |                                                                                                      |
 
 3] Cancer therapy list:<br>
 Chemotherapy: ATC level code equal to "L01XA", "L01BC", "L01CD" or "L01A" <br>
@@ -634,12 +633,6 @@ to 5 most recent values would be sufficient to `PASS`.
 | HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS  | Surgeries > Current date minus latest surgery date <= X weeks, or Treatment history > any treatment with category 'surgery' and start date <= X weeks. X should be <= 8, in case nr of weeks is higher, below rule should be used       | Note that X is the protocol nr of weeks. Therefore 2 weeks are subtracted from the latest surgery date. In case treatment with category 'surgery' is present but no date available, resolve to `FAIL` |
 | HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS | Surgeries > Current date minus latest surgery date <= X months, or Treatment history > any treatment with category 'surgery' and start date <= X months. X should be => 2, in case nr of months is lower, the above rule should be used | In case treatment with category 'surgery' is present but no date available, resolve to `UNDETERMINED`                                                                                                 |
 | HAS_PLANNED_SURGERY                  | Surgeries > Presence of surgery entry after current date, or Treatment history > any treatment with category 'surgery' and start date after current date.                                                                               | In case treatment with category 'surgery' is present but no date available, resolve to `UNDETERMINED`                                                                                                 |
-
-##### Rules related to lifestyle
-
-| Rule                                          | When does a patient pass evaluation? |
-|-----------------------------------------------|--------------------------------------|
-| IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES | Resolves to `WARN`                   |
 
 #### Standard of Care (SOC)
 

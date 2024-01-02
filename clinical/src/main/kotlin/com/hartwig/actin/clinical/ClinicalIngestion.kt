@@ -64,7 +64,7 @@ class ClinicalIngestion(
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val questionnaire = feed.latestQuestionnaireEntry(subject)?.let { QuestionnaireExtraction.extract(it) }
+            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject))
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val complicationsExtraction = complicationsExtractor.extract(patientId, questionnaire)
             val clinicalStatusExtraction =
@@ -116,7 +116,14 @@ class ClinicalIngestion(
                 .map { it.evaluation }
                 .fold(ExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
 
-            Pair(PatientIngestionResult.create(questionnaire, record, patientEvaluation.warnings.toList()), patientEvaluation)
+            Pair(
+                PatientIngestionResult.create(
+                    questionnaire,
+                    record,
+                    patientEvaluation.warnings.toList(),
+                    questionnaireCurationErrors.toSet()
+                ), patientEvaluation
+            )
         }.sortedWith { (result1, _), (result2, _) ->
             ClinicalRecordComparator().compare(
                 result1.clinicalRecord,
@@ -125,7 +132,8 @@ class ClinicalIngestion(
         }
         return IngestionResult(
             unusedConfigs = curationDatabaseContext.allUnusedConfig(records.map { it.second }),
-            patientResults = records.map { it.first })
+            patientResults = records.map { it.first }
+        )
     }
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {

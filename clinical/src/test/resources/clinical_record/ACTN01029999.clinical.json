@@ -30,7 +30,7 @@
     "hasActiveBrainLesions": null,
     "hasCnsLesions": null,
     "hasActiveCnsLesions": null,
-    "hasBoneLesions": true,
+    "hasBoneLesions": null,
     "hasLiverLesions": true,
     "hasLungLesions": null,
     "hasLymphNodeLesions": null,
@@ -57,8 +57,8 @@
       "year": 2019,
       "month": 7,
       "doids": [
-        "11335",
-        "5082"
+        "5082",
+        "11335"
       ],
       "category": "Liver disease",
       "isContraindicationForTherapy": false

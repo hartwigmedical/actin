@@ -316,7 +316,6 @@ object FunctionInputMapping {
         EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES to FunctionInput.TWO_INTEGERS,
         EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES to
                 FunctionInput.MANY_STRINGS_TWO_INTEGERS,
-        EligibilityRule.WILL_REQUIRE_ANY_ANTICANCER_THERAPY_DURING_TRIAL to FunctionInput.NONE,
         EligibilityRule.IS_BREASTFEEDING to FunctionInput.NONE,
         EligibilityRule.IS_PREGNANT to FunctionInput.NONE,
         EligibilityRule.USES_ADEQUATE_ANTICONCEPTION to FunctionInput.NONE,
@@ -351,7 +350,6 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HAD_RECENT_SURGERY to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS to FunctionInput.ONE_INTEGER,
-        EligibilityRule.HAS_PLANNED_SURGERY to FunctionInput.NONE,
-        EligibilityRule.IS_ABLE_AND_WILLING_TO_NOT_USE_CONTACT_LENSES to FunctionInput.NONE
+        EligibilityRule.HAS_PLANNED_SURGERY to FunctionInput.NONE
     )
 }

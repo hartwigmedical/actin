@@ -11,8 +11,8 @@ class HasSufficientLabValueULN(private val minULNFactor: Double) : LabEvaluation
     
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val result = LabEvaluation.evaluateVersusMinULN(labValue, minULNFactor)
-        val labValueString = "${labMeasurement.display()} ${String.format("%.1f", labValue.value())}"
-        val referenceString = "$minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
+        val labValueString = "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${String.format("%.1f", labValue.value)}"
+        val referenceString = "$minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp})"
 
         return when (result) {
             EvaluationResult.FAIL -> {
@@ -22,7 +22,8 @@ class HasSufficientLabValueULN(private val minULNFactor: Double) : LabEvaluation
             }
             EvaluationResult.UNDETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "${labMeasurement.display()} could not be evaluated versus maximum ULN", "${labMeasurement.display()} undetermined"
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} could not be evaluated versus maximum ULN",
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
                 )
             }
             EvaluationResult.PASS -> {

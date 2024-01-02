@@ -67,7 +67,10 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
         EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
         EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL,
-        EligibilityRule.HAS_NON_SQUAMOUS_NSCLC
+        EligibilityRule.HAS_NON_SQUAMOUS_NSCLC,
+        EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES,
+        EligibilityRule.HAS_KNOWN_HEPATITIS_A_INFECTION,
+        EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP
     )
 
     fun evaluate(trials: List<Trial>) {
