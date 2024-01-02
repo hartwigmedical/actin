@@ -54,20 +54,21 @@ class DoidJsonTest {
             assertThat(node1.term).isEqualTo("obsolete carcinoma in situ of respiratory system")
             assertThat(node1.type).isEqualTo("CLASS")
 
-            val definition = node1.metadata!!.definition
+            val metadata = node1.metadata!!
+            val definition = metadata.definition
             assertThat(definition!!.`val`).isEqualTo(
                 "A carcinoma in situ that is characterized by the spread of cancer in the respiratory "
                         + "system and the lack of invasion of surrounding tissues."
             )
             assertThat(definition.xrefs).containsExactly("url:http://en.wikipedia.org/wiki/Carcinoma_in_situ")
 
-            assertThat(node1.metadata.synonyms).containsExactly(
+            assertThat(metadata.synonyms).containsExactly(
                 Synonym(
                     "hasExactSynonym", "carcinoma in situ of respiratory tract (disorder)", emptyList()
                 )
             )
 
-            assertThat(node1.metadata.basicPropertyValues).containsExactly(
+            assertThat(metadata.basicPropertyValues).containsExactly(
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "DOID:8965"),
                 BasicPropertyValue("http://www.w3.org/2002/07/owl#deprecated", "true"),
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasOBONamespace", "disease_ontology")
@@ -80,7 +81,8 @@ class DoidJsonTest {
             assertThat(node2.term).isEqualTo("decubitus ulcer")
             assertThat(node2.type).isEqualTo("CLASS")
 
-            assertThat(node2.metadata!!.definition).isEqualTo(
+            val metadata = node2.metadata!!
+            assertThat(metadata.definition).isEqualTo(
                 Definition(
                 "Decubitus ulcer is a chronic ulcer of skin where the ulcer is an ulceration of "
                         + "tissue deprived of adequate blood supply by prolonged pressure.",
@@ -88,8 +90,8 @@ class DoidJsonTest {
                 )
             )
 
-            assertThat(node2.metadata.subsets).containsExactly("http://purl.obolibrary.org/obo/doid#NCIthesaurus")
-            assertThat(node2.metadata.xrefs).containsExactly(
+            assertThat(metadata.subsets).containsExactly("http://purl.obolibrary.org/obo/doid#NCIthesaurus")
+            assertThat(metadata.xrefs).containsExactly(
                 Xref("NCI:C50706"),
                 Xref("MESH:D003668"),
                 Xref("ICD9CM:707.0"),
@@ -98,7 +100,7 @@ class DoidJsonTest {
                 Xref("ICD10CM:L89")
             )
 
-            assertThat(node2.metadata.synonyms).containsExactly(
+            assertThat(metadata.synonyms).containsExactly(
                 Synonym("hasExactSynonym", "Decubitus ulcer any site", emptyList()),
                 Synonym("hasExactSynonym", "pressure ulcer", emptyList()),
                 Synonym("hasExactSynonym", "pressure sores", emptyList()),
@@ -106,7 +108,7 @@ class DoidJsonTest {
                 Synonym("hasRelatedSynonym", "bedsore", emptyList())
             )
 
-            assertThat(node2.metadata.basicPropertyValues).containsExactly(
+            assertThat(metadata.basicPropertyValues).containsExactly(
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "DOID:8808"),
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "DOID:9129"),
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "disease_ontology"),

@@ -1,10 +1,14 @@
 package com.hartwig.actin
 
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 class PatientRecordFactoryTest {
-    @org.junit.Test
-    fun canCreatePatientRecordFromTestRecords() {
+
+    @Test
+    fun `Should create patient record from test records`() {
         org.junit.Assert.assertNotNull(
             PatientRecordFactory.fromInputs(
                 TestClinicalFactory.createMinimalTestClinicalRecord(),
@@ -19,32 +23,12 @@ class PatientRecordFactoryTest {
         )
     }
 
-    @org.junit.Test
-    fun doNotCrashOnMissingTumorDoids() {
-        val base: ClinicalRecord = TestClinicalFactory.createMinimalTestClinicalRecord()
-        val noTumorDoid: ClinicalRecord = ImmutableClinicalRecord.builder()
-            .from(base)
-            .tumor(ImmutableTumorDetails.builder().from(base.tumor()).doids(null).build())
-            .build()
-        org.junit.Assert.assertNotNull(
-            PatientRecordFactory.fromInputs(
-                noTumorDoid,
-                TestMolecularFactory.createMinimalTestMolecularRecord()
-            )
-        )
-    }
-
-    @org.junit.Test
-    fun clinicalPatientBeatsMolecularPatient() {
-        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-            .patientId("clinical")
-            .build()
-        val molecular: com.hartwig.actin.molecular.datamodel.MolecularRecord = ImmutableMolecularRecord.builder()
-            .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-            .patientId("molecular")
-            .build()
+    @Test
+    fun `Should use clinical patient ID over molecular patient ID when different`() {
+        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(patientId = "clinical")
+        val molecular = TestMolecularFactory.createMinimalTestMolecularRecord().copy(patientId = "molecular")
+        
         val patient = PatientRecordFactory.fromInputs(clinical, molecular)
-        assertEquals("clinical", patient.patientId())
+        assertThat(patient.patientId).isEqualTo("clinical")
     }
 }

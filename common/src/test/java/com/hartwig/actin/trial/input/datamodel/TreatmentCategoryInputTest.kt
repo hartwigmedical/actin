@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TreatmentCategoryInputTest {
+
     @Test
     fun `Should create for all categories`() {
         for (category in TreatmentCategory.values()) {
@@ -37,7 +38,7 @@ class TreatmentCategoryInputTest {
                 val input = treatmentType.toString().replace("_", " ").lowercase()
                 val treatmentCategoryInput = TreatmentCategoryInput.fromString(input)
                 assertThat(treatmentCategoryInput.mappedType).isEqualTo(treatmentType)
-                assertThat(treatmentCategoryInput.mappedCategory).isEqualTo(treatmentType.category())
+                assertThat(treatmentCategoryInput.mappedCategory).isEqualTo(treatmentType.category)
                 assertThat(TreatmentCategoryInput.treatmentTypeFromString(input)).isEqualTo(treatmentType)
             }
         }

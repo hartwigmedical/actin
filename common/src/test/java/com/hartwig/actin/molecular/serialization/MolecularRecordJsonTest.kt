@@ -146,8 +146,9 @@ class MolecularRecordJsonTest {
             assertThat(variant.isBiallelic).isFalse
             assertThat(variant.isHotspot).isTrue
             assertThat(variant.clonalLikelihood).isEqualTo(1.0, Offset.offset(EPSILON))
-            assertThat(variant.phaseGroups!!).hasSize(1)
-            assertThat(variant.phaseGroups.contains(2)).isTrue
+            val phaseGroups = variant.phaseGroups!!
+            assertThat(phaseGroups).hasSize(1)
+            assertThat(phaseGroups.contains(2)).isTrue
 
             val canonicalImpact = variant.canonicalImpact
             assertThat(canonicalImpact.transcriptId).isEqualTo("ENST00000288602")

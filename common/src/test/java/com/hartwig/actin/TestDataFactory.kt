@@ -6,19 +6,19 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 object TestDataFactory {
     const val TEST_PATIENT = "ACTN01029999"
     const val TEST_SAMPLE = TEST_PATIENT + "T"
+
     fun createMinimalTestPatientRecord(): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .patientId(TEST_PATIENT)
-            .clinical(TestClinicalFactory.createMinimalTestClinicalRecord())
-            .molecular(TestMolecularFactory.createMinimalTestMolecularRecord())
-            .build()
+        return PatientRecord(
+            patientId = TEST_PATIENT,
+            clinical = TestClinicalFactory.createMinimalTestClinicalRecord(),
+            molecular = TestMolecularFactory.createMinimalTestMolecularRecord(),
+        )
     }
 
     fun createProperTestPatientRecord(): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(createMinimalTestPatientRecord())
-            .clinical(TestClinicalFactory.createProperTestClinicalRecord())
-            .molecular(TestMolecularFactory.createProperTestMolecularRecord())
-            .build()
+        return createMinimalTestPatientRecord().copy(
+            clinical = TestClinicalFactory.createProperTestClinicalRecord(),
+            molecular = TestMolecularFactory.createProperTestMolecularRecord()
+        )
     }
 }
