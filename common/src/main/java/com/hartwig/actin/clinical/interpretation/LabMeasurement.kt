@@ -1,8 +1,9 @@
 package com.hartwig.actin.clinical.interpretation
 
+import com.hartwig.actin.Displayable
 import com.hartwig.actin.clinical.datamodel.LabUnit
 
-enum class LabMeasurement(private val code: String, private val display: String, private val defaultUnit: LabUnit) {
+enum class LabMeasurement(val code: String, val display: String, val defaultUnit: LabUnit) : Displayable {
     ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME("APTT", "APTT", LabUnit.SECONDS),
     AMYLASE("AMYL", "amylase", LabUnit.UNITS_PER_LITER),
     ALANINE_AMINOTRANSFERASE("ALAT", "ALAT", LabUnit.UNITS_PER_LITER),
@@ -49,15 +50,7 @@ enum class LabMeasurement(private val code: String, private val display: String,
     TRIGLYCERIDE("TG", "triglycerides", LabUnit.MILLIMOLES_PER_LITER),
     TROPONIN_I_T("HSTNT", "troponin I and T", LabUnit.NANOGRAMS_PER_LITER);
 
-    fun code(): String {
-        return code
-    }
-
-    fun display(): String {
+    override fun display(): String {
         return display
-    }
-
-    fun defaultUnit(): LabUnit {
-        return defaultUnit
     }
 }

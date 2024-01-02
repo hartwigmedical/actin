@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical.datamodel.treatment
 
 import com.hartwig.actin.Displayable
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
-import java.util.*
 
 enum class TreatmentCategory : Displayable {
     CHEMOTHERAPY,
@@ -22,6 +21,6 @@ enum class TreatmentCategory : Displayable {
     ABLATION;
 
     override fun display(): String {
-        return TreatmentCategoryResolver.toString(this).lowercase(Locale.getDefault())
+        return TreatmentCategoryResolver.toString(this).lowercase()
     }
 }

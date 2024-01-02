@@ -1,9 +1,6 @@
 package com.hartwig.actin.clinical.datamodel.treatment
 
-import java.util.*
-
-enum class DrugType @JvmOverloads constructor(private val category: TreatmentCategory, private val display: String? = null) :
-    TreatmentType {
+enum class DrugType(override val category: TreatmentCategory, private val display: String? = null) : TreatmentType {
     ABL_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ABL inhibitor"),
     ADENOSINE_TARGETING(TreatmentCategory.IMMUNOTHERAPY),
     ALK_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ALK inhibitor"),
@@ -118,11 +115,7 @@ enum class DrugType @JvmOverloads constructor(private val category: TreatmentCat
     VEGFR2_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "VEGFR2 antibody"),
     VEGFR2_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "VEGFR2 inhibitor");
 
-    override fun category(): TreatmentCategory {
-        return category
-    }
-
     override fun display(): String {
-        return display ?: toString().replace("_", " ").lowercase(Locale.getDefault())
+        return display ?: toString().replace("_", " ").lowercase()
     }
 }

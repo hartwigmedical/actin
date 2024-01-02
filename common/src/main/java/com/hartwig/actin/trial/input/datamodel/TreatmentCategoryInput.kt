@@ -26,7 +26,7 @@ class TreatmentCategoryInput(val mappedCategory: TreatmentCategory, val mappedTy
                 LOGGER.debug("Treatment category not found for query string {}", query)
             }
             val treatmentType: TreatmentType = resolveTreatmentType(query)
-            return TreatmentCategoryInput(treatmentType.category(), treatmentType)
+            return TreatmentCategoryInput(treatmentType.category, treatmentType)
         }
 
         fun treatmentTypeFromString(input: String): TreatmentType {

@@ -1,32 +1,26 @@
 package com.hartwig.actin.clinical.sort
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TestPriorSecondPrimaryFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PriorSecondPrimaryDiagnosedDateComparatorTest {
+
     @Test
-    fun shouldSortOnDiagnosedYearThenDiagnosedMonthNullsLast() {
+    fun `Should sort on diagnosed year then diagnosed month nulls last`() {
         val secondPrimary1 = withYearMonth(2022, 2)
         val secondPrimary2 = withYearMonth(2022, 5)
         val secondPrimary3 = withYearMonth(2022, null)
         val secondPrimary4 = withYearMonth(2023, 1)
         val secondPrimary5 = withYearMonth(null, null)
-        val sorted: List<PriorSecondPrimary> =
-            Lists.newArrayList(secondPrimary2, secondPrimary3, secondPrimary5, secondPrimary4, secondPrimary1)
-        sorted.sort(PriorSecondPrimaryDiagnosedDateComparator())
-        Assertions.assertThat(sorted[0]).isEqualTo(secondPrimary1)
-        Assertions.assertThat(sorted[1]).isEqualTo(secondPrimary2)
-        Assertions.assertThat(sorted[2]).isEqualTo(secondPrimary3)
-        Assertions.assertThat(sorted[3]).isEqualTo(secondPrimary4)
-        Assertions.assertThat(sorted[4]).isEqualTo(secondPrimary5)
+        val sorted = listOf(secondPrimary2, secondPrimary3, secondPrimary5, secondPrimary4, secondPrimary1)
+            .sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
+
+        assertThat(sorted).containsExactly(secondPrimary1, secondPrimary2, secondPrimary3, secondPrimary4, secondPrimary5)
     }
 
-    companion object {
-        private fun withYearMonth(diagnosedYear: Int?, diagnosedMonth: Int?): PriorSecondPrimary {
-            return TestPriorSecondPrimaryFactory.builder().diagnosedYear(diagnosedYear).diagnosedMonth(diagnosedMonth).build()
-        }
+    private fun withYearMonth(diagnosedYear: Int?, diagnosedMonth: Int?): PriorSecondPrimary {
+        return TestPriorSecondPrimaryFactory.createMinimal().copy(diagnosedYear = diagnosedYear, diagnosedMonth = diagnosedMonth)
     }
 }

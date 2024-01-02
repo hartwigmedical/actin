@@ -103,12 +103,12 @@ class HasContraindicationToCTTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withMedications(medications)))
 
         // Test no relevant medication
-        medications.add(TestMedicationFactory.builder().name("no relevant medication").build())
+        medications.add(TestMedicationFactory.createMinimal().name("no relevant medication").build())
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withMedications(medications)))
 
         // Test relevant medication
         val relevantMedication: String = HasContraindicationToCT.MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT.iterator().next()
-        medications.add(TestMedicationFactory.builder().name(relevantMedication).build())
+        medications.add(TestMedicationFactory.createMinimal().name(relevantMedication).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withMedications(medications)))
     }
 

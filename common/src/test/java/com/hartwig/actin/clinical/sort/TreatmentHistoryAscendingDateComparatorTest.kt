@@ -1,16 +1,15 @@
 package com.hartwig.actin.clinical.sort
 
-import com.google.common.collect.Lists
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TreatmentHistoryAscendingDateComparatorTest {
+
     @Test
-    fun shouldSortByAscendingStartDateThenByAscendingEndDateThenByName() {
+    fun `Should sort by ascending start date then by ascending end date then by name`() {
         val treatment1 = create("treatment A", null, null, 2018, null)
         val treatment2 = create("treatment A", 2018, null, null, null)
         val treatment3 = create("treatment A", null, null, 2020, 1)
@@ -22,7 +21,8 @@ class TreatmentHistoryAscendingDateComparatorTest {
         val treatment9 = create("treatment A", null, null, 2020, 4)
         val treatment10 = create("treatment A", 2021, 1, null, null)
         val treatment11 = create("treatment A", null, null, null, null)
-        val treatments: List<TreatmentHistoryEntry> = Lists.newArrayList(
+
+        val treatments = listOf(
             treatment11,
             treatment10,
             treatment9,
@@ -34,32 +34,30 @@ class TreatmentHistoryAscendingDateComparatorTest {
             treatment3,
             treatment2,
             treatment1
+        ).sortedWith(TreatmentHistoryAscendingDateComparator())
+
+        assertThat(treatments).containsExactly(
+            treatment1,
+            treatment2,
+            treatment3,
+            treatment4,
+            treatment5,
+            treatment6,
+            treatment7,
+            treatment8,
+            treatment9,
+            treatment10,
+            treatment11
         )
-        treatments.sort(TreatmentHistoryAscendingDateComparator())
-        Assert.assertEquals(treatment1, treatments[0])
-        Assert.assertEquals(treatment2, treatments[1])
-        Assert.assertEquals(treatment3, treatments[2])
-        Assert.assertEquals(treatment4, treatments[3])
-        Assert.assertEquals(treatment5, treatments[4])
-        Assert.assertEquals(treatment6, treatments[5])
-        Assert.assertEquals(treatment7, treatments[6])
-        Assert.assertEquals(treatment8, treatments[7])
-        Assert.assertEquals(treatment9, treatments[8])
-        Assert.assertEquals(treatment10, treatments[9])
-        Assert.assertEquals(treatment11, treatments[10])
     }
 
-    companion object {
-        private fun create(
-            name: String, startYear: Int?, startMonth: Int?,
-            stopYear: Int?, stopMonth: Int?
-        ): TreatmentHistoryEntry {
-            return ImmutableTreatmentHistoryEntry.builder()
-                .addTreatments(ImmutableOtherTreatment.builder().name(name).isSystemic(false).build())
-                .startYear(startYear)
-                .startMonth(startMonth)
-                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(stopYear).stopMonth(stopMonth).build())
-                .build()
-        }
+    private fun create(name: String, startYear: Int?, startMonth: Int?, stopYear: Int?, stopMonth: Int?): TreatmentHistoryEntry {
+        return TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(OtherTreatment(name = name, isSystemic = false, categories = emptySet())),
+            startYear = startYear,
+            startMonth = startMonth,
+            stopYear = stopYear,
+            stopMonth = stopMonth
+        )
     }
 }

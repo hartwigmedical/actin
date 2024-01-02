@@ -25,10 +25,10 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
     @Test
     fun canEvaluateOnMedication() {
         val function = HasPotentialUncontrolledTumorRelatedPain(medicationStatusInterpreter)
-        val wrong: Medication = TestMedicationFactory.builder().name("just some medication").build()
+        val wrong: Medication = TestMedicationFactory.createMinimal().name("just some medication").build()
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withMedication(wrong)))
         val match: Medication =
-            TestMedicationFactory.builder().name(HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_MEDICATION).build()
+            TestMedicationFactory.createMinimal().name(HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_MEDICATION).build()
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withMedication(match)))
     }
 

@@ -28,7 +28,7 @@ internal object WashoutTestFactory {
     }
 
     fun builder(): ImmutableMedication.Builder {
-        return TestMedicationFactory.builder().status(MedicationStatus.ACTIVE)
+        return TestMedicationFactory.createMinimal().status(MedicationStatus.ACTIVE)
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {

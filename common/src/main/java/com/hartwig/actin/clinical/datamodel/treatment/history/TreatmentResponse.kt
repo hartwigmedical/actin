@@ -1,7 +1,5 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history
 
-import java.util.*
-
 enum class TreatmentResponse {
     PROGRESSIVE_DISEASE,
     STABLE_DISEASE,
@@ -12,7 +10,7 @@ enum class TreatmentResponse {
 
     companion object {
         fun createFromString(input: String): TreatmentResponse? {
-            return when (input.uppercase(Locale.getDefault())) {
+            return when (input.uppercase()) {
                 "PD" -> PROGRESSIVE_DISEASE
                 "SD" -> STABLE_DISEASE
                 "MIXED" -> MIXED

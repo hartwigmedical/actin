@@ -11,7 +11,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     @Test
     fun shouldPassWhenCypInducingMedication() {
         val medications = listOf(
-            TestMedicationFactory.builder().addCypInteractions(
+            TestMedicationFactory.createMinimal().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
@@ -22,7 +22,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     @Test
     fun shouldFailWhenCypInducingMedicationThatDoesNotMatchCyp() {
         val medications = listOf(
-            TestMedicationFactory.builder().addCypInteractions(
+            TestMedicationFactory.createMinimal().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
@@ -33,7 +33,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
     @Test
     fun shouldFailWhenNoCypInducingMedication() {
         val medications = listOf(
-            TestMedicationFactory.builder().addCypInteractions(
+            TestMedicationFactory.createMinimal().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
@@ -43,7 +43,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
 
     @Test
     fun shouldFailWhenPatientUsesNoMedication() {
-        val medications = listOf(TestMedicationFactory.builder().build())
+        val medications = listOf(TestMedicationFactory.createMinimal().build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 

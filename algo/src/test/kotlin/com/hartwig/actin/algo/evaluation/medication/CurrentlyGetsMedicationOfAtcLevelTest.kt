@@ -19,7 +19,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
         val atc =
             AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("wrong category").build())
                 .build()
-        val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().atc(atc).build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
@@ -32,7 +32,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
             EvaluationResult.PASS, FUNCTION.evaluate(
                 MedicationTestFactory.withMedications(
                     listOf(
-                        TestMedicationFactory.builder().atc(atc).build()
+                        TestMedicationFactory.createMinimal().atc(atc).build()
                     )
                 )
             )

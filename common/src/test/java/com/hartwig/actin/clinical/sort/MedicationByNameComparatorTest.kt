@@ -1,23 +1,24 @@
 package com.hartwig.actin.clinical.sort
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MedicationByNameComparatorTest {
+
     @Test
-    fun canSortMedications() {
-        val medication1: Medication = TestMedicationFactory.builder().name("X").build()
-        val medication2: Medication = TestMedicationFactory.builder().name("X").build()
-        val medication3: Medication = TestMedicationFactory.builder().name("Z").build()
-        val medication4: Medication = TestMedicationFactory.builder().name("Y").build()
-        val values: List<Medication> = Lists.newArrayList(medication1, medication2, medication3, medication4)
-        values.sort(MedicationByNameComparator())
-        Assert.assertEquals(medication1, values[0])
-        Assert.assertEquals(medication2, values[1])
-        Assert.assertEquals(medication4, values[2])
-        Assert.assertEquals(medication3, values[3])
+    fun `Should sort medications`() {
+        val medication1 = medication("X")
+        val medication2 = medication("X")
+        val medication3 = medication("Z")
+        val medication4 = medication("Y")
+        val values = listOf(medication1, medication2, medication3, medication4).sortedWith(MedicationByNameComparator())
+
+        assertThat(values).containsExactly(medication1, medication2, medication4, medication3)
+    }
+
+    private fun medication(name: String): Medication {
+        return TestMedicationFactory.createMinimal().copy(name = name)
     }
 }

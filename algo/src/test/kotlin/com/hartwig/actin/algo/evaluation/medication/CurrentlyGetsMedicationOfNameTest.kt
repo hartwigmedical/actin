@@ -16,11 +16,11 @@ class CurrentlyGetsMedicationOfNameTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Medication with wrong name
-        medications.add(TestMedicationFactory.builder().name("This is Term 2").build())
+        medications.add(TestMedicationFactory.createMinimal().name("This is Term 2").build())
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
 
         // Medication with right name
-        medications.add(TestMedicationFactory.builder().name("This is Term 1").build())
+        medications.add(TestMedicationFactory.createMinimal().name("This is Term 1").build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 }

@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.datamodel
 
 import com.hartwig.actin.Displayable
-import org.apache.logging.log4j.util.Strings
 
 enum class LabUnit(private val display: String) : Displayable {
     NANOGRAMS_PER_LITER("ng/L"),
@@ -47,7 +46,7 @@ enum class LabUnit(private val display: String) : Displayable {
     MILLI_OSMOLE_PER_KILOGRAM("mOsm/kg"),
     INTERNATIONAL_UNITS_PER_MILLILITER("IU/ml"),
     PRNT50("PRNT50"),
-    NONE(Strings.EMPTY);
+    NONE("");
 
     override fun display(): String {
         return display

@@ -11,7 +11,7 @@ import java.time.LocalDate
 class MedicationSelectorTest {
     @Test
     fun canFilterForActive() {
-        val medications = listOf(TestMedicationFactory.builder().name("active").build())
+        val medications = listOf(TestMedicationFactory.createMinimal().name("active").build())
         val filtered = MedicationTestFactory.alwaysActive().active(medications)
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertEquals("active", filtered[0].name())
@@ -21,11 +21,11 @@ class MedicationSelectorTest {
     fun canFilterOnActiveOrRecentlyStopped() {
         val minStopDate = LocalDate.of(2019, 11, 20)
         val medications = listOf(
-            TestMedicationFactory.builder()
+            TestMedicationFactory.createMinimal()
                 .name("recently stopped")
                 .stopDate(minStopDate.plusDays(1))
                 .build(),
-            TestMedicationFactory.builder()
+            TestMedicationFactory.createMinimal()
                 .name("stopped long ago")
                 .stopDate(minStopDate.minusDays(1))
                 .build()
@@ -39,10 +39,10 @@ class MedicationSelectorTest {
     @Test
     fun canFilterOnAnyTermInName() {
         val medications = listOf(
-            TestMedicationFactory.builder().name("name 1").build(),
-            TestMedicationFactory.builder().name("name 1 with some extension").build(),
-            TestMedicationFactory.builder().name("name 2").build(),
-            TestMedicationFactory.builder().name("name 3").build()
+            TestMedicationFactory.createMinimal().name("name 1").build(),
+            TestMedicationFactory.createMinimal().name("name 1 with some extension").build(),
+            TestMedicationFactory.createMinimal().name("name 2").build(),
+            TestMedicationFactory.createMinimal().name("name 3").build()
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithAnyTermInName(medications, setOf("Name 1", "2"))
         Assert.assertEquals(3, filtered.size.toLong())
@@ -54,16 +54,16 @@ class MedicationSelectorTest {
     @Test
     fun canFilterOnActiveWithCypInteraction() {
         val medications = listOf(
-            TestMedicationFactory.builder().name("no cyp interactions").build(),
-            TestMedicationFactory.builder().name("uses CYP9A9 inducer").addCypInteractions(
+            TestMedicationFactory.createMinimal().name("no cyp interactions").build(),
+            TestMedicationFactory.createMinimal().name("uses CYP9A9 inducer").addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build(),
-            TestMedicationFactory.builder().name("uses CYP9A9 inhibitor").addCypInteractions(
+            TestMedicationFactory.createMinimal().name("uses CYP9A9 inhibitor").addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build(),
-            TestMedicationFactory.builder().name("uses different CYP inhibitor").addCypInteractions(
+            TestMedicationFactory.createMinimal().name("uses different CYP inhibitor").addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build(),
@@ -76,15 +76,15 @@ class MedicationSelectorTest {
     @Test
     fun canFilterOnActiveWithAnyCypInducer() {
         val medications = listOf(
-            TestMedicationFactory.builder().name("uses any CYP inducer").addCypInteractions(
+            TestMedicationFactory.createMinimal().name("uses any CYP inducer").addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build(),
-            TestMedicationFactory.builder().name("uses any CYP inducer").addCypInteractions(
+            TestMedicationFactory.createMinimal().name("uses any CYP inducer").addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build(),
-            TestMedicationFactory.builder().name("uses CYP inhibitor").addCypInteractions(
+            TestMedicationFactory.createMinimal().name("uses CYP inhibitor").addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build(),
@@ -98,16 +98,16 @@ class MedicationSelectorTest {
     fun canFilterOnActiveOrRecentlyStoppedWithCypInteraction() {
         val minStopDate = LocalDate.of(2019, 11, 20)
         val medications = listOf(
-            TestMedicationFactory.builder().name("no cyp interactions").build(),
-            TestMedicationFactory.builder().name("uses CYP9A9 inducer").addCypInteractions(
+            TestMedicationFactory.createMinimal().name("no cyp interactions").build(),
+            TestMedicationFactory.createMinimal().name("uses CYP9A9 inducer").addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build(),
-            TestMedicationFactory.builder().name("uses different CYP inducer").addCypInteractions(
+            TestMedicationFactory.createMinimal().name("uses different CYP inducer").addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build(),
-            TestMedicationFactory.builder()
+            TestMedicationFactory.createMinimal()
                 .name("CYP9A9 inhibitor recently stopped")
                 .addCypInteractions(
                     ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR)
@@ -115,7 +115,7 @@ class MedicationSelectorTest {
                 )
                 .stopDate(minStopDate.plusDays(1))
                 .build(),
-            TestMedicationFactory.builder()
+            TestMedicationFactory.createMinimal()
                 .name("CYP9A9 inhibitor stopped long ago")
                 .addCypInteractions(
                     ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)

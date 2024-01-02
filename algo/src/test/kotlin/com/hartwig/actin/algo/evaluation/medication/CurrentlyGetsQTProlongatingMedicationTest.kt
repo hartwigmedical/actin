@@ -10,13 +10,13 @@ import org.junit.Test
 class CurrentlyGetsQTProlongatingMedicationTest {
     @Test
     fun shouldPassWhenPatientUsesKnownQTProlongatingMedication() {
-        val medications = listOf(TestMedicationFactory.builder().qtProlongatingRisk(QTProlongatingRisk.KNOWN).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().qtProlongatingRisk(QTProlongatingRisk.KNOWN).build())
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
     fun shouldFailWhenPatientDoesNotUseQTProlongatingMedication() {
-        val medications = listOf(TestMedicationFactory.builder().qtProlongatingRisk(QTProlongatingRisk.NONE).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().qtProlongatingRisk(QTProlongatingRisk.NONE).build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
 
     }

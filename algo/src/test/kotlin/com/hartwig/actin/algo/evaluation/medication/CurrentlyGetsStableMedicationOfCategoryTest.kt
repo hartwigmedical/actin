@@ -18,15 +18,15 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
 
     @Test
     fun shouldPassWhenSingleMedicationWithDosing() {
-        val medications = listOf(TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build())
         assertEvaluation(EvaluationResult.PASS, ONE_CATEGORY_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
     fun shouldPassWhenAnotherMedicationWithNoCategoryAndSameDosing() {
         val medications = listOf(
-            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
-            TestMedicationFactory.builder().dosage(fixedDosing()).build()
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).build()
         )
         assertEvaluation(EvaluationResult.PASS, ONE_CATEGORY_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
@@ -34,9 +34,9 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
     @Test
     fun shouldFailWhenSameCategoryAndOtherDosing() {
         val medications = listOf(
-            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
-            TestMedicationFactory.builder().dosage(fixedDosing()).build(),
-            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).build(),
+            TestMedicationFactory.createMinimal().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
                 .atc(
                     ATC_CATEGORY_1
                 ).build()
@@ -47,9 +47,9 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
     @Test
     fun shouldFailWhenDosingIsCombinedWithMedicationWithoutDosing() {
         val medications = listOf(
-            TestMedicationFactory.builder()
+            TestMedicationFactory.createMinimal()
                 .dosage(fixedDosing())
-                .build(), TestMedicationFactory.builder().build()
+                .build(), TestMedicationFactory.createMinimal().build()
         )
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -64,8 +64,8 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
     @Test
     fun shouldPassWithMultipleMedicationsWithDosing() {
         val medications = listOf(
-            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
-            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build()
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build()
         )
         assertEvaluation(EvaluationResult.PASS, MULTIPLE_CATEGORIES_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
@@ -73,9 +73,9 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
     @Test
     fun shouldPassOnSameCategoryAndOneWithStableDosing() {
         val medications = listOf(
-            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
-            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build(),
-            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build(),
+            TestMedicationFactory.createMinimal().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
                 .atc(ATC_CATEGORY_1).build()
         )
         assertEvaluation(EvaluationResult.PASS, MULTIPLE_CATEGORIES_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
@@ -84,11 +84,11 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
     @Test
     fun shouldFailWhenBothCategoriesHaveWrongDosing() {
         val medications = listOf(
-            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
-            TestMedicationFactory.builder().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build(),
-            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_1).build(),
+            TestMedicationFactory.createMinimal().dosage(fixedDosing()).atc(ATC_CATEGORY_2).build(),
+            TestMedicationFactory.createMinimal().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
                 .atc(ATC_CATEGORY_1).build(),
-            TestMedicationFactory.builder().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
+            TestMedicationFactory.createMinimal().dosage(ImmutableDosage.builder().from(fixedDosing()).frequencyUnit("other").build())
                 .atc(ATC_CATEGORY_2).build(),
         )
         assertEvaluation(EvaluationResult.FAIL, MULTIPLE_CATEGORIES_FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))

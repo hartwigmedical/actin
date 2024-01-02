@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import org.junit.Test

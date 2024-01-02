@@ -17,13 +17,13 @@ class HasRecentlyReceivedTrialMedicationTest {
 
     @Test
     fun shouldFailWhenMedicationIsNoTrialMedication() {
-        val medications = listOf(TestMedicationFactory.builder().isTrialMedication(false).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().isTrialMedication(false).build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
     fun shouldPassWhenMedicationIsTrialMedication() {
-        val medications = listOf(TestMedicationFactory.builder().isTrialMedication(true).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().isTrialMedication(true).build())
         assertEvaluation(EvaluationResult.PASS, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
@@ -33,7 +33,7 @@ class HasRecentlyReceivedTrialMedicationTest {
             MedicationTestFactory.alwaysStopped(),
             EVALUATION_DATE.minusDays(1)
         )
-        val medications = listOf(TestMedicationFactory.builder().isTrialMedication(true).stopDate(EVALUATION_DATE).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().isTrialMedication(true).stopDate(EVALUATION_DATE).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
@@ -43,7 +43,7 @@ class HasRecentlyReceivedTrialMedicationTest {
             MedicationTestFactory.alwaysStopped(),
             EVALUATION_DATE.minusWeeks(2)
         )
-        val medications = listOf(TestMedicationFactory.builder().isTrialMedication(true).stopDate(EVALUATION_DATE).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().isTrialMedication(true).stopDate(EVALUATION_DATE).build())
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(medications))

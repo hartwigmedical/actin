@@ -1,14 +1,9 @@
 package com.hartwig.actin.clinical.datamodel
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 import java.time.LocalDate
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class BodyWeight {
-    abstract fun date(): LocalDate
-    abstract fun value(): Double
-    abstract fun unit(): String
-}
+data class BodyWeight(
+    val date: LocalDate,
+    val value: Double,
+    val unit: String
+)

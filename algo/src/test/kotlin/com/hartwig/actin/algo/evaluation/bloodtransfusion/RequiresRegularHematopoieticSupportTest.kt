@@ -75,7 +75,8 @@ class RequiresRegularHematopoieticSupportTest {
         val atc =
             AtcTestFactory.atcClassificationBuilder().chemicalSubGroup(AtcTestFactory.atcLevelBuilder().code("wrong category").build())
                 .build()
-        val wrongCategory: Medication = TestMedicationFactory.builder().startDate(MIN_DATE.minusWeeks(1)).stopDate(null).atc(atc).build()
+        val wrongCategory: Medication =
+            TestMedicationFactory.createMinimal().startDate(MIN_DATE.minusWeeks(1)).stopDate(null).atc(atc).build()
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(wrongCategory)))
     }
 
@@ -89,7 +90,7 @@ class RequiresRegularHematopoieticSupportTest {
                 RequiresRegularHematopoieticSupport.hematopoieticMedicationCategories(AtcTestFactory.createProperAtcTree()).iterator()
                     .next()
             ).build()
-            return TestMedicationFactory.builder().atc(atc)
+            return TestMedicationFactory.createMinimal().atc(atc)
         }
 
         private fun create(date: LocalDate): BloodTransfusion {

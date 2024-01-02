@@ -3,51 +3,31 @@ package com.hartwig.actin.clinical.datamodel.treatment.history
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
-import java.util.*
-import java.util.function.Function
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class TreatmentHistoryEntry {
-    abstract fun treatments(): Set<Treatment>
-    abstract fun startYear(): Int?
-    abstract fun startMonth(): Int?
-    abstract fun intents(): Set<Intent?>?
-
-    @get:Value.Default
-    open val isTrial: Boolean
-        get() = false
-
-    abstract fun trialAcronym(): String?
-    abstract fun treatmentHistoryDetails(): TreatmentHistoryDetails?
+data class TreatmentHistoryEntry(
+    val treatments: Set<Treatment>,
+    val startYear: Int?,
+    val startMonth: Int?,
+    val intents: Set<Intent>?,
+    val isTrial: Boolean = false,
+    val trialAcronym: String?,
+    val treatmentHistoryDetails: TreatmentHistoryDetails?
+) {
     fun allTreatments(): Set<Treatment> {
-        val details = treatmentHistoryDetails() ?: return treatments()
-        val maintenanceTreatmentStream = if (details.maintenanceTreatment() == null) Stream.empty() else Stream.of(
-            details.maintenanceTreatment()!!.treatment()
-        )
-        val switchToTreatmentStream = if (details.switchToTreatments() == null) Stream.empty() else details.switchToTreatments()!!
-            .stream().map { obj: TreatmentStage? -> obj!!.treatment() }
-        return Stream.of(treatments().stream(), maintenanceTreatmentStream, switchToTreatmentStream)
-            .flatMap(Function.identity())
-            .collect(Collectors.toSet())
+        val switchToTreatments = treatmentHistoryDetails?.switchToTreatments?.map(TreatmentStage::treatment)?.toSet() ?: emptySet()
+        return treatments + setOfNotNull(treatmentHistoryDetails?.maintenanceTreatment?.treatment) + switchToTreatments
     }
 
     fun treatmentName(): String {
-        return treatmentStringUsingFunction(allTreatments()) { obj: Treatment -> obj.name() }
+        return treatmentStringUsingFunction(allTreatments(), Treatment::name)
     }
 
     fun categories(): Set<TreatmentCategory> {
-        return allTreatments().stream().flatMap { treatment: Treatment -> treatment.categories().stream() }
-            .collect(Collectors.toSet())
+        return allTreatments().flatMap(Treatment::categories).toSet()
     }
 
     fun isOfType(typeToFind: TreatmentType): Boolean? {
-        return matchesTypeFromSet(java.util.Set.of(typeToFind))
+        return matchesTypeFromSet(setOf(typeToFind))
     }
 
     fun matchesTypeFromSet(types: Set<TreatmentType>): Boolean? {
@@ -55,47 +35,44 @@ abstract class TreatmentHistoryEntry {
     }
 
     fun hasTypeConfigured(): Boolean {
-        return allTreatments().stream().noneMatch { treatment: Treatment -> treatment.types().isEmpty() }
+        return allTreatments().none { it.types.isEmpty() }
     }
 
     private fun isTypeFromCollection(types: Set<TreatmentType>): Boolean {
-        return allTreatments().stream().flatMap { treatment: Treatment -> treatment.types().stream() }
-            .anyMatch { o: TreatmentType -> types.contains(o) }
+        return allTreatments().flatMap(Treatment::types).any(types::contains)
     }
 
     fun treatmentDisplay(): String {
-        val treatmentNames = treatments().stream().map { obj: Treatment -> obj.display() }
-            .map { obj: String -> obj.lowercase(Locale.getDefault()) }.collect(Collectors.toSet())
+        val treatmentNames = treatments.map(Treatment::display).map(String::lowercase).toSet()
         val chemoradiationTherapyNames = setOf("chemotherapy", "radiotherapy")
         if (treatmentNames.containsAll(chemoradiationTherapyNames)) {
-            val remainingTreatments = treatments().stream()
-                .filter { treatment: Treatment -> !chemoradiationTherapyNames.contains(treatment.display().lowercase(Locale.getDefault())) }
-                .collect(Collectors.toList())
+            val remainingTreatments = treatments.filter { !chemoradiationTherapyNames.contains(it.display().lowercase()) }
             if (remainingTreatments.isEmpty()) {
                 return "Chemoradiation"
             } else if (remainingTreatments.size == 1) {
-                val remainingTreatment = remainingTreatments[0]
-                return if (remainingTreatment.categories().contains(TreatmentCategory.CHEMOTHERAPY)) {
-                    String.format("Chemoradiation (with %s)", remainingTreatment.display())
+                val remainingTreatment = remainingTreatments.first()
+                return if (remainingTreatment.categories.contains(TreatmentCategory.CHEMOTHERAPY)) {
+                    "Chemoradiation (with ${remainingTreatment.display()})"
                 } else {
-                    String.format("Chemoradiation and %s", remainingTreatment.display())
+                    "Chemoradiation and ${remainingTreatment.display()}"
                 }
             }
         }
-        return treatmentStringUsingFunction(treatments()) { obj: Treatment -> obj.display() }
+        return treatmentStringUsingFunction(treatments, Treatment::display)
     }
 
     companion object {
         private const val DELIMITER = ";"
-        private fun treatmentStringUsingFunction(treatments: Set<Treatment>, treatmentField: Function<Treatment, String>): String {
-            val nameString = treatments.stream().map(treatmentField).distinct().collect(Collectors.joining(DELIMITER))
-            return if (!nameString.isEmpty()) nameString else treatmentCategoryDisplay(treatments)
+
+        private fun treatmentStringUsingFunction(treatments: Set<Treatment>, treatmentField: (Treatment) -> String): String {
+            return treatments.map(treatmentField).sorted().distinct().joinToString(DELIMITER)
+                .ifEmpty { treatmentCategoryDisplay(treatments) }
         }
 
         private fun treatmentCategoryDisplay(treatments: Set<Treatment>): String {
-            return treatments.stream().flatMap { t: Treatment -> t.categories().stream().map { obj: TreatmentCategory -> obj.display() } }
+            return treatments.flatMap { it.categories.map(TreatmentCategory::display) }
                 .distinct()
-                .collect(Collectors.joining(DELIMITER))
+                .joinToString(DELIMITER)
         }
     }
 }

@@ -3,11 +3,12 @@ package com.hartwig.actin.clinical.sort
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 
 class PriorSecondPrimaryDiagnosedDateComparator : Comparator<PriorSecondPrimary> {
+    private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int?>())
+    private val comparator = Comparator.comparing(PriorSecondPrimary::diagnosedYear, nullSafeComparator)
+        .thenComparing(PriorSecondPrimary::diagnosedMonth, nullSafeComparator)
+        .thenComparing(PriorSecondPrimary::tumorLocation)
+    
     override fun compare(secondPrimary1: PriorSecondPrimary, secondPrimary2: PriorSecondPrimary): Int {
-        val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int?>())
-        return Comparator.comparing({ obj: PriorSecondPrimary -> obj.diagnosedYear() }, nullSafeComparator)
-            .thenComparing({ obj: PriorSecondPrimary -> obj.diagnosedMonth() }, nullSafeComparator)
-            .thenComparing { obj: PriorSecondPrimary -> obj.tumorLocation() }
-            .compare(secondPrimary1, secondPrimary2)
+        return comparator.compare(secondPrimary1, secondPrimary2)
     }
 }

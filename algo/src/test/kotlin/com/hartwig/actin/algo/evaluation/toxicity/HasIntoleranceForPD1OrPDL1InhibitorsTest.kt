@@ -56,7 +56,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
         private fun patient(intolerances: Iterable<Intolerance>, priorConditionDoid: String): PatientRecord {
             val minimalPatient = TestDataFactory.createMinimalTestPatientRecord()
             val priorCondition: PriorOtherCondition? =
-                TestPriorOtherConditionFactory.builder().addDoids(priorConditionDoid).isContraindicationForTherapy(true).build()
+                TestPriorOtherConditionFactory.createMinimal().addDoids(priorConditionDoid).isContraindicationForTherapy(true).build()
             return ImmutablePatientRecord.copyOf(minimalPatient)
                 .withClinical(
                     ImmutableClinicalRecord.copyOf(minimalPatient.clinical())

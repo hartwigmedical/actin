@@ -12,7 +12,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
     @Test
     fun shouldPassWhenPatientRecentlyReceivedCypInducingMedication() {
         val medications = listOf(
-            TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
+            TestMedicationFactory.createMinimal().stopDate(EVALUATION_DATE).addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
@@ -23,7 +23,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
     @Test
     fun shouldFailWhenPatientRecentlyReceivedCypInducingMedicationThatDoesNotMatchCyp() {
         val medications = listOf(
-            TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
+            TestMedicationFactory.createMinimal().stopDate(EVALUATION_DATE).addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
@@ -34,7 +34,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
     @Test
     fun shouldFailWhenPatientReceivedCypInducingMedicationBeforeMinStopDate() {
         val medications = listOf(
-            TestMedicationFactory.builder().stopDate(EVALUATION_DATE.minusWeeks(3)).addCypInteractions(
+            TestMedicationFactory.createMinimal().stopDate(EVALUATION_DATE.minusWeeks(3)).addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
@@ -45,7 +45,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
     @Test
     fun shouldFailWhenPatientDoesNotRecentlyReceivedCypInducingMedication() {
         val medications = listOf(
-            TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
+            TestMedicationFactory.createMinimal().stopDate(EVALUATION_DATE).addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
@@ -55,7 +55,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
 
     @Test
     fun shouldFailWhenPatientUsesNoMedication() {
-        val medications = listOf(TestMedicationFactory.builder().build())
+        val medications = listOf(TestMedicationFactory.createMinimal().build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 

@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentStage
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails

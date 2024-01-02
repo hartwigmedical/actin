@@ -1,18 +1,12 @@
 package com.hartwig.actin.clinical.datamodel
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
-
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class Dosage {
-    abstract fun dosageMin(): Double?
-    abstract fun dosageMax(): Double?
-    abstract fun dosageUnit(): String?
-    abstract fun frequency(): Double?
-    abstract fun frequencyUnit(): String?
-    abstract fun periodBetweenValue(): Double?
-    abstract fun periodBetweenUnit(): String?
-    abstract fun ifNeeded(): Boolean?
-}
+data class Dosage(
+    val dosageMin: Double? = null,
+    val dosageMax: Double? = null,
+    val dosageUnit: String? = null,
+    val frequency: Double? = null,
+    val frequencyUnit: String? = null,
+    val periodBetweenValue: Double? = null,
+    val periodBetweenUnit: String? = null,
+    val ifNeeded: Boolean? = null
+)

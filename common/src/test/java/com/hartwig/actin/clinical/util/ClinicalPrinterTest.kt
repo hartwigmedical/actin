@@ -6,8 +6,9 @@ import com.hartwig.actin.clinical.util.ClinicalPrinter.Companion.printRecord
 import org.junit.Test
 
 class ClinicalPrinterTest {
+
     @Test
-    fun canPrintClinicalRecords() {
+    fun `Should print clinical records`() {
         printRecord(createProperTestClinicalRecord())
         printRecord(createMinimalTestClinicalRecord())
     }

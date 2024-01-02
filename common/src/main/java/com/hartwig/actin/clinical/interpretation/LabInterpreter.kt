@@ -1,48 +1,33 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.Lists
-import com.google.common.collect.Maps
-import com.google.common.collect.Multimap
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 
 object LabInterpreter {
-    @JvmField
-    val MAPPINGS: MutableMap<LabMeasurement, LabMeasurement> = Maps.newHashMap()
-
-    init {
-        MAPPINGS[LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO_POCT] = LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO
-        MAPPINGS[LabMeasurement.LYMPHOCYTES_ABS_EDM] = LabMeasurement.LYMPHOCYTES_ABS_EDA
-        MAPPINGS[LabMeasurement.NEUTROPHILS_ABS_EDA] = LabMeasurement.NEUTROPHILS_ABS
-        MAPPINGS[LabMeasurement.PROTHROMBIN_TIME_POCT] = LabMeasurement.PROTHROMBIN_TIME
-        MAPPINGS[LabMeasurement.THROMBOCYTES_ABS_M] = LabMeasurement.THROMBOCYTES_ABS
-    }
-
+    val MAPPINGS: Map<LabMeasurement, LabMeasurement> = mapOf(
+        LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO_POCT to LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO,
+        LabMeasurement.LYMPHOCYTES_ABS_EDM to LabMeasurement.LYMPHOCYTES_ABS_EDA,
+        LabMeasurement.NEUTROPHILS_ABS_EDA to LabMeasurement.NEUTROPHILS_ABS,
+        LabMeasurement.PROTHROMBIN_TIME_POCT to LabMeasurement.PROTHROMBIN_TIME,
+        LabMeasurement.THROMBOCYTES_ABS_M to LabMeasurement.THROMBOCYTES_ABS
+    )
+    
     fun interpret(labValues: List<LabValue>): LabInterpretation {
-        val measurements: Multimap<LabMeasurement, LabValue> = ArrayListMultimap.create()
-        for (measurement in LabMeasurement.values()) {
-            measurements.putAll(measurement, filterByCode(labValues, measurement.code()))
+        val baseMeasurements = LabMeasurement.values().associateWith { filterByCode(labValues, it.code) }
+        val mappedMeasurements = MAPPINGS.entries.associate { (fromMeasurement, toMeasurement) ->
+            toMeasurement to baseMeasurements[fromMeasurement]!!.map { convert(it, toMeasurement) }
         }
-        for ((key, value) in MAPPINGS) {
-            for (labValue in measurements[key]) {
-                measurements.put(value, convert(labValue, value))
-            }
+
+        val allMeasurements = baseMeasurements.mapValues { (measurement, values) ->
+            values + (mappedMeasurements[measurement] ?: emptyList())
         }
-        return LabInterpretation.Companion.fromMeasurements(measurements)
+        return LabInterpretation.fromMeasurements(allMeasurements)
     }
 
     private fun convert(labValue: LabValue, targetMeasure: LabMeasurement): LabValue {
-        return ImmutableLabValue.builder().from(labValue).code(targetMeasure.code()).unit(targetMeasure.defaultUnit()).build()
+        return labValue.copy(code = targetMeasure.code, unit = targetMeasure.defaultUnit)
     }
 
     private fun filterByCode(labValues: List<LabValue>, code: String): List<LabValue> {
-        val filtered: MutableList<LabValue> = Lists.newArrayList()
-        for (labValue in labValues) {
-            if (labValue.code() == code) {
-                filtered.add(labValue)
-            }
-        }
-        return filtered
+        return labValues.filter { it.code == code }
     }
 }

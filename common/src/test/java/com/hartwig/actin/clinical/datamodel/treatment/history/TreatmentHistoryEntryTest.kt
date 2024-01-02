@@ -1,42 +1,47 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history
 
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TreatmentHistoryEntryTest {
+
     @Test
-    fun shouldExtractNamesFromTreatmentHistory() {
-        val treatmentHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
-            .withTreatments(chemotherapy(emptySet(), TREATMENT_1), chemotherapy(emptySet(), TREATMENT_2))
-        Assertions.assertThat(treatmentHistoryEntry.treatmentName()).isEqualTo(TREATMENT_1 + ";" + TREATMENT_2)
+    fun `Should extract names from treatment history`() {
+        val treatmentHistoryEntry = TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.copy(
+            treatments = setOf(chemotherapy(TREATMENT_1), chemotherapy(TREATMENT_2))
+        )
+        assertThat(treatmentHistoryEntry.treatmentName()).isEqualTo(TREATMENT_1 + ";" + TREATMENT_2)
     }
 
     @Test
-    fun shouldExtractTreatmentDisplayStringsFromTreatmentHistory() {
-        val treatmentHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
-            .withTreatments(chemotherapy(emptySet(), TREATMENT_1), chemotherapy(emptySet(), TREATMENT_2))
-        Assertions.assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Treatment 1;Treatment 2")
+    fun `Should extract treatment display strings from treatment history`() {
+        val treatmentHistoryEntry = TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.copy(
+            treatments = setOf(chemotherapy(TREATMENT_1), chemotherapy(TREATMENT_2))
+        )
+        assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Treatment 1;Treatment 2")
     }
 
     @Test
-    fun shouldDisplayChemoradiationWhenOnlyComponentsAreChemotherapyAndRadiation() {
-        val treatmentHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
-            .withTreatments(chemotherapy(emptySet(), "chemotherapy"), RADIOTHERAPY)
-        Assertions.assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemoradiation")
+    fun `Should display chemoradiation when only components are chemotherapy and radiation`() {
+        val treatmentHistoryEntry = TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.copy(
+            treatments = setOf(chemotherapy("chemotherapy"), RADIOTHERAPY)
+        )
+        assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemoradiation")
     }
 
     @Test
-    fun shouldDisplayChemoradiationAndOtherTreatmentWhenComponentsAreChemotherapyAndRadiationAndOtherTreatment() {
-        val treatmentHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
-            .withTreatments(
-                chemotherapy(emptySet(), "chemotherapy"),
+    fun `Should display chemoradiation and other treatment when components are chemotherapy and radiation and other treatment`() {
+        val treatmentHistoryEntry = TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.copy(
+            treatments = setOf(
+                chemotherapy("chemotherapy"),
                 RADIOTHERAPY,
                 ImmutableOtherTreatment.builder()
                     .name("ablation")
@@ -45,27 +50,25 @@ class TreatmentHistoryEntryTest {
                     .isSystemic(false)
                     .build()
             )
-        Assertions.assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemoradiation and Ablation")
+        )
+        assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemoradiation and Ablation")
     }
 
     @Test
-    fun shouldDisplayChemoradiationWithChemoDrugWhenComponentsAreChemotherapyAndRadiationAndChemoDrugTreatment() {
-        val treatmentHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
-            .withTreatments(
-                chemotherapy(emptySet(), "chemotherapy"),
-                RADIOTHERAPY,
-                chemotherapy(emptySet(), "chemo drug")
-            )
-        Assertions.assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemoradiation (with Chemo drug)")
+    fun `Should display chemoradiation with chemo drug when components are chemotherapy and radiation and chemo drug treatment`() {
+        val treatmentHistoryEntry = TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.copy(
+            treatments = setOf(chemotherapy("chemotherapy"), RADIOTHERAPY, chemotherapy("chemo drug"))
+        )
+        assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemoradiation (with Chemo drug)")
     }
 
     @Test
-    fun shouldDisplayNormallyWhenComponentsAreChemotherapyAndRadiationAndMultipleAdditionalTreatments() {
-        val treatmentHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE)
-            .withTreatments(
-                chemotherapy(emptySet(), "chemotherapy"),
+    fun `Should display normally when components are chemotherapy and radiation and multiple additional treatments`() {
+        val treatmentHistoryEntry = TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.copy(
+            treatments = setOf(
+                chemotherapy("chemotherapy"),
                 RADIOTHERAPY,
-                chemotherapy(emptySet(), "chemo drug"),
+                chemotherapy("chemo drug"),
                 ImmutableOtherTreatment.builder()
                     .name("ablation")
                     .addCategories(TreatmentCategory.ABLATION)
@@ -73,33 +76,34 @@ class TreatmentHistoryEntryTest {
                     .isSystemic(false)
                     .build()
             )
-        Assertions.assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemotherapy;Radiotherapy;Chemo drug;Ablation")
+        )
+        assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemotherapy;Radiotherapy;Chemo drug;Ablation")
     }
 
     @Test
-    fun shouldIncludeSwitchAndMaintenanceTreatmentsWhenPresent() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.allTreatments()).isEqualTo(
-            java.util.Set.of(
-                TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.treatments().iterator().next(),
-                SWITCH_TREATMENT_STAGE.treatment(),
-                MAINTENANCE_TREATMENT_STAGE.treatment()
+    fun `Should include switch and maintenance treatments when present`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.allTreatments()).isEqualTo(
+            setOf(
+                TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.treatments.first(),
+                SWITCH_TREATMENT_STAGE.treatment,
+                MAINTENANCE_TREATMENT_STAGE.treatment
             )
         )
     }
 
     @Test
-    fun shouldDisplayBaseNameWithoutSwitchAndMaintenanceTreatments() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.treatmentDisplay()).isEqualTo("Test treatment")
+    fun `Should display base name without switch and maintenance treatments`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.treatmentDisplay()).isEqualTo("Test treatment")
     }
 
     @Test
-    fun shouldReturnTreatmentCategories() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
+    fun `Should return treatment categories`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
     }
 
     @Test
-    fun shouldIncludeSwitchAndMaintenanceTreatmentCategoriesInTreatmentCategories() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.categories()).containsExactlyInAnyOrder(
+    fun `Should include switch and maintenance treatment categories in treatment categories`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.categories()).containsExactlyInAnyOrder(
             TreatmentCategory.CHEMOTHERAPY,
             TreatmentCategory.TARGETED_THERAPY,
             TreatmentCategory.SUPPORTIVE_TREATMENT
@@ -107,138 +111,100 @@ class TreatmentHistoryEntryTest {
     }
 
     @Test
-    fun shouldReturnNullForTypeNotConfiguredWhenMatchingAgainstType() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE.isOfType(DrugType.PLATINUM_COMPOUND)).isNull()
+    fun `Should return null for type not configured when matching against type`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE.isOfType(DrugType.PLATINUM_COMPOUND)).isNull()
     }
 
     @Test
-    fun shouldReturnTrueForMatchingType() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.isOfType(DrugType.PLATINUM_COMPOUND)).isTrue()
+    fun `Should return true for matching type`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.isOfType(DrugType.PLATINUM_COMPOUND)).isTrue()
     }
 
     @Test
-    fun shouldReturnFalseForTypeThatDoesNotMatch() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.isOfType(DrugType.ANTIMETABOLITE)).isFalse()
+    fun `Should return false for type that does not match`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.isOfType(DrugType.ANTIMETABOLITE)).isFalse()
     }
 
     @Test
-    fun shouldReturnTrueForTypeThatMatchesSwitchTreatment() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.isOfType(DrugType.ALK_INHIBITOR)).isTrue()
+    fun `Should return true for type that matches switch treatment`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.isOfType(DrugType.ALK_INHIBITOR)).isTrue()
     }
 
     @Test
-    fun shouldReturnTrueForTypeThatMatchesMaintenanceTreatment() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.isOfType(DrugType.STEROID)).isTrue()
+    fun `Should return true for type that matches maintenance treatment`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.isOfType(DrugType.STEROID)).isTrue()
     }
 
     @Test
-    fun shouldReturnTrueWhenTypeConfigured() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.hasTypeConfigured()).isTrue()
+    fun `Should return true when type configured`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.hasTypeConfigured()).isTrue()
     }
 
     @Test
-    fun shouldReturnFalseWhenTypeNotConfigured() {
-        Assertions.assertThat(TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE.hasTypeConfigured()).isFalse()
+    fun `Should return false when type not configured`() {
+        assertThat(TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE.hasTypeConfigured()).isFalse()
     }
 
     @Test
-    fun shouldReturnNullForTypeNotConfiguredWhenMatchingAgainstSetOfTypes() {
-        Assertions.assertThat(
-            TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE.matchesTypeFromSet(
-                java.util.Set.of(
-                    DrugType.ANTIMETABOLITE,
-                    DrugType.PLATINUM_COMPOUND
-                )
-            )
+    fun `Should return null for type not configured when matching against set of types`() {
+        assertThat(
+            TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE.matchesTypeFromSet(setOf(DrugType.ANTIMETABOLITE, DrugType.PLATINUM_COMPOUND))
         ).isNull()
     }
 
     @Test
-    fun shouldReturnTrueForSwitchTypeThatMatchesSetOfTypes() {
-        Assertions.assertThat(
-            TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.matchesTypeFromSet(
-                java.util.Set.of(
-                    DrugType.ANTIMETABOLITE,
-                    DrugType.ALK_INHIBITOR
-                )
-            )
+    fun `Should return true for switch type that matches set of types`() {
+        assertThat(
+            TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.matchesTypeFromSet(setOf(DrugType.ANTIMETABOLITE, DrugType.ALK_INHIBITOR))
         ).isTrue()
     }
 
     @Test
-    fun shouldReturnTrueForMaintenanceTypeThatMatchesSetOfTypes() {
-        Assertions.assertThat(
-            TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.matchesTypeFromSet(
-                java.util.Set.of(
-                    DrugType.ANTIMETABOLITE,
-                    DrugType.STEROID
-                )
-            )
+    fun `Should return true for maintenance type that matches set of types`() {
+        assertThat(
+            TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE.matchesTypeFromSet(setOf(DrugType.ANTIMETABOLITE, DrugType.STEROID))
         ).isTrue()
     }
 
     @Test
-    fun shouldReturnTrueForTypeThatMatchesSetOfTypes() {
-        Assertions.assertThat(
-            TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.matchesTypeFromSet(
-                java.util.Set.of(
-                    DrugType.ANTIMETABOLITE,
-                    DrugType.PLATINUM_COMPOUND
-                )
-            )
+    fun `Should return true for type that matches set of types`() {
+        assertThat(
+            TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.matchesTypeFromSet(setOf(DrugType.ANTIMETABOLITE, DrugType.PLATINUM_COMPOUND))
         ).isTrue()
     }
 
     @Test
-    fun shouldReturnFalseForTypeThatDoesNotMatchSetOfTypes() {
-        Assertions.assertThat(
-            TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.matchesTypeFromSet(
-                java.util.Set.of(
-                    DrugType.ANTIMETABOLITE,
-                    DrugType.ANTHRACYCLINE
-                )
-            )
+    fun `Should return false for type that does not match set of types`() {
+        assertThat(
+            TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.matchesTypeFromSet(setOf(DrugType.ANTIMETABOLITE, DrugType.ANTHRACYCLINE))
         ).isFalse()
     }
 
     companion object {
         private val TREATMENT_HISTORY_ENTRY_WITHOUT_TYPE = treatmentHistoryEntryWithDrugTypes(emptySet())
-        private val TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE =
-            treatmentHistoryEntryWithDrugTypes(java.util.Set.of(DrugType.PLATINUM_COMPOUND))
-        val SWITCH_TREATMENT_STAGE = treatmentStage("SWITCH TREATMENT", TreatmentCategory.TARGETED_THERAPY, DrugType.ALK_INHIBITOR)
-        val MAINTENANCE_TREATMENT_STAGE = treatmentStage("MAINTENANCE TREATMENT", TreatmentCategory.SUPPORTIVE_TREATMENT, DrugType.STEROID)
-        val TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE = ImmutableTreatmentHistoryEntry.copyOf(
-            TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE
+        private val TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE = treatmentHistoryEntryWithDrugTypes(setOf(DrugType.PLATINUM_COMPOUND))
+        val SWITCH_TREATMENT_STAGE = treatmentStage(
+            drugTreatment("SWITCH TREATMENT", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
         )
-            .withTreatmentHistoryDetails(
-                ImmutableTreatmentHistoryDetails.builder()
-                    .addSwitchToTreatments(SWITCH_TREATMENT_STAGE)
-                    .maintenanceTreatment(MAINTENANCE_TREATMENT_STAGE)
-                    .build()
-            )
-        private val RADIOTHERAPY: Radiotherapy = ImmutableRadiotherapy.builder().name("radiotherapy").build()
+        val MAINTENANCE_TREATMENT_STAGE = treatmentStage(
+            drugTreatment("MAINTENANCE TREATMENT", TreatmentCategory.SUPPORTIVE_TREATMENT, setOf(DrugType.STEROID))
+        )
+        val TREATMENT_HISTORY_ENTRY_WITH_SWITCH_AND_MAINTENANCE = treatmentHistoryEntry(
+            treatments = setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.PLATINUM_COMPOUND))),
+            switchToTreatments = listOf(SWITCH_TREATMENT_STAGE),
+            maintenanceTreatment = MAINTENANCE_TREATMENT_STAGE
+        )
+
+        private val RADIOTHERAPY: Radiotherapy = Radiotherapy("radiotherapy")
         private const val TREATMENT_1 = "TREATMENT_1"
         private const val TREATMENT_2 = "TREATMENT_2"
-        private fun treatmentStage(name: String, category: TreatmentCategory, drugType: DrugType): ImmutableTreatmentStage {
-            return ImmutableTreatmentStage.builder()
-                .treatment(
-                    ImmutableDrugTreatment.builder()
-                        .name(name)
-                        .addDrugs(ImmutableDrug.builder().name("$name drug").category(category).addDrugTypes(drugType).build())
-                        .build()
-                )
-                .build()
+
+        private fun treatmentHistoryEntryWithDrugTypes(types: Set<DrugType>): TreatmentHistoryEntry {
+            return treatmentHistoryEntry(treatments = setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY, types)))
         }
 
-        private fun treatmentHistoryEntryWithDrugTypes(types: Set<DrugType>): ImmutableTreatmentHistoryEntry {
-            return ImmutableTreatmentHistoryEntry.builder().addTreatments(chemotherapy(types, "test treatment")).build()
-        }
-
-        private fun chemotherapy(types: Set<DrugType>, name: String): ImmutableDrugTreatment {
-            return ImmutableDrugTreatment.builder()
-                .addDrugs(ImmutableDrug.builder().name("test drug").category(TreatmentCategory.CHEMOTHERAPY).drugTypes(types).build())
-                .name(name)
-                .build()
+        private fun chemotherapy(name: String): DrugTreatment {
+            return drugTreatment(name, TreatmentCategory.CHEMOTHERAPY)
         }
     }
 }

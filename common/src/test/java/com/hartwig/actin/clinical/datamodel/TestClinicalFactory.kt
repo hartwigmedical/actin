@@ -1,25 +1,18 @@
 package com.hartwig.actin.clinical.datamodel
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
-import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import java.time.LocalDate
 
@@ -40,221 +33,204 @@ object TestClinicalFactory {
     private const val DAYS_UNTIL_MEDICATION_END = 15
     private const val YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS = 3
 
-    @JvmStatic
     fun createMinimalTestClinicalRecord(): ClinicalRecord {
-        return ImmutableClinicalRecord.builder()
-            .patientId(TestDataFactory.TEST_PATIENT)
-            .patient(createTestPatientDetails())
-            .tumor(ImmutableTumorDetails.builder().build())
-            .clinicalStatus(ImmutableClinicalStatus.builder().build())
-            .build()
+        return ClinicalRecord(
+            patientId = TestDataFactory.TEST_PATIENT,
+            patient = createTestPatientDetails(),
+            tumor = TumorDetails(),
+            clinicalStatus = ClinicalStatus(),
+            oncologicalHistory = emptyList(),
+            priorSecondPrimaries = emptyList(),
+            priorOtherConditions = emptyList(),
+            priorMolecularTests = emptyList(),
+            complications = null,
+            labValues = emptyList(),
+            toxicities = emptyList(),
+            intolerances = emptyList(),
+            surgeries = emptyList(),
+            bodyWeights = emptyList(),
+            vitalFunctions = emptyList(),
+            bloodTransfusions = emptyList(),
+            medications = emptyList()
+        )
     }
 
-    @JvmStatic
     fun createProperTestClinicalRecord(): ClinicalRecord {
-        return ImmutableClinicalRecord.builder()
-            .from(createMinimalTestClinicalRecord())
-            .tumor(createTestTumorDetails()).clinicalStatus(createTestClinicalStatus()).oncologicalHistory(createTreatmentHistory())
-            .priorSecondPrimaries(createTestPriorSecondPrimaries())
-            .priorOtherConditions(createTestPriorOtherConditions())
-            .priorMolecularTests(createTestPriorMolecularTests())
-            .complications(createTestComplications())
-            .labValues(createTestLabValues())
-            .toxicities(createTestToxicities())
-            .intolerances(createTestIntolerances())
-            .surgeries(createTestSurgeries())
-            .bodyWeights(createTestBodyWeights())
-            .vitalFunctions(createTestVitalFunctions())
-            .bloodTransfusions(createTestBloodTransfusions())
-            .medications(createTestMedications())
-            .build()
+        return createMinimalTestClinicalRecord().copy(
+            tumor = createTestTumorDetails(),
+            clinicalStatus = createTestClinicalStatus(),
+            oncologicalHistory = createTreatmentHistory(),
+            priorSecondPrimaries = createTestPriorSecondPrimaries(),
+            priorOtherConditions = createTestPriorOtherConditions(),
+            priorMolecularTests = createTestPriorMolecularTests(),
+            complications = createTestComplications(),
+            labValues = createTestLabValues(),
+            toxicities = createTestToxicities(),
+            intolerances = createTestIntolerances(),
+            surgeries = createTestSurgeries(),
+            bodyWeights = createTestBodyWeights(),
+            vitalFunctions = createTestVitalFunctions(),
+            bloodTransfusions = createTestBloodTransfusions(),
+            medications = createTestMedications()
+        )
     }
 
     fun createExhaustiveTestClinicalRecord(): ClinicalRecord {
-        return ImmutableClinicalRecord.builder()
-            .from(createMinimalTestClinicalRecord())
-            .tumor(createTestTumorDetails())
-            .clinicalStatus(createTestClinicalStatus())
-            .oncologicalHistory(createExhaustiveTreatmentHistory())
-            .priorSecondPrimaries(createTestPriorSecondPrimaries())
-            .priorOtherConditions(createTestPriorOtherConditions())
-            .priorMolecularTests(createTestPriorMolecularTests())
-            .complications(createTestComplications())
-            .labValues(createTestLabValues())
-            .toxicities(createTestToxicities())
-            .intolerances(createTestIntolerances())
-            .surgeries(createTestSurgeries())
-            .bodyWeights(createTestBodyWeights())
-            .vitalFunctions(createTestVitalFunctions())
-            .bloodTransfusions(createTestBloodTransfusions())
-            .medications(createTestMedications())
-            .build()
+        return createProperTestClinicalRecord().copy(oncologicalHistory = createExhaustiveTreatmentHistory())
     }
 
     private fun createTestPatientDetails(): PatientDetails {
-        return ImmutablePatientDetails.builder()
-            .gender(Gender.MALE)
-            .birthYear(1950)
-            .registrationDate(TODAY.minusDays(DAYS_SINCE_REGISTRATION.toLong()))
-            .questionnaireDate(TODAY.minusDays(DAYS_SINCE_QUESTIONNAIRE.toLong()))
-            .build()
+        return PatientDetails(
+            gender = Gender.MALE,
+            birthYear = 1950,
+            registrationDate = TODAY.minusDays(DAYS_SINCE_REGISTRATION.toLong()),
+            questionnaireDate = TODAY.minusDays(DAYS_SINCE_QUESTIONNAIRE.toLong()),
+            otherMolecularPatientId = null
+        )
     }
 
     private fun createTestTumorDetails(): TumorDetails {
-        return ImmutableTumorDetails.builder()
-            .primaryTumorLocation("Skin")
-            .primaryTumorSubLocation("")
-            .primaryTumorType("Melanoma")
-            .primaryTumorSubType("")
-            .primaryTumorExtraDetails("")
-            .addDoids("8923")
-            .stage(TumorStage.IV)
-            .hasMeasurableDisease(true)
-            .hasBrainLesions(true)
-            .hasActiveBrainLesions(false)
-            .hasCnsLesions(true)
-            .hasActiveCnsLesions(true)
-            .hasBoneLesions(null)
-            .hasLiverLesions(true)
-            .hasLungLesions(true)
-            .hasLymphNodeLesions(true)
-            .addOtherLesions("lymph nodes cervical and supraclavicular")
-            .addOtherLesions("lymph nodes abdominal")
-            .addOtherLesions("lymph node")
-            .addOtherLesions("Test Lesion")
-            .biopsyLocation("Liver")
-            .build()
+        return TumorDetails(
+            primaryTumorLocation = "Skin",
+            primaryTumorSubLocation = "",
+            primaryTumorType = "Melanoma",
+            primaryTumorSubType = "",
+            primaryTumorExtraDetails = "",
+            doids = setOf("8923"),
+            stage = TumorStage.IV,
+            hasMeasurableDisease = true,
+            hasBrainLesions = true,
+            hasActiveBrainLesions = false,
+            hasCnsLesions = true,
+            hasActiveCnsLesions = true,
+            hasBoneLesions = null,
+            hasLiverLesions = true,
+            hasLungLesions = true,
+            hasLymphNodeLesions = true,
+            otherLesions = listOf("lymph nodes cervical and supraclavicular", "lymph nodes abdominal", "lymph node", "Test Lesion"),
+            biopsyLocation = "Liver"
+        )
     }
 
     private fun createTestClinicalStatus(): ClinicalStatus {
-        val ecg: ECG = ImmutableECG.builder().hasSigAberrationLatestECG(false).build()
-        val infectionStatus: InfectionStatus = ImmutableInfectionStatus.builder().hasActiveInfection(false).build()
-        return ImmutableClinicalStatus.builder().who(1).infectionStatus(infectionStatus).ecg(ecg).build()
+        return ClinicalStatus(
+            who = 1,
+            infectionStatus = InfectionStatus(hasActiveInfection = false, description = null),
+            ecg = ECG(hasSigAberrationLatestECG = false, aberrationDescription = null, jtcMeasure = null, qtcfMeasure = null)
+        ) 
     }
 
     private fun drug(name: String, drugType: DrugType, category: TreatmentCategory): Drug {
-        return ImmutableDrug.builder().name(name).addDrugTypes(drugType).category(category).build()
-    }
-
-    private fun treatmentHistoryEntry(treatments: Set<Treatment>, startYear: Int, intent: Intent): TreatmentHistoryEntry {
-        return ImmutableTreatmentHistoryEntry.builder()
-            .treatments(treatments)
-            .startYear(startYear)
-            .addIntents(intent)
-            .treatmentHistoryDetails(
-                ImmutableTreatmentHistoryDetails.builder()
-                    .bestResponse(TreatmentResponse.PARTIAL_RESPONSE)
-                    .build()
-            )
-            .build()
+        return Drug(name = name, drugTypes = setOf(drugType), category = category)
     }
 
     private fun createTreatmentHistory(): List<TreatmentHistoryEntry> {
         val oxaliplatin = drug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY)
         val fluorouracil = drug("5-FU", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY)
         val irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY)
-        val folfirinox: DrugTreatment = ImmutableDrugTreatment.builder()
-            .name("FOLFIRINOX")
-            .isSystemic(true)
-            .addDrugs(oxaliplatin, fluorouracil, irinotecan)
-            .maxCycles(8)
-            .build()
-        val radiotherapy: Radiotherapy = ImmutableRadiotherapy.builder().name("RADIOTHERAPY").isSystemic(false).build()
+        val folfirinox = DrugTreatment(
+            name = "FOLFIRINOX",
+            drugs = setOf(oxaliplatin, fluorouracil, irinotecan),
+            maxCycles = 8
+        )
+        val radiotherapy = Radiotherapy(name = "RADIOTHERAPY")
         val pembrolizumab = drug("PEMBROLIZUMAB", DrugType.ANTI_PD_1, TreatmentCategory.IMMUNOTHERAPY)
-        val folfirinoxAndPembrolizumab: DrugTreatment = ImmutableDrugTreatment.builder()
-            .name("FOLFIRINOX+PEMBROLIZUMAB")
-            .addAllDrugs(folfirinox.drugs())
-            .addDrugs(pembrolizumab)
-            .isSystemic(true)
-            .build()
-        val folfirinoxLocoRegional: DrugTreatment =
-            ImmutableDrugTreatment.copyOf(folfirinox).withName("FOLFIRINOX_LOCO-REGIONAL").withIsSystemic(false)
-        val colectomy: OtherTreatment =
-            ImmutableOtherTreatment.builder().name("COLECTOMY").addCategories(TreatmentCategory.SURGERY).isSystemic(true).build()
-        val surgeryHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .addTreatments(colectomy)
-            .startYear(2021)
-            .addIntents(Intent.MAINTENANCE)
-            .isTrial(false)
-            .build()
-        val folfirinoxEntry = treatmentHistoryEntry(java.util.Set.of<Treatment>(folfirinox), 2020, Intent.NEOADJUVANT)
-        val switchToTreatments =
-            java.util.Set.of<TreatmentStage>(ImmutableTreatmentStage.builder().treatment(folfirinoxAndPembrolizumab).cycles(3).build())
-        val maintenanceTreatment: TreatmentStage = ImmutableTreatmentStage.builder().treatment(folfirinoxLocoRegional).build()
-        val entryWithSwitchAndMaintenance: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.copyOf(folfirinoxEntry)
-            .withTreatmentHistoryDetails(
-                ImmutableTreatmentHistoryDetails.copyOf(folfirinoxEntry.treatmentHistoryDetails())
-                    .withCycles(4)
-                    .withSwitchToTreatments(switchToTreatments)
-                    .withMaintenanceTreatment(maintenanceTreatment)
+        val folfirinoxAndPembrolizumab = DrugTreatment(
+            name = "FOLFIRINOX+PEMBROLIZUMAB",
+            drugs = folfirinox.drugs + pembrolizumab,
+        )
+        val folfirinoxLocoRegional = folfirinox.copy(name = "FOLFIRINOX_LOCO-REGIONAL", isSystemic = false)
+        val colectomy = OtherTreatment(name = "COLECTOMY", categories = setOf(TreatmentCategory.SURGERY), isSystemic = false)
+        val surgeryHistoryEntry = treatmentHistoryEntry(
+            setOf(colectomy),
+            startYear = 2021,
+            intents = setOf(Intent.MAINTENANCE),
+            isTrial = false
+        )
+        val folfirinoxEntry = treatmentHistoryEntry(
+            treatments = setOf(folfirinox),
+            startYear = 2020,
+            intents = setOf(Intent.NEOADJUVANT),
+            bestResponse = TreatmentResponse.PARTIAL_RESPONSE
+        )
+        val switchToTreatments = listOf(treatmentStage(treatment = folfirinoxAndPembrolizumab, cycles = 3))
+        val maintenanceTreatment = treatmentStage(treatment = folfirinoxLocoRegional)
+        val entryWithSwitchAndMaintenance = folfirinoxEntry.copy(
+            treatmentHistoryDetails = folfirinoxEntry.treatmentHistoryDetails!!.copy(
+                cycles = 4,
+                switchToTreatments = switchToTreatments,
+                maintenanceTreatment = maintenanceTreatment,
             )
-        return java.util.List.of(
+        )
+        return listOf(
             entryWithSwitchAndMaintenance,
             surgeryHistoryEntry,
-            treatmentHistoryEntry(java.util.Set.of(radiotherapy, folfirinoxLocoRegional), 2022, Intent.ADJUVANT),
-            treatmentHistoryEntry(java.util.Set.of<Treatment>(folfirinoxAndPembrolizumab), 2023, Intent.PALLIATIVE)
+            treatmentHistoryEntry(
+                treatments = setOf(radiotherapy, folfirinoxLocoRegional),
+                startYear = 2022,
+                intents = setOf(Intent.ADJUVANT),
+                bestResponse = TreatmentResponse.PARTIAL_RESPONSE
+            ),
+            treatmentHistoryEntry(
+                treatments = setOf(folfirinoxAndPembrolizumab),
+                startYear = 2023,
+                intents = setOf(Intent.PALLIATIVE),
+                bestResponse = TreatmentResponse.PARTIAL_RESPONSE
+            )
         )
     }
 
     private fun createExhaustiveTreatmentHistory(): List<TreatmentHistoryEntry> {
-        val irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY)
-        val hasNoDateHistoryEntry: TreatmentHistoryEntry =
-            ImmutableTreatmentHistoryEntry.builder().addTreatments(ImmutableDrugTreatment.builder().name("Therapy").build()).build()
-        val hasStartYearHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .startYear(2019)
-            .addTreatments(ImmutableDrugTreatment.builder().name("Therapy1").addDrugs(irinotecan).build())
-            .build()
-        val hasStartYearHistoryEntry2: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .startYear(2023)
-            .addTreatments(ImmutableDrugTreatment.builder().name("Therapy4").addDrugs(irinotecan).build())
-            .build()
-        val hasEndYearMonthHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .startYear(null)
-            .startMonth(null)
-            .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(2020).stopMonth(6).build())
-            .addTreatments(ImmutableDrugTreatment.builder().name("Therapy2").addDrugs(irinotecan).build())
-            .build()
-        val hasStartYearMonthEndYearMonthHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .startYear(2020)
-            .startMonth(8)
-            .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().stopYear(2021).stopMonth(3).build())
-            .addTreatments(ImmutableDrugTreatment.builder().name("Therapy3").addDrugs(irinotecan).build())
-            .build()
-        val namedTrialHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .isTrial(true)
-            .startYear(2022)
-            .addTreatments(ImmutableDrugTreatment.builder().name("Trial1").addDrugs(irinotecan).build())
-            .build()
-        val unknownDetailsHistoryEntry: TreatmentHistoryEntry =
-            ImmutableTreatmentHistoryEntry.builder().isTrial(true).startYear(2022).build()
-        val hasCyclesStopReasonHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .isTrial(true)
-            .startYear(2022)
-            .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
-            .addTreatments(ImmutableDrugTreatment.builder().name("Trial1").addDrugs(irinotecan).build())
-            .build()
-        val hasAcronymHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .isTrial(true)
-            .trialAcronym("tr2")
-            .startYear(2022)
-            .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(3).stopReasonDetail("toxicity").build())
-            .addTreatments(ImmutableDrugTreatment.builder().name("Trial2").addDrugs(irinotecan).build())
-            .build()
-        val hasSingleIntentHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .isTrial(true)
-            .startYear(2022)
-            .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(1).stopReasonDetail("toxicity").build())
-            .addTreatments(ImmutableDrugTreatment.builder().name("Trial4").addDrugs(irinotecan).build())
-            .intents(java.util.Set.of(Intent.ADJUVANT))
-            .build()
-        val hasMultipleIntentsHistoryEntry: TreatmentHistoryEntry = ImmutableTreatmentHistoryEntry.builder()
-            .isTrial(true)
-            .startYear(2022)
-            .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().cycles(null).stopReasonDetail("toxicity").build())
-            .addTreatments(ImmutableDrugTreatment.builder().name("Trial5").addDrugs(irinotecan).build())
-            .intents(java.util.Set.of(Intent.ADJUVANT, Intent.CONSOLIDATION))
-            .build()
-        return java.util.List.of(
+        val hasNoDateHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("Therapy", TreatmentCategory.CHEMOTHERAPY)))
+        val hasStartYearHistoryEntry = treatmentHistoryEntry(
+            startYear = 2019, treatments = drugTreatmentSet("Therapy1")
+        )
+        val hasStartYearHistoryEntry2 = treatmentHistoryEntry(
+            startYear = 2023, treatments = drugTreatmentSet("Therapy4")
+        )
+        val hasEndYearMonthHistoryEntry = treatmentHistoryEntry(
+            stopYear = 2020, stopMonth = 6, treatments = drugTreatmentSet("Therapy2")
+        )
+        val hasStartYearMonthEndYearMonthHistoryEntry = treatmentHistoryEntry(
+            startYear = 2020,
+            startMonth = 8,
+            stopYear = 2021,
+            stopMonth = 3,
+            treatments = drugTreatmentSet("Therapy3")
+        )
+        val namedTrialHistoryEntry = treatmentHistoryEntry(isTrial = true, startYear = 2022, treatments = drugTreatmentSet("Trial1"))
+        val unknownDetailsHistoryEntry = treatmentHistoryEntry(isTrial = true, startYear = 2022)
+        val hasCyclesStopReasonHistoryEntry = treatmentHistoryEntry(
+            isTrial = true,
+            startYear = 2022,
+            numCycles = 3,
+            stopReasonDetail = "toxicity",
+            treatments = drugTreatmentSet("Trial1")
+        )
+        val hasAcronymHistoryEntry = treatmentHistoryEntry(
+            isTrial = true,
+            trialAcronym = "tr2",
+            startYear = 2022,
+            numCycles = 3,
+            stopReasonDetail = "toxicity",
+            treatments = drugTreatmentSet("Trial2")
+        )
+        val hasSingleIntentHistoryEntry = treatmentHistoryEntry(
+            isTrial = true,
+            startYear = 2022,
+            numCycles = 1,
+            stopReasonDetail = "toxicity",
+            treatments = drugTreatmentSet("Trial4"),
+            intents = setOf(Intent.ADJUVANT)
+        )
+        val hasMultipleIntentsHistoryEntry = treatmentHistoryEntry(
+            isTrial = true,
+            startYear = 2022,
+            stopReasonDetail = "toxicity",
+            treatments = drugTreatmentSet("Trial5"),
+            intents = setOf(Intent.ADJUVANT, Intent.CONSOLIDATION)
+        )
+        return listOf(
             hasNoDateHistoryEntry,
             hasStartYearHistoryEntry,
             hasStartYearHistoryEntry2,
@@ -269,309 +245,272 @@ object TestClinicalFactory {
         )
     }
 
-    private fun createTestPriorSecondPrimaries(): List<PriorSecondPrimary> {
-        val priorSecondPrimaries: MutableList<PriorSecondPrimary> = Lists.newArrayList()
-        priorSecondPrimaries.add(
-            ImmutablePriorSecondPrimary.builder()
-                .tumorLocation("Lung")
-                .tumorSubLocation("")
-                .tumorType("Carcinoma")
-                .tumorSubType("Adenocarcinoma")
-                .addDoids("3905")
-                .diagnosedYear(TODAY.year - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS)
-                .diagnosedMonth(TODAY.monthValue)
-                .treatmentHistory("Surgery")
-                .status(TumorStatus.INACTIVE)
-                .build()
+    private fun drugTreatmentSet(name: String): Set<DrugTreatment> {
+        return setOf(
+            DrugTreatment(
+                name = name, drugs = setOf(drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY))
+            )
         )
-        return priorSecondPrimaries
+    }
+
+    private fun createTestPriorSecondPrimaries(): List<PriorSecondPrimary> {
+        return listOf(
+            PriorSecondPrimary(
+                tumorLocation = "Lung",
+                tumorSubLocation = "",
+                tumorType = "Carcinoma",
+                tumorSubType = "Adenocarcinoma",
+                doids = setOf("3905"),
+                diagnosedYear = TODAY.year - YEARS_SINCE_SECOND_PRIMARY_DIAGNOSIS,
+                diagnosedMonth = TODAY.monthValue,
+                treatmentHistory = "Surgery",
+                status = TumorStatus.INACTIVE,
+                lastTreatmentYear = null,
+                lastTreatmentMonth = null
+            )
+        )
     }
 
     private fun createTestPriorOtherConditions(): List<PriorOtherCondition> {
-        val priorOtherConditions: MutableList<PriorOtherCondition> = Lists.newArrayList()
-        priorOtherConditions.add(
-            ImmutablePriorOtherCondition.builder()
-                .name("Pancreatitis")
-                .addDoids("4989")
-                .category("Pancreas disease")
-                .isContraindicationForTherapy(true)
-                .build()
+        return listOf(
+            PriorOtherCondition(
+                name = "Pancreatitis",
+                doids = setOf("4989"),
+                category = "Pancreas disease",
+                isContraindicationForTherapy = true,
+                year = null,
+                month = null
+            ),
+            PriorOtherCondition(
+                name = "Coronary artery bypass graft (CABG)",
+                doids = setOf("3393"),
+                category = "Heart disease",
+                isContraindicationForTherapy = true,
+                year = null,
+                month = null
+            )
         )
-        priorOtherConditions.add(
-            ImmutablePriorOtherCondition.builder()
-                .name("Coronary artery bypass graft (CABG)")
-                .addDoids("3393")
-                .category("Heart disease")
-                .isContraindicationForTherapy(true)
-                .build()
-        )
-        return priorOtherConditions
     }
 
     private fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
-        val priorMolecularTests: MutableList<PriorMolecularTest> = Lists.newArrayList()
-        priorMolecularTests.add(
-            ImmutablePriorMolecularTest.builder()
-                .test("")
-                .item("KIT")
-                .measure(null)
-                .scoreText("Exon 11: c.1714_1719dup p.D572_P573dup")
-                .scoreValuePrefix(null)
-                .scoreValue(null)
-                .scoreValueUnit(null)
-                .impliesPotentialIndeterminateStatus(false)
-                .build()
+        return listOf(
+            PriorMolecularTest(
+                test = "",
+                item = "KIT",
+                measure = null,
+                scoreText = "Exon 11: c.1714_1719dup p.D572_P573dup",
+                scoreValuePrefix = null,
+                scoreValue = null,
+                scoreValueUnit = null,
+                impliesPotentialIndeterminateStatus = false
+            ),
+            PriorMolecularTest(
+                test = "IHC",
+                item = "PD-L1",
+                measure = null,
+                scoreText = null,
+                scoreValuePrefix = null,
+                scoreValue = 90.0,
+                scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = false
+            )
         )
-        priorMolecularTests.add(
-            ImmutablePriorMolecularTest.builder()
-                .test("IHC")
-                .item("PD-L1")
-                .measure(null)
-                .scoreText(null)
-                .scoreValuePrefix(null)
-                .scoreValue(90.0)
-                .scoreValueUnit("%")
-                .impliesPotentialIndeterminateStatus(false)
-                .build()
-        )
-        return priorMolecularTests
     }
 
     private fun createTestComplications(): List<Complication> {
-        val complications: MutableList<Complication> = Lists.newArrayList()
-        complications.add(ImmutableComplication.builder().name("Ascites").addCategories("Ascites").build())
-        return complications
+        return listOf(Complication(name = "Ascites", categories = setOf("Ascites"), year = null, month = null))
     }
 
     private fun createTestLabValues(): List<LabValue> {
-        val labValues: MutableList<LabValue> = Lists.newArrayList()
-        labValues.add(
-            ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()))
-                .code(LabMeasurement.ASPARTATE_AMINOTRANSFERASE.code())
-                .name("Aspartate aminotransferase")
-                .comparator("")
-                .value(36.0)
-                .unit(LabMeasurement.ASPARTATE_AMINOTRANSFERASE.defaultUnit())
-                .refLimitUp(33.0)
-                .isOutsideRef(true)
-                .build()
+        return listOf(
+            LabValue(
+                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
+                code = LabMeasurement.ASPARTATE_AMINOTRANSFERASE.code,
+                name = "Aspartate aminotransferase",
+                comparator = "",
+                value = 36.0,
+                unit = LabMeasurement.ASPARTATE_AMINOTRANSFERASE.defaultUnit,
+                refLimitUp = 33.0,
+                isOutsideRef = true,
+                refLimitLow = null
+            ),
+            LabValue(
+                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
+                code = LabMeasurement.HEMOGLOBIN.code,
+                name = "Hemoglobin",
+                comparator = "",
+                value = 5.5,
+                unit = LabMeasurement.HEMOGLOBIN.defaultUnit,
+                refLimitLow = 6.5,
+                refLimitUp = 9.5,
+                isOutsideRef = true
+            ),
+            LabValue(
+                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
+                code = LabMeasurement.THROMBOCYTES_ABS.code,
+                name = "Thrombocytes",
+                comparator = "",
+                value = 155.0,
+                unit = LabMeasurement.THROMBOCYTES_ABS.defaultUnit,
+                refLimitLow = 155.0,
+                refLimitUp = 350.0,
+                isOutsideRef = false
+            ),
+            LabValue(
+                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()),
+                code = LabMeasurement.THROMBOCYTES_ABS.code,
+                name = "Thrombocytes",
+                comparator = "",
+                value = 151.0,
+                unit = LabMeasurement.THROMBOCYTES_ABS.defaultUnit,
+                refLimitLow = 155.0,
+                refLimitUp = 350.0,
+                isOutsideRef = true
+            ),
+            LabValue(
+                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
+                code = LabMeasurement.THROMBOCYTES_ABS.code,
+                name = "Thrombocytes",
+                comparator = "",
+                value = 150.0,
+                unit = LabMeasurement.THROMBOCYTES_ABS.defaultUnit,
+                refLimitLow = 155.0,
+                refLimitUp = 350.0,
+                isOutsideRef = true
+            ),
+            LabValue(
+                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
+                code = LabMeasurement.LEUKOCYTES_ABS.code,
+                name = "Leukocytes",
+                comparator = "",
+                value = 6.5,
+                unit = LabMeasurement.LEUKOCYTES_ABS.defaultUnit,
+                refLimitLow = 3.0,
+                refLimitUp = 10.0,
+                isOutsideRef = false
+            ),
+            LabValue(
+                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()),
+                code = LabMeasurement.EGFR_CKD_EPI.code,
+                name = "CKD-EPI eGFR",
+                comparator = ">",
+                value = 100.0,
+                unit = LabMeasurement.EGFR_CKD_EPI.defaultUnit,
+                refLimitLow = 100.0,
+                refLimitUp = null,
+                isOutsideRef = false
+            ),
+            LabValue(
+                date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()),
+                code = LabMeasurement.LACTATE_DEHYDROGENASE.code,
+                name = "Lactate dehydrogenase",
+                comparator = "",
+                value = 240.0,
+                unit = LabMeasurement.LACTATE_DEHYDROGENASE.defaultUnit,
+                refLimitUp = 245.0,
+                refLimitLow = null,
+                isOutsideRef = false
+            ),
         )
-        labValues.add(
-            ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()))
-                .code(LabMeasurement.HEMOGLOBIN.code())
-                .name("Hemoglobin")
-                .comparator("")
-                .value(5.5)
-                .unit(LabMeasurement.HEMOGLOBIN.defaultUnit())
-                .refLimitLow(6.5)
-                .refLimitUp(9.5)
-                .isOutsideRef(true)
-                .build()
-        )
-        labValues.add(
-            ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()))
-                .code(LabMeasurement.THROMBOCYTES_ABS.code())
-                .name("Thrombocytes")
-                .comparator("")
-                .value(155.0)
-                .unit(LabMeasurement.THROMBOCYTES_ABS.defaultUnit())
-                .refLimitLow(155.0)
-                .refLimitUp(350.0)
-                .isOutsideRef(false)
-                .build()
-        )
-        labValues.add(
-            ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()))
-                .code(LabMeasurement.THROMBOCYTES_ABS.code())
-                .name("Thrombocytes")
-                .comparator("")
-                .value(151.0)
-                .unit(LabMeasurement.THROMBOCYTES_ABS.defaultUnit())
-                .refLimitLow(155.0)
-                .refLimitUp(350.0)
-                .isOutsideRef(true)
-                .build()
-        )
-        labValues.add(
-            ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()))
-                .code(LabMeasurement.THROMBOCYTES_ABS.code())
-                .name("Thrombocytes")
-                .comparator("")
-                .value(150.0)
-                .unit(LabMeasurement.THROMBOCYTES_ABS.defaultUnit())
-                .refLimitLow(155.0)
-                .refLimitUp(350.0)
-                .isOutsideRef(true)
-                .build()
-        )
-        labValues.add(
-            ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()))
-                .code(LabMeasurement.LEUKOCYTES_ABS.code())
-                .name("Leukocytes")
-                .comparator("")
-                .value(6.5)
-                .unit(LabMeasurement.LEUKOCYTES_ABS.defaultUnit())
-                .refLimitLow(3.0)
-                .refLimitUp(10.0)
-                .isOutsideRef(false)
-                .build()
-        )
-        labValues.add(
-            ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_1.toLong()))
-                .code(LabMeasurement.EGFR_CKD_EPI.code())
-                .name("CKD-EPI eGFR")
-                .comparator(">")
-                .value(100.0)
-                .unit(LabMeasurement.EGFR_CKD_EPI.defaultUnit())
-                .refLimitLow(100.0)
-                .isOutsideRef(false)
-                .build()
-        )
-        labValues.add(
-            ImmutableLabValue.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_2.toLong()))
-                .code(LabMeasurement.LACTATE_DEHYDROGENASE.code())
-                .name("Lactate dehydrogenase")
-                .comparator("")
-                .value(240.0)
-                .unit(LabMeasurement.LACTATE_DEHYDROGENASE.defaultUnit())
-                .refLimitUp(245.0)
-                .isOutsideRef(false)
-                .build()
-        )
-        return labValues
     }
 
     private fun createTestToxicities(): List<Toxicity> {
-        return java.util.List.of<Toxicity>(
-            ImmutableToxicity.builder()
-                .name("Nausea")
-                .addCategories("Nausea")
-                .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES.toLong()))
-                .source(ToxicitySource.EHR)
-                .grade(1)
-                .build(),
-            ImmutableToxicity.builder()
-                .name("Fatigue")
-                .addCategories("Fatigue")
-                .evaluatedDate(TODAY.minusDays(DAYS_SINCE_TOXICITIES.toLong()))
-                .source(ToxicitySource.QUESTIONNAIRE)
-                .grade(2)
-                .build()
+        return listOf(
+            Toxicity(
+                name = "Nausea",
+                categories = setOf("Nausea"),
+                evaluatedDate = TODAY.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
+                source = ToxicitySource.EHR,
+                grade = 1
+            ),
+            Toxicity(
+                name = "Fatigue",
+                categories = setOf("Fatigue"),
+                evaluatedDate = TODAY.minusDays(DAYS_SINCE_TOXICITIES.toLong()),
+                source = ToxicitySource.QUESTIONNAIRE,
+                grade = 2
+            )
         )
     }
 
     private fun createTestIntolerances(): List<Intolerance> {
-        val intolerances: MutableList<Intolerance> = Lists.newArrayList()
-        intolerances.add(
-            ImmutableIntolerance.builder()
-                .name("Wasps")
-                .category("Environment")
-                .type("Allergy")
-                .clinicalStatus("Active")
-                .verificationStatus("Confirmed")
-                .criticality("Unable-to-assess")
-                .build()
+        return listOf(
+            Intolerance(
+                name = "Wasps",
+                category = "Environment",
+                type = "Allergy",
+                clinicalStatus = "Active",
+                verificationStatus = "Confirmed",
+                criticality = "Unable-to-assess",
+                doids = emptySet(),
+                subcategories = emptySet()
+            )
         )
-        return intolerances
     }
 
     private fun createTestSurgeries(): List<Surgery> {
-        return listOf<Surgery>(
-            ImmutableSurgery.builder()
-                .endDate(TODAY.minusDays(DAYS_SINCE_SURGERY.toLong()))
-                .status(SurgeryStatus.FINISHED)
-                .build()
-        )
+        return listOf(Surgery(endDate = TODAY.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED))
     }
 
     private fun createTestBodyWeights(): List<BodyWeight> {
-        val bodyWeights: MutableList<BodyWeight> = Lists.newArrayList()
-        bodyWeights.add(
-            ImmutableBodyWeight.builder().date(TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_1.toLong())).value(70.0).unit("Kilogram").build()
+        return listOf(
+            BodyWeight(date = TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_1.toLong()), value = 70.0, unit = "Kilogram"),
+            BodyWeight(date = TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_2.toLong()), value = 68.0, unit = "Kilogram")
         )
-        bodyWeights.add(
-            ImmutableBodyWeight.builder().date(TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_2.toLong())).value(68.0).unit("Kilogram").build()
-        )
-        return bodyWeights
     }
 
     private fun createTestVitalFunctions(): List<VitalFunction> {
-        val vitalFunctions: MutableList<VitalFunction> = Lists.newArrayList()
-        vitalFunctions.add(
-            ImmutableVitalFunction.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_BLOOD_PRESSURE.toLong()))
-                .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-                .subcategory("Mean blood pressure")
-                .value(99.0)
-                .unit("mm[Hg]")
-                .build()
+        return listOf(
+            VitalFunction(
+                date = TODAY.minusDays(DAYS_SINCE_BLOOD_PRESSURE.toLong()),
+                category = VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE,
+                subcategory = "Mean blood pressure",
+                value = 99.0,
+                unit = "mm[Hg]"
+            )
         )
-        return vitalFunctions
     }
 
     private fun createTestBloodTransfusions(): List<BloodTransfusion> {
-        val bloodTransfusions: MutableList<BloodTransfusion> = Lists.newArrayList()
-        bloodTransfusions.add(
-            ImmutableBloodTransfusion.builder()
-                .date(TODAY.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()))
-                .product("Thrombocyte concentrate")
-                .build()
-        )
-        return bloodTransfusions
+        return listOf(BloodTransfusion(date = TODAY.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()), product = "Thrombocyte concentrate"))
     }
 
     private fun createTestMedications(): List<Medication> {
-        val medications: MutableList<Medication> = Lists.newArrayList()
-        medications.add(
-            TestMedicationFactory.builder()
-                .name("Ibuprofen")
-                .status(MedicationStatus.ACTIVE)
-                .dosage(
-                    ImmutableDosage.builder()
-                        .dosageMin(750.0)
-                        .dosageMax(1000.0)
-                        .dosageUnit("mg")
-                        .frequency(1.0)
-                        .frequencyUnit("day")
-                        .ifNeeded(false)
-                        .build()
-                )
-                .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START.toLong()))
-                .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END.toLong()))
-                .isSelfCare(false)
-                .isTrialMedication(false)
-                .build()
+        return listOf(
+            TestMedicationFactory.createMinimal().copy(
+                name = "Ibuprofen",
+                status = MedicationStatus.ACTIVE,
+                dosage = Dosage(
+                    dosageMin = 750.0,
+                    dosageMax = 1000.0,
+                    dosageUnit = "mg",
+                    frequency = 1.0,
+                    frequencyUnit = "day",
+                    ifNeeded = false
+                ),
+                startDate = TODAY.minusDays(DAYS_SINCE_MEDICATION_START.toLong()),
+                stopDate = TODAY.plusDays(DAYS_UNTIL_MEDICATION_END.toLong()),
+                isSelfCare = false,
+                isTrialMedication = false,
+            ),
+            TestMedicationFactory.createMinimal().copy(
+                name = "Prednison",
+                status = MedicationStatus.ACTIVE,
+                dosage = Dosage(
+                    dosageMin = 750.0,
+                    dosageMax = 1000.0,
+                    dosageUnit = "mg",
+                    frequency = 1.0,
+                    frequencyUnit = "day",
+                    periodBetweenUnit = "months",
+                    periodBetweenValue = 2.0,
+                    ifNeeded = false
+                ),
+                startDate = TODAY.minusDays(DAYS_SINCE_MEDICATION_START.toLong()),
+                stopDate = TODAY.plusDays(DAYS_UNTIL_MEDICATION_END.toLong()),
+                isSelfCare = false,
+                isTrialMedication = false,
+            )
         )
-        medications.add(
-            TestMedicationFactory.builder()
-                .name("Prednison")
-                .status(MedicationStatus.ACTIVE)
-                .dosage(
-                    ImmutableDosage.builder()
-                        .dosageMin(750.0)
-                        .dosageMax(1000.0)
-                        .dosageUnit("mg")
-                        .frequency(1.0)
-                        .frequencyUnit("day")
-                        .periodBetweenUnit("months")
-                        .periodBetweenValue(2.0)
-                        .ifNeeded(false)
-                        .build()
-                )
-                .startDate(TODAY.minusDays(DAYS_SINCE_MEDICATION_START.toLong()))
-                .stopDate(TODAY.plusDays(DAYS_UNTIL_MEDICATION_END.toLong()))
-                .isSelfCare(false)
-                .isTrialMedication(false)
-                .build()
-        )
-        return medications
     }
 }

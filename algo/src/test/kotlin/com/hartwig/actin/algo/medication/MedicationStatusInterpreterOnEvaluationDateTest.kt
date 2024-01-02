@@ -34,7 +34,7 @@ class MedicationStatusInterpreterOnEvaluationDateTest {
 
     companion object {
         private fun create(status: MedicationStatus?, startDate: LocalDate?, stopDate: LocalDate?): Medication {
-            return TestMedicationFactory.builder().status(status).startDate(startDate).stopDate(stopDate).build()
+            return TestMedicationFactory.createMinimal().status(status).startDate(startDate).stopDate(stopDate).build()
         }
     }
 }

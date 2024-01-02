@@ -20,7 +20,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         val atc =
             AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("wrong category").build())
                 .build()
-        val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().atc(atc).build())
         assertEvaluation(EvaluationResult.FAIL, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
@@ -29,7 +29,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         val atc =
             AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("category to find").build())
                 .build()
-        val medications = listOf(TestMedicationFactory.builder().atc(atc).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().atc(atc).build())
         assertEvaluation(EvaluationResult.PASS, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
@@ -44,7 +44,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         val atc =
             AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("category to find").build())
                 .build()
-        val medications = listOf(TestMedicationFactory.builder().atc(atc).stopDate(EVALUATION_DATE).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().atc(atc).stopDate(EVALUATION_DATE).build())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
@@ -59,7 +59,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         val atc =
             AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("category to find").build())
                 .build()
-        val medications = listOf(TestMedicationFactory.builder().atc(atc).stopDate(EVALUATION_DATE).build())
+        val medications = listOf(TestMedicationFactory.createMinimal().atc(atc).stopDate(EVALUATION_DATE).build())
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(medications))

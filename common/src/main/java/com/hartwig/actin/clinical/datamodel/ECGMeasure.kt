@@ -1,12 +1,6 @@
 package com.hartwig.actin.clinical.datamodel
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
-
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class ECGMeasure {
-    abstract fun value(): Int?
-    abstract fun unit(): String?
-}
+data class ECGMeasure(
+    val value: Int?,
+    val unit: String?
+)

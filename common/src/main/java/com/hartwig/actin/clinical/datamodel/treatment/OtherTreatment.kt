@@ -1,16 +1,12 @@
 package com.hartwig.actin.clinical.datamodel.treatment
 
-import org.immutables.value.Value
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
-
-@Value.Immutable
-@Value.Style(passAnnotations = [NotNull::class, Nullable::class])
-abstract class OtherTreatment : Treatment {
-    val treatmentClass = TreatmentClass.OTHER_TREATMENT
-
-    @Value.Default
-    override fun types(): Set<TreatmentType?> {
-        return emptySet<TreatmentType>()
-    }
+data class OtherTreatment(
+    override val name: String,
+    override val categories: Set<TreatmentCategory>,
+    override val isSystemic: Boolean,
+    override val synonyms: Set<String> = emptySet(),
+    override val displayOverride: String? = null,
+    override val types: Set<TreatmentType> = emptySet()
+) : Treatment {
+    override val treatmentClass = TreatmentClass.OTHER_TREATMENT
 }
