@@ -189,21 +189,6 @@ public final class TestMolecularFactory {
                         .minCopies(0)
                         .maxCopies(0)
                         .build())
-                .addCopyNumbers(TestCopyNumberFactory.builder()
-                        .isReportable(true)
-                        .event("PTEN del")
-                        .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
-                                "A Phase 3 Study to Evaluate the treatment X as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)",
-                                Sets.newHashSet("Belgium"),
-                                "https://clinicaltrials.gov/study/NCT00000003"))
-                        .gene("PTEN")
-                        .geneRole(GeneRole.TSG)
-                        .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
-                        .type(CopyNumberType.LOSS)
-                        .minCopies(0)
-                        .maxCopies(0)
-                        .build())
                 .build();
     }
 
