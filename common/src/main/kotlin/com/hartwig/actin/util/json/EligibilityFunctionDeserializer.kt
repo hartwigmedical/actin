@@ -17,8 +17,8 @@ class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction> {
 
     private fun toEligibilityFunction(function: JsonObject): EligibilityFunction {
         return EligibilityFunction(
-            rule = EligibilityRule.valueOf(Json.string(function, "rule")),
-            parameters = toParameters(Json.array(function, "parameters"))
+            rule = EligibilityRule.valueOf(function.get("rule").asString),
+            parameters = toParameters(function.getAsJsonArray("parameters"))
         )
     }
 
