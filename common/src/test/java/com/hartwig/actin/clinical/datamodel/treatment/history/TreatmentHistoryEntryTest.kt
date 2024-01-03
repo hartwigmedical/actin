@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
@@ -43,12 +43,12 @@ class TreatmentHistoryEntryTest {
             treatments = setOf(
                 chemotherapy("chemotherapy"),
                 RADIOTHERAPY,
-                ImmutableOtherTreatment.builder()
-                    .name("ablation")
-                    .addCategories(TreatmentCategory.ABLATION)
-                    .synonyms(emptySet())
-                    .isSystemic(false)
-                    .build()
+                OtherTreatment(
+                    name = "ablation",
+                    categories = setOf(TreatmentCategory.ABLATION),
+                    synonyms = emptySet(),
+                    isSystemic = false
+                )
             )
         )
         assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemoradiation and Ablation")
@@ -69,15 +69,15 @@ class TreatmentHistoryEntryTest {
                 chemotherapy("chemotherapy"),
                 RADIOTHERAPY,
                 chemotherapy("chemo drug"),
-                ImmutableOtherTreatment.builder()
-                    .name("ablation")
-                    .addCategories(TreatmentCategory.ABLATION)
-                    .synonyms(emptySet())
-                    .isSystemic(false)
-                    .build()
+                OtherTreatment(
+                    name = "ablation",
+                    categories = setOf(TreatmentCategory.ABLATION),
+                    synonyms = emptySet(),
+                    isSystemic = false,
+                )
             )
         )
-        assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Chemotherapy;Radiotherapy;Chemo drug;Ablation")
+        assertThat(treatmentHistoryEntry.treatmentDisplay()).isEqualTo("Ablation;Chemo drug;Chemotherapy;Radiotherapy")
     }
 
     @Test
