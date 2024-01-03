@@ -64,10 +64,6 @@ object Json {
         return values
     }
 
-    fun stringSet(`object`: JsonObject, field: String): Set<String> {
-        return HashSet(stringList(`object`, field))
-    }
-
     @JvmStatic
     fun nullableIntegerList(`object`: JsonObject, field: String): List<Int>? {
         return if (!isNull(`object`, field)) integerList(`object`, field) else null

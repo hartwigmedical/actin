@@ -6,9 +6,4 @@ data class Node(
     val term: String?,
     val type: String?,
     val metadata: Metadata?
-) {
-
-    fun snomedConceptId(): String? {
-        return metadata?.snomedConceptId
-    }
-}
+)

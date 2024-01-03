@@ -15,10 +15,10 @@ class EligibilityComparator : Comparator<Eligibility> {
             return -1
         }
         val referenceCompare: Int = CRITERION_COMPARATOR.compare(eligibility1.references.first(), eligibility2.references.first())
-        if (referenceCompare == 0) {
-            return FUNCTION_COMPARATOR.compare(eligibility1.function, eligibility2.function)
+        return if (referenceCompare == 0) {
+            FUNCTION_COMPARATOR.compare(eligibility1.function, eligibility2.function)
         } else {
-            return referenceCompare
+            referenceCompare
         }
     }
 
