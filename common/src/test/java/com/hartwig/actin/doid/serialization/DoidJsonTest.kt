@@ -111,7 +111,7 @@ class DoidJsonTest {
             assertThat(metadata.basicPropertyValues).containsExactly(
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "DOID:8808"),
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "DOID:9129"),
-                BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "disease_ontology"),
+                BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasOBONamespace", "disease_ontology"),
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "DOID:9029"),
                 BasicPropertyValue("http://www.geneontology.org/formats/oboInOwl#hasAlternativeId", "DOID:9002")
             )

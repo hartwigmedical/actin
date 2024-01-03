@@ -85,7 +85,7 @@ class MolecularPrinter(private val printer: DatamodelPrinter) {
             }
         }
 
-        private fun keys(map: Map<String, Set<String>>): String {
+        private fun keys(map: Map<String, List<String>>): String {
             return concat(map.keys)
         }
 

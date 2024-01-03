@@ -12,7 +12,7 @@ class GeneFilterFactoryTest {
 
     @Test
     fun `Should create always valid`() {
-        assertThat(createAlwaysValid()).isNull()
+        assertThat(createAlwaysValid()).isNotNull()
     }
 
     @Test

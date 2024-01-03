@@ -95,30 +95,30 @@ object AggregatedEvidenceFactory {
 
     private fun mergeAggregatedEvidenceList(aggregatedEvidenceList: List<AggregatedEvidence>): AggregatedEvidence {
         return AggregatedEvidence(
-            approvedTreatmentsPerEvent = mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::approvedTreatmentsPerEvent)),
+            approvedTreatmentsPerEvent = mergeMapsOfLists(aggregatedEvidenceList.map(AggregatedEvidence::approvedTreatmentsPerEvent)),
             externalEligibleTrialsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::externalEligibleTrialsPerEvent)),
+            mergeMapsOfLists(aggregatedEvidenceList.map(AggregatedEvidence::externalEligibleTrialsPerEvent)),
             onLabelExperimentalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::onLabelExperimentalTreatmentsPerEvent)),
+            mergeMapsOfLists(aggregatedEvidenceList.map(AggregatedEvidence::onLabelExperimentalTreatmentsPerEvent)),
             offLabelExperimentalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent)),
+            mergeMapsOfLists(aggregatedEvidenceList.map(AggregatedEvidence::offLabelExperimentalTreatmentsPerEvent)),
             preClinicalTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::preClinicalTreatmentsPerEvent)),
+            mergeMapsOfLists(aggregatedEvidenceList.map(AggregatedEvidence::preClinicalTreatmentsPerEvent)),
             knownResistantTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::knownResistantTreatmentsPerEvent)),
+            mergeMapsOfLists(aggregatedEvidenceList.map(AggregatedEvidence::knownResistantTreatmentsPerEvent)),
             suspectResistantTreatmentsPerEvent =
-            mergeMapsOfSets(aggregatedEvidenceList.map(AggregatedEvidence::suspectResistantTreatmentsPerEvent)),
+            mergeMapsOfLists(aggregatedEvidenceList.map(AggregatedEvidence::suspectResistantTreatmentsPerEvent)),
         )
     }
 
-    private fun mergeMapsOfSets(mapsOfSets: List<Map<String, Set<String>>>): Map<String, Set<String>> {
+    private fun mergeMapsOfLists(mapsOfSets: List<Map<String, List<String>>>): Map<String, List<String>> {
         return mapsOfSets
             .flatMap { it.entries }
             .groupBy({ it.key }, { it.value })
-            .mapValues { it.value.flatten().toSet() }
+            .mapValues { it.value.flatten() }
     }
 
-    private fun evidenceMap(event: String, evidenceSubSet: Set<String>): Map<String, Set<String>> {
-        return if (evidenceSubSet.isEmpty()) emptyMap() else mapOf(event to evidenceSubSet)
+    private fun evidenceMap(event: String, evidenceSubSet: Set<String>): Map<String, List<String>> {
+        return if (evidenceSubSet.isEmpty()) emptyMap() else mapOf(event to evidenceSubSet.toList())
     }
 }

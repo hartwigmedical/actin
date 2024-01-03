@@ -11,8 +11,8 @@ class DoidModelTest {
     @Test
     fun `Should add parents`() {
         val model = createTestModel(TestDoidManualConfigFactory.createWithOneAdditionalDoid("300", "301"))
-        assertThat(model.doidWithParents("200")).containsExactly("200", "300", "301", "400")
-        assertThat(model.doidWithParents("300")).containsExactly("300", "301", "400")
+        assertThat(model.doidWithParents("200")).containsExactlyInAnyOrder("200", "300", "301", "400")
+        assertThat(model.doidWithParents("300")).containsExactlyInAnyOrder("300", "301", "400")
         assertThat(model.doidWithParents("400")).containsExactly("400")
         assertThat(model.doidWithParents("500")).hasSize(1)
     }

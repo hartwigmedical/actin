@@ -25,7 +25,7 @@ object ClinicalGsonDeserializer {
     }
 
     fun createWithDrugMap(drugsByName: Map<String, Drug>): Gson {
-        return gsonBuilder().registerTypeAdapter(object : TypeToken<Set<Drug>?>() {}.type, DrugNameSetAdapter(drugsByName)).create()
+        return gsonBuilder().registerTypeAdapter(object : TypeToken<Set<Drug>>() {}.type, DrugNameSetAdapter(drugsByName)).create()
     }
 
     private fun gsonBuilder(): GsonBuilder {
@@ -243,9 +243,9 @@ object ClinicalGsonDeserializer {
     
      */
 
-    private class DrugNameSetAdapter(private val drugsByName: Map<String, Drug>) : JsonDeserializer<Set<Drug>?> {
-        override fun deserialize(json: JsonElement, type: Type, context: JsonDeserializationContext): Set<Drug>? {
-            return if (json.isJsonNull) null else json.asJsonArray.asList().map(::getDrug).toSet()
+    private class DrugNameSetAdapter(private val drugsByName: Map<String, Drug>) : JsonDeserializer<Set<Drug>> {
+        override fun deserialize(json: JsonElement, type: Type, context: JsonDeserializationContext): Set<Drug> {
+            return json.asJsonArray.asList().map(::getDrug).toSet()
         }
 
         private fun getDrug(listElement: JsonElement): Drug {

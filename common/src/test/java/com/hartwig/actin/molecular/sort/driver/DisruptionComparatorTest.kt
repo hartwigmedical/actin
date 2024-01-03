@@ -8,8 +8,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DisruptionComparatorTest {
+
     @Test
-    fun canSortDisruptions() {
+    fun `Should sort disruptions`() {
         val disruption1 = create("NF1", DriverLikelihood.HIGH, DisruptionType.DEL, 2.0, 1.0)
         val disruption2 = create("APC", DriverLikelihood.LOW, DisruptionType.BND, 2.0, 1.0)
         val disruption3 = create("NF1", DriverLikelihood.LOW, DisruptionType.DUP, 2.0, 1.0)
