@@ -18,7 +18,7 @@ class TreatmentDatabaseTest {
         
         val treatment = treatmentDatabase().findTreatmentByName("Capecitabine+Oxaliplatin")
         assertThat(treatment).isNotNull()
-        assertThat(treatment!!.categories).containsExactly(TreatmentCategory.CHEMOTHERAPY)
+        assertThat(treatment!!.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
         assertThat(treatment.isSystemic).isTrue()
         assertThat((treatment as DrugTreatment).drugs).extracting(Drug::name, Drug::drugTypes).containsExactlyInAnyOrder(
             tuple("CAPECITABINE", setOf(DrugType.ANTIMETABOLITE)),
@@ -28,7 +28,7 @@ class TreatmentDatabaseTest {
 
     @Test
     fun `Should equate spaces and underscores in treatment lookups`() {
-        val treatment = OtherTreatment(isSystemic = false, name = "MULTIWORD_NAME", categories = emptySet())
+        val treatment = OtherTreatment(name = "MULTIWORD_NAME", isSystemic = false, categories = emptySet())
         val treatmentDatabase = TreatmentDatabase(emptyMap(), mapOf(treatment.name.lowercase() to treatment))
         assertThat(treatmentDatabase.findTreatmentByName("Multiword name")).isEqualTo(treatment)
     }

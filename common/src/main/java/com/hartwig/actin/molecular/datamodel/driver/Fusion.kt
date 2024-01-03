@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.sort.driver.FusionComparator
 
 data class Fusion(
     val geneStart: String,
@@ -16,4 +17,9 @@ data class Fusion(
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
     override val evidence: ActionableEvidence
-) : Driver
+) : Driver, Comparable<Fusion> {
+
+    override fun compareTo(other: Fusion): Int {
+        return FusionComparator().compare(this, other)
+    }
+}

@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.sort.driver.VariantComparator
 
 data class Variant(
     val type: VariantType,
@@ -20,4 +21,9 @@ data class Variant(
     override val geneRole: GeneRole,
     override val proteinEffect: ProteinEffect,
     override val isAssociatedWithDrugResistance: Boolean?,
-) : Driver, GeneAlteration
+) : Driver, GeneAlteration, Comparable<Variant> {
+
+    override fun compareTo(other: Variant): Int {
+        return VariantComparator().compare(this, other)
+    }
+}

@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
 
 data class CopyNumber(
     val type: CopyNumberType,
@@ -14,4 +15,9 @@ data class CopyNumber(
     override val gene: String,
     override val geneRole: GeneRole,
     override val proteinEffect: ProteinEffect
-) : Driver, GeneAlteration
+) : Driver, GeneAlteration, Comparable<CopyNumber> {
+
+    override fun compareTo(other: CopyNumber): Int {
+        return CopyNumberComparator().compare(this, other)
+    }
+}

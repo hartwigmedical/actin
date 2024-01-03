@@ -140,7 +140,7 @@ object TestClinicalFactory {
             drugs = folfirinox.drugs + pembrolizumab,
         )
         val folfirinoxLocoRegional = folfirinox.copy(name = "FOLFIRINOX_LOCO-REGIONAL", isSystemic = false)
-        val colectomy = OtherTreatment(name = "COLECTOMY", categories = setOf(TreatmentCategory.SURGERY), isSystemic = false)
+        val colectomy = OtherTreatment(name = "COLECTOMY", isSystemic = false, categories = setOf(TreatmentCategory.SURGERY))
         val surgeryHistoryEntry = treatmentHistoryEntry(
             setOf(colectomy),
             startYear = 2021,

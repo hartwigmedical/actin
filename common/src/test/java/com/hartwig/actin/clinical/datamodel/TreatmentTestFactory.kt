@@ -18,7 +18,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 object TreatmentTestFactory {
 
     fun treatment(name: String, isSystemic: Boolean, categories: Set<TreatmentCategory> = emptySet()): Treatment {
-        return OtherTreatment(name = name, isSystemic = isSystemic, categories = categories, displayOverride = null, synonyms = emptySet())
+        return OtherTreatment(name = name, isSystemic = isSystemic, synonyms = emptySet(), displayOverride = null, categories = categories)
     }
 
     fun drugTreatment(name: String, category: TreatmentCategory, types: Set<DrugType> = emptySet()): DrugTreatment {

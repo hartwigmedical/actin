@@ -37,8 +37,8 @@ object TreatmentDatabaseFactory {
     }
 
     private fun treatmentJsonToMapByName(treatmentJson: String, drugsByName: Map<String, Drug>): Map<String, Treatment> {
-        val treatments: List<Treatment> = ClinicalGsonDeserializer.createWithDrugMap(drugsByName)
-            .fromJson(treatmentJson, object : TypeToken<List<Treatment>>() {}.type)
+        val deserializer = ClinicalGsonDeserializer.createWithDrugMap(drugsByName)
+        val treatments: List<Treatment> = deserializer.fromJson(treatmentJson, object : TypeToken<List<Treatment>>() {}.type)
 
         return treatments.flatMap { treatment: Treatment ->
             (treatment.synonyms + treatment.name).map { it.replace(" ", "_").lowercase() to treatment }

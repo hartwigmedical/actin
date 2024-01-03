@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.sort.driver.DisruptionComparator
 
 data class Disruption(
     val type: DisruptionType,
@@ -17,4 +18,9 @@ data class Disruption(
     override val geneRole: GeneRole,
     override val proteinEffect: ProteinEffect,
     override val isAssociatedWithDrugResistance: Boolean?,
-) : Driver, GeneAlteration
+) : Driver, GeneAlteration, Comparable<Disruption> {
+
+    override fun compareTo(other: Disruption): Int {
+        return DisruptionComparator().compare(this, other)
+    }
+}

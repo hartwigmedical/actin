@@ -45,9 +45,9 @@ class TreatmentHistoryEntryTest {
                 RADIOTHERAPY,
                 OtherTreatment(
                     name = "ablation",
-                    categories = setOf(TreatmentCategory.ABLATION),
+                    isSystemic = false,
                     synonyms = emptySet(),
-                    isSystemic = false
+                    categories = setOf(TreatmentCategory.ABLATION)
                 )
             )
         )
@@ -71,9 +71,9 @@ class TreatmentHistoryEntryTest {
                 chemotherapy("chemo drug"),
                 OtherTreatment(
                     name = "ablation",
-                    categories = setOf(TreatmentCategory.ABLATION),
-                    synonyms = emptySet(),
                     isSystemic = false,
+                    synonyms = emptySet(),
+                    categories = setOf(TreatmentCategory.ABLATION),
                 )
             )
         )

@@ -35,7 +35,7 @@ data class TreatmentHistoryEntry(
     }
 
     fun hasTypeConfigured(): Boolean {
-        return allTreatments().none { it.types.isEmpty() }
+        return allTreatments().none { it.types().isEmpty() }
     }
 
     private fun isTypeFromCollection(types: Set<TreatmentType>): Boolean {
@@ -51,7 +51,7 @@ data class TreatmentHistoryEntry(
                 return "Chemoradiation"
             } else if (remainingTreatments.size == 1) {
                 val remainingTreatment = remainingTreatments.first()
-                return if (remainingTreatment.categories.contains(TreatmentCategory.CHEMOTHERAPY)) {
+                return if (remainingTreatment.categories().contains(TreatmentCategory.CHEMOTHERAPY)) {
                     "Chemoradiation (with ${remainingTreatment.display()})"
                 } else {
                     "Chemoradiation and ${remainingTreatment.display()}"
@@ -70,7 +70,7 @@ data class TreatmentHistoryEntry(
         }
 
         private fun treatmentCategoryDisplay(treatments: Set<Treatment>): String {
-            return treatments.flatMap { it.categories.map(TreatmentCategory::display) }
+            return treatments.flatMap { it.categories().map(TreatmentCategory::display) }
                 .distinct()
                 .joinToString(DELIMITER)
         }

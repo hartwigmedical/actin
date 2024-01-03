@@ -7,9 +7,13 @@ data class Drug(
     val drugTypes: Set<DrugType>,
     val category: TreatmentCategory,
     val displayOverride: String? = null,
-) : Displayable {
+) : Displayable, Comparable<Drug> {
 
     override fun display(): String {
         return displayOverride ?: name.replace("_", " ").lowercase()
+    }
+
+    override fun compareTo(other: Drug): Int {
+        return name.compareTo(other.name)
     }
 }

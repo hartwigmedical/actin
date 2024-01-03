@@ -9,6 +9,8 @@ data class DrugTreatment(
     val maxCycles: Int? = null
 ) : Treatment {
     override val treatmentClass = TreatmentClass.DRUG_TREATMENT
-    override val categories = drugs.map(Drug::category).toSet()
-    override val types = drugs.flatMap(Drug::drugTypes).toSet()
+
+    override fun categories() = drugs.map(Drug::category).toSet()
+
+    override fun types() = drugs.flatMap(Drug::drugTypes).toSet()
 }
