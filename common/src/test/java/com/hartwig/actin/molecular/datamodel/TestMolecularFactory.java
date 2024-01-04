@@ -31,6 +31,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
@@ -179,11 +180,12 @@ public final class TestMolecularFactory {
                         .isReportable(true)
                         .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
-                                "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)",
-                                Sets.newHashSet("Belgium", "Germany"),
-                                "https://clinicaltrials.gov/study/NCT00000002",
-                                "NCT00000002"))
+                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(ImmutableExternalTrial.builder()
+                                .title("A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)")
+                                .countries(Sets.newHashSet("Belgium", "Germany"))
+                                .url("https://clinicaltrials.gov/study/NCT00000002")
+                                .nctId("NCT00000002")
+                                .build()))
                         .gene("PTEN")
                         .geneRole(GeneRole.TSG)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
@@ -228,11 +230,12 @@ public final class TestMolecularFactory {
                         .isReportable(true)
                         .event("MYC amp")
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
-                                "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
-                                Sets.newHashSet("Netherlands"),
-                                "https://clinicaltrials.gov/study/NCT00000004",
-                                "NCT00000004"))
+                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(ImmutableExternalTrial.builder()
+                                .title("A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer")
+                                .countries(Sets.newHashSet("Netherlands"))
+                                .url("https://clinicaltrials.gov/study/NCT00000004")
+                                .nctId("NCT00000004")
+                                .build()))
                         .gene("MYC")
                         .type(CopyNumberType.FULL_GAIN)
                         .minCopies(38)

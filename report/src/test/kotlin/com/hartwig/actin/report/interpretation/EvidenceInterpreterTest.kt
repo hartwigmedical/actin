@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
-import com.google.common.collect.Sets
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.molecular.interpretation.ImmutableAggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
@@ -17,15 +16,15 @@ class EvidenceInterpreterTest {
             .putApprovedTreatmentsPerEvent("approved", "treatment")
             .putExternalEligibleTrialsPerEvent(
                 "external",
-                ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "url", "nctId")
+                TestExternalTrialFactory.createMinimal()
             )
             .putExternalEligibleTrialsPerEvent(
                 "approved",
-                ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "url", "nctId")
+                TestExternalTrialFactory.createMinimal()
             )
             .putExternalEligibleTrialsPerEvent(
                 "inclusion",
-                ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "url", "nctId")
+                TestExternalTrialFactory.createMinimal()
             )
             .putOnLabelExperimentalTreatmentsPerEvent("on-label", "treatment")
             .putOnLabelExperimentalTreatmentsPerEvent("approved", "treatment")

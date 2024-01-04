@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
@@ -20,6 +19,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -103,7 +103,7 @@ class MolecularDriversSummarizerTest {
     @Test
     fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
         val externalEvidence =
-            TestActionableEvidenceFactory.withExternalEligibleTrial("external", Sets.newHashSet("country"), "url", "nctId")
+            TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createMinimal())
         val approvedTreatment = TestActionableEvidenceFactory.withApprovedTreatment("approved")
         val cohorts = listOf(
             evaluatedCohort(

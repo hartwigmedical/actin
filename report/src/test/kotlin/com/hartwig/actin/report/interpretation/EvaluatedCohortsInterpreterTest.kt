@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.Driver
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -35,7 +35,7 @@ class EvaluatedCohortsInterpreterTest {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
         val driver: Driver = TestVariantFactory.builder()
             .event(CLOSED_COHORT)
-            .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("external", Sets.newHashSet("country"), "url", "nctId"))
+            .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createMinimal()))
             .build()
         assertThat(createInterpreter().driverIsActionable(driver)).isTrue
     }
