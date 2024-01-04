@@ -77,12 +77,23 @@ object ActionableEvidenceFactory {
     }
 
     private fun extractNctUrl(event: ActionableEvent): String {
-        if (event.sourceUrls().size != 1) {
-            throw IllegalStateException("Found more than 1 NCT url")
+        for (url in event.sourceUrls()) {
+            if (isNctUrl(url)) {
+                return url
+            }
         }
-        //url
-        // ..
-        return event.sourceUrls().iterator().next()
+
+        throw IllegalStateException("Found no URL ending with a NCT id: " + event.sourceUrls().joinToString { ", " })
+    }
+
+    private fun isNctUrl(url: String): Boolean {
+        if ((url.length > 11)) {
+            val nctId = url.takeLast(11)
+            if (nctId.substring(0, 3) == "NCT") {
+                return true
+            }
+        }
+        return false
     }
 
     private fun populateResponsiveOnLabelEvidence(
