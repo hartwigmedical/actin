@@ -16,7 +16,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
-            "%s trials potentially eligible based on molecular results which are not recruiting in the Netherlands (%d)",
+            "%s trials potentially eligible based on molecular results which are potentially recruiting outside the Netherlands (%d)",
             source,
             externalTrialsPerEvent.size()
         )
@@ -52,6 +52,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
             )
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
         }
+
         return makeWrapping(table)
     }
 
