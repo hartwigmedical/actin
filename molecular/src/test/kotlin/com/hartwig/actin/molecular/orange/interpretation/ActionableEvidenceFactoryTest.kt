@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
@@ -112,7 +113,10 @@ class ActionableEvidenceFactoryTest {
         assertNotNull(evidence)
         assertTrue(evidence!!.approvedTreatments().isEmpty())
         assertEquals(1, evidence.externalEligibleTrials().size.toLong())
-        assertTrue(evidence.externalEligibleTrials().iterator().next().title().contains("On-label responsive trial"))
+        assertTrue(evidence.externalEligibleTrials().iterator().next().title() == "On-label responsive trial")
+        assertTrue(evidence.externalEligibleTrials().iterator().next().countries() == Sets.newHashSet("country"))
+        assertTrue(evidence.externalEligibleTrials().iterator().next().url() == "url")
+        assertTrue(evidence.externalEligibleTrials().iterator().next().nctId() == "url")
         assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
         assertTrue(evidence.offLabelExperimentalTreatments().isEmpty())
         assertTrue(evidence.preClinicalTreatments().isEmpty())
