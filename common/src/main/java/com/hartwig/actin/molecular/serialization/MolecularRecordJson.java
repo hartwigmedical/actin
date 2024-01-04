@@ -76,7 +76,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial;
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialFactory;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
@@ -418,10 +418,12 @@ public class MolecularRecordJson {
         @NotNull
         private static Set<ExternalTrial> toEligibleTrials(@NotNull JsonArray eligibleTrialArray) {
             return extractSetFromJson(eligibleTrialArray,
-                    eligibleTrial -> ExternalTrialFactory.create(string(eligibleTrial, "title"),
-                            Sets.newHashSet(stringList(eligibleTrial, "countries")),
-                            string(eligibleTrial, "url"),
-                            string(eligibleTrial, "nctId")));
+                    eligibleTrial -> ImmutableExternalTrial.builder()
+                            .title(string(eligibleTrial, "title"))
+                            .countries(Sets.newHashSet(stringList(eligibleTrial, "countries")))
+                            .url(string(eligibleTrial, "url"))
+                            .nctId(string(eligibleTrial, "nctId"))
+                            .build());
         }
 
         @NotNull

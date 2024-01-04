@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrialFactory
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.ActionableEvent
@@ -60,17 +60,29 @@ object ActionableEvidenceFactory {
         val builder = ImmutableActionableEvidence.builder()
         for (onLabelEvent in onLabelEvents) {
             if (onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive) {
+                val nctUrl = extractNctUrl(onLabelEvent)
+
                 builder.addExternalEligibleTrials(
-                    ExternalTrialFactory.create(
-                        onLabelEvent.treatment().name(),
-                        onLabelEvent.evidenceUrls(),
-                        onLabelEvent.sourceUrls().iterator().next(),
-                        onLabelEvent.sourceUrls().iterator().next().takeLast(11)
-                    )
+                    ImmutableExternalTrial.builder()
+                        .title(onLabelEvent.treatment().name())
+                        // evidenceUrls() contains a set of countries
+                        .countries(onLabelEvent.evidenceUrls())
+                        .url(nctUrl)
+                        .nctId(nctUrl.takeLast(11))
+                        .build()
                 )
             }
         }
         return builder.build()
+    }
+
+    private fun extractNctUrl(event: ActionableEvent): String {
+        if (event.sourceUrls().size != 1) {
+            throw IllegalStateException("Found more than 1 NCT url")
+        }
+        //url
+        // ..
+        return event.sourceUrls().iterator().next()
     }
 
     private fun populateResponsiveOnLabelEvidence(

@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory;
 
 import org.junit.Test;
 
@@ -16,8 +16,7 @@ public class ActionableEvidenceComparatorTest {
     @Test
     public void canSortActionableEvidences() {
         ActionableEvidence evidence1 = TestActionableEvidenceFactory.withApprovedTreatment("treatment");
-        ActionableEvidence evidence2 =
-                TestActionableEvidenceFactory.withExternalEligibleTrial("treatment", Sets.newHashSet("country"), "url", "nctId");
+        ActionableEvidence evidence2 = TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createMinimal());
         ActionableEvidence evidence3 = TestActionableEvidenceFactory.withOnLabelExperimentalTreatment("treatment");
         ActionableEvidence evidence4 = TestActionableEvidenceFactory.withOffLabelExperimentalTreatment("treatment");
         ActionableEvidence evidence5 = TestActionableEvidenceFactory.withPreClinicalTreatment("treatment");
