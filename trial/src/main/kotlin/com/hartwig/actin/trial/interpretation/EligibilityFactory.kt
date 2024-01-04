@@ -3,7 +3,6 @@ package com.hartwig.actin.trial.interpretation
 import com.google.common.collect.Lists
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.datamodel.ImmutableEligibilityFunction
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.apache.logging.log4j.LogManager
@@ -35,9 +34,9 @@ class EligibilityFactory(private val functionInputResolver: FunctionInputResolve
                 Pair(EligibilityRule.valueOf(trimmed), emptyList())
             }
         }
-        val function: EligibilityFunction = ImmutableEligibilityFunction.builder().rule(rule).parameters(parameters).build()
+        val function = EligibilityFunction(rule = rule, parameters = parameters)
         val hasValidInputs = functionInputResolver.hasValidInputs(function)
-        check(!(hasValidInputs == null || !hasValidInputs)) { "Function " + function.rule() + " has invalid inputs: '" + function.parameters() + "'" }
+        check(!(hasValidInputs == null || !hasValidInputs)) { "Function ${function.rule} has invalid inputs: '${function.parameters}'" }
         return function
     }
 

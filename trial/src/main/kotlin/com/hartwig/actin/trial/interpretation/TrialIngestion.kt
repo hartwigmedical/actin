@@ -14,11 +14,7 @@ import com.hartwig.actin.trial.ctc.CTCModel
 import com.hartwig.actin.trial.datamodel.Cohort
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
-import com.hartwig.actin.trial.datamodel.ImmutableCohort
-import com.hartwig.actin.trial.datamodel.ImmutableCriterionReference
-import com.hartwig.actin.trial.datamodel.ImmutableEligibility
-import com.hartwig.actin.trial.datamodel.ImmutableTrial
-import com.hartwig.actin.trial.datamodel.ImmutableTrialIdentification
+import com.hartwig.actin.trial.datamodel.Trial
 import com.hartwig.actin.trial.datamodel.TrialIdentification
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.sort.CohortComparator
@@ -43,21 +39,21 @@ class TrialIngestion(
             trialConfigModel.trials().map { trialConfig ->
                 val trialId = trialConfig.trialId
                 val referencesById = trialConfigModel.referencesForTrial(trialId)
-                ImmutableTrial.builder()
-                    .identification(toIdentification(trialConfig))
-                    .generalEligibility(toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById))
-                    .cohorts(cohortsForTrial(trialId, referencesById))
-                    .build()
+                Trial(
+                    identification = toIdentification(trialConfig),
+                    generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
+                    cohorts = cohortsForTrial(trialId, referencesById)
+                )
             })
     }
 
     private fun cohortsForTrial(trialId: String, referencesById: Map<String, InclusionCriteriaReferenceConfig>): List<Cohort> {
         return trialConfigModel.cohortsForTrial(trialId).map { cohortConfig ->
             val cohortId = cohortConfig.cohortId
-            ImmutableCohort.builder()
-                .metadata(ctcModel.resolveCohortMetadata(cohortConfig))
-                .eligibility(toEligibility(trialConfigModel.specificInclusionCriteriaForCohort(trialId, cohortId), referencesById))
-                .build()
+            Cohort(
+                metadata = ctcModel.resolveCohortMetadata(cohortConfig),
+                eligibility = toEligibility(trialConfigModel.specificInclusionCriteriaForCohort(trialId, cohortId), referencesById)
+            )
         }
             .sortedWith(CohortComparator())
     }
@@ -67,21 +63,21 @@ class TrialIngestion(
         referencesById: Map<String, InclusionCriteriaReferenceConfig>
     ): List<Eligibility> {
         return criteria.map { criterion ->
-            ImmutableEligibility.builder()
-                .references(resolveReferences(referencesById, criterion.referenceIds))
-                .function(eligibilityFactory.generateEligibilityFunction(criterion.inclusionRule))
-                .build()
+            Eligibility(
+                references = resolveReferences(referencesById, criterion.referenceIds).toSet(),
+                function = eligibilityFactory.generateEligibilityFunction(criterion.inclusionRule)
+            )
         }
             .sortedWith(EligibilityComparator())
     }
 
     private fun toIdentification(trialConfig: TrialDefinitionConfig): TrialIdentification {
-        return ImmutableTrialIdentification.builder()
-            .trialId(trialConfig.trialId)
-            .open(determineOpenStatus(trialConfig))
-            .acronym(trialConfig.acronym)
-            .title(trialConfig.title)
-            .build()
+        return TrialIdentification(
+            trialId = trialConfig.trialId,
+            open = determineOpenStatus(trialConfig),
+            acronym = trialConfig.acronym,
+            title = trialConfig.title
+        )
     }
 
     private fun determineOpenStatus(trialConfig: TrialDefinitionConfig): Boolean {
@@ -121,7 +117,7 @@ class TrialIngestion(
                 if (!referencesById.contains(referenceId)) {
                     throw IllegalStateException("No config found for reference with ID: $referenceId")
                 }
-                ImmutableCriterionReference.builder().id(referenceId).text(referencesById[referenceId]!!.referenceText).build()
+                CriterionReference(id = referenceId, text = referencesById[referenceId]!!.referenceText)
             }
                 .sortedWith(CriterionReferenceComparator())
         }

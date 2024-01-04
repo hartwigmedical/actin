@@ -9,7 +9,6 @@ import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.trial.datamodel.CohortMetadata
-import com.hartwig.actin.trial.datamodel.ImmutableCohortMetadata
 import org.apache.logging.log4j.LogManager
 
 class CTCModel(private val ctcDatabase: CTCDatabase) {
@@ -67,14 +66,14 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
         this.cohortDefinitionValidationErrors.addAll(cohortDefinitionValidationErrors)
         this.ctcDatabaseValidationErrors.addAll(ctcDatabaseValidationErrors)
         val interpretedCohortStatus = maybeInterpretedCohortStatus ?: fromCohortConfig(cohortConfig)
-        return ImmutableCohortMetadata.builder()
-            .cohortId(cohortConfig.cohortId)
-            .evaluable(cohortConfig.evaluable)
-            .open(interpretedCohortStatus.open)
-            .slotsAvailable(interpretedCohortStatus.slotsAvailable)
-            .blacklist(cohortConfig.blacklist)
-            .description(cohortConfig.description)
-            .build()
+        return CohortMetadata(
+            cohortId = cohortConfig.cohortId,
+            evaluable = cohortConfig.evaluable,
+            open = interpretedCohortStatus.open,
+            slotsAvailable = interpretedCohortStatus.slotsAvailable,
+            blacklist = cohortConfig.blacklist,
+            description = cohortConfig.description
+        )
     }
 
     fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {

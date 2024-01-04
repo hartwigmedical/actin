@@ -75,8 +75,8 @@ object EligibilityRuleUsageEvaluator {
 
     fun evaluate(trials: List<Trial>) {
         val usedRules = trials.flatMap {
-            extractRules(it.generalEligibility()) + it.cohorts().flatMap { cohort ->
-                extractRules(cohort.eligibility())
+            extractRules(it.generalEligibility) + it.cohorts.flatMap { cohort ->
+                extractRules(cohort.eligibility)
             }
         }.toSet()
         val unusedRules = EligibilityRule.values().toSet() - usedRules
@@ -101,7 +101,7 @@ object EligibilityRuleUsageEvaluator {
     }
 
     private fun extractRules(eligibilities: List<Eligibility>): Collection<EligibilityRule> {
-        return eligibilities.flatMap { extract(listOf(it.function()), emptyList()) }
+        return eligibilities.flatMap { extract(listOf(it.function), emptyList()) }
     }
 
     private tailrec fun extract(functions: List<EligibilityFunction>, accumulated: List<EligibilityRule>): List<EligibilityRule> {
@@ -109,10 +109,10 @@ object EligibilityRuleUsageEvaluator {
             return accumulated
         }
         val function = functions.first()
-        val functionsToAdd = if (CompositeRules.isComposite(function.rule())) {
-            function.parameters().map { it as EligibilityFunction }
+        val functionsToAdd = if (CompositeRules.isComposite(function.rule)) {
+            function.parameters.map { it as EligibilityFunction }
         } else emptyList()
 
-        return extract(functionsToAdd + functions.drop(1), accumulated + function.rule())
+        return extract(functionsToAdd + functions.drop(1), accumulated + function.rule)
     }
 }

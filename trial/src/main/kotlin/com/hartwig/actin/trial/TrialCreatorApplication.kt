@@ -28,7 +28,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Loading known genes from {}", config.knownGenesTsv)
