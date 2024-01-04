@@ -56,7 +56,7 @@ class MolecularDriverEntryFactoryTest {
     fun shouldIncludeNonReportableDriversWithExternalTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
             TestActionableEvidenceFactory.withExternalEligibleTrial(
-                "trial 1", Sets.newHashSet("country"), "website"
+                "trial 1", Sets.newHashSet("country"), "url", "nctId"
             )
         )
         val factory = createFactoryForMolecularRecord(record)

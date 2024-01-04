@@ -36,8 +36,12 @@
       "externalEligibleTrials": [
         {
           "title": "PARP trial",
-          "countries": ["Netherlands", "Germany"],
-          "website": "https://clinicaltrials.gov/study/NCT00000001"
+          "countries": [
+            "Netherlands",
+            "Germany"
+          ],
+          "url": "https://clinicaltrials.gov/study/NCT00000001",
+          "nctId": "NCT00000001"
         }
       ],
       "onLabelExperimentalTreatments": [

@@ -17,7 +17,7 @@ public class ActionableEvidenceComparatorTest {
     public void canSortActionableEvidences() {
         ActionableEvidence evidence1 = TestActionableEvidenceFactory.withApprovedTreatment("treatment");
         ActionableEvidence evidence2 =
-                TestActionableEvidenceFactory.withExternalEligibleTrial("treatment", Sets.newHashSet("country"), "website");
+                TestActionableEvidenceFactory.withExternalEligibleTrial("treatment", Sets.newHashSet("country"), "url", "nctId");
         ActionableEvidence evidence3 = TestActionableEvidenceFactory.withOnLabelExperimentalTreatment("treatment");
         ActionableEvidence evidence4 = TestActionableEvidenceFactory.withOffLabelExperimentalTreatment("treatment");
         ActionableEvidence evidence5 = TestActionableEvidenceFactory.withPreClinicalTreatment("treatment");

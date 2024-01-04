@@ -37,7 +37,7 @@ class EligibleDutchExternalTrialsGenerator(
             externalTrialsPerEvent[event].forEach {
                 subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(it.title())))
                 subTable.addCell(
-                    Cells.createContentNoBorder(it.website().takeLast(11)).setAction(PdfAction.createURI(it.website()))
+                    Cells.createContentNoBorder(it.nctId()).setAction(PdfAction.createURI(it.url()))
                         .addStyle(
                             Styles.urlStyle()
                         )

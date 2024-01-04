@@ -35,7 +35,7 @@ class EvaluatedCohortsInterpreterTest {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
         val driver: Driver = TestVariantFactory.builder()
             .event(CLOSED_COHORT)
-            .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("external", Sets.newHashSet("country"), "website"))
+            .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial("external", Sets.newHashSet("country"), "url", "nctId"))
             .build()
         assertThat(createInterpreter().driverIsActionable(driver)).isTrue
     }

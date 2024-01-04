@@ -17,5 +17,8 @@ public abstract class ExternalTrial {
     public abstract Set<String> countries();
 
     @NotNull
-    public abstract String website();
+    public abstract String url();
+
+    @NotNull
+    public abstract String nctId();
 }

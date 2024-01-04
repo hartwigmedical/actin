@@ -591,7 +591,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         evidence: ActionableEvidence
     ) {
         writeTreatments(inserter, topicId, evidence.approvedTreatments(), "Approved")
-        writeTrialTreatments(inserter, topicId, evidence.externalEligibleTrials(), "Trial")
+        writeTrials(inserter, topicId, evidence.externalEligibleTrials())
         writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments(), "On-label experimental")
         writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments(), "Off-label experimental")
         writeTreatments(inserter, topicId, evidence.preClinicalTreatments(), "Pre-clinical")
@@ -605,14 +605,13 @@ internal class MolecularDAO(private val context: DSLContext) {
         }
     }
 
-    private fun <T : Record?> writeTrialTreatments(
+    private fun <T : Record?> writeTrials(
         inserter: EvidenceInserter<T>,
         topicId: Int,
-        treatments: Set<ExternalTrial>,
-        type: String
+        externalTrials: Set<ExternalTrial>
     ) {
-        for (treatment in treatments) {
-            inserter.write(topicId, treatment.title(), type)
+        for (externalTrial in externalTrials) {
+            inserter.write(topicId, externalTrial.title(), "Trial")
         }
     }
 }

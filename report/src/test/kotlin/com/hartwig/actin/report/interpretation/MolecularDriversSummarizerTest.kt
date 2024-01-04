@@ -102,7 +102,8 @@ class MolecularDriversSummarizerTest {
 
     @Test
     fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
-        val externalEvidence = TestActionableEvidenceFactory.withExternalEligibleTrial("external", Sets.newHashSet("country"), "website")
+        val externalEvidence =
+            TestActionableEvidenceFactory.withExternalEligibleTrial("external", Sets.newHashSet("country"), "url", "nctId")
         val approvedTreatment = TestActionableEvidenceFactory.withApprovedTreatment("approved")
         val cohorts = listOf(
             evaluatedCohort(

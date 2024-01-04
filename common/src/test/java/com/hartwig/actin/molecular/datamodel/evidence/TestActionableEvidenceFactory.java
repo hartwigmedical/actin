@@ -26,7 +26,8 @@ public final class TestActionableEvidenceFactory {
         return builder().addApprovedTreatments("approved")
                 .addExternalEligibleTrials(ExternalTrialFactory.create("external trial",
                         Sets.newHashSet("Netherlands", "Belgium"),
-                        "https://clinicaltrials.gov/study/NCT00000001"))
+                        "https://clinicaltrials.gov/study/NCT00000001",
+                        "NCT00000001"))
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")
                 .addPreClinicalTreatments("pre-clinical")
@@ -42,8 +43,8 @@ public final class TestActionableEvidenceFactory {
 
     @NotNull
     public static ActionableEvidence withExternalEligibleTrial(@NotNull String treatment, @NotNull Set<String> countries,
-            @NotNull String website) {
-        return builder().addExternalEligibleTrials(ExternalTrialFactory.create(treatment, countries, website)).build();
+            @NotNull String url, @NotNull String nctId) {
+        return builder().addExternalEligibleTrials(ExternalTrialFactory.create(treatment, countries, url, nctId)).build();
     }
 
     @NotNull

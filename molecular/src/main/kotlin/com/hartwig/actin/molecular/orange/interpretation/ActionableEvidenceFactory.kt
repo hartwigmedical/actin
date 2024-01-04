@@ -64,7 +64,8 @@ object ActionableEvidenceFactory {
                     ExternalTrialFactory.create(
                         onLabelEvent.treatment().name(),
                         onLabelEvent.evidenceUrls(),
-                        onLabelEvent.sourceUrls().iterator().next()
+                        onLabelEvent.sourceUrls().iterator().next(),
+                        onLabelEvent.sourceUrls().iterator().next().takeLast(11)
                     )
                 )
             }

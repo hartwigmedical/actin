@@ -64,10 +64,10 @@ class MolecularDriversGenerator(
             return treatments.joinToString(", ")
         }
 
-        private fun concatEligibleTrials(treatments: Set<ExternalTrial>): String {
+        private fun concatEligibleTrials(externalTrials: Set<ExternalTrial>): String {
             val strings = mutableSetOf<String>()
-            for (treatment in treatments) {
-                strings.add(treatment.website().takeLast(11))
+            for (externalTrial in externalTrials) {
+                strings.add(externalTrial.nctId())
             }
             return strings.joinToString(", ")
         }

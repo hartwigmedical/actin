@@ -182,7 +182,8 @@ public final class TestMolecularFactory {
                         .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
                                 "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)",
                                 Sets.newHashSet("Belgium", "Germany"),
-                                "https://clinicaltrials.gov/study/NCT00000002"))
+                                "https://clinicaltrials.gov/study/NCT00000002",
+                                "NCT00000002"))
                         .gene("PTEN")
                         .geneRole(GeneRole.TSG)
                         .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
@@ -230,7 +231,8 @@ public final class TestMolecularFactory {
                         .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(
                                 "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
                                 Sets.newHashSet("Netherlands"),
-                                "https://clinicaltrials.gov/study/NCT00000004"))
+                                "https://clinicaltrials.gov/study/NCT00000004",
+                                "NCT00000004"))
                         .gene("MYC")
                         .type(CopyNumberType.FULL_GAIN)
                         .minCopies(38)

@@ -16,7 +16,6 @@ import static com.hartwig.actin.util.json.Json.number;
 import static com.hartwig.actin.util.json.Json.object;
 import static com.hartwig.actin.util.json.Json.string;
 import static com.hartwig.actin.util.json.Json.stringList;
-import static com.hartwig.actin.util.json.Json.stringSet;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -420,8 +419,9 @@ public class MolecularRecordJson {
         private static Set<ExternalTrial> toEligibleTrials(@NotNull JsonArray eligibleTrialArray) {
             return extractSetFromJson(eligibleTrialArray,
                     eligibleTrial -> ExternalTrialFactory.create(string(eligibleTrial, "title"),
-                            stringSet(eligibleTrial, "countries"),
-                            string(eligibleTrial, "website")));
+                            Sets.newHashSet(stringList(eligibleTrial, "countries")),
+                            string(eligibleTrial, "url"),
+                            string(eligibleTrial, "nctId")));
         }
 
         @NotNull

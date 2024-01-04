@@ -70,7 +70,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun sourceUrls(): Set<String> {
-                return Sets.newHashSet("website")
+                return Sets.newHashSet("url")
             }
 
             override fun treatment(): Treatment {

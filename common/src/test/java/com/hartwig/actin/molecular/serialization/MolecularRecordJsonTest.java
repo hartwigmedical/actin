@@ -117,7 +117,8 @@ public class MolecularRecordJsonTest {
         assertEquals(TestActionableEvidenceFactory.builder()
                 .addExternalEligibleTrials(ExternalTrialFactory.create("PARP trial",
                         Sets.newHashSet("Netherlands", "Germany"),
-                        "https://clinicaltrials.gov/study/NCT00000001"))
+                        "https://clinicaltrials.gov/study/NCT00000001",
+                        "NCT00000001"))
                 .addOnLabelExperimentalTreatments("PARP on label")
                 .addOffLabelExperimentalTreatments("PARP off label")
                 .build(), characteristics.homologousRepairEvidence());

@@ -15,9 +15,18 @@ class EvidenceInterpreterTest {
         val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(listOf(cohortWithInclusion))
         val evidence: AggregatedEvidence = ImmutableAggregatedEvidence.builder()
             .putApprovedTreatmentsPerEvent("approved", "treatment")
-            .putExternalEligibleTrialsPerEvent("external", ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "website"))
-            .putExternalEligibleTrialsPerEvent("approved", ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "website"))
-            .putExternalEligibleTrialsPerEvent("inclusion", ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "website"))
+            .putExternalEligibleTrialsPerEvent(
+                "external",
+                ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "url", "nctId")
+            )
+            .putExternalEligibleTrialsPerEvent(
+                "approved",
+                ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "url", "nctId")
+            )
+            .putExternalEligibleTrialsPerEvent(
+                "inclusion",
+                ExternalTrialFactory.create("treatment", Sets.newHashSet("country"), "url", "nctId")
+            )
             .putOnLabelExperimentalTreatmentsPerEvent("on-label", "treatment")
             .putOnLabelExperimentalTreatmentsPerEvent("approved", "treatment")
             .putOffLabelExperimentalTreatmentsPerEvent("off-label", "treatment")
