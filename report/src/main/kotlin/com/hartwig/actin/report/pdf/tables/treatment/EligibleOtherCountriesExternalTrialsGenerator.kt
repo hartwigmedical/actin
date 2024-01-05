@@ -51,14 +51,15 @@ class EligibleOtherCountriesExternalTrialsGenerator(
             )
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
 
-            table.addCell(
-                Cells.createSpanningSubNote(
-                    String.format(
-                        "Currently only Belgium and German trials are supported"
-                    ), table
-                )
-            )
         }
+
+        table.addCell(
+            Cells.createSpanningSubNote(
+                String.format(
+                    "Currently only Belgium and German trials are supported"
+                ), table
+            )
+        )
 
         return makeWrapping(table)
     }
