@@ -12,6 +12,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
     private val maxCreatinineClearance: Double
 ) : LabEvaluationFunction {
+
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         return when (method) {
             CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)
@@ -22,35 +23,35 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
     private fun evaluateMDRD(record: PatientRecord, creatinine: LabValue): Evaluation {
         val mdrdValues = CreatinineFunctions.calcMDRD(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             creatinine
         )
-        return evaluateValues("MDRD", mdrdValues, creatinine.comparator())
+        return evaluateValues("MDRD", mdrdValues, creatinine.comparator)
     }
 
     private fun evaluateCKDEPI(record: PatientRecord, creatinine: LabValue): Evaluation {
         val ckdepiValues = CreatinineFunctions.calcCKDEPI(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             creatinine
         )
-        return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator())
+        return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator)
     }
 
     private fun evaluateCockcroftGault(record: PatientRecord, creatinine: LabValue): Evaluation {
-        val weight = CreatinineFunctions.determineWeight(record.clinical().bodyWeights())
+        val weight = CreatinineFunctions.determineWeight(record.clinical.bodyWeights)
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             weight,
             creatinine
         )
 
-        val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance)
+        val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator, maxCreatinineClearance)
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(

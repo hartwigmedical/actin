@@ -122,7 +122,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasSufficientLabValueCreator(
         measurement: LabMeasurement,
-        targetUnit: LabUnit = measurement.defaultUnit()
+        targetUnit: LabUnit = measurement.defaultUnit
     ): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minValue = functionInputResolver().createOneDoubleInput(function)
@@ -137,7 +137,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
-    private fun hasLimitedLabValueCreator(measurement: LabMeasurement, targetUnit: LabUnit = measurement.defaultUnit()): FunctionCreator {
+    private fun hasLimitedLabValueCreator(measurement: LabMeasurement, targetUnit: LabUnit = measurement.defaultUnit): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val maxValue = functionInputResolver().createOneDoubleInput(function)
             createLabEvaluator(measurement, HasLimitedLabValue(maxValue, measurement, targetUnit))
@@ -182,7 +182,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val measurement = retrieveForMethod(method)
             val main = createLabEvaluator(
                 measurement,
-                HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit())
+                HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit)
             )
             val fallback = createLabEvaluator(
                 LabMeasurement.CREATININE,
@@ -198,11 +198,11 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val measurement = retrieveForMethod(method)
             val minFunction = createLabEvaluator(
                 measurement,
-                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1())
+                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1)
             )
             val maxFunction = createLabEvaluator(
                 measurement,
-                HasLimitedDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double2())
+                HasLimitedDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double2)
             )
             And(listOf(minFunction, maxFunction))
         }

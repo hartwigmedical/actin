@@ -12,13 +12,12 @@ class CurrentlyGetsMedicationOfAtcLevel(
     private val categoryName: String,
     private val categoryAtcLevels: Set<AtcLevel>
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
+        val medications = selector.active(record.clinical.medications)
+            .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
 
-        val medications =
-            selector.active(record.clinical().medications())
-                .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
-
-        val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }
+        val foundMedicationNames = medications.map { it.name }.filter { it.isNotEmpty() }
 
         return if (medications.isNotEmpty()) {
             val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""

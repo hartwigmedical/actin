@@ -11,7 +11,7 @@ class HasTumorMutationalLoadWithinRange(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorMutationalLoad = record.molecular().characteristics().tumorMutationalLoad()
+        val tumorMutationalLoad = record.molecular.characteristics.tumorMutationalLoad
             ?: return EvaluationFactory.fail("Unknown tumor mutational load (TML)", "TML unknown")
 
         val meetsMinTumorLoad = tumorMutationalLoad >= minTumorMutationalLoad
@@ -33,8 +33,8 @@ class HasTumorMutationalLoadWithinRange(
             }
         }
         val tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5
-        return if (tumorMutationalLoadIsAlmostAllowed && record.molecular().hasSufficientQuality()
-            && !record.molecular().hasSufficientQualityAndPurity()
+        return if (tumorMutationalLoadIsAlmostAllowed && record.molecular.hasSufficientQuality
+            && !record.molecular.hasSufficientQualityAndPurity
         ) {
             EvaluationFactory.warn(
                 "Tumor mutational load (TML) of sample $tumorMutationalLoad almost exceeds $minTumorMutationalLoad"

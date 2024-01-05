@@ -11,22 +11,23 @@ import com.hartwig.actin.molecular.datamodel.driver.RegionType
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 
 class GeneHasUTR3Loss(private val gene: String) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = record.molecular().drivers().variants().filter { variant ->
-            variant.gene() == gene && variant.canonicalImpact().effects().contains(VariantEffect.THREE_PRIME_UTR)
+        val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = record.molecular.drivers.variants.filter { variant ->
+            variant.gene == gene && variant.canonicalImpact.effects.contains(VariantEffect.THREE_PRIME_UTR)
         }
             .fold(Triple(emptySet<String>(), emptySet<String>(), emptySet<String>())) { acc, variant ->
                 if (variant.isHotspot && variant.isReportable) {
-                    acc.copy(first = acc.first + variant.event())
+                    acc.copy(first = acc.first + variant.event)
                 } else if (variant.isHotspot) {
-                    acc.copy(second = acc.second + variant.event())
+                    acc.copy(second = acc.second + variant.event)
                 } else {
-                    acc.copy(third = acc.third + variant.event())
+                    acc.copy(third = acc.third + variant.event)
                 }
             }
 
-        val disruptionsIn3UTR = record.molecular().drivers().disruptions().filter { disruption ->
-            disruption.gene() == gene && disruption.codingContext() == CodingContext.UTR_3P && disruption.regionType() == RegionType.EXONIC
+        val disruptionsIn3UTR = record.molecular.drivers.disruptions.filter { disruption ->
+            disruption.gene == gene && disruption.codingContext == CodingContext.UTR_3P && disruption.regionType == RegionType.EXONIC
         }
             .map(Disruption::event)
             .toSet()

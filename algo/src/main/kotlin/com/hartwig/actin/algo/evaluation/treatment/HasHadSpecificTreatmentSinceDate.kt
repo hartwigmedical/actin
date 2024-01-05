@@ -13,9 +13,9 @@ import java.time.LocalDate
 class HasHadSpecificTreatmentSinceDate(private val treatment: Treatment, private val minDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingTreatments: List<TreatmentHistoryEntry> = record.clinical().oncologicalHistory()
+        val matchingTreatments: List<TreatmentHistoryEntry> = record.clinical.oncologicalHistory
             .mapNotNull { entry ->
-                TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) { it.name() == treatment.name() }
+                TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) { it.name == treatment.name }
             }
 
         return when {
@@ -46,8 +46,8 @@ class HasHadSpecificTreatmentSinceDate(private val treatment: Treatment, private
     }
 
     private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
-        return isAfterDate(minDate, treatment.treatmentHistoryDetails()?.stopYear(), treatment.treatmentHistoryDetails()?.stopMonth())
-            ?: isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
+        return isAfterDate(minDate, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth)
+            ?: isAfterDate(minDate, treatment.startYear, treatment.startMonth)
             ?: includeUnknown
     }
 }

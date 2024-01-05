@@ -8,15 +8,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasSpecificHLAType(private val hlaAlleleToFind: String) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        val immunology = record.molecular().immunology()
+        val immunology = record.molecular.immunology
         if (!immunology.isReliable) {
             return EvaluationFactory.recoverableUndetermined("HLA typing has not been performed reliably", "HLA typing unreliable")
         }
-        val (matchingAllelesUnmodifiedInTumor, matchingAllelesModifiedInTumor) = immunology.hlaAlleles()
-            .filter { it.name() == hlaAlleleToFind }
+        val (matchingAllelesUnmodifiedInTumor, matchingAllelesModifiedInTumor) = immunology.hlaAlleles
+            .filter { it.name == hlaAlleleToFind }
             .partition { hlaAllele ->
-                val alleleIsPresentInTumor = hlaAllele.tumorCopyNumber() >= 0.5
-                val alleleHasSomaticMutations = hlaAllele.hasSomaticMutations()
+                val alleleIsPresentInTumor = hlaAllele.tumorCopyNumber >= 0.5
+                val alleleHasSomaticMutations = hlaAllele.hasSomaticMutations
                 alleleIsPresentInTumor && !alleleHasSomaticMutations
             }
         return when {

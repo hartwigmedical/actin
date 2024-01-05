@@ -5,10 +5,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 
 object MolecularRuleEvaluator {
     fun geneIsAmplifiedForPatient(gene: String, record: PatientRecord): Boolean {
-        return GeneIsAmplified(gene).evaluate(record).result() == EvaluationResult.PASS
+        return GeneIsAmplified(gene).evaluate(record).result == EvaluationResult.PASS
     }
 
     fun geneIsInactivatedForPatient(gene: String, record: PatientRecord): Boolean {
-        return GeneIsInactivated(gene).evaluate(record).result() == EvaluationResult.PASS
+        return GeneIsInactivated(gene).evaluate(record).result == EvaluationResult.PASS
     }
 }

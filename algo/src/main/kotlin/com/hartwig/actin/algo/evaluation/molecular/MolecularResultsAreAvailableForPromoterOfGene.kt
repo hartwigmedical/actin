@@ -9,8 +9,8 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 class MolecularResultsAreAvailableForPromoterOfGene(private val gene: String) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTests, validPriorTests) = record.clinical().priorMolecularTests()
-            .filter { it.test().contains(gene) && it.test().lowercase().contains(PROMOTER) }
+        val (indeterminatePriorTests, validPriorTests) = record.clinical.priorMolecularTests
+            .filter { it.test.contains(gene) && it.test.lowercase().contains(PROMOTER) }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
         if (validPriorTests.isNotEmpty()) {

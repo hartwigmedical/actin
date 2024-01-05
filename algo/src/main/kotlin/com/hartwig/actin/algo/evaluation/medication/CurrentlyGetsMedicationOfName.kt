@@ -6,10 +6,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-class CurrentlyGetsMedicationOfName internal constructor(private val selector: MedicationSelector, private val termsToFind: Set<String>) :
-    EvaluationFunction {
+class CurrentlyGetsMedicationOfName(private val selector: MedicationSelector, private val termsToFind: Set<String>) : EvaluationFunction {
+        
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasReceivedMedication = selector.activeWithAnyTermInName(record.clinical().medications(), termsToFind).isNotEmpty()
+        val hasReceivedMedication = selector.activeWithAnyTermInName(record.clinical.medications, termsToFind).isNotEmpty()
         return if (hasReceivedMedication) {
             EvaluationFactory.recoverablePass(
                 "Patient currently gets medication with name " + concat(termsToFind),

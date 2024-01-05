@@ -17,7 +17,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult: Map<EvaluationResult, List<Evaluation>> = treatments
-            .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical().oncologicalHistory(), treatment.name()) }
+            .map { treatment -> evaluatePriorTreatmentsMatchingName(record.clinical.oncologicalHistory, treatment.name) }
             .groupBy { it.result }
 
         return when {
@@ -67,11 +67,11 @@ class HasHadCombinedTreatmentNamesWithCycles(
         val query = treatmentName.lowercase()
         val matchingHistoryEntries: Map<EvaluationResult, List<TreatmentHistoryEntry>> = treatmentHistory.mapNotNull { entry ->
             portionOfTreatmentHistoryEntryMatchingPredicate(entry) { treatment ->
-                (treatment.synonyms() + treatment.name()).any { it.lowercase() == query }
+                (treatment.synonyms + treatment.name).any { it.lowercase() == query }
             }
         }
             .groupBy {
-                when (it.treatmentHistoryDetails()?.cycles()) {
+                when (it.treatmentHistoryDetails?.cycles) {
                     null -> EvaluationResult.UNDETERMINED
                     in minCycles..maxCycles -> EvaluationResult.PASS
                     else -> EvaluationResult.FAIL
@@ -108,8 +108,8 @@ class HasHadCombinedTreatmentNamesWithCycles(
 
         private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
             return treatmentHistoryEntries.joinToString(", ") { entry ->
-                val cycleString = if (includeCycles) " (${entry.treatmentHistoryDetails()?.cycles()} cycles)" else ""
-                entry.treatments().joinToString("+") { it.display() } + cycleString
+                val cycleString = if (includeCycles) " (${entry.treatmentHistoryDetails?.cycles} cycles)" else ""
+                entry.treatments.joinToString("+") { it.display() } + cycleString
 
             }
         }

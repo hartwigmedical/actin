@@ -16,34 +16,34 @@ class GeneIsWildType internal constructor(private val gene: String) : Evaluation
         val reportableEventsWithEffect: MutableSet<String> = mutableSetOf()
         val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = mutableSetOf()
         val reportableEventsWithNoEffect: MutableSet<String> = mutableSetOf()
-        val evidenceSource = record.molecular().evidenceSource()
+        val evidenceSource = record.molecular.evidenceSource
 
-        val drivers = record.molecular().drivers()
+        val drivers = record.molecular.drivers
         sequenceOf(
-            drivers.variants().asSequence(),
-            drivers.copyNumbers().asSequence(),
-            drivers.homozygousDisruptions().asSequence().filter { it.geneRole() != GeneRole.ONCO },
-            drivers.disruptions().asSequence().filter { it.geneRole() != GeneRole.ONCO },
+            drivers.variants.asSequence(),
+            drivers.copyNumbers.asSequence(),
+            drivers.homozygousDisruptions.asSequence().filter { it.geneRole != GeneRole.ONCO },
+            drivers.disruptions.asSequence().filter { it.geneRole != GeneRole.ONCO },
         ).flatten()
-            .filter { it.gene() == gene && it.isReportable }
+            .filter { it.gene == gene && it.isReportable }
             .forEach {
-                if (it.proteinEffect() == ProteinEffect.NO_EFFECT || it.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED) {
-                    reportableEventsWithNoEffect.add(it.event())
-                } else if (it is Variant && it.driverLikelihood() == DriverLikelihood.HIGH) {
-                    reportableEventsWithEffect.add(it.event())
+                if (it.proteinEffect == ProteinEffect.NO_EFFECT || it.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED) {
+                    reportableEventsWithNoEffect.add(it.event)
+                } else if (it is Variant && it.driverLikelihood == DriverLikelihood.HIGH) {
+                    reportableEventsWithEffect.add(it.event)
                 } else {
-                    reportableEventsWithEffectPotentiallyWildtype.add(it.event())
+                    reportableEventsWithEffectPotentiallyWildtype.add(it.event)
                 }
             }
 
-        for (fusion in drivers.fusions()) {
-            if ((fusion.geneStart() == gene || fusion.geneEnd() == gene) && fusion.isReportable) {
+        for (fusion in drivers.fusions) {
+            if ((fusion.geneStart == gene || fusion.geneEnd == gene) && fusion.isReportable) {
                 val hasNoEffect =
-                    fusion.proteinEffect() == ProteinEffect.NO_EFFECT || fusion.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED
+                    fusion.proteinEffect == ProteinEffect.NO_EFFECT || fusion.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED
                 if (hasNoEffect) {
-                    reportableEventsWithNoEffect.add(fusion.event())
+                    reportableEventsWithNoEffect.add(fusion.event)
                 } else {
-                    reportableEventsWithEffect.add(fusion.event())
+                    reportableEventsWithEffect.add(fusion.event)
                 }
             }
         }

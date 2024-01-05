@@ -18,8 +18,8 @@ object SystemicTreatmentAnalyser {
                     compareBy(
                         TreatmentHistoryEntry::startYear,
                         TreatmentHistoryEntry::startMonth,
-                        { it.treatmentHistoryDetails()?.stopYear() },
-                        { it.treatmentHistoryDetails()?.stopMonth() },
+                        { it.treatmentHistoryDetails?.stopYear },
+                        { it.treatmentHistoryDetails?.stopMonth },
                         TreatmentHistoryEntry::treatmentName
                     )
                 )
@@ -41,8 +41,8 @@ object SystemicTreatmentAnalyser {
 
     private class TreatmentHistoryEntryStartDateComparator : Comparator<TreatmentHistoryEntry> {
         override fun compare(treatment1: TreatmentHistoryEntry, treatment2: TreatmentHistoryEntry): Int {
-            val yearComparison = compareValues(treatment1.startYear(), treatment2.startYear())
-            return if (yearComparison != 0) yearComparison else compareValues(treatment1.startMonth(), treatment2.startMonth())
+            val yearComparison = compareValues(treatment1.startYear, treatment2.startYear)
+            return if (yearComparison != 0) yearComparison else compareValues(treatment1.startMonth, treatment2.startMonth)
         }
     }
 
@@ -57,24 +57,18 @@ object SystemicTreatmentAnalyser {
     }
 
     private fun isBefore(first: TreatmentHistoryEntry, second: TreatmentHistoryEntry): Boolean {
-        return if (isLower(first.startYear(), second.startYear())) {
+        return if (isLower(first.startYear, second.startYear)) {
             true
         } else {
-            isEqual(first.startYear(), second.startYear()) && isLower(
-                first.startMonth(),
-                second.startMonth()
-            )
+            isEqual(first.startYear, second.startYear) && isLower(first.startMonth, second.startMonth)
         }
     }
 
     private fun isAfter(first: TreatmentHistoryEntry, second: TreatmentHistoryEntry): Boolean {
-        return if (isHigher(first.startYear(), second.startYear())) {
+        return if (isHigher(first.startYear, second.startYear)) {
             true
         } else {
-            isEqual(first.startYear(), second.startYear()) && isHigher(
-                first.startMonth(),
-                second.startMonth()
-            )
+            isEqual(first.startYear, second.startYear) && isHigher(first.startMonth, second.startMonth)
         }
     }
 

@@ -19,25 +19,25 @@ class GeneIsInactivated(private val gene: String) : EvaluationFunction {
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()
         val inactivationEventsGainOfFunction: MutableSet<String> = mutableSetOf()
-        val evidenceSource = record.molecular().evidenceSource()
+        val evidenceSource = record.molecular.evidenceSource
 
-        val drivers = record.molecular().drivers()
+        val drivers = record.molecular.drivers
         sequenceOf(
-            drivers.homozygousDisruptions().asSequence(),
-            drivers.copyNumbers().asSequence().filter { it.type() == CopyNumberType.LOSS }
+            drivers.homozygousDisruptions.asSequence(),
+            drivers.copyNumbers.asSequence().filter { it.type == CopyNumberType.LOSS }
         ).flatten()
-            .filter { it.gene() == gene }
+            .filter { it.gene == gene }
             .forEach { geneAlterationDriver ->
-                val isGainOfFunction = (geneAlterationDriver.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
-                        || geneAlterationDriver.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                val isGainOfFunction = (geneAlterationDriver.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION
+                        || geneAlterationDriver.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
                 if (!geneAlterationDriver.isReportable) {
-                    inactivationEventsThatAreUnreportable.add(geneAlterationDriver.event())
-                } else if (geneAlterationDriver.geneRole() == GeneRole.ONCO) {
-                    inactivationEventsNoTSG.add(geneAlterationDriver.event())
+                    inactivationEventsThatAreUnreportable.add(geneAlterationDriver.event)
+                } else if (geneAlterationDriver.geneRole == GeneRole.ONCO) {
+                    inactivationEventsNoTSG.add(geneAlterationDriver.event)
                 } else if (isGainOfFunction) {
-                    inactivationEventsGainOfFunction.add(geneAlterationDriver.event())
+                    inactivationEventsGainOfFunction.add(geneAlterationDriver.event)
                 } else {
-                    inactivationEventsThatQualify.add(geneAlterationDriver.event())
+                    inactivationEventsThatQualify.add(geneAlterationDriver.event)
                 }
             }
 
@@ -47,41 +47,41 @@ class GeneIsInactivated(private val gene: String) : EvaluationFunction {
         val inactivationSubclonalVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
-        val hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad()
-        for (variant in drivers.variants()) {
-            if (variant.gene() == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())) {
+        val hasHighMutationalLoad = record.molecular.characteristics.hasHighTumorMutationalLoad
+        for (variant in drivers.variants) {
+            if (variant.gene == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
                 if (!variant.isReportable) {
-                    inactivationEventsThatAreUnreportable.add(variant.event())
+                    inactivationEventsThatAreUnreportable.add(variant.event)
                 } else {
-                    val phaseGroups: Set<Int>? = variant.phaseGroups()
+                    val phaseGroups: Set<Int>? = variant.phaseGroups
                     if (phaseGroups != null) {
                         if (phaseGroups.none { evaluatedPhaseGroups.contains(it) }) {
-                            eventsThatMayBeTransPhased.add(variant.event())
+                            eventsThatMayBeTransPhased.add(variant.event)
                         }
                         evaluatedPhaseGroups.addAll(phaseGroups)
                     } else {
-                        eventsThatMayBeTransPhased.add(variant.event())
+                        eventsThatMayBeTransPhased.add(variant.event)
                     }
 
-                    if (variant.driverLikelihood() == DriverLikelihood.HIGH) {
-                        val isGainOfFunction = (variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION
-                                || variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
-                        if (variant.geneRole() == GeneRole.ONCO) {
-                            inactivationEventsNoTSG.add(variant.event())
+                    if (variant.driverLikelihood == DriverLikelihood.HIGH) {
+                        val isGainOfFunction = (variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION
+                                || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                        if (variant.geneRole == GeneRole.ONCO) {
+                            inactivationEventsNoTSG.add(variant.event)
                         } else if (!variant.isBiallelic) {
-                            inactivationHighDriverNonBiallelicVariants.add(variant.event())
+                            inactivationHighDriverNonBiallelicVariants.add(variant.event)
                         } else if (isGainOfFunction) {
-                            inactivationEventsGainOfFunction.add(variant.event())
-                        } else if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
-                            inactivationSubclonalVariants.add(variant.event())
+                            inactivationEventsGainOfFunction.add(variant.event)
+                        } else if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                            inactivationSubclonalVariants.add(variant.event)
                         } else {
-                            inactivationEventsThatQualify.add(variant.event())
+                            inactivationEventsThatQualify.add(variant.event)
                         }
                     } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                         if (variant.isBiallelic) {
-                            reportableNonDriverBiallelicVariantsOther.add(variant.event())
+                            reportableNonDriverBiallelicVariantsOther.add(variant.event)
                         } else {
-                            reportableNonDriverNonBiallelicVariantsOther.add(variant.event())
+                            reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                         }
                     }
                 }
@@ -89,11 +89,11 @@ class GeneIsInactivated(private val gene: String) : EvaluationFunction {
         }
 
         val evaluatedClusterGroups: MutableSet<Int> = mutableSetOf()
-        for (disruption in drivers.disruptions()) {
-            if (disruption.gene() == gene && disruption.isReportable) {
-                if (!evaluatedClusterGroups.contains(disruption.clusterGroup())) {
-                    evaluatedClusterGroups.add(disruption.clusterGroup())
-                    eventsThatMayBeTransPhased.add(disruption.event())
+        for (disruption in drivers.disruptions) {
+            if (disruption.gene == gene && disruption.isReportable) {
+                if (!evaluatedClusterGroups.contains(disruption.clusterGroup)) {
+                    evaluatedClusterGroups.add(disruption.clusterGroup)
+                    eventsThatMayBeTransPhased.add(disruption.event)
                 }
             }
         }

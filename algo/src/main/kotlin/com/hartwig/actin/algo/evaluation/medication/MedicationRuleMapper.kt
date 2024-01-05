@@ -4,20 +4,14 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.medication.MedicationCategories
-import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
-    private val selector: MedicationSelector
-    private val categories: MedicationCategories
-
-    init {
-        val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
-        selector = MedicationSelector(interpreter)
-        categories = MedicationCategories.create(atcTree())
-    }
+    private val selector: MedicationSelector =
+        MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date()))
+    private val categories: MedicationCategories = MedicationCategories.create(atcTree())
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
@@ -57,8 +51,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasRecentlyReceivedMedicationOfAtcLevelCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val categoryInput = functionInputResolver().createOneStringOneIntegerInput(function)
-            val categoryNameInput = categoryInput.string()
-            val maxStopDate = referenceDateProvider().date().minusWeeks(categoryInput.integer().toLong())
+            val categoryNameInput = categoryInput.string
+            val maxStopDate = referenceDateProvider().date().minusWeeks(categoryInput.integer.toLong())
             HasRecentlyReceivedMedicationOfAtcLevel(selector, categoryNameInput, categories.resolve(categoryNameInput), maxStopDate)
         }
     }
@@ -81,8 +75,8 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasRecentlyReceivedCYPXInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer().toLong())
-            HasRecentlyReceivedCypXInducingMedication(selector, input.string(), maxStopDate)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
+            HasRecentlyReceivedCypXInducingMedication(selector, input.string, maxStopDate)
         }
     }
 

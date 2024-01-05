@@ -12,19 +12,19 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        val fusionSkippingEvents = record.molecular().drivers().fusions().filter { fusion ->
-            fusion.isReportable && fusion.geneStart() == gene && fusion.geneEnd() == gene && fusion.fusedExonUp() == exonToSkip - 1
-                    && fusion.fusedExonDown() == exonToSkip + 1
+        val fusionSkippingEvents = record.molecular.drivers.fusions.filter { fusion ->
+            fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.fusedExonUp == exonToSkip - 1
+                    && fusion.fusedExonDown == exonToSkip + 1
         }
             .map(Fusion::event)
             .toSet()
 
-        val exonSplicingVariants = record.molecular().drivers().variants().filter { variant ->
+        val exonSplicingVariants = record.molecular.drivers.variants.filter { variant ->
             val isCanonicalSplice =
-                variant.canonicalImpact().codingEffect() == CodingEffect.SPLICE || variant.canonicalImpact().isSpliceRegion
-            val canonicalExonAffected = variant.canonicalImpact().affectedExon()
+                variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion
+            val canonicalExonAffected = variant.canonicalImpact.affectedExon
             val isCanonicalExonAffected = canonicalExonAffected != null && canonicalExonAffected == exonToSkip
-            variant.isReportable && variant.gene() == gene && isCanonicalExonAffected && isCanonicalSplice
+            variant.isReportable && variant.gene == gene && isCanonicalExonAffected && isCanonicalSplice
         }
             .map(Variant::event)
             .toSet()

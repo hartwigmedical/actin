@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorMutationalBurden = record.molecular().characteristics().tumorMutationalBurden()
+        val tumorMutationalBurden = record.molecular.characteristics.tumorMutationalBurden
             ?: return EvaluationFactory.fail("Unknown tumor mutational burden (TMB)", "Unknown TMB")
 
         if (tumorMutationalBurden >= minTumorMutationalBurden) {
@@ -20,8 +20,8 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
             )
         }
         val tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5
-        return if (tumorMutationalBurdenIsAlmostAllowed && record.molecular().hasSufficientQuality()
-            && !record.molecular().hasSufficientQualityAndPurity()
+        return if (tumorMutationalBurdenIsAlmostAllowed && record.molecular.hasSufficientQuality
+            && !record.molecular.hasSufficientQualityAndPurity
         ) {
             EvaluationFactory.warn(
                 "Tumor mutational burden (TMB) of sample $tumorMutationalBurden almost exceeds $minTumorMutationalBurden"

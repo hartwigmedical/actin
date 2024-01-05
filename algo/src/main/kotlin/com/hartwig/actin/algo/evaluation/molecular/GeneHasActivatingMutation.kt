@@ -23,41 +23,41 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         val nonHighDriverSubclonalVariants: MutableSet<String> = mutableSetOf()
         val nonHighDriverVariants: MutableSet<String> = mutableSetOf()
         val otherMissenseOrHotspotVariants: MutableSet<String> = mutableSetOf()
-        val hasHighMutationalLoad = record.molecular().characteristics().hasHighTumorMutationalLoad()
-        val evidenceSource = record.molecular().evidenceSource()
+        val hasHighMutationalLoad = record.molecular.characteristics.hasHighTumorMutationalLoad
+        val evidenceSource = record.molecular.evidenceSource
 
-        for (variant in record.molecular().drivers().variants()) {
-            if (variant.gene() == gene) {
+        for (variant in record.molecular.drivers.variants) {
+            if (variant.gene == gene) {
                 val isGainOfFunction =
-                    (variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION ||
-                            variant.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
-                val isNoOncogene = variant.geneRole() == GeneRole.TSG
+                    (variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION ||
+                            variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                val isNoOncogene = variant.geneRole == GeneRole.TSG
                 if (variant.isReportable) {
-                    if (variant.driverLikelihood() == DriverLikelihood.HIGH) {
+                    if (variant.driverLikelihood == DriverLikelihood.HIGH) {
                         if (isAssociatedWithDrugResistance(variant)) {
-                            activatingVariantsAssociatedWithResistance.add(variant.event())
+                            activatingVariantsAssociatedWithResistance.add(variant.event)
                         } else if (!variant.isHotspot && !isGainOfFunction) {
-                            activatingVariantsNoHotspotAndNoGainOfFunction.add(variant.event())
+                            activatingVariantsNoHotspotAndNoGainOfFunction.add(variant.event)
                         } else if (isNoOncogene) {
-                            activatingVariantsInNonOncogene.add(variant.event())
-                        } else if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
-                            activatingSubclonalVariants.add(variant.event())
+                            activatingVariantsInNonOncogene.add(variant.event)
+                        } else if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                            activatingSubclonalVariants.add(variant.event)
                         } else {
-                            activatingVariants.add(variant.event())
+                            activatingVariants.add(variant.event)
                         }
                     } else {
                         if (isGainOfFunction) {
-                            nonHighDriverGainOfFunctionVariants.add(variant.event())
+                            nonHighDriverGainOfFunctionVariants.add(variant.event)
                         } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                            if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
-                                nonHighDriverSubclonalVariants.add(variant.event())
+                            if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                                nonHighDriverSubclonalVariants.add(variant.event)
                             } else {
-                                nonHighDriverVariants.add(variant.event())
+                                nonHighDriverVariants.add(variant.event)
                             }
                         }
                     }
                 } else if (isMissenseOrHotspot(variant)) {
-                    otherMissenseOrHotspotVariants.add(variant.event())
+                    otherMissenseOrHotspotVariants.add(variant.event)
                 }
             }
         }
@@ -163,7 +163,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         }
 
         private fun isMissenseOrHotspot(variant: Variant): Boolean {
-            return variant.canonicalImpact().codingEffect() == CodingEffect.MISSENSE || variant.isHotspot
+            return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isHotspot
         }
     }
 }

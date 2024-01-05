@@ -13,4 +13,22 @@ data class Evaluation(
     val undeterminedGeneralMessages: Set<String> = emptySet(),
     val failSpecificMessages: Set<String> = emptySet(),
     val failGeneralMessages: Set<String> = emptySet()
-)
+) {
+
+    fun addMessagesAndEvents(other: Evaluation): Evaluation {
+        return Evaluation(
+            result = result,
+            recoverable = recoverable,
+            inclusionMolecularEvents = inclusionMolecularEvents + other.inclusionMolecularEvents,
+            exclusionMolecularEvents = exclusionMolecularEvents + other.exclusionMolecularEvents,
+            passSpecificMessages = passSpecificMessages + other.passSpecificMessages,
+            passGeneralMessages = passGeneralMessages + other.passGeneralMessages,
+            warnSpecificMessages = warnSpecificMessages + other.warnSpecificMessages,
+            warnGeneralMessages = warnGeneralMessages + other.warnGeneralMessages,
+            undeterminedSpecificMessages = undeterminedSpecificMessages + other.undeterminedSpecificMessages,
+            undeterminedGeneralMessages = undeterminedGeneralMessages + other.undeterminedGeneralMessages,
+            failSpecificMessages = failSpecificMessages + other.failSpecificMessages,
+            failGeneralMessages = failGeneralMessages + other.failGeneralMessages
+        )
+    }
+}

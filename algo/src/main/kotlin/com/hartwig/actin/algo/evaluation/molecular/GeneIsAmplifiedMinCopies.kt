@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
@@ -11,44 +10,44 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 //TODO: Merge with GeneIsAmplified
 class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMinCopyNumber: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ploidy = record.molecular().characteristics().ploidy()
+        val ploidy = record.molecular.characteristics.ploidy
             ?: return EvaluationFactory.fail(
                 "Cannot determine amplification for gene $gene without ploidy", "Undetermined amplification for $gene"
             )
-        val reportableFullAmps: MutableSet<String> = Sets.newHashSet()
-        val reportablePartialAmps: MutableSet<String> = Sets.newHashSet()
-        val ampsWithLossOfFunction: MutableSet<String> = Sets.newHashSet()
-        val ampsOnNonOncogenes: MutableSet<String> = Sets.newHashSet()
-        val ampsThatAreUnreportable: MutableSet<String> = Sets.newHashSet()
-        val ampsThatAreNearCutoff: MutableSet<String> = Sets.newHashSet()
-        val nonAmpsWithSufficientCopyNumber: MutableSet<String> = Sets.newHashSet()
-        val evidenceSource = record.molecular().evidenceSource()
+        val reportableFullAmps: MutableSet<String> = mutableSetOf()
+        val reportablePartialAmps: MutableSet<String> = mutableSetOf()
+        val ampsWithLossOfFunction: MutableSet<String> = mutableSetOf()
+        val ampsOnNonOncogenes: MutableSet<String> = mutableSetOf()
+        val ampsThatAreUnreportable: MutableSet<String> = mutableSetOf()
+        val ampsThatAreNearCutoff: MutableSet<String> = mutableSetOf()
+        val nonAmpsWithSufficientCopyNumber: MutableSet<String> = mutableSetOf()
+        val evidenceSource = record.molecular.evidenceSource
 
-        for (copyNumber in record.molecular().drivers().copyNumbers()) {
-            if (copyNumber.gene() == gene && copyNumber.minCopies() >= requestedMinCopyNumber) {
-                val relativeMinCopies = copyNumber.minCopies() / ploidy
-                val relativeMaxCopies = copyNumber.maxCopies() / ploidy
+        for (copyNumber in record.molecular.drivers.copyNumbers) {
+            if (copyNumber.gene == gene && copyNumber.minCopies >= requestedMinCopyNumber) {
+                val relativeMinCopies = copyNumber.minCopies / ploidy
+                val relativeMaxCopies = copyNumber.maxCopies / ploidy
                 val isAmplification = relativeMaxCopies >= HARD_PLOIDY_FACTOR
                 val isNearAmp = relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies <= HARD_PLOIDY_FACTOR
-                val isNoOncogene = copyNumber.geneRole() == GeneRole.TSG
-                val isLossOfFunction = (copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
-                        || copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
+                val isNoOncogene = copyNumber.geneRole == GeneRole.TSG
+                val isLossOfFunction = (copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION
+                        || copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
                 if (isAmplification) {
                     if (isNoOncogene) {
-                        ampsOnNonOncogenes.add(copyNumber.event())
+                        ampsOnNonOncogenes.add(copyNumber.event)
                     } else if (isLossOfFunction) {
-                        ampsWithLossOfFunction.add(copyNumber.event())
+                        ampsWithLossOfFunction.add(copyNumber.event)
                     } else if (!copyNumber.isReportable) {
-                        ampsThatAreUnreportable.add(copyNumber.event())
+                        ampsThatAreUnreportable.add(copyNumber.event)
                     } else if (relativeMinCopies < HARD_PLOIDY_FACTOR) {
-                        reportablePartialAmps.add(copyNumber.event())
+                        reportablePartialAmps.add(copyNumber.event)
                     } else {
-                        reportableFullAmps.add(copyNumber.event())
+                        reportableFullAmps.add(copyNumber.event)
                     }
                 } else if (isNearAmp) {
-                    ampsThatAreNearCutoff.add(copyNumber.event())
+                    ampsThatAreNearCutoff.add(copyNumber.event)
                 } else {
-                    nonAmpsWithSufficientCopyNumber.add(copyNumber.event())
+                    nonAmpsWithSufficientCopyNumber.add(copyNumber.event)
                 }
             }
         }

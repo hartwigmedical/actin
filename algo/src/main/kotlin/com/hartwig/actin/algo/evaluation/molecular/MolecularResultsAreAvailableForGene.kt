@@ -8,14 +8,15 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 
 class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecular().type() == ExperimentType.WHOLE_GENOME && record.molecular().containsTumorCells()) {
+        if (record.molecular.type == ExperimentType.WHOLE_GENOME && record.molecular.containsTumorCells) {
             return EvaluationFactory.pass(
                 "WGS has successfully been performed so molecular results are available for gene $gene", "WGS results available for $gene"
             )
         }
-        val (indeterminatePriorTestsForGene, passPriorTestsForGene) = record.clinical().priorMolecularTests()
-            .filter { it.item() == gene }
+        val (indeterminatePriorTestsForGene, passPriorTestsForGene) = record.clinical.priorMolecularTests
+            .filter { it.item == gene }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
         return when {
@@ -23,7 +24,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
                 EvaluationFactory.pass("$gene has been tested in a prior molecular test", "$gene tested before")
             }
 
-            record.molecular().type() == ExperimentType.WHOLE_GENOME && !record.molecular().containsTumorCells() -> {
+            record.molecular.type == ExperimentType.WHOLE_GENOME && !record.molecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had WGS but biopsy contained no tumor cells", "$gene tested but sample purity is too low"
                 )

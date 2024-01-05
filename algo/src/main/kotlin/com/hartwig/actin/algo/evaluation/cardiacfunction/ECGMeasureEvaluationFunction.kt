@@ -31,7 +31,7 @@ class ECGMeasureEvaluationFunction internal constructor(
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return record.clinical().clinicalStatus().ecg()?.let(extractingECGMeasure)
+        return record.clinical.clinicalStatus.ecg?.let(extractingECGMeasure)
             ?.let { measure: ECGMeasure -> this.evaluate(measure) }
             ?: EvaluationFactory.notEvaluated(
                 String.format("No %s known", measureName), String.format("Undetermined %s", measureName)
@@ -39,21 +39,21 @@ class ECGMeasureEvaluationFunction internal constructor(
     }
 
     private fun evaluate(measure: ECGMeasure): Evaluation {
-        if (measure.unit() != expectedUnit.symbol()) {
+        if (measure.unit != expectedUnit.symbol()) {
             return EvaluationFactory.undetermined(
-                "${measureName.name} measure not in '${expectedUnit.symbol()}': ${measure.unit()}",
+                "${measureName.name} measure not in '${expectedUnit.symbol()}': ${measure.unit}",
                 "Unrecognized unit of $measureName evaluation"
             )
         }
 
-        return if (thresholdCriteria.comparator.compare(measure.value(), threshold) >= 0) {
+        return if (thresholdCriteria.comparator.compare(measure.value, threshold) >= 0) {
             EvaluationFactory.recoverablePass(
-                String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value(), measure.unit(), threshold),
+                String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value, measure.unit, threshold),
                 generalMessage(measureName.name)
             )
         } else {
             EvaluationFactory.recoverableFail(
-                String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value(), measure.unit(), threshold),
+                String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value, measure.unit, threshold),
                 generalMessage(measureName.name)
             )
         }

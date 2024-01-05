@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
@@ -11,31 +10,31 @@ import com.hartwig.actin.algo.evaluation.util.Format.percentage
 class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        val canonicalReportableVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val canonicalReportableSubclonalVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val canonicalUnreportableVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val canonicalCodonMatches: MutableSet<String> = Sets.newHashSet()
-        val reportableOtherVariantMatches: MutableSet<String> = Sets.newHashSet()
-        val reportableOtherCodonMatches: MutableSet<String> = Sets.newHashSet()
-        for (variant in record.molecular().drivers().variants()) {
-            if (variant.gene() == gene) {
+        val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
+        val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()
+        val canonicalUnreportableVariantMatches: MutableSet<String> = mutableSetOf()
+        val canonicalCodonMatches: MutableSet<String> = mutableSetOf()
+        val reportableOtherVariantMatches: MutableSet<String> = mutableSetOf()
+        val reportableOtherCodonMatches: MutableSet<String> = mutableSetOf()
+        for (variant in record.molecular.drivers.variants) {
+            if (variant.gene == gene) {
                 for (codon in codons) {
-                    if (isCodonMatch(variant.canonicalImpact().affectedCodon(), codon)) {
+                    if (isCodonMatch(variant.canonicalImpact.affectedCodon, codon)) {
                         canonicalCodonMatches.add(codon)
                         if (variant.isReportable) {
-                            if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
-                                canonicalReportableSubclonalVariantMatches.add(variant.event())
+                            if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                                canonicalReportableSubclonalVariantMatches.add(variant.event)
                             } else {
-                                canonicalReportableVariantMatches.add(variant.event())
+                                canonicalReportableVariantMatches.add(variant.event)
                             }
                         } else {
-                            canonicalUnreportableVariantMatches.add(variant.event())
+                            canonicalUnreportableVariantMatches.add(variant.event)
                         }
                     }
                     if (variant.isReportable) {
-                        for (otherImpact in variant.otherImpacts()) {
-                            if (isCodonMatch(otherImpact.affectedCodon(), codon)) {
-                                reportableOtherVariantMatches.add(variant.event())
+                        for (otherImpact in variant.otherImpacts) {
+                            if (isCodonMatch(otherImpact.affectedCodon, codon)) {
+                                reportableOtherVariantMatches.add(variant.event)
                                 reportableOtherCodonMatches.add(codon)
                             }
                         }

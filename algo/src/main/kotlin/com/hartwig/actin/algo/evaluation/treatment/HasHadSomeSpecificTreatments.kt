@@ -11,13 +11,13 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 class HasHadSomeSpecificTreatments(private val treatments: List<Treatment>, private val minTreatmentLines: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val namesToMatch = treatments.map { it.name().lowercase() }.toSet()
-        val matchTreatments = record.clinical().oncologicalHistory()
-            .filter { it.allTreatments().any { treatment -> treatment.name().lowercase() in namesToMatch } }
+        val namesToMatch = treatments.map { it.name.lowercase() }.toSet()
+        val matchTreatments = record.clinical.oncologicalHistory
+            .filter { it.allTreatments().any { treatment -> treatment.name.lowercase() in namesToMatch } }
         val allowTrialMatches = treatments.any {
             it.categories().isEmpty() || it.categories().any(TreatmentSummaryForCategory::categoryAllowsTrialMatches)
         }
-        val trialMatchCount = if (allowTrialMatches) record.clinical().oncologicalHistory().count(TreatmentHistoryEntry::isTrial) else 0
+        val trialMatchCount = if (allowTrialMatches) record.clinical.oncologicalHistory.count(TreatmentHistoryEntry::isTrial) else 0
 
         val treatmentListing = concatItems(treatments)
         return when {

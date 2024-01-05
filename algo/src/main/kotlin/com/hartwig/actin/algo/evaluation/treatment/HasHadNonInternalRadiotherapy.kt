@@ -10,8 +10,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 class HasHadNonInternalRadiotherapy : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingTreatments = record.clinical().oncologicalHistory()
-            .filter { entry -> entry.treatments().any { it is Radiotherapy && it.isInternal != true } }
+        val matchingTreatments = record.clinical.oncologicalHistory
+            .filter { entry -> entry.treatments.any { it is Radiotherapy && it.isInternal != true } }
 
         return if (matchingTreatments.isNotEmpty()) {
             EvaluationFactory.pass(

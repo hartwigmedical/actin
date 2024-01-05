@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
@@ -12,11 +11,11 @@ import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 class IsHomologousRepairDeficient : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hrdGenesWithBiallelicDriver: MutableSet<String> = Sets.newHashSet()
-        val hrdGenesWithNonBiallelicDriver: MutableSet<String> = Sets.newHashSet()
+        val hrdGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()
+        val hrdGenesWithNonBiallelicDriver: MutableSet<String> = mutableSetOf()
         for (gene in MolecularConstants.HRD_GENES) {
-            for (variant in record.molecular().drivers().variants()) {
-                if (variant.gene() == gene && variant.isReportable) {
+            for (variant in record.molecular.drivers.variants) {
+                if (variant.gene == gene && variant.isReportable) {
                     if (variant.isBiallelic) {
                         hrdGenesWithBiallelicDriver.add(gene)
                     } else {
@@ -24,23 +23,23 @@ class IsHomologousRepairDeficient : EvaluationFunction {
                     }
                 }
             }
-            for (copyNumber in record.molecular().drivers().copyNumbers()) {
-                if (copyNumber.type() == CopyNumberType.LOSS && copyNumber.gene() == gene) {
+            for (copyNumber in record.molecular.drivers.copyNumbers) {
+                if (copyNumber.type == CopyNumberType.LOSS && copyNumber.gene == gene) {
                     hrdGenesWithBiallelicDriver.add(gene)
                 }
             }
-            for (homozygousDisruption in record.molecular().drivers().homozygousDisruptions()) {
-                if (homozygousDisruption.gene() == gene) {
+            for (homozygousDisruption in record.molecular.drivers.homozygousDisruptions) {
+                if (homozygousDisruption.gene == gene) {
                     hrdGenesWithBiallelicDriver.add(gene)
                 }
             }
-            for (disruption in record.molecular().drivers().disruptions()) {
-                if (disruption.gene() == gene && disruption.isReportable) {
+            for (disruption in record.molecular.drivers.disruptions) {
+                if (disruption.gene == gene && disruption.isReportable) {
                     hrdGenesWithNonBiallelicDriver.add(gene)
                 }
             }
         }
-        return when (record.molecular().characteristics().isHomologousRepairDeficient) {
+        return when (record.molecular.characteristics.isHomologousRepairDeficient) {
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(

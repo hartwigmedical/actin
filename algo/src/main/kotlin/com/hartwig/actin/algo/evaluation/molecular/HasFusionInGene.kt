@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
@@ -13,40 +12,39 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 class HasFusionInGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingFusions: MutableSet<String> = Sets.newHashSet()
-        val fusionsWithNoEffect: MutableSet<String> = Sets.newHashSet()
-        val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = Sets.newHashSet()
-        val fusionsWithNoHighDriverLikelihoodOther: MutableSet<String> = Sets.newHashSet()
-        val unreportableFusionsWithGainOfFunction: MutableSet<String> = Sets.newHashSet()
-        val evidenceSource = record.molecular().evidenceSource()
+        val matchingFusions: MutableSet<String> = mutableSetOf()
+        val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
+        val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()
+        val fusionsWithNoHighDriverLikelihoodOther: MutableSet<String> = mutableSetOf()
+        val unreportableFusionsWithGainOfFunction: MutableSet<String> = mutableSetOf()
+        val evidenceSource = record.molecular.evidenceSource
 
-        for (fusion in record.molecular().drivers().fusions()) {
+        for (fusion in record.molecular.drivers.fusions) {
             val isAllowedDriverType =
-                (fusion.geneStart() == gene && fusion.geneStart() == fusion.geneEnd()) ||
-                        (fusion.geneStart() == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType())) ||
-                        (fusion.geneEnd() == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_3.contains(fusion.driverType()))
+                (fusion.geneStart == gene && fusion.geneStart == fusion.geneEnd) ||
+                        (fusion.geneStart == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType)) ||
+                        (fusion.geneEnd == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_3.contains(fusion.driverType))
             if (isAllowedDriverType) {
                 val isGainOfFunction =
-                    (fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION ||
-                            fusion.proteinEffect() == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                    (fusion.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION ||
+                            fusion.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
                 if (fusion.isReportable) {
                     val hasNoEffect =
-                        (fusion.proteinEffect() == ProteinEffect.NO_EFFECT
-                                || fusion.proteinEffect() == ProteinEffect.NO_EFFECT_PREDICTED)
-                    if (fusion.driverLikelihood() != DriverLikelihood.HIGH) {
+                        (fusion.proteinEffect == ProteinEffect.NO_EFFECT || fusion.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED)
+                    if (fusion.driverLikelihood != DriverLikelihood.HIGH) {
                         if (isGainOfFunction) {
-                            fusionsWithNoHighDriverLikelihoodWithGainOfFunction.add(fusion.event())
+                            fusionsWithNoHighDriverLikelihoodWithGainOfFunction.add(fusion.event)
                         } else {
-                            fusionsWithNoHighDriverLikelihoodOther.add(fusion.event())
+                            fusionsWithNoHighDriverLikelihoodOther.add(fusion.event)
                         }
                     } else if (hasNoEffect) {
-                        fusionsWithNoEffect.add(fusion.event())
+                        fusionsWithNoEffect.add(fusion.event)
                     } else {
-                        matchingFusions.add(fusion.event())
+                        matchingFusions.add(fusion.event)
                     }
                 } else {
                     if (isGainOfFunction) {
-                        unreportableFusionsWithGainOfFunction.add(fusion.event())
+                        unreportableFusionsWithGainOfFunction.add(fusion.event)
                     }
                 }
             }
@@ -108,14 +106,14 @@ class HasFusionInGene(private val gene: String) : EvaluationFunction {
     }
 
     companion object {
-        val ALLOWED_DRIVER_TYPES_FOR_GENE_5: Set<FusionDriverType> = Sets.newHashSet(
+        val ALLOWED_DRIVER_TYPES_FOR_GENE_5: Set<FusionDriverType> = setOf(
             FusionDriverType.KNOWN_PAIR,
             FusionDriverType.KNOWN_PAIR_DEL_DUP,
             FusionDriverType.PROMISCUOUS_BOTH,
             FusionDriverType.PROMISCUOUS_5
         )
 
-        val ALLOWED_DRIVER_TYPES_FOR_GENE_3: Set<FusionDriverType> = Sets.newHashSet(
+        val ALLOWED_DRIVER_TYPES_FOR_GENE_3: Set<FusionDriverType> = setOf(
             FusionDriverType.KNOWN_PAIR,
             FusionDriverType.KNOWN_PAIR_DEL_DUP,
             FusionDriverType.PROMISCUOUS_BOTH,

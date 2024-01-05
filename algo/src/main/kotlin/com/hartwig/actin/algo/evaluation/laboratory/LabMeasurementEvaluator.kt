@@ -17,20 +17,20 @@ class LabMeasurementEvaluator(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val interpretation = LabInterpreter.interpret(record.clinical().labValues())
+        val interpretation = LabInterpreter.interpret(record.clinical.labValues)
         val mostRecent = interpretation.mostRecentValue(measurement)
         if (!isValid(mostRecent, measurement)) {
             return when {
                 mostRecent == null -> {
-                    EvaluationFactory.recoverableUndetermined("No measurement found for " + measurement.display())
+                    EvaluationFactory.recoverableUndetermined("No measurement found for ${measurement.display()}")
                 }
 
-                mostRecent.unit() != measurement.defaultUnit() -> {
-                    EvaluationFactory.recoverableUndetermined("Unexpected unit specified for " + measurement.display() + ": " + mostRecent.unit())
+                mostRecent.unit != measurement.defaultUnit -> {
+                    EvaluationFactory.recoverableUndetermined("Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit}")
                 }
 
-                mostRecent.date().isBefore(minValidDate) -> {
-                    EvaluationFactory.recoverableUndetermined("Most recent measurement too old for " + measurement.display())
+                mostRecent.date.isBefore(minValidDate) -> {
+                    EvaluationFactory.recoverableUndetermined("Most recent measurement too old for ${measurement.display()}")
                 }
 
                 else -> {
@@ -52,7 +52,7 @@ class LabMeasurementEvaluator(
             }
         }
 
-        return if (evaluation.result == EvaluationResult.PASS && !mostRecent.date().isAfter(minPassDate)) {
+        return if (evaluation.result == EvaluationResult.PASS && !mostRecent.date.isAfter(minPassDate)) {
             Evaluation(
                 result = EvaluationResult.WARN,
                 recoverable = true,
@@ -62,10 +62,10 @@ class LabMeasurementEvaluator(
     }
 
     private fun isValid(value: LabValue?, measurement: LabMeasurement): Boolean {
-        return value != null && value.unit() == measurement.defaultUnit() && !value.date().isBefore(minValidDate)
+        return value != null && value.unit == measurement.defaultUnit && !value.date.isBefore(minValidDate)
     }
 
     private fun appendPastMinPassDate(inputs: Set<String>): List<String> {
-        return inputs.map { it + ", but measurement occurred before " + date(minValidDate) }
+        return inputs.map { "$it, but measurement occurred before ${date(minValidDate)}" }
     }
 }

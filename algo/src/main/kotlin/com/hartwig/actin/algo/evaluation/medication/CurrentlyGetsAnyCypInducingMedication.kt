@@ -11,7 +11,7 @@ class CurrentlyGetsAnyCypInducingMedication(private val selector: MedicationSele
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val cypInducersReceived =
-            selector.activeWithCypInteraction(record.clinical().medications(), null, CypInteraction.Type.INDUCER).map { it.name() }
+            selector.activeWithCypInteraction(record.clinical.medications, null, CypInteraction.Type.INDUCER).map { it.name }
         return if (cypInducersReceived.isNotEmpty()) {
             EvaluationFactory.recoverablePass(
                 "Patient currently gets CYP inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",

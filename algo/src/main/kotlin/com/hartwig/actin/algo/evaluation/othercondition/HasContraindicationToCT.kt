@@ -11,8 +11,8 @@ import com.hartwig.actin.doid.DoidModel
 
 class HasContraindicationToCT internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
-            for (doid in condition.doids()) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+            for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
                     return EvaluationFactory.pass(
                         "Patient has a contraindication to CT due to " + doidModel.resolveTermForDoid(doid),
@@ -20,34 +20,34 @@ class HasContraindicationToCT internal constructor(private val doidModel: DoidMo
                     )
                 }
             }
-            if (stringCaseInsensitivelyMatchesQueryCollection(condition.name(), OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(condition.name, OTHER_CONDITIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
-                    "Patient has a contraindication to CT due to condition " + condition.name(),
-                    "Potential CT contraindication: " + condition.name()
+                    "Patient has a contraindication to CT due to condition " + condition.name,
+                    "Potential CT contraindication: " + condition.name
                 )
             }
         }
-        for (intolerance in record.clinical().intolerances()) {
-            if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name(), INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT)) {
+        for (intolerance in record.clinical.intolerances) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name, INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
-                    "Patient has a contraindication to CT due to intolerance " + intolerance.name(),
-                    "Potential CT contraindication: " + intolerance.name()
+                    "Patient has a contraindication to CT due to intolerance " + intolerance.name,
+                    "Potential CT contraindication: " + intolerance.name
                 )
             }
         }
-        for (medication in record.clinical().medications()) {
-            if (stringCaseInsensitivelyMatchesQueryCollection(medication.name(), MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
+        for (medication in record.clinical.medications) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(medication.name, MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
-                    "Patient has a contraindication to CT due to medication " + medication.name(),
-                    "Potential CT contraindication: " + medication.name()
+                    "Patient has a contraindication to CT due to medication " + medication.name,
+                    "Potential CT contraindication: " + medication.name
                 )
             }
         }
-        for (complication in record.clinical().complications() ?: emptyList()) {
-            if (stringCaseInsensitivelyMatchesQueryCollection(complication.name(), COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
+        for (complication in record.clinical.complications ?: emptyList()) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(complication.name, COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
-                    "Patient has a contraindication to CT due to complication " + complication.name(),
-                    "Potential CT contraindication: " + complication.name()
+                    "Patient has a contraindication to CT due to complication " + complication.name,
+                    "Potential CT contraindication: " + complication.name
                 )
             }
         }

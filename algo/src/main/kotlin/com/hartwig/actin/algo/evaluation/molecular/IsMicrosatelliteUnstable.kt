@@ -14,8 +14,8 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
         val msiGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()
         val msiGenesWithNonBiallelicDriver: MutableSet<String> = mutableSetOf()
         for (gene in MolecularConstants.MSI_GENES) {
-            for (variant in record.molecular().drivers().variants()) {
-                if (variant.gene() == gene && variant.isReportable) {
+            for (variant in record.molecular.drivers.variants) {
+                if (variant.gene == gene && variant.isReportable) {
                     if (variant.isBiallelic) {
                         msiGenesWithBiallelicDriver.add(gene)
                     } else {
@@ -23,23 +23,23 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
                     }
                 }
             }
-            for (copyNumber in record.molecular().drivers().copyNumbers()) {
-                if (copyNumber.type() == CopyNumberType.LOSS && copyNumber.gene() == gene) {
+            for (copyNumber in record.molecular.drivers.copyNumbers) {
+                if (copyNumber.type == CopyNumberType.LOSS && copyNumber.gene == gene) {
                     msiGenesWithBiallelicDriver.add(gene)
                 }
             }
-            for (homozygousDisruption in record.molecular().drivers().homozygousDisruptions()) {
-                if (homozygousDisruption.gene() == gene) {
+            for (homozygousDisruption in record.molecular.drivers.homozygousDisruptions) {
+                if (homozygousDisruption.gene == gene) {
                     msiGenesWithBiallelicDriver.add(gene)
                 }
             }
-            for (disruption in record.molecular().drivers().disruptions()) {
-                if (disruption.gene() == gene && disruption.isReportable) {
+            for (disruption in record.molecular.drivers.disruptions) {
+                if (disruption.gene == gene && disruption.isReportable) {
                     msiGenesWithNonBiallelicDriver.add(gene)
                 }
             }
         }
-        val isMicrosatelliteUnstable = record.molecular().characteristics().isMicrosatelliteUnstable
+        val isMicrosatelliteUnstable = record.molecular.characteristics.isMicrosatelliteUnstable
         if (isMicrosatelliteUnstable == null) {
             return if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                 EvaluationFactory.undetermined(

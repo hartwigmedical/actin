@@ -20,15 +20,15 @@ class GeneHasVariantInExonRangeOfType(
         val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
 
         val (canonicalReportableVariantMatches, canonicalUnreportableVariantMatches, reportableOtherVariantMatches) =
-            record.molecular().drivers().variants().filter { it.gene() == gene && allowedVariantTypes.contains(it.type()) }
+            record.molecular.drivers.variants.filter { it.gene == gene && allowedVariantTypes.contains(it.type) }
                 .map { variant ->
                     val (reportableMatches, unreportableMatches) = listOf(variant)
-                        .filter { hasEffectInExonRange(variant.canonicalImpact().affectedExon(), minExon, maxExon) }
+                        .filter { hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon) }
                         .partition(Variant::isReportable)
 
                     val otherImpactMatches = if (!variant.isReportable) emptySet() else {
-                        setOfNotNull(variant.otherImpacts().find { hasEffectInExonRange(it.affectedExon(), minExon, maxExon) }
-                            ?.let { variant.event() })
+                        setOfNotNull(variant.otherImpacts.find { hasEffectInExonRange(it.affectedExon, minExon, maxExon) }
+                            ?.let { variant.event })
                     }
                     Triple(
                         reportableMatches.map(Variant::event).toSet(),

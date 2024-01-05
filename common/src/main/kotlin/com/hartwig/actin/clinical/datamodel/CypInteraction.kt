@@ -1,21 +1,22 @@
 package com.hartwig.actin.clinical.datamodel
 
-enum class CypInteractionType {
-    INDUCER,
-    INHIBITOR,
-    SUBSTRATE
-}
-
-enum class CypInteractionStrength {
-    STRONG,
-    MODERATE,
-    WEAK,
-    SENSITIVE,
-    MODERATE_SENSITIVE
-}
-
 data class CypInteraction(
-    val type: CypInteractionType,
-    val strength: CypInteractionStrength,
+    val type: Type,
+    val strength: Strength,
     val cyp: String,
-)
+) {
+
+    enum class Type {
+        INDUCER,
+        INHIBITOR,
+        SUBSTRATE
+    }
+
+    enum class Strength {
+        STRONG,
+        MODERATE,
+        WEAK,
+        SENSITIVE,
+        MODERATE_SENSITIVE
+    }
+}

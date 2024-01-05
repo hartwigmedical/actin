@@ -19,27 +19,27 @@ class GeneHasVariantWithProteinImpact(private val gene: String, private val allo
         val canonicalProteinImpactMatches: MutableSet<String> = mutableSetOf()
         val reportableOtherVariantMatches: MutableSet<String> = mutableSetOf()
         val reportableOtherProteinImpactMatches: MutableSet<String> = mutableSetOf()
-        
-        for (variant in record.molecular().drivers().variants()) {
-            if (variant.gene() == gene) {
-                val canonicalProteinImpact = toProteinImpact(variant.canonicalImpact().hgvsProteinImpact())
+
+        for (variant in record.molecular.drivers.variants) {
+            if (variant.gene == gene) {
+                val canonicalProteinImpact = toProteinImpact(variant.canonicalImpact.hgvsProteinImpact)
                 for (allowedProteinImpact in allowedProteinImpacts) {
                     if (canonicalProteinImpact == allowedProteinImpact) {
                         canonicalProteinImpactMatches.add(allowedProteinImpact)
                         if (variant.isReportable) {
-                            if (variant.clonalLikelihood() < CLONAL_CUTOFF) {
-                                canonicalReportableSubclonalVariantMatches.add(variant.event())
+                            if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                                canonicalReportableSubclonalVariantMatches.add(variant.event)
                             } else {
-                                canonicalReportableVariantMatches.add(variant.event())
+                                canonicalReportableVariantMatches.add(variant.event)
                             }
                         } else {
-                            canonicalUnreportableVariantMatches.add(variant.event())
+                            canonicalUnreportableVariantMatches.add(variant.event)
                         }
                     }
                     if (variant.isReportable) {
-                        for (otherProteinImpact in toProteinImpacts(variant.otherImpacts())) {
+                        for (otherProteinImpact in toProteinImpacts(variant.otherImpacts)) {
                             if (otherProteinImpact == allowedProteinImpact) {
-                                reportableOtherVariantMatches.add(variant.event())
+                                reportableOtherVariantMatches.add(variant.event)
                                 reportableOtherProteinImpactMatches.add(allowedProteinImpact)
                             }
                         }
@@ -100,7 +100,7 @@ class GeneHasVariantWithProteinImpact(private val gene: String, private val allo
         )
         private const val CLONAL_CUTOFF = 0.5
         private fun toProteinImpacts(impacts: Set<TranscriptImpact>): Set<String> {
-            return impacts.map { toProteinImpact(it.hgvsProteinImpact()) }.toSet()
+            return impacts.map { toProteinImpact(it.hgvsProteinImpact) }.toSet()
         }
 
         @VisibleForTesting

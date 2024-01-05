@@ -22,24 +22,23 @@ class EvaluationFunctionFactory(
     fun create(function: EligibilityFunction): EvaluationFunction {
         val hasValidInputs: Boolean? = functionInputResolver.hasValidInputs(function)
         check(hasValidInputs ?: false) { "No valid inputs defined for $function" }
-        return if (CompositeRules.isComposite(function.rule())) {
+        return if (CompositeRules.isComposite(function.rule)) {
             createCompositeFunction(function)
         } else {
-            functionCreatorMap[function.rule()]?.create(function) ?: throw NullPointerException(
-                "Could not find function creator for rule "
-                        + function.rule()
+            functionCreatorMap[function.rule]?.create(function) ?: throw NullPointerException(
+                "Could not find function creator for rule ${function.rule}"
             )
         }
     }
 
     private fun createCompositeFunction(function: EligibilityFunction): EvaluationFunction {
-        return when (function.rule()) {
+        return when (function.rule) {
             EligibilityRule.AND -> And(createMultipleCompositeParameters(function))
             EligibilityRule.OR -> Or(createMultipleCompositeParameters(function))
             EligibilityRule.NOT -> Not(createSingleCompositeParameter(function))
             EligibilityRule.WARN_IF -> WarnIf(createSingleCompositeParameter(function))
             else -> {
-                throw IllegalStateException("Could not create evaluation function for composite rule '" + function.rule() + "'")
+                throw IllegalStateException("Could not create evaluation function for composite rule '${function.rule}'")
             }
         }
     }
@@ -49,11 +48,7 @@ class EvaluationFunctionFactory(
     }
 
     private fun createMultipleCompositeParameters(function: EligibilityFunction): List<EvaluationFunction> {
-        val parameters: MutableList<EvaluationFunction> = mutableListOf()
-        for (input in FunctionInputResolver.createAtLeastTwoCompositeParameters(function)) {
-            parameters.add(create(input))
-        }
-        return parameters
+        return FunctionInputResolver.createAtLeastTwoCompositeParameters(function).map(::create)
     }
 
     companion object {
