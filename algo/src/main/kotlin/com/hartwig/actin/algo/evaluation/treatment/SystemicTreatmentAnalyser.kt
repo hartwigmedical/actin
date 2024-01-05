@@ -39,13 +39,6 @@ object SystemicTreatmentAnalyser {
         return treatmentHistoryEntry.allTreatments().any(Treatment::isSystemic)
     }
 
-    class TreatmentHistoryEntryStartDateComparator : Comparator<TreatmentHistoryEntry> {
-        override fun compare(treatment1: TreatmentHistoryEntry, treatment2: TreatmentHistoryEntry): Int {
-            val yearComparison = compareValues(treatment1.startYear(), treatment2.startYear())
-            return if (yearComparison != 0) yearComparison else compareValues(treatment1.startMonth(), treatment2.startMonth())
-        }
-    }
-
     private fun isInterrupted(
         current: TreatmentHistoryEntry, previous: TreatmentHistoryEntry,
         otherTreatments: List<TreatmentHistoryEntry>

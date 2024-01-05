@@ -12,13 +12,12 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
 
     @Test
     fun `Should fail if treatment history empty`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(emptySet())
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             HasHadTreatmentWithCategoryOfTypesAsMostRecent(
                 TreatmentCategory.TARGETED_THERAPY, DrugType.EGFR_INHIBITOR_GEN_3
             ).evaluate(
-                withTreatmentHistory(listOf(treatmentHistoryEntry))
+                withTreatmentHistory(emptyList())
             )
         )
     }
