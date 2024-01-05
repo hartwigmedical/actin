@@ -4,7 +4,6 @@ import com.google.common.collect.Multimap
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Formats.COMMA_SEPARATOR
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
@@ -44,7 +43,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
                             Styles.urlStyle()
                         )
                 )
-                subTable.addCell(Cells.createContentNoBorder(it.countries().joinToString(COMMA_SEPARATOR)))
+                subTable.addCell(Cells.createContentNoBorder(it.countries().joinToString { it.display() }))
 
             }
             table.addCell(
