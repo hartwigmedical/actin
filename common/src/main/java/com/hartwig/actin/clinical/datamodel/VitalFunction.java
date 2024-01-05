@@ -23,4 +23,7 @@ public abstract class VitalFunction {
 
     @NotNull
     public abstract String unit();
+
+    @NotNull
+    public abstract Boolean valid();
 }

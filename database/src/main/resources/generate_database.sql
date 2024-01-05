@@ -205,9 +205,10 @@ DROP TABLE IF EXISTS `bodyWeight`;
 CREATE TABLE `bodyWeight`
 (   `id` int NOT NULL AUTO_INCREMENT,
      `patientId` varchar(50) NOT NULL,
-     `date` DATE NOT NULL,
+     `date` TIMESTAMP NOT NULL,
      `value` double precision NOT NULL,
      `unit` varchar(50) NOT NULL,
+     `valid` BOOLEAN NOT NULL,
      PRIMARY KEY (`id`)
 );
 
@@ -215,11 +216,12 @@ DROP TABLE IF EXISTS `vitalFunction`;
 CREATE TABLE `vitalFunction`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) NOT NULL,
-    `date` DATE NOT NULL,
+    `date` TIMESTAMP NOT NULL,
     `category` varchar(50) NOT NULL,
     `subcategory` varchar(150) NOT NULL,
     `value` double precision NOT NULL,
     `unit` varchar(50) NOT NULL,
+    `valid` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)
 );
 

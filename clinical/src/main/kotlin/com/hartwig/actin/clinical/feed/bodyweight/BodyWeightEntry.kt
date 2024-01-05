@@ -7,5 +7,6 @@ data class BodyWeightEntry(
     override val subject: String,
     val valueQuantityValue: Double,
     val valueQuantityUnit: String,
-    val effectiveDateTime: LocalDateTime
+    val effectiveDateTime: LocalDateTime,
+    val validValue: Boolean
 ) : FeedEntry

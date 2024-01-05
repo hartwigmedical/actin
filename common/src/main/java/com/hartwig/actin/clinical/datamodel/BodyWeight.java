@@ -17,4 +17,7 @@ public abstract class BodyWeight {
 
     @NotNull
     public abstract String unit();
+
+    @NotNull
+    public abstract Boolean valid();
 }

@@ -157,12 +157,14 @@ class ClinicalIngestion(
                     .date(entry.effectiveDateTime)
                     .value(entry.valueQuantityValue)
                     .unit(entry.valueQuantityUnit)
+                    .valid(true)
                     .build()
             } else {
                 ImmutableBodyWeight.builder()
                     .date(entry.effectiveDateTime)
                     .value(entry.valueQuantityValue)
-                    .unit("<ignore>")
+                    .unit(entry.valueQuantityUnit)
+                    .valid(false)
                     .build()
             }
         }
