@@ -38,6 +38,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
+import com.hartwig.actin.molecular.datamodel.evidence.Country;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
@@ -117,7 +118,7 @@ public class MolecularRecordJsonTest {
         assertEquals(TestActionableEvidenceFactory.builder()
                 .addExternalEligibleTrials(ImmutableExternalTrial.builder()
                         .title("PARP trial")
-                        .countries(Sets.newHashSet("Netherlands", "Germany"))
+                        .countries(Sets.newHashSet(Country.NETHERLANDS, Country.GERMANY))
                         .url("https://clinicaltrials.gov/study/NCT00000001")
                         .nctId("NCT00000001")
                         .build())

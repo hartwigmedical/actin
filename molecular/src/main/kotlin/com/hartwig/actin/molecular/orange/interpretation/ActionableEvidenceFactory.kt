@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
@@ -66,7 +67,7 @@ object ActionableEvidenceFactory {
                     ImmutableExternalTrial.builder()
                         .title(onLabelEvent.treatment().name())
                         // evidenceUrls() contains a set of countries
-                        .countries(onLabelEvent.evidenceUrls())
+                        .countries(determineCountries(onLabelEvent.evidenceUrls()))
                         .url(nctUrl)
                         .nctId(nctUrl.takeLast(11))
                         .build()
@@ -74,6 +75,24 @@ object ActionableEvidenceFactory {
             }
         }
         return builder.build()
+    }
+
+    private fun determineCountries(countries: Set<String>): Set<Country> {
+        val values = mutableSetOf<Country>()
+        for (country in countries) {
+            values.add(determineCountry(country))
+        }
+
+        return values
+    }
+
+    private fun determineCountry(country: String): Country {
+        return when (country) {
+            "Netherlands" -> Country.NETHERLANDS
+            "Belgium" -> Country.BELGIUM
+            "Germany" -> Country.GERMANY
+            else -> Country.OTHER
+        }
     }
 
     private fun extractNctUrl(event: ActionableEvent): String {

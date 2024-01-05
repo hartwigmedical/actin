@@ -31,6 +31,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory;
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect;
 import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
+import com.hartwig.actin.molecular.datamodel.evidence.Country;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
@@ -182,7 +183,7 @@ public final class TestMolecularFactory {
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(ImmutableExternalTrial.builder()
                                 .title("A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)")
-                                .countries(Sets.newHashSet("Belgium", "Germany"))
+                                .countries(Sets.newHashSet(Country.BELGIUM, Country.GERMANY))
                                 .url("https://clinicaltrials.gov/study/NCT00000002")
                                 .nctId("NCT00000002")
                                 .build()))
@@ -232,7 +233,7 @@ public final class TestMolecularFactory {
                         .driverLikelihood(DriverLikelihood.HIGH)
                         .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(ImmutableExternalTrial.builder()
                                 .title("A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer")
-                                .countries(Sets.newHashSet("Netherlands"))
+                                .countries(Sets.newHashSet(Country.NETHERLANDS))
                                 .url("https://clinicaltrials.gov/study/NCT00000004")
                                 .nctId("NCT00000004")
                                 .build()))

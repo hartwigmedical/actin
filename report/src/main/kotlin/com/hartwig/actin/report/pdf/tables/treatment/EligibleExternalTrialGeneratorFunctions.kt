@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.treatment
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -12,7 +13,7 @@ object EligibleExternalTrialGeneratorFunctions {
     fun dutchTrials(externalTrialsPerEvent: Multimap<String, ExternalTrial>): Multimap<String, ExternalTrial> {
         val dutchTrials = ArrayListMultimap.create<String, ExternalTrial>()
         externalTrialsPerEvent.forEach { event, eligibleTrial ->
-            if (eligibleTrial.countries().contains("Netherlands")) {
+            if (eligibleTrial.countries().contains(Country.NETHERLANDS)) {
                 dutchTrials.put(event, eligibleTrial)
             }
         }
@@ -22,7 +23,7 @@ object EligibleExternalTrialGeneratorFunctions {
     fun nonDutchTrials(externalTrialsPerEvent: Multimap<String, ExternalTrial>): Multimap<String, ExternalTrial> {
         val nonDutchTrials = ArrayListMultimap.create<String, ExternalTrial>()
         externalTrialsPerEvent.forEach { event, eligibleTrial ->
-            if (!eligibleTrial.countries().contains("Netherlands")) {
+            if (!eligibleTrial.countries().contains(Country.NETHERLANDS)) {
                 nonDutchTrials.put(event, eligibleTrial)
             }
         }

@@ -14,7 +14,7 @@ public abstract class ExternalTrial {
     public abstract String title();
 
     @NotNull
-    public abstract Set<String> countries();
+    public abstract Set<Country> countries();
 
     @NotNull
     public abstract String url();

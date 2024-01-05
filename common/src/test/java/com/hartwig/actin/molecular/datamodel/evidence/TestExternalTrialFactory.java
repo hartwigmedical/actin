@@ -15,7 +15,7 @@ public final class TestExternalTrialFactory {
     @NotNull
     public static ExternalTrial createMinimal() {
         return builder().title("treatment")
-                .countries(Sets.newHashSet(Collections.singleton("country")))
+                .countries(Sets.newHashSet(Collections.singleton(Country.NETHERLANDS)))
                 .url("https://clinicaltrials.gov/study/NCT00000001")
                 .nctId("nctId")
                 .build();

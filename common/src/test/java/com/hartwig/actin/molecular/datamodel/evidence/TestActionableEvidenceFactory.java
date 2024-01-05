@@ -24,7 +24,7 @@ public final class TestActionableEvidenceFactory {
         return builder().addApprovedTreatments("approved")
                 .addExternalEligibleTrials(ImmutableExternalTrial.builder()
                         .title("external trial")
-                        .countries(Sets.newHashSet("Netherlands", "Belgium"))
+                        .countries(Sets.newHashSet(Country.NETHERLANDS, Country.BELGIUM))
                         .url("https://clinicaltrials.gov/study/NCT00000001")
                         .nctId("NCT00000001")
                         .build())

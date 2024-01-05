@@ -75,6 +75,7 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.Country;
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
@@ -420,10 +421,19 @@ public class MolecularRecordJson {
             return extractSetFromJson(eligibleTrialArray,
                     eligibleTrial -> ImmutableExternalTrial.builder()
                             .title(string(eligibleTrial, "title"))
-                            .countries(Sets.newHashSet(stringList(eligibleTrial, "countries")))
+                            .countries(toCountries(stringList(eligibleTrial, "countries")))
                             .url(string(eligibleTrial, "url"))
                             .nctId(string(eligibleTrial, "nctId"))
                             .build());
+        }
+
+        @NotNull
+        private static Set<Country> toCountries(@NotNull List<String> countryStrings) {
+            Set<Country> countries = Sets.newHashSet();
+            for (String country : countryStrings) {
+                countries.add(Country.valueOf(country));
+            }
+            return countries;
         }
 
         @NotNull
