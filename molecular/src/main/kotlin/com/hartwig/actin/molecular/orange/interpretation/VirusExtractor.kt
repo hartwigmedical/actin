@@ -1,8 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableVirus
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
@@ -14,21 +12,19 @@ import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 
 internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
 
-    fun extract(virusInterpreter: VirusInterpreterData): MutableSet<Virus> {
-        val viruses: MutableSet<Virus> = Sets.newTreeSet(VirusComparator())
-        for (virus in virusInterpreter.allViruses()) {
-            viruses.add(ImmutableVirus.builder()
-                .isReportable(virus.reported())
-                .event(DriverEventFactory.virusEvent(virus))
-                .driverLikelihood(determineDriverLikelihood(virus.driverLikelihood()))
-                .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus)))
-                .name(virus.name())
-                .isReliable(virus.qcStatus() == QC_PASS_STATUS)
-                .type(determineType(virus.interpretation()))
-                .integrations(virus.integrations())
-                .build())
-        }
-        return viruses
+    fun extract(virusInterpreter: VirusInterpreterData): Set<Virus> {
+        return virusInterpreter.allViruses().map { virus ->
+            Virus(
+                isReportable = virus.reported(),
+                event = DriverEventFactory.virusEvent(virus),
+                driverLikelihood = determineDriverLikelihood(virus.driverLikelihood()),
+                evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))!!,
+                name = virus.name(),
+                isReliable = virus.qcStatus() == QC_PASS_STATUS,
+                type = determineType(virus.interpretation()),
+                integrations = virus.integrations()
+            )
+        }.toSortedSet(VirusComparator())
     }
 
     companion object {

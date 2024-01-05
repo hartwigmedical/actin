@@ -1,11 +1,9 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableDisruption
 import com.hartwig.actin.molecular.datamodel.driver.RegionType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
@@ -22,39 +20,38 @@ import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
 internal class DisruptionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
 
     fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>, drivers: List<LinxDriver>): MutableSet<Disruption> {
-        val disruptions: MutableSet<Disruption> = Sets.newTreeSet(DisruptionComparator())
-        for (breakend in linx.allSomaticBreakends()) {
-            val event = DriverEventFactory.disruptionEvent(breakend)
-
-            if (geneFilter.include(breakend.gene())) {
-                if (include(breakend, lostGenes)) {
-                    disruptions.add(
-                        ImmutableDisruption.builder()
-                            .from(
-                                GeneAlterationFactory.convertAlteration(
-                                    breakend.gene(),
-                                    evidenceDatabase.geneAlterationForBreakend(breakend)
-                                )
-                            )
-                            .isReportable(breakend.reported())
-                            .event(event)
-                            .driverLikelihood(DriverLikelihood.LOW)
-                            .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend)))
-                            .type(determineDisruptionType(breakend.type()))
-                            .junctionCopyNumber(ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()))
-                            .undisruptedCopyNumber(ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)))
-                            .regionType(determineRegionType(breakend.regionType()))
-                            .codingContext(determineCodingContext(breakend.codingType()))
-                            .clusterGroup(lookupClusterId(breakend, linx.allSomaticStructuralVariants()))
-                            .build()
-                    )
-                }
-            } else check(!breakend.reported()) {
-                ("Filtered a reported breakend through gene filtering: '" + event + "'. Please make sure '" + breakend.gene()
-                        + "' is configured as a known gene.")
+        return linx.allSomaticBreakends().filter { breakend ->
+            val geneIncluded = geneFilter.include(breakend.gene())
+            if (!geneIncluded && breakend.reported()) {
+                throw IllegalStateException(
+                    "Filtered a reported breakend through gene filtering: '${DriverEventFactory.disruptionEvent(breakend)}'."
+                            + " Please make sure '${breakend.gene()}' is configured as a known gene."
+                )
             }
+            geneIncluded && include(breakend, lostGenes)
         }
-        return disruptions
+            .map { breakend ->
+                val alteration = GeneAlterationFactory.convertAlteration(
+                    breakend.gene(), evidenceDatabase.geneAlterationForBreakend(breakend)
+                )
+                Disruption(
+                    gene = alteration.gene,
+                    geneRole = alteration.geneRole,
+                    proteinEffect = alteration.proteinEffect,
+                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                    isReportable = breakend.reported(),
+                    event = DriverEventFactory.disruptionEvent(breakend),
+                    driverLikelihood = DriverLikelihood.LOW,
+                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend))!!,
+                    type = determineDisruptionType(breakend.type()),
+                    junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
+                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)),
+                    regionType = determineRegionType(breakend.regionType()),
+                    codingContext = determineCodingContext(breakend.codingType()),
+                    clusterGroup = lookupClusterId(breakend, linx.allSomaticStructuralVariants())
+                )
+            }
+            .toSortedSet(DisruptionComparator())
     }
 
     companion object {
@@ -63,12 +60,8 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
         }
 
         private fun lookupClusterId(breakend: LinxBreakend, structuralVariants: List<LinxSvAnnotation>): Int {
-            for (structuralVariant in structuralVariants) {
-                if (structuralVariant.svId() == breakend.svId()) {
-                    return structuralVariant.clusterId()
-                }
-            }
-            throw IllegalStateException("Could not find structural variant with ID: " + breakend.svId())
+            return structuralVariants.find { it.svId() == breakend.svId() }?.clusterId()
+                ?: throw IllegalStateException("Could not find structural variant with ID: " + breakend.svId())
         }
 
         internal fun determineDisruptionType(type: LinxBreakendType): DisruptionType {
@@ -164,15 +157,13 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
         }
 
         fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double {
-            if (breakend.type() == LinxBreakendType.DUP) {
-                for (driver in drivers) {
-                    if (driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION) {
-                        return Math.max(0.0, breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber())
-                    }
-                }
+            return if (breakend.type() == LinxBreakendType.DUP
+                && drivers.any { driver -> driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION }
+            ) {
+                (breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
+            } else {
+                breakend.undisruptedCopyNumber()
             }
-
-            return breakend.undisruptedCopyNumber()
         }
     }
 }

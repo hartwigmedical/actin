@@ -3,60 +3,55 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.orange.evidence.known.TestServeKnownFactory
-import org.apache.logging.log4j.util.Strings
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class GeneAlterationFactoryTest {
 
     @Test
-    fun canConvertNullAlterations() {
+    fun `Should convert null alterations`() {
         val nullAlteration = GeneAlterationFactory.convertAlteration("gene", null)
-        assertEquals("gene", nullAlteration.gene())
-        assertEquals(GeneRole.UNKNOWN, nullAlteration.geneRole())
-        assertEquals(ProteinEffect.UNKNOWN, nullAlteration.proteinEffect())
-        assertNull(nullAlteration.isAssociatedWithDrugResistance)
+        assertThat(nullAlteration.gene).isEqualTo("gene")
+        assertThat(nullAlteration.geneRole).isEqualTo(GeneRole.UNKNOWN)
+        assertThat(nullAlteration.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
+        assertThat(nullAlteration.isAssociatedWithDrugResistance).isNull()
     }
 
     @Test
-    fun canConvertAllRolesAndEffects() {
+    fun `Should convert all roles and effects`() {
         for (geneRole in com.hartwig.serve.datamodel.common.GeneRole.values()) {
             for (proteinEffect in com.hartwig.serve.datamodel.common.ProteinEffect.values()) {
                 val alteration = GeneAlterationFactory.convertAlteration(
-                    Strings.EMPTY,
+                    "",
                     TestServeKnownFactory.createGeneAlteration(geneRole, proteinEffect)
                 )
-                assertNotNull(alteration.gene())
-                assertNotNull(alteration.geneRole())
-                assertNotNull(alteration.proteinEffect())
+                assertThat(alteration.gene).isNotNull()
+                assertThat(alteration.geneRole).isNotNull()
+                assertThat(alteration.proteinEffect).isNotNull()
             }
         }
     }
 
     @Test
-    fun canHandleDrugAssociations() {
+    fun `Should handle drug associations`() {
         val withDrugAssociation = GeneAlterationFactory.convertAlteration(
-            Strings.EMPTY,
+            "",
             TestServeKnownFactory.createGeneAlteration(
                 com.hartwig.serve.datamodel.common.GeneRole.UNKNOWN,
                 com.hartwig.serve.datamodel.common.ProteinEffect.UNKNOWN,
                 true
             )
         )
-        assertTrue(withDrugAssociation.isAssociatedWithDrugResistance == true)
+        assertThat(withDrugAssociation.isAssociatedWithDrugResistance).isTrue()
 
         val withNoDrugAssociation = GeneAlterationFactory.convertAlteration(
-            Strings.EMPTY,
+            "",
             TestServeKnownFactory.createGeneAlteration(
                 com.hartwig.serve.datamodel.common.GeneRole.UNKNOWN,
                 com.hartwig.serve.datamodel.common.ProteinEffect.UNKNOWN,
                 false
             )
         )
-        assertFalse(withNoDrugAssociation.isAssociatedWithDrugResistance == true)
+        assertThat(withNoDrugAssociation.isAssociatedWithDrugResistance == false).isTrue()
     }
 }

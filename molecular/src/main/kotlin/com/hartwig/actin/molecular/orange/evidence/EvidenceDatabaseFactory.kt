@@ -13,7 +13,7 @@ object EvidenceDatabaseFactory {
 
     fun create(
         knownEvents: KnownEvents, actionableEvents: ActionableEvents,
-        externalTrialMappings: MutableList<ExternalTrialMapping>, doidEntry: DoidEntry, tumorDoids: MutableSet<String>
+        externalTrialMappings: List<ExternalTrialMapping>, doidEntry: DoidEntry, tumorDoids: Set<String>
     ): EvidenceDatabase {
         val externalTrialMapper = ExternalTrialMapper(externalTrialMappings)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)

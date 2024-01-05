@@ -1,31 +1,26 @@
 package com.hartwig.actin.molecular.orange.evidence.curation
 
 import com.google.common.io.Resources
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ExternalTrialMappingFileTest {
 
     @Test
-    fun canReadExternalTrialMappingTsv() {
+    fun `Should read external trial mapping tsv`() {
         val mappings = ExternalTrialMappingFile.read(EXAMPLE_TSV)
 
-        assertEquals(2, mappings.size.toLong())
-        assertEquals("Trial 1", findByExternalTrial(mappings, "TR1").actinTrial)
-        assertEquals("TR2", findByExternalTrial(mappings, "TR2").actinTrial)
+        assertThat(mappings.size.toLong()).isEqualTo(2)
+        assertThat(findByExternalTrial(mappings, "TR1").actinTrial).isEqualTo("Trial 1")
+        assertThat(findByExternalTrial(mappings, "TR2").actinTrial).isEqualTo("TR2")
     }
 
     companion object {
         private val EXAMPLE_TSV = Resources.getResource("curation/external_trial_mapping.tsv").path
 
-        private fun findByExternalTrial(mappings: MutableList<ExternalTrialMapping>,
-                                        externalTrialToFind: String): ExternalTrialMapping {
-            for (mapping in mappings) {
-                if (mapping.externalTrial == externalTrialToFind) {
-                    return mapping
-                }
-            }
-            throw IllegalStateException("Could not find external trial in mapping list: $externalTrialToFind")
+        private fun findByExternalTrial(mappings: List<ExternalTrialMapping>, externalTrialToFind: String): ExternalTrialMapping {
+            return mappings.find { it.externalTrial == externalTrialToFind }
+                ?: throw IllegalStateException("Could not find external trial in mapping list: $externalTrialToFind")
         }
     }
 }

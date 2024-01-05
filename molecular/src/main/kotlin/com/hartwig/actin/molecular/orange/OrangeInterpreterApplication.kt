@@ -63,9 +63,9 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
 
             LOGGER.info("Loading clinical json from {}", config.clinicalJson)
             val clinical = ClinicalRecordJson.read(config.clinicalJson)
-            val tumorDoids = clinical.tumor().doids().orEmpty().filterNotNull().toMutableSet()
+            val tumorDoids = clinical.tumor.doids.orEmpty().toSet()
             if (tumorDoids.isEmpty()) {
-                LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId())
+                LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId)
             } else {
                 LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
             }
@@ -73,7 +73,7 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
             LOGGER.info("Loading DOID tree from {}", config.doidJson)
             val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
 
-            LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+            LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
             return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, mappings, doidEntry, tumorDoids)
         }
 

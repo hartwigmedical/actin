@@ -8,4 +8,17 @@ data class ActionableEvidence(
     val preClinicalTreatments: Set<String> = emptySet(),
     val knownResistantTreatments: Set<String> = emptySet(),
     val suspectResistantTreatments: Set<String> = emptySet()
-)
+) {
+
+    operator fun plus(other: ActionableEvidence): ActionableEvidence {
+        return ActionableEvidence(
+            approvedTreatments + other.approvedTreatments,
+            externalEligibleTrials + other.externalEligibleTrials,
+            onLabelExperimentalTreatments + other.onLabelExperimentalTreatments,
+            offLabelExperimentalTreatments + other.offLabelExperimentalTreatments,
+            preClinicalTreatments + other.preClinicalTreatments,
+            knownResistantTreatments + other.knownResistantTreatments,
+            suspectResistantTreatments + other.suspectResistantTreatments
+        )
+    }
+}

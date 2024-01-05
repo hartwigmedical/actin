@@ -10,7 +10,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
-import java.util.*
 
 object DriverEventFactory {
 
@@ -30,11 +29,7 @@ object DriverEventFactory {
         if (canonical.effects().contains(PurpleVariantEffect.UPSTREAM_GENE)) {
             return "upstream"
         }
-        val joiner = StringJoiner("&")
-        for (effect in canonical.effects()) {
-            joiner.add(effect.toString())
-        }
-        return joiner.toString()
+        return canonical.effects().joinToString("&") { it.toString() }
     }
 
     private fun reformatProteinImpact(proteinImpact: String): String {
@@ -67,15 +62,19 @@ object DriverEventFactory {
     }
 
     fun virusEvent(virus: VirusInterpreterEntry): String {
-        val interpretation = virus.interpretation()
-        return if (interpretation != null) {
-            if (virus.interpretation() == VirusInterpretation.HPV) {
-                String.format("%s (%s) positive", interpretation, virus.name())
-            } else {
-                String.format("%s positive", interpretation)
+        val label = when (val interpretation = virus.interpretation()) {
+            null -> {
+                virus.name()
             }
-        } else {
-            String.format("%s positive", virus.name())
+
+            VirusInterpretation.HPV -> {
+                "$interpretation (${virus.name()})"
+            }
+
+            else -> {
+                interpretation
+            }
         }
+        return "$label positive"
     }
 }
