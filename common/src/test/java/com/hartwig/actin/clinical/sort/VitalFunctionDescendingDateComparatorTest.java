@@ -35,9 +35,7 @@ public class VitalFunctionDescendingDateComparatorTest {
     private static VitalFunction withDate(@NotNull LocalDate date) {
         return ImmutableVitalFunction.builder().date(date.atStartOfDay())
                 .category(VitalFunctionCategory.HEART_RATE)
-                .subcategory(Strings.EMPTY)
-                .value(0D)
-                .unit(Strings.EMPTY)
+                .subcategory(Strings.EMPTY).value(0D).unit(Strings.EMPTY).valid(true)
                 .build();
     }
 }
