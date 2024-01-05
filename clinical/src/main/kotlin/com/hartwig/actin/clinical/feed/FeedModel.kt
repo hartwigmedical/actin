@@ -52,14 +52,23 @@ class FeedModel(private val feed: ClinicalFeed) {
         return entriesForSubject(
             feed.vitalFunctionEntries,
             subject
-        ).distinctBy { VitalFunctionProperties(it.effectiveDateTime, it.quantityValue, it.quantityUnit, it.componentCodeDisplay) }
+        ).distinctBy {
+            VitalFunctionProperties(
+                it.effectiveDateTime,
+                it.quantityValue,
+                it.quantityUnit,
+                it.componentCodeDisplay,
+                it.valid
+            )
+        }
     }
 
     data class VitalFunctionProperties(
         val effectiveDateTime: LocalDateTime,
         val quantityValue: Double,
         val quantityUnit: String,
-        val componentCodeDisplay: String
+        val componentCodeDisplay: String,
+        val valid: Boolean
     )
 
     fun intoleranceEntries(subject: String): List<IntoleranceEntry> {

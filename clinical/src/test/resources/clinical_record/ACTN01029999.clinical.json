@@ -148,12 +148,14 @@
     {
       "date": "2020-08-11T00:00:00",
       "value": 61.1,
-      "unit": "kilogram"
+      "unit": "kilogram",
+      "valid": true
     },
     {
       "date": "2020-08-20T08:43:00",
       "value": 58.9,
-      "unit": "kilogram"
+      "unit": "kilogram",
+      "valid": true
     }
   ],
   "vitalFunctions": [
@@ -162,7 +164,8 @@
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
       "subcategory": "Systolic blood pressure",
       "value": 108.0,
-      "unit": "mm[Hg]"
+      "unit": "mm[Hg]",
+      "valid": true
     }
   ],
   "bloodTransfusions": [

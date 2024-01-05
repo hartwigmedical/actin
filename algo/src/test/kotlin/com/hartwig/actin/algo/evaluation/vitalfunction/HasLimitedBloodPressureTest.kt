@@ -14,7 +14,7 @@ class HasLimitedBloodPressureTest {
 
     @Test
     fun `Should fail when systolic blood pressure above maximum`() {
-        val bloodPressures = listOf(systolic().date(referenceDate).value(145.0).build())
+        val bloodPressures = listOf(systolic().date(referenceDate).value(145.0).valid(true).build())
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures))

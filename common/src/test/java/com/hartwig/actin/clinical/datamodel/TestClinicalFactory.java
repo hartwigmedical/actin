@@ -531,12 +531,12 @@ public final class TestClinicalFactory {
         bodyWeights.add(ImmutableBodyWeight.builder()
                 .date(TODAY_TIME.minusDays(DAYS_SINCE_BODY_WEIGHT_1))
                 .value(70D)
-                .unit("Kilogram")
+                .unit("Kilogram").valid(true)
                 .build());
         bodyWeights.add(ImmutableBodyWeight.builder()
                 .date(TODAY_TIME.minusDays(DAYS_SINCE_BODY_WEIGHT_2))
                 .value(68D)
-                .unit("Kilogram")
+                .unit("Kilogram").valid(true)
                 .build());
 
         return bodyWeights;
@@ -548,9 +548,7 @@ public final class TestClinicalFactory {
 
         vitalFunctions.add(ImmutableVitalFunction.builder().date(TODAY_TIME.minusDays(DAYS_SINCE_BLOOD_PRESSURE))
                 .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-                .subcategory("Mean blood pressure")
-                .value(99)
-                .unit("mm[Hg]")
+                .subcategory("Mean blood pressure").value(99).unit("mm[Hg]").valid(true)
                 .build());
 
         return vitalFunctions;

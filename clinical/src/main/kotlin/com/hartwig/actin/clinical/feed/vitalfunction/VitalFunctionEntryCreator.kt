@@ -12,7 +12,8 @@ class VitalFunctionEntryCreator : FeedEntryCreator<VitalFunctionEntry> {
             codeDisplayOriginal = line.string("code_display_original"),
             componentCodeDisplay = line.string("component_code_display"),
             quantityUnit = line.string("quantity_unit"),
-            quantityValue = line.number("value_quantity")
+            quantityValue = line.number("value_quantity"),
+            valid = true
         )
     }
 

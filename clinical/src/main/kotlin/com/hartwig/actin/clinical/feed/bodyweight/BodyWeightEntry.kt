@@ -8,5 +8,5 @@ data class BodyWeightEntry(
     val valueQuantityValue: Double,
     val valueQuantityUnit: String,
     val effectiveDateTime: LocalDateTime,
-    val validValue: Boolean
+    val valid: Boolean
 ) : FeedEntry

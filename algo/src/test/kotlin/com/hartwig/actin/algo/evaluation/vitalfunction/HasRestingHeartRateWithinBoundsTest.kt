@@ -22,9 +22,9 @@ class HasRestingHeartRateWithinBoundsTest {
     @Test
     fun `Should pass when median heart rate within reference values`() {
         val heartRates = listOf(
-            heartRate().date(referenceDate).value(70.0).build(),
-            heartRate().date(referenceDate.minusDays(1)).value(70.0).build(),
-            heartRate().date(referenceDate.minusDays(2)).value(90.0).build()
+            heartRate().date(referenceDate).value(70.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(1)).value(70.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(2)).value(90.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
     }
@@ -32,9 +32,9 @@ class HasRestingHeartRateWithinBoundsTest {
     @Test
     fun `Should fail when median heart rate outside reference values`() {
         val heartRates = listOf(
-            heartRate().date(referenceDate).value(80.0).build(),
-            heartRate().date(referenceDate.minusDays(1)).value(85.0).build(),
-            heartRate().date(referenceDate.minusDays(2)).value(90.0).build()
+            heartRate().date(referenceDate).value(80.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(1)).value(85.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(2)).value(90.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
     }
@@ -42,9 +42,9 @@ class HasRestingHeartRateWithinBoundsTest {
     @Test
     fun `Should only use measurements within date cutoff for data validity`() {
         val heartRates = listOf(
-            heartRate().date(referenceDate).value(80.0).build(),
-            heartRate().date(referenceDate.minusDays(1)).value(85.0).build(),
-            heartRate().date(referenceDate.minusMonths(2)).value(60.0).build()
+            heartRate().date(referenceDate).value(80.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(1)).value(85.0).valid(true).build(),
+            heartRate().date(referenceDate.minusMonths(2)).value(60.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
     }
@@ -52,16 +52,16 @@ class HasRestingHeartRateWithinBoundsTest {
     @Test
     fun `Should only use 5 most recent data points (medians of medians per day)`() {
         val heartRates = listOf(
-            heartRate().date(referenceDate).value(90.0).build(),
-            heartRate().date(referenceDate).value(70.0).build(),
-            heartRate().date(referenceDate.minusDays(1)).value(70.0).build(),
-            heartRate().date(referenceDate.minusDays(1)).value(50.0).build(),
-            heartRate().date(referenceDate.minusDays(2)).value(85.0).build(),
-            heartRate().date(referenceDate.minusDays(3)).value(70.0).build(),
-            heartRate().date(referenceDate.minusDays(4)).value(75.0).build(),
-            heartRate().date(referenceDate.minusDays(5)).value(180.0).build(),
-            heartRate().date(referenceDate.minusDays(6)).value(180.0).build(),
-            heartRate().date(referenceDate.minusDays(7)).value(180.0).build()
+            heartRate().date(referenceDate).value(90.0).valid(true).build(),
+            heartRate().date(referenceDate).value(70.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(1)).value(70.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(1)).value(50.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(2)).value(85.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(3)).value(70.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(4)).value(75.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(5)).value(180.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(6)).value(180.0).valid(true).build(),
+            heartRate().date(referenceDate.minusDays(7)).value(180.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
     }

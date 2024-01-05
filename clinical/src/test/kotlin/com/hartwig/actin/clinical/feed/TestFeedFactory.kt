@@ -210,7 +210,9 @@ object TestFeedFactory {
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
                 quantityUnit = "mm[Hg]",
-                quantityValue = 120.0
+                quantityValue = 120.0,
+                valid = true
+
             ),
             VitalFunctionEntry(
                 subject = TEST_SUBJECT,
@@ -218,7 +220,8 @@ object TestFeedFactory {
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
                 quantityUnit = "mm[Hg]",
-                quantityValue = 1200.0
+                quantityValue = 1200.0,
+                valid = false
             ),
             VitalFunctionEntry(
                 subject = TEST_SUBJECT,
@@ -226,7 +229,8 @@ object TestFeedFactory {
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
                 quantityUnit = "mm[Hg]",
-                quantityValue = 120.0
+                quantityValue = 120.0,
+                valid = true
             ),
             VitalFunctionEntry(
                 subject = TEST_SUBJECT,
@@ -234,7 +238,8 @@ object TestFeedFactory {
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Diastolic blood pressure",
                 quantityUnit = "mm[Hg]",
-                quantityValue = 120.0
+                quantityValue = 120.0,
+                valid = true
             )
         )
     }
@@ -262,21 +267,25 @@ object TestFeedFactory {
                 valueQuantityValue = 58.1,
                 valueQuantityUnit = "kilogram",
                 effectiveDateTime = LocalDateTime.of(2018, 4, 5, 12, 30, 0),
+                valid = true
             ), BodyWeightEntry(
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 61.1,
                 valueQuantityUnit = "kilogram",
                 effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0),
+                valid = true
             ), BodyWeightEntry(
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 61.1,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0)
+                effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0),
+                valid = true
             ), BodyWeightEntry(
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 611.0,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDateTime.of(2018, 5, 4, 12, 30, 0)
+                effectiveDateTime = LocalDateTime.of(2018, 5, 4, 12, 30, 0),
+                valid = false
             )
         )
     }

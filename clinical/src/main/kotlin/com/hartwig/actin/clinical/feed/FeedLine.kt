@@ -52,6 +52,10 @@ class FeedLine(private val fields: Map<String, Int>, private val parts: Array<St
         return string(column).toInt()
     }
 
+    fun boolean(column: String): Boolean {
+        return string(column).toBoolean()
+    }
+
     companion object {
         const val NULL_STRING = "NULL"
     }

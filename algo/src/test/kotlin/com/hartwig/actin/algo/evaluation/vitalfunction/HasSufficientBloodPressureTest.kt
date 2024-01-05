@@ -15,7 +15,8 @@ class HasSufficientBloodPressureTest {
     @Test
     fun `Should fail when systolic blood pressure under minimum`() {
         val bloodPressures = listOf(
-            systolic().date(referenceDate).value(95.0).build())
+            systolic().date(referenceDate).value(95.0).valid(true).build()
+        )
 
         assertEvaluation(
             EvaluationResult.FAIL,

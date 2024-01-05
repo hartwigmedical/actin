@@ -31,6 +31,7 @@ class HasBMIUpToLimitTest {
                             .date(now)
                             .value(70.0)
                             .unit("pound")
+                            .valid(true)
                             .build()
                     )
                 )
@@ -43,11 +44,8 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    ImmutableBodyWeight.builder()
-                        .date(now)
-                        .value(70.57)
-                        .unit("Kilogram")
-                        .build(), ImmutableBodyWeight.builder().date(lastYear).value(100.0).unit("Kilogram").build()
+                    ImmutableBodyWeight.builder().date(now).value(70.57).unit("Kilogram").valid(true).build(),
+                    ImmutableBodyWeight.builder().date(lastYear).value(100.0).unit("Kilogram").valid(true).build()
                 )
             )
         )
@@ -63,11 +61,8 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    ImmutableBodyWeight.builder()
-                        .date(now)
-                        .value(180.32)
-                        .unit("Kilogram")
-                        .build(), ImmutableBodyWeight.builder().date(lastYear).value(100.0).unit("Kilogram").build()
+                    ImmutableBodyWeight.builder().date(now).value(180.32).unit("Kilogram").valid(true).build(),
+                    ImmutableBodyWeight.builder().date(lastYear).value(100.0).unit("Kilogram").valid(true).build()
                 )
             )
         )
@@ -82,11 +77,8 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    ImmutableBodyWeight.builder()
-                        .date(now)
-                        .value(100.99)
-                        .unit("Kilogram")
-                        .build(), ImmutableBodyWeight.builder().date(lastYear).value(80.0).unit("Kilogram").build()
+                    ImmutableBodyWeight.builder().date(now).value(100.99).unit("Kilogram").valid(true).build(),
+                    ImmutableBodyWeight.builder().date(lastYear).value(80.0).unit("Kilogram").valid(true).build()
                 )
             )
         )

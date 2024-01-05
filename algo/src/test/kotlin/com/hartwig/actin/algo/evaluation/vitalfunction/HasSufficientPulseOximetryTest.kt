@@ -21,9 +21,9 @@ class HasSufficientPulseOximetryTest {
     @Test
     fun `Should only consider measurements within date cutoff for data validity`() {
         val pulseOximetries: List<VitalFunction> = listOf(
-            pulseOximetry().date(referenceDate.minusMonths(3)).value(92.0).unit("percent").build(),
-            pulseOximetry().date(referenceDate.minusMonths(2)).value(92.0).unit("percent").build(),
-            pulseOximetry().date(referenceDate).value(89.0).unit("percent").build()
+            pulseOximetry().date(referenceDate.minusMonths(3)).value(92.0).unit("percent").valid(true).build(),
+            pulseOximetry().date(referenceDate.minusMonths(2)).value(92.0).unit("percent").valid(true).build(),
+            pulseOximetry().date(referenceDate).value(89.0).unit("percent").valid(true).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }
@@ -31,8 +31,8 @@ class HasSufficientPulseOximetryTest {
     @Test
     fun `Should only consider measurements with percentage as unit`() {
         val pulseOximetries: List<VitalFunction> = listOf(
-            pulseOximetry().date(referenceDate).value(40.0).unit("test").build(),
-            pulseOximetry().date(referenceDate).value(99.0).unit("percent").build(),
+            pulseOximetry().date(referenceDate).value(40.0).unit("test").valid(true).build(),
+            pulseOximetry().date(referenceDate).value(99.0).unit("percent").valid(true).build(),
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }
@@ -40,9 +40,9 @@ class HasSufficientPulseOximetryTest {
     @Test
     fun `Should pass when median SpO2 is above reference value`() {
         val pulseOximetries: List<VitalFunction> = listOf(
-            pulseOximetry().date(referenceDate).value(90.0).unit("percent").build(),
-            pulseOximetry().date(referenceDate).value(89.0).unit("percent").build(),
-            pulseOximetry().date(referenceDate).value(91.0).unit("percent").build()
+            pulseOximetry().date(referenceDate).value(90.0).unit("percent").valid(true).build(),
+            pulseOximetry().date(referenceDate).value(89.0).unit("percent").valid(true).build(),
+            pulseOximetry().date(referenceDate).value(91.0).unit("percent").valid(true).build()
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }
@@ -50,8 +50,8 @@ class HasSufficientPulseOximetryTest {
     @Test
     fun `Should fail when median SpO2 is below reference value`() {
         val pulseOximetries: List<VitalFunction> = listOf(
-            pulseOximetry().date(referenceDate).value(89.0).unit("percent").build(),
-            pulseOximetry().date(referenceDate.minusDays(4)).value(89.0).unit("percent").build()
+            pulseOximetry().date(referenceDate).value(89.0).unit("percent").valid(true).build(),
+            pulseOximetry().date(referenceDate.minusDays(4)).value(89.0).unit("percent").valid(true).build()
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }

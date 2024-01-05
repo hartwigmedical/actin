@@ -64,8 +64,8 @@ class CreatinineFunctionsTest {
     @Test
     fun canDetermineWeight() {
         val weights = listOf(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2020, 1, 1, 12, 30, 0)).value(50.0).unit(Strings.EMPTY).build(),
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 1, 1, 12, 30, 0)).value(60.0).unit(Strings.EMPTY).build()
+            ImmutableBodyWeight.builder().date(LocalDateTime.of(2020, 1, 1, 12, 30, 0)).value(50.0).unit(Strings.EMPTY).valid(true).build(),
+            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 1, 1, 12, 30, 0)).value(60.0).unit(Strings.EMPTY).valid(true).build()
         )
         Assert.assertEquals(60.0, CreatinineFunctions.determineWeight(weights)!!, EPSILON)
         Assert.assertNull(CreatinineFunctions.determineWeight(emptyList()))

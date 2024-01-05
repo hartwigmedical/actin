@@ -9,5 +9,6 @@ data class VitalFunctionEntry(
     val codeDisplayOriginal: String,
     val componentCodeDisplay: String,
     val quantityUnit: String,
-    val quantityValue: Double
+    val quantityValue: Double,
+    val valid: Boolean
 ) : FeedEntry

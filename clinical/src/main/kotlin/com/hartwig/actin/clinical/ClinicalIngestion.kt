@@ -185,6 +185,7 @@ class ClinicalIngestion(
                     .subcategory(entry.componentCodeDisplay)
                     .value(entry.quantityValue)
                     .unit(entry.quantityUnit)
+                    .valid(true)
                     .build()
             } else {
                 ImmutableVitalFunction.builder()
@@ -192,7 +193,8 @@ class ClinicalIngestion(
                     .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal))
                     .subcategory(entry.componentCodeDisplay)
                     .value(entry.quantityValue)
-                    .unit("<ignore>")
+                    .unit(entry.quantityUnit)
+                    .valid(false)
                     .build()
             }
         }

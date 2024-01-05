@@ -13,7 +13,7 @@ class VitalFunctionFunctionsTest {
     fun `Should sort values and select correct median`() {
         val builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE)
         val vitalFunctions =
-            listOf(builder.value(2.0).build(), builder.value(1.0).build(), builder.value(3.0).build())
+            listOf(builder.value(2.0).valid(true).build(), builder.value(1.0).valid(true).build(), builder.value(3.0).valid(true).build())
         Assert.assertEquals(2.0, selectMedianFunction(vitalFunctions).value(), EPSILON)
     }
 
@@ -22,10 +22,10 @@ class VitalFunctionFunctionsTest {
         val builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE)
         val vitalFunctions =
             listOf(
-                builder.value(1.7).build(),
-                builder.value(3.0).build(),
-                builder.value(1.0).build(),
-                builder.value(2.0).build()
+                builder.value(1.7).valid(true).build(),
+                builder.value(3.0).valid(true).build(),
+                builder.value(1.0).valid(true).build(),
+                builder.value(2.0).valid(true).build()
             )
         Assert.assertEquals(1.7, selectMedianFunction(vitalFunctions).value(), EPSILON)
     }
@@ -35,8 +35,8 @@ class VitalFunctionFunctionsTest {
     fun `Should determine exact median value`() {
         val builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE)
         val vitalFunctions = listOf(
-            builder.value(1.0).build(),
-            builder.value(3.0).build()
+            builder.value(1.0).valid(true).build(),
+            builder.value(3.0).valid(true).build()
         )
         Assert.assertEquals(2.0, determineMedianValue(vitalFunctions), EPSILON)
     }

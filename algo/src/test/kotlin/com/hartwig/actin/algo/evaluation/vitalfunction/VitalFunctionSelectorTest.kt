@@ -27,8 +27,8 @@ class VitalFunctionSelectorTest {
     fun `Should select one when max entries is one`() {
         val vitalFunctions: List<VitalFunction> =
             listOf(
-                vitalFunction().category(HEART_RATE).unit("unit1").date(date1).build(),
-                vitalFunction().category(HEART_RATE).unit("unit1").date(date2).build()
+                vitalFunction().category(HEART_RATE).unit("unit1").date(date1).valid(true).build(),
+                vitalFunction().category(HEART_RATE).unit("unit1").date(date2).valid(true).build()
             )
         Assert.assertEquals(1, selectMedianPerDay(vitalFunctions, HEART_RATE, "unit1", 1).size.toLong())
     }
@@ -37,8 +37,8 @@ class VitalFunctionSelectorTest {
     fun `Should select one when list contains two entries but only one is right category`() {
         val vitalFunctions: List<VitalFunction> =
             listOf(
-                vitalFunction().category(HEART_RATE).unit("unit1").date(date1).build(),
-                vitalFunction().category(SPO2).unit("unit1").build()
+                vitalFunction().category(HEART_RATE).unit("unit1").date(date1).valid(true).build(),
+                vitalFunction().category(SPO2).unit("unit1").valid(true).build()
             )
         Assert.assertEquals(
             1, selectMedianPerDay(vitalFunctions, HEART_RATE, "unit1", 2).size.toLong()
@@ -48,8 +48,8 @@ class VitalFunctionSelectorTest {
     @Test
     fun `Should select one when list contains one entry of right category with right unit and one with wrong unit`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).build(),
-            vitalFunction().category(HEART_RATE).unit("unit2").date(date2).build()
+            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).valid(true).build(),
+            vitalFunction().category(HEART_RATE).unit("unit2").date(date2).valid(true).build()
         )
         Assert.assertEquals(
             1, selectMedianPerDay(vitalFunctions, HEART_RATE, "unit1", 2).size.toLong()
@@ -59,8 +59,8 @@ class VitalFunctionSelectorTest {
     @Test
     fun `Should select one when list contains two of right category and right unit with same date`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).build(),
-            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).build()
+            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).valid(true).build(),
+            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).valid(true).build()
         )
         Assert.assertEquals(
             1, selectMedianPerDay(vitalFunctions, HEART_RATE, "unit1", 2).size.toLong()
@@ -70,8 +70,8 @@ class VitalFunctionSelectorTest {
     @Test
     fun `Should select two when list contains two of right category and right unit with separate date`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).build(),
-            vitalFunction().category(HEART_RATE).unit("unit1").date(date2).build()
+            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).valid(true).build(),
+            vitalFunction().category(HEART_RATE).unit("unit1").date(date2).valid(true).build()
         )
         Assert.assertEquals(
             2, selectMedianPerDay(vitalFunctions, HEART_RATE, "unit1", 2).size.toLong()
@@ -81,8 +81,8 @@ class VitalFunctionSelectorTest {
     @Test
     fun `Should select all of right category when unitToFind is null`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).build(),
-            vitalFunction().category(HEART_RATE).unit("unit2").date(date2).build()
+            vitalFunction().category(HEART_RATE).unit("unit1").date(date1).valid(true).build(),
+            vitalFunction().category(HEART_RATE).unit("unit2").date(date2).valid(true).build()
         )
         Assert.assertEquals(
             2, selectMedianPerDay(vitalFunctions, HEART_RATE, null, 2).size.toLong()
@@ -90,29 +90,27 @@ class VitalFunctionSelectorTest {
     }
 
     @Test
-    fun `Should filter out values with ignore flag`() {
+    fun `Should filter out invalid values`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(HEART_RATE).date(date1).value(10.0).unit("<ignore>").build(),
-            vitalFunction().category(HEART_RATE).date(date2).value(20.0).unit("<ignore>").build(),
-            vitalFunction().category(HEART_RATE).date(date2.minusDays(3)).value(2.0).build()
+            vitalFunction().category(HEART_RATE).date(date1).value(10.0).unit("kg").valid(false).build(),
+            vitalFunction().category(HEART_RATE).date(date2).value(15.0).unit("kg").valid(false).build(),
+            vitalFunction().category(HEART_RATE).date(date2.minusDays(3)).value(50.0).valid(true).build()
         )
         Assert.assertEquals(
-            listOf(2.0), selectMedianPerDay(vitalFunctions, HEART_RATE, null, 3).map { it.value() }
+            listOf(50.0), selectMedianPerDay(vitalFunctions, HEART_RATE, null, 3).map { it.value() }
         )
     }
 
     @Test
     fun `Should select one median per day of most recent dates`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(HEART_RATE).date(date1).value(10.0).build(),
-            vitalFunction().category(HEART_RATE).date(date1).value(15.0).build(),
-            vitalFunction().category(HEART_RATE).date(date1).value(20.0).build(),
-            vitalFunction().category(HEART_RATE).date(date2).value(5.0).build(),
-            vitalFunction().category(HEART_RATE).date(date2.minusDays(1)).value(8.0).build(),
-            vitalFunction().category(HEART_RATE).date(date2.minusDays(2)).value(12.0)
-                .build(),
-            vitalFunction().category(HEART_RATE).date(date2.minusDays(3)).value(14.0)
-                .build(),
+            vitalFunction().category(HEART_RATE).date(date1).value(10.0).valid(true).build(),
+            vitalFunction().category(HEART_RATE).date(date1).value(15.0).valid(true).build(),
+            vitalFunction().category(HEART_RATE).date(date1).value(20.0).valid(true).build(),
+            vitalFunction().category(HEART_RATE).date(date2).value(5.0).valid(true).build(),
+            vitalFunction().category(HEART_RATE).date(date2.minusDays(1)).value(8.0).valid(true).build(),
+            vitalFunction().category(HEART_RATE).date(date2.minusDays(2)).value(12.0).valid(true).build(),
+            vitalFunction().category(HEART_RATE).date(date2.minusDays(3)).value(14.0).valid(true).build(),
         )
         Assert.assertEquals(
             listOf(15.0, 5.0, 8.0), selectMedianPerDay(vitalFunctions, HEART_RATE, null, 3).map { it.value() }
@@ -122,9 +120,9 @@ class VitalFunctionSelectorTest {
     @Test
     fun `Should not take values outside of date cutoff`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(HEART_RATE).date(date1).value(10.0).build(),
-            vitalFunction().category(HEART_RATE).date(date2).value(15.0).build(),
-            vitalFunction().category(HEART_RATE).date(date3).value(20.0).build()
+            vitalFunction().category(HEART_RATE).date(date1).value(10.0).valid(true).build(),
+            vitalFunction().category(HEART_RATE).date(date2).value(15.0).valid(true).build(),
+            vitalFunction().category(HEART_RATE).date(date3).value(20.0).valid(true).build()
         )
         Assert.assertEquals(
             listOf(10.0, 15.0), selectMedianPerDay(vitalFunctions, HEART_RATE, null, 3).map { it.value() }
@@ -141,21 +139,23 @@ class VitalFunctionSelectorTest {
     @Test
     fun `Should select blood pressures only from right category`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1).build(),
-            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.DIASTOLIC.display()).date(date2).build()
+            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1)
+                .valid(true).build(),
+            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.DIASTOLIC.display()).date(date2)
+                .valid(true).build()
         )
         Assert.assertEquals(1, selectBloodPressures(vitalFunctions, BloodPressureCategory.SYSTOLIC).size.toLong())
     }
 
     @Test
-    fun `Should filter out blood pressure values with ignore flag`() {
+    fun `Should filter out invalid blood pressure values`() {
         val vitalFunctions: List<VitalFunction> = listOf(
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1)
-                .value(10.0).unit("<ignore>").build(),
+                .value(10.0).valid(false).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2)
-                .value(20.0).unit("<ignore>").build(),
+                .value(20.0).valid(false).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display())
-                .date(date2.minusDays(3)).value(2.0).build()
+                .date(date2.minusDays(3)).value(2.0).valid(true).build()
         )
         Assert.assertEquals(
             listOf(2.0), selectBloodPressures(vitalFunctions, BloodPressureCategory.SYSTOLIC).map { it.value() }
@@ -166,13 +166,13 @@ class VitalFunctionSelectorTest {
     fun `Should select one median blood pressure per day`() {
         val vitalFunctions: List<VitalFunction> = listOf(
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1)
-                .value(130.0).build(),
+                .value(130.0).valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2)
-                .value(110.0).build(),
+                .value(110.0).valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2)
-                .value(115.0).build(),
+                .value(115.0).valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2)
-                .value(120.0).build()
+                .value(120.0).valid(true).build()
         )
         Assert.assertEquals(listOf(130.0, 115.0), selectBloodPressures(vitalFunctions, BloodPressureCategory.SYSTOLIC).map { it.value() })
     }
@@ -181,11 +181,11 @@ class VitalFunctionSelectorTest {
     fun `Should not take blood pressure values outside of date cutoff`() {
         val vitalFunctions: List<VitalFunction> = listOf(
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1)
-                .value(110.0).build(),
+                .value(110.0).valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2)
-                .value(120.0).build(),
+                .value(120.0).valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display())
-                .date(date3).value(130.0).build()
+                .date(date3).value(130.0).valid(true).build()
         )
         Assert.assertEquals(listOf(110.0, 120.0), selectBloodPressures(vitalFunctions, BloodPressureCategory.SYSTOLIC).map { it.value() })
     }
@@ -193,16 +193,18 @@ class VitalFunctionSelectorTest {
     @Test
     fun `Should select max five values`() {
         val vitalFunctions: List<VitalFunction> = listOf(
-            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1).build(),
-            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2).build(),
+            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date1)
+                .valid(true).build(),
+            vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display()).date(date2)
+                .valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display())
-                .date(date1.minusDays(1)).build(),
+                .date(date1.minusDays(1)).valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display())
-                .date(date1.minusDays(2)).build(),
+                .date(date1.minusDays(2)).valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display())
-                .date(date1.minusDays(3)).build(),
+                .date(date1.minusDays(3)).valid(true).build(),
             vitalFunction().category(NON_INVASIVE_BLOOD_PRESSURE).subcategory(BloodPressureCategory.SYSTOLIC.display())
-                .date(date1.minusDays(4)).build()
+                .date(date1.minusDays(4)).valid(true).build()
         )
         Assert.assertEquals(5, selectBloodPressures(vitalFunctions, BloodPressureCategory.SYSTOLIC).size.toLong())
     }

@@ -16,7 +16,7 @@ internal object VitalFunctionSelector {
         val result = vitalFunctions.asSequence()
             .filter {
                 it.category() == categoryToFind && (unitToFind == null || it.unit()
-                    .equals(unitToFind, ignoreCase = true)) && it.unit() != "<ignore>"
+                    .equals(unitToFind, ignoreCase = true)) && it.valid()
             }
             .groupBy { it.date() }
             .map { VitalFunctionFunctions.selectMedianFunction(it.value) }
@@ -35,7 +35,7 @@ internal object VitalFunctionSelector {
     fun selectBloodPressures(vitalFunctions: List<VitalFunction>, category: BloodPressureCategory): List<VitalFunction> {
         val result =
             vitalFunctions.asSequence().filter {
-                isBloodPressure(it) && it.subcategory().equals(category.display(), ignoreCase = true) && it.unit() != "<ignore>"
+                isBloodPressure(it) && it.subcategory().equals(category.display(), ignoreCase = true) && it.valid()
             }
                 .groupBy { it.date() }
                 .map { VitalFunctionFunctions.selectMedianFunction(it.value) }
