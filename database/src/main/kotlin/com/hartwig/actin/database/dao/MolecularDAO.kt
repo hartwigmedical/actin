@@ -19,7 +19,7 @@ import org.jooq.Record
 internal class MolecularDAO(private val context: DSLContext) {
 
     fun clear(record: MolecularRecord) {
-        val sampleId = record.sampleId()
+        val sampleId = record.sampleId
         val molecularResults =
             context.select(Tables.MOLECULAR.ID).from(Tables.MOLECULAR).where(Tables.MOLECULAR.SAMPLEID.eq(sampleId)).fetch()
 
@@ -89,21 +89,21 @@ internal class MolecularDAO(private val context: DSLContext) {
 
     fun writeMolecularRecord(record: MolecularRecord) {
         writeMolecularDetails(record)
-        val sampleId = record.sampleId()
-        val drivers = record.drivers()
-        writeVariants(sampleId, drivers.variants())
-        writeCopyNumbers(sampleId, drivers.copyNumbers())
-        writeHomozygousDisruptions(sampleId, drivers.homozygousDisruptions())
-        writeDisruptions(sampleId, drivers.disruptions())
-        writeFusions(sampleId, drivers.fusions())
-        writeViruses(sampleId, drivers.viruses())
-        writeImmunology(sampleId, record.immunology())
-        writePharmaco(sampleId, record.pharmaco())
+        val sampleId = record.sampleId
+        val drivers = record.drivers
+        writeVariants(sampleId, drivers.variants)
+        writeCopyNumbers(sampleId, drivers.copyNumbers)
+        writeHomozygousDisruptions(sampleId, drivers.homozygousDisruptions)
+        writeDisruptions(sampleId, drivers.disruptions)
+        writeFusions(sampleId, drivers.fusions)
+        writeViruses(sampleId, drivers.viruses)
+        writeImmunology(sampleId, record.immunology)
+        writePharmaco(sampleId, record.pharmaco)
     }
 
     private fun writeMolecularDetails(record: MolecularRecord) {
-        val sampleId = record.sampleId()
-        val predictedTumorOrigin = record.characteristics().predictedTumorOrigin()
+        val sampleId = record.sampleId
+        val predictedTumorOrigin = record.characteristics.predictedTumorOrigin
         val molecularId = context.insertInto(
             Tables.MOLECULAR,
             Tables.MOLECULAR.PATIENTID,
@@ -127,33 +127,33 @@ internal class MolecularDAO(private val context: DSLContext) {
             Tables.MOLECULAR.HASHIGHTUMORMUTATIONALLOAD
         )
             .values(
-                record.patientId(),
+                record.patientId,
                 sampleId,
-                record.type().toString(),
-                record.refGenomeVersion().toString(),
-                record.date(),
-                record.evidenceSource(),
-                record.externalTrialSource(),
-                record.containsTumorCells(),
-                record.hasSufficientQualityAndPurity(),
-                record.characteristics().purity(),
-                record.characteristics().ploidy(),
+                record.type.toString(),
+                record.refGenomeVersion.toString(),
+                record.date,
+                record.evidenceSource,
+                record.externalTrialSource,
+                record.containsTumorCells,
+                record.hasSufficientQualityAndPurity,
+                record.characteristics.purity,
+                record.characteristics.ploidy,
                 predictedTumorOrigin?.cancerType(),
                 predictedTumorOrigin?.likelihood(),
-                record.characteristics().isMicrosatelliteUnstable,
-                record.characteristics().isHomologousRepairDeficient,
-                record.characteristics().tumorMutationalBurden(),
-                record.characteristics().hasHighTumorMutationalBurden(),
-                record.characteristics().tumorMutationalLoad(),
-                record.characteristics().hasHighTumorMutationalLoad()
+                record.characteristics.isMicrosatelliteUnstable,
+                record.characteristics.isHomologousRepairDeficient,
+                record.characteristics.tumorMutationalBurden,
+                record.characteristics.hasHighTumorMutationalBurden,
+                record.characteristics.tumorMutationalLoad,
+                record.characteristics.hasHighTumorMutationalLoad
             )
             .returning(Tables.MOLECULAR.ID)
             .fetchOne()!!
             .getValue(Tables.MOLECULAR.ID)
-        writeMicrosatelliteEvidence(molecularId, record.characteristics().microsatelliteEvidence())
-        writeHomologousRepairEvidence(molecularId, record.characteristics().homologousRepairEvidence())
-        writeTumorMutationalBurdenEvidence(molecularId, record.characteristics().tumorMutationalBurdenEvidence())
-        writeTumorMutationalLoadEvidence(molecularId, record.characteristics().tumorMutationalLoadEvidence())
+        writeMicrosatelliteEvidence(molecularId, record.characteristics.microsatelliteEvidence)
+        writeHomologousRepairEvidence(molecularId, record.characteristics.homologousRepairEvidence)
+        writeTumorMutationalBurdenEvidence(molecularId, record.characteristics.tumorMutationalBurdenEvidence)
+        writeTumorMutationalLoadEvidence(molecularId, record.characteristics.tumorMutationalLoadEvidence)
     }
 
     private fun writeMicrosatelliteEvidence(molecularId: Int, evidence: ActionableEvidence?) {
@@ -251,32 +251,32 @@ internal class MolecularDAO(private val context: DSLContext) {
                 .values(
                     sampleId,
                     variant.isReportable,
-                    variant.event(),
+                    variant.event,
                     driverLikelihood(variant),
-                    variant.gene(),
-                    variant.geneRole().toString(),
-                    variant.proteinEffect().toString(),
+                    variant.gene,
+                    variant.geneRole.toString(),
+                    variant.proteinEffect.toString(),
                     variant.isAssociatedWithDrugResistance,
-                    variant.type().toString(),
-                    variant.variantCopyNumber(),
-                    variant.totalCopyNumber(),
+                    variant.type.toString(),
+                    variant.variantCopyNumber,
+                    variant.totalCopyNumber,
                     variant.isBiallelic,
                     variant.isHotspot,
-                    variant.clonalLikelihood(),
-                    DataUtil.concat(integersToStrings(variant.phaseGroups())),
-                    variant.canonicalImpact().transcriptId(),
-                    variant.canonicalImpact().hgvsCodingImpact(),
-                    variant.canonicalImpact().hgvsProteinImpact(),
-                    variant.canonicalImpact().affectedCodon(),
-                    variant.canonicalImpact().affectedExon(),
-                    variant.canonicalImpact().isSpliceRegion,
-                    DataUtil.concat(effectsToStrings(variant.canonicalImpact().effects())),
-                    DataUtil.nullableToString(variant.canonicalImpact().codingEffect())
+                    variant.clonalLikelihood,
+                    DataUtil.concat(integersToStrings(variant.phaseGroups)),
+                    variant.canonicalImpact.transcriptId,
+                    variant.canonicalImpact.hgvsCodingImpact,
+                    variant.canonicalImpact.hgvsProteinImpact,
+                    variant.canonicalImpact.affectedCodon,
+                    variant.canonicalImpact.affectedExon,
+                    variant.canonicalImpact.isSpliceRegion,
+                    DataUtil.concat(effectsToStrings(variant.canonicalImpact.effects)),
+                    DataUtil.nullableToString(variant.canonicalImpact.codingEffect)
                 )
                 .returning(Tables.VARIANT.ID)
                 .fetchOne()!!
                 .getValue(Tables.VARIANT.ID)
-            writeVariantEvidence(variantId, variant.evidence())
+            writeVariantEvidence(variantId, variant.evidence)
         }
     }
 
@@ -312,20 +312,20 @@ internal class MolecularDAO(private val context: DSLContext) {
                 .values(
                     sampleId,
                     copyNumber.isReportable,
-                    copyNumber.event(),
+                    copyNumber.event,
                     driverLikelihood(copyNumber),
-                    copyNumber.gene(),
-                    copyNumber.geneRole().toString(),
-                    copyNumber.proteinEffect().toString(),
+                    copyNumber.gene,
+                    copyNumber.geneRole.toString(),
+                    copyNumber.proteinEffect.toString(),
                     copyNumber.isAssociatedWithDrugResistance,
-                    copyNumber.type().toString(),
-                    copyNumber.minCopies(),
-                    copyNumber.maxCopies()
+                    copyNumber.type.toString(),
+                    copyNumber.minCopies,
+                    copyNumber.maxCopies
                 )
                 .returning(Tables.COPYNUMBER.ID)
                 .fetchOne()!!
                 .getValue(Tables.COPYNUMBER.ID)
-            writeCopyNumberEvidence(copyNumberId, copyNumber.evidence())
+            writeCopyNumberEvidence(copyNumberId, copyNumber.evidence)
         }
     }
 
@@ -358,17 +358,17 @@ internal class MolecularDAO(private val context: DSLContext) {
                 .values(
                     sampleId,
                     homozygousDisruption.isReportable,
-                    homozygousDisruption.event(),
+                    homozygousDisruption.event,
                     driverLikelihood(homozygousDisruption),
-                    homozygousDisruption.gene(),
-                    homozygousDisruption.geneRole().toString(),
-                    homozygousDisruption.proteinEffect().toString(),
+                    homozygousDisruption.gene,
+                    homozygousDisruption.geneRole.toString(),
+                    homozygousDisruption.proteinEffect.toString(),
                     homozygousDisruption.isAssociatedWithDrugResistance
                 )
                 .returning(Tables.HOMOZYGOUSDISRUPTION.ID)
                 .fetchOne()!!
                 .getValue(Tables.HOMOZYGOUSDISRUPTION.ID)
-            writeHomozygousDisruptionEvidence(homozygousDisruptionId, homozygousDisruption.evidence())
+            writeHomozygousDisruptionEvidence(homozygousDisruptionId, homozygousDisruption.evidence)
         }
     }
 
@@ -407,23 +407,23 @@ internal class MolecularDAO(private val context: DSLContext) {
                 .values(
                     sampleId,
                     disruption.isReportable,
-                    disruption.event(),
+                    disruption.event,
                     driverLikelihood(disruption),
-                    disruption.gene(),
-                    disruption.geneRole().toString(),
-                    disruption.proteinEffect().toString(),
+                    disruption.gene,
+                    disruption.geneRole.toString(),
+                    disruption.proteinEffect.toString(),
                     disruption.isAssociatedWithDrugResistance,
-                    disruption.type().toString(),
-                    disruption.junctionCopyNumber(),
-                    disruption.undisruptedCopyNumber(),
-                    disruption.regionType().toString(),
-                    disruption.codingContext().toString(),
-                    disruption.clusterGroup()
+                    disruption.type.toString(),
+                    disruption.junctionCopyNumber,
+                    disruption.undisruptedCopyNumber,
+                    disruption.regionType.toString(),
+                    disruption.codingContext.toString(),
+                    disruption.clusterGroup
                 )
                 .returning(Tables.DISRUPTION.ID)
                 .fetchOne()!!
                 .getValue(Tables.DISRUPTION.ID)
-            writeDisruptionEvidence(disruptionId, disruption.evidence())
+            writeDisruptionEvidence(disruptionId, disruption.evidence)
         }
     }
 
@@ -461,22 +461,22 @@ internal class MolecularDAO(private val context: DSLContext) {
                 .values(
                     sampleId,
                     fusion.isReportable,
-                    fusion.event(),
+                    fusion.event,
                     driverLikelihood(fusion),
-                    fusion.geneStart(),
-                    fusion.geneTranscriptStart(),
-                    fusion.fusedExonUp(),
-                    fusion.geneEnd(),
-                    fusion.geneTranscriptEnd(),
-                    fusion.fusedExonDown(),
-                    fusion.driverType().toString(),
-                    fusion.proteinEffect().toString(),
+                    fusion.geneStart,
+                    fusion.geneTranscriptStart,
+                    fusion.fusedExonUp,
+                    fusion.geneEnd,
+                    fusion.geneTranscriptEnd,
+                    fusion.fusedExonDown,
+                    fusion.driverType.toString(),
+                    fusion.proteinEffect.toString(),
                     fusion.isAssociatedWithDrugResistance
                 )
                 .returning(Tables.FUSION.ID)
                 .fetchOne()!!
                 .getValue(Tables.FUSION.ID)
-            writeFusionEvidence(fusionId, fusion.evidence())
+            writeFusionEvidence(fusionId, fusion.evidence)
         }
     }
 
@@ -509,17 +509,17 @@ internal class MolecularDAO(private val context: DSLContext) {
                 .values(
                     sampleId,
                     virus.isReportable,
-                    virus.event(),
+                    virus.event,
                     driverLikelihood(virus),
-                    virus.name(),
-                    virus.type().toString(),
+                    virus.name,
+                    virus.type.toString(),
                     virus.isReliable,
-                    virus.integrations()
+                    virus.integrations
                 )
                 .returning(Tables.VIRUS.ID)
                 .fetchOne()!!
                 .getValue(Tables.VIRUS.ID)
-            writeVirusEvidence(virusId, virus.evidence())
+            writeVirusEvidence(virusId, virus.evidence)
         }
     }
 
@@ -537,7 +537,7 @@ internal class MolecularDAO(private val context: DSLContext) {
     }
 
     private fun writeImmunology(sampleId: String, immunology: MolecularImmunology) {
-        for (hlaAllele in immunology.hlaAlleles()) {
+        for (hlaAllele in immunology.hlaAlleles) {
             context.insertInto(
                 Tables.HLAALLELE,
                 Tables.HLAALLELE.SAMPLEID,
@@ -549,9 +549,9 @@ internal class MolecularDAO(private val context: DSLContext) {
                 .values(
                     sampleId,
                     immunology.isReliable,
-                    hlaAllele.name(),
-                    hlaAllele.tumorCopyNumber(),
-                    hlaAllele.hasSomaticMutations()
+                    hlaAllele.name,
+                    hlaAllele.tumorCopyNumber,
+                    hlaAllele.hasSomaticMutations
                 )
                 .execute()
         }
@@ -559,7 +559,7 @@ internal class MolecularDAO(private val context: DSLContext) {
 
     private fun writePharmaco(sampleId: String, pharmaco: Set<PharmacoEntry>) {
         for (entry in pharmaco) {
-            for (haplotype in entry.haplotypes()) {
+            for (haplotype in entry.haplotypes) {
                 context.insertInto(
                     Tables.PHARMACO,
                     Tables.PHARMACO.SAMPLEID,
@@ -567,7 +567,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     Tables.PHARMACO.HAPLOTYPE,
                     Tables.PHARMACO.HAPLOTYPEFUNCTION
                 )
-                    .values(sampleId, entry.gene(), haplotype.name(), haplotype.function())
+                    .values(sampleId, entry.gene, haplotype.name, haplotype.function)
                     .execute()
             }
         }
@@ -578,7 +578,7 @@ internal class MolecularDAO(private val context: DSLContext) {
     }
 
     private fun driverLikelihood(driver: Driver): String? {
-        return driver.driverLikelihood()?.toString()
+        return driver.driverLikelihood?.toString()
     }
 
     private fun integersToStrings(integers: Set<Int>?): Set<String>? {
@@ -589,13 +589,13 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter: EvidenceInserter<T>, topicId: Int,
         evidence: ActionableEvidence
     ) {
-        writeTreatments(inserter, topicId, evidence.approvedTreatments(), "Approved")
-        writeTreatments(inserter, topicId, evidence.externalEligibleTrials(), "Trial")
-        writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments(), "On-label experimental")
-        writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments(), "Off-label experimental")
-        writeTreatments(inserter, topicId, evidence.preClinicalTreatments(), "Pre-clinical")
-        writeTreatments(inserter, topicId, evidence.knownResistantTreatments(), "Known resistant")
-        writeTreatments(inserter, topicId, evidence.suspectResistantTreatments(), "Suspect resistant")
+        writeTreatments(inserter, topicId, evidence.approvedTreatments, "Approved")
+        writeTreatments(inserter, topicId, evidence.externalEligibleTrials, "Trial")
+        writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments, "On-label experimental")
+        writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments, "Off-label experimental")
+        writeTreatments(inserter, topicId, evidence.preClinicalTreatments, "Pre-clinical")
+        writeTreatments(inserter, topicId, evidence.knownResistantTreatments, "Known resistant")
+        writeTreatments(inserter, topicId, evidence.suspectResistantTreatments, "Suspect resistant")
     }
 
     private fun <T : Record?> writeTreatments(inserter: EvidenceInserter<T>, topicId: Int, treatments: Set<String>, type: String) {

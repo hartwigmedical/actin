@@ -19,7 +19,6 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
@@ -50,23 +49,23 @@ internal class ClinicalDAO(private val context: DSLContext) {
     }
 
     fun writeClinicalRecord(record: ClinicalRecord) {
-        val patientId = record.patientId()
-        writePatientDetails(patientId, record.patient())
-        writeTumorDetails(patientId, record.tumor())
-        writeClinicalStatus(patientId, record.clinicalStatus())
-        writeTreatmentHistoryEntries(patientId, record.oncologicalHistory())
-        writePriorSecondPrimaries(patientId, record.priorSecondPrimaries())
-        writePriorOtherConditions(patientId, record.priorOtherConditions())
-        writePriorMolecularTests(patientId, record.priorMolecularTests())
-        writeComplications(patientId, record.complications())
-        writeLabValues(patientId, record.labValues())
-        writeToxicities(patientId, record.toxicities())
-        writeIntolerances(patientId, record.intolerances())
-        writeSurgeries(patientId, record.surgeries())
-        writeBodyWeights(patientId, record.bodyWeights())
-        writeVitalFunctions(patientId, record.vitalFunctions())
-        writeBloodTransfusions(patientId, record.bloodTransfusions())
-        writeMedications(patientId, record.medications())
+        val patientId = record.patientId
+        writePatientDetails(patientId, record.patient)
+        writeTumorDetails(patientId, record.tumor)
+        writeClinicalStatus(patientId, record.clinicalStatus)
+        writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
+        writePriorSecondPrimaries(patientId, record.priorSecondPrimaries)
+        writePriorOtherConditions(patientId, record.priorOtherConditions)
+        writePriorMolecularTests(patientId, record.priorMolecularTests)
+        writeComplications(patientId, record.complications)
+        writeLabValues(patientId, record.labValues)
+        writeToxicities(patientId, record.toxicities)
+        writeIntolerances(patientId, record.intolerances)
+        writeSurgeries(patientId, record.surgeries)
+        writeBodyWeights(patientId, record.bodyWeights)
+        writeVitalFunctions(patientId, record.vitalFunctions)
+        writeBloodTransfusions(patientId, record.bloodTransfusions)
+        writeMedications(patientId, record.medications)
     }
 
     private fun writePatientDetails(patientId: String, patient: PatientDetails) {
@@ -81,17 +80,17 @@ internal class ClinicalDAO(private val context: DSLContext) {
         )
             .values(
                 patientId,
-                patient.birthYear(),
-                patient.gender().display(),
-                patient.registrationDate(),
-                patient.questionnaireDate(),
-                patient.otherMolecularPatientId()
+                patient.birthYear,
+                patient.gender.display(),
+                patient.registrationDate,
+                patient.questionnaireDate,
+                patient.otherMolecularPatientId
             )
             .execute()
     }
 
     private fun writeTumorDetails(patientId: String, tumor: TumorDetails) {
-        val stage = tumor.stage()
+        val stage = tumor.stage
         context.insertInto(
             Tables.TUMOR,
             Tables.TUMOR.PATIENTID,
@@ -116,31 +115,31 @@ internal class ClinicalDAO(private val context: DSLContext) {
         )
             .values(
                 patientId,
-                tumor.primaryTumorLocation(),
-                tumor.primaryTumorSubLocation(),
-                tumor.primaryTumorType(),
-                tumor.primaryTumorSubType(),
-                tumor.primaryTumorExtraDetails(),
-                DataUtil.concat(tumor.doids()),
+                tumor.primaryTumorLocation,
+                tumor.primaryTumorSubLocation,
+                tumor.primaryTumorType,
+                tumor.primaryTumorSubType,
+                tumor.primaryTumorExtraDetails,
+                DataUtil.concat(tumor.doids),
                 stage?.display(),
-                tumor.hasMeasurableDisease(),
-                tumor.hasBrainLesions(),
-                tumor.hasActiveBrainLesions(),
-                tumor.hasCnsLesions(),
-                tumor.hasActiveCnsLesions(),
-                tumor.hasBoneLesions(),
-                tumor.hasLiverLesions(),
-                tumor.hasLungLesions(),
-                tumor.hasLymphNodeLesions(),
-                DataUtil.concat(tumor.otherLesions()),
-                tumor.biopsyLocation()
+                tumor.hasMeasurableDisease,
+                tumor.hasBrainLesions,
+                tumor.hasActiveBrainLesions,
+                tumor.hasCnsLesions,
+                tumor.hasActiveCnsLesions,
+                tumor.hasBoneLesions,
+                tumor.hasLiverLesions,
+                tumor.hasLungLesions,
+                tumor.hasLymphNodeLesions,
+                DataUtil.concat(tumor.otherLesions),
+                tumor.biopsyLocation
             )
             .execute()
     }
 
     private fun writeClinicalStatus(patientId: String, clinicalStatus: ClinicalStatus) {
-        val infectionStatus = clinicalStatus.infectionStatus()
-        val ecg = Optional.ofNullable(clinicalStatus.ecg())
+        val infectionStatus = clinicalStatus.infectionStatus
+        val ecg = Optional.ofNullable(clinicalStatus.ecg)
         val qtcfMeasure = ecg.map(ECG::qtcfMeasure)
         val jtcMeasure = ecg.map(ECG::jtcMeasure)
         context.insertInto(
@@ -160,73 +159,73 @@ internal class ClinicalDAO(private val context: DSLContext) {
         )
             .values(
                 patientId,
-                clinicalStatus.who(),
-                infectionStatus?.hasActiveInfection(),
-                infectionStatus?.description(),
+                clinicalStatus.who,
+                infectionStatus?.hasActiveInfection,
+                infectionStatus?.description,
                 ecg.map(ECG::hasSigAberrationLatestECG).orElse(null),
                 ecg.map(ECG::aberrationDescription).orElse(null),
-                qtcfMeasure.map { it?.value() }.orElse(null),
-                qtcfMeasure.map { it?.unit() }.orElse(null),
-                jtcMeasure.map { it?.value() }.orElse(null),
-                jtcMeasure.map { it?.unit() }.orElse(null),
-                clinicalStatus.lvef(),
-                clinicalStatus.hasComplications()
+                qtcfMeasure.map { it?.value }.orElse(null),
+                qtcfMeasure.map { it?.unit }.orElse(null),
+                jtcMeasure.map { it?.value }.orElse(null),
+                jtcMeasure.map { it?.unit }.orElse(null),
+                clinicalStatus.lvef,
+                clinicalStatus.hasComplications
             )
             .execute()
     }
 
     private fun writeTreatmentHistoryEntries(patientId: String, treatmentHistoryEntries: List<TreatmentHistoryEntry>) {
         val records = treatmentHistoryEntries.flatMap { multiEntry: TreatmentHistoryEntry ->
-            multiEntry.treatments().map { ImmutableTreatmentHistoryEntry.copyOf(multiEntry).withTreatments(it) }
+            multiEntry.treatments.map { multiEntry.copy(treatments = setOf(it)) }
         }
-            .map { entry: ImmutableTreatmentHistoryEntry ->
-                val treatment = entry.treatments().iterator().next()
-                val intentString = DataUtil.concatObjects(entry.intents()) ?: ""
+            .map { entry: TreatmentHistoryEntry ->
+                val treatment = entry.treatments.iterator().next()
+                val intentString = DataUtil.concatObjects(entry.intents) ?: ""
                 val drugTreatment = treatment as? DrugTreatment
                 val radiotherapy = treatment as? Radiotherapy
-                val details = entry.treatmentHistoryDetails()
+                val details = entry.treatmentHistoryDetails
                 val valueMap = mapOf(
                     "patientId" to patientId,
-                    "name" to treatment.name(),
-                    "startYear" to entry.startYear(),
-                    "startMonth" to entry.startMonth(),
+                    "name" to treatment.name,
+                    "startYear" to entry.startYear,
+                    "startMonth" to entry.startMonth,
                     "intents" to intentString,
                     "isTrial" to entry.isTrial,
-                    "trialAcronym" to entry.trialAcronym(),
+                    "trialAcronym" to entry.trialAcronym,
                     "categories" to TreatmentCategoryResolver.toStringList(treatment.categories()),
-                    "synonyms" to DataUtil.concat(treatment.synonyms()),
+                    "synonyms" to DataUtil.concat(treatment.synonyms),
                     "isSystemic" to treatment.isSystemic,
                     "drugs" to drugTreatment?.let { drugTx ->
-                        DataUtil.concat(drugTx.drugs().map { "${it.name()} (${it.drugTypes().sorted().joinToString(", ")})" })
+                        DataUtil.concat(drugTx.drugs.map { "${it.name} (${it.drugTypes.sorted().joinToString(", ")})" })
                     },
-                    "maxCycles" to drugTreatment?.maxCycles(),
+                    "maxCycles" to drugTreatment?.maxCycles,
                     "isInternal" to radiotherapy?.isInternal,
-                    "radioType" to radiotherapy?.radioType(),
-                    "stopYear" to details?.stopYear(),
-                    "stopMonth" to details?.stopMonth(),
-                    "ongoingAsOf" to details?.ongoingAsOf(),
-                    "cycles" to details?.cycles(),
-                    "bestResponse" to details?.bestResponse(),
-                    "stopReason" to details?.stopReason(),
-                    "stopReasonDetail" to details?.stopReasonDetail(),
-                    "toxicities" to details?.toxicities()?.let { toxicities ->
-                        DataUtil.concat(toxicities.map { "${it.name()} grade ${it.grade()} (${DataUtil.concat(it.categories())})" })
+                    "radioType" to radiotherapy?.radioType,
+                    "stopYear" to details?.stopYear,
+                    "stopMonth" to details?.stopMonth,
+                    "ongoingAsOf" to details?.ongoingAsOf,
+                    "cycles" to details?.cycles,
+                    "bestResponse" to details?.bestResponse,
+                    "stopReason" to details?.stopReason,
+                    "stopReasonDetail" to details?.stopReasonDetail,
+                    "toxicities" to details?.toxicities?.let { toxicities ->
+                        DataUtil.concat(toxicities.map { "${it.name} grade ${it.grade} (${DataUtil.concat(it.categories)})" })
                     }
                 )
-                val maintenanceTreatmentMap = details?.maintenanceTreatment()?.let { maintenanceTreatment ->
+                val maintenanceTreatmentMap = details?.maintenanceTreatment?.let { maintenanceTreatment ->
                     mapOf(
-                        "maintenanceTreatment" to maintenanceTreatment.treatment().name(),
-                        "maintenanceTreatmentStartYear" to maintenanceTreatment.startYear(),
-                        "maintenanceTreatmentStartMonth" to maintenanceTreatment.startMonth(),
+                        "maintenanceTreatment" to maintenanceTreatment.treatment.name,
+                        "maintenanceTreatmentStartYear" to maintenanceTreatment.startYear,
+                        "maintenanceTreatmentStartMonth" to maintenanceTreatment.startMonth,
                     )
                 } ?: emptyMap()
 
-                val switchToTreatmentMap = details?.switchToTreatments()?.firstOrNull()?.let { switchToTreatment ->
+                val switchToTreatmentMap = details?.switchToTreatments?.firstOrNull()?.let { switchToTreatment ->
                     mapOf(
-                        "switchToTreatment" to switchToTreatment.treatment().name(),
-                        "switchToTreatmentStartYear" to switchToTreatment.startYear(),
-                        "switchToTreatmentStartMonth" to switchToTreatment.startMonth(),
-                        "switchToTreatmentCycles" to switchToTreatment.cycles()
+                        "switchToTreatment" to switchToTreatment.treatment.name,
+                        "switchToTreatmentStartYear" to switchToTreatment.startYear,
+                        "switchToTreatmentStartMonth" to switchToTreatment.startMonth,
+                        "switchToTreatmentCycles" to switchToTreatment.cycles
                     )
                 } ?: emptyMap()
                 
@@ -256,17 +255,17 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    priorSecondPrimary.tumorLocation(),
-                    priorSecondPrimary.tumorSubLocation(),
-                    priorSecondPrimary.tumorType(),
-                    priorSecondPrimary.tumorSubType(),
-                    DataUtil.concat(priorSecondPrimary.doids()),
-                    priorSecondPrimary.diagnosedYear(),
-                    priorSecondPrimary.diagnosedMonth(),
-                    priorSecondPrimary.treatmentHistory(),
-                    priorSecondPrimary.lastTreatmentYear(),
-                    priorSecondPrimary.lastTreatmentMonth(),
-                    priorSecondPrimary.status().toString()
+                    priorSecondPrimary.tumorLocation,
+                    priorSecondPrimary.tumorSubLocation,
+                    priorSecondPrimary.tumorType,
+                    priorSecondPrimary.tumorSubType,
+                    DataUtil.concat(priorSecondPrimary.doids),
+                    priorSecondPrimary.diagnosedYear,
+                    priorSecondPrimary.diagnosedMonth,
+                    priorSecondPrimary.treatmentHistory,
+                    priorSecondPrimary.lastTreatmentYear,
+                    priorSecondPrimary.lastTreatmentMonth,
+                    priorSecondPrimary.status.toString()
                 )
                 .execute()
         }
@@ -286,11 +285,11 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    priorOtherCondition.name(),
-                    priorOtherCondition.year(),
-                    priorOtherCondition.month(),
-                    DataUtil.concat(priorOtherCondition.doids()),
-                    priorOtherCondition.category(),
+                    priorOtherCondition.name,
+                    priorOtherCondition.year,
+                    priorOtherCondition.month,
+                    DataUtil.concat(priorOtherCondition.doids),
+                    priorOtherCondition.category,
                     priorOtherCondition.isContraindicationForTherapy
                 )
                 .execute()
@@ -313,14 +312,14 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    priorMolecularTest.test(),
-                    priorMolecularTest.item(),
-                    priorMolecularTest.measure(),
-                    priorMolecularTest.scoreText(),
-                    priorMolecularTest.scoreValuePrefix(),
-                    priorMolecularTest.scoreValue(),
-                    priorMolecularTest.scoreValueUnit(),
-                    priorMolecularTest.impliesPotentialIndeterminateStatus()
+                    priorMolecularTest.test,
+                    priorMolecularTest.item,
+                    priorMolecularTest.measure,
+                    priorMolecularTest.scoreText,
+                    priorMolecularTest.scoreValuePrefix,
+                    priorMolecularTest.scoreValue,
+                    priorMolecularTest.scoreValueUnit,
+                    priorMolecularTest.impliesPotentialIndeterminateStatus
                 )
                 .execute()
         }
@@ -329,7 +328,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
     private fun writeComplications(patientId: String, complications: List<Complication>?) {
         if (complications != null) {
             for (complication in complications) {
-                if (complication.name().isNotEmpty()) {
+                if (complication.name.isNotEmpty()) {
                     context.insertInto(
                         Tables.COMPLICATION,
                         Tables.COMPLICATION.PATIENTID,
@@ -340,10 +339,10 @@ internal class ClinicalDAO(private val context: DSLContext) {
                     )
                         .values(
                             patientId,
-                            complication.name(),
-                            DataUtil.concat(complication.categories()),
-                            complication.year(),
-                            complication.month()
+                            complication.name,
+                            DataUtil.concat(complication.categories),
+                            complication.year,
+                            complication.month
                         )
                         .execute()
                 }
@@ -368,14 +367,14 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    lab.date(),
-                    lab.code(),
-                    lab.name(),
-                    lab.comparator(),
-                    lab.value(),
-                    lab.unit().display(),
-                    lab.refLimitLow(),
-                    lab.refLimitUp(),
+                    lab.date,
+                    lab.code,
+                    lab.name,
+                    lab.comparator,
+                    lab.value,
+                    lab.unit.display(),
+                    lab.refLimitLow,
+                    lab.refLimitUp,
                     lab.isOutsideRef
                 )
                 .execute()
@@ -395,11 +394,11 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    toxicity.name(),
-                    DataUtil.concat(toxicity.categories()),
-                    toxicity.evaluatedDate(),
-                    toxicity.source().display(),
-                    toxicity.grade()
+                    toxicity.name,
+                    DataUtil.concat(toxicity.categories),
+                    toxicity.evaluatedDate,
+                    toxicity.source.display(),
+                    toxicity.grade
                 )
                 .execute()
         }
@@ -421,14 +420,14 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    intolerance.name(),
-                    DataUtil.concat(intolerance.doids()),
-                    intolerance.category(),
-                    DataUtil.concat(intolerance.subcategories()),
-                    intolerance.type(),
-                    intolerance.clinicalStatus(),
-                    intolerance.verificationStatus(),
-                    intolerance.criticality()
+                    intolerance.name,
+                    DataUtil.concat(intolerance.doids),
+                    intolerance.category,
+                    DataUtil.concat(intolerance.subcategories),
+                    intolerance.type,
+                    intolerance.clinicalStatus,
+                    intolerance.verificationStatus,
+                    intolerance.criticality
                 )
                 .execute()
         }
@@ -437,7 +436,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
     private fun writeSurgeries(patientId: String, surgeries: List<Surgery>) {
         for (surgery in surgeries) {
             context.insertInto(Tables.SURGERY, Tables.SURGERY.PATIENTID, Tables.SURGERY.ENDDATE, Tables.SURGERY.STATUS)
-                .values(patientId, surgery.endDate(), surgery.status().toString())
+                .values(patientId, surgery.endDate, surgery.status.toString())
                 .execute()
         }
     }
@@ -451,7 +450,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.BODYWEIGHT.VALUE,
                 Tables.BODYWEIGHT.UNIT
             )
-                .values(patientId, bodyWeight.date(), bodyWeight.value(), bodyWeight.unit())
+                .values(patientId, bodyWeight.date, bodyWeight.value, bodyWeight.unit)
                 .execute()
         }
     }
@@ -469,11 +468,11 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    vitalFunction.date(),
-                    vitalFunction.category().display(),
-                    vitalFunction.subcategory(),
-                    vitalFunction.value(),
-                    vitalFunction.unit()
+                    vitalFunction.date,
+                    vitalFunction.category.display(),
+                    vitalFunction.subcategory,
+                    vitalFunction.value,
+                    vitalFunction.unit
                 )
                 .execute()
         }
@@ -487,14 +486,14 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.BLOODTRANSFUSION.DATE,
                 Tables.BLOODTRANSFUSION.PRODUCT
             )
-                .values(patientId, bloodTransfusion.date(), bloodTransfusion.product())
+                .values(patientId, bloodTransfusion.date, bloodTransfusion.product)
                 .execute()
         }
     }
 
     private fun writeMedications(patientId: String, medications: List<Medication>) {
         for (medication in medications) {
-            val atc = medication.atc()
+            val atc = medication.atc
             context.insertInto(
                 Tables.MEDICATION,
                 Tables.MEDICATION.PATIENTID,
@@ -523,26 +522,26 @@ internal class ClinicalDAO(private val context: DSLContext) {
             )
                 .values(
                     patientId,
-                    medication.name(),
-                    medication.status()?.toString(),
-                    medication.administrationRoute(),
-                    medication.dosage().dosageMin(),
-                    medication.dosage().dosageMax(),
-                    medication.dosage().dosageUnit(),
-                    medication.dosage().frequency(),
-                    medication.dosage().frequencyUnit(),
-                    medication.dosage().periodBetweenValue(),
-                    medication.dosage().periodBetweenUnit(),
-                    medication.dosage().ifNeeded(),
-                    medication.startDate(),
-                    medication.stopDate(),
-                    DataUtil.concat(medication.cypInteractions().map { "${it.strength()} ${it.type()} (${it.cyp()})" }.toSet()),
-                    medication.qtProlongatingRisk().toString(),
-                    atc?.anatomicalMainGroup()?.name(),
-                    atc?.therapeuticSubGroup()?.name(),
-                    atc?.pharmacologicalSubGroup()?.name(),
-                    atc?.chemicalSubGroup()?.name(),
-                    atc?.chemicalSubstance()?.code(),
+                    medication.name,
+                    medication.status?.toString(),
+                    medication.administrationRoute,
+                    medication.dosage.dosageMin,
+                    medication.dosage.dosageMax,
+                    medication.dosage.dosageUnit,
+                    medication.dosage.frequency,
+                    medication.dosage.frequencyUnit,
+                    medication.dosage.periodBetweenValue,
+                    medication.dosage.periodBetweenUnit,
+                    medication.dosage.ifNeeded,
+                    medication.startDate,
+                    medication.stopDate,
+                    DataUtil.concat(medication.cypInteractions.map { "${it.strength} ${it.type} (${it.cyp})" }.toSet()),
+                    medication.qtProlongatingRisk.toString(),
+                    atc?.anatomicalMainGroup?.name,
+                    atc?.therapeuticSubGroup?.name,
+                    atc?.pharmacologicalSubGroup?.name,
+                    atc?.chemicalSubGroup?.name,
+                    atc?.chemicalSubstance?.code,
                     medication.isSelfCare,
                     medication.isTrialMedication
                 ).execute()

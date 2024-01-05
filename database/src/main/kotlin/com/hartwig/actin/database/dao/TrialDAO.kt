@@ -25,30 +25,30 @@ internal class TrialDAO(private val context: DSLContext) {
     }
 
     fun writeTrial(trial: Trial) {
-        val trialId = writeTrialIdentification(trial.identification())
+        val trialId = writeTrialIdentification(trial.identification)
         val referenceIdMap = writeReferences(trial)
-        writeEligibilities(trialId, null, trial.generalEligibility(), referenceIdMap)
-        for (cohort in trial.cohorts()) {
-            val cohortId = writeCohortMetadata(trialId, cohort.metadata())
-            writeEligibilities(trialId, cohortId, cohort.eligibility(), referenceIdMap)
+        writeEligibilities(trialId, null, trial.generalEligibility, referenceIdMap)
+        for (cohort in trial.cohorts) {
+            val cohortId = writeCohortMetadata(trialId, cohort.metadata)
+            writeEligibilities(trialId, cohortId, cohort.eligibility, referenceIdMap)
         }
     }
 
     private fun writeTrialIdentification(identification: TrialIdentification): Int {
         return context.insertInto(Tables.TRIAL, Tables.TRIAL.CODE, Tables.TRIAL.OPEN, Tables.TRIAL.ACRONYM, Tables.TRIAL.TITLE)
-            .values(identification.trialId(), identification.open(), identification.acronym(), identification.title())
+            .values(identification.trialId, identification.open, identification.acronym, identification.title)
             .returning(Tables.TRIAL.ID)
             .fetchOne()!!
             .getValue(Tables.TRIAL.ID)
     }
 
     private fun writeReferences(trial: Trial): Map<CriterionReference, Int> {
-        return listOf(trial.generalEligibility(), trial.cohorts().flatMap(Cohort::eligibility))
+        return listOf(trial.generalEligibility, trial.cohorts.flatMap(Cohort::eligibility))
             .flatMap { it.flatMap(Eligibility::references) }
             .distinct()
             .associateWith { reference ->
                 context.insertInto(Tables.REFERENCE, Tables.REFERENCE.CODE, Tables.REFERENCE.TEXT)
-                    .values(reference.id(), reference.text())
+                    .values(reference.id, reference.text)
                     .returning(Tables.REFERENCE.ID)
                     .fetchOne()!!
                     .getValue(Tables.REFERENCE.ID)
@@ -68,12 +68,12 @@ internal class TrialDAO(private val context: DSLContext) {
         )
             .values(
                 trialId,
-                metadata.cohortId(),
-                metadata.evaluable(),
-                metadata.open(),
-                metadata.slotsAvailable(),
-                metadata.blacklist(),
-                metadata.description()
+                metadata.cohortId,
+                metadata.evaluable,
+                metadata.open,
+                metadata.slotsAvailable,
+                metadata.blacklist,
+                metadata.description
             )
             .returning(Tables.COHORT.ID)
             .fetchOne()!!
@@ -85,8 +85,8 @@ internal class TrialDAO(private val context: DSLContext) {
         referenceIdMap: Map<CriterionReference, Int>
     ) {
         for (eligibility in eligibilities) {
-            val id = writeEligibilityFunction(trialId, cohortId, null, eligibility.function())
-            for (reference in eligibility.references()) {
+            val id = writeEligibilityFunction(trialId, cohortId, null, eligibility.function)
+            for (reference in eligibility.references) {
                 context.insertInto(
                     Tables.ELIGIBILITYREFERENCE,
                     Tables.ELIGIBILITYREFERENCE.ELIGIBILITYID,
@@ -102,8 +102,8 @@ internal class TrialDAO(private val context: DSLContext) {
         trialId: Int, cohortId: Int?, parentId: Int?,
         function: EligibilityFunction
     ): Int {
-        val isComposite = CompositeRules.isComposite(function.rule())
-        val parameters = if (isComposite) "" else DataUtil.concatObjects(function.parameters()) ?: ""
+        val isComposite = CompositeRules.isComposite(function.rule)
+        val parameters = if (isComposite) "" else DataUtil.concatObjects(function.parameters) ?: ""
         val id = context.insertInto(
             Tables.ELIGIBILITY,
             Tables.ELIGIBILITY.TRIALID,
@@ -113,12 +113,12 @@ internal class TrialDAO(private val context: DSLContext) {
             Tables.ELIGIBILITY.PARAMETERS,
             Tables.ELIGIBILITY.DISPLAY
         )
-            .values(trialId, cohortId, parentId, function.rule().toString(), parameters, EligibilityFunctionDisplay.format(function))
+            .values(trialId, cohortId, parentId, function.rule.toString(), parameters, EligibilityFunctionDisplay.format(function))
             .returning(Tables.ELIGIBILITY.ID)
             .fetchOne()!!
             .getValue(Tables.ELIGIBILITY.ID)
         if (isComposite) {
-            for (input in function.parameters()) {
+            for (input in function.parameters) {
                 writeEligibilityFunction(trialId, cohortId, id, input as EligibilityFunction)
             }
         }
