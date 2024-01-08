@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 class BodyWeightFunctionsTest {
 
-    private val referenceDate = LocalDateTime.of(2023, 11, 10, 12, 30, 0)
+    private val referenceDate = LocalDateTime.now()
 
     @Test
     fun `Should evaluate to undetermined on no body weight documented`() {

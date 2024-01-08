@@ -63,7 +63,7 @@ class FeedModel(private val feed: ClinicalFeed) {
         }
     }
 
-    data class VitalFunctionProperties(
+    private data class VitalFunctionProperties(
         val effectiveDateTime: LocalDateTime,
         val quantityValue: Double,
         val quantityUnit: String,

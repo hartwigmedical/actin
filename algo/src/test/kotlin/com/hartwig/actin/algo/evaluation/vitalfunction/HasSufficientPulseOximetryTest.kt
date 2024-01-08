@@ -9,12 +9,20 @@ import org.junit.Test
 import java.time.LocalDateTime
 
 class HasSufficientPulseOximetryTest {
-    val referenceDate = LocalDateTime.of(2023, 12, 7, 12, 30, 0)
+    val referenceDate = LocalDateTime.now()
     val function = HasSufficientPulseOximetry(90.0)
 
     @Test
     fun `Should evaluate to undetermined when no measurements are present`() {
         val pulseOximetries: List<VitalFunction> = emptyList()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if all measurements in wrong unit`() {
+        val pulseOximetries: List<VitalFunction> = listOf(
+            pulseOximetry().date(referenceDate.minusMonths(3)).value(92.0).unit("test").valid(true).build()
+        )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }
 

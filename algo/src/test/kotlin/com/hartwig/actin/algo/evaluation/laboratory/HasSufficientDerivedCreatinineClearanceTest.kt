@@ -14,14 +14,13 @@ import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 import java.time.LocalDateTime
 
 class HasSufficientDerivedCreatinineClearanceTest {
 
     @Test
-    fun canEvaluateMDRD() {
+    fun `Should evaluate correctly using MDRD`() {
         val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100.0)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
@@ -35,7 +34,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
     }
 
     @Test
-    fun canEvaluateCKDEPI() {
+    fun `Should evaluate correctly using CKDEPI`() {
         val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100.0)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
@@ -49,15 +48,12 @@ class HasSufficientDerivedCreatinineClearanceTest {
     }
 
     @Test
-    fun canEvaluateCockcroftGaultWithWeight() {
+    fun `Should evaluate correctly using Cockcroft Gault with light weight`() {
         val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
-        val weights: MutableList<BodyWeight> = mutableListOf()
-        weights.add(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2020, 1, 1, 12, 30, 0)).value(50.0).unit(Strings.EMPTY).valid(true).build()
-        )
-        weights.add(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 1, 1, 12, 30, 0)).value(60.0).unit(Strings.EMPTY).valid(true).build()
+        val weights = listOf(
+            ImmutableBodyWeight.builder().date(LocalDateTime.of(2020, 1, 1, 12, 30, 0)).value(50.0).unit(EXPECTED_UNIT).valid(true).build(),
+            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 1, 1, 12, 30, 0)).value(60.0).unit(EXPECTED_UNIT).valid(true).build()
         )
 
         // CG 95
@@ -67,8 +63,14 @@ class HasSufficientDerivedCreatinineClearanceTest {
         // CG 80
         val femaleLight = create(1971, Gender.FEMALE, Lists.newArrayList(creatinine), weights)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(femaleLight, LabMeasurement.CREATININE, creatinine))
-        weights.add(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 2, 2, 12, 30, 0)).value(70.0).unit(Strings.EMPTY).valid(true).build()
+    }
+
+    @Test
+    fun `Should evaluate correctly using Cockcroft Gault with heavy weight`() {
+        val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0)
+        val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
+        val weights = listOf(
+            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 2, 2, 12, 30, 0)).value(70.0).unit(EXPECTED_UNIT).valid(true).build()
         )
 
         // CG 111
@@ -81,7 +83,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
     }
 
     @Test
-    fun canEvaluateCockcroftGaultNoWeight() {
+    fun `Should evaluate correctly using Cockcroft Gault without weight`() {
         val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 80.0)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
@@ -110,5 +112,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
                 )
                 .build()
         }
+
+        private const val EXPECTED_UNIT = "kilogram"
     }
 }

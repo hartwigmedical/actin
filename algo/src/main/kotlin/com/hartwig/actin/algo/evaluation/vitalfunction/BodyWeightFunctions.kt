@@ -70,7 +70,7 @@ object BodyWeightFunctions {
         }
     }
 
-    private fun selectMedianBodyWeightPerDay(record: PatientRecord): List<BodyWeight> {
+    fun selectMedianBodyWeightPerDay(record: PatientRecord): List<BodyWeight> {
         return record.clinical().bodyWeights()
             .filter { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
             .groupBy { it.date() }
@@ -90,7 +90,7 @@ object BodyWeightFunctions {
         return bodyWeights.map { it.value() }.sorted()
     }
 
-    private fun determineMedianBodyWeight(bodyWeights: Iterable<BodyWeight>): Double {
+    fun determineMedianBodyWeight(bodyWeights: Iterable<BodyWeight>): Double {
         val values = sortedBodyWeightValues(bodyWeights)
         val index = ceil(values.size / 2.0).toInt() - 1
         return if (values.size % 2 == 0) {

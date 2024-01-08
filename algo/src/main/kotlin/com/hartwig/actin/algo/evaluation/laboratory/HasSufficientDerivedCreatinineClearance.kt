@@ -44,7 +44,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
     }
 
     private fun evaluateCockcroftGault(record: PatientRecord, creatinine: LabValue): Evaluation {
-        val weight = CreatinineFunctions.determineWeight(record.clinical().bodyWeights())
+        val weight = CreatinineFunctions.determineMedianWeight(record)
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
             record.clinical().patient().birthYear(),
             referenceYear,

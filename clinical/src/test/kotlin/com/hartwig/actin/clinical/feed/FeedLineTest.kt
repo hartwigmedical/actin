@@ -34,8 +34,8 @@ class FeedLineTest {
 
         assertEquals(Gender.MALE, line.gender("gender"))
         assertEquals(LocalDate.of(2019, 1, 1), line.date("date"))
-        assertEquals(LocalDateTime.of(2019, 1, 1, 0, 0, 0, 0), line.vitalFunctionDate("date"))
-        assertEquals(LocalDateTime.of(2019, 1, 1, 0, 0, 0, 0), line.bodyWeightDate("date"))
+        assertEquals(LocalDateTime.of(2019, 1, 1, 0, 0, 0, 0), line.dateTime("date"))
+        assertEquals(LocalDateTime.of(2019, 1, 1, 0, 0, 0, 0), line.dateTime("date"))
         assertEquals(LocalDate.of(2019, 1, 1), line.optionalDate("date"))
 
         assertEquals(1.0, line.number("number"), EPSILON)

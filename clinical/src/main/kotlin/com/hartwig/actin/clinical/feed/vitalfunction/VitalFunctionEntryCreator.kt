@@ -8,7 +8,7 @@ class VitalFunctionEntryCreator : FeedEntryCreator<VitalFunctionEntry> {
     override fun fromLine(line: FeedLine): VitalFunctionEntry {
         return VitalFunctionEntry(
             subject = line.trimmed("subject"),
-            effectiveDateTime = line.vitalFunctionDate("effectiveDateTime"),
+            effectiveDateTime = line.dateTime("effectiveDateTime"),
             codeDisplayOriginal = line.string("code_display_original"),
             componentCodeDisplay = line.string("component_code_display"),
             quantityUnit = line.string("quantity_unit"),

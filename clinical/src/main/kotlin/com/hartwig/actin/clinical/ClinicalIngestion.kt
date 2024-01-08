@@ -150,52 +150,49 @@ class ClinicalIngestion(
 
     private fun extractBodyWeights(subject: String): List<BodyWeight> {
         return feed.uniqueBodyWeightEntries(subject).map { entry: BodyWeightEntry ->
-            val isValidWeight = entry.valueQuantityValue in 20.0..300.0
-
-            if (isValidWeight) {
-                ImmutableBodyWeight.builder()
-                    .date(entry.effectiveDateTime)
-                    .value(entry.valueQuantityValue)
-                    .unit(entry.valueQuantityUnit)
-                    .valid(true)
-                    .build()
-            } else {
-                ImmutableBodyWeight.builder()
-                    .date(entry.effectiveDateTime)
-                    .value(entry.valueQuantityValue)
-                    .unit(entry.valueQuantityUnit)
-                    .valid(false)
-                    .build()
-            }
+            ImmutableBodyWeight.builder()
+                .date(entry.effectiveDateTime)
+                .value(entry.valueQuantityValue)
+                .unit(entry.valueQuantityUnit)
+                .valid(if (entry.valueQuantityUnit.lowercase() == "kilogram") bodyWeightIsValid(entry) else true)
+                .build()
         }
+    }
+
+    private fun bodyWeightIsValid(entry: BodyWeightEntry): Boolean {
+        return entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
     }
 
     private fun extractVitalFunctions(subject: String): List<VitalFunction> {
         return feed.vitalFunctionEntries(subject).map { entry: VitalFunctionEntry ->
-            val vitalFunctionCategory = VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)
-            val isValidBloodPressure = (vitalFunctionCategory == NON_INVASIVE_BLOOD_PRESSURE ||
-                    vitalFunctionCategory == ARTERIAL_BLOOD_PRESSURE) && entry.quantityValue in 10.0..300.0
-            val isValidHeartRate = vitalFunctionCategory == HEART_RATE && entry.quantityValue in 10.0..300.0
-            val isValidPulseOximetry = vitalFunctionCategory == SPO2 && entry.quantityValue in 10.0..100.0
+            val category = VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)
+            ImmutableVitalFunction.builder()
+                .date(entry.effectiveDateTime)
+                .category(category)
+                .subcategory(entry.componentCodeDisplay)
+                .value(entry.quantityValue)
+                .unit(entry.quantityUnit)
+                .valid(if (EXPECTED_UNIT[category].equals(entry.quantityUnit.lowercase())) vitalFunctionIsValid(entry) else true)
+                .build()
+        }
+    }
 
-            if (isValidBloodPressure || isValidHeartRate || isValidPulseOximetry) {
-                ImmutableVitalFunction.builder()
-                    .date(entry.effectiveDateTime)
-                    .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal))
-                    .subcategory(entry.componentCodeDisplay)
-                    .value(entry.quantityValue)
-                    .unit(entry.quantityUnit)
-                    .valid(true)
-                    .build()
-            } else {
-                ImmutableVitalFunction.builder()
-                    .date(entry.effectiveDateTime)
-                    .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal))
-                    .subcategory(entry.componentCodeDisplay)
-                    .value(entry.quantityValue)
-                    .unit(entry.quantityUnit)
-                    .valid(false)
-                    .build()
+    private fun vitalFunctionIsValid(entry: VitalFunctionEntry): Boolean {
+        return when (VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)) {
+            NON_INVASIVE_BLOOD_PRESSURE, ARTERIAL_BLOOD_PRESSURE -> {
+                entry.quantityValue in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX
+            }
+
+            HEART_RATE -> {
+                entry.quantityValue in HEART_RATE_MIN..HEART_RATE_MAX
+            }
+
+            SPO2 -> {
+                entry.quantityValue in SPO2_MIN..SPO2_MAX
+            }
+
+            else -> {
+                false
             }
         }
     }
@@ -233,6 +230,20 @@ class ClinicalIngestion(
             priorOtherConditionExtractor = PriorOtherConditionsExtractor.create(curationDatabaseContext),
             medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel),
             labValueExtractor = LabValueExtractor.create(curationDatabaseContext)
+        )
+
+        const val BODY_WEIGHT_MIN = 20.0
+        const val BODY_WEIGHT_MAX = 300.0
+        const val HEART_RATE_MIN = 10.0
+        const val HEART_RATE_MAX = 300.0
+        const val BLOOD_PRESSURE_MIN = 10.0
+        const val BLOOD_PRESSURE_MAX = 300.0
+        const val SPO2_MIN = 10.0
+        const val SPO2_MAX = 100.0
+
+        val EXPECTED_UNIT = mapOf(
+            HEART_RATE to "bpm", SPO2 to "percent", NON_INVASIVE_BLOOD_PRESSURE to "mmhg",
+            ARTERIAL_BLOOD_PRESSURE to "mmhg"
         )
     }
 }

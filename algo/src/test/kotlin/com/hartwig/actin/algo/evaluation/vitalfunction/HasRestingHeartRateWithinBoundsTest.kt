@@ -10,12 +10,20 @@ import java.time.LocalDateTime
 
 class HasRestingHeartRateWithinBoundsTest {
 
-    val referenceDate = LocalDateTime.of(2023, 12, 11, 12, 30, 0)
+    val referenceDate = LocalDateTime.now()
     val function = HasRestingHeartRateWithinBounds(60.0, 80.0)
 
     @Test
     fun `Should evaluate to undetermined when no heart rate measurements present`() {
         val heartRates: List<VitalFunction> = emptyList()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if all heart rate measurements in wrong unit`() {
+        val heartRates: List<VitalFunction> = listOf(
+            heartRate().date(referenceDate).value(70.0).unit("test").valid(true).build()
+        )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
     }
 
@@ -70,7 +78,7 @@ class HasRestingHeartRateWithinBoundsTest {
         private fun heartRate(): ImmutableVitalFunction.Builder {
             return VitalFunctionTestFactory.vitalFunction()
                 .category(VitalFunctionCategory.HEART_RATE)
-                .unit(HasRestingHeartRateWithinBounds.UNIT_TO_SELECT)
+                .unit(HasRestingHeartRateWithinBounds.HEART_RATE_EXPECTED_UNIT)
         }
     }
 }

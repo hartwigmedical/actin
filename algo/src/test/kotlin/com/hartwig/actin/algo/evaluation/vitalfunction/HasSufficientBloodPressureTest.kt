@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 class HasSufficientBloodPressureTest {
 
-    private val referenceDate = LocalDateTime.of(2020, 11, 19, 12, 30, 0)
+    private val referenceDate = LocalDateTime.now()
     private val function = HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 100)
 
     @Test

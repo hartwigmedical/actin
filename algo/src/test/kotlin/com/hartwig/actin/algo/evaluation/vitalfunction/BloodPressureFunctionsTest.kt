@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 
 class BloodPressureFunctionsTest {
 
-    private val referenceDate = LocalDateTime.of(2020, 11, 19, 12, 30, 0)
+    private val referenceDate = LocalDateTime.now()
 
     @Test
     fun `Should evaluate to undetermined when no blood pressures known`() {

@@ -7,48 +7,35 @@ import java.time.LocalDateTime
 
 internal object VitalFunctionSelector {
     private const val MAX_BLOOD_PRESSURES_TO_USE = 5
-    private const val MAX_AGE_MONTHS = 1
+
+    fun selectVitalFunctions(vitalFunctions: List<VitalFunction>, categoryToFind: VitalFunctionCategory): List<VitalFunction> {
+        return vitalFunctions.asSequence().filter {
+            it.date() > LocalDateTime.now().minusMonths(1) && it.category() == categoryToFind
+                    && it.valid()
+        }.toList()
+    }
 
     fun selectMedianPerDay(
         vitalFunctions: List<VitalFunction>, categoryToFind: VitalFunctionCategory,
         unitToFind: String?, maxEntries: Int
     ): List<VitalFunction> {
-        val result = vitalFunctions.asSequence()
-            .filter {
-                it.category() == categoryToFind && (unitToFind == null || it.unit()
-                    .equals(unitToFind, ignoreCase = true)) && it.valid()
-            }
+        return selectVitalFunctions(vitalFunctions, categoryToFind)
+            .filter { unitToFind == null || it.unit().equals(unitToFind, ignoreCase = true) }
             .groupBy { it.date() }
             .map { VitalFunctionFunctions.selectMedianFunction(it.value) }
             .sortedWith(VitalFunctionDescendingDateComparator())
             .take(maxEntries).toList()
-
-        return if (result.isEmpty()) result else {
-            val mostRecent = result[0].date()
-            result.takeWhile {
-                mostRecent != LocalDateTime.now().plusMonths(1)
-                        && !it.date().isBefore(mostRecent.minusMonths(MAX_AGE_MONTHS.toLong()))
-            }
-        }
     }
 
     fun selectBloodPressures(vitalFunctions: List<VitalFunction>, category: BloodPressureCategory): List<VitalFunction> {
-        val result =
-            vitalFunctions.asSequence().filter {
-                isBloodPressure(it) && it.subcategory().equals(category.display(), ignoreCase = true) && it.valid()
-            }
-                .groupBy { it.date() }
-                .map { VitalFunctionFunctions.selectMedianFunction(it.value) }
-                .sortedWith(VitalFunctionDescendingDateComparator())
-                .take(MAX_BLOOD_PRESSURES_TO_USE).toList()
-
-        return if (result.isEmpty()) result else {
-            val mostRecent = result[0].date()
-            result.takeWhile {
-                mostRecent != LocalDateTime.now().plusMonths(1)
-                        && !it.date().isBefore(mostRecent.minusMonths(MAX_AGE_MONTHS.toLong()))
-            }
+        return vitalFunctions.asSequence().filter {
+            it.date() > LocalDateTime.now().minusMonths(1) && isBloodPressure(it) && it.subcategory()
+                .equals(category.display(), ignoreCase = true) && it.valid()
         }
+            .groupBy { it.date() }
+            .map { VitalFunctionFunctions.selectMedianFunction(it.value) }
+            .sortedWith(VitalFunctionDescendingDateComparator())
+            .take(MAX_BLOOD_PRESSURES_TO_USE).toList()
     }
 
     private fun isBloodPressure(vitalFunction: VitalFunction): Boolean {

@@ -28,11 +28,7 @@ class FeedLine(private val fields: Map<String, Int>, private val parts: Array<St
         return FeedParseFunctions.parseDate(string(column))
     }
 
-    fun vitalFunctionDate(column: String): LocalDateTime {
-        return FeedParseFunctions.parseDateTime(string(column))
-    }
-
-    fun bodyWeightDate(column: String): LocalDateTime {
+    fun dateTime(column: String): LocalDateTime {
         return FeedParseFunctions.parseDateTime(string(column))
     }
 
@@ -50,10 +46,6 @@ class FeedLine(private val fields: Map<String, Int>, private val parts: Array<St
 
     fun integer(column: String): Int {
         return string(column).toInt()
-    }
-
-    fun boolean(column: String): Boolean {
-        return string(column).toBoolean()
     }
 
     companion object {
