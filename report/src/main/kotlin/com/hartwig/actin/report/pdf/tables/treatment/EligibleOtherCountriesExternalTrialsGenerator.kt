@@ -56,7 +56,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
         table.addCell(
             Cells.createSpanningSubNote(
                 String.format(
-                    "Currently only Belgium and German trials are supported"
+                    "Currently only Belgian and German trials are supported"
                 ), table
             )
         )
