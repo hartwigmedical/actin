@@ -46,6 +46,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LUNG_METASTASES to hasLungMetastasesCreator(),
             EligibilityRule.HAS_LYMPH_NODE_METASTASES to hasLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
+            EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
@@ -164,6 +165,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return FunctionCreator {
             DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()), HasUnresectableCancer())
         }
+    }
+
+    private fun hasUnresectablePeritonealMetastasesCreator(): FunctionCreator {
+        return FunctionCreator { HasUnresectablePeritonealMetastases() }
     }
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {
