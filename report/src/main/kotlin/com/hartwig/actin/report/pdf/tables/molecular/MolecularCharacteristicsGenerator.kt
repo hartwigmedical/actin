@@ -113,11 +113,9 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     fun createHRStatusString(): String? {
         val homologousRepairScore = molecular.characteristics().homologousRepairScore()
         molecular.characteristics().isHomologousRepairDeficient() ?: return null
-        val scoreInterpretation = " (" + homologousRepairScore?.let { Formats.twoDigitNumber(it) } + ")"
-        val statusInterpretation = molecular.characteristics().isHomologousRepairDeficient?.let { deficient -> if (deficient)
-            "Deficient" else "Proficient" }
-        val value = statusInterpretation + scoreInterpretation
-        return value
+        val statusInterpretation = if (molecular.characteristics().isHomologousRepairDeficient!!) "Deficient" else "Proficient"
+        val scoreInterpretation = homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
+        return statusInterpretation + scoreInterpretation
     }
 
     private fun createHRStatusCell(): Cell {
