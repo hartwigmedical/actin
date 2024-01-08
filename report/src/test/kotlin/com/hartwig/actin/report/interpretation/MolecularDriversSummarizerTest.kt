@@ -103,7 +103,7 @@ class MolecularDriversSummarizerTest {
     @Test
     fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
         val externalEvidence =
-            TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createMinimal())
+            TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
         val approvedTreatment = TestActionableEvidenceFactory.withApprovedTreatment("approved")
         val cohorts = listOf(
             evaluatedCohort(

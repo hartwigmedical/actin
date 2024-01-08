@@ -16,15 +16,15 @@ class EvidenceInterpreterTest {
             .putApprovedTreatmentsPerEvent("approved", "treatment")
             .putExternalEligibleTrialsPerEvent(
                 "external",
-                TestExternalTrialFactory.createMinimal()
+                TestExternalTrialFactory.createTestTrial()
             )
             .putExternalEligibleTrialsPerEvent(
                 "approved",
-                TestExternalTrialFactory.createMinimal()
+                TestExternalTrialFactory.createTestTrial()
             )
             .putExternalEligibleTrialsPerEvent(
                 "inclusion",
-                TestExternalTrialFactory.createMinimal()
+                TestExternalTrialFactory.createTestTrial()
             )
             .putOnLabelExperimentalTreatmentsPerEvent("on-label", "treatment")
             .putOnLabelExperimentalTreatmentsPerEvent("approved", "treatment")

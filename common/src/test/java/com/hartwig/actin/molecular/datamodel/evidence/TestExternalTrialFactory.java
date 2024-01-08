@@ -1,8 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.evidence;
 
-import java.util.Collections;
+import java.util.Set;
 
-import org.assertj.core.util.Sets;
 import org.jetbrains.annotations.NotNull;
 
 public final class TestExternalTrialFactory {
@@ -13,11 +12,11 @@ public final class TestExternalTrialFactory {
     }
 
     @NotNull
-    public static ExternalTrial createMinimal() {
+    public static ExternalTrial createTestTrial() {
         return builder().title("treatment")
-                .countries(Sets.newHashSet(Collections.singleton(Country.NETHERLANDS)))
+                .countries(Set.of(Country.NETHERLANDS, Country.BELGIUM))
                 .url("https://clinicaltrials.gov/study/NCT00000001")
-                .nctId("nctId")
+                .nctId("NCT00000001")
                 .build();
     }
 

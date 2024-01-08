@@ -53,7 +53,7 @@ class MolecularDriversInterpreterTest {
     fun shouldIncludeNonReportableDriversWithExternalTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
             TestActionableEvidenceFactory.withExternalEligibleTrial(
-                TestExternalTrialFactory.createMinimal()
+                TestExternalTrialFactory.createTestTrial()
             )
         )
         assertCountForRecord(1, record)

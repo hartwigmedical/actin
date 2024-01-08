@@ -16,7 +16,7 @@ public class ActionableEvidenceComparatorTest {
     @Test
     public void canSortActionableEvidences() {
         ActionableEvidence evidence1 = TestActionableEvidenceFactory.withApprovedTreatment("treatment");
-        ActionableEvidence evidence2 = TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createMinimal());
+        ActionableEvidence evidence2 = TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial());
         ActionableEvidence evidence3 = TestActionableEvidenceFactory.withOnLabelExperimentalTreatment("treatment");
         ActionableEvidence evidence4 = TestActionableEvidenceFactory.withOffLabelExperimentalTreatment("treatment");
         ActionableEvidence evidence5 = TestActionableEvidenceFactory.withPreClinicalTreatment("treatment");

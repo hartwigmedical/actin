@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular.datamodel.evidence;
 
-import com.google.common.collect.Sets;
-
 import org.jetbrains.annotations.NotNull;
 
 public final class TestActionableEvidenceFactory {
@@ -22,12 +20,7 @@ public final class TestActionableEvidenceFactory {
     @NotNull
     public static ActionableEvidence createExhaustive() {
         return builder().addApprovedTreatments("approved")
-                .addExternalEligibleTrials(ImmutableExternalTrial.builder()
-                        .title("external trial")
-                        .countries(Sets.newHashSet(Country.NETHERLANDS, Country.BELGIUM))
-                        .url("https://clinicaltrials.gov/study/NCT00000001")
-                        .nctId("NCT00000001")
-                        .build())
+                .addExternalEligibleTrials(TestExternalTrialFactory.createTestTrial())
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")
                 .addPreClinicalTreatments("pre-clinical")
