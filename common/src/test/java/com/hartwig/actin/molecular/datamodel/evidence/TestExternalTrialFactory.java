@@ -8,7 +8,7 @@ public final class TestExternalTrialFactory {
 
     @NotNull
     public static ImmutableExternalTrial.Builder builder() {
-        return ImmutableExternalTrial.builder();
+        return ImmutableExternalTrial.builder().title("").url("").nctId("");
     }
 
     @NotNull
