@@ -34,6 +34,7 @@ import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.Country;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory;
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology;
 import com.hartwig.actin.molecular.datamodel.immunology.TestHlaAlleleFactory;
@@ -181,7 +182,7 @@ public final class TestMolecularFactory {
                         .isReportable(true)
                         .event("PTEN del")
                         .driverLikelihood(DriverLikelihood.HIGH)
-                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(ImmutableExternalTrial.builder()
+                        .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.builder()
                                 .title("A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment for Participants With Advanced Solid Tumor (acronym)")
                                 .countries(Sets.newHashSet(Country.BELGIUM, Country.GERMANY))
                                 .url("https://clinicaltrials.gov/study/NCT00000002")
