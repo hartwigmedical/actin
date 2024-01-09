@@ -11,13 +11,13 @@ import org.apache.logging.log4j.core.config.Configurator
 data class OrangeInterpreterConfig(
     val orangeJson: String,
     val serveDirectory: String,
-    val externalTrialMappingTsv: String,
     val clinicalJson: String,
     val doidJson: String,
     val outputDirectory: String
 ) {
 
     companion object {
+        // TODO (CB): Remove EXTERNAL_TRIAL_MAPPING once ACTIN pipeline has been upgraded to contain ACTIN-68 and scripts have been updated
         fun createOptions(): Options {
             val options = Options()
             options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted")
@@ -38,7 +38,6 @@ data class OrangeInterpreterConfig(
             return OrangeInterpreterConfig(
                 orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
-                externalTrialMappingTsv = ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TRIAL_MAPPING_TSV),
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)

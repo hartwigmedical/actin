@@ -97,7 +97,7 @@ public class MolecularPrinter {
     }
 
     @NotNull
-    private static String keys(@NotNull Multimap<String, String> multimap) {
+    private static <T> String keys(@NotNull Multimap<String, T> multimap) {
         return concat(multimap.keySet());
     }
 

@@ -24,8 +24,8 @@ class EvidenceInterpreter private constructor(private val actinInclusionEvents: 
         )
     }
 
-    private fun filter(
-        eventMap: Multimap<String, String>, evidence: AggregatedEvidence, additionalEventsToFilter: Set<String> = emptySet()
+    private fun <T> filter(
+        eventMap: Multimap<String, T>, evidence: AggregatedEvidence, additionalEventsToFilter: Set<String> = emptySet()
     ): Set<String> {
         return eventMap.keySet() - eventsWithApprovedEvidence(evidence) - actinInclusionEvents - additionalEventsToFilter
     }

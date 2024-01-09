@@ -69,8 +69,8 @@ object TestServeActionabilityFactory {
                 return Strings.EMPTY
             }
 
-            override fun sourceUrls(): MutableSet<String?> {
-                return Sets.newHashSet()
+            override fun sourceUrls(): Set<String> {
+                return Sets.newHashSet("https://clinicaltrials.gov/study/NCT00000001")
             }
 
             override fun treatment(): Treatment {
@@ -94,7 +94,8 @@ object TestServeActionabilityFactory {
             }
 
             override fun evidenceUrls(): MutableSet<String?> {
-                return Sets.newHashSet()
+                // evidenceUrls() contains a set of countries
+                return Sets.newHashSet("country")
             }
         }
     }
