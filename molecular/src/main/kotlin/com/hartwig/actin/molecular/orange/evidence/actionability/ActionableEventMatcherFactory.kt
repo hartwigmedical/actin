@@ -2,27 +2,19 @@ package com.hartwig.actin.molecular.orange.evidence.actionability
 
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.orange.evidence.curation.ApplicabilityFiltering
-import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMapper
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
-import com.hartwig.serve.datamodel.ImmutableTreatment
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
-import com.hartwig.serve.datamodel.characteristic.ImmutableActionableCharacteristic
 import com.hartwig.serve.datamodel.fusion.ActionableFusion
-import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion
 import com.hartwig.serve.datamodel.gene.ActionableGene
-import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
-import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.immuno.ActionableHLA
-import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.range.ActionableRange
-import com.hartwig.serve.datamodel.range.ImmutableActionableRange
 
 class ActionableEventMatcherFactory(
-    private val externalTrialMapper: ExternalTrialMapper, private val doidModel: DoidModel,
+    private val doidModel: DoidModel,
     private val tumorDoids: Set<String>
 ) {
 
@@ -36,91 +28,14 @@ class ActionableEventMatcherFactory(
 
     internal fun curateExternalTrials(actionableEvents: ActionableEvents): ActionableEvents {
         return ImmutableActionableEvents.builder()
-            .hotspots(curateHotspots(actionableEvents.hotspots()))
-            .codons(curateRanges(actionableEvents.codons()))
-            .exons(curateRanges(actionableEvents.exons()))
-            .genes(curateGenes(actionableEvents.genes()))
-            .fusions(curateFusions(actionableEvents.fusions()))
-            .characteristics(curateCharacteristics(actionableEvents.characteristics()))
-            .hla(curateHla(actionableEvents.hla()))
+            .hotspots(actionableEvents.hotspots())
+            .codons(actionableEvents.codons())
+            .exons(actionableEvents.exons())
+            .genes(actionableEvents.genes())
+            .fusions(actionableEvents.fusions())
+            .characteristics(actionableEvents.characteristics())
+            .hla(actionableEvents.hla())
             .build()
-    }
-
-    private fun curateHotspots(hotspots: MutableList<ActionableHotspot>): List<ActionableHotspot> {
-        return curateTreatments(hotspots)
-        { event: ActionableHotspot, curatedTreatmentName: String ->
-            ImmutableActionableHotspot.builder()
-                .from(event)
-                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                .build()
-        }
-    }
-
-    private fun curateRanges(ranges: MutableList<ActionableRange>): List<ActionableRange> {
-        return curateTreatments(ranges)
-        { event: ActionableRange, curatedTreatmentName: String ->
-            ImmutableActionableRange.builder()
-                .from(event)
-                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                .build()
-        }
-    }
-
-    private fun curateGenes(genes: MutableList<ActionableGene>): List<ActionableGene> {
-        return curateTreatments(genes)
-        { event: ActionableGene, curatedTreatmentName: String ->
-            ImmutableActionableGene.builder()
-                .from(event)
-                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                .build()
-        }
-    }
-
-    private fun curateFusions(fusions: MutableList<ActionableFusion>): List<ActionableFusion> {
-        return curateTreatments(fusions)
-        { event: ActionableFusion, curatedTreatmentName: String ->
-            ImmutableActionableFusion.builder()
-                .from(event)
-                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                .build()
-        }
-    }
-
-    private fun curateCharacteristics(characteristics: List<ActionableCharacteristic>): List<ActionableCharacteristic> {
-        return curateTreatments(characteristics)
-        { event: ActionableCharacteristic, curatedTreatmentName: String ->
-            ImmutableActionableCharacteristic.builder()
-                .from(event)
-                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                .build()
-        }
-    }
-
-    private fun curateHla(hlas: List<ActionableHLA>): List<ActionableHLA> {
-        return curateTreatments(hlas)
-        { event: ActionableHLA, curatedTreatmentName: String ->
-            ImmutableActionableHLA.builder()
-                .from(event)
-                .treatment(ImmutableTreatment.builder().from(event.treatment()).name(curatedTreatmentName).build())
-                .build()
-        }
-    }
-
-    private fun <T : ActionableEvent> curateTreatments(events: List<T>, factory: ActionableFactory<T>): List<T> {
-        return events.map { event: T ->
-            val curatedTreatmentName = determineCuratedTreatmentName(event)
-            if (curatedTreatmentName != event.treatment().name()) factory.create(event, curatedTreatmentName) else event
-        }.toList()
-    }
-
-    private fun determineCuratedTreatmentName(event: ActionableEvent): String {
-        return if (event.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE) {
-            externalTrialMapper.map(event.treatment().name())
-        } else event.treatment().name()
-    }
-
-    private fun interface ActionableFactory<T : ActionableEvent?> {
-        fun create(event: T, curatedTreatmentName: String): T
     }
 
     companion object {

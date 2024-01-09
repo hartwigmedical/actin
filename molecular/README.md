@@ -12,7 +12,6 @@ java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplicati
    -orange_json /path/to/orange.json \
    -serve_directory /path/to/serve_directory \
    -known_genes_tsv /path/to/known_genes.tsv \
-   -external_trial_mapping_tsv /path/to/external_trial_mapping.tsv \
    -clinical_json /path/to/actin_clinical.json \
    -output_directory /path/to/where/molecular_json_file_is_written
 ```
@@ -30,9 +29,6 @@ The following assumptions are made about the inputs:
 - The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
   extract
   the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
-- The external trial mapping TSV file enables mapping of external trial acronyms to those used in ACTIN trial database, to avoid duplication
-  of trials in case different acronyms are used in different sources. An example can be
-  found [here](https://github.com/hartwigmedical/actin/blob/master/molecular/src/test/resources/curation/external_trial_mapping.tsv).
 
 ## ACTIN Molecular Datamodel
 
