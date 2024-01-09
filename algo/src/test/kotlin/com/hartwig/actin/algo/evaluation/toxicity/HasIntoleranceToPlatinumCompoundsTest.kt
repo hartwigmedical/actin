@@ -33,4 +33,14 @@ class HasIntoleranceToPlatinumCompoundsTest {
             HasIntoleranceToPlatinumCompounds().evaluate(ToxicityTestFactory.withIntolerance(match))
         )
     }
+
+    @Test
+    fun `Should pass when substring of intolerance name matches`() {
+        val match: Intolerance =
+            ToxicityTestFactory.intolerance().name("carboplatin chemotherapy allergy").build()
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            HasIntoleranceToPlatinumCompounds().evaluate(ToxicityTestFactory.withIntolerance(match))
+        )
+    }
 }

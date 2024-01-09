@@ -23,4 +23,13 @@ class HasIntoleranceToTaxanesTest {
         val match: Intolerance = ToxicityTestFactory.intolerance().name(HasIntoleranceToTaxanes.TAXANES.iterator().next()).build()
         assertEvaluation(EvaluationResult.PASS, HasIntoleranceToTaxanes().evaluate(ToxicityTestFactory.withIntolerance(match)))
     }
+
+    @Test
+    fun `Should pass when substring of intolerance name matches`() {
+        val match: Intolerance =
+            ToxicityTestFactory.intolerance().name("docetaxel chemotherapy allergy").build()
+        assertEvaluation(
+            EvaluationResult.PASS, HasIntoleranceToTaxanes().evaluate(ToxicityTestFactory.withIntolerance(match))
+        )
+    }
 }
