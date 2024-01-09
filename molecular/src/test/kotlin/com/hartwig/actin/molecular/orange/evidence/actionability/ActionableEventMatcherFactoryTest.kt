@@ -27,8 +27,7 @@ class ActionableEventMatcherFactoryTest {
     }
 
     @Test
-    fun canFilterAndCurateExternalTrials() {
-        val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
+    fun canFilterExternalTrials() {
         val base = TestServeActionabilityFactory.createActionableEvent(Knowledgebase.CKB_TRIAL, "external")
 
         val actionable: ActionableEvents = ImmutableActionableEvents.builder()
@@ -52,10 +51,8 @@ class ActionableEventMatcherFactoryTest {
         val filteredOnApplicability: ActionableEvents = ActionableEventMatcherFactory.filterForApplicability(filteredOnSource)
         assertEquals(3, filteredOnApplicability.hotspots().size.toLong())
 
-        val factory = ActionableEventMatcherFactory(doidModel, mutableSetOf())
-        val curated = factory.curateExternalTrials(filteredOnApplicability)
-        assertEquals("internal", findByGene(curated.hotspots(), "gene 2"))
-        assertEquals("external", findByGene(curated.hotspots(), "gene 3"))
+        assertEquals("internal", findByGene(filteredOnApplicability.hotspots(), "gene 2"))
+        assertEquals("external", findByGene(filteredOnApplicability.hotspots(), "gene 3"))
     }
 
     companion object {

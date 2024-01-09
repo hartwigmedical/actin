@@ -20,49 +20,13 @@ class ActionableEventMatcherFactory(
 
     fun create(actionableEvents: ActionableEvents): ActionableEventMatcher {
         val filtered = filterForApplicability(filterForSources(actionableEvents, ACTIONABLE_EVENT_SOURCES))
-        val curated = curateExternalTrials(filtered)
         val personalizedActionabilityFactory: PersonalizedActionabilityFactory =
             PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
-        return fromActionableEvents(personalizedActionabilityFactory, curated)
-    }
-
-    internal fun curateExternalTrials(actionableEvents: ActionableEvents): ActionableEvents {
-        return ImmutableActionableEvents.builder()
-            .hotspots(actionableEvents.hotspots())
-            .codons(actionableEvents.codons())
-            .exons(actionableEvents.exons())
-            .genes(actionableEvents.genes())
-            .fusions(actionableEvents.fusions())
-            .characteristics(actionableEvents.characteristics())
-            .hla(actionableEvents.hla())
-            .build()
+        return fromActionableEvents(personalizedActionabilityFactory, filtered)
     }
 
     companion object {
         val ACTIONABLE_EVENT_SOURCES = setOf(ActionabilityConstants.EVIDENCE_SOURCE, ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
-
-        private fun fromActionableEvents(
-            personalizedActionabilityFactory: PersonalizedActionabilityFactory,
-            actionableEvents: ActionableEvents
-        ): ActionableEventMatcher {
-            val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionableEvents)
-            val variantEvidence: VariantEvidence = VariantEvidence.create(actionableEvents)
-            val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionableEvents)
-            val homozygousDisruptionEvidence: HomozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents)
-            val breakendEvidence: BreakendEvidence = BreakendEvidence.create(actionableEvents)
-            val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
-            val virusEvidence: VirusEvidence = VirusEvidence.create(actionableEvents)
-            return ActionableEventMatcher(
-                personalizedActionabilityFactory,
-                signatureEvidence,
-                variantEvidence,
-                copyNumberEvidence,
-                homozygousDisruptionEvidence,
-                breakendEvidence,
-                fusionEvidence,
-                virusEvidence
-            )
-        }
 
         internal fun filterForSources(actionableEvents: ActionableEvents, sourcesToInclude: Set<Knowledgebase?>): ActionableEvents {
             return ImmutableActionableEvents.builder()
@@ -110,6 +74,29 @@ class ActionableEventMatcherFactory(
 
         private fun filterGenesForApplicability(genes: List<ActionableGene>): List<ActionableGene> {
             return filterEventsForApplicability(genes) { obj: ActionableGene -> ApplicabilityFiltering.isApplicable(obj) }
+        }
+
+        private fun fromActionableEvents(
+            personalizedActionabilityFactory: PersonalizedActionabilityFactory,
+            actionableEvents: ActionableEvents
+        ): ActionableEventMatcher {
+            val signatureEvidence: SignatureEvidence = SignatureEvidence.create(actionableEvents)
+            val variantEvidence: VariantEvidence = VariantEvidence.create(actionableEvents)
+            val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionableEvents)
+            val homozygousDisruptionEvidence: HomozygousDisruptionEvidence = HomozygousDisruptionEvidence.create(actionableEvents)
+            val breakendEvidence: BreakendEvidence = BreakendEvidence.create(actionableEvents)
+            val fusionEvidence: FusionEvidence = FusionEvidence.create(actionableEvents)
+            val virusEvidence: VirusEvidence = VirusEvidence.create(actionableEvents)
+            return ActionableEventMatcher(
+                personalizedActionabilityFactory,
+                signatureEvidence,
+                variantEvidence,
+                copyNumberEvidence,
+                homozygousDisruptionEvidence,
+                breakendEvidence,
+                fusionEvidence,
+                virusEvidence
+            )
         }
     }
 }
