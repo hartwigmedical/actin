@@ -164,7 +164,7 @@
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
       "subcategory": "Systolic blood pressure",
       "value": 108.0,
-      "unit": "mm[Hg]",
+      "unit": "mmHg",
       "valid": true
     }
   ],

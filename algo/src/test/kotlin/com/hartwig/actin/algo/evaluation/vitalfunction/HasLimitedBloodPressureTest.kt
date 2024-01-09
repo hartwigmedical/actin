@@ -1,15 +1,15 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
-import java.time.LocalDateTime
 
 class HasLimitedBloodPressureTest {
 
-    private val referenceDate = LocalDateTime.now()
+    private val referenceDate = ReferenceDateProviderTestFactory.createCurrentDateProvider().date().atStartOfDay()
     private val function = HasLimitedBloodPressure(BloodPressureCategory.SYSTOLIC, 140)
 
     @Test

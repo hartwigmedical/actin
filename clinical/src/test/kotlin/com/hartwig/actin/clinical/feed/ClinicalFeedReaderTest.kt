@@ -138,7 +138,7 @@ class ClinicalFeedReaderTest {
             assertEquals(LocalDateTime.of(2019, 4, 28, 13, 45, 0), entry.effectiveDateTime)
             assertEquals("NIBP", entry.codeDisplayOriginal)
             assertEquals("Systolic blood pressure", entry.componentCodeDisplay)
-            assertEquals("mm[Hg]", entry.quantityUnit)
+            assertEquals("mmHg", entry.quantityUnit)
             assertEquals(108.0, entry.quantityValue, EPSILON)
         }
 

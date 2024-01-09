@@ -1,17 +1,19 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientForMaximumBodyWeight
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientForMinimumBodyWeight
+import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
+import org.junit.Assert
 import org.junit.Test
-import java.time.LocalDateTime
 
 class BodyWeightFunctionsTest {
 
-    private val referenceDate = LocalDateTime.now()
+    private val referenceDate = ReferenceDateProviderTestFactory.createCurrentDateProvider().date().atStartOfDay()
 
     @Test
     fun `Should evaluate to undetermined on no body weight documented`() {
@@ -27,9 +29,9 @@ class BodyWeightFunctionsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined on weight in wrong unit`() {
+    fun `Should evaluate to undetermined when weight measurement invalid`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(3)).value(148.0).unit("pounds").valid(true).build()
+            weight().date(referenceDate.minusDays(3)).value(148.0).unit("pounds").valid(false).build()
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -131,6 +133,17 @@ class BodyWeightFunctionsTest {
         assertEvaluation(
             EvaluationResult.PASS, evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
         )
+    }
+
+    // Test of fun selectMedianBodyWeightPerDay
+
+    @Test
+    fun `Should return null if no valid measurements present`() {
+        val weights = listOf(
+            weight().date(referenceDate).value(1250.0).valid(false).build(),
+            weight().date(referenceDate).value(125.0).unit("pounds").valid(false).build()
+        )
+        Assert.assertEquals(null, selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
 
     companion object {

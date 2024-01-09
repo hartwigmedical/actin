@@ -21,8 +21,7 @@ object BodyWeightFunctions {
         record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean
     ): Evaluation {
         val relevant = selectMedianBodyWeightPerDay(record)
-        if (relevant.isEmpty()) {
-            return if (record.clinical().bodyWeights().isNotEmpty() &&
+            ?: return if (record.clinical().bodyWeights().isNotEmpty() &&
                 record.clinical().bodyWeights().none { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
             ) {
                 EvaluationFactory.undetermined(
@@ -34,7 +33,6 @@ object BodyWeightFunctions {
                     "No (recent) body weights found", "No (recent) body weights found"
                 )
             }
-        }
 
         val median = determineMedianBodyWeight(relevant)
         val comparison = median.compareTo(referenceBodyWeight)
@@ -70,14 +68,14 @@ object BodyWeightFunctions {
         }
     }
 
-    fun selectMedianBodyWeightPerDay(record: PatientRecord): List<BodyWeight> {
-        return record.clinical().bodyWeights()
-            .filter { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
+    fun selectMedianBodyWeightPerDay(record: PatientRecord): List<BodyWeight>? {
+        val result = record.clinical().bodyWeights()
+            .filter { it.valid() }
             .groupBy { it.date() }
             .map { selectMedianBodyWeightValue(it.value) }
             .sortedWith(BodyWeightDescendingDateComparator())
             .take(MAX_ENTRIES)
-            .toList()
+        return result.ifEmpty { null }
     }
 
     private fun selectMedianBodyWeightValue(bodyWeights: List<BodyWeight>): BodyWeight {

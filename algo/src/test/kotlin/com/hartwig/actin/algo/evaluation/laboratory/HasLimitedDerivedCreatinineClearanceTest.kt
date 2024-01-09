@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.BodyWeight
@@ -17,7 +18,7 @@ import org.junit.Test
 import java.time.LocalDateTime
 
 class HasLimitedDerivedCreatinineClearanceTest {
-    val referenceDate = LocalDateTime.now()
+    val referenceDate = ReferenceDateProviderTestFactory.createCurrentDateProvider().date().atStartOfDay()
 
     @Test
     fun `Should evaluate correctly using MDRD`() {

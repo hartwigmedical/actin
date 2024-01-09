@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.datamodel.LabValue
 import kotlin.math.pow
@@ -49,10 +47,5 @@ internal object CreatinineFunctions {
         val age = referenceYear - birthYear
         val base = (140 - age) * effectiveWeight / (0.81 * creatinine.value())
         return if (isFemale) base * 0.85 else base
-    }
-
-    fun determineMedianWeight(record: PatientRecord): Double? {
-        val relevant = BodyWeightFunctions.selectMedianBodyWeightPerDay(record)
-        return if (relevant.isEmpty()) null else BodyWeightFunctions.determineMedianBodyWeight(relevant)
     }
 }

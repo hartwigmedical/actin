@@ -1,14 +1,11 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory
 import com.hartwig.actin.clinical.datamodel.Gender
-import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import org.junit.Assert
 import org.junit.Test
-import java.time.LocalDateTime
 
 class CreatinineFunctionsTest {
     @Test
@@ -61,18 +58,7 @@ class CreatinineFunctionsTest {
         Assert.assertEquals(67.46, CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.FEMALE, null, creatinine), EPSILON)
     }
 
-    @Test
-    fun `Should correctly determine median weight`() {
-        val weights = listOf(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2020, 1, 1, 12, 30, 0)).value(50.0).unit(EXPECTED_UNIT).valid(true).build(),
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 1, 1, 12, 30, 0)).value(60.0).unit(EXPECTED_UNIT).valid(true).build()
-        )
-        Assert.assertEquals(55.0, CreatinineFunctions.determineMedianWeight(VitalFunctionTestFactory.withBodyWeights(weights))!!, EPSILON)
-        Assert.assertNull(CreatinineFunctions.determineMedianWeight(VitalFunctionTestFactory.withBodyWeights(emptyList())))
-    }
-
     companion object {
         private const val EPSILON = 1.0E-2
-        private const val EXPECTED_UNIT = "kilogram"
     }
 }

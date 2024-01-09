@@ -548,7 +548,10 @@ public final class TestClinicalFactory {
 
         vitalFunctions.add(ImmutableVitalFunction.builder().date(TODAY_TIME.minusDays(DAYS_SINCE_BLOOD_PRESSURE))
                 .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-                .subcategory("Mean blood pressure").value(99).unit("mm[Hg]").valid(true)
+                .subcategory("Mean blood pressure")
+                .value(99)
+                .unit("mmHg")
+                .valid(true)
                 .build());
 
         return vitalFunctions;

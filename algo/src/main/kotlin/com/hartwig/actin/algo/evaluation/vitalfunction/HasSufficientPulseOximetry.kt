@@ -8,18 +8,17 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
 class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val totalRecentPulseOximetries = VitalFunctionSelector.selectVitalFunctions(
-            record.clinical().vitalFunctions(), VitalFunctionCategory.SPO2
-        )
-        if (totalRecentPulseOximetries.isEmpty()) {
+        val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.SPO2, MAX_PULSE_OXIMETRY_TO_USE)
+        val wrongUnit = VitalFunctionSelector.selectRecentVitalFunctionsWrongUnit(record, VitalFunctionCategory.SPO2)
+
+        if (relevant.isEmpty() && wrongUnit.isEmpty()) {
             return EvaluationFactory.recoverableUndetermined("No (recent) pulse oximetry data found")
-        } else if (totalRecentPulseOximetries.none { it.unit().lowercase() == EXPECTED_UNIT }) {
+        } else if (relevant.isEmpty()) {
             return EvaluationFactory.recoverableUndetermined("Pulse oximetry measurements not in correct unit (${EXPECTED_UNIT})")
         }
 
         val relevantPulseOximetries = VitalFunctionSelector.selectMedianPerDay(
-            record.clinical().vitalFunctions(), VitalFunctionCategory.SPO2,
-            EXPECTED_UNIT, MAX_PULSE_OXIMETRY_TO_USE
+            record, VitalFunctionCategory.SPO2, MAX_PULSE_OXIMETRY_TO_USE
         )
         val median = VitalFunctionFunctions.determineMedianValue(relevantPulseOximetries)
         return if (median.compareTo(minMedianPulseOximetry) >= 0) {

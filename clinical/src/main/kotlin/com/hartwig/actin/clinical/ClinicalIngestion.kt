@@ -154,13 +154,13 @@ class ClinicalIngestion(
                 .date(entry.effectiveDateTime)
                 .value(entry.valueQuantityValue)
                 .unit(entry.valueQuantityUnit)
-                .valid(if (entry.valueQuantityUnit.lowercase() == "kilogram") bodyWeightIsValid(entry) else true)
+                .valid(bodyWeightIsValid(entry))
                 .build()
         }
     }
 
     private fun bodyWeightIsValid(entry: BodyWeightEntry): Boolean {
-        return entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
+        return entry.valueQuantityUnit.lowercase() == "kilogram" && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
     }
 
     private fun extractVitalFunctions(subject: String): List<VitalFunction> {
@@ -172,7 +172,7 @@ class ClinicalIngestion(
                 .subcategory(entry.componentCodeDisplay)
                 .value(entry.quantityValue)
                 .unit(entry.quantityUnit)
-                .valid(if (EXPECTED_UNIT[category].equals(entry.quantityUnit.lowercase())) vitalFunctionIsValid(entry) else true)
+                .valid(vitalFunctionIsValid(entry))
                 .build()
         }
     }
@@ -180,17 +180,16 @@ class ClinicalIngestion(
     private fun vitalFunctionIsValid(entry: VitalFunctionEntry): Boolean {
         return when (VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)) {
             NON_INVASIVE_BLOOD_PRESSURE, ARTERIAL_BLOOD_PRESSURE -> {
-                entry.quantityValue in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX
+                entry.quantityValue in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX && entry.quantityUnit.lowercase() == BLOOD_PRESSURE_EXPECTED_UNIT
             }
 
             HEART_RATE -> {
-                entry.quantityValue in HEART_RATE_MIN..HEART_RATE_MAX
+                entry.quantityValue in HEART_RATE_MIN..HEART_RATE_MAX && entry.quantityUnit.lowercase() == HEART_RATE_EXPECTED_UNIT
             }
 
             SPO2 -> {
-                entry.quantityValue in SPO2_MIN..SPO2_MAX
+                entry.quantityValue in SPO2_MIN..SPO2_MAX && entry.quantityUnit.lowercase() == SPO2_EXPECTED_UNIT
             }
-
             else -> {
                 false
             }
@@ -236,14 +235,12 @@ class ClinicalIngestion(
         const val BODY_WEIGHT_MAX = 300.0
         const val HEART_RATE_MIN = 10.0
         const val HEART_RATE_MAX = 300.0
+        const val HEART_RATE_EXPECTED_UNIT = "bpm"
         const val BLOOD_PRESSURE_MIN = 10.0
         const val BLOOD_PRESSURE_MAX = 300.0
+        const val BLOOD_PRESSURE_EXPECTED_UNIT = "mmhg"
         const val SPO2_MIN = 10.0
         const val SPO2_MAX = 100.0
-
-        val EXPECTED_UNIT = mapOf(
-            HEART_RATE to "bpm", SPO2 to "percent", NON_INVASIVE_BLOOD_PRESSURE to "mmhg",
-            ARTERIAL_BLOOD_PRESSURE to "mmhg"
-        )
+        const val SPO2_EXPECTED_UNIT = "percent"
     }
 }

@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
-import java.time.LocalDateTime
 
 class HasRestingHeartRateWithinBoundsTest {
 
-    val referenceDate = LocalDateTime.now()
+    val referenceDate = ReferenceDateProviderTestFactory.createCurrentDateProvider().date().atStartOfDay()
     val function = HasRestingHeartRateWithinBounds(60.0, 80.0)
 
     @Test
@@ -20,9 +20,9 @@ class HasRestingHeartRateWithinBoundsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if all heart rate measurements in wrong unit`() {
+    fun `Should evaluate to undetermined if all heart rate measurements invalid`() {
         val heartRates: List<VitalFunction> = listOf(
-            heartRate().date(referenceDate).value(70.0).unit("test").valid(true).build()
+            heartRate().date(referenceDate).value(70.0).unit("test").valid(false).build()
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
     }

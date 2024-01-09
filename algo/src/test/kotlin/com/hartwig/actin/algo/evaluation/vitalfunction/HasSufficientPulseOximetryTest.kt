@@ -1,15 +1,15 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
-import java.time.LocalDateTime
 
 class HasSufficientPulseOximetryTest {
-    val referenceDate = LocalDateTime.now()
+    val referenceDate = ReferenceDateProviderTestFactory.createCurrentDateProvider().date().atStartOfDay()
     val function = HasSufficientPulseOximetry(90.0)
 
     @Test
@@ -37,9 +37,9 @@ class HasSufficientPulseOximetryTest {
     }
 
     @Test
-    fun `Should only consider measurements with percentage as unit`() {
+    fun `Should only consider valid measurements`() {
         val pulseOximetries: List<VitalFunction> = listOf(
-            pulseOximetry().date(referenceDate).value(40.0).unit("test").valid(true).build(),
+            pulseOximetry().date(referenceDate).value(8.0).unit("percent").valid(false).build(),
             pulseOximetry().date(referenceDate).value(99.0).unit("percent").valid(true).build(),
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))

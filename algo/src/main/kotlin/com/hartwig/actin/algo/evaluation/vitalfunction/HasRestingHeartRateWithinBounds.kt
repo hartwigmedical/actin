@@ -9,23 +9,16 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Double, private val maxMedianRestingHeartRate: Double) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val totalRecentHeartRates = VitalFunctionSelector.selectVitalFunctions(
-            record.clinical().vitalFunctions(),
-            VitalFunctionCategory.HEART_RATE
-        )
-        if (totalRecentHeartRates.isEmpty()) {
+        val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.HEART_RATE, MAX_HEART_RATES_TO_USE)
+        val wrongUnit = VitalFunctionSelector.selectRecentVitalFunctionsWrongUnit(record, VitalFunctionCategory.HEART_RATE)
+
+        if (relevant.isEmpty() && wrongUnit.isEmpty()) {
             return EvaluationFactory.recoverableUndetermined("No (recent) heart rate data found")
-        } else if (totalRecentHeartRates.none { it.unit().uppercase() == HEART_RATE_EXPECTED_UNIT }) {
+        } else if (relevant.isEmpty()) {
             return EvaluationFactory.recoverableUndetermined("Heart rates not measured in $HEART_RATE_EXPECTED_UNIT")
         }
 
-        val relevantHeartRates = VitalFunctionSelector.selectMedianPerDay(
-            record.clinical().vitalFunctions(),
-            VitalFunctionCategory.HEART_RATE,
-            HEART_RATE_EXPECTED_UNIT,
-            MAX_HEART_RATES_TO_USE
-        )
-        val median = VitalFunctionFunctions.determineMedianValue(relevantHeartRates)
+        val median = VitalFunctionFunctions.determineMedianValue(relevant)
         return if (median.compareTo(minMedianRestingHeartRate) >= 0 && median.compareTo(maxMedianRestingHeartRate) <= 0) {
             EvaluationFactory.recoverablePass(
                 "Patient has median heart rate of $median bpm - thus between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",

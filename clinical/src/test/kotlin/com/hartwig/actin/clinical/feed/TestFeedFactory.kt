@@ -209,7 +209,7 @@ object TestFeedFactory {
                 effectiveDateTime = LocalDateTime.of(2021, 2, 27, 12, 30, 0, 0),
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
-                quantityUnit = "mm[Hg]",
+                quantityUnit = "mmHg",
                 quantityValue = 120.0,
                 valid = true
 
@@ -219,7 +219,7 @@ object TestFeedFactory {
                 effectiveDateTime = LocalDateTime.of(2021, 2, 26, 12, 30, 0, 0),
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
-                quantityUnit = "mm[Hg]",
+                quantityUnit = "mmHg",
                 quantityValue = 1200.0,
                 valid = false
             ),
@@ -228,7 +228,7 @@ object TestFeedFactory {
                 effectiveDateTime = LocalDateTime.of(2021, 2, 27, 12, 30, 0, 0),
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
-                quantityUnit = "mm[Hg]",
+                quantityUnit = "mmHg",
                 quantityValue = 120.0,
                 valid = true
             ),
@@ -237,7 +237,7 @@ object TestFeedFactory {
                 effectiveDateTime = LocalDateTime.of(2021, 2, 27, 12, 30, 0, 0),
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Diastolic blood pressure",
-                quantityUnit = "mm[Hg]",
+                quantityUnit = "mmHg",
                 quantityValue = 120.0,
                 valid = true
             )
