@@ -20,8 +20,9 @@ object ClinicalFeedReader {
     fun read(clinicalFeedDirectory: String): ClinicalFeed {
         LOGGER.info("Reading clinical feed data from {}", clinicalFeedDirectory)
         val basePath = Paths.forceTrailingFileSeparator(clinicalFeedDirectory)
+        val patientEntries = readEntriesFromFile(basePath, PATIENT_TSV, FeedFileReaderFactory.createPatientReader())
         val feed = ClinicalFeed(
-            patientEntries = readEntriesFromFile(basePath, PATIENT_TSV, FeedFileReaderFactory.createPatientReader()),
+            patientEntries = patientEntries,
             questionnaireEntries = readEntriesFromFile(
                 basePath,
                 QUESTIONNAIRE_TSV,
