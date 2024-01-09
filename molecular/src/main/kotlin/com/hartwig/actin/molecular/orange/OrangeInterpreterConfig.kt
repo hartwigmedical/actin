@@ -17,10 +17,12 @@ data class OrangeInterpreterConfig(
 ) {
 
     companion object {
+        // TODO (CB): Remove EXTERNAL_TRIAL_MAPPING once ACTIN pipeline has been upgraded to contain ACTIN-68 and scripts have been updated
         fun createOptions(): Options {
             val options = Options()
             options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
+            options.addOption(EXTERNAL_TRIAL_MAPPING_TSV, true, "A mapping from external trial names to ACTIN trials")
             options.addOption(CLINICAL_JSON, true, "The clinical JSON of the patient for which a sample is analyzed")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
@@ -47,6 +49,7 @@ data class OrangeInterpreterConfig(
 
         // Params for clinical annotation and interpretation
         private const val SERVE_DIRECTORY: String = "serve_directory"
+        private const val EXTERNAL_TRIAL_MAPPING_TSV: String = "external_trial_mapping_tsv"
         private const val CLINICAL_JSON: String = "clinical_json"
         private const val DOID_JSON: String = "doid_json"
         private const val OUTPUT_DIRECTORY: String = "output_directory"
