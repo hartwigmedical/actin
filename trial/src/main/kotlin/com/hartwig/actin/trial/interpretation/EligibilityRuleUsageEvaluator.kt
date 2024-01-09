@@ -35,6 +35,7 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA,
         EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE,
         EligibilityRule.HAS_EXTRACRANIAL_METASTASES,
+        EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS,
         EligibilityRule.HAS_INTOLERANCE_TO_TAXANE,
         EligibilityRule.HAS_EVIDENCE_OF_CNS_HEMORRHAGE_BY_MRI,
         EligibilityRule.HAS_HAD_COMPLETE_RESECTION,

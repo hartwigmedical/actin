@@ -355,6 +355,7 @@ final class FunctionInputMapping {
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS, FunctionInput.NONE);

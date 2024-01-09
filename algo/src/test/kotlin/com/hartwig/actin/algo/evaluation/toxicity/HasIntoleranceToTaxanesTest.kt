@@ -6,19 +6,30 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 import org.junit.Test
 
 class HasIntoleranceToTaxanesTest {
+
     @Test
-    fun canEvaluate() {
-        val function = HasIntoleranceToTaxanes()
+    fun `Should fail when no known intolerances are present`() {
+        assertEvaluation(EvaluationResult.FAIL, HasIntoleranceToTaxanes().evaluate(ToxicityTestFactory.withIntolerances(emptyList())))
+    }
 
-        // No allergies
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(emptyList())))
-
-        // Mismatch allergy
+    @Test
+    fun `Should fail when intolerances are not of Taxane category`() {
         val mismatch: Intolerance = ToxicityTestFactory.intolerance().name("mismatch").build()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerance(mismatch)))
+        assertEvaluation(EvaluationResult.FAIL, HasIntoleranceToTaxanes().evaluate(ToxicityTestFactory.withIntolerance(mismatch)))
+    }
 
-        // Matching allergy
+    @Test
+    fun `Should pass with known Taxane intolerance present`() {
         val match: Intolerance = ToxicityTestFactory.intolerance().name(HasIntoleranceToTaxanes.TAXANES.iterator().next()).build()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withIntolerance(match)))
+        assertEvaluation(EvaluationResult.PASS, HasIntoleranceToTaxanes().evaluate(ToxicityTestFactory.withIntolerance(match)))
+    }
+
+    @Test
+    fun `Should pass when substring of intolerance name matches`() {
+        val match: Intolerance =
+            ToxicityTestFactory.intolerance().name("docetaxel chemotherapy allergy").build()
+        assertEvaluation(
+            EvaluationResult.PASS, HasIntoleranceToTaxanes().evaluate(ToxicityTestFactory.withIntolerance(match))
+        )
     }
 }

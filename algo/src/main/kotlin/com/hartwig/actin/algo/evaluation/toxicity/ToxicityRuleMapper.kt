@@ -12,6 +12,7 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
         return mapOf(
             EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
             EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X to hasIntoleranceWithSpecificDoidTermCreator(),
+            EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS to hasIntoleranceToPlatinumCompoundsCreator(),
             EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to hasIntoleranceToTaxaneCreator(),
             EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION to hasIntoleranceRelatedToStudyMedicationCreator(),
             EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS to hasIntoleranceToPD1OrPDL1InhibitorsCreator(),
@@ -35,6 +36,10 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             val doidTermToFind = functionInputResolver().createOneDoidTermInput(function)
             HasIntoleranceWithSpecificDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!)
         }
+    }
+
+    private fun hasIntoleranceToPlatinumCompoundsCreator(): FunctionCreator {
+        return FunctionCreator { HasIntoleranceToPlatinumCompounds() }
     }
 
     private fun hasIntoleranceToTaxaneCreator(): FunctionCreator {
