@@ -11,10 +11,10 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
         val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.SPO2, MAX_PULSE_OXIMETRY_TO_USE)
         val wrongUnit = VitalFunctionSelector.selectRecentVitalFunctionsWrongUnit(record, VitalFunctionCategory.SPO2)
 
-        if (relevant.isEmpty() && wrongUnit.isEmpty()) {
-            return EvaluationFactory.recoverableUndetermined("No (recent) pulse oximetry data found")
-        } else if (relevant.isEmpty()) {
-            return EvaluationFactory.recoverableUndetermined("Pulse oximetry measurements not in correct unit (${EXPECTED_UNIT})")
+        if (relevant.isEmpty()) {
+            return EvaluationFactory.undetermined(
+                if (wrongUnit.isEmpty()) "No (recent) pulse oximetry data found" else "Pulse oximetry measurements not in correct unit (${EXPECTED_UNIT})"
+            )
         }
 
         val relevantPulseOximetries = VitalFunctionSelector.selectMedianPerDay(

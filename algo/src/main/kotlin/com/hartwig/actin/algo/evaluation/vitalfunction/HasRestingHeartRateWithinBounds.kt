@@ -12,10 +12,10 @@ class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Dou
         val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.HEART_RATE, MAX_HEART_RATES_TO_USE)
         val wrongUnit = VitalFunctionSelector.selectRecentVitalFunctionsWrongUnit(record, VitalFunctionCategory.HEART_RATE)
 
-        if (relevant.isEmpty() && wrongUnit.isEmpty()) {
-            return EvaluationFactory.recoverableUndetermined("No (recent) heart rate data found")
-        } else if (relevant.isEmpty()) {
-            return EvaluationFactory.recoverableUndetermined("Heart rates not measured in $HEART_RATE_EXPECTED_UNIT")
+        if (relevant.isEmpty()) {
+            return EvaluationFactory.undetermined(
+                if (wrongUnit.isEmpty()) "No (recent) heart rate data found" else "Heart rates not measured in $HEART_RATE_EXPECTED_UNIT"
+            )
         }
 
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
