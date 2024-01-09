@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-class HasIntoleranceToTaxanes internal constructor() : EvaluationFunction {
+class HasIntoleranceToTaxanes : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val allergies = record.clinical().intolerances()
             .filter { TAXANES.contains(it.name().lowercase()) }
@@ -26,6 +26,6 @@ class HasIntoleranceToTaxanes internal constructor() : EvaluationFunction {
     }
 
     companion object {
-        val TAXANES = setOf("paclitaxel", "docetaxel", "cabazitaxel")
+        val TAXANES = setOf("paclitaxel", "docetaxel", "cabazitaxel", "nab-paclitaxel", "Abraxane", "Jevtana", "Tesetaxel")
     }
 }
