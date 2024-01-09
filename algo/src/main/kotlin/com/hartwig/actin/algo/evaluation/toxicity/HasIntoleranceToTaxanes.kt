@@ -5,18 +5,19 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 
 class HasIntoleranceToTaxanes : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val allergies = record.clinical().intolerances()
-            .filter { TAXANES.contains(it.name().lowercase()) }
+        val taxaneAllergies = record.clinical().intolerances()
+            .filter { stringCaseInsensitivelyMatchesQueryCollection(it.name(), TAXANES) }
             .map { it.name() }
             .toSet()
 
-        return if (allergies.isNotEmpty()) {
+        return if (taxaneAllergies.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient has allergy to a taxane: " + concat(allergies),
-                "Taxane allergy: " + concat(allergies)
+                "Patient has allergy to a taxane: " + concat(taxaneAllergies),
+                "Taxane allergy: " + concat(taxaneAllergies)
             )
         } else
             EvaluationFactory.fail(
