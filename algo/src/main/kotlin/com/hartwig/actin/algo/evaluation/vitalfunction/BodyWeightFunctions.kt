@@ -5,22 +5,23 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
+import java.time.LocalDate
 import kotlin.math.ceil
 
 object BodyWeightFunctions {
 
-    fun evaluatePatientForMaximumBodyWeight(record: PatientRecord, maxBodyWeight: Double): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false)
+    fun evaluatePatientForMaximumBodyWeight(record: PatientRecord, maxBodyWeight: Double, minimalDate: LocalDate): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false, minimalDate)
         }
 
-    fun evaluatePatientForMinimumBodyWeight(record: PatientRecord, minBodyWeight: Double): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true)
+    fun evaluatePatientForMinimumBodyWeight(record: PatientRecord, minBodyWeight: Double, minimalDate: LocalDate): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true, minimalDate)
     }
 
     private fun evaluatePatientBodyWeightAgainstReference(
-        record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean
+        record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean, minimalDate: LocalDate
     ): Evaluation {
-        val relevant = selectMedianBodyWeightPerDay(record)
+        val relevant = selectMedianBodyWeightPerDay(record, minimalDate)
             ?: return if (record.clinical().bodyWeights().isNotEmpty() &&
                 record.clinical().bodyWeights().none { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
             ) {
@@ -40,8 +41,8 @@ object BodyWeightFunctions {
         return when {
 
             comparison < 0 -> {
-                val specificMessage = "Patient median body weight ({$median kg}) is below $referenceBodyWeight kg"
-                val generalMessage = "Median body weight ({$median kg}) below $referenceBodyWeight kg"
+                val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
+                val generalMessage = "Median body weight ($median kg) below $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
                     EvaluationFactory.fail(specificMessage, generalMessage)
                 } else {
@@ -50,15 +51,15 @@ object BodyWeightFunctions {
             }
 
             comparison == 0 -> {
-                val specificMessage = "Patient median body weight ({$median kg}) is equal to $referenceBodyWeight kg"
-                val generalMessage = "Median body weight ({$median kg}) equal to $referenceBodyWeight kg"
+                val specificMessage = "Patient median body weight ($median kg) is equal to $referenceBodyWeight kg"
+                val generalMessage = "Median body weight ($median kg) equal to $referenceBodyWeight kg"
 
                 return EvaluationFactory.pass(specificMessage, generalMessage)
             }
 
             else -> {
-                val specificMessage = "Patient median body weight ({$median kg}) is above $referenceBodyWeight kg"
-                val generalMessage = "Median body weight ({$median kg}) above $referenceBodyWeight kg"
+                val specificMessage = "Patient median body weight ($median kg) is above $referenceBodyWeight kg"
+                val generalMessage = "Median body weight ($median kg) above $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
                     EvaluationFactory.pass(specificMessage, generalMessage)
                 } else {
@@ -68,9 +69,9 @@ object BodyWeightFunctions {
         }
     }
 
-    fun selectMedianBodyWeightPerDay(record: PatientRecord): List<BodyWeight>? {
+    fun selectMedianBodyWeightPerDay(record: PatientRecord, minimalDate: LocalDate): List<BodyWeight>? {
         val result = record.clinical().bodyWeights()
-            .filter { it.valid() }
+            .filter { it.date().toLocalDate() > minimalDate && it.valid() }
             .groupBy { it.date() }
             .map { selectMedianBodyWeightValue(it.value) }
             .sortedWith(BodyWeightDescendingDateComparator())

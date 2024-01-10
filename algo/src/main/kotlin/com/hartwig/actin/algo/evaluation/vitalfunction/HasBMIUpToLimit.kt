@@ -4,25 +4,31 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
 import com.hartwig.actin.util.ApplicationConfig
+import java.time.LocalDate
 import kotlin.math.sqrt
 
-class HasBMIUpToLimit internal constructor(private val maximumBMI: Int) : EvaluationFunction {
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val latestWeight = record.clinical()
-            .bodyWeights()
-            .filter { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
-            .minWithOrNull(BodyWeightDescendingDateComparator())
-            ?: return EvaluationFactory.recoverableUndetermined("No body weights found in $EXPECTED_UNIT", "Body weight unknown")
+class HasBMIUpToLimit internal constructor(private val maximumBMI: Int, private val minimalDate: LocalDate) : EvaluationFunction {
 
-        val minimumRequiredHeight = calculateHeightForBmiAndWeight(maximumBMI.toDouble(), latestWeight.value())
+    override fun evaluate(record: PatientRecord): Evaluation {
+        val allBodyWeights = record.clinical().bodyWeights()
+        val relevant = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimalDate) ?: return EvaluationFactory.undetermined(
+            if (allBodyWeights.isNotEmpty() && allBodyWeights.none { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }) {
+                "Body weights not measured in $EXPECTED_UNIT"
+            } else {
+                "No (recent) body weights found"
+            }
+        )
+        val median = BodyWeightFunctions.determineMedianBodyWeight(relevant)
+
+        val minimumRequiredHeight = calculateHeightForBmiAndWeight(maximumBMI.toDouble(), median)
+
         return when {
             minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES -> {
                 EvaluationFactory.pass(
                     String.format(
-                        ApplicationConfig.LOCALE, "Patient weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m",
-                        latestWeight.value(), maximumBMI, minimumRequiredHeight
+                        ApplicationConfig.LOCALE, "Median weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m",
+                        median, maximumBMI, minimumRequiredHeight
                     ), "BMI below limit"
                 )
             }
@@ -31,7 +37,7 @@ class HasBMIUpToLimit internal constructor(private val maximumBMI: Int) : Evalua
                 EvaluationFactory.fail(
                     String.format(
                         ApplicationConfig.LOCALE,
-                        "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m", latestWeight.value(), maximumBMI,
+                        "Median weight %.1f kg will exceed BMI limit of %d for height < %.2f m", median, maximumBMI,
                         minimumRequiredHeight
                     ), "BMI above limit"
                 )
@@ -41,7 +47,7 @@ class HasBMIUpToLimit internal constructor(private val maximumBMI: Int) : Evalua
                 EvaluationFactory.warn(
                     String.format(
                         ApplicationConfig.LOCALE,
-                        "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m", latestWeight.value(), maximumBMI,
+                        "Median weight %.1f kg will exceed BMI limit of %d for height < %.2f m", median, maximumBMI,
                         minimumRequiredHeight
                     ), "Potentially BMI above limit"
                 )

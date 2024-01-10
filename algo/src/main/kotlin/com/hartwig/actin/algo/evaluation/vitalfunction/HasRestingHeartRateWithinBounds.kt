@@ -5,11 +5,15 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import java.time.LocalDate
 
-class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Double, private val maxMedianRestingHeartRate: Double) :
+class HasRestingHeartRateWithinBounds(
+    private val minMedianRestingHeartRate: Double, private val maxMedianRestingHeartRate: Double, private val minimalDate: LocalDate
+) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.HEART_RATE, MAX_HEART_RATES_TO_USE)
+        val relevant =
+            VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.HEART_RATE, MAX_HEART_RATES_TO_USE, minimalDate)
         val wrongUnit = VitalFunctionSelector.selectRecentVitalFunctionsWrongUnit(record, VitalFunctionCategory.HEART_RATE)
 
         if (relevant.isEmpty()) {

@@ -19,9 +19,13 @@ import java.time.LocalDateTime
 
 class HasSufficientDerivedCreatinineClearanceTest {
 
+    private val referenceDate = LocalDateTime.of(2020, 1, 1, 12, 30, 0)
+    private val minimalValidDateWeightMeasurements = referenceDate.minusMonths(1).toLocalDate()
+
     @Test
     fun `Should evaluate correctly using MDRD`() {
-        val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100.0)
+        val function =
+            HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100.0, minimalValidDateWeightMeasurements)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
         // MDRD between 103 and 125
@@ -35,7 +39,8 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
     @Test
     fun `Should evaluate correctly using CKDEPI`() {
-        val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100.0)
+        val function =
+            HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100.0, minimalValidDateWeightMeasurements)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
         // CDK-EPI between 104 and 125
@@ -49,11 +54,16 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
     @Test
     fun `Should evaluate correctly using Cockcroft Gault with light weight`() {
-        val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0)
+        val function = HasSufficientDerivedCreatinineClearance(
+            2021,
+            CreatinineClearanceMethod.COCKCROFT_GAULT,
+            100.0,
+            minimalValidDateWeightMeasurements
+        )
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
         val weights = listOf(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2020, 1, 1, 12, 30, 0)).value(50.0).unit(EXPECTED_UNIT).valid(true).build(),
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 1, 1, 12, 30, 0)).value(60.0).unit(EXPECTED_UNIT).valid(true).build()
+            ImmutableBodyWeight.builder().date(referenceDate).value(50.0).unit(EXPECTED_UNIT).valid(true).build(),
+            ImmutableBodyWeight.builder().date(referenceDate).value(60.0).unit(EXPECTED_UNIT).valid(true).build()
         )
 
         // CG 95
@@ -67,10 +77,15 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
     @Test
     fun `Should evaluate correctly using Cockcroft Gault with heavy weight`() {
-        val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0)
+        val function = HasSufficientDerivedCreatinineClearance(
+            2021,
+            CreatinineClearanceMethod.COCKCROFT_GAULT,
+            100.0,
+            minimalValidDateWeightMeasurements
+        )
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
         val weights = listOf(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 2, 2, 12, 30, 0)).value(70.0).unit(EXPECTED_UNIT).valid(true).build()
+            ImmutableBodyWeight.builder().date(referenceDate).value(70.0).unit(EXPECTED_UNIT).valid(true).build()
         )
 
         // CG 111
@@ -84,7 +99,12 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
     @Test
     fun `Should evaluate correctly using Cockcroft Gault without weight`() {
-        val function = HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 80.0)
+        val function = HasSufficientDerivedCreatinineClearance(
+            2021,
+            CreatinineClearanceMethod.COCKCROFT_GAULT,
+            80.0,
+            minimalValidDateWeightMeasurements
+        )
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
         // CG 103

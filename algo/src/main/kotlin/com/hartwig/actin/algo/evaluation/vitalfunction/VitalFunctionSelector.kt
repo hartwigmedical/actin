@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import com.hartwig.actin.clinical.sort.VitalFunctionDescendingDateComparator
+import java.time.LocalDate
 
 internal object VitalFunctionSelector {
     private const val MAX_BLOOD_PRESSURES_TO_USE = 5
@@ -20,11 +21,10 @@ internal object VitalFunctionSelector {
     }
 
     fun selectMedianPerDay(
-        record: PatientRecord, categoryToFind: VitalFunctionCategory, maxEntries: Int
+        record: PatientRecord, categoryToFind: VitalFunctionCategory, maxEntries: Int, minimalDate: LocalDate
     ): List<VitalFunction> {
-        val referenceDate = ReferenceDateProviderFactory.create(record.clinical(), true).date().minusMonths(MAX_AGE_MONTHS.toLong())
         return record.clinical().vitalFunctions().filter {
-            it.date().toLocalDate() > referenceDate && it.category() == categoryToFind
+            it.date().toLocalDate() > minimalDate && it.category() == categoryToFind
                     && it.valid()
         }
             .groupBy { it.date() }
@@ -33,10 +33,9 @@ internal object VitalFunctionSelector {
             .take(maxEntries).toList()
     }
 
-    fun selectBloodPressures(record: PatientRecord, category: BloodPressureCategory): List<VitalFunction> {
-        val referenceDate = ReferenceDateProviderFactory.create(record.clinical(), true).date().minusMonths(MAX_AGE_MONTHS.toLong())
+    fun selectBloodPressures(record: PatientRecord, category: BloodPressureCategory, minimalDate: LocalDate): List<VitalFunction> {
         return record.clinical().vitalFunctions().asSequence().filter {
-            it.date().toLocalDate() > referenceDate && isBloodPressure(it) && it.subcategory()
+            it.date().toLocalDate() > minimalDate && isBloodPressure(it) && it.subcategory()
                 .equals(category.display(), ignoreCase = true) && it.valid()
         }
             .groupBy { it.date() }

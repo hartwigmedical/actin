@@ -5,10 +5,12 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import java.time.LocalDate
 
-class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double) : EvaluationFunction {
+class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double, private val minimalDate: LocalDate) :
+    EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.SPO2, MAX_PULSE_OXIMETRY_TO_USE)
+        val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.SPO2, MAX_PULSE_OXIMETRY_TO_USE, minimalDate)
         val wrongUnit = VitalFunctionSelector.selectRecentVitalFunctionsWrongUnit(record, VitalFunctionCategory.SPO2)
 
         if (relevant.isEmpty()) {
@@ -17,10 +19,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
             )
         }
 
-        val relevantPulseOximetries = VitalFunctionSelector.selectMedianPerDay(
-            record, VitalFunctionCategory.SPO2, MAX_PULSE_OXIMETRY_TO_USE
-        )
-        val median = VitalFunctionFunctions.determineMedianValue(relevantPulseOximetries)
+        val median = VitalFunctionFunctions.determineMedianValue(relevant)
         return if (median.compareTo(minMedianPulseOximetry) >= 0) {
             EvaluationFactory.recoverablePass(
                 "Patient has median pulse oximetry exceeding $minMedianPulseOximetry",

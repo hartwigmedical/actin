@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.BodyWeight
@@ -18,11 +17,13 @@ import org.junit.Test
 import java.time.LocalDateTime
 
 class HasLimitedDerivedCreatinineClearanceTest {
-    val referenceDate = ReferenceDateProviderTestFactory.createCurrentDateProvider().date().atStartOfDay()
+    private val referenceDate = LocalDateTime.of(2020, 1, 1, 12, 30, 0)
+    private val minimalValidDateWeightMeasurements = referenceDate.minusMonths(1).toLocalDate()
 
     @Test
     fun `Should evaluate correctly using MDRD`() {
-        val function = HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100.0)
+        val function =
+            HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100.0, minimalValidDateWeightMeasurements)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
         // MDRD between 103 and 125
@@ -36,7 +37,8 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
     @Test
     fun `Should evaluate correctly using CKDEPI`() {
-        val function = HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100.0)
+        val function =
+            HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100.0, minimalValidDateWeightMeasurements)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
         // CDK-EPI between 104 and 125
@@ -50,11 +52,12 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
     @Test
     fun `Should evaluate correctly using Cockcroft Gault with light weight`() {
-        val function = HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0)
+        val function =
+            HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0, minimalValidDateWeightMeasurements)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
         val weights = listOf(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2020, 1, 1, 12, 30, 0)).value(50.0).unit(EXPECTED_UNIT).valid(true).build(),
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 1, 1, 12, 30, 0)).value(60.0).unit(EXPECTED_UNIT).valid(true).build()
+            ImmutableBodyWeight.builder().date(referenceDate).value(50.0).unit(EXPECTED_UNIT).valid(true).build(),
+            ImmutableBodyWeight.builder().date(referenceDate).value(60.0).unit(EXPECTED_UNIT).valid(true).build()
         )
 
         // CG 95
@@ -68,10 +71,11 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
     @Test
     fun `Should evaluate correctly using Cockcroft Gault with heavy weight`() {
-        val function = HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0)
+        val function =
+            HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0, minimalValidDateWeightMeasurements)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
         val weights = listOf(
-            ImmutableBodyWeight.builder().date(LocalDateTime.of(2021, 2, 2, 12, 30, 0)).value(70.0).unit(EXPECTED_UNIT).valid(true).build()
+            ImmutableBodyWeight.builder().date(referenceDate).value(70.0).unit(EXPECTED_UNIT).valid(true).build()
         )
         // CG 111
         val maleHeavy = create(1971, Gender.MALE, listOf(creatinine), weights)
@@ -84,7 +88,8 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
     @Test
     fun `Should evaluate correctly using Cockcroft Gault without weight`() {
-        val function = HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 80.0)
+        val function =
+            HasLimitedDerivedCreatinineClearance(2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 80.0, minimalValidDateWeightMeasurements)
         val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
 
         // CG 103

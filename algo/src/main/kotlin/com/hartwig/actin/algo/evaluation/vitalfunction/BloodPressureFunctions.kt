@@ -3,22 +3,32 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import java.time.LocalDate
 import kotlin.math.roundToInt
 
 object BloodPressureFunctions {
 
-    fun evaluatePatientMinimumBloodPressure(record: PatientRecord, category: BloodPressureCategory, minimalBloodPressure: Int): Evaluation {
-        return evaluatePatientBloodPressureAgainstReference(record, category, minimalBloodPressure, true)
+    fun evaluatePatientMinimumBloodPressure(
+        record: PatientRecord, category: BloodPressureCategory, minimalBloodPressure: Int, minimalDate: LocalDate
+    ): Evaluation {
+        return evaluatePatientBloodPressureAgainstReference(record, category, minimalBloodPressure, true, minimalDate)
     }
 
-    fun evaluatePatientMaximumBloodPressure(record: PatientRecord, category: BloodPressureCategory, maximumBloodPressure: Int): Evaluation {
-        return evaluatePatientBloodPressureAgainstReference(record, category, maximumBloodPressure, false)
+    fun evaluatePatientMaximumBloodPressure(
+        record: PatientRecord, category: BloodPressureCategory, maximumBloodPressure: Int, minimalDate: LocalDate
+    ): Evaluation {
+        return evaluatePatientBloodPressureAgainstReference(record, category, maximumBloodPressure, false, minimalDate)
     }
 
     private fun evaluatePatientBloodPressureAgainstReference(
-        record: PatientRecord, category: BloodPressureCategory, referenceBloodPressure: Int, referenceIsMinimum: Boolean): Evaluation {
+        record: PatientRecord,
+        category: BloodPressureCategory,
+        referenceBloodPressure: Int,
+        referenceIsMinimum: Boolean,
+        minimalDate: LocalDate
+    ): Evaluation {
         val categoryDisplay = category.display().lowercase()
-        val relevant = VitalFunctionSelector.selectBloodPressures(record, category)
+        val relevant = VitalFunctionSelector.selectBloodPressures(record, category, minimalDate)
         if (relevant.isEmpty()) return EvaluationFactory.recoverableUndetermined("No (recent) data found for $categoryDisplay")
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
         val comparison = median.compareTo(referenceBloodPressure)

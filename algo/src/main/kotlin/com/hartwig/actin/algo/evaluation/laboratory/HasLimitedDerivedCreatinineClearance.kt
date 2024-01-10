@@ -10,10 +10,11 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import java.time.LocalDate
 
 class HasLimitedDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
-    private val maxCreatinineClearance: Double
+    private val maxCreatinineClearance: Double, private val minimalDateWeightMeasurements: LocalDate
 ) : LabEvaluationFunction {
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         return when (method) {
@@ -44,7 +45,8 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
     }
 
     private fun evaluateCockcroftGault(record: PatientRecord, creatinine: LabValue): Evaluation {
-        val weight = selectMedianBodyWeightPerDay(record)?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
+        val weight =
+            selectMedianBodyWeightPerDay(record, minimalDateWeightMeasurements)?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
             record.clinical().patient().birthYear(),
             referenceYear,
