@@ -1,10 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.datamodel.LabValue
-import java.time.LocalDate
 import kotlin.math.pow
 
 internal object CreatinineFunctions {
@@ -49,17 +47,5 @@ internal object CreatinineFunctions {
         val age = referenceYear - birthYear
         val base = (140 - age) * effectiveWeight / (0.81 * creatinine.value())
         return if (isFemale) base * 0.85 else base
-    }
-
-    fun determineWeight(bodyWeights: List<BodyWeight>): Double? {
-        var weight: Double? = null
-        var mostRecentDate: LocalDate? = null
-        for (bodyWeight in bodyWeights) {
-            if (mostRecentDate == null || bodyWeight.date().isAfter(mostRecentDate)) {
-                weight = bodyWeight.value()
-                mostRecentDate = bodyWeight.date()
-            }
-        }
-        return weight
     }
 }

@@ -17,10 +17,10 @@ public class BodyWeightDescendingDateComparatorTest {
 
     @Test
     public void canSortBodyWeights() {
-        BodyWeight weight1 = builder().date(LocalDate.of(2020, 4, 4)).value(0D).unit(Strings.EMPTY).build();
-        BodyWeight weight2 = builder().date(LocalDate.of(2020, 4, 4)).value(80D).unit("unit 1").build();
-        BodyWeight weight3 = builder().date(LocalDate.of(2020, 4, 4)).value(80D).unit("unit 2").build();
-        BodyWeight weight4 = builder().date(LocalDate.of(2021, 4, 4)).build();
+        BodyWeight weight1 = builder().date(LocalDate.of(2020, 4, 4).atStartOfDay()).value(0D).unit(Strings.EMPTY).valid(true).build();
+        BodyWeight weight2 = builder().date(LocalDate.of(2020, 4, 4).atStartOfDay()).value(80D).unit("unit 1").valid(true).build();
+        BodyWeight weight3 = builder().date(LocalDate.of(2020, 4, 4).atStartOfDay()).value(80D).unit("unit 2").valid(true).build();
+        BodyWeight weight4 = builder().date(LocalDate.of(2021, 4, 4).atStartOfDay()).valid(true).build();
 
         List<BodyWeight> weights = Lists.newArrayList(weight1, weight2, weight4, weight3);
 

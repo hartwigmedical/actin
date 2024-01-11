@@ -6,17 +6,17 @@ import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HasSufficientBloodPressureTest {
 
-    private val referenceDate = LocalDate.of(2020, 11, 19)
-    private val function = HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 100)
+    private val function = HasSufficientBloodPressure(BloodPressureCategory.SYSTOLIC, 140, LocalDate.of(2023, 12, 1))
 
     @Test
     fun `Should fail when systolic blood pressure under minimum`() {
         val bloodPressures = listOf(
-            systolic().date(referenceDate).value(95.0).build())
-
+            systolic().date(LocalDateTime.of(2023, 12, 2, 0, 0)).value(95.0).valid(true).build()
+        )
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures))

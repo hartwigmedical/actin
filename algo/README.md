@@ -50,6 +50,10 @@ when a new lab test has been done. Hence, lab rules can be 'recoverable', wherea
 location rules are thus 'unrecoverable'. Recoverability can be significant for non-`FAIL` results as well, for example a nested `PASS`
 result that becomes a `FAIL` after negation with `NOT`.
 
+Rules evaluating lab values and vital function/body weight measurements are all evaluated to `RECOVERABLE UNDETERMINED` when data is
+missing.
+This is done to reduce the amount of (less important) warnings on the report, since `RECOVERABLE UNDETERMINED` warnings are not shown.
+
 #### Evaluation feedback
 
 Every criterion algorithm provides human-readable feedback ('messages') about its evaluation, so that a human can easily and quickly
@@ -604,20 +608,17 @@ Note for all TOXICITY rules:
 
 ##### Rules related to vital function / body weight measurements
 
-| Rule                                   | When does a patient pass evaluation?                                                                                                            |
-|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| HAS_SBP_MMHG_OF_AT_LEAST_X             | vitalFunction > Include median of up to 5 different days (but must be within a month), with over all median systolic blood pressure value => X  |
-| HAS_SBP_MMHG_OF_AT_MOST_X              | vitalFunction > Include median of up to 5 different days (but must be within a month), with over all median systolic blood pressure value <= X  |
-| HAS_DBP_MMHG_OF_AT_LEAST_X             | vitalFunction > Include median of up to 5 different days (but must be within a month), with over all median diastolic blood pressure value => X |
-| HAS_DBP_MMHG_OF_AT_MOST_X              | vitalFunction > Include median of up to 5 different days (but must be within a month), with over all median diastolic blood pressure value <= X |
-| HAS_PULSE_OXIMETRY_OF_AT_LEAST_X       | vitalFunction > Up to 5 most recent SpO2 measurements (in percent) AND median value => X                                                        |
-| HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | Vital function > Up to 5 most recent HR measurements (in BPM) AND median value between X and Y                                                  |
-| HAS_BODY_WEIGHT_OF_AT_LEAST_X          | bodyWeight > Latest body weight measurement (in kg) => X                                                                                        |
-| HAS_BODY_WEIGHT_OF_AT_MOST_X           | bodyWeight > Latest body weight measurement (in kg) <= X                                                                                        |
-| HAS_BMI_OF_AT_MOST_X                   | Patient BMI estimate from body weight <= X for patients between 1.5 and 2.0 m                                                                   |
-
-For Pulse oximetry, evaluation should resolve to `UNDETERMINED` rather than `FAIL` in case of no PASS, but at least 1 of the up
-to 5 most recent values would be sufficient to `PASS`.
+| Rule                                   | When does a patient pass evaluation?                                                                                                                                                |
+|----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| HAS_SBP_MMHG_OF_AT_LEAST_X             | vitalFunction > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median systolic blood pressure value => X  |
+| HAS_SBP_MMHG_OF_AT_MOST_X              | vitalFunction > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median systolic blood pressure value <= X  |
+| HAS_DBP_MMHG_OF_AT_LEAST_X             | vitalFunction > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median diastolic blood pressure value => X |
+| HAS_DBP_MMHG_OF_AT_MOST_X              | vitalFunction > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median diastolic blood pressure value <= X |
+| HAS_PULSE_OXIMETRY_OF_AT_LEAST_X       | vitalFunction > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median SpO2 (in percent) => X              |
+| HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y | vitalFunction > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median heart rate (in BPM) between X and Y |
+| HAS_BODY_WEIGHT_OF_AT_LEAST_X          | bodyWeight > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median body weight (in kg) => X               |
+| HAS_BODY_WEIGHT_OF_AT_MOST_X           | bodyWeight > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median body weight (in kg) <= X               |
+| HAS_BMI_OF_AT_MOST_X                   | Patient BMI estimate from body weight <= X for patients between 1.5 and 2.0 m                                                                                                       |
 
 ##### Rules related to blood transfusions
 
