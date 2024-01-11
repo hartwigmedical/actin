@@ -20,7 +20,7 @@ public final class TestActionableEvidenceFactory {
     @NotNull
     public static ActionableEvidence createExhaustive() {
         return builder().addApprovedTreatments("approved")
-                .addExternalEligibleTrials("external trial")
+                .addExternalEligibleTrials(TestExternalTrialFactory.createTestTrial())
                 .addOnLabelExperimentalTreatments("on-label experimental")
                 .addOffLabelExperimentalTreatments("off-label experimental")
                 .addPreClinicalTreatments("pre-clinical")
@@ -35,8 +35,8 @@ public final class TestActionableEvidenceFactory {
     }
 
     @NotNull
-    public static ActionableEvidence withExternalEligibleTrial(@NotNull String treatment) {
-        return builder().addExternalEligibleTrials(treatment).build();
+    public static ActionableEvidence withExternalEligibleTrial(@NotNull ExternalTrial externalTrial) {
+        return builder().addExternalEligibleTrials(externalTrial).build();
     }
 
     @NotNull

@@ -114,23 +114,15 @@ class ClinicalFeedReaderTest {
         }
 
         private fun assertLab(entries: List<LabEntry>) {
-            assertEquals(2, entries.size.toLong())
-            val entry1 = findByCodeCodeOriginal(entries, "LEUKO-ABS")
+            assertEquals(1, entries.size.toLong())
+            val entry1 = findByCodeCodeOriginal(entries, "AC")
             assertEquals("ACTN-01-02-9999", entry1.subject)
-            assertEquals("Leukocytes", entry1.codeDisplayOriginal)
+            assertEquals("ACTH", entry1.codeDisplayOriginal)
             assertEquals(Strings.EMPTY, entry1.valueQuantityComparator)
             assertEquals(5.5, entry1.valueQuantityValue, EPSILON)
             assertEquals("10^9/L", entry1.valueQuantityUnit)
             assertEquals("3.5 - 10", entry1.referenceRangeText)
             assertEquals(LocalDate.of(2019, 6, 27), entry1.effectiveDateTime)
-            val entry2 = findByCodeCodeOriginal(entries, "HB")
-            assertEquals("ACTN-01-02-9999", entry2.subject)
-            assertEquals("Hemoglobine", entry2.codeDisplayOriginal)
-            assertEquals(Strings.EMPTY, entry2.valueQuantityComparator)
-            assertEquals(4.2, entry2.valueQuantityValue, EPSILON)
-            assertEquals("mmol/L", entry2.valueQuantityUnit)
-            assertEquals("8.8 - 10.7", entry2.referenceRangeText)
-            assertEquals(LocalDate.of(2019, 5, 27), entry2.effectiveDateTime)
         }
 
         private fun findByCodeCodeOriginal(entries: List<LabEntry>, codeCodeOriginal: String): LabEntry {

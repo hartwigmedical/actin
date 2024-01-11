@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
 import com.hartwig.actin.clinical.datamodel.ImmutableObservedToxicity
@@ -25,26 +26,39 @@ class TreatmentHistoryEntryConfigFactory(
 
     private val gson = GsonSerializer.create()
 
-    override fun create(fields: Map<String, Int>, parts: Array<String>): TreatmentHistoryEntryConfig {
+    override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<TreatmentHistoryEntryConfig> {
+        val input = parts[fields["input"]!!]
         val treatmentName = fields["treatmentName"]?.let { ResourceFile.optionalString(parts[it]) } ?: ""
         val ignore: Boolean = CurationUtil.isIgnoreString(treatmentName)
-        val treatmentHistoryEntry = if (ignore) null else curateObject(fields, parts.toList(), treatmentName)
+        val (treatmentHistoryEntry, validationErrors) = if (ignore) null to emptyList() else curateObject(
+            input,
+            fields,
+            parts.toList(),
+            treatmentName
+        )
 
-        return TreatmentHistoryEntryConfig(
-            input = parts[fields["input"]!!],
-            ignore = ignore,
-            curated = treatmentHistoryEntry
+        return ValidatedCurationConfig(
+            TreatmentHistoryEntryConfig(
+                input = input,
+                ignore = ignore,
+                curated = treatmentHistoryEntry
+            ), validationErrors
         )
     }
 
-    private fun curateObject(fields: Map<String, Int>, parts: List<String>, treatmentName: String): TreatmentHistoryEntry {
+    private fun curateObject(
+        input: String,
+        fields: Map<String, Int>,
+        parts: List<String>,
+        treatmentName: String
+    ): Pair<TreatmentHistoryEntry?, List<CurationConfigValidationError>> {
         val isTrial = optionalObjectFromColumn(parts, fields, "isTrial", ResourceFile::optionalBool) ?: false
 
         val treatments = if (treatmentName.isEmpty() && isTrial) emptyList() else {
             val treatmentsByName = CurationUtil.toSet(treatmentName).associateWith(treatmentDatabase::findTreatmentByName)
             val unknownTreatmentNames = treatmentsByName.filterValues(Objects::isNull).keys
             if (unknownTreatmentNames.isNotEmpty()) {
-                throw missingTreatmentException(unknownTreatmentNames)
+                return null to missingTreatmentException(unknownTreatmentNames, input, "treatmentName")
             }
             treatmentsByName.values
         }
@@ -65,14 +79,26 @@ class TreatmentHistoryEntryConfigFactory(
 
         val intents = entriesFromColumn(parts, fields, "intents")?.map { stringToEnum(it, Intent::valueOf) }
 
-        val maintenanceTreatmentStage = treatmentStage(
-            parts, fields, "maintenanceTreatment", "maintenanceTreatmentStartYear", "maintenanceTreatmentStartMonth", null
+        val (maintenanceTreatmentStage, maintenanceValidationErrors) = treatmentStage(
+            input,
+            parts,
+            fields,
+            "maintenanceTreatment",
+            "maintenanceTreatmentStartYear",
+            "maintenanceTreatmentStartMonth",
+            null
         )
 
-        val switchToTreatments = treatmentStage(
-            parts, fields, "switchToTreatment", "switchToTreatmentStartYear", "switchToTreatmentStartMonth", "switchToTreatmentCycles"
-        )?.let { setOf(it) }
-        
+        val (switchToTreatments, switchToValidationErrors) = treatmentStage(
+            input,
+            parts,
+            fields,
+            "switchToTreatment",
+            "switchToTreatmentStartYear",
+            "switchToTreatmentStartMonth",
+            "switchToTreatmentCycles"
+        )
+
         val treatmentHistoryDetails = ImmutableTreatmentHistoryDetails.builder()
             .stopYear(optionalIntegerFromColumn(parts, fields, "stopYear"))
             .stopMonth(optionalIntegerFromColumn(parts, fields, "stopMonth"))
@@ -84,7 +110,7 @@ class TreatmentHistoryEntryConfigFactory(
             .bodyLocationCategories(bodyLocationCategories)
             .bodyLocations(entriesFromColumn(parts, fields, "bodyLocations"))
             .maintenanceTreatment(maintenanceTreatmentStage)
-            .switchToTreatments(switchToTreatments)
+            .switchToTreatments(switchToTreatments?.let { setOf(it) })
             .build()
 
         return ImmutableTreatmentHistoryEntry.builder()
@@ -95,10 +121,11 @@ class TreatmentHistoryEntryConfigFactory(
             .isTrial(isTrial)
             .trialAcronym(optionalStringFromColumn(parts, fields, "trialAcronym"))
             .treatmentHistoryDetails(treatmentHistoryDetails)
-            .build()
+            .build() to switchToValidationErrors + maintenanceValidationErrors
     }
 
     private fun treatmentStage(
+        input: String,
         parts: List<String>,
         fields: Map<String, Int>,
         nameField: String,
@@ -106,15 +133,16 @@ class TreatmentHistoryEntryConfigFactory(
         startMonthField: String,
         cycleField: String?
     ) = optionalStringFromColumn(parts, fields, nameField)?.let { name ->
-        val treatment = treatmentDatabase.findTreatmentByName(name) ?: throw missingTreatmentException(setOf(name))
+        val treatment =
+            treatmentDatabase.findTreatmentByName(name) ?: return null to missingTreatmentException(setOf(name), input, nameField)
 
         ImmutableTreatmentStage.builder()
             .treatment(treatment)
             .startYear(optionalIntegerFromColumn(parts, fields, startYearField))
             .startMonth(optionalIntegerFromColumn(parts, fields, startMonthField))
             .cycles(cycleField?.let { optionalIntegerFromColumn(parts, fields, it) })
-            .build()
-    }
+            .build() to emptyList<CurationConfigValidationError>()
+    } ?: (null to emptyList())
 
     private fun optionalIntegerFromColumn(parts: List<String>, fields: Map<String, Int>, colName: String): Int? {
         return optionalObjectFromColumn(parts, fields, colName, ResourceFile::optionalInteger)
@@ -141,20 +169,30 @@ class TreatmentHistoryEntryConfigFactory(
         return enumCreator(input.uppercase().replace(" ", "_"))
     }
 
-    private fun missingTreatmentException(treatments: Set<String>): IllegalStateException {
-        return IllegalStateException(treatments.map { it.replace(" ", "_").uppercase() }.joinToString(",") {
-            "Treatment with name $it does not exist in database. Please add with one of the following templates: " + listOf(
-                ImmutableDrugTreatment.builder().name(it).synonyms(emptySet()).isSystemic(false).drugs(emptySet())
-                    .build(),
-                ImmutableRadiotherapy.builder().name(it).synonyms(emptySet()).isSystemic(false).build(),
-                ImmutableOtherTreatment.builder().name(it).synonyms(emptySet()).isSystemic(false)
-                    .categories(emptySet())
-                    .build()
-            ).map { templates ->
-                gson.toJson(templates).replace("isSystemic\":false", "isSystemic\":?")
-                    .replace("\"displayOverride\":null,", "")
-                    .replace("\"maxCycles\":null,", "")
-            }
-        })
+    private fun missingTreatmentException(treatments: Set<String>, input: String, nameField: String): List<CurationConfigValidationError> {
+        return treatments.map { it.replace(" ", "_").uppercase() }.map {
+            CurationConfigValidationError(
+                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                input,
+                nameField,
+                it,
+                "treatment",
+                templates(it)
+            )
+        }
     }
+
+    private fun templates(it: String) =
+        "Treatment with name $it does not exist in database. Please add with one of the following templates: " + listOf(
+            ImmutableDrugTreatment.builder().name(it).synonyms(emptySet()).isSystemic(false).drugs(emptySet())
+                .build(),
+            ImmutableRadiotherapy.builder().name(it).synonyms(emptySet()).isSystemic(false).build(),
+            ImmutableOtherTreatment.builder().name(it).synonyms(emptySet()).isSystemic(false)
+                .categories(emptySet())
+                .build()
+        ).map { templates ->
+            gson.toJson(templates).replace("isSystemic\":false", "isSystemic\":?")
+                .replace("\"displayOverride\":null,", "")
+                .replace("\"maxCycles\":null,", "")
+        }
 }

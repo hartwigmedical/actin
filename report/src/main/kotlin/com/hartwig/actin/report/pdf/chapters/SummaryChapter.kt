@@ -8,7 +8,9 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenera
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleDutchExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleExternalTrialGeneratorFunctions
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -73,6 +75,8 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
         val aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular)
         val externalEligibleTrials = aggregatedEvidence.externalEligibleTrialsPerEvent()
+        val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
+        val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
 
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
@@ -80,8 +84,15 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()),
-            if (!externalEligibleTrials.isEmpty) EligibleExternalTrialsGenerator(
-                report.molecular.externalTrialSource(), externalEligibleTrials, keyWidth, valueWidth
+            if (!dutchTrials.isEmpty) EligibleDutchExternalTrialsGenerator(
+                report.molecular.externalTrialSource(),
+                dutchTrials,
+                contentWidth()
+            ) else null,
+            if (!nonDutchTrials.isEmpty) EligibleOtherCountriesExternalTrialsGenerator(
+                report.molecular.externalTrialSource(),
+                nonDutchTrials,
+                contentWidth()
             ) else null
         )
 
@@ -129,7 +140,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             return tumor.stage()?.display() ?: Formats.VALUE_UNKNOWN
         }
 
-        private fun lesions(tumor: TumorDetails): String {
+        fun lesions(tumor: TumorDetails): String {
             val categorizedLesions = listOf(
                 "CNS" to tumor.hasCnsLesions(),
                 "Brain" to tumor.hasBrainLesions(),
@@ -149,8 +160,10 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             }.filterNot(String::isEmpty).distinctBy(String::lowercase)
 
             val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
-                "Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})"
-            } else "Lymph nodes"
+                listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
+            } else if (lymphNodeLesions.isNotEmpty()) {
+                listOf("Lymph nodes")
+            } else emptyList()
 
             return if (lesions.isEmpty()) {
                 Formats.VALUE_UNKNOWN

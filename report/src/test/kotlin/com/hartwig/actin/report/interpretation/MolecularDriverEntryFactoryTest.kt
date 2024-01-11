@@ -8,6 +8,7 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -55,7 +56,7 @@ class MolecularDriverEntryFactoryTest {
     fun shouldIncludeNonReportableDriversWithExternalTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(
             TestActionableEvidenceFactory.withExternalEligibleTrial(
-                "trial 1"
+                TestExternalTrialFactory.createTestTrial()
             )
         )
         val factory = createFactoryForMolecularRecord(record)

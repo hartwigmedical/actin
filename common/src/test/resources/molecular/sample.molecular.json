@@ -34,7 +34,15 @@
     "homologousRepairEvidence": {
       "approvedTreatments": [],
       "externalEligibleTrials": [
-        "PARP trial"
+        {
+          "title": "PARP trial",
+          "countries": [
+            "NETHERLANDS",
+            "GERMANY"
+          ],
+          "url": "https://clinicaltrials.gov/study/NCT00000001",
+          "nctId": "NCT00000001"
+        }
       ],
       "onLabelExperimentalTreatments": [
         "PARP on label"

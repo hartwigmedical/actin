@@ -35,6 +35,7 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA,
         EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE,
         EligibilityRule.HAS_EXTRACRANIAL_METASTASES,
+        EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS,
         EligibilityRule.HAS_INTOLERANCE_TO_TAXANE,
         EligibilityRule.HAS_EVIDENCE_OF_CNS_HEMORRHAGE_BY_MRI,
         EligibilityRule.HAS_HAD_COMPLETE_RESECTION,
@@ -67,7 +68,10 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_PT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
         EligibilityRule.HAS_APTT_WITHIN_INSTITUTIONAL_NORMAL_LIMITS,
         EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL,
-        EligibilityRule.HAS_NON_SQUAMOUS_NSCLC
+        EligibilityRule.HAS_NON_SQUAMOUS_NSCLC,
+        EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES,
+        EligibilityRule.HAS_KNOWN_HEPATITIS_A_INFECTION,
+        EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP
     )
 
     fun evaluate(trials: List<Trial>) {

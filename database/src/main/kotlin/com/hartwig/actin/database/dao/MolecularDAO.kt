@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import org.jooq.DSLContext
@@ -592,7 +593,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         evidence: ActionableEvidence
     ) {
         writeTreatments(inserter, topicId, evidence.approvedTreatments(), "Approved")
-        writeTreatments(inserter, topicId, evidence.externalEligibleTrials(), "Trial")
+        writeTrials(inserter, topicId, evidence.externalEligibleTrials())
         writeTreatments(inserter, topicId, evidence.onLabelExperimentalTreatments(), "On-label experimental")
         writeTreatments(inserter, topicId, evidence.offLabelExperimentalTreatments(), "Off-label experimental")
         writeTreatments(inserter, topicId, evidence.preClinicalTreatments(), "Pre-clinical")
@@ -603,6 +604,16 @@ internal class MolecularDAO(private val context: DSLContext) {
     private fun <T : Record?> writeTreatments(inserter: EvidenceInserter<T>, topicId: Int, treatments: Set<String>, type: String) {
         for (treatment in treatments) {
             inserter.write(topicId, treatment, type)
+        }
+    }
+
+    private fun <T : Record?> writeTrials(
+        inserter: EvidenceInserter<T>,
+        topicId: Int,
+        externalTrials: Set<ExternalTrial>
+    ) {
+        for (externalTrial in externalTrials) {
+            inserter.write(topicId, externalTrial.title(), "Trial")
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
@@ -111,8 +113,14 @@ class ActionableEvidenceFactoryTest {
         val evidence = ActionableEvidenceFactory.create(match)
         assertNotNull(evidence)
         assertTrue(evidence!!.approvedTreatments().isEmpty())
-        assertEquals(1, evidence.externalEligibleTrials().size.toLong())
-        assertTrue(evidence.externalEligibleTrials().contains("On-label responsive trial"))
+        assertEquals(1, evidence.externalEligibleTrials().size)
+
+        val externalTrial = evidence.externalEligibleTrials().iterator().next()
+        assertEquals("On-label responsive trial", externalTrial.title())
+        assertEquals(Sets.newHashSet(Country.OTHER), externalTrial.countries())
+        assertEquals("https://clinicaltrials.gov/study/NCT00000001", externalTrial.url())
+        assertEquals("NCT00000001", externalTrial.nctId())
+
         assertTrue(evidence.onLabelExperimentalTreatments().isEmpty())
         assertTrue(evidence.offLabelExperimentalTreatments().isEmpty())
         assertTrue(evidence.preClinicalTreatments().isEmpty())

@@ -20,7 +20,7 @@ class HasLimitedBilirubinPercentageOfTotal internal constructor(private val maxP
                 "Bilirubin percentage of total bilirubin could not be determined"
             )
         }
-        val messageStart = labMeasurement.display() + " as percentage of " + mostRecentTotal.code()
+        val messageStart = labMeasurement.display().replaceFirstChar { it.uppercase() } + " as percentage of " + mostRecentTotal.code()
         return if ((100 * (labValue.value() / mostRecentTotal.value())).compareTo(maxPercentage) <= 0) {
             EvaluationFactory.recoverablePass(
                 "$messageStart below maximum percentage of $maxPercentage%",

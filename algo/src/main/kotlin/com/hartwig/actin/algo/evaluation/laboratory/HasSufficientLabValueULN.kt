@@ -14,7 +14,7 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
         when (result) {
             EvaluationResult.FAIL -> {
                 builder.addFailSpecificMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             labValue.value()
@@ -22,7 +22,7 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
                     } is below minimum of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
                 )
                 builder.addFailGeneralMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             labValue.value()
@@ -32,13 +32,17 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
             }
 
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("${labMeasurement.display()} could not be evaluated versus maximum ULN")
-                builder.addUndeterminedGeneralMessages("${labMeasurement.display()} undetermined")
+                builder.addUndeterminedSpecificMessages(
+                    "${
+                        labMeasurement.display().replaceFirstChar { it.uppercase() }
+                    } could not be evaluated versus maximum ULN"
+                )
+                builder.addUndeterminedGeneralMessages("${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined")
             }
 
             EvaluationResult.PASS -> {
                 builder.addPassSpecificMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             labValue.value()
@@ -46,7 +50,7 @@ class HasSufficientLabValueULN internal constructor(private val minULNFactor: Do
                     } above minimum of $minULNFactor*ULN ($minULNFactor*${labValue.refLimitUp()})"
                 )
                 builder.addPassGeneralMessages(
-                    "${labMeasurement.display()} ${
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format(
                             "%.1f",
                             labValue.value()

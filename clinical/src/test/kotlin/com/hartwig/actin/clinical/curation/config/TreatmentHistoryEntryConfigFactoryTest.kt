@@ -1,17 +1,17 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class TreatmentHistoryEntryConfigFactoryTest {
 
     @Test
-    fun `Should not generate treatment history entry config for unknown treatment`() {
+    fun `Should return validation error for treatment history entry config for unknown treatment`() {
         val input = "Unknown therapy 2022"
         val treatmentName = "Unknown therapy"
         val parts = partsWithMappedValues(
@@ -21,12 +21,20 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "startYear" to "2022"
             )
         )
-        assertThat(assertThrows(IllegalStateException::class.java) {
-            factory.create(fields, parts)
-        }.message).isEqualTo("Treatment with name UNKNOWN_THERAPY does not exist in database. Please add with one of the following templates: " +
-                "[{\"name\":\"UNKNOWN_THERAPY\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
-                "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"categories\":[]," +
-                "\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]")
+        val config = factory.create(fields, parts)
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                input,
+                "treatmentName",
+                "UNKNOWN_THERAPY",
+                "treatment",
+                "Treatment with name UNKNOWN_THERAPY does not exist in database. Please add with one of the following templates: " +
+                        "[{\"name\":\"UNKNOWN_THERAPY\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
+                        "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"categories\":[]," +
+                        "\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
+            )
+        )
     }
 
     @Test
@@ -41,7 +49,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
 
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
@@ -73,7 +81,8 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 .build()
         )
 
-        assertThat(config).isEqualTo(expected)
+        assertThat(config.config).isEqualTo(expected)
+        assertThat(config.errors).isEmpty()
     }
 
     @Test
@@ -88,12 +97,20 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "isTrial" to "1"
             )
         )
-        assertThat(assertThrows(IllegalStateException::class.java) {
-            factory.create(fields, parts)
-        }.message).isEqualTo("Treatment with name TRIAL_NAME does not exist in database. Please add with one of the following templates: " +
-                "[{\"name\":\"TRIAL_NAME\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
-                "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"TRIAL_NAME\"," +
-                "\"categories\":[],\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]")
+        val config = factory.create(fields, parts)
+        assertThat(config.errors).containsExactly(
+            CurationConfigValidationError(
+                CurationCategory.ONCOLOGICAL_HISTORY.categoryName,
+                input,
+                "treatmentName",
+                "TRIAL_NAME",
+                "treatment",
+                "Treatment with name TRIAL_NAME does not exist in database. Please add with one of the following templates: " +
+                        "[{\"name\":\"TRIAL_NAME\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
+                        "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"TRIAL_NAME\"," +
+                        "\"categories\":[],\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
+            )
+        )
     }
 
     @Test
@@ -106,7 +123,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "treatmentName" to treatmentName
             )
         )
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo("NA")
         assertThat(config.ignore).isTrue
         assertThat(config.curated).isNull()
@@ -124,7 +141,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
             )
         )
 
-        val config = factory.create(fields, parts)
+        val config = factory.create(fields, parts).config
         assertThat(config.input).isEqualTo(input)
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
@@ -153,9 +170,9 @@ class TreatmentHistoryEntryConfigFactoryTest {
         )
 
         val config = factory.create(fields, parts)
-        assertThat(config.input).isEqualTo(input)
-        assertThat(config.ignore).isFalse
-        val curated = config.curated
+        assertThat(config.config.input).isEqualTo(input)
+        assertThat(config.config.ignore).isFalse
+        val curated = config.config.curated
         assertThat(curated).isNotNull
 
         val treatments = curated!!.treatments()
