@@ -81,6 +81,7 @@ public enum DrugType implements TreatmentType {
     MONOCLONAL_ANTIBODY_SUPPORTIVE_TREATMENT(TreatmentCategory.SUPPORTIVE_TREATMENT, "monoclonal antibody - supportive treatments"),
     MONOCLONAL_ANTIBODY_TARGETED_THERAPY(TreatmentCategory.TARGETED_THERAPY, "monoclonal antibody - targeted therapies"),
     MTORC1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MTORC1 inhibitor"),
+    MUC16_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MUC16 inhibitor"),
     MULTI_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),
     NK_CELL_BASED_THERAPY(TreatmentCategory.IMMUNOTHERAPY, "NK cell-based therapy"),
     NONSTEROIDAL_ANTI_ANDROGEN(TreatmentCategory.HORMONE_THERAPY),
