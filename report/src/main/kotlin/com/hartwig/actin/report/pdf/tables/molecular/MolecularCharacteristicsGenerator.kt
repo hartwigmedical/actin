@@ -112,7 +112,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
 
     fun createHRStatusString(): String? {
         val homologousRepairScore = molecular.characteristics().homologousRepairScore()
-        molecular.characteristics().isHomologousRepairDeficient() ?: return null
+        molecular.characteristics().isHomologousRepairDeficient ?: return null
         val statusInterpretation = if (molecular.characteristics().isHomologousRepairDeficient!!) "Deficient" else "Proficient"
         val scoreInterpretation = homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
         return statusInterpretation + scoreInterpretation
