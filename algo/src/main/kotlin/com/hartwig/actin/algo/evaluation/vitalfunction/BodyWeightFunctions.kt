@@ -10,18 +10,18 @@ import kotlin.math.ceil
 
 object BodyWeightFunctions {
 
-    fun evaluatePatientForMaximumBodyWeight(record: PatientRecord, maxBodyWeight: Double, minimalDate: LocalDate): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false, minimalDate)
+    fun evaluatePatientForMaximumBodyWeight(record: PatientRecord, maxBodyWeight: Double, minimumDate: LocalDate): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false, minimumDate)
         }
 
-    fun evaluatePatientForMinimumBodyWeight(record: PatientRecord, minBodyWeight: Double, minimalDate: LocalDate): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true, minimalDate)
+    fun evaluatePatientForMinimumBodyWeight(record: PatientRecord, minBodyWeight: Double, minimumDate: LocalDate): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true, minimumDate)
     }
 
     private fun evaluatePatientBodyWeightAgainstReference(
-        record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean, minimalDate: LocalDate
+        record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean, minimumDate: LocalDate
     ): Evaluation {
-        val relevant = selectMedianBodyWeightPerDay(record, minimalDate)
+        val relevant = selectMedianBodyWeightPerDay(record, minimumDate)
             ?: return if (record.clinical().bodyWeights().isNotEmpty() &&
                 record.clinical().bodyWeights().none { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
             ) {

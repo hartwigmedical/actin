@@ -13,19 +13,19 @@ import java.time.LocalDate
 
 class BodyWeightFunctionsTest {
 
-    private val minimalValidDate = LocalDate.of(2023, 12, 1)
-    private val referenceDateTime = minimalValidDate.atStartOfDay().plusDays(1)
+    private val minimumValidDate = LocalDate.of(2023, 12, 1)
+    private val referenceDateTime = minimumValidDate.atStartOfDay().plusDays(1)
 
     @Test
     fun `Should evaluate to undetermined on no body weight documented`() {
         val weights: List<BodyWeight> = emptyList()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimalValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimalValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
@@ -36,11 +36,11 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimalValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimalValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
@@ -52,7 +52,7 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDateTime.plusDays(1)).value(155.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.FAIL, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimalValidDate
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
         )
         )
     }
@@ -64,7 +64,7 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDateTime.plusDays(1)).value(148.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.PASS, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimalValidDate
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
         )
         )
     }
@@ -76,7 +76,7 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDateTime.plusDays(1)).value(148.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.PASS, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimalValidDate
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
         )
         )
     }
@@ -89,7 +89,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimalValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
@@ -101,7 +101,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimalValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
@@ -113,7 +113,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimalValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
@@ -130,7 +130,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimalValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
     }
 
@@ -143,7 +143,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimalValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
     }
 
@@ -155,7 +155,19 @@ class BodyWeightFunctionsTest {
             weight().date(referenceDateTime).value(1250.0).valid(false).build(),
             weight().date(referenceDateTime).value(125.0).unit("pounds").valid(false).build()
         )
-        Assert.assertEquals(null, selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimalValidDate))
+        Assert.assertEquals(null, selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimumValidDate))
+    }
+
+    @Test
+    fun `Should not take body weight measurements outside of date cutoff`() {
+        val weights = listOf(
+            weight().date(referenceDateTime.plusDays(1)).value(110.0).valid(true).build(),
+            weight().date(referenceDateTime).value(120.0).valid(true).build(),
+            weight().date(referenceDateTime.minusDays(3)).value(130.0).valid(true).build()
+        )
+        Assert.assertEquals(
+            listOf(110.0, 120.0),
+            selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimumValidDate)?.map { it.value() })
     }
 
     companion object {

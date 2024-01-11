@@ -203,14 +203,14 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return FunctionCreator { function: EligibilityFunction ->
             val inputs = functionInputResolver().createTwoDoublesInput(function)
             val measurement = retrieveForMethod(method)
-            val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
+            val mininumDateForBodyWeights = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val minFunction = createLabEvaluator(
                 measurement,
                 HasSufficientDerivedCreatinineClearance(
                     referenceDateProvider().year(),
                     method,
                     inputs.double1(),
-                    minimalDateWeightMeasurements
+                    mininumDateForBodyWeights
                 )
             )
             val maxFunction = createLabEvaluator(
@@ -219,7 +219,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                     referenceDateProvider().year(),
                     method,
                     inputs.double2(),
-                    minimalDateWeightMeasurements
+                    mininumDateForBodyWeights
                 )
             )
             And(listOf(minFunction, maxFunction))

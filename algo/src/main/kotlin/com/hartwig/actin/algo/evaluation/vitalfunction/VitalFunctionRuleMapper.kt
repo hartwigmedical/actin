@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction
 import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import java.time.LocalDate
 
 class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -23,62 +24,63 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
 
     private fun hasSufficientBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val minimalDate = referenceDateProvider().date().minusMonths(VITAL_FUNCTION_MAX_AGE_MONTHS.toLong())
             val minMedianBloodPressure = functionInputResolver().createOneIntegerInput(function)
-            HasSufficientBloodPressure(category, minMedianBloodPressure, minimalDate)
+            HasSufficientBloodPressure(category, minMedianBloodPressure, minimumDateForVitalFunction())
         }
     }
 
     private fun hasLimitedBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val minimalDate = referenceDateProvider().date().minusMonths(VITAL_FUNCTION_MAX_AGE_MONTHS.toLong())
             val maxMedianBloodPressure = functionInputResolver().createOneIntegerInput(function)
-            HasLimitedBloodPressure(category, maxMedianBloodPressure, minimalDate)
+            HasLimitedBloodPressure(category, maxMedianBloodPressure, minimumDateForVitalFunction())
         }
     }
 
     private fun hasSufficientPulseOximetryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val minimalDate = referenceDateProvider().date().minusMonths(VITAL_FUNCTION_MAX_AGE_MONTHS.toLong())
             val minMedianPulseOximetry = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientPulseOximetry(minMedianPulseOximetry, minimalDate)
+            HasSufficientPulseOximetry(minMedianPulseOximetry, minimumDateForVitalFunction())
         }
     }
 
     private fun hasRestingHeartRateWithinBoundsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val minimalDate = referenceDateProvider().date().minusMonths(VITAL_FUNCTION_MAX_AGE_MONTHS.toLong())
             val input = functionInputResolver().createTwoDoublesInput(function)
-            HasRestingHeartRateWithinBounds(input.double1(), input.double2(), minimalDate)
+            HasRestingHeartRateWithinBounds(input.double1(), input.double2(), minimumDateForVitalFunction())
         }
     }
 
     private fun hasSufficientBodyWeightCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minBodyWeight = functionInputResolver().createOneDoubleInput(function)
-            val minimalDate = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONHTS.toLong())
-            HasSufficientBodyWeight(minBodyWeight, minimalDate)
+            HasSufficientBodyWeight(minBodyWeight, minimumDateForBodyWeight())
         }
     }
 
     private fun hasLimitedBodyWeightCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val maxBodyWeight = functionInputResolver().createOneDoubleInput(function)
-            val minimalDate = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONHTS.toLong())
-            HasLimitedBodyWeight(maxBodyWeight, minimalDate)
+            HasLimitedBodyWeight(maxBodyWeight, minimumDateForBodyWeight())
         }
     }
 
     private fun hasBMIUpToLimitCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val maximumBMI = functionInputResolver().createOneIntegerInput(function)
-            val minimalDate = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONHTS.toLong())
-            HasBMIUpToLimit(maximumBMI, minimalDate)
+            HasBMIUpToLimit(maximumBMI, minimumDateForBodyWeight())
         }
     }
 
+    private fun minimumDateForVitalFunction(): LocalDate {
+        return referenceDateProvider().date().minusMonths(VITAL_FUNCTION_MAX_AGE_MONTHS.toLong())
+    }
+
+    private fun minimumDateForBodyWeight(): LocalDate {
+        return referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
+    }
+
     companion object {
-        private const val BODY_WEIGHT_MAX_AGE_MONHTS = 1
+        private const val BODY_WEIGHT_MAX_AGE_MONTHS = 2
         private const val VITAL_FUNCTION_MAX_AGE_MONTHS = 1
     }
 }

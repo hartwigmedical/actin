@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import java.time.LocalDate
 
 class HasSufficientBloodPressure(
-    private val category: BloodPressureCategory, private val minMedianBloodPressure: Int, private val minimalDate: LocalDate
+    private val category: BloodPressureCategory, private val minMedianBloodPressure: Int, private val minimumDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -14,7 +14,7 @@ class HasSufficientBloodPressure(
             record,
             this.category,
             this.minMedianBloodPressure,
-            this.minimalDate
+            this.minimumDate
         )
     }
 }

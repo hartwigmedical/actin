@@ -6,12 +6,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import java.time.LocalDate
 
 class HasLimitedBloodPressure(
-    private val category: BloodPressureCategory, private val maxMedianBloodPressure: Int, private val minimalDate: LocalDate
+    private val category: BloodPressureCategory, private val maxMedianBloodPressure: Int, private val minimumDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return BloodPressureFunctions.evaluatePatientMaximumBloodPressure(
-            record, this.category, this.maxMedianBloodPressure, this.minimalDate
+            record, this.category, this.maxMedianBloodPressure, this.minimumDate
         )
     }
 }

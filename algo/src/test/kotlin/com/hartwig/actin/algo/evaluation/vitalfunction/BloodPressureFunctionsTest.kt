@@ -14,8 +14,8 @@ import java.time.LocalDate
 
 class BloodPressureFunctionsTest {
 
-    private val minimalValidDate = LocalDate.of(2023, 12, 1)
-    private val referenceDateTime = minimalValidDate.atStartOfDay().plusDays(1)
+    private val minimumValidDate = LocalDate.of(2023, 12, 1)
+    private val referenceDateTime = minimumValidDate.atStartOfDay().plusDays(1)
 
     @Test
     fun `Should evaluate to undetermined when no blood pressures known`() {
@@ -25,7 +25,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 DIASTOLIC,
                 60,
-                minimalValidDate
+                minimumValidDate
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED,
@@ -33,7 +33,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 100,
-                minimalValidDate
+                minimumValidDate
             )
         )
     }
@@ -50,7 +50,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 100,
-                minimalValidDate
+                minimumValidDate
             )
         )
     }
@@ -68,7 +68,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 DIASTOLIC,
                 80,
-                minimalValidDate
+                minimumValidDate
             )
         )
     }
@@ -86,7 +86,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 100,
-                minimalValidDate
+                minimumValidDate
             )
         )
     }
@@ -104,7 +104,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 DIASTOLIC,
                 75,
-                minimalValidDate
+                minimumValidDate
             )
         )
     }
@@ -122,7 +122,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 DIASTOLIC,
                 100,
-                minimalValidDate
+                minimumValidDate
             )
         )
     }
@@ -140,7 +140,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 130,
-                minimalValidDate
+                minimumValidDate
             )
         )
     }
@@ -161,7 +161,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 100,
-                minimalValidDate
+                minimumValidDate
             )
         )
     }
@@ -170,7 +170,7 @@ class BloodPressureFunctionsTest {
     fun `Should evaluate to undetermined when wrong blood pressure category`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePatientMaximumBloodPressure(
             VitalFunctionTestFactory.withVitalFunctions(listOf(diastolic().date(referenceDateTime).value(110.0).valid(true).build())),
-            SYSTOLIC, 100, minimalValidDate
+            SYSTOLIC, 100, minimumValidDate
         )
         )
     }

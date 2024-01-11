@@ -14,7 +14,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class VitalFunctionSelectorTest {
-    private val minimalDate = LocalDate.of(2023, 12, 1)
+    private val minimumDate = LocalDate.of(2023, 12, 1)
     private val recentDate = LocalDateTime.of(2023, 12, 2, 0, 0)
     private val oldDate = recentDate.minusMonths(2)
 
@@ -22,7 +22,7 @@ class VitalFunctionSelectorTest {
     @Test
     fun `Should select zero when list is empty`() {
         val vitalFunctions: List<VitalFunction> = emptyList()
-        Assert.assertEquals(0, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimalDate).size.toLong())
+        Assert.assertEquals(0, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimumDate).size.toLong())
     }
 
     @Test
@@ -32,7 +32,7 @@ class VitalFunctionSelectorTest {
                 vitalFunction().category(HEART_RATE).date(recentDate).valid(true).build(),
                 vitalFunction().category(HEART_RATE).date(recentDate.plusDays(1)).valid(true).build()
             )
-        Assert.assertEquals(1, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 1, minimalDate).size.toLong())
+        Assert.assertEquals(1, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 1, minimumDate).size.toLong())
     }
 
     @Test
@@ -43,7 +43,7 @@ class VitalFunctionSelectorTest {
                 vitalFunction().category(SPO2).valid(true).build()
             )
         Assert.assertEquals(
-            1, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimalDate).size.toLong()
+            1, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimumDate).size.toLong()
         )
     }
 
@@ -54,7 +54,7 @@ class VitalFunctionSelectorTest {
             vitalFunction().category(HEART_RATE).date(recentDate.plusDays(1)).valid(false).build()
         )
         Assert.assertEquals(
-            1, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimalDate).size.toLong()
+            1, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimumDate).size.toLong()
         )
     }
 
@@ -65,7 +65,7 @@ class VitalFunctionSelectorTest {
             vitalFunction().category(HEART_RATE).date(recentDate).valid(true).build()
         )
         Assert.assertEquals(
-            1, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimalDate).size.toLong()
+            1, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimumDate).size.toLong()
         )
     }
 
@@ -76,7 +76,7 @@ class VitalFunctionSelectorTest {
             vitalFunction().category(HEART_RATE).unit("unit1").date(recentDate.plusDays(1)).valid(true).build()
         )
         Assert.assertEquals(
-            2, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimalDate).size.toLong()
+            2, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimumDate).size.toLong()
         )
     }
 
@@ -87,7 +87,7 @@ class VitalFunctionSelectorTest {
             vitalFunction().category(HEART_RATE).unit("unit2").date(recentDate.plusDays(1)).valid(true).build()
         )
         Assert.assertEquals(
-            2, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimalDate).size.toLong()
+            2, selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 2, minimumDate).size.toLong()
         )
     }
 
@@ -99,7 +99,7 @@ class VitalFunctionSelectorTest {
             vitalFunction().category(HEART_RATE).date(recentDate).value(50.0).valid(true).build()
         )
         Assert.assertEquals(
-            listOf(50.0), selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 3, minimalDate).map { it.value() }
+            listOf(50.0), selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 3, minimumDate).map { it.value() }
         )
     }
 
@@ -115,7 +115,7 @@ class VitalFunctionSelectorTest {
             vitalFunction().category(HEART_RATE).date(recentDate).value(14.0).valid(true).build(),
         )
         Assert.assertEquals(
-            listOf(15.0, 5.0, 12.0), selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 3, minimalDate).map { it.value() }
+            listOf(15.0, 5.0, 12.0), selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 3, minimumDate).map { it.value() }
         )
     }
 
@@ -127,7 +127,7 @@ class VitalFunctionSelectorTest {
             vitalFunction().category(HEART_RATE).date(oldDate).value(20.0).valid(true).build()
         )
         Assert.assertEquals(
-            listOf(15.0, 10.0), selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 3, minimalDate).map { it.value() }
+            listOf(15.0, 10.0), selectMedianPerDay(withVitalFunctions(vitalFunctions), HEART_RATE, 3, minimumDate).map { it.value() }
         )
     }
 
@@ -137,7 +137,7 @@ class VitalFunctionSelectorTest {
         val vitalFunctions: List<VitalFunction> = emptyList()
         Assert.assertEquals(
             0,
-            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimalDate).size.toLong()
+            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimumDate).size.toLong()
         )
     }
 
@@ -151,7 +151,7 @@ class VitalFunctionSelectorTest {
         )
         Assert.assertEquals(
             1,
-            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimalDate).size.toLong()
+            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimumDate).size.toLong()
         )
     }
 
@@ -167,7 +167,7 @@ class VitalFunctionSelectorTest {
         )
         Assert.assertEquals(
             listOf(2.0),
-            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimalDate).map { it.value() }
+            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimumDate).map { it.value() }
         )
     }
 
@@ -186,7 +186,7 @@ class VitalFunctionSelectorTest {
         )
         Assert.assertEquals(
             listOf(130.0, 115.0),
-            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimalDate).map { it.value() })
+            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimumDate).map { it.value() })
     }
 
     @Test
@@ -202,7 +202,7 @@ class VitalFunctionSelectorTest {
         )
         Assert.assertEquals(
             listOf(110.0, 120.0),
-            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimalDate).map { it.value() })
+            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimumDate).map { it.value() })
     }
 
     @Test
@@ -225,7 +225,7 @@ class VitalFunctionSelectorTest {
         )
         Assert.assertEquals(
             5,
-            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimalDate).size.toLong()
+            selectBloodPressures(withVitalFunctions(vitalFunctions), BloodPressureCategory.SYSTOLIC, minimumDate).size.toLong()
         )
     }
 }

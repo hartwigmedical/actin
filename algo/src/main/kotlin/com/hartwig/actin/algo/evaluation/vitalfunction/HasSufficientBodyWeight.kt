@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import java.time.LocalDate
 
-class HasSufficientBodyWeight(private val minimumWeight: Double, val minimalDate: LocalDate) : EvaluationFunction {
+class HasSufficientBodyWeight(private val minimumWeight: Double, private val minimumDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return BodyWeightFunctions.evaluatePatientForMinimumBodyWeight(record, this.minimumWeight, this.minimalDate)
+        return BodyWeightFunctions.evaluatePatientForMinimumBodyWeight(record, this.minimumWeight, this.minimumDate)
     }
 }

@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 class HasSufficientDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
-    private val minCreatinineClearance: Double, private val minimalDateWeightMeasurements: LocalDate
+    private val minCreatinineClearance: Double, private val minimumDateForBodyWeights: LocalDate
 ) : LabEvaluationFunction {
 
     //TODO: Implement logics for method = "measured"
@@ -46,7 +46,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
     }
 
     private fun evaluateCockcroftGault(record: PatientRecord, creatinine: LabValue): Evaluation {
-        val weight = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimalDateWeightMeasurements)
+        val weight = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDateForBodyWeights)
             ?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
             record.clinical().patient().birthYear(),
