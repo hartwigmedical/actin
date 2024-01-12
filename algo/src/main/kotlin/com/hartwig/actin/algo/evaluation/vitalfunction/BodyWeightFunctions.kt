@@ -18,19 +18,19 @@ object BodyWeightFunctions {
     private fun evaluatePatientBodyWeightAgainstReference(
         record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean
     ): Evaluation {
-        val mostRecent = record.clinical().bodyWeights().sortedWith(BodyWeightDescendingDateComparator()).firstOrNull()
+        val mostRecent = record.clinical.bodyWeights.sortedWith(BodyWeightDescendingDateComparator()).firstOrNull()
             ?: return EvaluationFactory.undetermined(
                 "No body weights found", "No body weights found"
             )
 
-        if (!mostRecent.unit().equals(EXPECTED_UNIT, ignoreCase = true)) {
+        if (!mostRecent.unit.equals(EXPECTED_UNIT, ignoreCase = true)) {
             return EvaluationFactory.undetermined(
                 "Most recent body weight not measured in $EXPECTED_UNIT",
                 "Invalid body weight unit"
             )
         }
 
-        val comparison = mostRecent.value().compareTo(referenceBodyWeight)
+        val comparison = mostRecent.value.compareTo(referenceBodyWeight)
 
         return when {
 

@@ -33,38 +33,38 @@ object EligibilityFunctionComparison {
             oldFunction == newFunction ->
                 Triple(emptyList(), emptyList(), FunctionDifferences())
 
-            newFunction.rule() == EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X ->
+            newFunction.rule == EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X ->
                 Triple(emptyList(), emptyList(), FunctionDifferences(nameToDrugDifferences = listOf(
-                    "${oldFunction.rule()}[${paramString(oldFunction)}] -> HAS_HAD_TREATMENT_WITH_ANY_DRUG_X[${newFunction.parameters()[0]}]"
+                    "${oldFunction.rule}[${paramString(oldFunction)}] -> HAS_HAD_TREATMENT_WITH_ANY_DRUG_X[${newFunction.parameters[0]}]"
                 )))
 
-            oldFunction.rule() == EligibilityRule.OR && newFunction.rule() == EligibilityRule.OR && newFunction.parameters()
-                .mapNotNull { (it as? EligibilityFunction)?.rule() }
+            oldFunction.rule == EligibilityRule.OR && newFunction.rule == EligibilityRule.OR && newFunction.parameters
+                .mapNotNull { (it as? EligibilityFunction)?.rule }
                 .all { it == EligibilityRule.HAS_HAD_TREATMENT_NAME_X || it == EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X } -> {
                 Triple(emptyList(), emptyList(), FunctionDifferences(nameToDrugDifferences = listOf(
-                    "${oldFunction.rule()}[${paramString(oldFunction)}] -> \"${newFunction.rule()}[${paramString(newFunction)}]}]"
+                    "${oldFunction.rule}[${paramString(oldFunction)}] -> \"${newFunction.rule}[${paramString(newFunction)}]}]"
                 )))
             }
 
-            CompositeRules.isComposite(oldFunction.rule()) && CompositeRules.isComposite(newFunction.rule()) -> {
-                val ruleDifferences = if (oldFunction.rule() != newFunction.rule()) {
-                    listOf("${oldFunction.rule()} != ${newFunction.rule()}")
+            CompositeRules.isComposite(oldFunction.rule) && CompositeRules.isComposite(newFunction.rule) -> {
+                val ruleDifferences = if (oldFunction.rule != newFunction.rule) {
+                    listOf("${oldFunction.rule} != ${newFunction.rule}")
                 } else {
                     emptyList()
                 }
                 Triple(
-                    oldFunction.parameters().mapNotNull { it as? EligibilityFunction },
-                    newFunction.parameters().mapNotNull { it as? EligibilityFunction },
+                    oldFunction.parameters.mapNotNull { it as? EligibilityFunction },
+                    newFunction.parameters.mapNotNull { it as? EligibilityFunction },
                     FunctionDifferences(otherDifferences = ruleDifferences)
                 )
             }
 
-            oldFunction.rule() == newFunction.rule() ->
+            oldFunction.rule == newFunction.rule ->
                 Triple(emptyList(), emptyList(), FunctionDifferences(parameterDifferences = listOf("${paramString(oldFunction)} != ${paramString(newFunction)}")))
 
             else -> Triple(emptyList(), emptyList(), FunctionDifferences(otherDifferences = listOf("$oldFunction != $newFunction")))
         }
     }
 
-    private fun paramString(eligibilityFunction: EligibilityFunction) = eligibilityFunction.parameters().joinToString(";")
+    private fun paramString(eligibilityFunction: EligibilityFunction) = eligibilityFunction.parameters.joinToString(";")
 }

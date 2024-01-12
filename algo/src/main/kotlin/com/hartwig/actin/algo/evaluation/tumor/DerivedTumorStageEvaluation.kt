@@ -12,13 +12,13 @@ internal object DerivedTumorStageEvaluation {
 
     private fun worstEvaluation(derived: Map<TumorStage, Evaluation>): Evaluation {
         return derived.values
-            .minWith { e1: Evaluation, e2: Evaluation -> if (e1 == e2) 0 else if (e1.result().isWorseThan(e2.result())) -1 else 1 }
+            .minWith { e1: Evaluation, e2: Evaluation -> if (e1 == e2) 0 else if (e1.result.isWorseThan(e2.result)) -1 else 1 }
     }
 
     private fun allSpecificMessagesFrom(derived: Map<TumorStage, Evaluation>, worstEvaluation: Evaluation): String {
         val aggregatedMessage = listOf(
-            worstEvaluation.passSpecificMessages(), worstEvaluation.warnSpecificMessages(),
-            worstEvaluation.failSpecificMessages(), worstEvaluation.undeterminedSpecificMessages()
+            worstEvaluation.passSpecificMessages, worstEvaluation.warnSpecificMessages,
+            worstEvaluation.failSpecificMessages, worstEvaluation.undeterminedSpecificMessages
         )
             .flatten()
             .joinToString(". ")
@@ -27,8 +27,8 @@ internal object DerivedTumorStageEvaluation {
 
     private fun allGeneralMessagesFrom(worstEvaluation: Evaluation): String {
         return listOf(
-            worstEvaluation.passGeneralMessages(), worstEvaluation.warnGeneralMessages(), worstEvaluation.failGeneralMessages(),
-            worstEvaluation.undeterminedGeneralMessages()
+            worstEvaluation.passGeneralMessages, worstEvaluation.warnGeneralMessages, worstEvaluation.failGeneralMessages,
+            worstEvaluation.undeterminedGeneralMessages
         )
             .flatten()
             .joinToString(". ")

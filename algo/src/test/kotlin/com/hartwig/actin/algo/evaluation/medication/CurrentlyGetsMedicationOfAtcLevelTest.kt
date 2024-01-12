@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
@@ -16,24 +16,18 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
 
     @Test
     fun shouldFailWhenMedicationHasWrongCategory() {
-        val atc =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("wrong category").build())
-                .build()
-        val medications = listOf(TestMedicationFactory.createMinimal().atc(atc).build())
+        val atc = AtcTestFactory.atcClassification("wrong category")
+        val medications = listOf(TestMedicationFactory.createMinimal().copy(atc = atc))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
     fun shouldPassWhenMedicationHasRightCategory() {
-        val atc =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code("L01A").build())
-                .build()
+        val atc = AtcTestFactory.atcClassification("L01A")
         assertEvaluation(
             EvaluationResult.PASS, FUNCTION.evaluate(
                 MedicationTestFactory.withMedications(
-                    listOf(
-                        TestMedicationFactory.createMinimal().atc(atc).build()
-                    )
+                    listOf(TestMedicationFactory.createMinimal().copy(atc = atc))
                 )
             )
         )
@@ -44,7 +38,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
             CurrentlyGetsMedicationOfAtcLevel(
                 MedicationTestFactory.alwaysActive(),
                 "L01A",
-                setOf(ImmutableAtcLevel.builder().code("L01A").name("").build())
+                setOf(AtcLevel(code = "L01A", name = ""))
             )
     }
 }

@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.datamodel.CohortMatch
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
@@ -15,9 +14,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialMatcherTest {
@@ -28,29 +25,18 @@ class TrialMatcherTest {
         val trial = TestTrialFactory.createProperTestTrial()
         val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
         val matches = matcher.determineEligibility(patient, listOf(trial))
-        assertEquals(1, matches.size.toLong())
+        assertThat(matches).hasSize(1)
         assertTrialMatch(matches[0])
     }
 
     @Test
     fun `Should determine potential eligibility`() {
-        val evaluations: MutableList<Evaluation> = mutableListOf()
-        evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.PASS))
-        assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
-        evaluations.add(
-            ImmutableEvaluation.builder()
-                .from(EvaluationTestFactory.withResult(EvaluationResult.FAIL))
-                .recoverable(true)
-                .build()
-        )
-        assertTrue(TrialMatcher.isPotentiallyEligible(evaluations))
-        evaluations.add(
-            ImmutableEvaluation.builder()
-                .from(EvaluationTestFactory.withResult(EvaluationResult.FAIL))
-                .recoverable(false)
-                .build()
-        )
-        assertFalse(TrialMatcher.isPotentiallyEligible(evaluations))
+        val evaluations = mutableListOf(EvaluationTestFactory.withResult(EvaluationResult.PASS))
+        assertThat(TrialMatcher.isPotentiallyEligible(evaluations)).isTrue
+        evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.FAIL).copy(recoverable = true))
+        assertThat(TrialMatcher.isPotentiallyEligible(evaluations)).isTrue
+        evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.FAIL).copy(recoverable = false))
+        assertThat(TrialMatcher.isPotentiallyEligible(evaluations)).isFalse
     }
 
     companion object {
@@ -64,50 +50,37 @@ class TrialMatcherTest {
         }
 
         private fun assertTrialMatch(trialMatch: TrialMatch) {
-            assertEquals(1, trialMatch.evaluations().size.toLong())
-            assertTrue(trialMatch.isPotentiallyEligible)
-            assertEquals(
-                EvaluationResult.PASS,
-                findEvaluationResultForRule(trialMatch.evaluations(), EligibilityRule.IS_AT_LEAST_X_YEARS_OLD)
-            )
-            assertEquals(3, trialMatch.cohorts().size.toLong())
+            assertThat(trialMatch.evaluations).hasSize(1)
+            assertThat(trialMatch.isPotentiallyEligible).isTrue
+            assertThat(findEvaluationResultForRule(trialMatch.evaluations, EligibilityRule.IS_AT_LEAST_X_YEARS_OLD))
+                .isEqualTo(EvaluationResult.PASS)
+            assertThat(trialMatch.cohorts).hasSize(3)
 
-            val cohortA = findCohort(trialMatch.cohorts(), "A")
-            assertEquals(1, cohortA.evaluations().size.toLong())
-            assertFalse(cohortA.isPotentiallyEligible)
-            assertEquals(EvaluationResult.FAIL, findEvaluationResultForRule(cohortA.evaluations(), EligibilityRule.NOT))
+            val cohortA = findCohort(trialMatch.cohorts, "A")
+            assertThat(cohortA.evaluations).hasSize(1)
+            assertThat(cohortA.isPotentiallyEligible).isFalse
+            assertThat(findEvaluationResultForRule(cohortA.evaluations, EligibilityRule.NOT)).isEqualTo(EvaluationResult.FAIL)
 
-            val cohortB = findCohort(trialMatch.cohorts(), "B")
-            assertTrue(cohortB.isPotentiallyEligible)
-            assertEquals(
-                EvaluationResult.NOT_EVALUATED,
-                findEvaluationResultForRule(cohortB.evaluations(), EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS)
+            val cohortB = findCohort(trialMatch.cohorts, "B")
+            assertThat(cohortB.isPotentiallyEligible).isTrue
+            assertThat(findEvaluationResultForRule(cohortB.evaluations, EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS)).isEqualTo(
+                EvaluationResult.NOT_EVALUATED
             )
 
-            val cohortC = findCohort(trialMatch.cohorts(), "C")
-            assertTrue(cohortC.isPotentiallyEligible)
-            assertTrue(cohortC.evaluations().isEmpty())
+            val cohortC = findCohort(trialMatch.cohorts, "C")
+            assertThat(cohortC.isPotentiallyEligible).isTrue
+            assertThat(cohortC.evaluations).isEmpty()
         }
 
-        private fun findEvaluationResultForRule(
-            evaluations: Map<Eligibility, Evaluation>,
-            ruleToFind: EligibilityRule
-        ): EvaluationResult {
-            for ((key, value) in evaluations) {
-                if (key.function().rule() == ruleToFind) {
-                    return value.result()
-                }
-            }
-            throw IllegalStateException("Cannot find evaluation for rule '$ruleToFind'")
+        private fun findEvaluationResultForRule(evaluations: Map<Eligibility, Evaluation>, ruleToFind: EligibilityRule): EvaluationResult {
+            val match = evaluations.entries.find { (key, _) -> key.function.rule == ruleToFind }
+                ?: throw IllegalStateException("Cannot find evaluation for rule '$ruleToFind'")
+            return match.value.result
         }
 
         private fun findCohort(cohorts: List<CohortMatch>, cohortIdToFind: String): CohortMatch {
-            for (cohort in cohorts) {
-                if (cohort.metadata().cohortId() == cohortIdToFind) {
-                    return cohort
-                }
-            }
-            throw IllegalStateException("Cannot find cohort with id '$cohortIdToFind'")
+            return cohorts.find { it.metadata.cohortId == cohortIdToFind }
+                ?: throw IllegalStateException("Cannot find cohort with id '$cohortIdToFind'")
         }
     }
 }

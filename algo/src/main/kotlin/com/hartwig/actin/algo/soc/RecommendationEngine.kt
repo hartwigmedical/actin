@@ -96,11 +96,11 @@ class RecommendationEngine private constructor(
         }
 
         private fun expandedTumorDoids(patientRecord: PatientRecord, doidModel: DoidModel): Set<String> {
-            return patientRecord.clinical().tumor().doids()?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
+            return patientRecord.clinical.tumor.doids?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
         }
 
         private fun treatmentHasNoFailedEvaluations(evaluatedTreatment: EvaluatedTreatment): Boolean {
-            return evaluatedTreatment.evaluations.none { it.result() == EvaluationResult.FAIL }
+            return evaluatedTreatment.evaluations.none { it.result == EvaluationResult.FAIL }
         }
     }
 }

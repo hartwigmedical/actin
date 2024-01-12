@@ -13,14 +13,14 @@ class LabUnitConverterTest {
         val firstFromKey = firstFromUnitConversionFactorKey()
         val firstToKey = firstToUnitConversionFactorKey()
         val conversionFactor = firstConversionFactor()
-        val value: LabValue = LabTestFactory.builder().unit(firstToKey).value(conversionFactor).build()
+        val value: LabValue = LabTestFactory.create(value = 0.0).unit(firstToKey).value(conversionFactor).build()
         Assert.assertEquals(conversionFactor, LabUnitConverter.convert(measurement, value, firstToKey)!!, EPSILON)
         Assert.assertEquals(1.0, LabUnitConverter.convert(measurement, value, firstFromKey)!!, EPSILON)
     }
 
     @Test
     fun missingConversionEntryLeadsToNull() {
-        val value: LabValue = LabTestFactory.builder().unit(LabUnit.CELLS_PER_CUBIC_MILLIMETER).build()
+        val value: LabValue = LabTestFactory.create(value = 0.0).unit(LabUnit.CELLS_PER_CUBIC_MILLIMETER).build()
         Assert.assertNull(LabUnitConverter.convert(LabMeasurement.NEUTROPHILS_ABS, value, LabUnit.GRAMS_PER_LITER))
     }
 

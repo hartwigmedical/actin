@@ -27,7 +27,7 @@ object TreatmentMatchComparison {
                 eligibilityDifferences.forEach(::logDebug)
 
                 val evaluationDifferences = EvaluationComparison.determineEvaluationDifferences(
-                    oldTrialMatch.evaluations(), newTrialMatch.evaluations(), key.trialId(), 0
+                    oldTrialMatch.evaluations, newTrialMatch.evaluations, key.trialId, 0
                 ).copy(eligibilityDifferences = eligibilityDifferences)
 
                 evaluationDifferences + determineCohortDifferences(oldTrialMatch, newTrialMatch)
@@ -45,19 +45,24 @@ object TreatmentMatchComparison {
             if (newCohortMatch == null) EvaluationDifferences.create() else {
                 val cohortEligibilityDifferences = extractDifferences(oldCohortMatch, newCohortMatch, mapOf("eligibility" to CohortMatch::isPotentiallyEligible))
                 cohortEligibilityDifferences.forEach { logDebug(it, INDENT_WIDTH) }
-                val id = "${oldTrialMatch.identification().trialId()}, cohort$cohortId"
-                EvaluationComparison.determineEvaluationDifferences(oldCohortMatch.evaluations(), newCohortMatch.evaluations(), id, INDENT_WIDTH)
+                val id = "${oldTrialMatch.identification.trialId}, cohort$cohortId"
+                EvaluationComparison.determineEvaluationDifferences(
+                    oldCohortMatch.evaluations,
+                    newCohortMatch.evaluations,
+                    id,
+                    INDENT_WIDTH
+                )
                     .copy(eligibilityDifferences = cohortEligibilityDifferences)
             }
         }.fold(EvaluationDifferences.create(mapKeyDifferences = cohortKeyDifferences)) { acc, other -> acc + other }
     }
 
     private fun trialMatchesById(treatmentMatch: TreatmentMatch): Map<TrialIdentification, TrialMatch> {
-        return treatmentMatch.trialMatches().associateBy(TrialMatch::identification)
+        return treatmentMatch.trialMatches.associateBy(TrialMatch::identification)
     }
 
     private fun cohortMatchesById(trialMatch: TrialMatch): Map<String, CohortMatch> {
-        return trialMatch.cohorts().associateBy { it.metadata().cohortId() }
+        return trialMatch.cohorts.associateBy { it.metadata.cohortId }
     }
 
     private fun logDebug(message: String, indent: Int = 0) {

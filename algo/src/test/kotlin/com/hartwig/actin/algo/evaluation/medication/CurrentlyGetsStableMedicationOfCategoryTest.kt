@@ -2,8 +2,8 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.Dosage
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
 import com.hartwig.actin.clinical.datamodel.ImmutableDosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
@@ -109,15 +109,13 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
         private const val CATEGORY_1 = "category 1"
         private const val CATEGORY_2 = "category 2"
 
-        private val ATC_CATEGORY_1 =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code(CATEGORY_1).build()).build()
-        private val ATC_CATEGORY_2 =
-            AtcTestFactory.atcClassificationBuilder().anatomicalMainGroup(AtcTestFactory.atcLevelBuilder().code(CATEGORY_2).build()).build()
+        private val ATC_CATEGORY_1 = AtcTestFactory.atcClassification(CATEGORY_1)
+        private val ATC_CATEGORY_2 = AtcTestFactory.atcClassification(CATEGORY_2)
 
         private val ONE_CATEGORY_FUNCTION = CurrentlyGetsStableMedicationOfCategory(
             MedicationTestFactory.alwaysActive(), mapOf(
                 CATEGORY_1 to setOf(
-                    ImmutableAtcLevel.builder().code(CATEGORY_1).name("").build()
+                    AtcLevel(code = CATEGORY_1, name = "")
                 )
             )
         )
@@ -125,8 +123,8 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
             CurrentlyGetsStableMedicationOfCategory(
                 MedicationTestFactory.alwaysActive(),
                 mapOf(
-                    CATEGORY_1 to setOf(ImmutableAtcLevel.builder().code(CATEGORY_1).name("").build()),
-                    CATEGORY_2 to setOf(ImmutableAtcLevel.builder().code(CATEGORY_2).name("").build())
+                    CATEGORY_1 to setOf(AtcLevel(code = CATEGORY_1, name = "")),
+                    CATEGORY_2 to setOf(AtcLevel(code = CATEGORY_2, name = ""))
                 )
             )
     }

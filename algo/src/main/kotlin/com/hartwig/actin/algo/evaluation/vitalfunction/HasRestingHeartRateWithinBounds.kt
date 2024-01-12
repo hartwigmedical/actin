@@ -10,7 +10,7 @@ class HasRestingHeartRateWithinBounds(private val minMedianRestingHeartRate: Dou
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val heartRates = VitalFunctionSelector.select(
-            record.clinical().vitalFunctions(),
+            record.clinical.vitalFunctions,
             VitalFunctionCategory.HEART_RATE,
             UNIT_TO_SELECT,
             MAX_HEART_RATES_TO_USE

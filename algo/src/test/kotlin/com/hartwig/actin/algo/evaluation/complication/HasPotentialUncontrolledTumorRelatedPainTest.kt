@@ -10,25 +10,26 @@ import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class HasPotentialUncontrolledTumorRelatedPainTest {
+
     @Test
-    fun canEvaluateOnComplication() {
+    fun `Should evaluate on complication`() {
         val function = HasPotentialUncontrolledTumorRelatedPain(medicationStatusInterpreter)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(null)))
-        val wrong: Complication = ComplicationTestFactory.builder().addCategories("just a category").build()
+        val wrong: Complication = ComplicationTestFactory.complication(categories = setOf("just a category"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(wrong)))
-        val match: Complication = ComplicationTestFactory.builder()
-            .addCategories("this is category: " + HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_COMPLICATION)
-            .build()
+        val match: Complication = ComplicationTestFactory.complication(
+            categories = setOf("this is category: " + HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_COMPLICATION)
+        )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(match)))
     }
 
     @Test
-    fun canEvaluateOnMedication() {
+    fun `Should evaluate on medication`() {
         val function = HasPotentialUncontrolledTumorRelatedPain(medicationStatusInterpreter)
-        val wrong: Medication = TestMedicationFactory.createMinimal().name("just some medication").build()
+        val wrong: Medication = TestMedicationFactory.createMinimal().copy(name = "just some medication")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withMedication(wrong)))
         val match: Medication =
-            TestMedicationFactory.createMinimal().name(HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_MEDICATION).build()
+            TestMedicationFactory.createMinimal().copy(name = HasPotentialUncontrolledTumorRelatedPain.SEVERE_PAIN_MEDICATION)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withMedication(match)))
     }
 

@@ -45,7 +45,7 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     private fun hasRestingHeartRateWithinBoundsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createTwoDoublesInput(function)
-            HasRestingHeartRateWithinBounds(input.double1(), input.double2())
+            HasRestingHeartRateWithinBounds(input.double1, input.double2)
         }
     }
 

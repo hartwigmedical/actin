@@ -28,7 +28,7 @@ object EvaluationComparison {
                 EvaluationDifferences.create()
             } else {
                 val (newFunction, newEvaluation) = newFunctionAndEvaluation
-                val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it.id() }}"
+                val criteriaId = "ID $id, Criteria ${references.joinToString(", ") { it.id }}"
 
                 val resultDifferences = extractDifferences(
                     oldEvaluation, newEvaluation, mapOf("result for $criteriaId" to Evaluation::result)
@@ -60,7 +60,7 @@ object EvaluationComparison {
     }
 
     private fun evaluationsByCriteria(evaluations: Map<Eligibility, Evaluation>): Map<Set<CriterionReference>, Pair<EligibilityFunction, Evaluation>> {
-        return evaluations.map { (eligibility, evaluation) -> eligibility.references() to Pair(eligibility.function(), evaluation) }.toMap()
+        return evaluations.map { (eligibility, evaluation) -> eligibility.references to Pair(eligibility.function, evaluation) }.toMap()
     }
 
     private fun extractMessageDifferences(old: Evaluation, new: Evaluation): List<String> {
@@ -76,12 +76,12 @@ object EvaluationComparison {
     }
 
     private fun getGeneralMessagesForEvaluation(evaluation: Evaluation): Set<String> {
-        return when (evaluation.result()) {
-            EvaluationResult.PASS -> evaluation.passGeneralMessages()
-            EvaluationResult.NOT_EVALUATED -> evaluation.passGeneralMessages()
-            EvaluationResult.WARN -> evaluation.warnGeneralMessages()
-            EvaluationResult.UNDETERMINED -> evaluation.undeterminedGeneralMessages()
-            EvaluationResult.FAIL -> evaluation.failGeneralMessages()
+        return when (evaluation.result) {
+            EvaluationResult.PASS -> evaluation.passGeneralMessages
+            EvaluationResult.NOT_EVALUATED -> evaluation.passGeneralMessages
+            EvaluationResult.WARN -> evaluation.warnGeneralMessages
+            EvaluationResult.UNDETERMINED -> evaluation.undeterminedGeneralMessages
+            EvaluationResult.FAIL -> evaluation.failGeneralMessages
             else -> emptySet()
         }
     }

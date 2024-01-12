@@ -10,19 +10,18 @@ import kotlin.math.sqrt
 
 class HasBMIUpToLimit internal constructor(private val maximumBMI: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val latestWeight = record.clinical()
-            .bodyWeights()
-            .filter { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }
+        val latestWeight = record.clinical.bodyWeights
+            .filter { it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }
             .minWithOrNull(BodyWeightDescendingDateComparator())
             ?: return EvaluationFactory.undetermined("No body weights found in $EXPECTED_UNIT", "Body weight unknown")
 
-        val minimumRequiredHeight = calculateHeightForBmiAndWeight(maximumBMI.toDouble(), latestWeight.value())
+        val minimumRequiredHeight = calculateHeightForBmiAndWeight(maximumBMI.toDouble(), latestWeight.value)
         return when {
             minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES -> {
                 EvaluationFactory.pass(
                     String.format(
                         ApplicationConfig.LOCALE, "Patient weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m",
-                        latestWeight.value(), maximumBMI, minimumRequiredHeight
+                        latestWeight.value, maximumBMI, minimumRequiredHeight
                     ), "BMI below limit"
                 )
             }
@@ -31,7 +30,7 @@ class HasBMIUpToLimit internal constructor(private val maximumBMI: Int) : Evalua
                 EvaluationFactory.fail(
                     String.format(
                         ApplicationConfig.LOCALE,
-                        "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m", latestWeight.value(), maximumBMI,
+                        "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m", latestWeight.value, maximumBMI,
                         minimumRequiredHeight
                     ), "BMI above limit"
                 )
@@ -41,7 +40,7 @@ class HasBMIUpToLimit internal constructor(private val maximumBMI: Int) : Evalua
                 EvaluationFactory.warn(
                     String.format(
                         ApplicationConfig.LOCALE,
-                        "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m", latestWeight.value(), maximumBMI,
+                        "Patient weight %.1f kg will exceed BMI limit of %d for height < %.2f m", latestWeight.value, maximumBMI,
                         minimumRequiredHeight
                     ), "Potentially BMI above limit"
                 )

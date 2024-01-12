@@ -8,15 +8,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasBoneMetastasesOnly : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasBoneMetastases = record.clinical().tumor().hasBoneLesions() ?: return EvaluationFactory.undetermined(
+        val hasBoneMetastases = record.clinical.tumor.hasBoneLesions ?: return EvaluationFactory.undetermined(
             "Data regarding presence of bone metastases is missing", "Missing bone metastasis data"
         )
-        val hasLiverMetastases = record.clinical().tumor().hasLiverLesions()
-        val hasCnsMetastases = record.clinical().tumor().hasCnsLesions()
-        val hasBrainMetastases = record.clinical().tumor().hasBrainLesions()
-        val hasLungLesions = record.clinical().tumor().hasLungLesions()
-        val hasLymphNodeLesions = record.clinical().tumor().hasLymphNodeLesions()
-        val otherLesions = record.clinical().tumor().otherLesions()
+        val hasLiverMetastases = record.clinical.tumor.hasLiverLesions
+        val hasCnsMetastases = record.clinical.tumor.hasCnsLesions
+        val hasBrainMetastases = record.clinical.tumor.hasBrainLesions
+        val hasLungLesions = record.clinical.tumor.hasLungLesions
+        val hasLymphNodeLesions = record.clinical.tumor.hasLymphNodeLesions
+        val otherLesions = record.clinical.tumor.otherLesions
         if (hasBoneMetastases && listOf(
                 hasLiverMetastases,
                 hasCnsMetastases,

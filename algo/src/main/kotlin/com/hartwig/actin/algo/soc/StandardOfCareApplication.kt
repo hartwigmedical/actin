@@ -43,7 +43,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         TreatmentMatcherApplication.LOGGER.info("Creating ATC tree from file {}", config.atcTsv)

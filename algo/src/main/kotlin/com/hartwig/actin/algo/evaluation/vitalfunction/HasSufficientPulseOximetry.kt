@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val pulseOximetries = VitalFunctionSelector.select(
-            record.clinical().vitalFunctions(),
+            record.clinical.vitalFunctions,
             VitalFunctionCategory.SPO2,
             null,
             MAX_PULSE_OXIMETRY_TO_USE
@@ -23,7 +23,7 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
                 "Patient has median pulse oximetry exceeding $minMedianPulseOximetry",
                 "Pulse oximetry above $minMedianPulseOximetry"
             )
-        } else if (pulseOximetries.any { it.value().compareTo(minMedianPulseOximetry) >= 0 }) {
+        } else if (pulseOximetries.any { it.value.compareTo(minMedianPulseOximetry) >= 0 }) {
             return EvaluationFactory.recoverableUndetermined(
                 "Patient has median pulse oximetry below $minMedianPulseOximetry but also at least one "
                         + "measure above $minMedianPulseOximetry", "Pulse oximetry requirements"
