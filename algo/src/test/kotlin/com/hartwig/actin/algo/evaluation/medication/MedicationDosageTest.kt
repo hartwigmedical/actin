@@ -2,13 +2,13 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.medication.MedicationDosage.hasMatchingDosing
 import com.hartwig.actin.clinical.datamodel.Dosage
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MedicationDosageTest {
+
     @Test
-    fun canAssessDosingStability() {
+    fun `Should accurately determine dosage stability`() {
         val dosing1 = Dosage(
             dosageMin = 1.0,
             dosageMax = 2.0,
@@ -25,9 +25,9 @@ class MedicationDosageTest {
             frequencyUnit = "unit 1",
             ifNeeded = false
         )
-        assertTrue(hasMatchingDosing(dosing1, dosing1))
-        assertTrue(hasMatchingDosing(dosing2, dosing2))
-        assertFalse(hasMatchingDosing(dosing1, dosing2))
-        assertFalse(hasMatchingDosing(dosing1, Dosage()))
+        assertThat(hasMatchingDosing(dosing1, dosing1)).isTrue
+        assertThat(hasMatchingDosing(dosing2, dosing2)).isTrue
+        assertThat(hasMatchingDosing(dosing1, dosing2)).isFalse
+        assertThat(hasMatchingDosing(dosing1, Dosage())).isFalse
     }
 }

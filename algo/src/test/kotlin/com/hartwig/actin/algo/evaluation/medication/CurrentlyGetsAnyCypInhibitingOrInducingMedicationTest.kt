@@ -3,40 +3,42 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
-import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class CurrentlyGetsAnyCypInhibitingOrInducingMedicationTest {
+    private val function = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive())
+    
     @Test
-    fun shouldPassWhenAnyCypInhibitingOrInducingMedication() {
-        val medications = listOf(
-            TestMedicationFactory.createMinimal().addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+    fun `Should pass when any CYP-inhibiting or -inducing medication`() {
+        assertEvaluation(
+            EvaluationResult.PASS, function.evaluate(
+                MedicationTestFactory.withCypInteraction(
+                    "9A9", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG
+                )
+            )
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
-    }
-
-    @Test
-    fun shouldFailWhenNoCypInhibitingOrInducingMedication() {
-        val medications = listOf(
-            TestMedicationFactory.createMinimal().addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+        assertEvaluation(
+            EvaluationResult.PASS, function.evaluate(
+                MedicationTestFactory.withCypInteraction(
+                    "9A9", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG
+                )
+            )
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientUsesNoMedication() {
-        val medications = listOf(TestMedicationFactory.createMinimal().build())
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    fun `Should fail when no CYP-inhibiting or -inducing medication`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                MedicationTestFactory.withCypInteraction(
+                    "9A9", CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG
+                )
+            )
+        )
     }
 
-    companion object {
-        private val FUNCTION = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive())
+    @Test
+    fun `Should fail when patient uses no medication`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
     }
 }

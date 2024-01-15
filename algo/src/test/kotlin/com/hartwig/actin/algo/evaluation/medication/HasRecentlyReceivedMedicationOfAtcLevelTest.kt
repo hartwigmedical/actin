@@ -3,68 +3,63 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.AtcLevel
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class HasRecentlyReceivedMedicationOfAtcLevelTest {
+    private val evaluationDate = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
+    private val function = HasRecentlyReceivedMedicationOfAtcLevel(
+        MedicationTestFactory.alwaysActive(),
+        "category to find",
+        setOf(AtcLevel(code = "category to find", name = "")),
+        evaluationDate.plusDays(1)
+    )
+    
     @Test
-    fun shouldFailWhenNoMedication() {
-        val medications = emptyList<Medication>()
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
+    fun `Should fail when no medication`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
     }
 
     @Test
-    fun shouldFailWhenMedicationHasWrongCategory() {
+    fun `Should fail when medication has wrong category`() {
         val atc = AtcTestFactory.atcClassification("wrong category")
-        val medications = listOf(TestMedicationFactory.createMinimal().copy(atc = atc))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
+        val medications = listOf(MedicationTestFactory.medication(atc = atc))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldPassWhenMedicationHasRightCategory() {
+    fun `Should pass when medication has right category`() {
         val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(TestMedicationFactory.createMinimal().copy(atc = atc))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
-    }
-
-    @Test
-    fun shouldPassWhenMedicationHasCorrectDate() {
-        val function = HasRecentlyReceivedMedicationOfAtcLevel(
-            MedicationTestFactory.alwaysStopped(),
-            "category to find",
-            setOf(AtcLevel(code = "category to find", name = "")),
-            EVALUATION_DATE.minusDays(1)
-        )
-        val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(TestMedicationFactory.createMinimal().copy(atc = atc, stopDate = EVALUATION_DATE))
+        val medications = listOf(MedicationTestFactory.medication(atc = atc))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldBeUndeterminedWhenMedicationStoppedAfterMinStopDate() {
+    fun `Should pass when medication has correct date`() {
         val function = HasRecentlyReceivedMedicationOfAtcLevel(
             MedicationTestFactory.alwaysStopped(),
             "category to find",
             setOf(AtcLevel(code = "category to find", name = "")),
-            EVALUATION_DATE.minusWeeks(2)
+            evaluationDate.minusDays(1)
         )
         val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(TestMedicationFactory.createMinimal().copy(atc = atc, stopDate = EVALUATION_DATE))
+        val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun `Should be undetermined when medication stopped after min stop date`() {
+        val function = HasRecentlyReceivedMedicationOfAtcLevel(
+            MedicationTestFactory.alwaysStopped(),
+            "category to find",
+            setOf(AtcLevel(code = "category to find", name = "")),
+            evaluationDate.minusWeeks(2)
+        )
+        val atc = AtcTestFactory.atcClassification("category to find")
+        val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(medications))
-        )
-    }
-
-    companion object {
-        private val EVALUATION_DATE = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
-        private val FUNCTION_ACTIVE = HasRecentlyReceivedMedicationOfAtcLevel(
-            MedicationTestFactory.alwaysActive(),
-            "category to find",
-            setOf(AtcLevel(code = "category to find", name = "")),
-            EVALUATION_DATE.plusDays(1)
         )
     }
 }

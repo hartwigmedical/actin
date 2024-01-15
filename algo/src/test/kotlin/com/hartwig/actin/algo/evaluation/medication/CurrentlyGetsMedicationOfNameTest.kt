@@ -2,25 +2,39 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class CurrentlyGetsMedicationOfNameTest {
+    private val function = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysActive(), setOf("term 1"))
+    
     @Test
-    fun canEvaluate() {
-        val function = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysActive(), setOf("term 1"))
+    fun `Should fail with no medications`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
+    }
 
-        // No medications yet
-        val medications: MutableList<Medication> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    @Test
+    fun `Should fail with wrong medication`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                MedicationTestFactory.withMedications(
+                    listOf(
+                        MedicationTestFactory.medication("This is Term 2")
+                    )
+                )
+            )
+        )
+    }
 
-        // Medication with wrong name
-        medications.add(TestMedicationFactory.createMinimal().name("This is Term 2").build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
-
-        // Medication with right name
-        medications.add(TestMedicationFactory.createMinimal().name("This is Term 1").build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    @Test
+    fun `Should pass with matching medication`() {
+        assertEvaluation(
+            EvaluationResult.PASS, function.evaluate(
+                MedicationTestFactory.withMedications(
+                    listOf(
+                        MedicationTestFactory.medication("This is Term 1")
+                    )
+                )
+            )
+        )
     }
 }

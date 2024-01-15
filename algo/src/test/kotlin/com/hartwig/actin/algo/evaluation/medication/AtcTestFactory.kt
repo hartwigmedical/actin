@@ -15,10 +15,6 @@ internal object AtcTestFactory {
         )
     }
 
-    fun createMinimalAtcLevel(): AtcLevel {
-        return AtcLevel(name = "", code = "")
-    }
-
     fun createProperAtcTree(): AtcTree {
         return AtcTree(
             mapOf(
@@ -85,6 +81,10 @@ internal object AtcTestFactory {
                 "string3" to NAME_NOT_APPLICABLE,
             )
         )
+    }
+
+    private fun createMinimalAtcLevel(): AtcLevel {
+        return AtcLevel(name = "", code = "")
     }
 
     private const val NAME_NOT_APPLICABLE = ""

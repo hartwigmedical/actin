@@ -1,27 +1,28 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.clinical.datamodel.LabUnit
-import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 
 class LabUnitConverterTest {
+
     @Test
     fun canConvert() {
         val measurement = firstMeasurementWithConversionTable()
         val firstFromKey = firstFromUnitConversionFactorKey()
         val firstToKey = firstToUnitConversionFactorKey()
         val conversionFactor = firstConversionFactor()
-        val value: LabValue = LabTestFactory.create(value = 0.0).unit(firstToKey).value(conversionFactor).build()
-        Assert.assertEquals(conversionFactor, LabUnitConverter.convert(measurement, value, firstToKey)!!, EPSILON)
-        Assert.assertEquals(1.0, LabUnitConverter.convert(measurement, value, firstFromKey)!!, EPSILON)
+        val value = LabTestFactory.create(value = conversionFactor).copy(unit = firstToKey)
+        assertThat(LabUnitConverter.convert(measurement, value, firstToKey)!!).isEqualTo(conversionFactor, Offset.offset(EPSILON))
+        assertThat(LabUnitConverter.convert(measurement, value, firstFromKey)!!).isEqualTo(1.0, Offset.offset(EPSILON))
     }
 
     @Test
     fun missingConversionEntryLeadsToNull() {
-        val value: LabValue = LabTestFactory.create(value = 0.0).unit(LabUnit.CELLS_PER_CUBIC_MILLIMETER).build()
-        Assert.assertNull(LabUnitConverter.convert(LabMeasurement.NEUTROPHILS_ABS, value, LabUnit.GRAMS_PER_LITER))
+        val value = LabTestFactory.create().copy(unit = LabUnit.CELLS_PER_CUBIC_MILLIMETER)
+        assertThat(LabUnitConverter.convert(LabMeasurement.NEUTROPHILS_ABS, value, LabUnit.GRAMS_PER_LITER)).isNull()
     }
 
     companion object {
