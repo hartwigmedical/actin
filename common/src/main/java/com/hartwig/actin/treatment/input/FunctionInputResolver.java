@@ -214,8 +214,8 @@ public class FunctionInputResolver {
                     createOneHlaAlleleInput(function);
                     return true;
                 }
-                case ONE_UGT1A1_HAPLOTYPE: {
-                    createOneUGT1A1HaplotypeInput(function);
+                case ONE_HAPLOTYPE: {
+                    createOneHaplotypeInput(function);
                     return true;
                 }
                 case ONE_GENE: {
@@ -500,12 +500,12 @@ public class FunctionInputResolver {
     }
 
     @NotNull
-    public OneHaplotype createOneUGT1A1HaplotypeInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.ONE_UGT1A1_HAPLOTYPE, 1);
+    public OneHaplotype createOneHaplotypeInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_HAPLOTYPE, 1);
 
         String haplotype = (String) function.parameters().get(0);
         if (!MolecularInputChecker.isHaplotype(haplotype)) {
-            throw new IllegalArgumentException("Not a proper UGT1A1 haplotype: " + haplotype);
+            throw new IllegalArgumentException("Not a proper haplotype: " + haplotype);
         }
 
         return ImmutableOneHaplotype.builder().haplotype(haplotype).build();

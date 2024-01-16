@@ -33,5 +33,5 @@ public enum FunctionInput {
     ONE_HLA_ALLELE,
     ONE_DOID_TERM,
     ONE_TUMOR_STAGE,
-    ONE_UGT1A1_HAPLOTYPE,
+    ONE_HAPLOTYPE,
 }

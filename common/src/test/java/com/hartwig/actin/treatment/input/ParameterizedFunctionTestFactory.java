@@ -119,6 +119,9 @@ public class ParameterizedFunctionTestFactory {
             case ONE_HLA_ALLELE: {
                 return List.of("A*02:01");
             }
+            case ONE_HAPLOTYPE: {
+                return List.of("*1_HOM");
+            }
             case ONE_GENE: {
                 return List.of("gene");
             }

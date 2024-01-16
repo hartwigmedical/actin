@@ -401,14 +401,14 @@ public class FunctionInputResolverTest {
     public void shouldResolveFunctionsWithOneHaplotypeInput() {
         FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
 
-        EligibilityRule rule = firstOfType(FunctionInput.ONE_UGT1A1_HAPLOTYPE);
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_HAPLOTYPE);
 
         String haplotype = "*1_HOM";
         EligibilityFunction valid = create(rule, Lists.newArrayList(haplotype));
         assertTrue(resolver.hasValidInputs(valid));
 
         OneHaplotype expected = ImmutableOneHaplotype.builder().haplotype(haplotype).build();
-        assertEquals(expected, resolver.createOneUGT1A1HaplotypeInput(valid));
+        assertEquals(expected, resolver.createOneHaplotypeInput(valid));
 
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not an haplotype"))));

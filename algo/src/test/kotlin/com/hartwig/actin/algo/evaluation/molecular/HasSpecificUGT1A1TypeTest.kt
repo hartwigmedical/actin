@@ -27,7 +27,7 @@ class HasSpecificUGT1A1TypeTest {
             EvaluationResult.FAIL,
             FUNCTION.evaluate(
                 MolecularTestFactory.withUGT1A1(
-                    createPharmacoEntryWithHaplotype("UGT1A1", "*28_HET")
+                    createPharmacoEntryWithHaplotype("UGT1A1", "*28_HOM")
                 )
             )
         )
@@ -39,7 +39,7 @@ class HasSpecificUGT1A1TypeTest {
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(
                 MolecularTestFactory.withUGT1A1(
-                    createPharmacoEntryWithHaplotype("DPYD", "*28_HET")
+                    createPharmacoEntryWithHaplotype("DPYD", "*28_HOM")
                 )
             )
         )

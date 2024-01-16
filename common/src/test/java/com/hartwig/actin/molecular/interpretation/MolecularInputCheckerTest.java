@@ -32,7 +32,7 @@ public class MolecularInputCheckerTest {
     }
 
     @Test
-    public void canDetermineIfStringIsUGT1A1Haplotype() {
+    public void canDetermineIfStringIsHaplotype() {
         assertTrue(MolecularInputChecker.isHaplotype("*1_HOM"));
 
         assertFalse(MolecularInputChecker.isHlaAllele("UGT1A1_1_HOM"));

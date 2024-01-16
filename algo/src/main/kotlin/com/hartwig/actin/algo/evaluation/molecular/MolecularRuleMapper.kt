@@ -191,7 +191,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasSpecificUGT1A1TypeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val haplotypeToFind = functionInputResolver().createOneUGT1A1HaplotypeInput(function)
+            val haplotypeToFind = functionInputResolver().createOneHaplotypeInput(function)
             HasSpecificUGT1A1Type(haplotypeToFind.haplotype())
         }
     }

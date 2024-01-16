@@ -10,11 +10,12 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 class HasSpecificUGT1A1Type internal constructor(private val haplotypeToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val pharmaco = record.molecular().pharmaco()
-        val hasUGT1A1Type = hasUGT1A1Type(pharmaco, haplotypeToFind)
 
         if (pharmaco.find { it.gene() == "UGT1A1" } == null) {
-            return EvaluationFactory.recoverableUndetermined("UGT1A1 type undetermined", "UGT1A1 type undetermined")
+            return EvaluationFactory.recoverableUndetermined("UGT1A1 haplotype undetermined", "UGT1A1 haplotype undetermined")
         }
+
+        val hasUGT1A1Type = hasUGT1A1Type(pharmaco, haplotypeToFind)
 
         if (hasUGT1A1Type) {
             return EvaluationFactory.unrecoverable()
