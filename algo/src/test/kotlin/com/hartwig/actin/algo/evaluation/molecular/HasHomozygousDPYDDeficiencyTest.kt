@@ -8,11 +8,13 @@ import org.junit.Test
 
 class HasHomozygousDPYDDeficiencyTest {
 
+    private val function = HasHomozygousDPYDDeficiency()
+
     @Test
     fun `Should pass if patient has homozygous DPYD haplotypes with reduced function`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
-            FUNCTION.evaluate(
+            function.evaluate(
                 MolecularTestFactory.withDPYD(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
@@ -27,7 +29,7 @@ class HasHomozygousDPYDDeficiencyTest {
     fun `Should pass if patient has heterozygous DPYD haplotypes with both no normal function`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
-            FUNCTION.evaluate(
+            function.evaluate(
                 MolecularTestFactory.withDPYD(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
@@ -43,7 +45,7 @@ class HasHomozygousDPYDDeficiencyTest {
     fun `Should fail if patient has heterozygous DPYD haplotypes with at least one haplotype with normal function`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            FUNCTION.evaluate(
+            function.evaluate(
                 MolecularTestFactory.withDPYD(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
@@ -59,7 +61,7 @@ class HasHomozygousDPYDDeficiencyTest {
     fun `Should fail if patient has homozygous DPYD haplotypes with normal function`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            FUNCTION.evaluate(
+            function.evaluate(
                 MolecularTestFactory.withDPYD(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
@@ -74,7 +76,7 @@ class HasHomozygousDPYDDeficiencyTest {
     fun `Should return undetermined if patient has no DPYD type information`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION.evaluate(
+            function.evaluate(
                 MolecularTestFactory.withDPYD(
                     ImmutablePharmacoEntry.builder()
                         .gene("UGT1A1")
@@ -83,10 +85,6 @@ class HasHomozygousDPYDDeficiencyTest {
                 )
             )
         )
-    }
-
-    companion object {
-        val FUNCTION = HasHomozygousDPYDDeficiency()
     }
 
 }
