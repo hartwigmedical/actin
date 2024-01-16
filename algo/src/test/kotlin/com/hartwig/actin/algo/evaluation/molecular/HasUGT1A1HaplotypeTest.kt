@@ -6,11 +6,11 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry
 import com.hartwig.actin.molecular.datamodel.pharmaco.TestPharmacoFactory
 import org.junit.Test
 
-class HasAtLeastUGT1A1HaplotypeTest {
+class HasUGT1A1HaplotypeTest {
 
     @Test
     fun `Should pass if patient has at least one UGT1A1 allel with required haplotype`() {
-        val function = HasAtLeastUGT1A1Haplotype("*1_HET")
+        val function = HasUGT1A1Haplotype("*1_HET")
 
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
@@ -28,7 +28,7 @@ class HasAtLeastUGT1A1HaplotypeTest {
 
     @Test
     fun `Should fail if patient does not have required UGT1A1 haplotype`() {
-        val function = HasAtLeastUGT1A1Haplotype("*1_HOM")
+        val function = HasUGT1A1Haplotype("*1_HOM")
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -45,7 +45,7 @@ class HasAtLeastUGT1A1HaplotypeTest {
 
     @Test
     fun `Should return undetermined if patient has no UGT1A1 haplotype information`() {
-        val function = HasAtLeastUGT1A1Haplotype("*1_HOM")
+        val function = HasUGT1A1Haplotype("*1_HOM")
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(

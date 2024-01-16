@@ -31,7 +31,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
             EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
-            EligibilityRule.HAS_AT_LEAST_UGT1A1_HAPLOTYPE_X to hasAtLeastUGT1A1HaplotypeCreator(),
+            EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
             EligibilityRule.OVEREXPRESSION_OF_GENE_X to geneIsOverexpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_GENE_X to geneIsNotExpressedCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
@@ -189,10 +189,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasAtLeastUGT1A1HaplotypeCreator(): FunctionCreator {
+    private fun hasUGT1A1HaplotypeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val haplotypeToFind = functionInputResolver().createOneHaplotypeInput(function)
-            HasAtLeastUGT1A1Haplotype(haplotypeToFind.haplotype())
+            HasUGT1A1Haplotype(haplotypeToFind.haplotype())
         }
     }
 
