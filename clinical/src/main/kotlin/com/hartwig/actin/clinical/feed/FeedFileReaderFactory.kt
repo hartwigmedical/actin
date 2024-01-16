@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.feed
 
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
+import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntryValidator
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
 import com.hartwig.actin.clinical.feed.lab.LabEntry
@@ -8,7 +9,9 @@ import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
+import com.hartwig.actin.clinical.feed.surgery.SurgeryEntryFeedValidator
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
+import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionFeedValidator
 
 object FeedFileReaderFactory {
     fun createPatientReader(): FeedFileReader<PatientEntry> {
@@ -24,7 +27,7 @@ object FeedFileReaderFactory {
     }
 
     fun createSurgeryReader(): FeedFileReader<SurgeryEntry> {
-        return FeedFileReader(SurgeryEntry::class.java)
+        return FeedFileReader(SurgeryEntry::class.java, SurgeryEntryFeedValidator())
     }
 
     fun createMedicationReader(): FeedFileReader<MedicationEntry> {
@@ -36,7 +39,7 @@ object FeedFileReaderFactory {
     }
 
     fun createVitalFunctionReader(): FeedFileReader<VitalFunctionEntry> {
-        return FeedFileReader(VitalFunctionEntry::class.java)
+        return FeedFileReader(VitalFunctionEntry::class.java, VitalFunctionFeedValidator())
     }
 
     fun createIntoleranceReader(): FeedFileReader<IntoleranceEntry> {
@@ -44,6 +47,6 @@ object FeedFileReaderFactory {
     }
 
     fun createBodyWeightReader(): FeedFileReader<BodyWeightEntry> {
-        return FeedFileReader(BodyWeightEntry::class.java)
+        return FeedFileReader(BodyWeightEntry::class.java, BodyWeightEntryValidator())
     }
 }

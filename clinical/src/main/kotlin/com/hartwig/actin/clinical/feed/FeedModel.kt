@@ -23,12 +23,12 @@ class FeedModel(private val feed: ClinicalFeed) {
 
     fun bloodTransfusionEntries(subject: String): List<DigitalFileEntry> {
         return entriesForSubject(feed.digitalFileEntries, subject)
-            .filter { obj: DigitalFileEntry -> obj.isBloodTransfusionEntry }
+            .filter { obj: DigitalFileEntry -> obj.isBloodTransfusionEntry() }
     }
 
     fun toxicityEntries(subject: String): List<DigitalFileEntry> {
         return entriesForSubject(feed.digitalFileEntries, subject)
-            .filter { obj: DigitalFileEntry -> obj.isToxicityEntry }
+            .filter { obj: DigitalFileEntry -> obj.isToxicityEntry() }
     }
 
     fun latestQuestionnaireEntry(subject: String): QuestionnaireEntry? {

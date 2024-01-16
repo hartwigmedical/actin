@@ -138,7 +138,7 @@ class ClinicalFeedReaderTest {
             assertEquals("NIBP", entry.codeDisplayOriginal)
             assertEquals("Systolic blood pressure", entry.componentCodeDisplay)
             assertEquals("mm[Hg]", entry.quantityUnit)
-            assertEquals(108.0, entry.quantityValue, EPSILON)
+            assertEquals(108.0, entry.quantityValue!!, EPSILON)
         }
 
         private fun assertIntolerances(entries: List<IntoleranceEntry>) {

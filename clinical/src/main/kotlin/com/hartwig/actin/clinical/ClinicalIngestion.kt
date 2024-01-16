@@ -168,7 +168,7 @@ class ClinicalIngestion(
                 .date(entry.effectiveDateTime)
                 .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal))
                 .subcategory(entry.componentCodeDisplay)
-                .value(entry.quantityValue)
+                .value(entry.quantityValue ?: Double.NaN)
                 .unit(entry.quantityUnit)
                 .build()
         }
