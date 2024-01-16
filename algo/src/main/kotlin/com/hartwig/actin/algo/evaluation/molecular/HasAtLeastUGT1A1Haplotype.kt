@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
-class HasSpecificUGT1A1Type internal constructor(private val haplotypeToFind: String) : EvaluationFunction {
+class HasAtLeastUGT1A1Haplotype internal constructor(private val haplotypeToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val pharmaco = record.molecular().pharmaco()
 
