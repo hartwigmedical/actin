@@ -11,11 +11,12 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 class HasHomozygousDPYDDeficiency internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val pharmaco = record.molecular().pharmaco()
-        val isHomozygousDeficient = isHomozygousDeficient(pharmaco)
 
         if (pharmaco.find { it.gene() == "DPYD" } == null) {
             return EvaluationFactory.recoverableUndetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
         }
+
+        val isHomozygousDeficient = isHomozygousDeficient(pharmaco)
 
         if (isHomozygousDeficient) {
             return unrecoverable()
