@@ -8,6 +8,8 @@ import org.junit.Test
 
 class HasUGT1A1HaplotypeTest {
 
+    private val function = HasUGT1A1Haplotype("*1_HET")
+
     @Test
     fun `Should pass if patient has at least one UGT1A1 allel with required haplotype`() {
         EvaluationAssert.assertMolecularEvaluation(
@@ -54,7 +56,4 @@ class HasUGT1A1HaplotypeTest {
             )
         )
     }
-
-    private val function = HasUGT1A1Haplotype("*1_HET")
-
 }
