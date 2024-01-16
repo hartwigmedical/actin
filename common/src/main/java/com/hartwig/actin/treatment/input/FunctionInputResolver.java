@@ -31,6 +31,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyProteinImpac
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneOneIntegerOneVariantType;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneTwoIntegers;
+import com.hartwig.actin.treatment.input.single.ImmutableOneHaplotype;
 import com.hartwig.actin.treatment.input.single.ImmutableOneHlaAllele;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
@@ -50,6 +51,7 @@ import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts;
 import com.hartwig.actin.treatment.input.single.OneGeneOneInteger;
 import com.hartwig.actin.treatment.input.single.OneGeneOneIntegerOneVariantType;
 import com.hartwig.actin.treatment.input.single.OneGeneTwoIntegers;
+import com.hartwig.actin.treatment.input.single.OneHaplotype;
 import com.hartwig.actin.treatment.input.single.OneHlaAllele;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
@@ -210,6 +212,10 @@ public class FunctionInputResolver {
                 }
                 case ONE_HLA_ALLELE: {
                     createOneHlaAlleleInput(function);
+                    return true;
+                }
+                case ONE_UGT1A1_HAPLOTYPE: {
+                    createOneUGT1A1HaplotypeInput(function);
                     return true;
                 }
                 case ONE_GENE: {
@@ -491,6 +497,18 @@ public class FunctionInputResolver {
         }
 
         return ImmutableOneHlaAllele.builder().allele(allele).build();
+    }
+
+    @NotNull
+    public OneHaplotype createOneUGT1A1HaplotypeInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.ONE_UGT1A1_HAPLOTYPE, 1);
+
+        String haplotype = (String) function.parameters().get(0);
+        if (!MolecularInputChecker.isHaplotype(haplotype)) {
+            throw new IllegalArgumentException("Not a proper UGT1A1 haplotype: " + haplotype);
+        }
+
+        return ImmutableOneHaplotype.builder().haplotype(haplotype).build();
     }
 
     @NotNull

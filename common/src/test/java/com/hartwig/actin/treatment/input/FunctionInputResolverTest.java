@@ -29,6 +29,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyProteinImpac
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneOneIntegerOneVariantType;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneTwoIntegers;
+import com.hartwig.actin.treatment.input.single.ImmutableOneHaplotype;
 import com.hartwig.actin.treatment.input.single.ImmutableOneHlaAllele;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.ImmutableOneIntegerOneString;
@@ -42,6 +43,7 @@ import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts;
 import com.hartwig.actin.treatment.input.single.OneGeneOneInteger;
 import com.hartwig.actin.treatment.input.single.OneGeneOneIntegerOneVariantType;
 import com.hartwig.actin.treatment.input.single.OneGeneTwoIntegers;
+import com.hartwig.actin.treatment.input.single.OneHaplotype;
 import com.hartwig.actin.treatment.input.single.OneHlaAllele;
 import com.hartwig.actin.treatment.input.single.OneIntegerManyStrings;
 import com.hartwig.actin.treatment.input.single.OneIntegerOneString;
@@ -393,6 +395,24 @@ public class FunctionInputResolverTest {
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not an HLA allele"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("A*02:01", "A*02:02"))));
+    }
+
+    @Test
+    public void shouldResolveFunctionsWithOneHaplotypeInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
+
+        EligibilityRule rule = firstOfType(FunctionInput.ONE_UGT1A1_HAPLOTYPE);
+
+        String haplotype = "*1_HOM";
+        EligibilityFunction valid = create(rule, Lists.newArrayList(haplotype));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        OneHaplotype expected = ImmutableOneHaplotype.builder().haplotype(haplotype).build();
+        assertEquals(expected, resolver.createOneUGT1A1HaplotypeInput(valid));
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not an haplotype"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("*1_HOM", "*1_HOM"))));
     }
 
     @Test
