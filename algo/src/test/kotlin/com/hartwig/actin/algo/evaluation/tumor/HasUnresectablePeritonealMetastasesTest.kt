@@ -20,7 +20,7 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should fail if patient has no peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Lymph node")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("retroperitoneal")))
         )
     }
 

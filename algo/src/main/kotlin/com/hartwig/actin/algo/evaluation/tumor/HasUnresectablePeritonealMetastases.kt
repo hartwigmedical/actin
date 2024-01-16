@@ -8,7 +8,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasUnresectablePeritonealMetastases : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasPeritonealMetastases = record.clinical().tumor().otherLesions()?.any { lesion ->
-            lesion.contains("peritoneal", true) || lesion.contains("peritoneum", true)
+            (lesion.contains("peritoneal", true) || lesion.contains("peritoneum", true)) && (!lesion.contains(
+                "retroperitoneal",
+                true
+            ) && !lesion.contains("retroperitoneum", true))
         } ?: false
 
         return if (hasPeritonealMetastases) {
