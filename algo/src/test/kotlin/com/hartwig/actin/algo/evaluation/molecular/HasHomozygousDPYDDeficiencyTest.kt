@@ -9,7 +9,7 @@ import org.junit.Test
 class HasHomozygousDPYDDeficiencyTest {
 
     @Test
-    fun `Should pass if patient has homozgyous DPYD haplotypes with reduced function`() {
+    fun `Should pass if patient has homozygous DPYD haplotypes with reduced function`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(

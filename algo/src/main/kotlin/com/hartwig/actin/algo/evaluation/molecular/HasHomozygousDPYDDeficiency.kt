@@ -14,7 +14,7 @@ class HasHomozygousDPYDDeficiency internal constructor() : EvaluationFunction {
         val isHomozygousDeficient = isHomozygousDeficient(pharmaco)
 
         if (pharmaco.find { it.gene() == "DPYD" } == null) {
-            return EvaluationFactory.recoverableUndetermined("DPYD type undetermined", "DPYD type undetermined")
+            return EvaluationFactory.recoverableUndetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
         }
 
         if (isHomozygousDeficient) {
