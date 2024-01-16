@@ -6,15 +6,15 @@ import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HasLimitedBloodPressureTest {
 
-    private val referenceDate = LocalDate.of(2020, 11, 19)
-    private val function = HasLimitedBloodPressure(BloodPressureCategory.SYSTOLIC, 140)
+    private val function = HasLimitedBloodPressure(BloodPressureCategory.SYSTOLIC, 140, LocalDate.of(2023, 12, 1))
 
     @Test
     fun `Should fail when systolic blood pressure above maximum`() {
-        val bloodPressures = listOf(systolic().date(referenceDate).value(145.0).build())
+        val bloodPressures = listOf(systolic().date(LocalDateTime.of(2023, 12, 2, 0, 0)).value(145.0).valid(true).build())
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures))

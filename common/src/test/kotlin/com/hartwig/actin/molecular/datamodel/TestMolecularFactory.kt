@@ -24,7 +24,9 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
@@ -172,7 +174,16 @@ object TestMolecularFactory {
                     isReportable = true,
                     event = "PTEN del",
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = TestActionableEvidenceFactory.withExternalEligibleTrial("Trial 1"),
+                    evidence = TestActionableEvidenceFactory.withExternalEligibleTrial(
+                        TestExternalTrialFactory.create(
+                            title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in "
+                                    + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment "
+                                    + "for Participants With Advanced Solid Tumor (acronym)",
+                            countries = setOf(Country.BELGIUM, Country.GERMANY),
+                            url = "https://clinicaltrials.gov/study/NCT00000002",
+                            nctId = "NCT00000002"
+                        )
+                    ),
                     gene = "PTEN",
                     geneRole = GeneRole.TSG,
                     proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
@@ -215,7 +226,14 @@ object TestMolecularFactory {
                 isReportable = true,
                 event = "MYC amp",
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestActionableEvidenceFactory.createExhaustive(),
+                evidence = TestActionableEvidenceFactory.withExternalEligibleTrial(
+                    TestExternalTrialFactory.create(
+                        title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
+                        countries = setOf(Country.NETHERLANDS),
+                        url = "https://clinicaltrials.gov/study/NCT00000003",
+                        nctId = "NCT00000003",
+                    )
+                ),
                 gene = "MYC",
                 type = CopyNumberType.FULL_GAIN,
                 minCopies = 38,

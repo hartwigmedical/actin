@@ -5,38 +5,40 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import java.time.LocalDate
 
-class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double) : EvaluationFunction {
+class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double, private val minimumDate: LocalDate) :
+    EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val pulseOximetries = VitalFunctionSelector.select(
-            record.clinical.vitalFunctions,
-            VitalFunctionCategory.SPO2,
-            null,
-            MAX_PULSE_OXIMETRY_TO_USE
-        )
-        if (pulseOximetries.isEmpty()) {
-            return EvaluationFactory.recoverableUndetermined("No pulse oximetries readouts found")
+        val relevant = VitalFunctionSelector.selectMedianPerDay(record, VitalFunctionCategory.SPO2, MAX_PULSE_OXIMETRY_TO_USE, minimumDate)
+        val wrongUnit = VitalFunctionSelector.selectRecentVitalFunctionsWrongUnit(record, VitalFunctionCategory.SPO2)
+
+        if (relevant.isEmpty()) {
+            return EvaluationFactory.undetermined(
+                if (wrongUnit.isEmpty()) {
+                    "No (recent) pulse oximetry data found"
+                } else {
+                    "Pulse oximetry measurements not in correct unit (${EXPECTED_UNIT})"
+                }
+            )
         }
-        val median = VitalFunctionFunctions.determineMedianValue(pulseOximetries)
+
+        val median = VitalFunctionFunctions.determineMedianValue(relevant)
         return if (median.compareTo(minMedianPulseOximetry) >= 0) {
             EvaluationFactory.recoverablePass(
                 "Patient has median pulse oximetry exceeding $minMedianPulseOximetry",
                 "Pulse oximetry above $minMedianPulseOximetry"
             )
-        } else if (pulseOximetries.any { it.value.compareTo(minMedianPulseOximetry) >= 0 }) {
-            return EvaluationFactory.recoverableUndetermined(
-                "Patient has median pulse oximetry below $minMedianPulseOximetry but also at least one "
-                        + "measure above $minMedianPulseOximetry", "Pulse oximetry requirements"
-            )
         } else {
             EvaluationFactory.recoverableFail(
-                "Patient has median pulse oximetry below $minMedianPulseOximetry",
-                "Pulse oximetry below $minMedianPulseOximetry"
+                "Patient has median pulse oximetry ($median%) below $minMedianPulseOximetry",
+                "Median pulse oximetry ($median%) below $minMedianPulseOximetry"
             )
         }
     }
 
     companion object {
+        private const val EXPECTED_UNIT: String = "percent"
         private const val MAX_PULSE_OXIMETRY_TO_USE = 5
     }
 }

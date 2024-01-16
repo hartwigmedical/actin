@@ -5,7 +5,6 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabaseFactory
-import com.hartwig.actin.molecular.orange.evidence.curation.ExternalTrialMappingFile
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
@@ -56,10 +55,6 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
             knownEvents: KnownEvents
         ): EvidenceDatabase {
             val actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
-            LOGGER.info("Loading external trial to ACTIN mapping TSV from {}", config.externalTrialMappingTsv)
-
-            val mappings = ExternalTrialMappingFile.read(config.externalTrialMappingTsv)
-            LOGGER.info(" Loaded {} mappings", mappings.size)
 
             LOGGER.info("Loading clinical json from {}", config.clinicalJson)
             val clinical = ClinicalRecordJson.read(config.clinicalJson)
@@ -74,7 +69,7 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
             val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
 
             LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
-            return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, mappings, doidEntry, tumorDoids)
+            return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
         }
 
         private fun toServeRefGenomeVersion(refGenomeVersion: OrangeRefGenomeVersion): RefGenome {

@@ -23,4 +23,9 @@ enum class TreatmentCategory : Displayable {
     override fun display(): String {
         return TreatmentCategoryResolver.toString(this).lowercase()
     }
+
+    companion object {
+        val CANCER_TREATMENT_CATEGORIES: Set<TreatmentCategory> =
+            setOf(CHEMOTHERAPY, TARGETED_THERAPY, IMMUNOTHERAPY, HORMONE_THERAPY, TRIAL, CAR_T, TCR_T, GENE_THERAPY)
+    }
 }

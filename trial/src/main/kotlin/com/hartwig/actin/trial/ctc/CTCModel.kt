@@ -52,7 +52,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
         trialDefinitionValidationErrors.add(
             TrialDefinitionValidationError(
                 trialConfig,
-                "No study status found in CTC for trial"
+                "No study status found in CTC overview, using manually configured status for study status"
             )
         )
         return null

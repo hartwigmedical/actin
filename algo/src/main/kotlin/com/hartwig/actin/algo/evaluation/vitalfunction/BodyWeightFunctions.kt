@@ -3,40 +3,46 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
+import java.time.LocalDate
+import kotlin.math.ceil
 
 object BodyWeightFunctions {
 
-    fun evaluatePatientForMaximumBodyWeight(record: PatientRecord, maxBodyWeight: Double): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false)
+    fun evaluatePatientForMaximumBodyWeight(record: PatientRecord, maxBodyWeight: Double, minimumDate: LocalDate): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false, minimumDate)
         }
 
-    fun evaluatePatientForMinimumBodyWeight(record: PatientRecord, minBodyWeight: Double): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true)
+    fun evaluatePatientForMinimumBodyWeight(record: PatientRecord, minBodyWeight: Double, minimumDate: LocalDate): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true, minimumDate)
     }
 
     private fun evaluatePatientBodyWeightAgainstReference(
-        record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean
+        record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean, minimumDate: LocalDate
     ): Evaluation {
-        val mostRecent = record.clinical.bodyWeights.sortedWith(BodyWeightDescendingDateComparator()).firstOrNull()
-            ?: return EvaluationFactory.undetermined(
-                "No body weights found", "No body weights found"
-            )
+        val relevant = selectMedianBodyWeightPerDay(record, minimumDate)
+            ?: return if (record.clinical.bodyWeights.isNotEmpty() &&
+                record.clinical.bodyWeights.none { it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }
+            ) {
+                EvaluationFactory.undetermined(
+                    "Body weights not measured in $EXPECTED_UNIT",
+                    "Invalid body weight unit"
+                )
+            } else {
+                EvaluationFactory.recoverableUndetermined(
+                    "No (recent) body weights found", "No (recent) body weights found"
+                )
+            }
 
-        if (!mostRecent.unit.equals(EXPECTED_UNIT, ignoreCase = true)) {
-            return EvaluationFactory.undetermined(
-                "Most recent body weight not measured in $EXPECTED_UNIT",
-                "Invalid body weight unit"
-            )
-        }
-
-        val comparison = mostRecent.value.compareTo(referenceBodyWeight)
+        val median = determineMedianBodyWeight(relevant)
+        val comparison = median.compareTo(referenceBodyWeight)
 
         return when {
 
             comparison < 0 -> {
-                val specificMessage = "Patient body weight ({$mostRecent kg}) is below $referenceBodyWeight kg"
-                val generalMessage = "Body weight ({$mostRecent kg}) below $referenceBodyWeight kg"
+                val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
+                val generalMessage = "Median body weight ($median kg) below $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
                     EvaluationFactory.fail(specificMessage, generalMessage)
                 } else {
@@ -45,15 +51,15 @@ object BodyWeightFunctions {
             }
 
             comparison == 0 -> {
-                val specificMessage = "Patient body weight ({$mostRecent kg}) is equal to $referenceBodyWeight kg"
-                val generalMessage = "Body weight ({$mostRecent kg}) equal to $referenceBodyWeight kg"
+                val specificMessage = "Patient median body weight ($median kg) is equal to $referenceBodyWeight kg"
+                val generalMessage = "Median body weight ($median kg) equal to $referenceBodyWeight kg"
 
                 return EvaluationFactory.pass(specificMessage, generalMessage)
             }
 
             else -> {
-                val specificMessage = "Patient body weight ({$mostRecent kg}) is above $referenceBodyWeight kg"
-                val generalMessage = "Body weight ({$mostRecent kg}) above $referenceBodyWeight kg"
+                val specificMessage = "Patient median body weight ($median kg) is above $referenceBodyWeight kg"
+                val generalMessage = "Median body weight ($median kg) above $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
                     EvaluationFactory.pass(specificMessage, generalMessage)
                 } else {
@@ -63,7 +69,38 @@ object BodyWeightFunctions {
         }
     }
 
+    fun selectMedianBodyWeightPerDay(record: PatientRecord, minimalDate: LocalDate): List<BodyWeight>? {
+        val result = record.clinical.bodyWeights
+            .filter { it.date.toLocalDate() > minimalDate && it.valid }
+            .groupBy { it.date }
+            .map { selectMedianBodyWeightValue(it.value) }
+            .sortedWith(BodyWeightDescendingDateComparator())
+            .take(MAX_ENTRIES)
+        return result.ifEmpty { null }
+    }
+
+    private fun selectMedianBodyWeightValue(bodyWeights: List<BodyWeight>): BodyWeight {
+        val sorted = bodyWeights.sortedBy(BodyWeight::value)
+        return sorted[ceil(sorted.size / 2.0).toInt() - 1]
+
+    }
+
+    private fun sortedBodyWeightValues(bodyWeights: Iterable<BodyWeight>): List<Double> {
+        return bodyWeights.map { it.value }.sorted()
+    }
+
+    fun determineMedianBodyWeight(bodyWeights: Iterable<BodyWeight>): Double {
+        val values = sortedBodyWeightValues(bodyWeights)
+        val index = ceil(values.size / 2.0).toInt() - 1
+        return if (values.size % 2 == 0) {
+            0.5 * (values[index] + values[index + 1])
+        } else {
+            values[index]
+        }
+    }
+
     const val EXPECTED_UNIT = "kilogram"
+    private const val MAX_ENTRIES = 5
 }
 
 

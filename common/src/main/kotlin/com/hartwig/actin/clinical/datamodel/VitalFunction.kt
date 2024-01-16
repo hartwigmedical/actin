@@ -1,11 +1,12 @@
 package com.hartwig.actin.clinical.datamodel
 
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class VitalFunction(
-    val date: LocalDate,
+    val date: LocalDateTime,
     val category: VitalFunctionCategory,
     val subcategory: String,
     val value: Double,
-    val unit: String
+    val unit: String,
+    val valid: Boolean
 )

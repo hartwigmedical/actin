@@ -27,9 +27,11 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.createEmpty
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withApprovedTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withPreClinicalTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.fromJson
@@ -103,7 +105,14 @@ class MolecularRecordJsonTest {
             assertThat(characteristics.isHomologousRepairDeficient!!).isTrue
             assertThat(characteristics.homologousRepairEvidence).isEqualTo(
                 ActionableEvidence(
-                    externalEligibleTrials = setOf("PARP trial"),
+                    externalEligibleTrials = setOf(
+                        TestExternalTrialFactory.create(
+                            title = "PARP trial",
+                            countries = setOf(Country.NETHERLANDS, Country.GERMANY),
+                            url = "https://clinicaltrials.gov/study/NCT00000001",
+                            nctId = "NCT00000001"
+                        )
+                    ),
                     onLabelExperimentalTreatments = setOf("PARP on label"),
                     offLabelExperimentalTreatments = setOf("PARP off label")
                 )

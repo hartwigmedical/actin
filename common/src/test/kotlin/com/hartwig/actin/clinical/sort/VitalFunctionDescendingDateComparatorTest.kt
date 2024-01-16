@@ -21,11 +21,12 @@ class VitalFunctionDescendingDateComparatorTest {
     companion object {
         private fun withDate(date: LocalDate): VitalFunction {
             return VitalFunction(
-                date = date,
+                date = date.atStartOfDay(),
                 category = VitalFunctionCategory.HEART_RATE,
                 subcategory = "",
                 value = 0.0,
-                unit = ""
+                unit = "",
+                valid = true
             )
         }
     }

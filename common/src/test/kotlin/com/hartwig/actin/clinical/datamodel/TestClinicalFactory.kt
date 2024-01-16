@@ -14,10 +14,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 object TestClinicalFactory {
-    private val TODAY = LocalDate.now()
+    private val NOW = LocalDateTime.now()
+    private val TODAY = NOW.toLocalDate()
     private const val DAYS_SINCE_QUESTIONNAIRE = 10
     private const val DAYS_SINCE_REGISTRATION = 15
     private const val DAYS_SINCE_LAB_MEASUREMENT_1 = 30
@@ -454,19 +455,20 @@ object TestClinicalFactory {
 
     private fun createTestBodyWeights(): List<BodyWeight> {
         return listOf(
-            BodyWeight(date = TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_1.toLong()), value = 70.0, unit = "Kilogram"),
-            BodyWeight(date = TODAY.minusDays(DAYS_SINCE_BODY_WEIGHT_2.toLong()), value = 68.0, unit = "Kilogram")
+            BodyWeight(date = NOW.minusDays(DAYS_SINCE_BODY_WEIGHT_1.toLong()), value = 70.0, unit = "Kilogram", valid = true),
+            BodyWeight(date = NOW.minusDays(DAYS_SINCE_BODY_WEIGHT_2.toLong()), value = 68.0, unit = "Kilogram", valid = true)
         )
     }
 
     private fun createTestVitalFunctions(): List<VitalFunction> {
         return listOf(
             VitalFunction(
-                date = TODAY.minusDays(DAYS_SINCE_BLOOD_PRESSURE.toLong()),
+                date = NOW.minusDays(DAYS_SINCE_BLOOD_PRESSURE.toLong()),
                 category = VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE,
                 subcategory = "Mean blood pressure",
                 value = 99.0,
-                unit = "mm[Hg]"
+                unit = "mm[Hg]",
+                valid = true
             )
         )
     }

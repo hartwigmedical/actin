@@ -9,10 +9,12 @@ import com.google.gson.JsonParseException
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentClass
+import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
 import com.hartwig.actin.util.json.Json.integer
 import com.hartwig.actin.util.json.Json.string
 import java.lang.reflect.Type
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 object ClinicalGsonDeserializer {
     fun create(): Gson {
@@ -27,6 +29,7 @@ object ClinicalGsonDeserializer {
         return GsonBuilder().serializeNulls()
             .enableComplexMapKeySerialization()
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
+            .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
     }
 

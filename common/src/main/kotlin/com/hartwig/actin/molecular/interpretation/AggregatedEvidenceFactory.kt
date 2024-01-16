@@ -67,7 +67,7 @@ object AggregatedEvidenceFactory {
                 evidence.preClinicalTreatments,
                 evidence.knownResistantTreatments,
                 evidence.suspectResistantTreatments
-            ).any(Set<String>::isNotEmpty)
+            ).any(Set<Any>::isNotEmpty)
         }
     }
 
@@ -111,14 +111,14 @@ object AggregatedEvidenceFactory {
         )
     }
 
-    private fun mergeMapsOfLists(mapsOfSets: List<Map<String, List<String>>>): Map<String, List<String>> {
+    private fun <T> mergeMapsOfLists(mapsOfSets: List<Map<String, List<T>>>): Map<String, List<T>> {
         return mapsOfSets
             .flatMap { it.entries }
             .groupBy({ it.key }, { it.value })
             .mapValues { it.value.flatten() }
     }
 
-    private fun evidenceMap(event: String, evidenceSubSet: Set<String>): Map<String, List<String>> {
+    private fun <T> evidenceMap(event: String, evidenceSubSet: Set<T>): Map<String, List<T>> {
         return if (evidenceSubSet.isEmpty()) emptyMap() else mapOf(event to evidenceSubSet.toList())
     }
 }

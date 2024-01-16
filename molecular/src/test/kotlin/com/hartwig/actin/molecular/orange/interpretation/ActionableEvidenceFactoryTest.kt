@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.Country
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.orange.evidence.actionability.TestServeActionabilityFactory
@@ -107,8 +109,11 @@ class ActionableEvidenceFactoryTest {
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
         assertThat(evidence!!.approvedTreatments).isEmpty()
-        assertThat(evidence.externalEligibleTrials).hasSize(1)
-        assertThat(evidence.externalEligibleTrials).contains("On-label responsive trial")
+        assertThat(evidence.externalEligibleTrials).containsExactly(
+            TestExternalTrialFactory.create(
+                "On-label responsive trial", setOf(Country.OTHER), "https://clinicaltrials.gov/study/NCT00000001", "NCT00000001"
+            )
+        )
         assertThat(evidence.onLabelExperimentalTreatments).isEmpty()
         assertThat(evidence.offLabelExperimentalTreatments).isEmpty()
         assertThat(evidence.preClinicalTreatments).isEmpty()

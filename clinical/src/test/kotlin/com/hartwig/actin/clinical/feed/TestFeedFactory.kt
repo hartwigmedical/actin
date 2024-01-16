@@ -14,6 +14,7 @@ import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory
 import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 val FEED_DIRECTORY: String = Resources.getResource("feed").path + "/"
 object TestFeedFactory {
@@ -205,11 +206,40 @@ object TestFeedFactory {
         return listOf(
             VitalFunctionEntry(
                 subject = TEST_SUBJECT,
-                effectiveDateTime = LocalDate.of(2021, 2, 27),
+                effectiveDateTime = LocalDateTime.of(2021, 2, 27, 12, 30, 0, 0),
                 codeDisplayOriginal = "NIBP",
-                componentCodeDisplay = "systolic",
-                quantityUnit = "mm[Hg]",
-                quantityValue = 120.0
+                componentCodeDisplay = "Systolic blood pressure",
+                quantityUnit = "mmHg",
+                quantityValue = 120.0,
+                valid = true
+
+            ),
+            VitalFunctionEntry(
+                subject = TEST_SUBJECT,
+                effectiveDateTime = LocalDateTime.of(2021, 2, 26, 12, 30, 0, 0),
+                codeDisplayOriginal = "NIBP",
+                componentCodeDisplay = "Systolic blood pressure",
+                quantityUnit = "mmHg",
+                quantityValue = 1200.0,
+                valid = false
+            ),
+            VitalFunctionEntry(
+                subject = TEST_SUBJECT,
+                effectiveDateTime = LocalDateTime.of(2021, 2, 27, 12, 30, 0, 0),
+                codeDisplayOriginal = "NIBP",
+                componentCodeDisplay = "Systolic blood pressure",
+                quantityUnit = "mmHg",
+                quantityValue = 120.0,
+                valid = true
+            ),
+            VitalFunctionEntry(
+                subject = TEST_SUBJECT,
+                effectiveDateTime = LocalDateTime.of(2021, 2, 27, 12, 30, 0, 0),
+                codeDisplayOriginal = "NIBP",
+                componentCodeDisplay = "Diastolic blood pressure",
+                quantityUnit = "mmHg",
+                quantityValue = 120.0,
+                valid = true
             )
         )
     }
@@ -236,17 +266,26 @@ object TestFeedFactory {
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 58.1,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDate.of(2018, 4, 5),
+                effectiveDateTime = LocalDateTime.of(2018, 4, 5, 12, 30, 0),
+                valid = true
             ), BodyWeightEntry(
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 61.1,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDate.of(2018, 5, 5),
+                effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0),
+                valid = true
             ), BodyWeightEntry(
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 61.1,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDate.of(2018, 5, 5)
+                effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0),
+                valid = true
+            ), BodyWeightEntry(
+                subject = TEST_SUBJECT,
+                valueQuantityValue = 611.0,
+                valueQuantityUnit = "kilogram",
+                effectiveDateTime = LocalDateTime.of(2018, 5, 4, 12, 30, 0),
+                valid = false
             )
         )
     }

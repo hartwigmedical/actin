@@ -7,6 +7,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFact
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withOnLabelExperimentalTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withPreClinicalTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withSuspectResistantTreatment
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -15,7 +16,7 @@ class ActionableEvidenceComparatorTest {
     @Test
     fun `Should sort actionable evidences`() {
         val evidence1 = withApprovedTreatment("treatment")
-        val evidence2 = withExternalEligibleTrial("treatment")
+        val evidence2 = withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
         val evidence3 = withOnLabelExperimentalTreatment("treatment")
         val evidence4 = withOffLabelExperimentalTreatment("treatment")
         val evidence5 = withPreClinicalTreatment("treatment")

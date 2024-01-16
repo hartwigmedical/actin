@@ -19,6 +19,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -101,7 +102,8 @@ class MolecularDriversSummarizerTest {
 
     @Test
     fun shouldReturnActionableEventsThatAreNotKeyDrivers() {
-        val externalEvidence = TestActionableEvidenceFactory.withExternalEligibleTrial("external")
+        val externalEvidence =
+            TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
         val approvedTreatment = TestActionableEvidenceFactory.withApprovedTreatment("approved")
         val cohorts = listOf(
             evaluatedCohort(

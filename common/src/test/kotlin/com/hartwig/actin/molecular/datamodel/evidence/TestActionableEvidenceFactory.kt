@@ -9,7 +9,7 @@ object TestActionableEvidenceFactory {
     fun createExhaustive(): ActionableEvidence {
         return ActionableEvidence(
             approvedTreatments = setOf("approved"),
-            externalEligibleTrials = setOf("external trial"),
+            externalEligibleTrials = setOf(TestExternalTrialFactory.createTestTrial()),
             onLabelExperimentalTreatments = setOf("on-label experimental"),
             offLabelExperimentalTreatments = setOf("off-label experimental"),
             preClinicalTreatments = setOf("pre-clinical"),
@@ -22,7 +22,7 @@ object TestActionableEvidenceFactory {
         return ActionableEvidence(approvedTreatments = setOf(treatment))
     }
 
-    fun withExternalEligibleTrial(treatment: String): ActionableEvidence {
+    fun withExternalEligibleTrial(treatment: ExternalTrial): ActionableEvidence {
         return ActionableEvidence(externalEligibleTrials = setOf(treatment))
     }
 

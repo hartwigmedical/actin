@@ -12,7 +12,6 @@ java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplicati
    -orange_json /path/to/orange.json \
    -serve_directory /path/to/serve_directory \
    -known_genes_tsv /path/to/known_genes.tsv \
-   -external_trial_mapping_tsv /path/to/external_trial_mapping.tsv \
    -clinical_json /path/to/actin_clinical.json \
    -output_directory /path/to/where/molecular_json_file_is_written
 ```
@@ -30,9 +29,6 @@ The following assumptions are made about the inputs:
 - The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
   extract
   the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
-- The external trial mapping TSV file enables mapping of external trial acronyms to those used in ACTIN trial database, to avoid duplication
-  of trials in case different acronyms are used in different sources. An example can be
-  found [here](https://github.com/hartwigmedical/actin/blob/master/molecular/src/test/resources/curation/external_trial_mapping.tsv).
 
 ## ACTIN Molecular Datamodel
 
@@ -42,15 +38,15 @@ Overall, a molecular record belongs to a `sampleId` (which belongs to a `patient
 
 ### 1 molecular base data
 
-| Field                | Example Value | Details                                                                                                                                   |
-|----------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| type                 | WGS           | The type of molecular experiment done, either `WGS` or `PANEL`                                                                            |
-| refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                   |
-| date                 | 2022-01-14    | The date on which the molecular results were obtained                                                                                     |
-| evidenceSource       | CKB_EVIDENCE  | The name of the provider of the evidence. Currently always `CKB_EVIDENCE`                                                                 |
-| externalTrialSource  | ICLUSION      | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `ICLUSION` |
-| containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                             |
-| hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                            |
+| Field                | Example Value | Details                                                                                                                                    |
+|----------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| type                 | WGS           | The type of molecular experiment done, either `WGS` or `PANEL`                                                                             |
+| refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                    |
+| date                 | 2022-01-14    | The date on which the molecular results were obtained                                                                                      |
+| evidenceSource       | CKB_EVIDENCE  | The name of the provider of the evidence. Currently always `CKB_EVIDENCE`                                                                  |
+| externalTrialSource  | CKB_TRIAL     | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `CKB_TRIAL` |
+| containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                              |
+| hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                             |
 
 ### 1 molecular characteristics
 
@@ -243,7 +239,7 @@ Do note that gene matching only ever populates the `geneRole` field. Any gene-le
 
 Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB_EVIDENCE`
 except for
-external trials which is populated by `ICLUSION`. The evidence annotations occur in the following order:
+external trials which is populated by `CKB_TRIAL`. The evidence annotations occur in the following order:
 
 1. Collect all on-label and off-label applicable evidences that match with the driver / characteristic
 2. Map the evidences to the ACTIN evidence datamodel (above).
@@ -286,7 +282,7 @@ The evidences are then mapped to the ACTIN evidence model as follows:
 
 Notes:
 
-- All responsive on-label evidence from `ICLUSION` is mapped to external trials in ACTIN datamodel
+- All responsive on-label evidence from `CKB_TRIAL` is mapped to external trials in ACTIN datamodel
 - Responsive treatments are cleaned according to their evidence level. The highest evidence levels for each treatment are kept (such that an
   approved treatment cannot also be a pre-clinical treatment)
 - Resistant treatments are retained only in case responsive evidence for the same treatment is present as well (either approved or
@@ -305,7 +301,7 @@ Molecular base data:
 | refGenomeVersion     | Extracted from ORANGE field `refGenomeVersion` | 
 | date                 | The ORANGE field `experimentDate`              |
 | evidenceSource       | Hard-coded to `CKB_EVIDENCE`                   |
-| externalTrialSource  | Hard-coded to `ICLUSION`                       |
+| externalTrialSource  | Hard-coded to `CKB_TRIAL`                      |
 | containsTumorCells   | The PURPLE field `containsTumorCells`          |
 | hasSufficientQuality | The PURPLE field `hasSufficientQuality`        |
 

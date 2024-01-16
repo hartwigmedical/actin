@@ -74,18 +74,16 @@ class MolecularPrinter(private val printer: DatamodelPrinter) {
                 null -> {
                     "Unknown"
                 }
-
                 true -> {
                     "Yes"
                 }
-
                 else -> {
                     "No"
                 }
             }
         }
 
-        private fun keys(map: Map<String, List<String>>): String {
+        private fun <T> keys(map: Map<String, List<T>>): String {
             return concat(map.keys)
         }
 

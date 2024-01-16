@@ -11,7 +11,6 @@ import org.apache.logging.log4j.core.config.Configurator
 data class OrangeInterpreterConfig(
     val orangeJson: String,
     val serveDirectory: String,
-    val externalTrialMappingTsv: String,
     val clinicalJson: String,
     val doidJson: String,
     val outputDirectory: String
@@ -22,7 +21,6 @@ data class OrangeInterpreterConfig(
             val options = Options()
             options.addOption(ORANGE_JSON, true, "Path of the ORANGE json to be interpreted")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
-            options.addOption(EXTERNAL_TRIAL_MAPPING_TSV, true, "A mapping from external trial names to ACTIN trials")
             options.addOption(CLINICAL_JSON, true, "The clinical JSON of the patient for which a sample is analyzed")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
@@ -38,7 +36,6 @@ data class OrangeInterpreterConfig(
             return OrangeInterpreterConfig(
                 orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
-                externalTrialMappingTsv = ApplicationConfig.nonOptionalFile(cmd, EXTERNAL_TRIAL_MAPPING_TSV),
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
@@ -50,7 +47,6 @@ data class OrangeInterpreterConfig(
 
         // Params for clinical annotation and interpretation
         private const val SERVE_DIRECTORY: String = "serve_directory"
-        private const val EXTERNAL_TRIAL_MAPPING_TSV: String = "external_trial_mapping_tsv"
         private const val CLINICAL_JSON: String = "clinical_json"
         private const val DOID_JSON: String = "doid_json"
         private const val OUTPUT_DIRECTORY: String = "output_directory"

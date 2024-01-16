@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
 import com.hartwig.actin.molecular.interpretation.ImmutableAggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
@@ -13,9 +14,18 @@ class EvidenceInterpreterTest {
         val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(listOf(cohortWithInclusion))
         val evidence: AggregatedEvidence = ImmutableAggregatedEvidence.builder()
             .putApprovedTreatmentsPerEvent("approved", "treatment")
-            .putExternalEligibleTrialsPerEvent("external", "treatment")
-            .putExternalEligibleTrialsPerEvent("approved", "treatment")
-            .putExternalEligibleTrialsPerEvent("inclusion", "treatment")
+            .putExternalEligibleTrialsPerEvent(
+                "external",
+                TestExternalTrialFactory.createTestTrial()
+            )
+            .putExternalEligibleTrialsPerEvent(
+                "approved",
+                TestExternalTrialFactory.createTestTrial()
+            )
+            .putExternalEligibleTrialsPerEvent(
+                "inclusion",
+                TestExternalTrialFactory.createTestTrial()
+            )
             .putOnLabelExperimentalTreatmentsPerEvent("on-label", "treatment")
             .putOnLabelExperimentalTreatmentsPerEvent("approved", "treatment")
             .putOffLabelExperimentalTreatmentsPerEvent("off-label", "treatment")

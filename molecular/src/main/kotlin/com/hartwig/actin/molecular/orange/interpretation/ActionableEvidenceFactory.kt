@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.Country
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.ActionableEvent
@@ -52,9 +54,32 @@ object ActionableEvidenceFactory {
             externalEligibleTrials = onLabelEvents.filter { onLabelEvent ->
                 onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive
             }
-                .map { it.treatment().name() }
+                .map { onLabelEvent ->
+                    val nctUrl = extractNctUrl(onLabelEvent)
+                    ExternalTrial(
+                        title = onLabelEvent.treatment().name(),
+                        // evidenceUrls() contains a set of countries
+                        countries = onLabelEvent.evidenceUrls().map(::determineCountry).toSet(),
+                        url = nctUrl,
+                        nctId = nctUrl.takeLast(11),
+                    )
+                }
                 .toSet()
         )
+    }
+
+    private fun determineCountry(country: String): Country {
+        return when (country) {
+            "Netherlands" -> Country.NETHERLANDS
+            "Belgium" -> Country.BELGIUM
+            "Germany" -> Country.GERMANY
+            else -> Country.OTHER
+        }
+    }
+
+    private fun extractNctUrl(event: ActionableEvent): String {
+        return event.sourceUrls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
+            ?: throw IllegalStateException("Found no URL ending with a NCT id: " + event.sourceUrls().joinToString { ", " })
     }
 
     private fun responsiveOnLabelEvidence(onLabelResponsiveEvent: ActionableEvent): ActionableEvidence {

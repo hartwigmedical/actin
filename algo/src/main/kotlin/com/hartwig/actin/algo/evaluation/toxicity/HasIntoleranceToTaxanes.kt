@@ -5,19 +5,19 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.clinical.datamodel.Intolerance
 
-class HasIntoleranceToTaxanes internal constructor() : EvaluationFunction {
-
+class HasIntoleranceToTaxanes : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val allergies = record.clinical.intolerances
-            .filter { TAXANES.contains(it.name.lowercase()) }
-            .map { it.name }
+        val taxaneAllergies = record.clinical.intolerances.map(Intolerance::name)
+            .filter { stringCaseInsensitivelyMatchesQueryCollection(it, TAXANES) }
             .toSet()
 
-        return if (allergies.isNotEmpty()) {
+        return if (taxaneAllergies.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient has allergy to a taxane: " + concat(allergies),
-                "Taxane allergy: " + concat(allergies)
+                "Patient has allergy to a taxane: " + concat(taxaneAllergies),
+                "Taxane allergy: " + concat(taxaneAllergies)
             )
         } else
             EvaluationFactory.fail(
@@ -27,6 +27,6 @@ class HasIntoleranceToTaxanes internal constructor() : EvaluationFunction {
     }
 
     companion object {
-        val TAXANES = setOf("paclitaxel", "docetaxel", "cabazitaxel")
+        val TAXANES = setOf("paclitaxel", "docetaxel", "cabazitaxel", "nab-paclitaxel", "Abraxane", "Jevtana", "Tesetaxel")
     }
 }

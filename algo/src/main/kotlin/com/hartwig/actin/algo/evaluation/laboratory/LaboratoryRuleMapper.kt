@@ -180,13 +180,19 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return FunctionCreator { function: EligibilityFunction ->
             val minCreatinineClearance = functionInputResolver().createOneDoubleInput(function)
             val measurement = retrieveForMethod(method)
+            val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val main = createLabEvaluator(
                 measurement,
                 HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit)
             )
             val fallback = createLabEvaluator(
                 LabMeasurement.CREATININE,
-                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, minCreatinineClearance)
+                HasSufficientDerivedCreatinineClearance(
+                    referenceDateProvider().year(),
+                    method,
+                    minCreatinineClearance,
+                    minimalDateWeightMeasurements
+                )
             )
             Fallback(main, fallback)
         }
@@ -196,13 +202,14 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         return FunctionCreator { function: EligibilityFunction ->
             val inputs = functionInputResolver().createTwoDoublesInput(function)
             val measurement = retrieveForMethod(method)
+            val mininumDateForBodyWeights = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val minFunction = createLabEvaluator(
                 measurement,
-                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1)
+                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1, mininumDateForBodyWeights)
             )
             val maxFunction = createLabEvaluator(
                 measurement,
-                HasLimitedDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double2)
+                HasLimitedDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double2, mininumDateForBodyWeights)
             )
             And(listOf(minFunction, maxFunction))
         }
@@ -258,6 +265,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     companion object {
         private const val MAX_LAB_VALUE_AGE_DAYS_FOR_VALIDITY = 90
         private const val MAX_LAB_VALUE_AGE_DAYS_FOR_PASS = 30
+        private const val BODY_WEIGHT_MAX_AGE_MONTHS = 1
         private fun retrieveForMethod(method: CreatinineClearanceMethod): LabMeasurement {
             return when (method) {
                 CreatinineClearanceMethod.EGFR_MDRD -> LabMeasurement.EGFR_MDRD
