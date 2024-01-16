@@ -18,11 +18,11 @@ class HasUnresectablePeritonealMetastases : EvaluationFunction {
 
         return if (hasPeritonealMetastases) {
             EvaluationFactory.warn(
-                "Peritoneal metastases are present which could be unresectable",
-                "Peritoneal metastases which could be unresectable"
+                "Undetermined if peritoneal metastases are unresectable",
+                "Undetermined if peritoneal metastases are unresectable"
             )
         } else {
-            EvaluationFactory.fail("No peritoneal metastases present", "No peritoneal metastases")
+            EvaluationFactory.fail("Patient has no unresectable peritoneal metastases", "No unresectable peritoneal metastases")
         }
     }
 }
