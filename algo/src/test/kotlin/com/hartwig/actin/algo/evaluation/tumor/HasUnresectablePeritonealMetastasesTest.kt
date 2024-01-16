@@ -6,11 +6,21 @@ import org.junit.Test
 
 class HasUnresectablePeritonealMetastasesTest {
 
+    private val function = HasUnresectablePeritonealMetastases()
+
+    @Test
+    fun `Should fail if patient has no other lesions`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withOtherLesions(null))
+        )
+    }
+
     @Test
     fun `Should fail if patient has no peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            FUNCTION.evaluate(TumorTestFactory.withOtherLesions(listOf("Lymph node")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Lymph node")))
         )
     }
 
@@ -18,7 +28,7 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should fail if patient has no metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            FUNCTION.evaluate(TumorTestFactory.withOtherLesions(emptyList()))
+            function.evaluate(TumorTestFactory.withOtherLesions(emptyList()))
         )
     }
 
@@ -26,15 +36,11 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should warn if patient has peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            FUNCTION.evaluate(TumorTestFactory.withOtherLesions(listOf("Abdominal lesion located in peritoneum")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Abdominal lesion located in Peritoneum")))
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            FUNCTION.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions abdominal and peritoneal")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions abdominal and peritoneal")))
         )
-    }
-
-    companion object {
-        val FUNCTION = HasUnresectablePeritonealMetastases()
     }
 }
