@@ -46,7 +46,7 @@ class ProteinHasSufficientExpressionByIHCTest {
 
     companion object {
         private fun ihcBuilder(protein: String): ImmutablePriorMolecularTest.Builder {
-            return MolecularTestFactory.priorBuilder().test("IHC").item(protein)
+            return MolecularTestFactory.priorMolecularTest().test("IHC").item(protein)
         }
     }
 }

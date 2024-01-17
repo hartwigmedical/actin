@@ -1,69 +1,61 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.driver.Driver
 import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
-import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
-import org.apache.logging.log4j.util.Strings
 
 internal object MolecularTestFactory {
-    fun priorBuilder(): ImmutablePriorMolecularTest.Builder {
-        return ImmutablePriorMolecularTest.builder().test(Strings.EMPTY).item(Strings.EMPTY).impliesPotentialIndeterminateStatus(false)
+    private val base = TestDataFactory.createMinimalTestPatientRecord()
+
+    fun priorMolecularTest(
+        test: String = "",
+        item: String = "",
+        measure: String? = null,
+        scoreText: String? = null,
+        impliesIndeterminate: Boolean = false,
+        scoreValue: Double? = null,
+        scoreValuePrefix: String? = null
+    ): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = test,
+            item = item,
+            measure = measure,
+            scoreText = scoreText,
+            scoreValuePrefix = scoreValuePrefix,
+            scoreValue = scoreValue,
+            impliesPotentialIndeterminateStatus = impliesIndeterminate
+        )
     }
 
-    fun withPriorTests(priorTests: List<PriorMolecularTest?>): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder()
-            .from(base)
-            .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).priorMolecularTests(priorTests).build())
-            .build()
+    fun withPriorTests(priorTests: List<PriorMolecularTest>): PatientRecord {
+        return base.copy(clinical = base.clinical.copy(priorMolecularTests = priorTests))
     }
 
     fun withPriorTest(priorTest: PriorMolecularTest): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder()
-            .from(base)
-            .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
-            .build()
+        return withPriorTests(listOf(priorTest))
     }
 
     fun withVariant(variant: Variant): PatientRecord {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addVariants(variant).build())
+        return withDriver(variant)
     }
 
-    fun withHasTumorMutationalLoadAndVariants(
-        hasHighTumorMutationalLoad: Boolean?,
-        vararg variants: Variant
-    ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
+    fun withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad: Boolean?, vararg variants: Variant): PatientRecord {
         return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(*variants).build())
-                .build()
+            base.molecular.copy(
+                characteristics = base.molecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
+                drivers = base.molecular.drivers.copy(variants = setOf(*variants))
+            )
         )
     }
 
@@ -72,135 +64,76 @@ internal object MolecularTestFactory {
         variant: Variant,
         disruption: Disruption
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .hasHighTumorMutationalLoad(hasHighTumorMutationalLoad)
-                        .build()
+            base.molecular.copy(
+                characteristics = base.molecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
+                drivers = base.molecular.drivers.copy(
+                    variants = setOf(variant), disruptions = setOf(disruption)
                 )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).addDisruptions(disruption).build())
-                .build()
+            )
         )
     }
 
     fun withCopyNumber(copyNumber: CopyNumber): PatientRecord {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addCopyNumbers(copyNumber).build())
+        return withDriver(copyNumber)
     }
 
     fun withPloidyAndCopyNumber(ploidy: Double?, copyNumber: CopyNumber): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(ImmutableMolecularCharacteristics.builder().from(base.characteristics()).ploidy(ploidy).build())
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addCopyNumbers(copyNumber).build())
-                .build()
-        )
+        return withCharacteristicsAndDriver(base.molecular.characteristics.copy(ploidy = ploidy), copyNumber)
     }
 
     fun withHomozygousDisruption(homozygousDisruption: HomozygousDisruption): PatientRecord {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addHomozygousDisruptions(homozygousDisruption).build())
+        return withDriver(homozygousDisruption)
     }
 
     fun withDisruption(disruption: Disruption): PatientRecord {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addDisruptions(disruption).build())
+        return withDriver(disruption)
     }
 
     fun withFusion(fusion: Fusion): PatientRecord {
-        return withMolecularDrivers(ImmutableMolecularDrivers.builder().addFusions(fusion).build())
+        return withDriver(fusion)
     }
 
     fun withExperimentTypeAndContainingTumorCells(type: ExperimentType, containsTumorCells: Boolean): PatientRecord {
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .type(type)
-                .containsTumorCells(containsTumorCells)
-                .build()
-        )
+        return withMolecularRecord(base.molecular.copy(type = type, containsTumorCells = containsTumorCells))
     }
 
     fun withHlaAllele(hlaAllele: HlaAllele): PatientRecord {
-        return withMolecularImmunology(ImmutableMolecularImmunology.builder().isReliable(true).addHlaAlleles(hlaAllele).build())
+        return withMolecularImmunology(MolecularImmunology(isReliable = true, hlaAlleles = setOf(hlaAllele)))
     }
 
     fun withUnreliableMolecularImmunology(): PatientRecord {
-        return withMolecularImmunology(ImmutableMolecularImmunology.builder().isReliable(false).build())
+        return withMolecularImmunology(MolecularImmunology(isReliable = false, hlaAlleles = emptySet()))
     }
 
     private fun withMolecularImmunology(immunology: MolecularImmunology): PatientRecord {
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .immunology(immunology)
-                .build()
-        )
+        return withMolecularRecord(base.molecular.copy(immunology = immunology))
     }
 
     fun withExperimentTypeAndPriorTest(type: ExperimentType, priorTest: PriorMolecularTest): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder()
-            .from(base)
-            .molecular(ImmutableMolecularRecord.builder().from(base.molecular()).type(type).build())
-            .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).addPriorMolecularTests(priorTest).build())
-            .build()
+        return base.copy(
+            molecular = base.molecular.copy(type = type),
+            clinical = base.clinical.copy(priorMolecularTests = listOf(priorTest))
+        )
     }
 
-    fun withMicrosatelliteInstabilityAndVariant(
-        isMicrosatelliteUnstable: Boolean?,
-        variant: Variant
-    ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
-                .build()
+    fun withMicrosatelliteInstabilityAndVariant(isMicrosatelliteUnstable: Boolean?, variant: Variant): PatientRecord {
+        return withCharacteristicsAndDriver(
+            base.molecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), variant
         )
     }
 
     fun withMicrosatelliteInstabilityAndLoss(isMicrosatelliteUnstable: Boolean?, loss: CopyNumber): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addCopyNumbers(loss).build())
-                .build()
+        return withCharacteristicsAndDriver(
+            base.molecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), loss
         )
     }
 
     fun withMicrosatelliteInstabilityAndHomozygousDisruption(
-        isMicrosatelliteUnstable: Boolean?,
-        homozygousDisruption: HomozygousDisruption
+        isMicrosatelliteUnstable: Boolean?, homozygousDisruption: HomozygousDisruption
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addHomozygousDisruptions(homozygousDisruption).build())
-                .build()
+        return withCharacteristicsAndDriver(
+            base.molecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), homozygousDisruption
         )
     }
 
@@ -208,18 +141,8 @@ internal object MolecularTestFactory {
         isMicrosatelliteUnstable: Boolean?,
         disruption: Disruption
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isMicrosatelliteUnstable(isMicrosatelliteUnstable)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addDisruptions(disruption).build())
-                .build()
+        return withCharacteristicsAndDriver(
+            base.molecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), disruption
         )
     }
 
@@ -227,18 +150,8 @@ internal object MolecularTestFactory {
         isHomologousRepairDeficient: Boolean?,
         variant: Variant
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addVariants(variant).build())
-                .build()
+        return withCharacteristicsAndDriver(
+            base.molecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), variant
         )
     }
 
@@ -246,18 +159,8 @@ internal object MolecularTestFactory {
         isHomologousRepairDeficient: Boolean?,
         loss: CopyNumber
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addCopyNumbers(loss).build())
-                .build()
+        return withCharacteristicsAndDriver(
+            base.molecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), loss
         )
     }
 
@@ -265,18 +168,8 @@ internal object MolecularTestFactory {
         isHomologousRepairDeficient: Boolean?,
         homozygousDisruption: HomozygousDisruption
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addHomozygousDisruptions(homozygousDisruption).build())
-                .build()
+        return withCharacteristicsAndDriver(
+            base.molecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), homozygousDisruption
         )
     }
 
@@ -284,33 +177,16 @@ internal object MolecularTestFactory {
         isHomologousRepairDeficient: Boolean?,
         disruption: Disruption
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .isHomologousRepairDeficient(isHomologousRepairDeficient)
-                        .build()
-                )
-                .drivers(ImmutableMolecularDrivers.builder().from(base.drivers()).addDisruptions(disruption).build())
-                .build()
+        return withCharacteristicsAndDriver(
+            base.molecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), disruption
         )
     }
 
     fun withTumorMutationalBurden(tumorMutationalBurden: Double?): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .tumorMutationalBurden(tumorMutationalBurden)
-                        .build()
-                )
-                .build()
+            base.molecular.copy(
+                characteristics = base.molecular.characteristics.copy(tumorMutationalBurden = tumorMutationalBurden)
+            )
         )
     }
 
@@ -319,71 +195,52 @@ internal object MolecularTestFactory {
         hasSufficientQualityAndPurity: Boolean,
         hasSufficientQuality: Boolean
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .tumorMutationalBurden(tumorMutationalBurden)
-                        .build()
-                )
-                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
-                .hasSufficientQuality(hasSufficientQuality)
-                .build()
+            base.molecular.copy(
+                characteristics = base.molecular.characteristics.copy(tumorMutationalBurden = tumorMutationalBurden),
+                hasSufficientQualityAndPurity = hasSufficientQualityAndPurity,
+                hasSufficientQuality = hasSufficientQuality
+            )
         )
     }
 
     fun withTumorMutationalLoad(tumorMutationalLoad: Int?): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .tumorMutationalLoad(tumorMutationalLoad)
-                        .build()
-                )
-                .build()
+            base.molecular.copy(
+                characteristics = base.molecular.characteristics.copy(tumorMutationalLoad = tumorMutationalLoad)
+            )
         )
     }
 
     fun withTumorMutationalLoadAndHasSufficientQualityAndPurity(
-        tumorMutationalLoad: Int?,
-        hasSufficientQualityAndPurity: Boolean,
-        hasSufficientQuality: Boolean
+        tumorMutationalLoad: Int?, hasSufficientQualityAndPurity: Boolean, hasSufficientQuality: Boolean
     ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
         return withMolecularRecord(
-            ImmutableMolecularRecord.builder()
-                .from(base)
-                .characteristics(
-                    ImmutableMolecularCharacteristics.builder()
-                        .from(base.characteristics())
-                        .tumorMutationalLoad(tumorMutationalLoad)
-                        .build()
-                )
-                .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity)
-                .hasSufficientQuality(hasSufficientQuality)
-                .build()
+            base.molecular.copy(
+                characteristics = base.molecular.characteristics.copy(tumorMutationalLoad = tumorMutationalLoad),
+                hasSufficientQualityAndPurity = hasSufficientQualityAndPurity,
+                hasSufficientQuality = hasSufficientQuality
+            )
         )
     }
 
-    private fun withMolecularDrivers(drivers: MolecularDrivers): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .molecular(
-                ImmutableMolecularRecord.builder()
-                    .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                    .drivers(drivers)
-                    .build()
-            )
-            .build()
+    private fun withDriver(driver: Driver): PatientRecord {
+        return withCharacteristicsAndDriver(base.molecular.characteristics, driver)
+    }
+
+    private fun withCharacteristicsAndDriver(characteristics: MolecularCharacteristics, driver: Driver?): PatientRecord {
+        val drivers = when (driver) {
+            is Variant -> base.molecular.drivers.copy(variants = setOf(driver))
+            is CopyNumber -> base.molecular.drivers.copy(copyNumbers = setOf(driver))
+            is HomozygousDisruption -> base.molecular.drivers.copy(homozygousDisruptions = setOf(driver))
+            is Disruption -> base.molecular.drivers.copy(disruptions = setOf(driver))
+            is Fusion -> base.molecular.drivers.copy(fusions = setOf(driver))
+            else -> base.molecular.drivers
+        }
+        return withMolecularRecord(base.molecular.copy(characteristics = characteristics, drivers = drivers))
     }
 
     private fun withMolecularRecord(molecular: MolecularRecord): PatientRecord {
-        return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).molecular(molecular).build()
+        return base.copy(molecular = molecular)
     }
 }

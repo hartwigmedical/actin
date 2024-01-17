@@ -3,7 +3,17 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.driver.*
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.driver.Variant
 import org.junit.Test
 
 private const val GENE = "gene A"
@@ -12,186 +22,168 @@ class GeneIsInactivatedTest {
 
     private val function = GeneIsInactivated(GENE)
 
-    private val matchingHomDisruption: HomozygousDisruption =
-        TestHomozygousDisruptionFactory.createMinimal().gene(GENE).isReportable(true).geneRole(GeneRole.TSG)
-            .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION).build()
+    private val matchingHomDisruption = TestHomozygousDisruptionFactory.createMinimal().copy(
+        gene = GENE, isReportable = true, geneRole = GeneRole.TSG, proteinEffect = ProteinEffect.LOSS_OF_FUNCTION
+    )
 
-    private val matchingLoss: CopyNumber =
-        TestCopyNumberFactory.createMinimal().gene(GENE).isReportable(true).geneRole(GeneRole.TSG)
-            .proteinEffect(ProteinEffect.LOSS_OF_FUNCTION)
-            .type(CopyNumberType.LOSS).build()
+    private val matchingLoss = TestCopyNumberFactory.createMinimal().copy(
+        gene = GENE,
+        isReportable = true,
+        geneRole = GeneRole.TSG,
+        proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
+        type = CopyNumberType.LOSS
+    )
 
-    private val matchingVariant: Variant =
-        TestVariantFactory.createMinimal().gene(GENE).isReportable(true).driverLikelihood(DriverLikelihood.HIGH).isBiallelic(true)
-            .clonalLikelihood(1.0).geneRole(GeneRole.TSG).proteinEffect(ProteinEffect.LOSS_OF_FUNCTION).canonicalImpact(
-                TestTranscriptImpactFactory.createMinimal().codingEffect(GeneIsInactivated.INACTIVATING_CODING_EFFECTS.iterator().next())
-                    .build()
-            ).build()
+    private val matchingVariant = TestVariantFactory.createMinimal().copy(
+        gene = GENE,
+        isReportable = true,
+        driverLikelihood = DriverLikelihood.HIGH,
+        isBiallelic = true,
+        clonalLikelihood = 1.0,
+        geneRole = GeneRole.TSG,
+        proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
+        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(
+            codingEffect = GeneIsInactivated.INACTIVATING_CODING_EFFECTS.first()
+        )
+    )
 
     @Test
-    fun shouldFailWithoutAnyAlterations() {
+    fun `Should fail without any alterations`() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
 
     @Test
-    fun shouldPassWithMatchingTSGHomozygousDisruption() {
+    fun `Should pass with matching TSG homozygous disruption`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption))
         )
     }
 
     @Test
-    fun shouldWarnWhenTSGHomozygousDisruptionIsNotReportable() {
+    fun `Should warn when TSG homozygous disruption is not reportable`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(isReportable = false)))
+        )
+    }
+
+    @Test
+    fun `Should warn when homozygously disrupted gene is an oncogene`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(geneRole = GeneRole.ONCO)))
+        )
+    }
+
+    @Test
+    fun `Should warn when TSG homozygous disruption implies gain of function`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withHomozygousDisruption(
-                    ImmutableHomozygousDisruption.copyOf(matchingHomDisruption).withIsReportable(false)
-                )
+                MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
             )
         )
     }
 
     @Test
-    fun shouldWarnWhenHomozygouslyDisruptedGeneIsAnOncogene() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withHomozygousDisruption(
-                    ImmutableHomozygousDisruption.copyOf(matchingHomDisruption).withGeneRole(GeneRole.ONCO)
-                )
-            )
-        )
-    }
-
-    @Test
-    fun shouldWarnWhenTSGHomozygousDisruptionImpliesGainOfFunction() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withHomozygousDisruption(
-                    ImmutableHomozygousDisruption.copyOf(matchingHomDisruption).withProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-                )
-            )
-        )
-    }
-
-    @Test
-    fun shouldPassWithMatchingTSGLoss() {
+    fun `Should pass with matching TSG loss`() {
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss)))
     }
 
     @Test
-    fun shouldWarnWhenTSGLossIsNotReportable() {
+    fun `Should warn when TSG loss is not reportable`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withCopyNumber(ImmutableCopyNumber.copyOf(matchingLoss).withIsReportable(false))
-            )
+            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(isReportable = false)))
         )
     }
 
     @Test
-    fun shouldWarnWhenLostGeneIsAnOncogene() {
+    fun `Should warn when lost gene is an oncogene`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withCopyNumber(ImmutableCopyNumber.copyOf(matchingLoss).withGeneRole(GeneRole.ONCO))
-            )
+            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(geneRole = GeneRole.ONCO)))
         )
     }
 
     @Test
-    fun shouldWarnWhenLostGeneImpliesGainOfFunction() {
+    fun `Should warn when lost gene implies gain of function`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withCopyNumber(
-                    ImmutableCopyNumber.copyOf(matchingLoss).withProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-                )
-            )
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)))
         )
     }
 
     @Test
-    fun shouldPassWithMatchingTSGVariant() {
+    fun `Should pass with matching TSG variant`() {
         assertResultForVariant(EvaluationResult.PASS, matchingVariant)
     }
 
     @Test
-    fun shouldWarnWhenTSGVariantIsNotReportable() {
-        assertResultForVariant(EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withIsReportable(false))
+    fun `Should warn when TSG variant is not reportable`() {
+        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(isReportable = false))
     }
 
     @Test
-    fun shouldWarnWhenVariantAffectsOncogene() {
-        assertResultForVariant(EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withGeneRole(GeneRole.ONCO))
+    fun `Should warn when variant affects oncogene`() {
+        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(geneRole = GeneRole.ONCO))
     }
 
     @Test
-    fun shouldWarnWhenTSGVariantImpliesGainOfFunction() {
+    fun `Should warn when TSG variant implies gain of function`() {
+        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
+    }
+
+    @Test
+    fun `Should warn when TSG variant has no high driver likelihood`() {
+        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
+    }
+
+    @Test
+    fun `Should warn when TSG variant is not biallelic`() {
+        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(isBiallelic = false))
+    }
+
+    @Test
+    fun `Should warn when TSG variant is subclonal`() {
+        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(clonalLikelihood = 0.4))
+    }
+
+    @Test
+    fun `Should fail when TSG variant has no coding impact`() {
         assertResultForVariant(
-            EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withProteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-        )
-    }
-
-    @Test
-    fun shouldWarnWhenTSGVariantHasNoHighDriverLikelihood() {
-        assertResultForVariant(
-            EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withDriverLikelihood(DriverLikelihood.MEDIUM)
-        )
-    }
-
-    @Test
-    fun shouldWarnWhenTSGVariantIsNotBiallelic() {
-        assertResultForVariant(EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withIsBiallelic(false))
-    }
-
-    @Test
-    fun shouldWarnWhenTSGVariantIsSubclonal() {
-        assertResultForVariant(EvaluationResult.WARN, ImmutableVariant.copyOf(matchingVariant).withClonalLikelihood(0.4))
-    }
-
-    @Test
-    fun shouldFailWhenTSGVariantHasNoCodingImpact() {
-        assertResultForVariant(
-            EvaluationResult.FAIL, ImmutableVariant.copyOf(matchingVariant).withCanonicalImpact(
-                TestTranscriptImpactFactory.createMinimal().codingEffect(CodingEffect.NONE).build()
+            EvaluationResult.FAIL, matchingVariant.copy(
+                canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONE)
             )
         )
     }
 
     @Test
-    fun shouldPassWhenTSGVariantInHighTMLSample() {
+    fun `Should pass when TSG variant in high TML sample`() {
+        assertResultForMutationalLoadAndVariant(EvaluationResult.PASS, true, matchingVariant)
+    }
+
+    @Test
+    fun `Should fail when TSG variant has no high driver likelihood in high TML sample`() {
         assertResultForMutationalLoadAndVariant(
-            EvaluationResult.PASS,
-            true,
-            TestVariantFactory.createMinimal().from(matchingVariant).build()
+            EvaluationResult.FAIL, true, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
         )
     }
 
     @Test
-    fun shouldFailWhenTSGVariantHasNoHighDriverLikelihoodInHighTMLSample() {
+    fun `Should warn when TSG variant is non biallelic and non high driver in low TML sample`() {
         assertResultForMutationalLoadAndVariant(
-            EvaluationResult.FAIL, true, ImmutableVariant.copyOf(matchingVariant).withDriverLikelihood(DriverLikelihood.LOW)
-        )
-    }
-
-    @Test
-    fun shouldWarnWhenTSGVariantIsNonBiallelicAndNonHighDriverInLowTMLSample() {
-        assertResultForMutationalLoadAndVariant(
-            EvaluationResult.WARN,
-            false,
-            ImmutableVariant.copyOf(matchingVariant).withDriverLikelihood(DriverLikelihood.LOW).withIsBiallelic(false)
+            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW, isBiallelic = false)
         )
 
     }
 
     @Test
-    fun shouldWarnWhenTSGVariantIsNonHighDriverButBiallelicInLowTMLSample() {
+    fun `Should warn when TSG variant is non high driver but biallelic in low TML sample`() {
         assertResultForMutationalLoadAndVariant(
-            EvaluationResult.WARN,
-            false,
-            TestVariantFactory.createMinimal().from(matchingVariant).driverLikelihood(DriverLikelihood.LOW).build()
+            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
         )
     }
 
     @Test
-    fun shouldFailWithMultipleLowDriverVariantsWithOverlappingPhaseGroupsAndInactivatingEffects() {
+    fun `Should fail with multiple low driver variants with overlapping phase groups and inactivating effects`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
@@ -202,7 +194,7 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMultipleLowDriverVariantsWithNonOverlappingPhaseGroupsAndInactivatingEffects() {
+    fun `Should warn with multiple low driver variants with non overlapping phase groups and inactivating effects`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
@@ -213,10 +205,10 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithMultipleLowDriverVariantsWithUnknownPhaseGroupsAndInactivatingEffects() {
+    fun `Should warn with multiple low driver variants with unknown phase groups and inactivating effects`() {
         val variant1 = variantWithPhaseGroups(null)
         // Add copy number to make distinct:
-        val variant2 = ImmutableVariant.copyOf(variant1).withVariantCopyNumber(1.0)
+        val variant2 = variant1.copy(variantCopyNumber = 1.0)
 
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
@@ -226,10 +218,10 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun shouldWarnWithLowDriverVariantWithInactivatingEffectAndLowDriverDisruption() {
-        val disruption: Disruption =
-            TestDisruptionFactory.createMinimal().gene(GENE).isReportable(true).clusterGroup(1).driverLikelihood(DriverLikelihood.LOW)
-                .build()
+    fun `Should warn with low driver variant with inactivating effect and low driver disruption`() {
+        val disruption = TestDisruptionFactory.createMinimal().copy(
+            gene = GENE, isReportable = true, clusterGroup = 1, driverLikelihood = DriverLikelihood.LOW
+        )
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariantAndDisruption(
@@ -244,15 +236,18 @@ class GeneIsInactivatedTest {
     }
 
     private fun assertResultForMutationalLoadAndVariant(
-        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: ImmutableVariant
+        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: Variant
     ) {
         assertMolecularEvaluation(
             result, function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant))
         )
     }
 
-    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): Variant = TestVariantFactory.createMinimal().gene(GENE).isReportable(true)
-        .canonicalImpact(TestTranscriptImpactFactory.createMinimal().codingEffect(CodingEffect.NONSENSE_OR_FRAMESHIFT).build())
-        .driverLikelihood(DriverLikelihood.LOW)
-        .phaseGroups(phaseGroups).build()
+    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): Variant = TestVariantFactory.createMinimal().copy(
+        gene = GENE,
+        isReportable = true,
+        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT),
+        driverLikelihood = DriverLikelihood.LOW,
+        phaseGroups = phaseGroups
+    )
 }

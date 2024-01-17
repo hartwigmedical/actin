@@ -1,30 +1,29 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.priorMolecularTest
 import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allIHCTestsForProtein
 import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allPDL1Tests
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PriorMolecularTestFunctionsTest {
+
     @Test
     fun canFilterPriorMolecularTestsForPDL1WithSpecificMeasure() {
-        val test1: PriorMolecularTest = MolecularTestFactory.priorBuilder().test("Archer").item("PD-L1").build()
-        val test2: PriorMolecularTest = MolecularTestFactory.priorBuilder().test("IHC").item("PD-L1").measure("CPS").build()
-        val test3: PriorMolecularTest = MolecularTestFactory.priorBuilder().test("IHC").item("PD-L1").measure("wrong").build()
-        val test4: PriorMolecularTest = MolecularTestFactory.priorBuilder().test("IHC").item("BRAF").build()
+        val test1 = priorMolecularTest(test = "Archer", item = "PD-L1")
+        val test2 = priorMolecularTest(test = "IHC", item = "PD-L1", measure = "CPS")
+        val test3 = priorMolecularTest(test = "IHC", item = "PD-L1", measure = "wrong")
+        val test4 = priorMolecularTest(test = "IHC", item = "BRAF")
         val filtered = allPDL1Tests(listOf(test1, test2, test3, test4), "CPS")
-        Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertTrue(filtered.contains(test2))
+        assertThat(filtered).containsExactly(test2)
     }
 
     @Test
     fun canFilterPriorMolecularTestsOnIHCForProtein() {
-        val test1: PriorMolecularTest = MolecularTestFactory.priorBuilder().test("Archer").item("protein 1").build()
-        val test2: PriorMolecularTest = MolecularTestFactory.priorBuilder().test("IHC").item("protein 1").build()
-        val test3: PriorMolecularTest = MolecularTestFactory.priorBuilder().test("IHC").item("protein 2").build()
+        val test1 = priorMolecularTest(test = "Archer", item = "protein 1")
+        val test2 = priorMolecularTest(test = "IHC", item = "protein 1")
+        val test3 = priorMolecularTest(test = "IHC", item = "protein 2")
         val filtered = allIHCTestsForProtein(listOf(test1, test2, test3), "protein 1")
-        Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertTrue(filtered.contains(test2))
+        assertThat(filtered).containsExactly(test2)
     }
 }

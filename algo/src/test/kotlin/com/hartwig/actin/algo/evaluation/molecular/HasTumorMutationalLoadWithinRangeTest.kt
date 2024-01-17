@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import org.junit.Test
 
 class HasTumorMutationalLoadWithinRangeTest {
+
     @Test
     fun canEvaluate() {
         val function = HasTumorMutationalLoadWithinRange(140, null)

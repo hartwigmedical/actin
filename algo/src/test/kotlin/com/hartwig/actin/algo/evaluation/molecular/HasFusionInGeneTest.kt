@@ -5,28 +5,32 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableFusion
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import org.junit.Test
 
-class HasFusionInGeneTest {
+private const val MATCHING_GENE = "gene A"
 
+class HasFusionInGeneTest {
     val function = HasFusionInGene(MATCHING_GENE)
+
+    private val matchingFusion = TestFusionFactory.createMinimal().copy(
+        geneStart = MATCHING_GENE,
+        isReportable = true,
+        driverLikelihood = DriverLikelihood.HIGH,
+        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+        driverType = FusionDriverType.PROMISCUOUS_5
+    )
 
     @Test
     fun shouldFailOnMinimalTestPatientRecordEvaluate() {
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(TestDataFactory.createMinimalTestPatientRecord())
-        )
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
     }
 
     @Test
     fun shouldPassOnHighDriverReportableGainOfFunctionMatchingFusion() {
         assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusionBuilder().build()))
+            EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(matchingFusion))
         )
     }
 
@@ -34,11 +38,7 @@ class HasFusionInGeneTest {
     fun shouldFailOnThreeGeneMatchWhenTypeFivePromiscuous() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withFusion(
-                    matchingFusionBuilder().geneStart("gene B").geneEnd("gene A").build()
-                )
-            )
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene A")))
         )
     }
 
@@ -46,7 +46,7 @@ class HasFusionInGeneTest {
     fun shouldFailIfExonDelDupOnDifferentGene() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusionBuilder().geneStart("gene B").geneEnd("gene B").build()))
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene B")))
         )
     }
 
@@ -54,19 +54,14 @@ class HasFusionInGeneTest {
     fun shouldFailOnFiveGeneMatchWhenTypeIsThreePromiscuous() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withFusion(
-                    matchingFusionBuilder().driverType(FusionDriverType.PROMISCUOUS_3).build()
-                )
-            )
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(driverType = FusionDriverType.PROMISCUOUS_3)))
         )
     }
 
     @Test
     fun shouldWarnOnUnreportableGainOfFunctionMatch() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusionBuilder().isReportable(false).build()))
+            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false)))
         )
     }
 
@@ -75,9 +70,7 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withFusion(
-                    matchingFusionBuilder().isReportable(false).proteinEffect(ProteinEffect.NO_EFFECT).build()
-                )
+                MolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false, proteinEffect = ProteinEffect.NO_EFFECT))
             )
         )
     }
@@ -86,11 +79,7 @@ class HasFusionInGeneTest {
     fun shouldWarnOnLowDriverGainOfFunctionFusion() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withFusion(
-                    matchingFusionBuilder().driverLikelihood(DriverLikelihood.LOW).build()
-                )
-            )
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(driverLikelihood = DriverLikelihood.LOW)))
         )
     }
 
@@ -98,25 +87,7 @@ class HasFusionInGeneTest {
     fun shouldWarnOnHighDriverFusionWithNoEffect() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withFusion(
-                    matchingFusionBuilder().proteinEffect(ProteinEffect.NO_EFFECT).build()
-                )
-            )
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)))
         )
-    }
-
-
-    companion object {
-        private const val MATCHING_GENE = "gene A"
-
-        private fun matchingFusionBuilder(): ImmutableFusion.Builder {
-            return TestFusionFactory.createMinimal()
-                .geneStart(MATCHING_GENE)
-                .isReportable(true)
-                .driverLikelihood(DriverLikelihood.HIGH)
-                .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-                .driverType(FusionDriverType.PROMISCUOUS_5)
-        }
     }
 }

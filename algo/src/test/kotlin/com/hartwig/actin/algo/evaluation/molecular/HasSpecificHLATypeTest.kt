@@ -6,6 +6,7 @@ import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import org.junit.Test
 
 class HasSpecificHLATypeTest {
+
     @Test
     fun canEvaluate() {
         val correct = HlaAllele(name = "A*02:01", tumorCopyNumber = 1.0, hasSomaticMutations = false)

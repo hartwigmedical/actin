@@ -5,4 +5,9 @@ data class ExternalTrial(
     val countries: Set<Country>,
     val url: String,
     val nctId: String
-)
+) : Comparable<ExternalTrial> {
+
+    override fun compareTo(other: ExternalTrial): Int {
+        return title.compareTo(other.title)
+    }
+}

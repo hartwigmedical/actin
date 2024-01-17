@@ -47,7 +47,7 @@ class ProteinIsWildTypeByIHCTest {
         }
 
         private fun builder(): ImmutablePriorMolecularTest.Builder {
-            return MolecularTestFactory.priorBuilder().test("IHC").item(PROTEIN).scoreText("WildType")
+            return MolecularTestFactory.priorMolecularTest().test("IHC").item(PROTEIN).scoreText("WildType")
         }
     }
 }

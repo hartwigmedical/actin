@@ -7,83 +7,43 @@ import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.driver.Variant
 import org.junit.Test
 
 class IsMicrosatelliteUnstableTest {
+    private val msiGene = MolecularConstants.MSI_GENES.first()
+    private val function = IsMicrosatelliteUnstable()
 
     @Test
     fun canEvaluate() {
-        val function = IsMicrosatelliteUnstable()
         assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    null,
-                    TestVariantFactory.createMinimal().gene(MolecularConstants.MSI_GENES.iterator().next()).isReportable(false).build()
-                )
-            )
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant()))
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    null,
-                    TestVariantFactory.createMinimal()
-                        .gene(MolecularConstants.MSI_GENES.iterator().next())
-                        .isReportable(true)
-                        .isBiallelic(true)
-                        .build()
-                )
+                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    null,
-                    TestVariantFactory.createMinimal()
-                        .gene(MolecularConstants.MSI_GENES.iterator().next())
-                        .isReportable(true)
-                        .isBiallelic(false)
-                        .build()
-                )
-            )
+            function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant(isReportable = true)))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    true,
-                    TestVariantFactory.createMinimal()
-                        .gene(MolecularConstants.MSI_GENES.iterator().next())
-                        .isReportable(true)
-                        .isBiallelic(false)
-                        .build()
-                )
-            )
+            function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant(isReportable = true)))
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    true,
-                    TestVariantFactory.createMinimal()
-                        .gene(MolecularConstants.MSI_GENES.iterator().next())
-                        .isReportable(true)
-                        .isBiallelic(true)
-                        .build()
-                )
+                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withMicrosatelliteInstabilityAndLoss(
-                    true,
-                    TestCopyNumberFactory.createMinimal()
-                        .type(CopyNumberType.LOSS)
-                        .gene(MolecularConstants.MSI_GENES.iterator().next())
-                        .build()
+                    true, TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, gene = msiGene)
                 )
             )
         )
@@ -91,8 +51,7 @@ class IsMicrosatelliteUnstableTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withMicrosatelliteInstabilityAndHomozygousDisruption(
-                    true,
-                    TestHomozygousDisruptionFactory.createMinimal().gene(MolecularConstants.MSI_GENES.iterator().next()).build()
+                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = msiGene)
                 )
             )
         )
@@ -100,50 +59,30 @@ class IsMicrosatelliteUnstableTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withMicrosatelliteInstabilityAndDisruption(
-                    true,
-                    TestDisruptionFactory.createMinimal().gene(MolecularConstants.MSI_GENES.iterator().next()).build()
+                    true, TestDisruptionFactory.createMinimal().copy(gene = msiGene)
                 )
             )
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant()))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    true,
-                    TestVariantFactory.createMinimal()
-                        .gene(MolecularConstants.MSI_GENES.iterator().next())
-                        .isReportable(true)
-                        .isBiallelic(false)
-                        .build()
-                )
-            )
-        )
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    true,
-                    TestVariantFactory.createMinimal().gene(MolecularConstants.MSI_GENES.iterator().next()).isReportable(false).build()
-                )
-            )
-        )
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    true,
-                    TestVariantFactory.createMinimal().gene("other gene").isReportable(true).isBiallelic(false).build()
+                    true, TestVariantFactory.createMinimal().copy(gene = "other gene", isReportable = true, isBiallelic = false)
                 )
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    false,
-                    TestVariantFactory.createMinimal().gene(MolecularConstants.MSI_GENES.iterator().next()).isReportable(true).build()
-                )
-            )
+            function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(false, msiVariant(isReportable = true)))
+        )
+    }
+
+    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
+        return TestVariantFactory.createMinimal().copy(
+            gene = msiGene, isReportable = isReportable, isBiallelic = isBiallelic
         )
     }
 }
