@@ -55,7 +55,7 @@ class ClinicalFeedReaderTest {
             assertEquals("ACTN-01-02-9999", entry.subject)
             assertEquals("INT Consult", entry.description)
             assertEquals("Beloop", entry.itemText)
-            assertEquals(26, entry.text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong())
+            assertEquals(26, entry.text.split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong())
             assertTrue(entry.text.startsWith("ACTIN Questionnaire"))
             assertTrue(entry.text.contains("CNS lesions yes/no/unknown"))
             assertTrue(entry.text.contains("Other (e.g. Osteoporosis, Pleural effusion)"))

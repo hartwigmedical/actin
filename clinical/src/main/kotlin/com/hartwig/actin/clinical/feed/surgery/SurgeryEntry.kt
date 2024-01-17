@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.feed.surgery
 
 import com.hartwig.actin.clinical.feed.FeedEntry
+import com.hartwig.actin.clinical.feed.FeedValidation
 import com.hartwig.actin.clinical.feed.FeedValidator
 import com.hartwig.actin.clinical.feed.TsvRow
 import java.time.LocalDate
@@ -19,7 +20,7 @@ data class SurgeryEntry(
 ) : FeedEntry
 
 class SurgeryEntryFeedValidator : FeedValidator<SurgeryEntry> {
-    override fun validate(feed: SurgeryEntry): Boolean {
-        return feed.codeCodingDisplayOriginal != BIOPSY_PROCEDURE_DISPLAY
+    override fun validate(feed: SurgeryEntry): FeedValidation {
+        return FeedValidation(feed.codeCodingDisplayOriginal != BIOPSY_PROCEDURE_DISPLAY)
     }
 }

@@ -16,6 +16,10 @@ class FeedModel(private val feed: ClinicalFeed) {
         return feed.patientEntries.map { it.subject }.toSortedSet()
     }
 
+    fun validationWarnings(subject: String): Set<FeedValidationWarning> {
+        return feed.validationWarnings.filter { it.subject == subject }.toSet()
+    }
+
     fun patientEntry(subject: String): PatientEntry {
         return entriesForSubject(feed.patientEntries, subject).firstOrNull()
             ?: throw IllegalStateException("Could not find patient for subject $subject")

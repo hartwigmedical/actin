@@ -121,7 +121,8 @@ class ClinicalIngestion(
                     questionnaire,
                     record,
                     patientEvaluation.warnings.toList(),
-                    questionnaireCurationErrors.toSet()
+                    questionnaireCurationErrors.toSet(),
+                    feed.validationWarnings(subject)
                 ), patientEvaluation
             )
         }.sortedWith { (result1, _), (result2, _) ->

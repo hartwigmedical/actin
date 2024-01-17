@@ -11,7 +11,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -55,6 +54,10 @@ class FeedStringDeserializer : JsonDeserializer<String>() {
     }
 }
 
+data class FeedResult<T : FeedEntry>(
+    val entry: T, val validation: FeedValidation
+)
+
 class FeedFileReader<T : FeedEntry>(feedClass: Class<T>, private val feedValidator: FeedValidator<T> = AlwaysValidFeedValidator()) {
     private val reader = CsvMapper().apply {
         enable(CsvParser.Feature.FAIL_ON_MISSING_COLUMNS)
@@ -71,17 +74,9 @@ class FeedFileReader<T : FeedEntry>(feedClass: Class<T>, private val feedValidat
         )
     }.readerFor(feedClass).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
 
-    fun read(feedTsv: String): List<T> {
-        return reader.readValues<T>(File(feedTsv)).readAll().filter {
-            val valid = feedValidator.validate(it)
-            if (!valid) {
-                LOGGER.warn("Filtering feed entry for '${it.subject}' of type '${it.javaClass.simpleName}'")
-            }
-            valid
+    fun read(feedTsv: String): List<FeedResult<T>> {
+        return reader.readValues<T>(File(feedTsv)).readAll().map {
+            FeedResult(it, feedValidator.validate(it))
         }
-    }
-
-    companion object {
-        private val LOGGER = LogManager.getLogger(FeedFileReader::class.java)
     }
 }
