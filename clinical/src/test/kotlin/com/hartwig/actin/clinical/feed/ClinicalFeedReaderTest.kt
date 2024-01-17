@@ -19,6 +19,7 @@ import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 import java.io.IOException
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class ClinicalFeedReaderTest {
     @Test
@@ -134,10 +135,10 @@ class ClinicalFeedReaderTest {
             assertEquals(1, entries.size.toLong())
             val entry = entries[0]
             assertEquals("ACTN-01-02-9999", entry.subject)
-            assertEquals(LocalDate.of(2019, 4, 28), entry.effectiveDateTime)
+            assertEquals(LocalDateTime.of(2019, 4, 28, 13, 45), entry.effectiveDateTime)
             assertEquals("NIBP", entry.codeDisplayOriginal)
             assertEquals("Systolic blood pressure", entry.componentCodeDisplay)
-            assertEquals("mm[Hg]", entry.quantityUnit)
+            assertEquals("mmHg", entry.quantityUnit)
             assertEquals(108.0, entry.quantityValue!!, EPSILON)
         }
 
@@ -157,17 +158,17 @@ class ClinicalFeedReaderTest {
 
         private fun assertBodyWeights(entries: List<BodyWeightEntry>) {
             assertEquals(2, entries.size.toLong())
-            val entry1 = findByDate(entries, LocalDate.of(2020, 8, 11))
+            val entry1 = findByDate(entries, LocalDateTime.of(2020, 8, 11, 0, 0, 0, 0))
             assertEquals("ACTN-01-02-9999", entry1.subject)
             assertEquals(61.1, entry1.valueQuantityValue, EPSILON)
             assertEquals("kilogram", entry1.valueQuantityUnit)
-            val entry2 = findByDate(entries, LocalDate.of(2020, 8, 20))
+            val entry2 = findByDate(entries, LocalDateTime.of(2020, 8, 20, 8, 43, 0, 0))
             assertEquals("ACTN-01-02-9999", entry2.subject)
             assertEquals(58.9, entry2.valueQuantityValue, EPSILON)
             assertEquals("kilogram", entry2.valueQuantityUnit)
         }
 
-        private fun findByDate(entries: List<BodyWeightEntry>, dateToFind: LocalDate): BodyWeightEntry {
+        private fun findByDate(entries: List<BodyWeightEntry>, dateToFind: LocalDateTime): BodyWeightEntry {
             return entries.find { it.effectiveDateTime == dateToFind }
                 ?: throw IllegalStateException("Could not find body weight entry with date '$dateToFind'")
         }

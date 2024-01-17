@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.feed.FeedValidation
 import com.hartwig.actin.clinical.feed.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.FeedValidator
 import com.hartwig.actin.clinical.feed.TsvRow
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @TsvRow
 data class BodyWeightEntry(
@@ -23,7 +23,7 @@ data class BodyWeightEntry(
     val valueQuantityUnit: String,
 
     @JsonProperty("effectiveDateTime")
-    val effectiveDateTime: LocalDate
+    val effectiveDateTime: LocalDateTime
 ) : FeedEntry
 
 class BodyWeightEntryValidator : FeedValidator<BodyWeightEntry> {

@@ -189,16 +189,20 @@ class ClinicalIngestion(
     private fun vitalFunctionIsValid(entry: VitalFunctionEntry): Boolean {
         return when (VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)) {
             NON_INVASIVE_BLOOD_PRESSURE, ARTERIAL_BLOOD_PRESSURE -> {
-                entry.quantityValue in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX && entry.quantityUnit.lowercase() == BLOOD_PRESSURE_EXPECTED_UNIT
+                (entry.quantityValue
+                    ?: Double.NaN) in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX && entry.quantityUnit.lowercase() == BLOOD_PRESSURE_EXPECTED_UNIT
             }
 
             HEART_RATE -> {
-                entry.quantityValue in HEART_RATE_MIN..HEART_RATE_MAX && entry.quantityUnit.lowercase() == HEART_RATE_EXPECTED_UNIT
+                (entry.quantityValue
+                    ?: Double.NaN) in HEART_RATE_MIN..HEART_RATE_MAX && entry.quantityUnit.lowercase() == HEART_RATE_EXPECTED_UNIT
             }
 
             SPO2 -> {
-                entry.quantityValue in SPO2_MIN..SPO2_MAX && entry.quantityUnit.lowercase() == SPO2_EXPECTED_UNIT
+                (entry.quantityValue
+                    ?: Double.NaN) in SPO2_MIN..SPO2_MAX && entry.quantityUnit.lowercase() == SPO2_EXPECTED_UNIT
             }
+
             else -> {
                 false
             }

@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.feed.vitalfunction
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class VitalFunctionFeedValidatorTest {
 
@@ -51,7 +51,7 @@ class VitalFunctionFeedValidatorTest {
 
     private fun validEntry() = VitalFunctionEntry(
         subject = "TestSubject",
-        effectiveDateTime = LocalDate.now(),
+        effectiveDateTime = LocalDateTime.now(),
         codeDisplayOriginal = "NIBP",
         componentCodeDisplay = "TestComponent",
         quantityUnit = "TestUnit",

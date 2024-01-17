@@ -13,6 +13,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import java.io.File
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class FeedDateDeserializer : JsonDeserializer<LocalDate?>() {
@@ -32,6 +33,28 @@ class FeedDateDeserializer : JsonDeserializer<LocalDate?>() {
                 LocalDate.parse(date, NANOS_FORMATTER)
             } else {
                 LocalDate.parse(date, MILLIS_FORMATTER)
+            }
+        }
+    }
+}
+
+class FeedDateTimeDeserializer : JsonDeserializer<LocalDateTime?>() {
+    companion object {
+        private const val BASE_FORMAT = "yyyy-MM-dd HH:mm:ss."
+        private val MILLIS_FORMATTER = DateTimeFormatter.ofPattern("${BASE_FORMAT}SSS")
+        const val NANOS_FORMAT = "${BASE_FORMAT}SSSSSSS"
+        private val NANOS_FORMATTER = DateTimeFormatter.ofPattern(NANOS_FORMAT)
+    }
+
+    override fun deserialize(jsonParser: JsonParser, ctxt: DeserializationContext): LocalDateTime? {
+        val date = jsonParser.text
+        return if ("NULL".equals(date, ignoreCase = true)) {
+            null
+        } else {
+            if (date.length == NANOS_FORMAT.length) {
+                LocalDateTime.parse(date, NANOS_FORMATTER)
+            } else {
+                LocalDateTime.parse(date, MILLIS_FORMATTER)
             }
         }
     }
@@ -68,9 +91,10 @@ class FeedFileReader<T : FeedEntry>(feedClass: Class<T>, private val feedValidat
         setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
         registerModule(JavaTimeModule())
         registerModule(
-            SimpleModule().addDeserializer(LocalDate::class.java, FeedDateDeserializer()).addDeserializer(
-                String::class.java, FeedStringDeserializer()
-            )
+            SimpleModule().addDeserializer(LocalDate::class.java, FeedDateDeserializer())
+                .addDeserializer(LocalDateTime::class.java, FeedDateTimeDeserializer()).addDeserializer(
+                    String::class.java, FeedStringDeserializer()
+                )
         )
     }.readerFor(feedClass).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
 

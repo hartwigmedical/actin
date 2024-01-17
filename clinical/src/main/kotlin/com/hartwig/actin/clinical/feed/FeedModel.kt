@@ -59,10 +59,10 @@ class FeedModel(private val feed: ClinicalFeed) {
         ).distinctBy {
             VitalFunctionProperties(
                 it.effectiveDateTime,
-                it.quantityValue,
+                it.quantityValue ?: Double.NaN,
                 it.quantityUnit,
                 it.componentCodeDisplay,
-                it.valid
+                it.isValid()
             )
         }
     }
