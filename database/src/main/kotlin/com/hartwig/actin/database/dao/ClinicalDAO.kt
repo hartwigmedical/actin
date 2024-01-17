@@ -449,9 +449,10 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.BODYWEIGHT.PATIENTID,
                 Tables.BODYWEIGHT.DATE,
                 Tables.BODYWEIGHT.VALUE,
-                Tables.BODYWEIGHT.UNIT
+                Tables.BODYWEIGHT.UNIT,
+                Tables.BODYWEIGHT.VALID
             )
-                .values(patientId, bodyWeight.date(), bodyWeight.value(), bodyWeight.unit())
+                .values(patientId, bodyWeight.date(), bodyWeight.value(), bodyWeight.unit(), bodyWeight.valid())
                 .execute()
         }
     }
@@ -465,7 +466,8 @@ internal class ClinicalDAO(private val context: DSLContext) {
                 Tables.VITALFUNCTION.CATEGORY,
                 Tables.VITALFUNCTION.SUBCATEGORY,
                 Tables.VITALFUNCTION.VALUE,
-                Tables.VITALFUNCTION.UNIT
+                Tables.VITALFUNCTION.UNIT,
+                Tables.VITALFUNCTION.VALID
             )
                 .values(
                     patientId,
@@ -473,7 +475,8 @@ internal class ClinicalDAO(private val context: DSLContext) {
                     vitalFunction.category().display(),
                     vitalFunction.subcategory(),
                     vitalFunction.value(),
-                    vitalFunction.unit()
+                    vitalFunction.unit(),
+                    vitalFunction.valid()
                 )
                 .execute()
         }

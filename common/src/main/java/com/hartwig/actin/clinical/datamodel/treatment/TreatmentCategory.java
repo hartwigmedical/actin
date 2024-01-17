@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.datamodel.treatment;
 
+import java.util.Set;
+
 import com.hartwig.actin.Displayable;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 
@@ -27,4 +29,7 @@ public enum TreatmentCategory implements Displayable {
     public String display() {
         return TreatmentCategoryResolver.toString(this).toLowerCase();
     }
+
+    public static final Set<TreatmentCategory> CANCER_TREATMENT_CATEGORIES =
+            Set.of(CHEMOTHERAPY, TARGETED_THERAPY, IMMUNOTHERAPY, HORMONE_THERAPY, TRIAL, CAR_T, TCR_T, GENE_THERAPY);
 }

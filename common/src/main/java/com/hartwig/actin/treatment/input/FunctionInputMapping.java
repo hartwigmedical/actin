@@ -109,6 +109,8 @@ final class FunctionInputMapping {
                 FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES,
                 FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE,
+                FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_LINES,
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
@@ -355,6 +357,7 @@ final class FunctionInputMapping {
 
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_NAME_X, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_BELONGING_TO_DOID_TERM_X, FunctionInput.ONE_DOID_TERM);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_TO_TAXANE, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS, FunctionInput.NONE);

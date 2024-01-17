@@ -24,6 +24,10 @@ import com.hartwig.actin.clinical.datamodel.PatientDetails
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.HEART_RATE
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory.SPO2
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.lab.LabExtraction
@@ -159,19 +163,45 @@ class ClinicalIngestion(
                 .date(entry.effectiveDateTime)
                 .value(entry.valueQuantityValue)
                 .unit(entry.valueQuantityUnit)
+                .valid(bodyWeightIsValid(entry))
                 .build()
         }
     }
 
+    private fun bodyWeightIsValid(entry: BodyWeightEntry): Boolean {
+        return entry.valueQuantityUnit.lowercase() == "kilogram" && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
+    }
+
     private fun extractVitalFunctions(subject: String): List<VitalFunction> {
         return feed.vitalFunctionEntries(subject).map { entry: VitalFunctionEntry ->
+            val category = VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)
             ImmutableVitalFunction.builder()
                 .date(entry.effectiveDateTime)
-                .category(VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal))
+                .category(category)
                 .subcategory(entry.componentCodeDisplay)
                 .value(entry.quantityValue ?: Double.NaN)
                 .unit(entry.quantityUnit)
+                .valid(vitalFunctionIsValid(entry))
                 .build()
+        }
+    }
+
+    private fun vitalFunctionIsValid(entry: VitalFunctionEntry): Boolean {
+        return when (VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)) {
+            NON_INVASIVE_BLOOD_PRESSURE, ARTERIAL_BLOOD_PRESSURE -> {
+                entry.quantityValue in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX && entry.quantityUnit.lowercase() == BLOOD_PRESSURE_EXPECTED_UNIT
+            }
+
+            HEART_RATE -> {
+                entry.quantityValue in HEART_RATE_MIN..HEART_RATE_MAX && entry.quantityUnit.lowercase() == HEART_RATE_EXPECTED_UNIT
+            }
+
+            SPO2 -> {
+                entry.quantityValue in SPO2_MIN..SPO2_MAX && entry.quantityUnit.lowercase() == SPO2_EXPECTED_UNIT
+            }
+            else -> {
+                false
+            }
         }
     }
 
@@ -209,5 +239,17 @@ class ClinicalIngestion(
             medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel),
             labValueExtractor = LabValueExtractor.create(curationDatabaseContext)
         )
+
+        const val BODY_WEIGHT_MIN = 20.0
+        const val BODY_WEIGHT_MAX = 300.0
+        const val HEART_RATE_MIN = 10.0
+        const val HEART_RATE_MAX = 300.0
+        const val HEART_RATE_EXPECTED_UNIT = "bpm"
+        const val BLOOD_PRESSURE_MIN = 10.0
+        const val BLOOD_PRESSURE_MAX = 300.0
+        const val BLOOD_PRESSURE_EXPECTED_UNIT = "mmhg"
+        const val SPO2_MIN = 10.0
+        const val SPO2_MAX = 100.0
+        const val SPO2_EXPECTED_UNIT = "percent"
     }
 }

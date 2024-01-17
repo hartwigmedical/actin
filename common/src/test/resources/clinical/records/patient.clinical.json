@@ -240,22 +240,14 @@
   ],
   "bodyWeights": [
     {
-      "date": {
-        "year": 2020,
-        "month": 6,
-        "day": 18
-      },
+      "date": "2020-06-18T00:00:00",
       "value": 70,
       "unit": "kilogram"
     }
   ],
   "vitalFunctions": [
     {
-      "date": {
-        "year": 2020,
-        "month": 6,
-        "day": 15
-      },
+      "date": "2020-06-15T00:00:00",
       "category": "HEART_RATE",
       "subcategory": "",
       "value": 120,

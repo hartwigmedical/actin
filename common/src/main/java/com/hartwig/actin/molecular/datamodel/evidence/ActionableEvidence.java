@@ -14,7 +14,7 @@ public abstract class ActionableEvidence {
     public abstract Set<String> approvedTreatments();
 
     @NotNull
-    public abstract Set<String> externalEligibleTrials();
+    public abstract Set<ExternalTrial> externalEligibleTrials();
 
     @NotNull
     public abstract Set<String> onLabelExperimentalTreatments();

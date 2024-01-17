@@ -1,7 +1,9 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.ActionableEvent
@@ -59,10 +61,58 @@ object ActionableEvidenceFactory {
         val builder = ImmutableActionableEvidence.builder()
         for (onLabelEvent in onLabelEvents) {
             if (onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive) {
-                builder.addExternalEligibleTrials(onLabelEvent.treatment().name())
+                val nctUrl = extractNctUrl(onLabelEvent)
+
+                builder.addExternalEligibleTrials(
+                    ImmutableExternalTrial.builder()
+                        .title(onLabelEvent.treatment().name())
+                        // evidenceUrls() contains a set of countries
+                        .countries(determineCountries(onLabelEvent.evidenceUrls()))
+                        .url(nctUrl)
+                        .nctId(nctUrl.takeLast(11))
+                        .build()
+                )
             }
         }
         return builder.build()
+    }
+
+    private fun determineCountries(countries: Set<String>): Set<Country> {
+        val values = mutableSetOf<Country>()
+        for (country in countries) {
+            values.add(determineCountry(country))
+        }
+
+        return values
+    }
+
+    private fun determineCountry(country: String): Country {
+        return when (country) {
+            "Netherlands" -> Country.NETHERLANDS
+            "Belgium" -> Country.BELGIUM
+            "Germany" -> Country.GERMANY
+            else -> Country.OTHER
+        }
+    }
+
+    private fun extractNctUrl(event: ActionableEvent): String {
+        for (url in event.sourceUrls()) {
+            if (isNctUrl(url)) {
+                return url
+            }
+        }
+
+        throw IllegalStateException("Found no URL ending with a NCT id: " + event.sourceUrls().joinToString { ", " })
+    }
+
+    private fun isNctUrl(url: String): Boolean {
+        if ((url.length > 11)) {
+            val nctId = url.takeLast(11)
+            if (nctId.substring(0, 3) == "NCT") {
+                return true
+            }
+        }
+        return false
     }
 
     private fun populateResponsiveOnLabelEvidence(
