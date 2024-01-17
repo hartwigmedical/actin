@@ -27,7 +27,7 @@ class FeedTemporalDeserializer<T : Temporal>(private val parser: (String, DateTi
 
     override fun deserialize(jsonParser: JsonParser, ctxt: DeserializationContext): T? {
         val date = jsonParser.text
-        return if ("NULL".equals(date, ignoreCase = true)) {
+        return if ("NULL".equals(date, ignoreCase = true) || date.trim().isEmpty()) {
             null
         } else {
             if (date.length == NANOS_FORMAT.length) {
