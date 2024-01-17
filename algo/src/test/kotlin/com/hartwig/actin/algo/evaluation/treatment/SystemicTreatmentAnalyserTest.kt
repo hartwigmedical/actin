@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.max
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.minSystemicTreatments
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertNull
@@ -117,15 +116,12 @@ class SystemicTreatmentAnalyserTest {
     companion object {
         private val SYSTEMIC_TREATMENT = treatment("treatment A", true)
         private val SYSTEMIC_TREATMENT_HISTORY_ENTRY = treatmentHistoryEntry(setOf(SYSTEMIC_TREATMENT), 2022, 5)
-        private val EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY: ImmutableTreatmentHistoryEntry =
-            ImmutableTreatmentHistoryEntry.copyOf(SYSTEMIC_TREATMENT_HISTORY_ENTRY)
-                .withStartYear(2021)
-                .withStartMonth(5)
+        private val EARLIER_SYSTEMIC_TREATMENT_HISTORY_ENTRY = SYSTEMIC_TREATMENT_HISTORY_ENTRY.copy(startYear = 2021, startMonth = 5)
         private val NON_SYSTEMIC_TREATMENT = treatment("treatment B", false)
         private val NON_SYSTEMIC_TREATMENT_HISTORY_ENTRY = treatmentHistoryEntry(setOf(NON_SYSTEMIC_TREATMENT), 2022, 2)
 
         private fun assertNameForLastSystemicTreatmentHistoryEntry(treatmentHistory: List<TreatmentHistoryEntry>, name: String) {
-            assertThat(lastSystemicTreatment(treatmentHistory)!!.treatments().iterator().next().name()).isEqualTo(name)
+            assertThat(lastSystemicTreatment(treatmentHistory)!!.treatments.first().name).isEqualTo(name)
         }
     }
 }

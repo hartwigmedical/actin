@@ -2,124 +2,114 @@ package com.hartwig.actin.algo.evaluation.surgery
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.builder
+import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.surgery
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgeries
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgery
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 import java.time.LocalDate
 
-
 class HasHadAnySurgeryAfterSpecificDateTest {
+    private val evaluationDate = LocalDate.of(2020, 4, 20)
+    private val minDate = evaluationDate.minusMonths(2)
+    private val function = HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)
 
     @Test
-    fun shouldFailWithNoSurgeries() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withSurgeries(emptyList())))
+    fun `Should fail with no surgeries`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgeries(emptyList())))
     }
 
     @Test
-    fun shouldFailWithOldSurgery() {
-        val tooLongAgo: Surgery = builder().endDate(MIN_DATE.minusWeeks(4)).build()
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withSurgery(tooLongAgo)))
+    fun `Should fail with old surgery`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgery(surgery(minDate.minusWeeks(4)))))
     }
 
     @Test
-    fun shouldPassWithRecentSurgery() {
-        val recentFinished: Surgery = builder().status(SurgeryStatus.FINISHED).endDate(MIN_DATE.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withSurgery(recentFinished)))
+    fun `Should pass with recent surgery`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withSurgery(surgery(minDate.plusWeeks(2), SurgeryStatus.FINISHED))))
     }
 
     @Test
-    fun shouldWarnWithRecentPlannedSurgery() {
-        val recentPlanned: Surgery = builder().status(SurgeryStatus.PLANNED).endDate(MIN_DATE.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.WARN, FUNCTION.evaluate(withSurgery(recentPlanned)))
+    fun `Should warn with recent planned surgery`() {
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(withSurgery(surgery(minDate.plusWeeks(2), SurgeryStatus.PLANNED))))
     }
 
     @Test
-    fun shouldFailWithRecentCancelledSurgery() {
-        val recentCancelled: Surgery = builder().status(SurgeryStatus.CANCELLED).endDate(MIN_DATE.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withSurgery(recentCancelled)))
+    fun `Should fail with recent cancelled surgery`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgery(surgery(minDate.plusWeeks(2), SurgeryStatus.CANCELLED))))
     }
 
     @Test
-    fun shouldWarnWithFutureFinishedSurgery() {
-        val futureFinished: Surgery = builder().status(SurgeryStatus.FINISHED).endDate(EVALUATION_DATE.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.WARN, FUNCTION.evaluate(withSurgery(futureFinished)))
+    fun `Should warn with future finished surgery`() {
+        val futureFinished: Surgery = surgery(evaluationDate.plusWeeks(2), SurgeryStatus.FINISHED)
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(withSurgery(futureFinished)))
     }
 
     @Test
-    fun shouldPassWithFuturePlannedSurgery() {
-        val futurePlanned: Surgery = builder().status(SurgeryStatus.PLANNED).endDate(EVALUATION_DATE.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withSurgery(futurePlanned)))
+    fun `Should pass with future planned surgery`() {
+        val futurePlanned: Surgery = surgery(evaluationDate.plusWeeks(2), SurgeryStatus.PLANNED)
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withSurgery(futurePlanned)))
     }
 
     @Test
-    fun shouldFailWithFutureCancelledSurgery() {
-        val futureCancelled: Surgery = builder().status(SurgeryStatus.CANCELLED).endDate(EVALUATION_DATE.plusWeeks(2)).build()
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withSurgery(futureCancelled)))
+    fun `Should fail with future cancelled surgery`() {
+        val futureCancelled: Surgery = surgery(evaluationDate.plusWeeks(2), SurgeryStatus.CANCELLED)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgery(futureCancelled)))
     }
 
     @Test
-    fun shouldFailWithNoPriorTreatments() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(emptyList())))
+    fun `Should fail with no prior treatments`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withOncologicalHistory(emptyList())))
     }
 
     @Test
-    fun shouldFailWithRecentNonSurgicalTreatment() {
-        val treatments = listOf(treatmentHistoryEntry(emptySet(), MIN_DATE.year))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
+    fun `Should fail with recent non surgical treatment`() {
+        val treatments = listOf(treatmentHistoryEntry(emptySet(), minDate.year))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
-    fun shouldFailEvaluationWithTooLongAgoSurgicalTreatment() {
-        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.minusYears(1).year))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
+    fun `Should fail evaluation with too long ago surgical treatment`() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), minDate.minusYears(1).year))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
-    fun shouldReturnUndeterminedWithSurgicalTreatmentInSameYear() {
-        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year))
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
+    fun `Should return undetermined with surgical treatment in same year`() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), minDate.year))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
-    fun shouldReturnUndeterminedWithSurgicalTreatmentWithoutDate() {
+    fun `Should return undetermined with surgical treatment without date`() {
         val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
-    fun shouldFailWithSurgicalTreatmentInMonthJustBeforeMinDate() {
-        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year, MIN_DATE.monthValue - 1))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
+    fun `Should fail with surgical treatment in month just before min date`() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), minDate.year, minDate.monthValue - 1))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
     @Test
-    fun shouldPassWithSurgicalTreatmentInMonthJustAfterMinDate() {
-        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), MIN_DATE.year, MIN_DATE.monthValue + 1))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
+    fun `Should pass with surgical treatment in month just after min date`() {
+        val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), minDate.year, minDate.monthValue + 1))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)))
     }
 
-    companion object {
-        private val EVALUATION_DATE = LocalDate.of(2020, 4, 20)
-        private val MIN_DATE = EVALUATION_DATE.minusMonths(2)
-        private val FUNCTION = HasHadAnySurgeryAfterSpecificDate(MIN_DATE, EVALUATION_DATE)
-
-        private fun treatmentHistoryEntry(
-            categories: Set<TreatmentCategory>,
-            startYear: Int? = null,
-            startMonth: Int? = null
-        ): TreatmentHistoryEntry {
-            return ImmutableTreatmentHistoryEntry.builder()
-                .addTreatments(ImmutableOtherTreatment.builder().name("").isSystemic(false).categories(categories).build())
-                .startYear(startYear)
-                .startMonth(startMonth)
-                .build()
-        }
+    private fun treatmentHistoryEntry(
+        categories: Set<TreatmentCategory>, startYear: Int? = null, startMonth: Int? = null
+    ): TreatmentHistoryEntry {
+        return TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(OtherTreatment(name = "", isSystemic = false, categories = categories)),
+            startYear = startYear,
+            startMonth = startMonth
+        )
     }
 }

@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 import org.junit.Test
 
 class HasMinimumSitesWithLesionsTest {
@@ -40,9 +40,7 @@ class HasMinimumSitesWithLesionsTest {
     @Test
     fun shouldNotCountAdditionalLesionDetailsOrBiopsyLocationContainingLymphWhenLymphNodeLesionsPresent() {
         val patient = TumorTestFactory.withTumorDetails(
-            ImmutableTumorDetails.copyOf(testPatient.clinical().tumor())
-                .withOtherLesions("lymph node")
-                .withBiopsyLocation("lymph")
+            testPatient.clinical.tumor.copy(otherLesions = listOf("lymph node"), biopsyLocation = "lymph")
         )
         assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(6).evaluate(patient))
     }
@@ -75,16 +73,16 @@ class HasMinimumSitesWithLesionsTest {
             hasLungLesions: Boolean?, hasLymphNodeLesions: Boolean?, otherLesions: List<String>?, biopsyLocation: String?
         ): PatientRecord {
             return TumorTestFactory.withTumorDetails(
-                TumorTestFactory.builder()
-                    .hasBoneLesions(hasBoneLesions)
-                    .hasBrainLesions(hasBrainLesions)
-                    .hasCnsLesions(hasCnsLesions)
-                    .hasLiverLesions(hasLiverLesions)
-                    .hasLungLesions(hasLungLesions)
-                    .hasLymphNodeLesions(hasLymphNodeLesions)
-                    .otherLesions(otherLesions)
-                    .biopsyLocation(biopsyLocation)
-                    .build()
+                TumorDetails(
+                    hasBoneLesions = hasBoneLesions,
+                    hasBrainLesions = hasBrainLesions,
+                    hasCnsLesions = hasCnsLesions,
+                    hasLiverLesions = hasLiverLesions,
+                    hasLungLesions = hasLungLesions,
+                    hasLymphNodeLesions = hasLymphNodeLesions,
+                    otherLesions = otherLesions,
+                    biopsyLocation = biopsyLocation
+                )
             )
         }
     }

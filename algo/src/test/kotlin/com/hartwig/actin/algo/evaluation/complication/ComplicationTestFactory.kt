@@ -7,6 +7,8 @@ import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Medication
 
 internal object ComplicationTestFactory {
+    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    
     fun complication(name: String = "", categories: Set<String> = emptySet()): Complication {
         return Complication(name = name, categories = categories, year = null, month = null)
     }
@@ -20,7 +22,6 @@ internal object ComplicationTestFactory {
     }
 
     fun withComplications(complications: List<Complication>?): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
         return base.copy(
             clinical = base.clinical.copy(
                 complications = complications,
@@ -30,12 +31,10 @@ internal object ComplicationTestFactory {
     }
 
     fun withMedication(medication: Medication): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
         return base.copy(clinical = base.clinical.copy(medications = listOf(medication)))
     }
 
     fun withCnsLesion(lesion: String): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
         return base.copy(
             clinical = base.clinical.copy(
                 tumor = base.clinical.tumor.copy(

@@ -5,47 +5,42 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableRadiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import org.junit.Test
 
-
 class HasHadNonInternalRadiotherapyTest {
+    private val function = HasHadNonInternalRadiotherapy()
 
     @Test
-    fun `should fail for empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+    fun `Should fail for empty treatment history`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun `should fail for non-radiotherapy treatment`() {
+    fun `Should fail for non-radiotherapy treatment`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(treatment("other treatment", false))))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
-    fun `should fail for internal radiotherapy`() {
+    fun `Should fail for internal radiotherapy`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(radiotherapy(true))))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
-    fun `should pass for radiotherapy with internal status not specified`() {
+    fun `Should pass for radiotherapy with internal status not specified`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(radiotherapy(null))))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
-    fun `should pass for external radiotherapy`() {
+    fun `Should pass for external radiotherapy`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(radiotherapy(false))))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
-    companion object {
-        private val FUNCTION = HasHadNonInternalRadiotherapy()
-
-        private fun radiotherapy(isInternal: Boolean?): Radiotherapy {
-            return ImmutableRadiotherapy.builder().name("radiotherapy").isInternal(isInternal).build()
-        }
+    private fun radiotherapy(isInternal: Boolean?): Radiotherapy {
+        return Radiotherapy(name = "radiotherapy", isInternal = isInternal)
     }
 }

@@ -1,19 +1,17 @@
 package com.hartwig.actin.algo.evaluation.surgery
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableSurgery
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
 internal object SurgeryTestFactory {
-    fun builder(): ImmutableSurgery.Builder {
-        return ImmutableSurgery.builder().endDate(LocalDate.of(2020, 4, 5)).status(SurgeryStatus.UNKNOWN)
+    private val base = TestDataFactory.createMinimalTestPatientRecord()
+
+    fun surgery(endDate: LocalDate, status: SurgeryStatus = SurgeryStatus.UNKNOWN): Surgery {
+        return Surgery(endDate = endDate, status = status)
     }
 
     fun withSurgery(surgery: Surgery): PatientRecord {
@@ -21,26 +19,10 @@ internal object SurgeryTestFactory {
     }
 
     fun withSurgeries(surgeries: List<Surgery>): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .surgeries(surgeries)
-                    .build()
-            )
-            .build()
+        return base.copy(clinical = base.clinical.copy(surgeries = surgeries))
     }
 
     fun withOncologicalHistory(treatments: List<TreatmentHistoryEntry>): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .oncologicalHistory(treatments)
-                    .build()
-            )
-            .build()
+        return base.copy(clinical = base.clinical.copy(oncologicalHistory = treatments))
     }
 }

@@ -16,6 +16,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
 object TreatmentTestFactory {
+    private val base = TestDataFactory.createMinimalTestPatientRecord()
 
     fun treatment(name: String, isSystemic: Boolean, categories: Set<TreatmentCategory> = emptySet()): Treatment {
         return OtherTreatment(name = name, isSystemic = isSystemic, synonyms = emptySet(), displayOverride = null, categories = categories)
@@ -89,8 +90,6 @@ object TreatmentTestFactory {
     }
 
     fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(
-            clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(oncologicalHistory = treatmentHistory)
-        )
+        return base.copy(clinical = base.clinical.copy(oncologicalHistory = treatmentHistory))
     }
 }

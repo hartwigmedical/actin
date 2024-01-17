@@ -7,6 +7,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasHistoryOfSecondMalignancyWithDoidTest {
+
     @Test
     fun canEvaluate() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200")
@@ -17,11 +18,11 @@ class HasHistoryOfSecondMalignancyWithDoidTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
 
         // Wrong doid
-        priorTumors.add(PriorTumorTestFactory.builder().addDoids("300").build())
+        priorTumors.add(PriorTumorTestFactory.priorSecondPrimary(doid = "300"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
 
         // Right doid
-        priorTumors.add(PriorTumorTestFactory.builder().addDoids("200").build())
+        priorTumors.add(PriorTumorTestFactory.priorSecondPrimary(doid = "200"))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
     }
 }

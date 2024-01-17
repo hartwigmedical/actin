@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureCategory.DIA
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureCategory.SYSTOLIC
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMaximumBloodPressure
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMinimumBloodPressure
-import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
@@ -175,17 +174,15 @@ class BloodPressureFunctionsTest {
         )
     }
 
-    companion object {
-        private fun systolic(): ImmutableVitalFunction.Builder {
-            return VitalFunctionTestFactory.vitalFunction()
-                .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-                .subcategory(SYSTOLIC.display())
-        }
+    private fun systolic(): VitalFunction {
+        return VitalFunctionTestFactory.vitalFunction()
+            .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
+            .subcategory(SYSTOLIC.display())
+    }
 
-        private fun diastolic(): ImmutableVitalFunction.Builder {
-            return VitalFunctionTestFactory.vitalFunction()
-                .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-                .subcategory(DIASTOLIC.display())
-        }
+    private fun diastolic(): VitalFunction {
+        return VitalFunctionTestFactory.vitalFunction()
+            .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
+            .subcategory(DIASTOLIC.display())
     }
 }

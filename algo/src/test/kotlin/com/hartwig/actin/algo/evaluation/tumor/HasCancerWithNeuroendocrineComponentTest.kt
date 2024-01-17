@@ -1,14 +1,12 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import org.junit.Test
@@ -18,97 +16,52 @@ class HasCancerWithNeuroendocrineComponentTest {
     fun canEvaluate() {
         val matchDoid = "matching doid"
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(
-            matchDoid,
-            HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_TERMS.iterator().next()
+            matchDoid, HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_TERMS.iterator().next()
         )
         val function = HasCancerWithNeuroendocrineComponent(doidModel)
 
         // Can't determine when nothing known about tumor
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().build()))
-        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorDetails(TumorDetails())))
 
         // Fail when tumor is of non-neuroendocrine type.
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().addDoids("other").build()))
-        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("other")))
 
         // Can't be sure when tumor has a small cell component.
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                TumorTestFactory.withTumorDetails(
-                    TumorTestFactory.builder()
-                        .addDoids(HasCancerWithSmallCellComponent.SMALL_CELL_DOIDS.iterator().next())
-                        .build()
-                )
-            )
+            function.evaluate(TumorTestFactory.withDoids(HasCancerWithSmallCellComponent.SMALL_CELL_DOIDS.iterator().next()))
         )
 
         // Can't be sure if tumor has a neuroendocrine profile
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(createWithNeuroendocrineProfile()))
 
         // Pass when tumor has a doid with a neuroendocrine term
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withTumorDetails(TumorTestFactory.builder().addDoids(matchDoid).build()))
-        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(matchDoid)))
 
         // Pass when tumor has a doid that is configured as neuroendocrine
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(
-                TumorTestFactory.withTumorDetails(
-                    TumorTestFactory.builder()
-                        .addDoids(HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_DOIDS.iterator().next())
-                        .build()
-                )
-            )
+            function.evaluate(TumorTestFactory.withDoids(HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_DOIDS.iterator().next()))
         )
 
         // Pass when tumor has been annotated as neuroendocrine
+        val annotation = HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_EXTRA_DETAILS.first() + " tumor"
         assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                TumorTestFactory.withTumorDetails(
-                    TumorTestFactory.builder()
-                        .primaryTumorExtraDetails(
-                            HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_EXTRA_DETAILS.iterator().next() + " tumor"
-                        )
-                        .build()
-                )
-            )
+            EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorDetails(TumorDetails(primaryTumorExtraDetails = annotation)))
         )
     }
 
-    companion object {
-        private fun createWithNeuroendocrineProfile(): PatientRecord {
-            val base = TestDataFactory.createMinimalTestPatientRecord()
-            return ImmutablePatientRecord.builder()
-                .from(base)
-                .molecular(
-                    ImmutableMolecularRecord.builder()
-                        .from(base.molecular())
-                        .drivers(
-                            ImmutableMolecularDrivers.builder()
-                                .from(base.molecular().drivers())
-                                .addCopyNumbers(
-                                    TestCopyNumberFactory.createMinimal()
-                                        .type(CopyNumberType.LOSS)
-                                        .isReportable(true)
-                                        .gene("TP53")
-                                        .build()
-                                )
-                                .addHomozygousDisruptions(
-                                    TestHomozygousDisruptionFactory.createMinimal().isReportable(true).gene("RB1").build()
-                                )
-                                .build()
-                        )
-                        .build()
+    private fun createWithNeuroendocrineProfile(): PatientRecord {
+        val base = TestDataFactory.createMinimalTestPatientRecord()
+        return base.copy(
+            molecular = base.molecular.copy(
+                drivers = base.molecular.drivers.copy(
+                    copyNumbers = setOf(
+                        TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, isReportable = true, gene = "TP53")
+                    ),
+                    homozygousDisruptions = setOf(TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1"))
                 )
-                .build()
-        }
+            )
+        )
     }
 }
