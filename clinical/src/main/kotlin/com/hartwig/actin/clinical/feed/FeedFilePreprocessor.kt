@@ -5,11 +5,11 @@ import java.io.File
 class FeedFilePreprocessor {
 
     fun apply(file: File): File {
-        val outputFile = File(file.name + ".escaped")
+        val outputFile = File(file.name + ".preprocessed")
         file.bufferedReader().useLines { lines ->
             outputFile.bufferedWriter().use { writer ->
                 lines.forEach { line ->
-                    val processedLine = processLine(line)
+                    val processedLine = removeEnclosedQuotes(line)
                     writer.write(processedLine)
                     writer.newLine()
                 }
@@ -18,12 +18,10 @@ class FeedFilePreprocessor {
         return outputFile
     }
 
-    private fun processLine(line: String): String {
-        // Split the line by tab while considering quoted fields
+    private fun removeEnclosedQuotes(line: String): String {
         val fields = line.split(Regex("""\t(?=(?:[^"]*"[^"]*")*[^"]*$)"""))
 
         return fields.joinToString("\t") { field ->
-            // Replace internal quotes with escaped quotes
             if (field.startsWith("\"") && field.endsWith("\"")) {
                 "\"" + field.drop(1).dropLast(1).replace("\"", "") + "\""
             } else {
