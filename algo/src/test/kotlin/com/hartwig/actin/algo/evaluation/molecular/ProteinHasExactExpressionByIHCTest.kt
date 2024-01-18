@@ -5,9 +5,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import org.junit.Test
 
+private const val IHC = "IHC"
+private const val PROTEIN = "protein 1"
+
 class ProteinHasExactExpressionByIHCTest {
-    private val protein = "protein 1"
-    private val function = ProteinHasExactExpressionByIHC(protein, 2)
+    private val function = ProteinHasExactExpressionByIHC(PROTEIN, 2)
 
     @Test
     fun `Should fail when there are no prior tests`() {
@@ -48,7 +50,7 @@ class ProteinHasExactExpressionByIHCTest {
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null): PriorMolecularTest {
         return MolecularTestFactory.priorMolecularTest(
-            test = "IHC", item = protein, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
+            test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
         )
     }
 }

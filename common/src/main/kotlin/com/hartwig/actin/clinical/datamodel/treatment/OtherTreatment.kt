@@ -6,7 +6,7 @@ data class OtherTreatment(
     override val synonyms: Set<String> = emptySet(),
     override val displayOverride: String? = null,
     val categories: Set<TreatmentCategory>,
-    val types: Set<TreatmentType> = emptySet()
+    val types: Set<OtherTreatmentType> = emptySet()
 ) : Treatment {
     override val treatmentClass = TreatmentClass.OTHER_TREATMENT
 

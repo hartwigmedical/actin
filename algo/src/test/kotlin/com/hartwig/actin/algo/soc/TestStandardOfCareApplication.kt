@@ -1,23 +1,16 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -29,14 +22,14 @@ class TestStandardOfCareApplication {
         val patient = patient()
 
         LOGGER.info("Running ACTIN Test SOC Application with clinical record")
-        ClinicalPrinter.printRecord(patient.clinical())
+        ClinicalPrinter.printRecord(patient.clinical)
 
         LOGGER.info("and molecular record")
-        MolecularPrinter.printRecord(patient.molecular())
+        MolecularPrinter.printRecord(patient.molecular)
 
         LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         val database = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
@@ -82,15 +75,13 @@ class TestStandardOfCareApplication {
         private val ATC_TREE_PATH = listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)
 
         private fun patient(): PatientRecord {
-            val tumorDetails: TumorDetails = ImmutableTumorDetails.builder().addDoids(DoidConstants.COLORECTAL_CANCER_DOID).build()
-            val clinicalRecord: ClinicalRecord = ImmutableClinicalRecord.builder()
-                .from(TestClinicalFactory.createProperTestClinicalRecord())
-                .tumor(tumorDetails)
-                .build()
-            val molecularRecord: MolecularRecord = TestMolecularFactory.createProperTestMolecularRecord()
-            return PatientRecordFactory.fromInputs(clinicalRecord, molecularRecord)
+            val base = TestDataFactory.createMinimalTestPatientRecord()
+            return base.copy(
+                clinical = base.clinical.copy(
+                    tumor = base.clinical.tumor.copy(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
+                )
+            )
         }
-
     }
 }
 

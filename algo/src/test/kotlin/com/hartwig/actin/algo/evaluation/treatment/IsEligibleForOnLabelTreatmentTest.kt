@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 import org.junit.Test
 
 class IsEligibleForOnLabelTreatmentTest {
@@ -17,9 +18,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TumorTestFactory.withTumorDetails(
-                    TumorTestFactory.builder().primaryTumorLocation("unknown").primaryTumorSubLocation("CUP").build()
-                )
+                TumorTestFactory.withTumorDetails(TumorDetails(primaryTumorLocation = "unknown", primaryTumorSubLocation = "CUP"))
             )
         )
     }
