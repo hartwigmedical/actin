@@ -25,7 +25,7 @@ class FeedFilePreprocessor {
         return fields.joinToString("\t") { field ->
             // Replace internal quotes with escaped quotes
             if (field.startsWith("\"") && field.endsWith("\"")) {
-                "\"" + field.drop(1).dropLast(1).replace("\"", "\\\"") + "\""
+                "\"" + field.drop(1).dropLast(1).replace("\"", "") + "\""
             } else {
                 field
             }
