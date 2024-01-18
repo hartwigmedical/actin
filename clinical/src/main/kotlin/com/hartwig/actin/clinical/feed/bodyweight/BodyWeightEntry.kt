@@ -28,9 +28,10 @@ data class BodyWeightEntry(
 
 class BodyWeightEntryValidator : FeedValidator<BodyWeightEntry> {
     override fun validate(feed: BodyWeightEntry): FeedValidation {
+        val valid = feed.valueQuantityValue > 0
         return FeedValidation(
-            feed.valueQuantityValue > 0,
-            listOf(FeedValidationWarning(feed.subject, "Body weight is equal to or less than 0"))
+            valid,
+            if (valid) emptyList() else listOf(FeedValidationWarning(feed.subject, "Body weight is equal to or less than 0"))
         )
     }
 }

@@ -83,9 +83,11 @@ class FeedFileReader<T : FeedEntry>(
     }.readerFor(feedClass).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
 
     fun read(feedTsv: String): List<FeedResult<T>> {
-        val apply = feedFilePreprocessor.apply(File(feedTsv))
-        return reader.readValues<T>(apply).readAll().map {
+        val preProcessedFile = feedFilePreprocessor.apply(File(feedTsv))
+        val results = reader.readValues<T>(preProcessedFile).readAll().map {
             FeedResult(it, feedValidator.validate(it))
         }
+        preProcessedFile.delete()
+        return results
     }
 }

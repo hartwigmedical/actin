@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.FeedModel
+import com.hartwig.actin.clinical.feed.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCurationError
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -65,6 +66,12 @@ class ClinicalIngestionTest {
         assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
         assertThat(patientResults[0].questionnaireCurationErrors)
             .containsExactly(QuestionnaireCurationError("ACTN-01-02-9999", "Unrecognized questionnaire option: 'Probably'"))
+        assertThat(patientResults[0].feedValidationWarnings).containsExactly(
+            FeedValidationWarning(
+                "ACTN-01-02-9999",
+                "Empty vital function value"
+            )
+        )
 
         assertThat(ingestionResult.unusedConfigs).containsExactly(
             UnusedCurationConfig(categoryName = "Molecular Test", input = "ihc erbb2 3+"),
