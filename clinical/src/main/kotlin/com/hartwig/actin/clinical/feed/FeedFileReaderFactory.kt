@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.feed.lab.LabEntry
 import com.hartwig.actin.clinical.feed.medication.MedicationEntry
 import com.hartwig.actin.clinical.feed.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
+import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntryFeedValidator
 import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.surgery.SurgeryEntryFeedValidator
 import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
@@ -19,7 +20,7 @@ object FeedFileReaderFactory {
     }
 
     fun createQuestionnaireReader(): FeedFileReader<QuestionnaireEntry> {
-        return FeedFileReader(QuestionnaireEntry::class.java)
+        return FeedFileReader(QuestionnaireEntry::class.java, QuestionnaireEntryFeedValidator())
     }
 
     fun createDigitalFileReader(): FeedFileReader<DigitalFileEntry> {

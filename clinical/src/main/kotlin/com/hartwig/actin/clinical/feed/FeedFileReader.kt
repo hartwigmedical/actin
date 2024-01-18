@@ -47,7 +47,7 @@ class EuropeanDecimalDeserializer : JsonDeserializer<Double?>() {
 
 class FeedStringDeserializer : JsonDeserializer<String>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): String {
-        val cleanInput = p.text.replace("\n", "").replace("\r", "")
+        val cleanInput = p.text.trim()
         return if (cleanInput == "NULL") {
             ""
         } else {
