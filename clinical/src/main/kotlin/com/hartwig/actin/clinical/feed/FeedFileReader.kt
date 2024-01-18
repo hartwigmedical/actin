@@ -60,7 +60,11 @@ data class FeedResult<T : FeedEntry>(
     val entry: T, val validation: FeedValidation
 )
 
-class FeedFileReader<T : FeedEntry>(feedClass: Class<T>, private val feedValidator: FeedValidator<T> = AlwaysValidFeedValidator()) {
+class FeedFileReader<T : FeedEntry>(
+    feedClass: Class<T>,
+    private val feedValidator: FeedValidator<T> = AlwaysValidFeedValidator(),
+    private val feedFilePreprocessor: FeedFilePreprocessor = FeedFilePreprocessor()
+) {
     private val reader = CsvMapper().apply {
         enable(CsvParser.Feature.FAIL_ON_MISSING_COLUMNS)
         enable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS)
@@ -74,14 +78,13 @@ class FeedFileReader<T : FeedEntry>(feedClass: Class<T>, private val feedValidat
                 LocalDate::class.java,
                 FeedTemporalDeserializer { text, format -> LocalDate.parse(text, format) })
                 .addDeserializer(LocalDateTime::class.java, FeedTemporalDeserializer { text, format -> LocalDateTime.parse(text, format) })
-                .addDeserializer(
-                    String::class.java, FeedStringDeserializer()
-                )
+                .addDeserializer(String::class.java, FeedStringDeserializer())
         )
     }.readerFor(feedClass).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
 
     fun read(feedTsv: String): List<FeedResult<T>> {
-        return reader.readValues<T>(File(feedTsv)).readAll().map {
+        val apply = feedFilePreprocessor.apply(File(feedTsv))
+        return reader.readValues<T>(apply).readAll().map {
             FeedResult(it, feedValidator.validate(it))
         }
     }

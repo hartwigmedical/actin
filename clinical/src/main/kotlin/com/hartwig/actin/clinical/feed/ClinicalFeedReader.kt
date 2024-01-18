@@ -69,6 +69,7 @@ object ClinicalFeedReader {
         basePath: String, feedExtraction: FeedExtraction<T>
     ): ClinicalFeed {
         val filePath = basePath + feedExtraction.tsv
+        LOGGER.info(" Reading {}", filePath)
         val entries = feedExtraction.feedFileReader.read(filePath)
         LOGGER.info(" Read {} entries from {}", entries.size, filePath)
         return feedExtraction.feedCreator.invoke(entries.filter { it.validation.valid })
