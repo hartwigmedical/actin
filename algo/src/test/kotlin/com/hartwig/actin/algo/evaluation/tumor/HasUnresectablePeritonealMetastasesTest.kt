@@ -9,7 +9,7 @@ class HasUnresectablePeritonealMetastasesTest {
     private val function = HasUnresectablePeritonealMetastases()
 
     @Test
-    fun `Should fail if patient has no other lesions`() {
+    fun `Should fail if other lesions are unknown`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withOtherLesions(null))
@@ -20,12 +20,20 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should fail if patient has no peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("retroperitoneal")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("retroperitoneal lesions")))
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("metastases in subperitoneal region")))
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Lymph node")))
         )
     }
 
     @Test
-    fun `Should fail if patient has no metastases`() {
+    fun `Should fail if patient has no other lesions`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withOtherLesions(emptyList()))
@@ -41,6 +49,10 @@ class HasUnresectablePeritonealMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions abdominal and peritoneal")))
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intraperitoneal")))
         )
     }
 }
