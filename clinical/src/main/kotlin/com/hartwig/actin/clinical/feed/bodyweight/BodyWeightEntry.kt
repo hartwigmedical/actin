@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.EuropeanDecimalDeserializer
 import com.hartwig.actin.clinical.feed.FeedEntry
 import com.hartwig.actin.clinical.feed.FeedValidation
-import com.hartwig.actin.clinical.feed.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.FeedValidator
 import com.hartwig.actin.clinical.feed.TsvRow
 import java.time.LocalDateTime
@@ -28,10 +27,6 @@ data class BodyWeightEntry(
 
 class BodyWeightEntryValidator : FeedValidator<BodyWeightEntry> {
     override fun validate(feed: BodyWeightEntry): FeedValidation {
-        val valid = feed.valueQuantityValue > 0
-        return FeedValidation(
-            valid,
-            if (valid) emptyList() else listOf(FeedValidationWarning(feed.subject, "Body weight is equal to or less than 0"))
-        )
+        return FeedValidation(feed.valueQuantityValue > 0)
     }
 }

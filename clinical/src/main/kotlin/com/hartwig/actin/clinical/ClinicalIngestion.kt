@@ -179,7 +179,7 @@ class ClinicalIngestion(
                 .date(entry.effectiveDateTime)
                 .category(category)
                 .subcategory(entry.componentCodeDisplay)
-                .value(entry.quantityValue ?: Double.NaN)
+                .value(safeQuantityValue(entry))
                 .unit(entry.quantityUnit)
                 .valid(vitalFunctionIsValid(entry))
                 .build()
@@ -189,18 +189,15 @@ class ClinicalIngestion(
     private fun vitalFunctionIsValid(entry: VitalFunctionEntry): Boolean {
         return when (VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)) {
             NON_INVASIVE_BLOOD_PRESSURE, ARTERIAL_BLOOD_PRESSURE -> {
-                (entry.quantityValue
-                    ?: Double.NaN) in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX && entry.quantityUnit.lowercase() == BLOOD_PRESSURE_EXPECTED_UNIT
+                safeQuantityValue(entry) in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX && entry.quantityUnit.lowercase() == BLOOD_PRESSURE_EXPECTED_UNIT
             }
 
             HEART_RATE -> {
-                (entry.quantityValue
-                    ?: Double.NaN) in HEART_RATE_MIN..HEART_RATE_MAX && entry.quantityUnit.lowercase() == HEART_RATE_EXPECTED_UNIT
+                safeQuantityValue(entry) in HEART_RATE_MIN..HEART_RATE_MAX && entry.quantityUnit.lowercase() == HEART_RATE_EXPECTED_UNIT
             }
 
             SPO2 -> {
-                (entry.quantityValue
-                    ?: Double.NaN) in SPO2_MIN..SPO2_MAX && entry.quantityUnit.lowercase() == SPO2_EXPECTED_UNIT
+                safeQuantityValue(entry) in SPO2_MIN..SPO2_MAX && entry.quantityUnit.lowercase() == SPO2_EXPECTED_UNIT
             }
 
             else -> {
@@ -208,6 +205,9 @@ class ClinicalIngestion(
             }
         }
     }
+
+    private fun safeQuantityValue(entry: VitalFunctionEntry) = (entry.quantityValue
+        ?: Double.NaN)
 
     private fun resolveSurgeryStatus(status: String): SurgeryStatus {
         val valueToFind = status.trim { it <= ' ' }.replace("-".toRegex(), "_")
