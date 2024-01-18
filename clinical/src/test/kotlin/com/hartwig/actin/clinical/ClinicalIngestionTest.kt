@@ -2,10 +2,13 @@ package com.hartwig.actin.clinical
 
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCurationError
@@ -36,8 +39,15 @@ class ClinicalIngestionTest {
             ),
             TestTreatmentDatabaseFactory.createProper()
         )
+        val clinicalFeed = ClinicalFeedReader.read(FEED_DIRECTORY)
         val ingestion = ClinicalIngestion.create(
-            FeedModel.fromFeedDirectory(FEED_DIRECTORY),
+            FeedModel(
+                clinicalFeed.copy(
+                    questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                        clinicalFeed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(CURATION_DIRECTORY)
+                    )
+                )
+            ),
             curationDatabase,
             TestAtcFactory.createProperAtcModel()
         )
