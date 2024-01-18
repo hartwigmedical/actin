@@ -29,6 +29,14 @@ class MolecularInputCheckerTest {
     }
 
     @Test
+    fun `Should determine if string is haplotype`() {
+        assertThat(MolecularInputChecker.isHaplotype("*1_HOM")).isTrue
+        assertThat(isHlaAllele("UGT1A1_1_HOM")).isFalse
+        assertThat(isHlaAllele("_1*HOM")).isFalse
+        assertThat(isHlaAllele("*_HOM")).isFalse
+    }
+    
+    @Test
     fun `Should determine if string is protein impact`() {
         assertThat(isProteinImpact("?")).isTrue
         assertThat(isProteinImpact("V600=")).isTrue

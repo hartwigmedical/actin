@@ -4,6 +4,7 @@ import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.filter.GeneFilterFactory.createAlwaysValid
 
+
 class MolecularInputChecker(private val geneFilter: GeneFilter) {
 
     fun isGene(string: String): Boolean {
@@ -24,6 +25,12 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
             return asteriskIndex == 1 && semicolonIndex > asteriskIndex
         }
 
+        fun isHaplotype(string: String): Boolean {
+            val asterixIndex = string.indexOf("*")
+            val semicolonIndex = string.indexOf("_")
+            return asterixIndex == 0 && semicolonIndex > asterixIndex
+        }
+        
         fun isProteinImpact(string: String): Boolean {
             if (string == "?") {
                 return true

@@ -23,6 +23,7 @@ import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
+import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
@@ -177,6 +178,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_HAPLOTYPE -> {
+                    createOneHaplotypeInput(function)
+                    return true
+                }
+                        
                 FunctionInput.ONE_GENE -> {
                     createOneGeneInput(function)
                     return true
@@ -410,6 +416,17 @@ class FunctionInputResolver(
             throw IllegalArgumentException("Not a proper HLA allele: $allele")
         }
         return OneHlaAllele(allele)
+    }
+
+    fun createOneHaplotypeInput(function: EligibilityFunction): OneHaplotype {
+        assertParamConfig(function, FunctionInput.ONE_HAPLOTYPE, 1)
+
+        val haplotype = function.parameters.first() as String
+        if (!MolecularInputChecker.isHaplotype(haplotype)) {
+            throw IllegalArgumentException("Not a proper haplotype: $haplotype")
+        }
+
+        return OneHaplotype(haplotype)
     }
 
     fun createOneGeneInput(function: EligibilityFunction): OneGene {

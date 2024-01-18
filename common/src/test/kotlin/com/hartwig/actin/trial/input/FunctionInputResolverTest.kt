@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory
+import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory.createTestResolver
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.FunctionInput
@@ -16,6 +17,7 @@ import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
 import com.hartwig.actin.trial.input.single.OneGeneOneInteger
 import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
+import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
@@ -26,8 +28,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
+
 class FunctionInputResolverTest {
-    private val resolver = TestFunctionInputResolveFactory.createTestResolver()
+    private val resolver = createTestResolver()
     
     @Test
     fun `Should determine input validity for every rule`() {
@@ -309,6 +312,21 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("A*02:01", "A*02:02")))!!).isFalse
     }
 
+    @Test
+    fun shouldResolveFunctionsWithOneHaplotypeInput() {
+        val resolver = createTestResolver()
+        val rule = firstOfType(FunctionInput.ONE_HAPLOTYPE)
+        val haplotype = "*1_HOM"
+        val valid = create(rule, listOf(haplotype))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+
+        val expected = OneHaplotype(haplotype)
+        assertThat(resolver.createOneHaplotypeInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not an haplotype")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("*1_HOM", "*1_HOM")))).isFalse
+    }
+    
     @Test
     fun `Should resolve functions with one gene input`() {
         val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")

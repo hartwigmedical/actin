@@ -207,13 +207,13 @@ object TestMolecularFactory {
         return setOf(
             PharmacoEntry(
                 gene = "DPYD",
-                haplotypes = setOf(Haplotype(name = "*1 HOM", function = "Normal function")),
+                haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")),
             ),
             PharmacoEntry(
                 gene = "UGT1A1",
                 haplotypes = setOf(
-                    Haplotype(name = "*1 HET", function = "Normal function"),
-                    Haplotype(name = "*28 HET", function = "Reduced function"),
+                    Haplotype(name = "*1_HET", function = "Normal function"),
+                    Haplotype(name = "*28_HET", function = "Reduced function"),
                 )
             )
         )

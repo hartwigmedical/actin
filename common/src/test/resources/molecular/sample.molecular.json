@@ -309,7 +309,7 @@
       "gene": "DPYD",
       "haplotypes": [
         {
-          "name": "1* HOM",
+          "name": "*1_HOM",
           "function": "Normal function"
         }
       ]

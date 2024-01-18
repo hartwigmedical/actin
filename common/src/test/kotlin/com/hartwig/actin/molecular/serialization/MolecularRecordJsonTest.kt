@@ -156,14 +156,13 @@ class MolecularRecordJsonTest {
             assertThat(variant.isHotspot).isTrue
             assertThat(variant.clonalLikelihood).isEqualTo(1.0, Offset.offset(EPSILON))
             val phaseGroups = variant.phaseGroups!!
-            assertThat(phaseGroups).hasSize(1)
-            assertThat(phaseGroups.contains(2)).isTrue
+            assertThat(phaseGroups).containsExactly(2)
 
             val canonicalImpact = variant.canonicalImpact
             assertThat(canonicalImpact.transcriptId).isEqualTo("ENST00000288602")
             assertThat(canonicalImpact.hgvsCodingImpact).isEqualTo("c.1799T>A")
             assertThat(canonicalImpact.hgvsProteinImpact).isEqualTo("p.V600E")
-            assertThat((canonicalImpact.affectedCodon as Int).toLong()).isEqualTo(600)
+            assertThat(canonicalImpact.affectedCodon).isEqualTo(600)
             assertThat(canonicalImpact.affectedExon).isNull()
             assertThat(canonicalImpact.isSpliceRegion).isFalse
             assertThat(canonicalImpact.effects).isEqualTo(Sets.newHashSet(VariantEffect.MISSENSE))
@@ -175,7 +174,7 @@ class MolecularRecordJsonTest {
             assertThat(otherImpact.hgvsCodingImpact).isEqualTo("c.other")
             assertThat(otherImpact.hgvsProteinImpact).isEqualTo("p.V601K")
             assertThat(otherImpact.affectedCodon).isNull()
-            assertThat((otherImpact.affectedExon as Int).toLong()).isEqualTo(8)
+            assertThat(otherImpact.affectedExon).isEqualTo(8)
             assertThat(otherImpact.isSpliceRegion).isFalse
             assertThat(otherImpact.effects).isEqualTo(Sets.newHashSet(VariantEffect.MISSENSE, VariantEffect.SPLICE_ACCEPTOR))
             assertThat(otherImpact.codingEffect).isNull()
@@ -278,7 +277,7 @@ class MolecularRecordJsonTest {
             assertThat(virus.name).isEqualTo("Human papillomavirus type 16")
             assertThat(virus.type).isEqualTo(VirusType.HUMAN_PAPILLOMA_VIRUS)
             assertThat(virus.isReliable).isTrue
-            assertThat(virus.integrations.toLong()).isEqualTo(3)
+            assertThat(virus.integrations).isEqualTo(3)
         }
 
         private fun <T : Driver> findByEvent(drivers: Iterable<T>, eventToFind: String): T {
@@ -294,14 +293,14 @@ class MolecularRecordJsonTest {
             assertThat(hlaAllele.hasSomaticMutations).isFalse
         }
 
-        private fun assertPharmaco(pharmaco: Set<PharmacoEntry?>) {
+        private fun assertPharmaco(pharmaco: Set<PharmacoEntry>) {
             assertThat(pharmaco).hasSize(1)
             val entry = pharmaco.first()
-            assertThat(entry!!.gene).isEqualTo("DPYD")
+            assertThat(entry.gene).isEqualTo("DPYD")
             assertThat(entry.haplotypes).hasSize(1)
 
             val haplotype = entry.haplotypes.first()
-            assertThat(haplotype.name).isEqualTo("1* HOM")
+            assertThat(haplotype.name).isEqualTo("*1_HOM")
             assertThat(haplotype.function).isEqualTo("Normal function")
         }
     }
