@@ -129,7 +129,7 @@ internal object MolecularTestFactory {
         return withMolecularImmunology(ImmutableMolecularImmunology.builder().isReliable(true).addHlaAlleles(hlaAllele).build())
     }
 
-    fun withUGT1A1(pharmacoEntry: PharmacoEntry): PatientRecord {
+    fun withHaplotype(pharmacoEntry: PharmacoEntry): PatientRecord {
         return withMolecularRecord(
             ImmutableMolecularRecord.builder().from(TestMolecularFactory.createMinimalTestMolecularRecord()).addPharmaco(pharmacoEntry)
                 .build()

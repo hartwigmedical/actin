@@ -15,7 +15,7 @@ class HasUGT1A1HaplotypeTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withUGT1A1(
+                MolecularTestFactory.withHaplotype(
                     ImmutablePharmacoEntry.builder()
                         .gene("UGT1A1")
                         .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Normal function").build())
@@ -31,7 +31,7 @@ class HasUGT1A1HaplotypeTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withUGT1A1(
+                MolecularTestFactory.withHaplotype(
                     ImmutablePharmacoEntry.builder()
                         .gene("UGT1A1")
                         .addHaplotypes(TestPharmacoFactory.builder().name("*17_HET").function("Normal function").build())
@@ -47,7 +47,7 @@ class HasUGT1A1HaplotypeTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withUGT1A1(
+                MolecularTestFactory.withHaplotype(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
                         .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Normal function").build())
