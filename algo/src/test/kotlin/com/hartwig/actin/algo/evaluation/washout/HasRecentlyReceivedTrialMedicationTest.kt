@@ -3,58 +3,53 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
+import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory.medication
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class HasRecentlyReceivedTrialMedicationTest {
+    private val evaluationDate = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
+    private val functionActive = HasRecentlyReceivedTrialMedication(MedicationTestFactory.alwaysActive(), evaluationDate.plusDays(1))
+    
     @Test
-    fun shouldFailWhenNoMedication() {
+    fun `Should fail when no medication`() {
         val medications = emptyList<Medication>()
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, functionActive.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenMedicationIsNoTrialMedication() {
-        val medications = listOf(TestMedicationFactory.createMinimal().isTrialMedication(false).build())
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
+    fun `Should fail when medication is no trial medication`() {
+        val medications = listOf(medication(isTrialMedication = false))
+        assertEvaluation(EvaluationResult.FAIL, functionActive.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldPassWhenMedicationIsTrialMedication() {
-        val medications = listOf(TestMedicationFactory.createMinimal().isTrialMedication(true).build())
-        assertEvaluation(EvaluationResult.PASS, FUNCTION_ACTIVE.evaluate(MedicationTestFactory.withMedications(medications)))
+    fun `Should pass when medication is trial medication`() {
+        val medications = listOf(medication(isTrialMedication = true))
+        assertEvaluation(EvaluationResult.PASS, functionActive.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldPassWhenMedicationHasCorrectDate() {
+    fun `Should pass when medication has correct date`() {
         val function = HasRecentlyReceivedTrialMedication(
             MedicationTestFactory.alwaysStopped(),
-            EVALUATION_DATE.minusDays(1)
+            evaluationDate.minusDays(1)
         )
-        val medications = listOf(TestMedicationFactory.createMinimal().isTrialMedication(true).stopDate(EVALUATION_DATE).build())
+        val medications = listOf(medication(isTrialMedication = true, stopDate = evaluationDate))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldBeUndeterminedWhenMedicationStoppedAfterMinStopDate() {
+    fun `Should be undetermined when medication stopped after min stop date`() {
         val function = HasRecentlyReceivedTrialMedication(
             MedicationTestFactory.alwaysStopped(),
-            EVALUATION_DATE.minusWeeks(2)
+            evaluationDate.minusWeeks(2)
         )
-        val medications = listOf(TestMedicationFactory.createMinimal().isTrialMedication(true).stopDate(EVALUATION_DATE).build())
+        val medications = listOf(medication(isTrialMedication = true, stopDate = evaluationDate))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(medications))
-        )
-    }
-
-    companion object {
-        private val EVALUATION_DATE = TestClinicalFactory.createMinimalTestClinicalRecord().patient().registrationDate().plusWeeks(1)
-        private val FUNCTION_ACTIVE = HasRecentlyReceivedTrialMedication(
-            MedicationTestFactory.alwaysActive(),
-            EVALUATION_DATE.plusDays(1)
         )
     }
 }

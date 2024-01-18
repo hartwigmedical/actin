@@ -18,14 +18,14 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     @Test
     fun shouldFailWhenMedicationHasWrongCategory() {
         val atc = AtcTestFactory.atcClassification("wrong category")
-        val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.plusDays(1)).build())
+        val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 
     @Test
     fun shouldFailWhenMedicationHasRightCategoryAndOldDate() {
         val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.minusDays(1)).build())
+        val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.minusDays(1)))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
 
     }
@@ -33,13 +33,13 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     @Test
     fun shouldPassWhenMedicationHasRightCategoryAndRecentDate() {
         val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(WashoutTestFactory.builder().atc(atc).stopDate(REFERENCE_DATE.plusDays(1)).build())
+        val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)))
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 
     @Test
     fun shouldPassWhenMedicationIsTrialMedication() {
-        val medications = listOf(WashoutTestFactory.builder().isTrialMedication(true).stopDate(REFERENCE_DATE.plusDays(1)).build())
+        val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true, stopDate = REFERENCE_DATE.plusDays(1)))
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.vitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
 import java.time.LocalDate
@@ -14,18 +14,16 @@ class HasLimitedBloodPressureTest {
 
     @Test
     fun `Should fail when systolic blood pressure above maximum`() {
-        val bloodPressures = listOf(systolic().date(LocalDateTime.of(2023, 12, 2, 0, 0)).value(145.0).valid(true).build())
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures))
+        val bloodPressures = listOf(
+            vitalFunction(
+                category = VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE,
+                subcategory = BloodPressureCategory.SYSTOLIC.display(),
+                date = LocalDateTime.of(2023, 12, 2, 0, 0),
+                value = 145.0,
+                valid = true
+            )
         )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)))
     }
 
-    companion object {
-        private fun systolic(): ImmutableVitalFunction.Builder {
-            return VitalFunctionTestFactory.vitalFunction()
-                .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-                .subcategory(BloodPressureCategory.SYSTOLIC.display())
-        }
-    }
 }

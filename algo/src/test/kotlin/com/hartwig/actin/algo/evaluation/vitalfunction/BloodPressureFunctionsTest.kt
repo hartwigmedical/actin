@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class BloodPressureFunctionsTest {
 
@@ -40,8 +41,8 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should fail when median systolic blood pressure under minimum`() {
         val bloodPressures = listOf(
-            systolic().date(referenceDateTime).value(85.0).valid(true).build(),
-            systolic().date(referenceDateTime).value(105.0).valid(true).build()
+            systolic(referenceDateTime, 85.0),
+            systolic(referenceDateTime, 105.0)
         )
 
         assertEvaluation(EvaluationResult.FAIL,
@@ -57,8 +58,8 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should fail when median diastolic blood pressure under minimum`() {
         val bloodPressures = listOf(
-            diastolic().date(referenceDateTime).value(65.0).valid(true).build(),
-            diastolic().date(referenceDateTime.plusDays(1)).value(90.0).valid(true).build()
+            diastolic(referenceDateTime, 65.0),
+            diastolic(referenceDateTime.plusDays(1), 90.0)
         )
 
         assertEvaluation(
@@ -75,8 +76,8 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should pass when median systolic blood pressure above minimum`() {
         val bloodPressures = listOf(
-            systolic().date(referenceDateTime).value(110.0).valid(true).build(),
-            systolic().date(referenceDateTime.plusDays(1)).value(95.0).valid(true).build()
+            systolic(referenceDateTime, 110.0),
+            systolic(referenceDateTime.plusDays(1), 95.0)
         )
 
         assertEvaluation(
@@ -93,8 +94,8 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should pass when median diastolic blood pressure above minimum`() {
         val bloodPressures = listOf(
-            diastolic().date(referenceDateTime).value(80.0).valid(true).build(),
-            diastolic().date(referenceDateTime.plusDays(1)).value(75.0).valid(true).build()
+            diastolic(referenceDateTime, 80.0),
+            diastolic(referenceDateTime.plusDays(1), 75.0)
         )
 
         assertEvaluation(
@@ -111,8 +112,8 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should fail when median diastolic blood pressure above maximum`() {
         val bloodPressures = listOf(
-            diastolic().date(referenceDateTime).value(110.0).valid(true).build(),
-            diastolic().date(referenceDateTime.plusDays(1)).value(95.0).valid(true).build()
+            diastolic(referenceDateTime, 110.0),
+            diastolic(referenceDateTime.plusDays(1), 95.0)
         )
 
         assertEvaluation(
@@ -129,8 +130,8 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should pass when median systolic blood pressure under maximum`() {
         val bloodPressures = listOf(
-            systolic().date(referenceDateTime).value(110.0).valid(true).build(),
-            systolic().date(referenceDateTime.plusDays(1)).value(140.0).valid(true).build()
+            systolic(referenceDateTime, 110.0),
+            systolic(referenceDateTime.plusDays(1), 140.0)
         )
 
         assertEvaluation(
@@ -147,12 +148,12 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should pass since only most recent are taken into account`() {
         val bloodPressures = listOf(
-            systolic().date(referenceDateTime.plusDays(5)).value(110.0).valid(true).build(),
-            systolic().date(referenceDateTime.plusDays(4)).value(105.0).valid(true).build(),
-            systolic().date(referenceDateTime.plusDays(3)).value(105.0).valid(true).build(),
-            systolic().date(referenceDateTime.plusDays(2)).value(20.0).valid(true).build(),
-            systolic().date(referenceDateTime.plusDays(1)).value(20.0).valid(true).build(),
-            systolic().date(referenceDateTime).value(20.0).valid(true).build()
+            systolic(referenceDateTime.plusDays(5), 110.0),
+            systolic(referenceDateTime.plusDays(4), 105.0),
+            systolic(referenceDateTime.plusDays(3), 105.0),
+            systolic(referenceDateTime.plusDays(2), 20.0),
+            systolic(referenceDateTime.plusDays(1), 20.0),
+            systolic(referenceDateTime, 20.0)
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -168,21 +169,26 @@ class BloodPressureFunctionsTest {
     @Test
     fun `Should evaluate to undetermined when wrong blood pressure category`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePatientMaximumBloodPressure(
-            VitalFunctionTestFactory.withVitalFunctions(listOf(diastolic().date(referenceDateTime).value(110.0).valid(true).build())),
+            VitalFunctionTestFactory.withVitalFunctions(listOf(diastolic(referenceDateTime, 110.0))),
             SYSTOLIC, 100, minimumValidDate
         )
         )
     }
 
-    private fun systolic(): VitalFunction {
-        return VitalFunctionTestFactory.vitalFunction()
-            .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-            .subcategory(SYSTOLIC.display())
+    private fun vitalFunction(subcategory: String, date: LocalDateTime, value: Double): VitalFunction {
+        return VitalFunctionTestFactory.vitalFunction(
+            category = VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE,
+            subcategory = subcategory,
+            date = date,
+            value = value
+        )
     }
 
-    private fun diastolic(): VitalFunction {
-        return VitalFunctionTestFactory.vitalFunction()
-            .category(VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE)
-            .subcategory(DIASTOLIC.display())
+    private fun systolic(date: LocalDateTime, value: Double): VitalFunction {
+        return vitalFunction(SYSTOLIC.display(), date, value)
+    }
+
+    private fun diastolic(date: LocalDateTime, value: Double): VitalFunction {
+        return vitalFunction(DIASTOLIC.display(), date, value)
     }
 }

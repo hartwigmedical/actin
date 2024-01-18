@@ -14,13 +14,13 @@ internal object VitalFunctionTestFactory {
         return base.copy(clinical = base.clinical.copy(bodyWeights = bodyWeights))
     }
 
-    fun bodyWeight(
-        dateTime: LocalDateTime = LocalDateTime.of(2017, 7, 7, 12, 30, 0),
+    fun weight(
+        date: LocalDateTime = LocalDateTime.of(2017, 7, 7, 12, 30, 0),
         value: Double = 0.0,
-        unit: String = "",
-        valid: Boolean = true
+        valid: Boolean = true,
+        unit: String = BodyWeightFunctions.EXPECTED_UNIT
     ): BodyWeight {
-        return BodyWeight(date = dateTime, value = value, unit = unit, valid = valid)
+        return BodyWeight(date = date, value = value, unit = unit, valid = valid)
     }
 
     fun withVitalFunctions(vitalFunctions: List<VitalFunction>): PatientRecord {
@@ -29,18 +29,19 @@ internal object VitalFunctionTestFactory {
 
     fun vitalFunction(
         category: VitalFunctionCategory,
-        dateTime: LocalDateTime = LocalDateTime.of(2017, 7, 7, 12, 30, 0),
+        subcategory: String = "",
+        date: LocalDateTime = LocalDateTime.of(2017, 7, 7, 12, 30, 0),
         value: Double = 0.0,
         unit: String = "",
         valid: Boolean = true
     ): VitalFunction {
         return VitalFunction(
             category = category,
-            date = dateTime,
+            date = date,
             value = value,
             unit = unit,
             valid = valid,
-            subcategory = ""
+            subcategory = subcategory
         )
     }
 }

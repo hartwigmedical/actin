@@ -3,38 +3,47 @@ package com.hartwig.actin.algo.medication
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
 class MedicationStatusInterpreterOnEvaluationDateTest {
+
     @Test
     fun canInterpretMedicationStatus() {
         val evaluationDate = LocalDate.of(2020, 5, 6)
         val interpreter = MedicationStatusInterpreterOnEvaluationDate(evaluationDate)
         val noStatusOrStartOrStop = create(null, null, null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(noStatusOrStartOrStop))
+        assertThat(interpreter.interpret(noStatusOrStartOrStop)).isEqualTo(MedicationStatusInterpretation.UNKNOWN)
+        
         val cancelled = create(MedicationStatus.CANCELLED, null, null)
-        assertEquals(MedicationStatusInterpretation.CANCELLED, interpreter.interpret(cancelled))
+        assertThat(interpreter.interpret(cancelled)).isEqualTo(MedicationStatusInterpretation.CANCELLED)
+        
         val activeWithoutStart = create(MedicationStatus.ACTIVE, null, null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(activeWithoutStart))
+        assertThat(interpreter.interpret(activeWithoutStart)).isEqualTo(MedicationStatusInterpretation.UNKNOWN)
+        
         val activeStartingInFuture = create(MedicationStatus.ACTIVE, evaluationDate.plusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.PLANNED, interpreter.interpret(activeStartingInFuture))
+        assertThat(interpreter.interpret(activeStartingInFuture)).isEqualTo(MedicationStatusInterpretation.PLANNED)
+        
         val activeAndStarted = create(MedicationStatus.ACTIVE, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.ACTIVE, interpreter.interpret(activeAndStarted))
+        assertThat(interpreter.interpret(activeAndStarted)).isEqualTo(MedicationStatusInterpretation.ACTIVE)
+        
         val startedButOnHold = create(MedicationStatus.ON_HOLD, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(startedButOnHold))
+        assertThat(interpreter.interpret(startedButOnHold)).isEqualTo(MedicationStatusInterpretation.STOPPED)
+        
         val startedWithUnknownStatus = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(startedWithUnknownStatus))
+        assertThat(interpreter.interpret(startedWithUnknownStatus)).isEqualTo(MedicationStatusInterpretation.UNKNOWN)
+        
         val activeStartedAndNotStopped = create(MedicationStatus.ACTIVE, evaluationDate.minusDays(1), evaluationDate.plusDays(1))
-        assertEquals(MedicationStatusInterpretation.ACTIVE, interpreter.interpret(activeStartedAndNotStopped))
+        assertThat(interpreter.interpret(activeStartedAndNotStopped)).isEqualTo(MedicationStatusInterpretation.ACTIVE)
+        
         val activeStartedAndStopped = create(MedicationStatus.ACTIVE, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(activeStartedAndStopped))
+        assertThat(interpreter.interpret(activeStartedAndStopped)).isEqualTo(MedicationStatusInterpretation.STOPPED)
     }
 
-    companion object {
-        private fun create(status: MedicationStatus?, startDate: LocalDate?, stopDate: LocalDate?): Medication {
-            return TestMedicationFactory.createMinimal().status(status).startDate(startDate).stopDate(stopDate).build()
-        }
+    private fun create(status: MedicationStatus?, startDate: LocalDate?, stopDate: LocalDate?): Medication {
+        return TestMedicationFactory.createMinimal().copy(
+            status = status, startDate = startDate, stopDate = stopDate,
+        )
     }
 }
