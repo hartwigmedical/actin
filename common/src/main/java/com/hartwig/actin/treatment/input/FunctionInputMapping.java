@@ -168,6 +168,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.TML_OF_AT_LEAST_X, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.TML_BETWEEN_X_AND_Y, FunctionInput.TWO_INTEGERS);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HLA_TYPE_X, FunctionInput.ONE_HLA_ALLELE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X, FunctionInput.ONE_HAPLOTYPE);
         RULE_INPUT_MAP.put(EligibilityRule.OVEREXPRESSION_OF_GENE_X, FunctionInput.ONE_GENE);
         RULE_INPUT_MAP.put(EligibilityRule.NON_EXPRESSION_OF_GENE_X, FunctionInput.ONE_GENE);
         RULE_INPUT_MAP.put(EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC, FunctionInput.ONE_STRING);

@@ -21,6 +21,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableMolecularImmunology
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import org.apache.logging.log4j.util.Strings
 
 internal object MolecularTestFactory {
@@ -126,6 +127,13 @@ internal object MolecularTestFactory {
 
     fun withHlaAllele(hlaAllele: HlaAllele): PatientRecord {
         return withMolecularImmunology(ImmutableMolecularImmunology.builder().isReliable(true).addHlaAlleles(hlaAllele).build())
+    }
+
+    fun withHaplotype(pharmacoEntry: PharmacoEntry): PatientRecord {
+        return withMolecularRecord(
+            ImmutableMolecularRecord.builder().from(TestMolecularFactory.createMinimalTestMolecularRecord()).addPharmaco(pharmacoEntry)
+                .build()
+        )
     }
 
     fun withUnreliableMolecularImmunology(): PatientRecord {
