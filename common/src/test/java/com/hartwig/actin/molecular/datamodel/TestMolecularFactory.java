@@ -212,13 +212,13 @@ public final class TestMolecularFactory {
 
         pharmacoEntries.add(ImmutablePharmacoEntry.builder()
                 .gene("DPYD")
-                .addHaplotypes(TestPharmacoFactory.builder().name("*1 HOM").function("Normal function").build())
+                .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Normal function").build())
                 .build());
 
         pharmacoEntries.add(ImmutablePharmacoEntry.builder()
                 .gene("UGT1A1")
-                .addHaplotypes(TestPharmacoFactory.builder().name("*1 HET").function("Normal function").build())
-                .addHaplotypes(TestPharmacoFactory.builder().name("*28 HET").function("Reduced function").build())
+                .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Normal function").build())
+                .addHaplotypes(TestPharmacoFactory.builder().name("*28_HET").function("Reduced function").build())
                 .build());
 
         return pharmacoEntries;
