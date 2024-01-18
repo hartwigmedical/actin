@@ -15,7 +15,7 @@ class HasHomozygousDPYDDeficiencyTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withDPYD(
+                MolecularTestFactory.withHaplotype(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
                         .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Reduced function").build())
@@ -30,7 +30,7 @@ class HasHomozygousDPYDDeficiencyTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withDPYD(
+                MolecularTestFactory.withHaplotype(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
                         .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Reduced function").build())
@@ -46,7 +46,7 @@ class HasHomozygousDPYDDeficiencyTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withDPYD(
+                MolecularTestFactory.withHaplotype(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
                         .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Normal function").build())
@@ -62,7 +62,7 @@ class HasHomozygousDPYDDeficiencyTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withDPYD(
+                MolecularTestFactory.withHaplotype(
                     ImmutablePharmacoEntry.builder()
                         .gene("DPYD")
                         .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Normal function").build())
@@ -77,7 +77,7 @@ class HasHomozygousDPYDDeficiencyTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withDPYD(
+                MolecularTestFactory.withHaplotype(
                     ImmutablePharmacoEntry.builder()
                         .gene("UGT1A1")
                         .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Normal function").build())
