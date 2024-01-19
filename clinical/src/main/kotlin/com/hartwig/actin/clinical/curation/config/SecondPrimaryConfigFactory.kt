@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.util.ResourceFile
@@ -42,23 +41,20 @@ class SecondPrimaryConfigFactory(private val curationDoidValidator: CurationDoid
     }
 
     private fun curatedPriorSecondPrimary(
-        tumorStatus: TumorStatus,
-        fields: Map<String, Int>,
-        parts: Array<String>,
-        doids: Set<String>
+        tumorStatus: TumorStatus, fields: Map<String, Int>, parts: Array<String>, doids: Set<String>
     ): PriorSecondPrimary {
-        return ImmutablePriorSecondPrimary.builder()
-            .tumorLocation(parts[fields["tumorLocation"]!!])
-            .tumorSubLocation(parts[fields["tumorSubLocation"]!!])
-            .tumorType(parts[fields["tumorType"]!!])
-            .tumorSubType(parts[fields["tumorSubType"]!!])
-            .doids(doids)
-            .diagnosedYear(ResourceFile.optionalInteger(parts[fields["diagnosedYear"]!!]))
-            .diagnosedMonth(ResourceFile.optionalInteger(parts[fields["diagnosedMonth"]!!]))
-            .treatmentHistory(parts[fields["treatmentHistory"]!!])
-            .lastTreatmentYear(ResourceFile.optionalInteger(parts[fields["lastTreatmentYear"]!!]))
-            .lastTreatmentMonth(ResourceFile.optionalInteger(parts[fields["lastTreatmentMonth"]!!]))
-            .status(tumorStatus)
-            .build()
+        return PriorSecondPrimary(
+            tumorLocation = parts[fields["tumorLocation"]!!],
+            tumorSubLocation = parts[fields["tumorSubLocation"]!!],
+            tumorType = parts[fields["tumorType"]!!],
+            tumorSubType = parts[fields["tumorSubType"]!!],
+            doids = doids,
+            diagnosedYear = ResourceFile.optionalInteger(parts[fields["diagnosedYear"]!!]),
+            diagnosedMonth = ResourceFile.optionalInteger(parts[fields["diagnosedMonth"]!!]),
+            treatmentHistory = parts[fields["treatmentHistory"]!!],
+            lastTreatmentYear = ResourceFile.optionalInteger(parts[fields["lastTreatmentYear"]!!]),
+            lastTreatmentMonth = ResourceFile.optionalInteger(parts[fields["lastTreatmentMonth"]!!]),
+            status = tumorStatus
+        )
     }
 }

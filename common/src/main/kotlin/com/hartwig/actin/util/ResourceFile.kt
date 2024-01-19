@@ -20,11 +20,9 @@ object ResourceFile {
             "1" -> {
                 true
             }
-
             "0" -> {
                 false
             }
-
             else -> {
                 throw IllegalArgumentException("Cannot convert curation value to boolean: '$bool'")
             }
