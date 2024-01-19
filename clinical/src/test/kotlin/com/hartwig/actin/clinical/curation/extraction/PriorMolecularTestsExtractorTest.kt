@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -22,8 +22,9 @@ class PriorMolecularTestsExtractorTest {
             MolecularTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
-                curated = ImmutablePriorMolecularTest.builder().impliesPotentialIndeterminateStatus(false)
-                    .test(MOLECULAR_TEST_INTERPRETATION).item("item").build()
+                curated = PriorMolecularTest(
+                    impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION, item = "item"
+                )
             )
         )
     )
@@ -34,7 +35,7 @@ class PriorMolecularTestsExtractorTest {
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = inputs)
         val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(priorMolecularTests).hasSize(1)
-        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION)
+        assertThat(priorMolecularTests[0].test).isEqualTo(MOLECULAR_TEST_INTERPRETATION)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

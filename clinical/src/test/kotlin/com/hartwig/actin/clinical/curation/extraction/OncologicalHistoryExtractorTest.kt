@@ -6,8 +6,9 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -27,8 +28,7 @@ class TreatmentHistoryExtractorTest {
             TreatmentHistoryEntryConfig(
                 input = TREATMENT_HISTORY_INPUT,
                 ignore = false,
-                curated = ImmutableTreatmentHistoryEntry.builder()
-                    .addTreatments(ImmutableDrugTreatment.builder().name(CURATED_TREATMENT_NAME).build()).build()
+                curated = treatmentHistoryEntry(setOf(drugTreatment(CURATED_TREATMENT_NAME, TreatmentCategory.CHEMOTHERAPY)))
             )
         ), TestCurationFactory.curationDatabase(
             SecondPrimaryConfig(

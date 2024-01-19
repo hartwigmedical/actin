@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -23,8 +23,11 @@ class PriorOtherConditionsExtractorTest {
                 input = NON_ONCOLOGICAL_INPUT,
                 ignore = false,
                 lvef = null,
-                priorOtherCondition = ImmutablePriorOtherCondition.builder().name(PRIOR_CONDITION_INTERPRETATION).category("category")
-                    .isContraindicationForTherapy(false).build()
+                priorOtherCondition = PriorOtherCondition(
+                    name = PRIOR_CONDITION_INTERPRETATION,
+                    category = "category",
+                    isContraindicationForTherapy = false
+                )
             )
         )
     )
@@ -36,7 +39,7 @@ class PriorOtherConditionsExtractorTest {
             .copy(nonOncologicalHistory = inputs)
         val (priorOtherConditions, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(priorOtherConditions).hasSize(1)
-        assertThat(priorOtherConditions[0].name()).isEqualTo(PRIOR_CONDITION_INTERPRETATION)
+        assertThat(priorOtherConditions[0].name).isEqualTo(PRIOR_CONDITION_INTERPRETATION)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

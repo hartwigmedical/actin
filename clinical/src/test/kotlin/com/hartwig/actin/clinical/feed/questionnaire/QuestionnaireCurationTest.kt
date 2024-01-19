@@ -17,7 +17,7 @@ class QuestionnaireCurationTest {
     @Test
     fun `Should curate options when curation exists`() {
         val curated = toOption(SUBJECT, "YES")
-        assertThat(curated.curated).isTrue()
+        assertThat(curated.curated).isTrue
         assertThat(curated.errors).isEmpty()
     }
 
@@ -108,8 +108,8 @@ class QuestionnaireCurationTest {
     fun shouldReturnDescriptionVerbatimForWhenCurationDoesNotExistInfectionStatus() {
         val infectionStatus = toInfectionStatus(SUBJECT, "new infection status")
         val curated = infectionStatus.curated!!
-        assertThat(curated.description()).isEqualTo("new infection status")
-        assertThat(curated.hasActiveInfection()).isTrue()
+        assertThat(curated.description).isEqualTo("new infection status")
+        assertThat(curated.hasActiveInfection).isTrue
         assertThat(infectionStatus.errors).isEmpty()
     }
 
@@ -119,8 +119,8 @@ class QuestionnaireCurationTest {
         val infectionStatus = toInfectionStatus(SUBJECT, infectionDescription)
         Assert.assertNotNull(infectionStatus)
         val curated = infectionStatus.curated!!
-        Assert.assertTrue(curated.hasActiveInfection())
-        Assert.assertEquals(infectionDescription, curated.description())
+        Assert.assertTrue(curated.hasActiveInfection)
+        Assert.assertEquals(infectionDescription, curated.description)
     }
 
     @Test
@@ -129,8 +129,8 @@ class QuestionnaireCurationTest {
         val infectionStatus = toInfectionStatus(SUBJECT, infectionDescription)
         Assert.assertNotNull(infectionStatus)
         val curated = infectionStatus.curated!!
-        Assert.assertFalse(curated.hasActiveInfection())
-        Assert.assertEquals(infectionDescription, curated.description())
+        Assert.assertFalse(curated.hasActiveInfection)
+        Assert.assertEquals(infectionDescription, curated.description)
     }
 
     @Test
@@ -139,8 +139,8 @@ class QuestionnaireCurationTest {
         val infectionStatus = toInfectionStatus(SUBJECT, infectionDescription)
         Assert.assertNotNull(infectionStatus)
         val curated = infectionStatus.curated!!
-        Assert.assertTrue(curated.hasActiveInfection())
-        Assert.assertEquals(infectionDescription, curated.description())
+        Assert.assertTrue(curated.hasActiveInfection)
+        Assert.assertEquals(infectionDescription, curated.description)
     }
 
     @Test
@@ -161,8 +161,8 @@ class QuestionnaireCurationTest {
     fun shouldReturnDescriptionVerbatimForWhenCurationDoesNotExistECG() {
         val infectionStatus = toECG(SUBJECT, "new ECG value")
         val curated = infectionStatus.curated!!
-        assertThat(curated.aberrationDescription()).isEqualTo("new ECG value")
-        assertThat(curated.hasSigAberrationLatestECG()).isTrue()
+        assertThat(curated.aberrationDescription).isEqualTo("new ECG value")
+        assertThat(curated.hasSigAberrationLatestECG).isTrue
         assertThat(infectionStatus.errors).isEmpty()
     }
 
@@ -172,8 +172,8 @@ class QuestionnaireCurationTest {
         val status = toECG(SUBJECT, description)
         Assert.assertNotNull(status)
         val curated = status.curated!!
-        Assert.assertTrue(curated.hasSigAberrationLatestECG())
-        Assert.assertEquals(description, curated.aberrationDescription())
+        Assert.assertTrue(curated.hasSigAberrationLatestECG)
+        Assert.assertEquals(description, curated.aberrationDescription)
     }
 
     @Test
@@ -182,8 +182,8 @@ class QuestionnaireCurationTest {
         val status = toECG(SUBJECT, description)
         Assert.assertNotNull(status)
         val curated = status.curated!!
-        Assert.assertFalse(curated.hasSigAberrationLatestECG())
-        Assert.assertEquals(description, curated.aberrationDescription())
+        Assert.assertFalse(curated.hasSigAberrationLatestECG)
+        Assert.assertEquals(description, curated.aberrationDescription)
     }
 
     @Test
@@ -192,7 +192,7 @@ class QuestionnaireCurationTest {
         val status = toECG(SUBJECT, description)
         Assert.assertNotNull(status)
         val curated = status.curated!!
-        Assert.assertTrue(curated.hasSigAberrationLatestECG())
-        Assert.assertEquals(description, curated.aberrationDescription())
+        Assert.assertTrue(curated.hasSigAberrationLatestECG)
+        Assert.assertEquals(description, curated.aberrationDescription)
     }
 }

@@ -17,13 +17,10 @@ import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
+import com.hartwig.actin.clinical.datamodel.AtcClassification
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.CypInteraction
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
-import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
-import com.hartwig.actin.clinical.datamodel.ImmutableDosage
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
+import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
@@ -40,16 +37,18 @@ private const val ADMINISTRATION_ROUTE_INPUT_ORAL = "Oraal"
 private const val DOSAGE_INPUT = "Dosage input"
 private const val DOSAGE_UNIT_TRANSLATED_MG = "mg"
 
-private val DOSAGE = ImmutableDosage.builder()
-    .dosageMin(50.0)
-    .dosageMax(60.0)
-    .dosageUnit(DOSAGE_UNIT_TRANSLATED_MG)
-    .frequency(1.0)
-    .frequencyUnit("day")
-    .periodBetweenValue(1.0)
-    .periodBetweenUnit("mo")
-    .ifNeeded(false)
-    .build()
+private val DOSAGE = Dosage(
+    dosageMin = 50.0,
+    dosageMax = 60.0,
+    dosageUnit = DOSAGE_UNIT_TRANSLATED_MG,
+    frequency = 1.0,
+    frequencyUnit = "day",
+    periodBetweenValue = 1.0,
+    periodBetweenUnit = "mo",
+    ifNeeded = false
+)
+
+private val cypInteraction = CypInteraction(cyp = "2D6", strength = CypInteraction.Strength.WEAK, type = CypInteraction.Type.INHIBITOR)
 
 private const val TRANSLATED_ADMINISTRATION_ROUTE_ORAL = "oral"
 
@@ -64,8 +63,6 @@ private const val CURATED_PERIOD_BETWEEN_UNIT = "Curated period between unit"
 private const val NO_MEDICATION_NAME_INPUT = "No medication name input"
 
 private const val DOSAGE_TRANSLATION_INPUT_MILLIGRAM = "milligram"
-fun createTestCypInteraction(): ImmutableCypInteraction =
-    ImmutableCypInteraction.builder().cyp("2D6").strength(CypInteraction.Strength.WEAK).type(CypInteraction.Type.INHIBITOR).build()
 
 class MedicationExtractorTest {
     private val extractor =
@@ -100,7 +97,7 @@ class MedicationExtractorTest {
                 CypInteractionConfig(
                     input = CURATED_MEDICATION_NAME,
                     ignore = false,
-                    interactions = listOf(createTestCypInteraction())
+                    interactions = listOf(cypInteraction)
                 )
             ),
             TestCurationFactory.curationDatabase(
@@ -144,27 +141,25 @@ class MedicationExtractorTest {
         )
 
         assertThat(extractor.extract(PATIENT_ID, listOf(entry)).extracted).containsExactly(
-            ImmutableMedication.builder()
-                .name(CURATED_MEDICATION_NAME)
-                .status(MedicationStatus.ACTIVE)
-                .administrationRoute("oral")
-                .dosage(DOSAGE)
-                .startDate(LocalDate.of(2023, 12, 12))
-                .stopDate(LocalDate.of(2023, 12, 13))
-                .addCypInteractions(createTestCypInteraction())
-                .qtProlongatingRisk(QTProlongatingRisk.POSSIBLE)
-                .atc(
-                    ImmutableAtcClassification.builder()
-                        .anatomicalMainGroup(atcLevel("N", ANATOMICAL))
-                        .therapeuticSubGroup(atcLevel("N02", THERAPEUTIC))
-                        .pharmacologicalSubGroup(atcLevel("N02B", PHARMACOLOGICAL))
-                        .chemicalSubGroup(atcLevel("N02BE", CHEMICAL))
-                        .chemicalSubstance(atcLevel(FULL_ATC_CODE, CHEMICAL_SUBSTANCE))
-                        .build()
-                )
-                .isSelfCare(false)
-                .isTrialMedication(false)
-                .build()
+            Medication(
+                name = CURATED_MEDICATION_NAME,
+                status = MedicationStatus.ACTIVE,
+                administrationRoute = "oral",
+                dosage = DOSAGE,
+                startDate = LocalDate.of(2023, 12, 12),
+                stopDate = LocalDate.of(2023, 12, 13),
+                cypInteractions = listOf(cypInteraction),
+                qtProlongatingRisk = QTProlongatingRisk.POSSIBLE,
+                atc = AtcClassification(
+                    anatomicalMainGroup = AtcLevel("N", ANATOMICAL),
+                    therapeuticSubGroup = AtcLevel("N02", THERAPEUTIC),
+                    pharmacologicalSubGroup = AtcLevel("N02B", PHARMACOLOGICAL),
+                    chemicalSubGroup = AtcLevel("N02BE", CHEMICAL),
+                    chemicalSubstance = AtcLevel(FULL_ATC_CODE, CHEMICAL_SUBSTANCE)
+                ),
+                isSelfCare = false,
+                isTrialMedication = false
+            )
         )
     }
 
@@ -227,7 +222,7 @@ class MedicationExtractorTest {
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.medicationDosageEvaluatedInputs).containsExactly(DOSAGE_INPUT.lowercase())
         assertThat(medications).hasSize(1)
-        assertThat(medications.first().dosage()).isEqualTo(DOSAGE)
+        assertThat(medications.first().dosage).isEqualTo(DOSAGE)
     }
 
     @Test
@@ -347,6 +342,4 @@ class MedicationExtractorTest {
         assertThat(emptyTranslation).isNull()
         assertThat(evaluation.warnings).isEmpty()
     }
-
-    private fun atcLevel(code: String, name: String): AtcLevel = ImmutableAtcLevel.builder().code(code).name(name).build()
 }

@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.lab
 
 import com.google.common.annotations.VisibleForTesting
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.feed.FeedParseFunctions
 import org.apache.logging.log4j.LogManager
@@ -12,41 +11,51 @@ object LabExtraction {
     fun extract(entry: LabEntry): LabValue {
         val limits = extractLimits(entry.referenceRangeText)
         val value = entry.valueQuantityValue
-        var isOutsideRef: Boolean? = null
-        if (limits.lower() != null || limits.upper() != null) {
-            isOutsideRef = limits.lower() != null && value < limits.lower()!! || limits.upper() != null && value > limits.upper()!!
-        }
-        return ImmutableLabValue.builder()
-            .date(entry.effectiveDateTime)
-            .code(entry.codeCodeOriginal)
-            .name(entry.codeDisplayOriginal)
-            .comparator(entry.valueQuantityComparator)
-            .value(value)
-            .unit(LabUnitResolver.resolve(entry.valueQuantityUnit))
-            .refLimitLow(limits.lower())
-            .refLimitUp(limits.upper())
-            .isOutsideRef(isOutsideRef)
-            .build()
+        val isOutsideRef = if (limits.lower != null || limits.upper != null) {
+            limits.lower != null && value < limits.lower || limits.upper != null && value > limits.upper
+        } else null
+        return LabValue(
+            date = entry.effectiveDateTime,
+            code = entry.codeCodeOriginal,
+            name = entry.codeDisplayOriginal,
+            comparator = entry.valueQuantityComparator,
+            value = value,
+            unit = LabUnitResolver.resolve(entry.valueQuantityUnit),
+            refLimitLow = limits.lower,
+            refLimitUp = limits.upper,
+            isOutsideRef = isOutsideRef
+        )
     }
 
     @VisibleForTesting
     fun extractLimits(referenceRangeText: String): Limits {
-        var lower: Double? = null
-        var upper: Double? = null
-        if (referenceRangeText.contains(">")) {
-            val index = referenceRangeText.indexOf(">")
-            lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim { it <= ' ' })
-        } else if (referenceRangeText.contains("<")) {
-            val index = referenceRangeText.indexOf("<")
-            upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim { it <= ' ' })
-        } else if (referenceRangeText.contains("-")) {
-            val separatingHyphenIndex = findSeparatingHyphenIndex(referenceRangeText)
-            lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(0, separatingHyphenIndex))
-            upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(separatingHyphenIndex + 1))
-        } else if (!referenceRangeText.isEmpty()) {
-            LOGGER.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText)
+        return when {
+            referenceRangeText.contains(">") -> {
+                val index = referenceRangeText.indexOf(">")
+                val lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim { it <= ' ' })
+                Limits(lower, null)
+            }
+
+            referenceRangeText.contains("<") -> {
+                val index = referenceRangeText.indexOf("<")
+                val upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(index + 1).trim { it <= ' ' })
+                Limits(null, upper)
+            }
+
+            referenceRangeText.contains("-") -> {
+                val separatingHyphenIndex = findSeparatingHyphenIndex(referenceRangeText)
+                val lower = FeedParseFunctions.parseDouble(referenceRangeText.substring(0, separatingHyphenIndex))
+                val upper = FeedParseFunctions.parseDouble(referenceRangeText.substring(separatingHyphenIndex + 1))
+                Limits(lower, upper)
+            }
+
+            else -> {
+                if (referenceRangeText.isNotEmpty()) {
+                    LOGGER.warn("Could not parse lab value referenceRangeText '{}'", referenceRangeText)
+                }
+                Limits(null, null)
+            }
         }
-        return Limits(lower, upper)
     }
 
     @VisibleForTesting
@@ -67,15 +76,5 @@ object LabExtraction {
         return character in '0'..'9'
     }
 
-    class Limits(private val lower: Double?, private val upper: Double?) {
-        @VisibleForTesting
-        fun lower(): Double? {
-            return lower
-        }
-
-        @VisibleForTesting
-        fun upper(): Double? {
-            return upper
-        }
-    }
+    data class Limits(val lower: Double?, val upper: Double?)
 }
