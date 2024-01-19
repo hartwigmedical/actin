@@ -1,11 +1,12 @@
 package com.hartwig.actin.clinical.feed.bodyweight
 
 import com.hartwig.actin.clinical.feed.FeedEntry
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class BodyWeightEntry(
     override val subject: String,
     val valueQuantityValue: Double,
     val valueQuantityUnit: String,
-    val effectiveDateTime: LocalDate
+    val effectiveDateTime: LocalDateTime,
+    val valid: Boolean
 ) : FeedEntry

@@ -4,105 +4,170 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientForMaximumBodyWeight
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientForMinimumBodyWeight
+import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
+import org.junit.Assert
 import org.junit.Test
 import java.time.LocalDate
 
 class BodyWeightFunctionsTest {
 
-    private val referenceDate = LocalDate.of(2023, 11, 10)
+    private val minimumValidDate = LocalDate.of(2023, 12, 1)
+    private val referenceDateTime = minimumValidDate.atStartOfDay().plusDays(1)
 
     @Test
     fun `Should evaluate to undetermined on no body weight documented`() {
         val weights: List<BodyWeight> = emptyList()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
     @Test
-    fun `Should evaluate to undetermined on weight in wrong unit`() {
+    fun `Should evaluate to undetermined when weight measurement invalid`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(4)).value(149.0).build(),
-            weight().date(referenceDate.minusDays(3)).value(148.0).unit("pounds").build()
+            weight().date(referenceDateTime).value(148.0).unit("pounds").valid(false).build()
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
+
     @Test
-    fun `Should fail on most recent weight above max`() {
+    fun `Should fail on median weight above max`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(6)).value(148.0).build(),
-            weight().date(referenceDate.minusDays(5)).value(155.0).build()
+            weight().date(referenceDateTime).value(148.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(1)).value(155.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.FAIL, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
+        )
         )
     }
 
     @Test
-    fun `Should pass on most recent weight below max`() {
+    fun `Should pass on median weight below max`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(5)).value(155.0).build(),
-            weight().date(referenceDate.minusDays(4)).value(148.0).build()
+            weight().date(referenceDateTime).value(151.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(1)).value(148.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.PASS, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
+        )
         )
     }
 
     @Test
-    fun `Should pass on most recent weight equal to max`() {
+    fun `Should pass on median weight equal to max`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(5)).value(155.0).build(),
-            weight().date(referenceDate.minusDays(3)).value(150.0).build()
+            weight().date(referenceDateTime).value(152.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(1)).value(148.0).valid(true).build()
         )
         assertEvaluation(EvaluationResult.PASS, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0)
+            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
+        )
         )
     }
 
     @Test
-    fun `Should fail on most recent weight below min`() {
+    fun `Should fail on median weight below min`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(6)).value(42.0).build(),
-            weight().date(referenceDate.minusDays(5)).value(38.0).build()
+            weight().date(referenceDateTime).value(41.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(1)).value(38.0).valid(true).build()
         )
-        assertEvaluation(EvaluationResult.FAIL, evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
     @Test
-    fun `Should pass on most recent weight above min`() {
+    fun `Should pass on median weight above min`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(5)).value(38.0).build(),
-            weight().date(referenceDate.minusDays(4)).value(41.0).build()
+            weight().date(referenceDateTime).value(38.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(1)).value(43.0).valid(true).build()
         )
-        assertEvaluation(EvaluationResult.PASS, evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
     }
 
     @Test
-    fun `Should pass on most recent weight equal to min`() {
+    fun `Should pass on median weight equal to min`() {
         val weights = listOf(
-            weight().date(referenceDate.minusDays(5)).value(39.0).build(),
-            weight().date(referenceDate.minusDays(3)).value(40.0).build()
+            weight().date(referenceDateTime).value(39.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(1)).value(41.0).valid(true).build()
         )
-        assertEvaluation(EvaluationResult.PASS, evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0)
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
+    }
+
+    @Test
+    fun `Should take most recent and max 5 entries`() {
+        val weights = listOf(
+            weight().date(referenceDateTime).value(150.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(1)).value(150.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(2)).value(150.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(3)).value(150.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(4)).value(150.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(5)).value(280.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(6)).value(280.0).valid(true).build()
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+        )
+    }
+
+    @Test
+    fun `Should take only one and the correct median per day`() {
+        val weights = listOf(
+            weight().date(referenceDateTime).value(125.0).valid(true).build(),
+            weight().date(referenceDateTime).value(175.0).valid(true).build(),
+            weight().date(referenceDateTime.plusDays(1)).value(150.0).valid(true).build()
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+        )
+    }
+
+    // Test of fun selectMedianBodyWeightPerDay
+
+    @Test
+    fun `Should return null if no valid measurements present`() {
+        val weights = listOf(
+            weight().date(referenceDateTime).value(1250.0).valid(false).build(),
+            weight().date(referenceDateTime).value(125.0).unit("pounds").valid(false).build()
+        )
+        Assert.assertEquals(null, selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimumValidDate))
+    }
+
+    @Test
+    fun `Should not take body weight measurements outside of date cutoff`() {
+        val weights = listOf(
+            weight().date(referenceDateTime.plusDays(1)).value(110.0).valid(true).build(),
+            weight().date(referenceDateTime).value(120.0).valid(true).build(),
+            weight().date(referenceDateTime.minusDays(3)).value(130.0).valid(true).build()
+        )
+        Assert.assertEquals(
+            listOf(110.0, 120.0),
+            selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimumValidDate)?.map { it.value() })
     }
 
     companion object {

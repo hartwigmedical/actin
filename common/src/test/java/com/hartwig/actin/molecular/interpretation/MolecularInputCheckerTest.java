@@ -32,6 +32,15 @@ public class MolecularInputCheckerTest {
     }
 
     @Test
+    public void canDetermineIfStringIsHaplotype() {
+        assertTrue(MolecularInputChecker.isHaplotype("*1_HOM"));
+
+        assertFalse(MolecularInputChecker.isHlaAllele("UGT1A1_1_HOM"));
+        assertFalse(MolecularInputChecker.isHlaAllele("_1*HOM"));
+        assertFalse(MolecularInputChecker.isHlaAllele("*_HOM"));
+    }
+
+    @Test
     public void canDetermineIfStringIsProteinImpact() {
         assertTrue(MolecularInputChecker.isProteinImpact("?"));
         assertTrue(MolecularInputChecker.isProteinImpact("V600="));

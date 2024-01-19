@@ -75,6 +75,9 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantType;
 import com.hartwig.actin.molecular.datamodel.driver.Virus;
 import com.hartwig.actin.molecular.datamodel.driver.VirusType;
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence;
+import com.hartwig.actin.molecular.datamodel.evidence.Country;
+import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial;
+import com.hartwig.actin.molecular.datamodel.evidence.ImmutableExternalTrial;
 import com.hartwig.actin.molecular.datamodel.evidence.ImmutableActionableEvidence;
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele;
 import com.hartwig.actin.molecular.datamodel.immunology.ImmutableHlaAllele;
@@ -404,13 +407,33 @@ public class MolecularRecordJson {
         private static ActionableEvidence toActionableEvidence(@NotNull JsonObject evidence) {
             return ImmutableActionableEvidence.builder()
                     .approvedTreatments(stringList(evidence, "approvedTreatments"))
-                    .externalEligibleTrials(stringList(evidence, "externalEligibleTrials"))
+                    .externalEligibleTrials(toEligibleTrials(array(evidence, "externalEligibleTrials")))
                     .onLabelExperimentalTreatments(stringList(evidence, "onLabelExperimentalTreatments"))
                     .offLabelExperimentalTreatments(stringList(evidence, "offLabelExperimentalTreatments"))
                     .preClinicalTreatments(stringList(evidence, "preClinicalTreatments"))
                     .knownResistantTreatments(stringList(evidence, "knownResistantTreatments"))
                     .suspectResistantTreatments(stringList(evidence, "suspectResistantTreatments"))
                     .build();
+        }
+
+        @NotNull
+        private static Set<ExternalTrial> toEligibleTrials(@NotNull JsonArray eligibleTrialArray) {
+            return extractSetFromJson(eligibleTrialArray,
+                    eligibleTrial -> ImmutableExternalTrial.builder()
+                            .title(string(eligibleTrial, "title"))
+                            .countries(toCountries(stringList(eligibleTrial, "countries")))
+                            .url(string(eligibleTrial, "url"))
+                            .nctId(string(eligibleTrial, "nctId"))
+                            .build());
+        }
+
+        @NotNull
+        private static Set<Country> toCountries(@NotNull List<String> countryStrings) {
+            Set<Country> countries = Sets.newHashSet();
+            for (String country : countryStrings) {
+                countries.add(Country.valueOf(country));
+            }
+            return countries;
         }
 
         @NotNull

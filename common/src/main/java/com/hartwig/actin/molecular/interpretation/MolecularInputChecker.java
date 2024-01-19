@@ -35,6 +35,12 @@ public class MolecularInputChecker {
         return asterixIndex == 1 && semicolonIndex > asterixIndex;
     }
 
+    public static boolean isHaplotype(@NotNull String string) {
+        int asterixIndex = string.indexOf("*");
+        int semicolonIndex = string.indexOf("_");
+        return asterixIndex == 0 && semicolonIndex > asterixIndex;
+    }
+
     public static boolean isProteinImpact(@NotNull String string) {
         if (string.equals("?")) {
             return true;
