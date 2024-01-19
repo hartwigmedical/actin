@@ -69,7 +69,8 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_ANY_CYP,
         EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE,
         EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X,
-        EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY
+        EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY,
+        EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS
     )
 
     fun evaluate(trials: List<Trial>) {
