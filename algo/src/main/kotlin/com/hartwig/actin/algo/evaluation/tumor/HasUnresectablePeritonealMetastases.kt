@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasUnresectablePeritonealMetastases : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val targetTerms = listOf("peritoneum", "peritoneal", "intraperitoneal", "intraperitoneal")
+        val targetTerms = listOf("peritoneum", "peritoneal", "intraperitoneum", "intraperitoneal")
         val hasPeritonealMetastases = record.clinical().tumor().otherLesions()?.any { lesion ->
             val lowercaseLesion = lesion.lowercase()
             targetTerms.any(lowercaseLesion::startsWith) || targetTerms.any { lowercaseLesion.contains(" $it") }
