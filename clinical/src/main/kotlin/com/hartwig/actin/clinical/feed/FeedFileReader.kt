@@ -70,7 +70,6 @@ class FeedFileReader<T : FeedEntry>(
     private val reader = CsvMapper().apply {
         enable(CsvParser.Feature.FAIL_ON_MISSING_COLUMNS)
         enable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS)
-        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
         enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
         setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
@@ -92,7 +91,8 @@ class FeedFileReader<T : FeedEntry>(
         }
         LOGGER.info(" Read {} entries from {}", results.size, feedTsv)
         preProcessedFile.delete()
-        return clinicalFeedCreator.invoke(results).copy(validationWarnings = results.flatMap { it.validation.warnings })
+        return clinicalFeedCreator.invoke(results.filter { it.validation.valid })
+            .copy(validationWarnings = results.flatMap { it.validation.warnings })
     }
 
     companion object {
