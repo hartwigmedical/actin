@@ -16,38 +16,47 @@ import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionFeedValidator
 
 object FeedFileReaderFactory {
     fun createPatientReader(): FeedFileReader<PatientEntry> {
-        return FeedFileReader(PatientEntry::class.java)
+        return FeedFileReader(PatientEntry::class.java) { ClinicalFeed(patientEntries = entries(it)) }
     }
 
     fun createQuestionnaireReader(): FeedFileReader<QuestionnaireEntry> {
-        return FeedFileReader(QuestionnaireEntry::class.java, QuestionnaireEntryFeedValidator())
+        return FeedFileReader(
+            QuestionnaireEntry::class.java,
+            QuestionnaireEntryFeedValidator()
+        ) { ClinicalFeed(questionnaireEntries = entries(it)) }
     }
 
     fun createDigitalFileReader(): FeedFileReader<DigitalFileEntry> {
-        return FeedFileReader(DigitalFileEntry::class.java)
+        return FeedFileReader(DigitalFileEntry::class.java) { ClinicalFeed(digitalFileEntries = entries(it)) }
     }
 
     fun createSurgeryReader(): FeedFileReader<SurgeryEntry> {
-        return FeedFileReader(SurgeryEntry::class.java, SurgeryEntryFeedValidator())
+        return FeedFileReader(SurgeryEntry::class.java, SurgeryEntryFeedValidator()) { ClinicalFeed(surgeryEntries = entries(it)) }
     }
 
     fun createMedicationReader(): FeedFileReader<MedicationEntry> {
-        return FeedFileReader(MedicationEntry::class.java)
+        return FeedFileReader(MedicationEntry::class.java) { ClinicalFeed(medicationEntries = entries(it)) }
     }
 
     fun createLabReader(): FeedFileReader<LabEntry> {
-        return FeedFileReader(LabEntry::class.java)
+        return FeedFileReader(LabEntry::class.java) { ClinicalFeed(labEntries = entries(it)) }
     }
 
     fun createVitalFunctionReader(): FeedFileReader<VitalFunctionEntry> {
-        return FeedFileReader(VitalFunctionEntry::class.java, VitalFunctionFeedValidator())
+        return FeedFileReader(
+            VitalFunctionEntry::class.java,
+            VitalFunctionFeedValidator()
+        ) { ClinicalFeed(vitalFunctionEntries = entries(it)) }
     }
 
     fun createIntoleranceReader(): FeedFileReader<IntoleranceEntry> {
-        return FeedFileReader(IntoleranceEntry::class.java)
+        return FeedFileReader(IntoleranceEntry::class.java) { ClinicalFeed(intoleranceEntries = entries(it)) }
     }
 
     fun createBodyWeightReader(): FeedFileReader<BodyWeightEntry> {
-        return FeedFileReader(BodyWeightEntry::class.java, BodyWeightEntryValidator())
+        return FeedFileReader(BodyWeightEntry::class.java, BodyWeightEntryValidator()) { ClinicalFeed(bodyWeightEntries = entries(it)) }
     }
+
+    private fun <T : FeedEntry> entries(it: List<FeedResult<T>>) =
+        it.map { p -> p.entry }
 }

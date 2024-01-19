@@ -11,6 +11,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -63,7 +64,8 @@ data class FeedResult<T : FeedEntry>(
 class FeedFileReader<T : FeedEntry>(
     feedClass: Class<T>,
     private val feedValidator: FeedValidator<T> = AlwaysValidFeedValidator(),
-    private val feedFilePreprocessor: FeedFilePreprocessor = FeedFilePreprocessor()
+    private val feedFilePreprocessor: FeedFilePreprocessor = FeedFilePreprocessor(),
+    private val clinicalFeedCreator: (List<FeedResult<T>>) -> ClinicalFeed
 ) {
     private val reader = CsvMapper().apply {
         enable(CsvParser.Feature.FAIL_ON_MISSING_COLUMNS)
@@ -82,12 +84,18 @@ class FeedFileReader<T : FeedEntry>(
         )
     }.readerFor(feedClass).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
 
-    fun read(feedTsv: String): List<FeedResult<T>> {
+    fun read(feedTsv: String): ClinicalFeed {
+        LOGGER.info(" Reading {}", feedTsv)
         val preProcessedFile = feedFilePreprocessor.apply(File(feedTsv))
         val results = reader.readValues<T>(preProcessedFile).readAll().map {
             FeedResult(it, feedValidator.validate(it))
         }
+        LOGGER.info(" Read {} entries from {}", results.size, feedTsv)
         preProcessedFile.delete()
-        return results
+        return clinicalFeedCreator.invoke(results).copy(validationWarnings = results.flatMap { it.validation.warnings })
+    }
+
+    companion object {
+        private val LOGGER = LogManager.getLogger(FeedFileReader::class.java)
     }
 }
