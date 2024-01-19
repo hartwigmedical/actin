@@ -146,6 +146,9 @@ public class ParameterizedFunctionTestFactory {
             case ONE_DOID_TERM: {
                 return List.of(doidTermToUse);
             }
+            case MANY_INTENTS_WITH_ONE_INTEGER: {
+                return List.of("ADJUVANT;NEOADJUVANT", "1");
+            }
             default: {
                 throw new IllegalStateException("Could not create inputs for " + input);
             }

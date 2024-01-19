@@ -13,6 +13,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.treatment.Drug;
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType;
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver;
 import com.hartwig.actin.doid.DoidModel;
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker;
@@ -24,6 +25,7 @@ import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableManyGenes;
+import com.hartwig.actin.treatment.input.single.ImmutableManyIntentsOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableManySpecificTreatmentsTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGene;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyCodons;
@@ -44,6 +46,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ManyGenes;
+import com.hartwig.actin.treatment.input.single.ManyIntentsOneInteger;
 import com.hartwig.actin.treatment.input.single.ManySpecificTreatmentsTwoIntegers;
 import com.hartwig.actin.treatment.input.single.OneGene;
 import com.hartwig.actin.treatment.input.single.OneGeneManyCodons;
@@ -248,6 +251,10 @@ public class FunctionInputResolver {
                 }
                 case ONE_DOID_TERM: {
                     createOneDoidTermInput(function);
+                    return true;
+                }
+                case MANY_INTENTS_WITH_ONE_INTEGER: {
+                    createManyIntentsOneIntegerInput(function);
                     return true;
                 }
                 default: {
@@ -627,6 +634,29 @@ public class FunctionInputResolver {
             throw new IllegalStateException("Not a valid DOID term: " + param);
         }
         return param;
+    }
+
+    @NotNull
+    public ManyIntentsOneInteger createManyIntentsOneIntegerInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.MANY_INTENTS_WITH_ONE_INTEGER, 2);
+
+        return ImmutableManyIntentsOneInteger.builder()
+                .intents(toIntents(function.parameters().get(0)))
+                .integer(Integer.parseInt((String) function.parameters().get(1)))
+                .build();
+    }
+
+    @NotNull
+    private List<Intent> toIntents(@NotNull Object input) {
+        return toStringStream(input).map(this::toIntent).collect(Collectors.toList());
+    }
+
+    @NotNull
+    private Intent toIntent(@NotNull String intentName) {
+        if (!Intent.findByValue(intentName)) {
+            throw new IllegalStateException("Intent name not found: " + intentName);
+        }
+        return Intent.valueOf(intentName);
     }
 
     @NotNull

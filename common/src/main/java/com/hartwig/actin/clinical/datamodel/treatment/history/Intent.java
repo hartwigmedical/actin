@@ -1,10 +1,36 @@
 package com.hartwig.actin.clinical.datamodel.treatment.history;
 
-public enum Intent {
-    ADJUVANT,
-    NEOADJUVANT,
-    INDUCTION,
-    CONSOLIDATION,
-    MAINTENANCE,
-    PALLIATIVE
+import com.hartwig.actin.Displayable;
+
+import org.jetbrains.annotations.NotNull;
+
+public enum Intent implements Displayable {
+    ADJUVANT("Adjuvant"),
+    NEOADJUVANT("Neoadjuvant"),
+    INDUCTION("Induction"),
+    CONSOLIDATION("Consolidation"),
+    MAINTENANCE("Maintenance"),
+    PALLIATIVE("Palliative");
+
+    @NotNull
+    private final String display;
+
+    Intent(@NotNull final String display) {
+        this.display = display;
+    }
+
+    @Override
+    @NotNull
+    public String display() {
+        return display;
+    }
+
+    public static Boolean findByValue(String value) {
+        for (Intent intent : Intent.values()) {
+            if (intent.display().equalsIgnoreCase(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
