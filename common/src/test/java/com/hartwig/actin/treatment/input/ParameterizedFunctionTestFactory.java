@@ -149,6 +149,9 @@ public class ParameterizedFunctionTestFactory {
             case MANY_INTENTS_WITH_ONE_INTEGER: {
                 return List.of("ADJUVANT;NEOADJUVANT", "1");
             }
+            case MANY_INTENTS: {
+                return List.of("ADJUVANT;NEOADJUVANT");
+            }
             default: {
                 throw new IllegalStateException("Could not create inputs for " + input);
             }

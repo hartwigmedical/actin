@@ -11,10 +11,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-class HasHadSystemicTherapyWithAnyIntentWithinMonths(
+class HasHadSystemicTherapyWithAnyIntent(
     private val intents: Set<Intent>,
-    private val minDate: LocalDate,
-    private val monthsAgo: Int
+    private val minDate: LocalDate?,
+    private val monthsAgo: Int?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -25,6 +25,17 @@ class HasHadSystemicTherapyWithAnyIntentWithinMonths(
         val intentsLowercase = concatItemsWithOr(intents).lowercase()
 
         return when {
+            (monthsAgo == null) && matchingTreatments.isNotEmpty() -> {
+                EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
+            }
+
+            matchingTreatments.isEmpty() -> {
+                EvaluationFactory.fail(
+                    "Patient has not had any $intentsLowercase systemic therapy in prior tumor history",
+                    "No $intentsLowercase systemic therapy in prior tumor history"
+                )
+            }
+
             matchingTreatments.any { treatmentSinceMinDate(it, false) } -> {
                 EvaluationFactory.pass(
                     "Patient has had $intentsLowercase systemic therapy within the last $monthsAgo months",
@@ -39,25 +50,18 @@ class HasHadSystemicTherapyWithAnyIntentWithinMonths(
                 )
             }
 
-            matchingTreatments.isNotEmpty() ->
+            else ->
                 EvaluationFactory.fail(
                     "All $intentsLowercase systemic therapy is administered more than $monthsAgo months ago",
                     "No $intentsLowercase systemic therapy within $monthsAgo months"
                 )
-
-            else -> {
-                EvaluationFactory.fail(
-                    "Patient has not had any $intentsLowercase systemic therapy in prior tumor history",
-                    "No $intentsLowercase systemic therapy in prior tumor history"
-                )
-            }
         }
 
     }
 
     private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
         return DateComparison.isAfterDate(
-            minDate,
+            minDate!!,
             treatment.treatmentHistoryDetails()?.stopYear(),
             treatment.treatmentHistoryDetails()?.stopMonth()
         )

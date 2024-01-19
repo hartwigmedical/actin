@@ -25,6 +25,7 @@ import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableManyGenes;
+import com.hartwig.actin.treatment.input.single.ImmutableManyIntents;
 import com.hartwig.actin.treatment.input.single.ImmutableManyIntentsOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableManySpecificTreatmentsTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGene;
@@ -46,6 +47,7 @@ import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ManyGenes;
+import com.hartwig.actin.treatment.input.single.ManyIntents;
 import com.hartwig.actin.treatment.input.single.ManyIntentsOneInteger;
 import com.hartwig.actin.treatment.input.single.ManySpecificTreatmentsTwoIntegers;
 import com.hartwig.actin.treatment.input.single.OneGene;
@@ -255,6 +257,10 @@ public class FunctionInputResolver {
                 }
                 case MANY_INTENTS_WITH_ONE_INTEGER: {
                     createManyIntentsOneIntegerInput(function);
+                    return true;
+                }
+                case MANY_INTENTS: {
+                    createManyIntentsInput(function);
                     return true;
                 }
                 default: {
@@ -634,6 +640,15 @@ public class FunctionInputResolver {
             throw new IllegalStateException("Not a valid DOID term: " + param);
         }
         return param;
+    }
+
+    @NotNull
+    public ManyIntents createManyIntentsInput(@NotNull EligibilityFunction function) {
+        assertParamConfig(function, FunctionInput.MANY_INTENTS, 1);
+
+        return ImmutableManyIntents.builder()
+                .intents(toIntents(function.parameters().get(0)))
+                .build();
     }
 
     @NotNull
