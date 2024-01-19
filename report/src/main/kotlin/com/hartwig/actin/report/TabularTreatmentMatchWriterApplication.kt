@@ -21,11 +21,11 @@ class TabularTreatmentMatchWriterApplication(private val config: TabularTreatmen
 
         LOGGER.info("Writing tabular evaluation results to {}", config.outputDirectory)
         val outputPath = Paths.forceTrailingFileSeparator(config.outputDirectory)
-        val evaluationSummaryTsv = outputPath + treatmentMatch.patientId() + ".evaluation.summary.tsv"
+        val evaluationSummaryTsv = outputPath + treatmentMatch.patientId + ".evaluation.summary.tsv"
         TabularTreatmentMatchWriter.writeEvaluationSummaryToTsv(treatmentMatch, evaluationSummaryTsv)
         LOGGER.info(" Written summary data to {}", evaluationSummaryTsv)
 
-        val evaluationDetailsTsv = outputPath + treatmentMatch.patientId() + ".evaluation.details.tsv"
+        val evaluationDetailsTsv = outputPath + treatmentMatch.patientId + ".evaluation.details.tsv"
         TabularTreatmentMatchWriter.writeEvaluationDetailsToTsv(treatmentMatch, evaluationDetailsTsv)
         LOGGER.info(" Written detailed data to {}", evaluationDetailsTsv)
         LOGGER.info("Done!")

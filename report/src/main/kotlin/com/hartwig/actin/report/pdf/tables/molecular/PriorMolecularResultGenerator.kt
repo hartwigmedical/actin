@@ -21,10 +21,10 @@ class PriorMolecularResultGenerator(
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createSubTitle("IHC results"))
-        if (clinical.priorMolecularTests().isEmpty()) {
+        if (clinical.priorMolecularTests.isEmpty()) {
             table.addCell(Cells.createValue("None"))
         } else {
-            val interpretation = PriorMolecularTestInterpreter.interpret(clinical.priorMolecularTests())
+            val interpretation = PriorMolecularTestInterpreter.interpret(clinical.priorMolecularTests)
             val paragraphs = generatePriorTestParagraphs(interpretation)
             table.addCell(Cells.createValue(paragraphs))
         }
@@ -56,26 +56,26 @@ class PriorMolecularResultGenerator(
                 builder.append(scoreText.substring(1).lowercase())
             }
             builder.append(if (key.test.isNotEmpty()) " (${key.test}): " else ": ")
-            builder.append(sorted[0].item())
+            builder.append(sorted[0].item)
             for (i in 1 until sorted.size) {
                 if (i < sorted.size - 1) {
                     builder.append(", ")
                 } else {
                     builder.append(" and ")
                 }
-                builder.append(sorted[i].item())
+                builder.append(sorted[i].item)
             }
             return builder.toString()
         }
 
         private fun formatValueBasedPriorTest(valueTest: PriorMolecularTest): String {
             return listOfNotNull(
-                valueTest.item(),
+                valueTest.item,
                 "Score",
-                valueTest.measure(),
-                valueTest.scoreValuePrefix(),
-                Formats.twoDigitNumber(valueTest.scoreValue()!!),
-                valueTest.scoreValueUnit()
+                valueTest.measure,
+                valueTest.scoreValuePrefix,
+                Formats.twoDigitNumber(valueTest.scoreValue!!),
+                valueTest.scoreValueUnit
             ).joinToString(" ")
         }
     }

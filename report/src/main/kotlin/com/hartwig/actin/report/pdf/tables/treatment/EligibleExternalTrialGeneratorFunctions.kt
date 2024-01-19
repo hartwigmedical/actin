@@ -1,7 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
-import com.google.common.collect.ArrayListMultimap
-import com.google.common.collect.Multimap
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.pdf.util.Cells
@@ -10,24 +8,12 @@ import com.itextpdf.layout.element.Table
 
 object EligibleExternalTrialGeneratorFunctions {
 
-    fun dutchTrials(externalTrialsPerEvent: Multimap<String, ExternalTrial>): Multimap<String, ExternalTrial> {
-        val dutchTrials = ArrayListMultimap.create<String, ExternalTrial>()
-        externalTrialsPerEvent.forEach { event, eligibleTrial ->
-            if (eligibleTrial.countries().contains(Country.NETHERLANDS)) {
-                dutchTrials.put(event, eligibleTrial)
-            }
-        }
-        return dutchTrials
+    fun dutchTrials(externalTrialsPerEvent: Map<String, List<ExternalTrial>>): Map<String, List<ExternalTrial>> {
+        return filterMapOfExternalTrials(externalTrialsPerEvent) { it.countries.contains(Country.NETHERLANDS) }
     }
 
-    fun nonDutchTrials(externalTrialsPerEvent: Multimap<String, ExternalTrial>): Multimap<String, ExternalTrial> {
-        val nonDutchTrials = ArrayListMultimap.create<String, ExternalTrial>()
-        externalTrialsPerEvent.forEach { event, eligibleTrial ->
-            if (!eligibleTrial.countries().contains(Country.NETHERLANDS)) {
-                nonDutchTrials.put(event, eligibleTrial)
-            }
-        }
-        return nonDutchTrials
+    fun nonDutchTrials(externalTrialsPerEvent: Map<String, List<ExternalTrial>>): Map<String, List<ExternalTrial>> {
+        return filterMapOfExternalTrials(externalTrialsPerEvent) { !it.countries.contains(Country.NETHERLANDS) }
     }
 
     fun shortenTitle(title: String): String {
@@ -45,5 +31,12 @@ object EligibleExternalTrialGeneratorFunctions {
             subTable.setKeepTogether(true)
         }
         table.addCell(Cells.createContent(finalSubTable))
+    }
+
+    private fun filterMapOfExternalTrials(
+        externalTrialsPerEvent: Map<String, List<ExternalTrial>>, filter: (ExternalTrial) -> Boolean
+    ): Map<String, List<ExternalTrial>> {
+        return externalTrialsPerEvent.mapValues { (_, externalTrials) -> externalTrials.filter(filter::invoke) }
+            .filterValues { it.isNotEmpty() }
     }
 }

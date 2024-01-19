@@ -1,12 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch
-import com.hartwig.actin.algo.datamodel.ImmutableTrialMatch
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
-import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory.create
-import com.hartwig.actin.trial.datamodel.ImmutableTrialIdentification
+import com.hartwig.actin.trial.datamodel.TrialIdentification
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -67,22 +64,14 @@ class EvaluatedCohortFactoryTest {
 
     @Test
     fun canEvaluateTrialsWithoutCohort() {
-        val trialMatchWithoutCohort: TrialMatch = ImmutableTrialMatch.builder()
-            .identification(
-                ImmutableTrialIdentification.builder()
-                    .trialId("test")
-                    .open(true)
-                    .acronym("test-1")
-                    .title("Example test trial 1")
-                    .build()
-            )
-            .isPotentiallyEligible(true)
-            .build()
+        val trialMatchWithoutCohort = TrialMatch(
+            identification = TrialIdentification(trialId = "test", open = true, acronym = "test-1", title = "Example test trial 1"),
+            isPotentiallyEligible = true,
+            cohorts = emptyList(),
+            evaluations = emptyMap()
+        )
 
-        val treatmentMatch: TreatmentMatch = ImmutableTreatmentMatch.builder()
-            .from(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
-            .addTrialMatches(trialMatchWithoutCohort)
-            .build()
+        val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(trialMatches = listOf(trialMatchWithoutCohort))
         val cohorts = create(treatmentMatch)
         assertThat(cohorts).hasSize(1)
     }

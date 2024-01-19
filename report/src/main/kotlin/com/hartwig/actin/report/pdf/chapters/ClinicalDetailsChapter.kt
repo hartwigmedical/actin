@@ -36,13 +36,13 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth - 10
-        val bloodTransfusions = report.clinical.bloodTransfusions()
+        val bloodTransfusions = report.clinical.bloodTransfusions
 
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
             PatientCurrentDetailsGenerator(report.clinical, keyWidth, valueWidth),
             TumorDetailsGenerator(report.clinical, keyWidth, valueWidth),
-            MedicationGenerator(report.clinical.medications(), contentWidth()),
+            MedicationGenerator(report.clinical.medications, contentWidth()),
             if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(bloodTransfusions, contentWidth())
         )
         for (i in generators.indices) {

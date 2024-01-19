@@ -33,20 +33,20 @@ class EvaluatedCohortsInterpreterTest {
     @Test
     fun shouldIndicateDriverIsActionableIfExternalTrialsExist() {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
-        val driver: Driver = TestVariantFactory.createMinimal()
-            .event(CLOSED_COHORT)
-            .evidence(TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial()))
-            .build()
+        val driver: Driver = TestVariantFactory.createMinimal().copy(
+            event = CLOSED_COHORT,
+            evidence = TestActionableEvidenceFactory.withExternalEligibleTrial(TestExternalTrialFactory.createTestTrial())
+        )
         assertThat(createInterpreter().driverIsActionable(driver)).isTrue
     }
 
     @Test
     fun shouldIndicateDriverIsActionableIfApprovedTreatmentsExist() {
         assertThat(createInterpreter().driverIsActionable(driverForEvent(CLOSED_COHORT))).isFalse
-        val driver: Driver = TestVariantFactory.createMinimal()
-            .event(CLOSED_COHORT)
-            .evidence(TestActionableEvidenceFactory.withApprovedTreatment("treatment"))
-            .build()
+        val driver: Driver = TestVariantFactory.createMinimal().copy(
+            event = CLOSED_COHORT,
+            evidence = TestActionableEvidenceFactory.withApprovedTreatment("treatment")
+        )
         assertThat(createInterpreter().driverIsActionable(driver)).isTrue
     }
 
@@ -57,15 +57,10 @@ class EvaluatedCohortsInterpreterTest {
         private const val ELIGIBLE_COHORT_2 = "ELIGIBLE2"
         private const val ELIGIBLE_EVENT = "event"
         private fun driverForEvent(event: String): Driver {
-            return TestVariantFactory.createMinimal().event(event).build()
+            return TestVariantFactory.createMinimal().copy(event = event)
         }
 
-        private fun evaluatedCohort(
-            name: String,
-            isEligible: Boolean,
-            isOpen: Boolean,
-            event: String = name
-        ): EvaluatedCohort {
+        private fun evaluatedCohort(name: String, isEligible: Boolean, isOpen: Boolean, event: String = name): EvaluatedCohort {
             return EvaluatedCohortTestFactory.evaluatedCohort(
                 acronym = name,
                 isPotentiallyEligible = isEligible,

@@ -44,16 +44,14 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
         table.addCell(
-            Cells.createTitle("${report.molecular.type().display()} (${report.molecular.sampleId()}, ${date(report.molecular.date())})")
+            Cells.createTitle("${report.molecular.type.display()} (${report.molecular.sampleId}, ${date(report.molecular.date)})")
         )
 
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
         val generators: MutableList<TableGenerator> = mutableListOf(
-            MolecularCharacteristicsGenerator(
-                report.molecular, contentWidth()
-            )
+            MolecularCharacteristicsGenerator(report.molecular, contentWidth())
         )
-        if (report.molecular.containsTumorCells()) {
+        if (report.molecular.containsTumorCells) {
             generators.add(PredictedTumorOriginGenerator(report.molecular, contentWidth()))
             generators.add(MolecularDriversGenerator(report.molecular, cohorts, contentWidth()))
         }
@@ -65,7 +63,7 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
                 table.addCell(Cells.createEmpty())
             }
         }
-        if (!report.molecular.containsTumorCells()) {
+        if (!report.molecular.containsTumorCells) {
             table.addCell(Cells.createContent("No successful WGS could be performed on the submitted biopsy"))
         }
         document.add(table)

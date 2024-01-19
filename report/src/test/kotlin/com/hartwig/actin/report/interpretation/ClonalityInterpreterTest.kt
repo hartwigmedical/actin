@@ -13,9 +13,7 @@ class ClonalityInterpreterTest {
         assertThat(isPotentiallySubclonal(create(ClonalityInterpreter.CLONAL_CUTOFF - 0.01))).isTrue
     }
 
-    companion object {
-        private fun create(clonalLikelihood: Double): Variant {
-            return TestVariantFactory.createMinimal().clonalLikelihood(clonalLikelihood).build()
-        }
+    private fun create(clonalLikelihood: Double): Variant {
+        return TestVariantFactory.createMinimal().copy(clonalLikelihood = clonalLikelihood)
     }
 }

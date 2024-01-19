@@ -39,16 +39,16 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
     private fun addPatientDetails(document: Document) {
         val patientDetailFields = listOf(
-            "Gender: " to report.clinical.patient().gender().display(),
-            " | Birth year: " to report.clinical.patient().birthYear().toString(),
-            " | WHO: " to whoStatus(report.clinical.clinicalStatus().who())
+            "Gender: " to report.clinical.patient.gender.display(),
+            " | Birth year: " to report.clinical.patient.birthYear.toString(),
+            " | WHO: " to whoStatus(report.clinical.clinicalStatus.who)
         )
         addParagraphWithContent(patientDetailFields, document)
 
         val tumorDetailFields = listOf(
-            "Tumor: " to tumor(report.clinical.tumor()),
-            " | Lesions: " to lesions(report.clinical.tumor()),
-            " | Stage: " to stage(report.clinical.tumor())
+            "Tumor: " to tumor(report.clinical.tumor),
+            " | Lesions: " to lesions(report.clinical.tumor),
+            " | Stage: " to stage(report.clinical.tumor)
         )
         addParagraphWithContent(tumorDetailFields, document)
     }
@@ -74,7 +74,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
         val aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular)
-        val externalEligibleTrials = aggregatedEvidence.externalEligibleTrialsPerEvent()
+        val externalEligibleTrials = aggregatedEvidence.externalEligibleTrialsPerEvent
         val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
         val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
 
@@ -84,16 +84,12 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()),
-            if (!dutchTrials.isEmpty) EligibleDutchExternalTrialsGenerator(
-                report.molecular.externalTrialSource(),
-                dutchTrials,
-                contentWidth()
-            ) else null,
-            if (!nonDutchTrials.isEmpty) EligibleOtherCountriesExternalTrialsGenerator(
-                report.molecular.externalTrialSource(),
-                nonDutchTrials,
-                contentWidth()
-            ) else null
+            if (dutchTrials.isNotEmpty()) {
+                EligibleDutchExternalTrialsGenerator(report.molecular.externalTrialSource, dutchTrials, contentWidth())
+            } else null,
+            if (nonDutchTrials.isNotEmpty()) {
+                EligibleOtherCountriesExternalTrialsGenerator(report.molecular.externalTrialSource, nonDutchTrials, contentWidth())
+            } else null
         )
 
         for (i in generators.indices) {
@@ -123,34 +119,34 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         }
 
         private fun tumorLocation(tumor: TumorDetails): String? {
-            return tumor.primaryTumorLocation()?.let { tumorLocation ->
-                val tumorSubLocation = tumor.primaryTumorSubLocation()
+            return tumor.primaryTumorLocation?.let { tumorLocation ->
+                val tumorSubLocation = tumor.primaryTumorSubLocation
                 return if (!tumorSubLocation.isNullOrEmpty()) "$tumorLocation ($tumorSubLocation)" else tumorLocation
             }
         }
 
         private fun tumorType(tumor: TumorDetails): String? {
-            return tumor.primaryTumorType()?.let { tumorType ->
-                val tumorSubType = tumor.primaryTumorSubType()
+            return tumor.primaryTumorType?.let { tumorType ->
+                val tumorSubType = tumor.primaryTumorSubType
                 if (!tumorSubType.isNullOrEmpty()) tumorSubType else tumorType
             }
         }
 
         private fun stage(tumor: TumorDetails): String {
-            return tumor.stage()?.display() ?: Formats.VALUE_UNKNOWN
+            return tumor.stage?.display() ?: Formats.VALUE_UNKNOWN
         }
 
         fun lesions(tumor: TumorDetails): String {
             val categorizedLesions = listOf(
-                "CNS" to tumor.hasCnsLesions(),
-                "Brain" to tumor.hasBrainLesions(),
-                "Liver" to tumor.hasLiverLesions(),
-                "Bone" to tumor.hasBoneLesions(),
-                "Lung" to tumor.hasLungLesions()
+                "CNS" to tumor.hasCnsLesions,
+                "Brain" to tumor.hasBrainLesions,
+                "Liver" to tumor.hasLiverLesions,
+                "Bone" to tumor.hasBoneLesions,
+                "Lung" to tumor.hasLungLesions
             ).filter { it.second == true }.map { it.first }
 
             val lesions =
-                listOfNotNull(categorizedLesions, tumor.otherLesions(), listOfNotNull(tumor.biopsyLocation())).flatten()
+                listOfNotNull(categorizedLesions, tumor.otherLesions, listOfNotNull(tumor.biopsyLocation)).flatten()
                     .sorted().distinctBy { it.uppercase() }
 
             val (lymphNodeLesions, otherLesions) = lesions.partition { it.lowercase().startsWith("lymph node") }

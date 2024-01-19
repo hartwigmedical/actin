@@ -12,25 +12,25 @@ import com.itextpdf.layout.element.Table
 class TumorDetailsGenerator(private val record: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
     override fun title(): String {
-        return "Tumor details (" + date(record.patient().questionnaireDate()) + ")"
+        return "Tumor details (" + date(record.patient.questionnaireDate) + ")"
     }
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createKey("Measurable disease"))
-        table.addCell(Cells.createValue(Formats.yesNoUnknown(record.tumor().hasMeasurableDisease())))
+        table.addCell(Cells.createValue(Formats.yesNoUnknown(record.tumor.hasMeasurableDisease)))
         table.addCell(Cells.createKey("CNS lesion status"))
-        table.addCell(Cells.createValue(cnsLesions(record.tumor())))
+        table.addCell(Cells.createValue(cnsLesions(record.tumor)))
         table.addCell(Cells.createKey("Brain lesion status"))
-        table.addCell(Cells.createValue(brainLesions(record.tumor())))
+        table.addCell(Cells.createValue(brainLesions(record.tumor)))
         return table
     }
 
     companion object {
         private fun cnsLesions(tumor: TumorDetails): String {
-            return when (tumor.hasCnsLesions()) {
+            return when (tumor.hasCnsLesions) {
                 true -> {
-                    activeLesionString("Present CNS lesions", tumor.hasActiveCnsLesions())
+                    activeLesionString("Present CNS lesions", tumor.hasActiveCnsLesions)
                 }
 
                 false -> {
@@ -44,9 +44,9 @@ class TumorDetailsGenerator(private val record: ClinicalRecord, private val keyW
         }
 
         private fun brainLesions(tumor: TumorDetails): String {
-            return when (tumor.hasBrainLesions()) {
+            return when (tumor.hasBrainLesions) {
                 true -> {
-                    activeLesionString("Present brain lesions", tumor.hasActiveBrainLesions())
+                    activeLesionString("Present brain lesions", tumor.hasActiveBrainLesions)
                 }
 
                 false -> {
