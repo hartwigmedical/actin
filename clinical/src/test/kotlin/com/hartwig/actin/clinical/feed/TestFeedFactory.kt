@@ -17,14 +17,11 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 val FEED_DIRECTORY: String = Resources.getResource("feed").path + "/"
+
 object TestFeedFactory {
     const val TEST_SUBJECT = "ACTN-01-02-9999"
     fun createProperTestFeedModel(): FeedModel {
         return FeedModel(createTestClinicalFeed())
-    }
-
-    fun createMinimalTestFeedModel(): FeedModel {
-        return FeedModel(ClinicalFeed(patientEntries = createTestPatientEntries()))
     }
 
     fun createTestClinicalFeed(): ClinicalFeed {
@@ -210,8 +207,7 @@ object TestFeedFactory {
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
                 quantityUnit = "mmHg",
-                quantityValue = 120.0,
-                valid = true
+                quantityValue = 120.0
 
             ),
             VitalFunctionEntry(
@@ -220,8 +216,7 @@ object TestFeedFactory {
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
                 quantityUnit = "mmHg",
-                quantityValue = 1200.0,
-                valid = false
+                quantityValue = 1200.0
             ),
             VitalFunctionEntry(
                 subject = TEST_SUBJECT,
@@ -229,8 +224,7 @@ object TestFeedFactory {
                 codeDisplayOriginal = "NIBP",
                 componentCodeDisplay = "Systolic blood pressure",
                 quantityUnit = "mmHg",
-                quantityValue = 120.0,
-                valid = true
+                quantityValue = 120.0
             ),
             VitalFunctionEntry(
                 subject = TEST_SUBJECT,
@@ -239,7 +233,6 @@ object TestFeedFactory {
                 componentCodeDisplay = "Diastolic blood pressure",
                 quantityUnit = "mmHg",
                 quantityValue = 120.0,
-                valid = true
             )
         )
     }
@@ -266,26 +259,22 @@ object TestFeedFactory {
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 58.1,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDateTime.of(2018, 4, 5, 12, 30, 0),
-                valid = true
+                effectiveDateTime = LocalDateTime.of(2018, 4, 5, 12, 30, 0)
             ), BodyWeightEntry(
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 61.1,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0),
-                valid = true
+                effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0)
             ), BodyWeightEntry(
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 61.1,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0),
-                valid = true
+                effectiveDateTime = LocalDateTime.of(2018, 5, 5, 12, 30, 0)
             ), BodyWeightEntry(
                 subject = TEST_SUBJECT,
                 valueQuantityValue = 611.0,
                 valueQuantityUnit = "kilogram",
-                effectiveDateTime = LocalDateTime.of(2018, 5, 4, 12, 30, 0),
-                valid = false
+                effectiveDateTime = LocalDateTime.of(2018, 5, 4, 12, 30, 0)
             )
         )
     }

@@ -351,7 +351,7 @@ class QuestionnaireExtractionTest {
         }
 
         private fun questionnaire(text: String): Questionnaire {
-            return QuestionnaireExtraction.extract(entryWithText(text)).first!!
+            return QuestionnaireExtraction.extract(entryWithText(text.replace("\n", "\\n"))).first!!
         }
 
         private fun assertExtractionForQuestionnaireV1_5(rawQuestionnaire: String) {

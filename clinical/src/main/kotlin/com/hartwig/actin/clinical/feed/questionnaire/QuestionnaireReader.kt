@@ -7,7 +7,7 @@ import java.util.*
 internal object QuestionnaireReader {
     val TERMS_TO_CLEAN = setOf("{", "}", "\\tab", "\\li0", "\\ri0", "\\sa0", "\\sb0", "\\u000ci0", "\\ql", "\\par", "\\u000c2", "\\ltrch")
     fun read(entryText: String, validKeys: List<String>): Array<String> {
-        return merge(clean(entryText).split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray(), validKeys)
+        return merge(clean(entryText).split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray(), validKeys)
     }
 
     private fun merge(lines: Array<String>, validKeys: List<String>): Array<String> {

@@ -2,12 +2,16 @@ package com.hartwig.actin.clinical
 
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.FeedModel
+import com.hartwig.actin.clinical.feed.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCurationError
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -36,8 +40,15 @@ class ClinicalIngestionTest {
             ),
             TestTreatmentDatabaseFactory.createProper()
         )
+        val clinicalFeed = ClinicalFeedReader.read(FEED_DIRECTORY)
         val ingestion = ClinicalIngestion.create(
-            FeedModel.fromFeedDirectory(FEED_DIRECTORY),
+            FeedModel(
+                clinicalFeed.copy(
+                    questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                        clinicalFeed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(CURATION_DIRECTORY)
+                    )
+                )
+            ),
             curationDatabase,
             TestAtcFactory.createProperAtcModel()
         )
@@ -55,6 +66,12 @@ class ClinicalIngestionTest {
         assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
         assertThat(patientResults[0].questionnaireCurationErrors)
             .containsExactly(QuestionnaireCurationError("ACTN-01-02-9999", "Unrecognized questionnaire option: 'Probably'"))
+        assertThat(patientResults[0].feedValidationWarnings).containsExactly(
+            FeedValidationWarning(
+                "ACTN-01-02-9999",
+                "Empty vital function value"
+            )
+        )
 
         assertThat(ingestionResult.unusedConfigs).containsExactly(
             UnusedCurationConfig(categoryName = "Molecular Test", input = "ihc erbb2 3+"),
