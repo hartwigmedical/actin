@@ -14,13 +14,24 @@ class HasUnresectablePeritonealMetastases : EvaluationFunction {
             targetTerms.any(lowercaseLesion::startsWith) || targetTerms.any { lowercaseLesion.contains(" $it") }
         } ?: false
 
-        return if (hasPeritonealMetastases) {
-            EvaluationFactory.warn(
-                "Undetermined if peritoneal metastases are unresectable",
-                "Undetermined if peritoneal metastases are unresectable"
-            )
-        } else {
-            EvaluationFactory.fail("Patient has no unresectable peritoneal metastases", "No unresectable peritoneal metastases")
+        return when {
+            record.clinical().tumor().otherLesions() == null -> {
+                EvaluationFactory.undetermined(
+                    "Missing metastases data",
+                    "Missing metastases data"
+                )
+            }
+
+            (hasPeritonealMetastases) -> {
+                EvaluationFactory.warn(
+                    "Undetermined if peritoneal metastases are unresectable",
+                    "Undetermined if peritoneal metastases are unresectable"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.fail("Patient has no unresectable peritoneal metastases", "No unresectable peritoneal metastases")
+            }
         }
     }
 }

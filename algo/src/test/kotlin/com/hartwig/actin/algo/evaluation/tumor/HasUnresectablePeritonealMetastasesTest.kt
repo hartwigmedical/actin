@@ -9,9 +9,9 @@ class HasUnresectablePeritonealMetastasesTest {
     private val function = HasUnresectablePeritonealMetastases()
 
     @Test
-    fun `Should fail if other lesions are unknown`() {
+    fun `Should be undetermined if other lesions are unknown`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withOtherLesions(null))
         )
     }
