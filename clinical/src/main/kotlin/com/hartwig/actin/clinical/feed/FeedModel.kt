@@ -28,16 +28,16 @@ class FeedModel(private val feed: ClinicalFeed) {
 
     fun bloodTransfusionEntries(subject: String): List<DigitalFileEntry> {
         return entriesForSubject(feed.digitalFileEntries, subject)
-            .filter { obj: DigitalFileEntry -> obj.isBloodTransfusionEntry() }
+            .filter(DigitalFileEntry::isBloodTransfusionEntry)
     }
 
     fun toxicityEntries(subject: String): List<DigitalFileEntry> {
         return entriesForSubject(feed.digitalFileEntries, subject)
-            .filter { obj: DigitalFileEntry -> obj.isToxicityEntry() }
+            .filter(DigitalFileEntry::isToxicityEntry)
     }
 
     fun latestQuestionnaireEntry(subject: String): QuestionnaireEntry? {
-        return entriesForSubject(feed.questionnaireEntries, subject).maxByOrNull { obj: QuestionnaireEntry -> obj.authored }
+        return entriesForSubject(feed.questionnaireEntries, subject).maxByOrNull(QuestionnaireEntry::authored)
     }
 
     fun uniqueSurgeryEntries(subject: String): List<SurgeryEntry> {
