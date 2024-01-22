@@ -147,7 +147,7 @@ public class ParameterizedFunctionTestFactory {
             case ONE_DOID_TERM: {
                 return List.of(doidTermToUse);
             }
-            case MANY_INTENTS_WITH_ONE_INTEGER: {
+            case MANY_INTENTS_ONE_INTEGER: {
                 return List.of(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display(), "1");
             }
             case MANY_INTENTS: {

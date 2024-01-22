@@ -255,7 +255,7 @@ public class FunctionInputResolver {
                     createOneDoidTermInput(function);
                     return true;
                 }
-                case MANY_INTENTS_WITH_ONE_INTEGER: {
+                case MANY_INTENTS_ONE_INTEGER: {
                     createManyIntentsOneIntegerInput(function);
                     return true;
                 }
@@ -653,7 +653,7 @@ public class FunctionInputResolver {
 
     @NotNull
     public ManyIntentsOneInteger createManyIntentsOneIntegerInput(@NotNull EligibilityFunction function) {
-        assertParamConfig(function, FunctionInput.MANY_INTENTS_WITH_ONE_INTEGER, 2);
+        assertParamConfig(function, FunctionInput.MANY_INTENTS_ONE_INTEGER, 2);
 
         return ImmutableManyIntentsOneInteger.builder()
                 .intents(toIntents(function.parameters().get(0)))
