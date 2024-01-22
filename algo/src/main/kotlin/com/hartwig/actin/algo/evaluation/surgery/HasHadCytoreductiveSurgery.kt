@@ -13,30 +13,34 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
         val undeterminedSurgery = record.clinical().oncologicalHistory()
             .any { it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName().equals("Surgery", true) }
 
-        if (undeterminedSurgery) {
-            return EvaluationFactory.undetermined(
-                "Undetermined if the surgery the patient received was cytoreductive",
-                "Undetermined if surgery patient received was cytoreductive"
-            )
-        }
-
         val hasHadCytoreductiveSurgery = record.clinical().oncologicalHistory()
             .any {
                 (it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName()
                     .contains("cytoreduct", true)) || it.treatmentName().contains("HIPEC", true)
             }
 
-        return if (hasHadCytoreductiveSurgery) {
-            EvaluationFactory.pass(
-                "Patient has had cytoreductive surgery",
-                "Has had cytoreductive surgery"
-            )
-        } else {
-            EvaluationFactory.fail(
-                "Patient has not received cytoreductive surgery",
-                "Has not received cytoreductive surgery"
-            )
-        }
+        return when {
+            hasHadCytoreductiveSurgery -> {
+                EvaluationFactory.pass(
+                    "Patient has had cytoreductive surgery",
+                    "Has had cytoreductive surgery"
+                )
+            }
 
+            undeterminedSurgery -> {
+                EvaluationFactory.undetermined(
+                    "Undetermined if the surgery the patient received was cytoreductive",
+                    "Undetermined if surgery patient received was cytoreductive"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.fail(
+                    "Patient has not received cytoreductive surgery",
+                    "Has not received cytoreductive surgery"
+                )
+            }
+
+        }
     }
 }
