@@ -26,7 +26,16 @@ class HasHadCytoreductiveSurgeryTest {
     fun `Should fail with no surgeries`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(withOncologicalHistory(listOf(treatmentHistoryEntry(setOf(TreatmentCategory.RADIOTHERAPY), "Brachytherapy"))))
+            function.evaluate(
+                withOncologicalHistory(
+                    listOf(
+                        treatmentHistoryEntry(
+                            setOf(TreatmentCategory.HORMONE_THERAPY),
+                            "Hormone therapy"
+                        )
+                    )
+                )
+            )
         )
     }
 
@@ -39,15 +48,11 @@ class HasHadCytoreductiveSurgeryTest {
     }
 
     @Test
-    fun `Should pass with history of HIPEC`() {
+    fun `Should pass with history of cytoreductive surgery or HIPEC`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withOncologicalHistory(listOf(treatmentHistoryEntry(setOf(TreatmentCategory.CHEMOTHERAPY), "HIPEC"))))
         )
-    }
-
-    @Test
-    fun `Should pass with history of cytoreductive surgery`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -56,6 +61,19 @@ class HasHadCytoreductiveSurgeryTest {
                         treatmentHistoryEntry(
                             setOf(TreatmentCategory.SURGERY),
                             "Cytoreductive surgery"
+                        )
+                    )
+                )
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                withOncologicalHistory(
+                    listOf(
+                        treatmentHistoryEntry(
+                            setOf(TreatmentCategory.SURGERY),
+                            "Colorectal cancer cytoreduction"
                         )
                     )
                 )

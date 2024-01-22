@@ -28,13 +28,13 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
 
         return if (hasHadCytoreductiveSurgery) {
             EvaluationFactory.pass(
-                "Patient has had cytoreductive surgery ",
-                "Has had cytoreductive surgery "
+                "Patient has had cytoreductive surgery",
+                "Has had cytoreductive surgery"
             )
         } else {
             EvaluationFactory.fail(
-                "Patient has not received cytoreductive surgery ",
-                "Has not received cytoreductive surgery "
+                "Patient has not received cytoreductive surgery",
+                "Has not received cytoreductive surgery"
             )
         }
 
