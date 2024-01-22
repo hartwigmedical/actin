@@ -24,13 +24,4 @@ public enum Intent implements Displayable {
     public String display() {
         return display;
     }
-
-    public static Boolean findByValue(String value) {
-        for (Intent intent : Intent.values()) {
-            if (intent.display().equalsIgnoreCase(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

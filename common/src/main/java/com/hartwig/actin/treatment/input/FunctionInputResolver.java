@@ -668,10 +668,11 @@ public class FunctionInputResolver {
 
     @NotNull
     private Intent toIntent(@NotNull String intentName) {
-        if (!Intent.findByValue(intentName)) {
+       try {
+            return Intent.valueOf(intentName.toUpperCase());
+        } catch (IllegalArgumentException e) {
             throw new IllegalStateException("Intent name not found: " + intentName);
         }
-        return Intent.valueOf(intentName);
     }
 
     @NotNull

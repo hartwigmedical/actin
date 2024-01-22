@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.DateComparison
+import com.hartwig.actin.algo.evaluation.util.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
@@ -20,7 +20,7 @@ class HasHadSystemicTherapyWithAnyIntent(
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingTreatments = record.clinical().oncologicalHistory()
             .filter { it.allTreatments().any(Treatment::isSystemic) }
-            .filter { matchingIntent(it) }
+            .filter { it.intents()?.any { intent -> intent in intents } ?: false }
 
         val intentsLowercase = concatItemsWithOr(intents).lowercase()
 
@@ -60,21 +60,8 @@ class HasHadSystemicTherapyWithAnyIntent(
     }
 
     private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
-        return DateComparison.isAfterDate(
-            minDate!!,
-            treatment.treatmentHistoryDetails()?.stopYear(),
-            treatment.treatmentHistoryDetails()?.stopMonth()
-        )
-            ?: DateComparison.isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
+        return isAfterDate(minDate!!, treatment.treatmentHistoryDetails()?.stopYear(), treatment.treatmentHistoryDetails()?.stopMonth())
+            ?: isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
             ?: includeUnknown
-    }
-
-    private fun matchingIntent(treatment: TreatmentHistoryEntry): Boolean {
-        for (intent in intents) {
-            if (treatment.intents()?.any { it == intent } == true) {
-                return true
-            }
-        }
-        return false
     }
 }
