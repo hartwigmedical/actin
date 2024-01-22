@@ -139,6 +139,21 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithDate.evaluate(
+                withTreatmentHistory(
+                    listOf(
+                        TreatmentTestFactory.treatmentHistoryEntry(
+                            setOf(treatment),
+                            startYear = recentDate.year,
+                            startMonth = recentDate.monthValue,
+                            intents = setOf(Intent.ADJUVANT)
+                        )
+                    )
+                )
+            )
+        )
     }
 
     @Test
