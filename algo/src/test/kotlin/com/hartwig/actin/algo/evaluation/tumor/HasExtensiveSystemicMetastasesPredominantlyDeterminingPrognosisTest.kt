@@ -8,8 +8,7 @@ import org.junit.Test
 
 class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
 
-    private val matchDoid = "parent"
-    private val doidModel = TestDoidModelFactory.createWithOneParentChild(matchDoid, "child")
+    private val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
     private val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(doidModel)
 
     @Test
