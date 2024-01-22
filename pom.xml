@@ -55,6 +55,7 @@
         <junit.version>4.13.2</junit.version>
         <assertj-core.version>3.24.2</assertj-core.version>
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
+        <jackson.version>2.16.1</jackson.version>
     </properties>
 
     <distributionManagement>
@@ -197,6 +198,11 @@
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-serialization-json</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+            <dependency>
                 <groupId>com.intellij</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${intellij.annotations.version}</version>
@@ -250,6 +256,16 @@
                 <groupId>com.itextpdf</groupId>
                 <artifactId>io</artifactId>
                 <version>${itext.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-csv</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
 
             <dependency>
