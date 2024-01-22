@@ -56,6 +56,7 @@ internal object QuestionnaireCuration {
         OPTION_MAPPING["botaantasting bij weke delen massa"] = false
         OPTION_MAPPING["no total resection"] = false
         OPTION_MAPPING["probably"] = null
+        OPTION_MAPPING["ye"] = true
 
         STAGE_MAPPING["I"] = TumorStage.I
         STAGE_MAPPING["1"] = TumorStage.I
