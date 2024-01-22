@@ -5,12 +5,14 @@ import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
+import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.logging.log4j.LogManager
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
+import java.time.LocalDate
 
 object TreatmentMatchJson {
     private val LOGGER = LogManager.getLogger(TreatmentMatchJson::class.java)
@@ -34,7 +36,10 @@ object TreatmentMatchJson {
     }
 
     fun fromJson(json: String): TreatmentMatch {
-        val gson = GsonBuilder().registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer()).create()
+        val gson = GsonBuilder()
+            .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
+            .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
+            .create()
         return gson.fromJson(json, TreatmentMatch::class.java)
     }
 

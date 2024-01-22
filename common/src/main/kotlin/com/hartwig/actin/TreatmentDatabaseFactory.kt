@@ -15,7 +15,6 @@ object TreatmentDatabaseFactory {
     private const val TREATMENT_JSON: String = "treatment.json"
     private val LOGGER: Logger = LogManager.getLogger(TreatmentDatabaseFactory::class.java)
 
-    @JvmStatic
     @Throws(IOException::class)
     fun createFromPath(treatmentDbPath: String): TreatmentDatabase {
         LOGGER.info("Creating treatment database from path {}", treatmentDbPath)

@@ -26,6 +26,7 @@ class GsonLocalDateAdapter : TypeAdapter<LocalDate?>() {
     override fun read(reader: JsonReader): LocalDate? {
         val firstToken: JsonToken = reader.peek()
         if (firstToken == JsonToken.NULL) {
+            reader.skipValue()
             return null
         }
         var year: Int = -1
