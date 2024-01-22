@@ -89,4 +89,12 @@ class HasHadCytoreductiveSurgeryTest {
         )
     }
 
+    @Test
+    fun `Should return undetermined if debulking surgery is performed`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withOncologicalHistory(listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), "debulking"))))
+        )
+    }
+
 }

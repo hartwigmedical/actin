@@ -10,14 +10,19 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         // TODO: once we curate surgery names from the surgeries tsv file evaluate these as well
-        val undeterminedSurgery = record.clinical().oncologicalHistory()
+        val oncologicalHistory = record.clinical().oncologicalHistory()
+
+        val undeterminedSurgery = oncologicalHistory
             .any { it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName().equals("Surgery", true) }
 
-        val hasHadCytoreductiveSurgery = record.clinical().oncologicalHistory()
+        val hasHadCytoreductiveSurgery = oncologicalHistory
             .any {
                 (it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName()
                     .contains("cytoreduct", true)) || it.treatmentName().contains("HIPEC", true)
             }
+
+        val hasHadDebulkingSurgery = oncologicalHistory
+            .any { it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName().contains("debulking", true) }
 
         return when {
             hasHadCytoreductiveSurgery -> {
@@ -32,6 +37,10 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
                     "Undetermined if the surgery the patient received was cytoreductive",
                     "Undetermined if surgery patient received was cytoreductive"
                 )
+            }
+
+            hasHadDebulkingSurgery -> {
+                EvaluationFactory.undetermined("Undetermined if the performed debulking surgery meets the criteria of cytoreductive surgery")
             }
 
             else -> {
