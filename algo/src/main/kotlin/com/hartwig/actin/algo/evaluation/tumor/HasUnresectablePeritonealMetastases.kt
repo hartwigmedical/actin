@@ -12,21 +12,15 @@ class HasUnresectablePeritonealMetastases : EvaluationFunction {
         val hasPeritonealMetastases = record.clinical().tumor().otherLesions()?.any { lesion ->
             val lowercaseLesion = lesion.lowercase()
             targetTerms.any(lowercaseLesion::startsWith) || targetTerms.any { lowercaseLesion.contains(" $it") }
-        } ?: false
+        }
 
-        return when {
-            record.clinical().tumor().otherLesions() == null -> {
-                EvaluationFactory.undetermined(
-                    "Missing metastases data",
-                    "Missing metastases data"
-                )
+        return when (hasPeritonealMetastases) {
+            null -> {
+                EvaluationFactory.undetermined("Missing metastases data")
             }
 
-            (hasPeritonealMetastases) -> {
-                EvaluationFactory.warn(
-                    "Undetermined if peritoneal metastases are unresectable",
-                    "Undetermined if peritoneal metastases are unresectable"
-                )
+            true -> {
+                EvaluationFactory.warn("Undetermined if peritoneal metastases are unresectable")
             }
 
             else -> {
