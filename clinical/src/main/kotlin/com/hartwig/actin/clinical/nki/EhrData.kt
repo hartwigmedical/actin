@@ -44,18 +44,19 @@ val feedJson = Json {
 
 @Serializable
 data class EhrPatientRecord(
+    val patientId: String,
     val allergies: List<EhrAllergy>,
     val bloodTransfusions: List<EhrBloodTransfusion>,
     val complications: List<EhrComplication>,
     val labValues: List<EhrLabValue>,
     val medications: List<EhrMedication>,
     val molecularTestHistory: List<EhrMolecularTestHistory>,
-    val patientDetails: List<EhrPatientDetail>,
+    val patientDetails: EhrPatientDetail,
     val priorOtherConditions: List<EhrPriorOtherCondition>,
     val surgeries: List<EhrSurgery>,
     val toxicities: List<EhrToxicity>,
     val treatmentHistory: List<EhrTreatmentHistory>,
-    val tumorDetails: List<EhrTumorDetail>,
+    val tumorDetails: EhrTumorDetail,
     val vitalFunctions: List<EhrVitalFunction>
 )
 
@@ -135,7 +136,9 @@ data class EhrPatientDetail(
     val gender: String,
     val who: String,
     @Contextual
-    val whoDate: LocalDate
+    val whoDate: LocalDate,
+    @Contextual
+    val registrationDate: LocalDate
 )
 
 @Serializable
