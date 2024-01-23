@@ -25,15 +25,15 @@ class HasHadSystemicTherapyWithAnyIntent(
         val intentsLowercase = concatItemsWithOr(intents).lowercase()
 
         return when {
-            !matchingTreatments.containsKey(true) && matchingTreatments.containsKey(null) -> {
-                EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
-            }
-
             (monthsAgo == null) && matchingTreatments.containsKey(true) -> {
                 EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
             }
 
-            matchingTreatments.isEmpty() || !matchingTreatments.containsKey(true) -> {
+            (!(matchingTreatments[true]?.any { treatmentSinceMinDate(it, false) } ?: false) || (monthsAgo == null)) && matchingTreatments.containsKey(null) -> {
+                EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
+            }
+
+            !matchingTreatments.containsKey(true) -> {
                 EvaluationFactory.fail(
                     "Patient has not had any $intentsLowercase systemic therapy in prior tumor history",
                     "No $intentsLowercase systemic therapy in prior tumor history"
