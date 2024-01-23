@@ -49,7 +49,8 @@ internal object QuestionnaireCuration {
         "(yes/no)" to null,
         "botaantasting bij weke delen massa" to false,
         "no total resection" to false,
-        "probably" to null
+        "probably" to null,
+        "ye" to true
     )
 
     private val STAGE_MAPPING = mapOf(

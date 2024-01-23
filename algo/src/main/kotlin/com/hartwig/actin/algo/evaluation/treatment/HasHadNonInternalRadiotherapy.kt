@@ -15,8 +15,8 @@ class HasHadNonInternalRadiotherapy : EvaluationFunction {
 
         return if (matchingTreatments.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Has received non-internal radiotherapy in treatment(s) "
-                        + concatLowercaseWithAnd(matchingTreatments.map(TreatmentHistoryEntryFunctions::fullTreatmentDisplay))
+                "Has received non-internal radiotherapy (" +
+                        concatLowercaseWithAnd(matchingTreatments.map(TreatmentHistoryEntryFunctions::fullTreatmentDisplay)) + ")"
             )
         } else {
             EvaluationFactory.fail("Has not received any non-internal radiotherapy")
