@@ -244,7 +244,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(): FunctionCreator {
-        return FunctionCreator { HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(doidModel()) }
+        return FunctionCreator { HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasBiopsyAmenableLesionCreator(): FunctionCreator {

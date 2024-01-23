@@ -2,29 +2,41 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.TumorStage
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Test
 
 class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
 
-    private val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-    private val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(doidModel)
+    private val patientRecord = TumorTestFactory.withTumorStage(null)
 
     @Test
     fun `Should fail when no metastatic cancer`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, "random")))
+        val alwaysFailsMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
+            every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
+        }
+        val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysFailsMetastaticCancerEvaluation)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 
     @Test
     fun `Should be undetermined when tumor stage unknown`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, null)))
+        val alwaysUndeterminedMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
+            every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
+        }
+        val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysUndeterminedMetastaticCancerEvaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
     @Test
     fun `Should be undetermined when patient has metastatic cancer`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIC)))
+        val alwaysPassMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
+            every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
+        }
+        val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysPassMetastaticCancerEvaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 }
