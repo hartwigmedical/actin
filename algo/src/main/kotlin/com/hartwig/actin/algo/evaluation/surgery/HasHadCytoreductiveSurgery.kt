@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadCytoreductiveSurgery : EvaluationFunction {
@@ -13,12 +14,11 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
         val oncologicalHistory = record.clinical().oncologicalHistory()
 
         val undeterminedSurgery = oncologicalHistory
-            .any { it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName().equals("Surgery", true) }
+            .any { it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName().equals("surgery", true) }
 
         val hasHadCytoreductiveSurgery = oncologicalHistory
             .any {
-                (it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName()
-                    .contains("cytoreduct", true)) || it.treatmentName().contains("HIPEC", true)
+                it.isOfType(OtherTreatmentType.CYTOREDUCTIVE) == true || it.treatmentName().contains("HIPEC", true)
             }
 
         val hasHadDebulkingSurgery = oncologicalHistory
