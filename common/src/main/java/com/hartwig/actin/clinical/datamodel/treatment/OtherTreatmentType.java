@@ -8,7 +8,8 @@ public enum OtherTreatmentType implements TreatmentType {
     MICROWAVE(TreatmentCategory.ABLATION),
     RADIOFREQUENCY(TreatmentCategory.ABLATION),
     HYPERTHERMIA(TreatmentCategory.ABLATION),
-    CYTOREDUCTIVE(TreatmentCategory.SURGERY);
+    CYTOREDUCTIVE_SURGERY(TreatmentCategory.SURGERY),
+    DEBULKING_SURGERY(TreatmentCategory.SURGERY);
 
     @NotNull
     private final TreatmentCategory category;

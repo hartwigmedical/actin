@@ -18,11 +18,11 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
 
         val hasHadCytoreductiveSurgery = oncologicalHistory
             .any {
-                it.isOfType(OtherTreatmentType.CYTOREDUCTIVE) == true || it.treatmentName().contains("HIPEC", true)
+                it.isOfType(OtherTreatmentType.CYTOREDUCTIVE_SURGERY) == true || it.treatmentName().contains("HIPEC", true)
             }
 
         val hasHadDebulkingSurgery = oncologicalHistory
-            .any { it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName().contains("debulking", true) }
+            .any { it.isOfType(OtherTreatmentType.DEBULKING_SURGERY) == true }
 
         return when {
             hasHadCytoreductiveSurgery -> {

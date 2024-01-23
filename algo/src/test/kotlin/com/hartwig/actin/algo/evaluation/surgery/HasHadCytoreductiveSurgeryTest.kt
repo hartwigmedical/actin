@@ -33,11 +33,11 @@ class HasHadCytoreductiveSurgeryTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(createPatientRecord("HIPEC", setOf(TreatmentCategory.CHEMOTHERAPY))))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(createPatientRecord("Cytoreductive surgery", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.CYTOREDUCTIVE)))
+            function.evaluate(createPatientRecord("Cytoreductive surgery", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)))
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(createPatientRecord("Colorectal cancer cytoreduction", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.CYTOREDUCTIVE)))
+            function.evaluate(createPatientRecord("Colorectal cancer cytoreduction", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)))
         )
 
     }
@@ -51,11 +51,11 @@ class HasHadCytoreductiveSurgeryTest {
     fun `Should return undetermined if debulking surgery is performed`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(createPatientRecord("Debulking", setOf(TreatmentCategory.SURGERY)))
+            function.evaluate(createPatientRecord("Debulking", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.DEBULKING_SURGERY)))
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(createPatientRecord("complete debulking", setOf(TreatmentCategory.SURGERY)))
+            function.evaluate(createPatientRecord("complete debulking", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.DEBULKING_SURGERY)))
         )
     }
 
