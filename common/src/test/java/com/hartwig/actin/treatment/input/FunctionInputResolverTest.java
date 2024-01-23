@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
@@ -23,6 +24,8 @@ import com.hartwig.actin.treatment.input.datamodel.TumorTypeInput;
 import com.hartwig.actin.treatment.input.datamodel.VariantTypeInput;
 import com.hartwig.actin.treatment.input.single.FunctionInput;
 import com.hartwig.actin.treatment.input.single.ImmutableManyGenes;
+import com.hartwig.actin.treatment.input.single.ImmutableManyIntents;
+import com.hartwig.actin.treatment.input.single.ImmutableManyIntentsOneInteger;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGene;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyCodons;
 import com.hartwig.actin.treatment.input.single.ImmutableOneGeneManyProteinImpacts;
@@ -37,6 +40,8 @@ import com.hartwig.actin.treatment.input.single.ImmutableTwoDoubles;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegers;
 import com.hartwig.actin.treatment.input.single.ImmutableTwoIntegersManyStrings;
 import com.hartwig.actin.treatment.input.single.ManyGenes;
+import com.hartwig.actin.treatment.input.single.ManyIntents;
+import com.hartwig.actin.treatment.input.single.ManyIntentsOneInteger;
 import com.hartwig.actin.treatment.input.single.OneGene;
 import com.hartwig.actin.treatment.input.single.OneGeneManyCodons;
 import com.hartwig.actin.treatment.input.single.OneGeneManyProteinImpacts;
@@ -559,6 +564,41 @@ public class FunctionInputResolverTest {
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("doid 1"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("term 2"))));
         assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("term 1", "term 2"))));
+    }
+
+    @Test
+    public void shouldResolveFunctionsWithManyIntentsInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
+
+        EligibilityRule rule = firstOfType(FunctionInput.MANY_INTENTS);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display()));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        ManyIntents inputs = resolver.createManyIntentsInput(valid);
+        assertEquals(ImmutableManyIntents.builder().intents(Set.of(Intent.ADJUVANT, Intent.NEOADJUVANT)).build(), inputs);
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("not an intent"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList(Intent.ADJUVANT, "test"))));
+    }
+
+    @Test
+    public void shouldResolveFunctionsWithManyIntentsOneIntegerInput() {
+        FunctionInputResolver resolver = TestFunctionInputResolveFactory.createTestResolver();
+
+        EligibilityRule rule = firstOfType(FunctionInput.MANY_INTENTS_ONE_INTEGER);
+
+        EligibilityFunction valid = create(rule, Lists.newArrayList(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display(), "1"));
+        assertTrue(resolver.hasValidInputs(valid));
+
+        ManyIntentsOneInteger inputs = resolver.createManyIntentsOneIntegerInput(valid);
+        assertEquals(ImmutableManyIntentsOneInteger.builder().intents(Set.of(Intent.ADJUVANT, Intent.NEOADJUVANT)).integer(1).build(),
+                inputs);
+
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList())));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList(Intent.ADJUVANT.display(), "test", "1"))));
+        assertFalse(resolver.hasValidInputs(create(rule, Lists.newArrayList("1", Intent.ADJUVANT.display()))));
     }
 
     @NotNull
