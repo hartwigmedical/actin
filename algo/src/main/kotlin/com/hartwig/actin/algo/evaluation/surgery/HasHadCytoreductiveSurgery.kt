@@ -18,7 +18,8 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
 
         val hasHadCytoreductiveSurgery = oncologicalHistory
             .any {
-                it.isOfType(OtherTreatmentType.CYTOREDUCTIVE_SURGERY) == true || it.treatmentName().contains("HIPEC", true)
+                it.isOfType(OtherTreatmentType.CYTOREDUCTIVE_SURGERY) == true || it.allTreatments()
+                    .any { treatment -> treatment.name().uppercase() == "HIPEC" }
             }
 
         val hasHadDebulkingSurgery = oncologicalHistory
