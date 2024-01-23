@@ -24,68 +24,36 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     @Test
     fun `Should fail with systemic treatment with wrong intent (and correct date)`() {
         val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            functionWithDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            stopYear = recentDate.year,
-                            stopMonth = recentDate.monthValue,
-                            intents = setOf(Intent.PALLIATIVE)
-                        )
-                    )
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    stopYear = recentDate.year,
+                    stopMonth = recentDate.monthValue,
+                    intents = setOf(Intent.PALLIATIVE)
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            functionWithoutDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            intents = setOf(Intent.PALLIATIVE)
-                        )
-                    )
-                )
-            )
-        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(patientRecord))
 
     }
 
     @Test
     fun `Should fail with non-systemic treatment with correct intent (and correct date)`() {
         val treatment = TreatmentTestFactory.treatment("non systemic treatment", false)
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            functionWithDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            stopYear = recentDate.year,
-                            stopMonth = recentDate.monthValue,
-                            intents = setOf(Intent.ADJUVANT)
-                        )
-                    )
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    stopYear = recentDate.year,
+                    stopMonth = recentDate.monthValue,
+                    intents = setOf(Intent.ADJUVANT)
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            functionWithoutDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            intents = setOf(Intent.ADJUVANT)
-                        )
-                    )
-                )
-            )
-        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(patientRecord))
     }
 
     @Test
@@ -111,49 +79,18 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     @Test
     fun `Should pass with recent systemic treatment with correct intent`() {
         val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            functionWithDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            stopYear = recentDate.year,
-                            stopMonth = recentDate.monthValue,
-                            intents = setOf(Intent.ADJUVANT)
-                        )
-                    )
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    stopYear = recentDate.year,
+                    stopMonth = recentDate.monthValue,
+                    intents = setOf(Intent.ADJUVANT)
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            functionWithoutDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            intents = setOf(Intent.ADJUVANT)
-                        )
-                    )
-                )
-            )
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            functionWithDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            startYear = recentDate.year,
-                            startMonth = recentDate.monthValue,
-                            intents = setOf(Intent.ADJUVANT)
-                        )
-                    )
-                )
-            )
-        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithDate.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutDate.evaluate(patientRecord))
     }
 
     @Test
