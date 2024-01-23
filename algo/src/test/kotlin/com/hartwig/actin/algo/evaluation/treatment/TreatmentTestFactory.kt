@@ -48,7 +48,7 @@ object TreatmentTestFactory {
         bestResponse: TreatmentResponse? = null,
         stopYear: Int? = null,
         stopMonth: Int? = null,
-        intents: Set<Intent> = emptySet(),
+        intents: Set<Intent>? = emptySet(),
         isTrial: Boolean = false,
         numCycles: Int? = null,
         switchToTreatments: List<TreatmentStage>? = null,

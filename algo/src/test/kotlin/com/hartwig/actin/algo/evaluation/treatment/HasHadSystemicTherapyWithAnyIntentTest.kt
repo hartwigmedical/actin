@@ -150,4 +150,22 @@ class HasHadSystemicTherapyWithAnyIntentTest {
             )
         )
     }
+
+    @Test
+    fun `Should be undetermined with treatment with missing intent`() {
+        val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    stopYear = recentDate.year,
+                    stopMonth = recentDate.monthValue,
+                    intents = null
+                )
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithoutDate.evaluate(patientRecord))
+
+    }
 }
