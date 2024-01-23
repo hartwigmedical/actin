@@ -4,7 +4,7 @@ import com.hartwig.actin.util.json.JsonDatamodelChecker
 
 object DatamodelCheckerFactory {
     fun rootObjectChecker(): JsonDatamodelChecker {
-        return JsonDatamodelChecker("RootObject", mapOf("graphs" to true))
+        return allRequiredDatamodelChecker("RootObject", listOf("graphs"))
     }
 
     fun graphsChecker(): JsonDatamodelChecker {
@@ -18,52 +18,54 @@ object DatamodelCheckerFactory {
             "domainRangeAxioms",
             "propertyChainAxioms"
         )
-        return datamodelChecker("Graphs", properties)
+        return allRequiredDatamodelChecker("Graphs", properties)
     }
 
     fun nodeChecker(): JsonDatamodelChecker {
-        return datamodelChecker("Node", listOf("type", "lbl", "id", "meta"))
+        return JsonDatamodelChecker("Node", mapOf("type" to false, "lbl" to false, "id" to true, "meta" to false))
     }
 
     fun edgeChecker(): JsonDatamodelChecker {
-        return datamodelChecker("Edge", listOf("sub", "pred", "obj"))
+        return allRequiredDatamodelChecker("Edge", listOf("sub", "pred", "obj"))
     }
 
     fun graphMetadataChecker(): JsonDatamodelChecker {
-        return datamodelChecker("GraphMetadata", listOf("xrefs", "basicPropertyValues", "version", "subsets"))
-    }
-
-    fun logicalDefinitionAxiomChecker(): JsonDatamodelChecker {
-        return datamodelChecker("LogicalDefinitionAxiom", listOf("definedClassId", "genusIds", "restrictions"))
-    }
-
-    fun restrictionChecker(): JsonDatamodelChecker {
-        return datamodelChecker("Restriction", listOf("propertyId", "fillerId"))
-    }
-
-    fun synonymChecker(): JsonDatamodelChecker {
-        return datamodelChecker("Synonym", listOf("pred", "val", "xrefs"))
-    }
-
-    fun definitionChecker(): JsonDatamodelChecker {
-        return datamodelChecker("Definition", listOf("xrefs", "val"))
-    }
-
-    fun basicPropertyValueChecker(): JsonDatamodelChecker {
-        return datamodelChecker("BasicPropertyValue", listOf("pred", "val"))
-    }
-
-    fun metadataXrefChecker(): JsonDatamodelChecker {
-        return datamodelChecker("MetadataXref", listOf("val"))
-    }
-
-    fun metadataChecker(): JsonDatamodelChecker {
-        return datamodelChecker(
-            "Metadata", listOf(
-                "xrefs", "synonyms", "basicPropertyValues", "definition", "subsets", "deprecated", "comments"
-            )
+        return JsonDatamodelChecker(
+            "GraphMetadata", mapOf("xrefs" to true, "basicPropertyValues" to true, "version" to false, "subsets" to true)
         )
     }
 
-    private fun datamodelChecker(name: String, properties: List<String>) = JsonDatamodelChecker(name, properties.associateWith { true })
+    fun logicalDefinitionAxiomChecker(): JsonDatamodelChecker {
+        return allRequiredDatamodelChecker("LogicalDefinitionAxiom", listOf("definedClassId", "genusIds", "restrictions"))
+    }
+
+    fun restrictionChecker(): JsonDatamodelChecker {
+        return allRequiredDatamodelChecker("Restriction", listOf("propertyId", "fillerId"))
+    }
+
+    fun synonymChecker(): JsonDatamodelChecker {
+        return allRequiredDatamodelChecker("Synonym", listOf("pred", "val", "xrefs"))
+    }
+
+    fun definitionChecker(): JsonDatamodelChecker {
+        return allRequiredDatamodelChecker("Definition", listOf("xrefs", "val"))
+    }
+
+    fun basicPropertyValueChecker(): JsonDatamodelChecker {
+        return allRequiredDatamodelChecker("BasicPropertyValue", listOf("pred", "val"))
+    }
+
+    fun metadataXrefChecker(): JsonDatamodelChecker {
+        return allRequiredDatamodelChecker("MetadataXref", listOf("val"))
+    }
+
+    fun metadataChecker(): JsonDatamodelChecker {
+        return JsonDatamodelChecker(
+            "Metadata",
+            listOf("xrefs", "synonyms", "basicPropertyValues", "definition", "subsets", "deprecated", "comments").associateWith { false }
+        )
+    }
+
+    private fun allRequiredDatamodelChecker(name: String, properties: List<String>) =
+        JsonDatamodelChecker(name, properties.associateWith { true })
 }
