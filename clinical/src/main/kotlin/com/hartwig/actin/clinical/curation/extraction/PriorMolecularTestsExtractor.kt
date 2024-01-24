@@ -9,8 +9,11 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import org.apache.logging.log4j.LogManager
 
 class PriorMolecularTestsExtractor(private val molecularTestCuration: CurationDatabase<MolecularTestConfig>) {
+
+    private val logger = LogManager.getLogger(PriorMolecularTestsExtractor::class.java)
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorMolecularTest>> {
         if (questionnaire == null) {
@@ -24,7 +27,7 @@ class PriorMolecularTestsExtractor(private val molecularTestCuration: CurationDa
                 testResults.map {
                     val input = CurationUtil.fullTrim(it)
                     CurationResponse.createFromConfigs(
-                        molecularTestCuration.find(checkRenameAmbiguousInput(testType, input)),
+                        findWithFallback(patientId, testType, input),
                         patientId,
                         CurationCategory.MOLECULAR_TEST,
                         input,
@@ -37,15 +40,21 @@ class PriorMolecularTestsExtractor(private val molecularTestCuration: CurationDa
         return ExtractionResult(curation.configs.filterNot(MolecularTestConfig::ignore).map { it.curated!! }, curation.extractionEvaluation)
     }
 
+    private fun findWithFallback(patientId: String, testType: String, input: String): Set<MolecularTestConfig> {
+        return if (testType == "PD-L1") {
+            val prefixedMatch = molecularTestCuration.find("$testType $input")
+            if (prefixedMatch.isNotEmpty()) {
+                logger.info("Matched curation using $testType special prefix for patient $patientId and input $input")
+                prefixedMatch
+            } else {
+                molecularTestCuration.find(input)
+            }
+        } else {
+            molecularTestCuration.find(input)
+        }
+    }
+
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) = PriorMolecularTestsExtractor(curationDatabaseContext.molecularTestCuration)
-
-        private fun checkRenameAmbiguousInput(testType: String, input: String): String {
-            return if (testType == "PD-L1" && input == "negative") {
-                "PD-L1 negative"
-            } else {
-                input
-            }
-        }
     }
 }
