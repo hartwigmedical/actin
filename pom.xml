@@ -56,6 +56,7 @@
         <assertj-core.version>3.24.2</assertj-core.version>
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
         <jackson.version>2.16.1</jackson.version>
+        <kotlinx-serialization-json.version>1.6.2</kotlinx-serialization-json.version>
     </properties>
 
     <distributionManagement>
@@ -200,7 +201,7 @@
             <dependency>
                 <groupId>org.jetbrains.kotlinx</groupId>
                 <artifactId>kotlinx-serialization-json</artifactId>
-                <version>1.3.1</version>
+                <version>${kotlinx-serialization-json.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.intellij</groupId>

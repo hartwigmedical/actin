@@ -63,4 +63,13 @@ public enum LabUnit implements Displayable {
     public String display() {
         return display;
     }
+
+    public static LabUnit fromString(@NotNull final String display) {
+        for (LabUnit unit : LabUnit.values()) {
+            if (unit.display().equals(display)) {
+                return unit;
+            }
+        }
+        return NONE;
+    }
 }
