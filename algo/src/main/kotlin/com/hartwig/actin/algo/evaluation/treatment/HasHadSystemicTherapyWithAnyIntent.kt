@@ -29,7 +29,21 @@ class HasHadSystemicTherapyWithAnyIntent(
                 EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
             }
 
-            (!(matchingTreatments[true]?.any { treatmentSinceMinDate(it, false) } ?: false) || (monthsAgo == null)) && matchingTreatments.containsKey(null) -> {
+            matchingTreatments[true]?.any { treatmentSinceMinDate(it, false) } ?: false -> {
+                EvaluationFactory.pass(
+                    "Patient has had $intentsLowercase systemic therapy within the last $monthsAgo months",
+                    "Received $intentsLowercase systemic therapy within the last $monthsAgo months"
+                )
+            }
+
+            matchingTreatments[true]?.any { treatmentSinceMinDate(it, true) } ?: false -> {
+                EvaluationFactory.undetermined(
+                    "Patient has had $intentsLowercase systemic therapy but date unknown",
+                    "Received $intentsLowercase systemic therapy but date unknown"
+                )
+            }
+
+            ((monthsAgo == null) && matchingTreatments.containsKey(null)) || matchingTreatments[null]?.any { treatmentSinceMinDate(it, true) } ?: false -> {
                 EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
             }
 
@@ -37,20 +51,6 @@ class HasHadSystemicTherapyWithAnyIntent(
                 EvaluationFactory.fail(
                     "Patient has not had any $intentsLowercase systemic therapy in prior tumor history",
                     "No $intentsLowercase systemic therapy in prior tumor history"
-                )
-            }
-
-            matchingTreatments[true]!!.any { treatmentSinceMinDate(it, false) } -> {
-                EvaluationFactory.pass(
-                    "Patient has had $intentsLowercase systemic therapy within the last $monthsAgo months",
-                    "Received $intentsLowercase systemic therapy within the last $monthsAgo months"
-                )
-            }
-
-            matchingTreatments[true]!!.any { treatmentSinceMinDate(it, true) } -> {
-                EvaluationFactory.undetermined(
-                    "Patient has had $intentsLowercase systemic therapy but date unknown",
-                    "Received $intentsLowercase systemic therapy but date unknown"
                 )
             }
 

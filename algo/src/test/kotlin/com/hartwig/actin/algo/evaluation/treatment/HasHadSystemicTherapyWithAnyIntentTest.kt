@@ -219,4 +219,30 @@ class HasHadSystemicTherapyWithAnyIntentTest {
             )
         )
     }
+
+    @Test
+    fun `Should be undetermined with one recent systemic treatment with incorrect intent and one recent systemic treatment with unknown intent`() {
+        val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionWithDate.evaluate(
+                withTreatmentHistory(
+                    listOf(
+                        TreatmentTestFactory.treatmentHistoryEntry(
+                            setOf(treatment),
+                            stopYear = recentDate.year,
+                            stopMonth = recentDate.monthValue,
+                            intents = setOf(Intent.PALLIATIVE)
+                        ),
+                        TreatmentTestFactory.treatmentHistoryEntry(
+                            setOf(treatment),
+                            stopYear = recentDate.year,
+                            stopMonth = recentDate.monthValue,
+                            intents = null
+                        )
+                    )
+                )
+            )
+        )
+    }
 }
