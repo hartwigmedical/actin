@@ -8,7 +8,8 @@ object DoidModelFactory {
     private val LOGGER = LogManager.getLogger(DoidModelFactory::class.java)
 
     fun createFromDoidEntry(doidEntry: DoidEntry): DoidModel {
-        val childToParentsMap = doidEntry.edges.filter { it.predicate == "is_a" }
+        val childToParentsMap = doidEntry.edges.asSequence()
+            .filter { it.predicate == "is_a" }
             .map { edge ->
                 val child = edge.subjectDoid
                 val parent = edge.objectDoid
@@ -16,16 +17,15 @@ object DoidModelFactory {
             }
             .distinct()
             .groupBy(Pair<String, String>::first, Pair<String, String>::second)
+        LOGGER.debug("Loaded {} parent-child relationships", childToParentsMap.size)
 
         // Assume both doid and term are unique.
-        val (termPerDoidMap, doidPerLowerCaseTermMap) = doidEntry.nodes.filter { it.term != null }
-            .fold(Pair(emptyMap<String, String>(), emptyMap<String, String>())) { (doidsToTerms, termsToDoids), node ->
-                val lowerCaseTerm = node.term!!.lowercase()
-                if (termsToDoids.containsKey(lowerCaseTerm)) {
-                    LOGGER.warn("DOID term (in lower-case) is not unique: '{}'", node.term)
-                }
-                Pair(doidsToTerms + mapOf(node.doid to node.term), termsToDoids + mapOf(lowerCaseTerm to node.doid))
-            }
+        val termPerDoidMap = doidEntry.nodes.filter { it.term != null }.associate { it.doid to it.term!! }
+
+        termPerDoidMap.values.groupBy { it.lowercase() }.filter { it.value.size > 1 }.forEach { (term, _) ->
+            LOGGER.warn("DOID term (in lower-case) is not unique: '{}'", term)
+        }
+        val doidPerLowerCaseTermMap = termPerDoidMap.entries.associate { (doid, term) -> term.lowercase() to doid }
 
         return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, DoidManualConfigFactory.create())
     }

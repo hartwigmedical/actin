@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.algo.TreatmentMatcherApplication
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
@@ -46,7 +45,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        TreatmentMatcherApplication.LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
+        LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
         LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
