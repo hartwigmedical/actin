@@ -24,7 +24,7 @@ class PriorMolecularTestsExtractor(private val molecularTestCuration: CurationDa
                 testResults.map {
                     val input = CurationUtil.fullTrim(it)
                     CurationResponse.createFromConfigs(
-                        molecularTestCuration.find(input),
+                        molecularTestCuration.find(checkRenameAmbiguousInput(testType, input)),
                         patientId,
                         CurationCategory.MOLECULAR_TEST,
                         input,
@@ -39,5 +39,13 @@ class PriorMolecularTestsExtractor(private val molecularTestCuration: CurationDa
 
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) = PriorMolecularTestsExtractor(curationDatabaseContext.molecularTestCuration)
+
+        private fun checkRenameAmbiguousInput(testType: String, input: String): String {
+            return if (testType == "PD-L1" && input == "negative") {
+                "PD-L1 negative"
+            } else {
+                input
+            }
+        }
     }
 }
