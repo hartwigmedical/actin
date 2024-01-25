@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
@@ -42,7 +43,7 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
             PatientCurrentDetailsGenerator(report.clinical, keyWidth, valueWidth),
             TumorDetailsGenerator(report.clinical, keyWidth, valueWidth),
-            MedicationGenerator(report.clinical.medications(), contentWidth()),
+            MedicationGenerator(report.clinical.medications(), contentWidth(), MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate())),
             if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(bloodTransfusions, contentWidth())
         )
         for (i in generators.indices) {
