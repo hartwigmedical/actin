@@ -10,8 +10,7 @@ class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: Lo
         val status = medication.status()
         if (status == MedicationStatus.CANCELLED) {
             return MedicationStatusInterpretation.CANCELLED
-        }
-        if (status == MedicationStatus.ON_HOLD) {
+        } else if (status == MedicationStatus.ON_HOLD) {
             return MedicationStatusInterpretation.STOPPED
         }
         val startDate = medication.startDate() ?: return MedicationStatusInterpretation.UNKNOWN
