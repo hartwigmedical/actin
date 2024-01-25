@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNames
 import kotlinx.serialization.json.JsonNamingStrategy
 import kotlinx.serialization.modules.SerializersModule
 import java.time.LocalDate
@@ -60,7 +59,9 @@ data class EhrPatientRecord(
     val toxicities: List<EhrToxicity>,
     val treatmentHistory: List<EhrTreatmentHistory>,
     val tumorDetails: EhrTumorDetail,
+    val priorPrimaries: List<EhrPriorPrimary>,
     val vitalFunctions: List<EhrVitalFunction>,
+    val bodyWeights: List<EhrBodyWeight>,
     val whoEvaluations: List<EhrWhoEvaluation>
 )
 
@@ -70,7 +71,11 @@ data class EhrAllergy(
     @Contextual
     val startDate: LocalDate,
     @Contextual
-    val endDate: LocalDate
+    val endDate: LocalDate,
+    val category: String,
+    val severity: String,
+    val clinicalStatus: String,
+    val verificationStatus: String
 )
 
 @Serializable
@@ -96,6 +101,7 @@ data class EhrLabValue(
     @Serializable(with = LocalDateTimeFromZonedDateTimeSerializer::class)
     val dateTime: LocalDateTime,
     val measure: String,
+    val code: String,
     val category: String,
     val value: Double,
     val unit: String,
@@ -119,7 +125,9 @@ data class EhrMedication(
     val frequencyUnit: String,
     val periodBetweenDosagesValue: Double,
     val periodBetweenDosagesUnit: String,
-    val administrationOnlyIfNeeded: Boolean
+    val administrationOnlyIfNeeded: Boolean,
+    val isTrial: Boolean,
+    val isSelfCare: Boolean
 )
 
 @Serializable
@@ -180,7 +188,7 @@ data class EhrToxicity(
 )
 
 @Serializable
-data class EhrTreatmentHistory @OptIn(ExperimentalSerializationApi::class) constructor(
+data class EhrTreatmentHistory(
     val treatmentName: String,
     val intention: String,
     @Contextual
@@ -195,13 +203,17 @@ data class EhrTreatmentHistory @OptIn(ExperimentalSerializationApi::class) const
     val responseDate: LocalDate,
     val intendedCycles: Int,
     val administeredCycles: Int,
-    val modifications: List<String>,
-    @JsonNames("grade_2_toxicities")
-    val grade2Toxicities: String,
-    @Contextual
-    @JsonNames("grade_2_toxicities_date")
-    val grade2ToxicitiesDate: LocalDate,
+    val modifications: List<EhrTreatmentModification>,
     val administeredInStudy: Boolean
+)
+
+@Serializable
+data class EhrTreatmentModification(
+    val treatmentName: String,
+    @Contextual
+    val date: LocalDate,
+    val administeredCycles: Int,
+    val note: String
 )
 
 @Serializable
@@ -223,10 +235,30 @@ data class EhrTumorDetail(
 )
 
 @Serializable
+data class EhrPriorPrimary(
+    @Contextual
+    val diagnosisDate: LocalDate,
+    val tumorLocalization: String,
+    val tumorTypeDetails: String,
+    val statusDetails: String,
+    @Contextual
+    val statusDetailsDate: LocalDate
+)
+
+@Serializable
 data class EhrVitalFunction(
     @Contextual
     val date: LocalDate,
     val measure: String,
+    val subcategory: String,
+    val value: Double,
+    val unit: String
+)
+
+@Serializable
+data class EhrBodyWeight(
+    @Contextual
+    val date: LocalDate,
     val value: Double,
     val unit: String
 )

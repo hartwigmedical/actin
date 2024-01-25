@@ -24,7 +24,7 @@ private const val TOXICITY_CATEGORY = "Toxicity category"
 
 private const val TOXICITY_TRANSLATED = "Toxicity translated"
 
-class ToxicityExtractorTest {
+class EhrToxicityExtractorTest {
     private val extractor = ToxicityExtractor(
         TestCurationFactory.curationDatabase(
             ToxicityConfig(

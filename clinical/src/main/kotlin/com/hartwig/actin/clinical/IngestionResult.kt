@@ -39,15 +39,19 @@ data class PatientIngestionResult(
                 record.patientId(),
                 status(questionnaire, warnings),
                 record,
-                warnings.groupBy { it.category.categoryName }.map { (categoryName, warnings) ->
-                    CurationResult(
-                        categoryName,
-                        warnings.map { CurationRequirement(it.feedInput, it.message) }
-                    )
-                }.toSet(),
+                curationResults(warnings),
                 questionnaireCurationErrors,
                 feedValidationWarnings
             )
+        }
+
+        fun curationResults(warnings: List<CurationWarning>): Set<CurationResult> {
+            return warnings.groupBy { it.category.categoryName }.map { (categoryName, warnings) ->
+                CurationResult(
+                    categoryName,
+                    warnings.map { CurationRequirement(it.feedInput, it.message) }
+                )
+            }.toSet()
         }
 
         private fun status(questionnaire: Questionnaire?, warnings: List<CurationWarning>): PatientIngestionStatus {

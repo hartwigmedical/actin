@@ -16,7 +16,7 @@ private const val CANNOT_CURATE = "cannot curate"
 
 private const val PRIOR_CONDITION_INTERPRETATION = "Prior condition interpretation"
 
-class PriorOtherConditionsExtractorTest {
+class EhrPriorOtherConditionsExtractorTest {
     private val extractor = PriorOtherConditionsExtractor(
         TestCurationFactory.curationDatabase(
             NonOncologicalHistoryConfig(
