@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.ImmutableOtherTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
@@ -22,8 +23,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
 object TreatmentTestFactory {
 
-    fun treatment(name: String, isSystemic: Boolean, categories: Set<TreatmentCategory> = emptySet()): Treatment {
-        return ImmutableOtherTreatment.builder().name(name).isSystemic(isSystemic).categories(categories).build()
+    fun treatment(name: String, isSystemic: Boolean, categories: Set<TreatmentCategory> = emptySet(), types: Set<OtherTreatmentType> = emptySet()): Treatment {
+        return ImmutableOtherTreatment.builder().name(name).isSystemic(isSystemic).categories(categories).types(types).build()
     }
 
     fun drugTreatment(name: String, category: TreatmentCategory, types: Set<DrugType> = emptySet()): Treatment {
