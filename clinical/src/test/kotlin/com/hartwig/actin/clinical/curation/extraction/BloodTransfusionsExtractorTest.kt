@@ -33,9 +33,7 @@ class BloodTransfusionsExtractorTest {
             authored = LocalDate.of(2019, 9, 9),
             description = "Aanvraag bloedproducten_test",
             itemText = "",
-            itemAnswerValueValueString = "",
-            isBloodTransfusionEntry = true,
-            isToxicityEntry = false
+            itemAnswerValueValueString = ""
         )
         val (extracted, evaluation) = extractor.extract(PATIENT_ID, inputs.map { entry.copy(itemAnswerValueValueString = it) })
         assertThat(extracted).hasSize(2)
