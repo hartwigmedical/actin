@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
@@ -16,6 +17,8 @@ import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.FunctionInput
 import com.hartwig.actin.trial.input.single.ManyGenes
+import com.hartwig.actin.trial.input.single.ManyIntents
+import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
@@ -37,6 +40,7 @@ import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.util.*
 
 class FunctionInputResolver(
     doidModel: DoidModel, molecularInputChecker: MolecularInputChecker,
@@ -220,6 +224,16 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_DOID_TERM -> {
                     createOneDoidTermInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_INTENTS_ONE_INTEGER -> {
+                    createManyIntentsOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_INTENTS -> {
+                    createManyIntentsInput(function)
                     return true
                 }
 
@@ -498,6 +512,33 @@ class FunctionInputResolver(
             throw IllegalStateException("Not a valid DOID term: $param")
         }
         return param
+    }
+
+    fun createManyIntentsInput(function: EligibilityFunction): ManyIntents {
+        assertParamConfig(function, FunctionInput.MANY_INTENTS, 1)
+
+        return ManyIntents(toIntents(function.parameters.first()))
+    }
+
+    fun createManyIntentsOneIntegerInput(function: EligibilityFunction): ManyIntentsOneInteger {
+        assertParamConfig(function, FunctionInput.MANY_INTENTS_ONE_INTEGER, 2)
+
+        return ManyIntentsOneInteger(
+            intents = toIntents(function.parameters.first()),
+            integer = parameterAsString(function, 1).toInt(),
+        )
+    }
+
+    private fun toIntents(input: Any): Set<Intent> {
+        return toStringList(input).map(::toIntent).toSet()
+    }
+
+    private fun toIntent(intentName: String): Intent {
+        try {
+            return Intent.valueOf(intentName.uppercase(Locale.getDefault()))
+        } catch (e: Exception) {
+            throw IllegalStateException("Intent name not found: $intentName")
+        }
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String

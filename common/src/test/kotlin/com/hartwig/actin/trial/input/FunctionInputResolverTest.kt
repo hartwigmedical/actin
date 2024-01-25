@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.input
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory
@@ -11,6 +12,8 @@ import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.FunctionInput
 import com.hartwig.actin.trial.input.single.ManyGenes
+import com.hartwig.actin.trial.input.single.ManyIntents
+import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -450,6 +453,42 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("doid 1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("term 2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("term 1", "term 2")))!!).isFalse
+    }
+
+    @Test
+    fun shouldResolveFunctionsWithManyIntentsInput() {
+        val resolver = createTestResolver()
+
+        val rule = firstOfType(FunctionInput.MANY_INTENTS)
+
+        val valid = create(rule, listOf(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display()))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+
+        val inputs: ManyIntents = resolver.createManyIntentsInput(valid)
+        assertThat(inputs).isEqualTo(ManyIntents(setOf(Intent.ADJUVANT, Intent.NEOADJUVANT)))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not an intent")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(Intent.ADJUVANT, "test")))).isFalse
+    }
+
+
+    @Test
+    fun shouldResolveFunctionsWithManyIntentsOneIntegerInput() {
+        val resolver = createTestResolver()
+
+        val rule = firstOfType(FunctionInput.MANY_INTENTS_ONE_INTEGER)
+
+        val valid = create(rule, listOf(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display(), "1"))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+
+        val inputs: ManyIntentsOneInteger = resolver.createManyIntentsOneIntegerInput(valid)
+        assertThat(inputs)
+            .isEqualTo(ManyIntentsOneInteger(intents = setOf(Intent.ADJUVANT, Intent.NEOADJUVANT), integer = 1))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(Intent.ADJUVANT.display(), "test", "1")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1", Intent.ADJUVANT.display())))).isFalse
     }
 
     companion object {

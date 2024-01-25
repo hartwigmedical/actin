@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.composite.CompositeInput
@@ -129,6 +130,13 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
             }
             FunctionInput.ONE_DOID_TERM -> {
                 listOf(doidTermToUse)
+            }
+            FunctionInput.MANY_INTENTS_ONE_INTEGER -> {
+                listOf(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display(), "1")
+            }
+
+            FunctionInput.MANY_INTENTS -> {
+                listOf(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display())
             }
         }
     }

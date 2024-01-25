@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
@@ -18,8 +19,12 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 object TreatmentTestFactory {
     private val base = TestDataFactory.createMinimalTestPatientRecord()
 
-    fun treatment(name: String, isSystemic: Boolean, categories: Set<TreatmentCategory> = emptySet()): Treatment {
-        return OtherTreatment(name = name, isSystemic = isSystemic, synonyms = emptySet(), displayOverride = null, categories = categories)
+    fun treatment(
+        name: String, isSystemic: Boolean, categories: Set<TreatmentCategory> = emptySet(), types: Set<OtherTreatmentType> = emptySet()
+    ): Treatment {
+        return OtherTreatment(
+            name = name, isSystemic = isSystemic, synonyms = emptySet(), displayOverride = null, categories = categories, types = types
+        )
     }
 
     fun drugTreatment(name: String, category: TreatmentCategory, types: Set<DrugType> = emptySet()): DrugTreatment {
@@ -41,7 +46,7 @@ object TreatmentTestFactory {
         bestResponse: TreatmentResponse? = null,
         stopYear: Int? = null,
         stopMonth: Int? = null,
-        intents: Set<Intent> = emptySet(),
+        intents: Set<Intent>? = emptySet(),
         isTrial: Boolean = false,
         numCycles: Int? = null,
         switchToTreatments: List<TreatmentStage>? = null,

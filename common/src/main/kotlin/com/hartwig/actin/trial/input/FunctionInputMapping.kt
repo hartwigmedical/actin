@@ -58,6 +58,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_LYMPH_NODE_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_VISCERAL_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to FunctionInput.NONE,
+        EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to FunctionInput.NONE,
         EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to FunctionInput.NONE,
         EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to FunctionInput.ONE_INTEGER,
         EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to FunctionInput.NONE,
@@ -107,6 +108,8 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER,
         EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE,
+        EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_MONTHS to FunctionInput.MANY_INTENTS_ONE_INTEGER,
+        EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to FunctionInput.MANY_INTENTS,
         EligibilityRule.HAS_HAD_NON_INTERNAL_RADIOTHERAPY to FunctionInput.NONE,
         EligibilityRule.HAS_RECEIVED_HER2_TARGETING_ADC to FunctionInput.NONE,
         EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT to FunctionInput.ONE_SPECIFIC_TREATMENT,
@@ -371,6 +374,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HAD_RECENT_SURGERY to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS to FunctionInput.ONE_INTEGER,
-        EligibilityRule.HAS_PLANNED_SURGERY to FunctionInput.NONE
+        EligibilityRule.HAS_PLANNED_SURGERY to FunctionInput.NONE,
+        EligibilityRule.HAS_HAD_CYTOREDUCTIVE_SURGERY to FunctionInput.NONE
     )
 }

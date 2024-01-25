@@ -5,7 +5,9 @@ enum class OtherTreatmentType(override val category: TreatmentCategory) : Treatm
     AUTOLOGOUS(TreatmentCategory.TRANSPLANTATION),
     MICROWAVE(TreatmentCategory.ABLATION),
     RADIOFREQUENCY(TreatmentCategory.ABLATION),
-    HYPERTHERMIA(TreatmentCategory.ABLATION);
+    HYPERTHERMIA(TreatmentCategory.ABLATION),
+    CYTOREDUCTIVE_SURGERY(TreatmentCategory.SURGERY),
+    DEBULKING_SURGERY(TreatmentCategory.SURGERY);
 
     override fun display(): String {
         return toString().replace("_", " ").lowercase()
