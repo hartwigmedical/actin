@@ -46,6 +46,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LUNG_METASTASES to hasLungMetastasesCreator(),
             EligibilityRule.HAS_LYMPH_NODE_METASTASES to hasLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
+            EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
+            EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(),
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
@@ -166,6 +168,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         }
     }
 
+    private fun hasUnresectablePeritonealMetastasesCreator(): FunctionCreator {
+        return FunctionCreator { HasUnresectablePeritonealMetastases() }
+    }
+
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {
         return FunctionCreator {
             DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()), HasUnresectableStageIIICancer())
@@ -240,6 +246,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasVisceralMetastasesCreator(): FunctionCreator {
         return FunctionCreator { HasVisceralMetastases() }
+    }
+
+    private fun hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(): FunctionCreator {
+        return FunctionCreator { HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasBiopsyAmenableLesionCreator(): FunctionCreator {

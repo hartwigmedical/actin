@@ -1,17 +1,31 @@
 package com.hartwig.actin.clinical.feed.digitalfile
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.hartwig.actin.clinical.feed.FeedEntry
+import com.hartwig.actin.clinical.feed.TsvRow
 import java.time.LocalDate
 
+@TsvRow
 data class DigitalFileEntry(
+    @JsonProperty("subject")
     override val subject: String,
+    @JsonProperty("authored")
     val authored: LocalDate,
+    @JsonProperty("description")
     val description: String,
+    @JsonProperty("item_text")
     val itemText: String,
-    val itemAnswerValueValueString: String,
-    val isBloodTransfusionEntry: Boolean = description == BLOOD_TRANSFUSION_DESCRIPTION,
-    val isToxicityEntry: Boolean = description == TOXICITY_DESCRIPTION
+    @JsonProperty("item_answer_value_valueString")
+    val itemAnswerValueValueString: String
 ) : FeedEntry {
+
+    fun isBloodTransfusionEntry(): Boolean {
+        return description == BLOOD_TRANSFUSION_DESCRIPTION
+    }
+
+    fun isToxicityEntry(): Boolean {
+        return description == TOXICITY_DESCRIPTION
+    }
 
     companion object {
         private const val BLOOD_TRANSFUSION_DESCRIPTION = "Aanvraag bloedproducten_test"
