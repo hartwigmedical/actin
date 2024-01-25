@@ -35,6 +35,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_NON_SQUAMOUS_NSCLC, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BREAST_CANCER_HORMONE_POSITIVE_AND_HER2_NEGATIVE, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE, FunctionInput.ONE_STRING);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR, FunctionInput.NONE);
