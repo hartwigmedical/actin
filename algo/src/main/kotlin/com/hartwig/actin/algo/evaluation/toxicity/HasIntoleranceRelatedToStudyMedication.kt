@@ -17,9 +17,10 @@ class HasIntoleranceRelatedToStudyMedication() : EvaluationFunction {
             .toSet()
 
         return if (allergies.isNotEmpty()) {
+            val generalMessage = "Patient has medication-related allergies: ${concat(allergies)}"
             EvaluationFactory.undetermined(
-                "Patient has medication-related allergies: ${concat(allergies)}. "
-                        + "Currently not determined if this could be related to potential study medication"
+                "$generalMessage. Currently not determined if this could be related to potential study medication",
+                generalMessage
             )
         } else EvaluationFactory.fail("Patient has no known allergies with category 'medication'")
     }

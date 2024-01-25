@@ -1,11 +1,14 @@
 package com.hartwig.actin.trial.serialization
 
 import com.google.gson.GsonBuilder
+import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.Trial
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
 import com.hartwig.actin.util.Paths
+import com.hartwig.actin.util.json.CriterionReferenceDeserializer
+import com.hartwig.actin.util.json.CriterionReferenceDeserializer.Companion.toJsonReferenceText
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.logging.log4j.LogManager
@@ -16,11 +19,10 @@ import java.io.FileWriter
 import java.io.IOException
 import java.nio.file.Files
 
+
 object TrialJson {
     private val LOGGER: Logger = LogManager.getLogger(TrialJson::class.java)
     private const val TRIAL_JSON_EXTENSION: String = ".trial.json"
-    private const val JSON_REFERENCE_TEXT_LINE_BREAK: String = "<enter>"
-    private const val JAVA_REFERENCE_TEXT_LINE_BREAK: String = "\n"
 
     fun write(trials: List<Trial>, directory: String) {
         val path: String = Paths.forceTrailingFileSeparator(directory)
@@ -63,7 +65,10 @@ object TrialJson {
     }
 
     fun fromJson(json: String): Trial {
-        val gson = GsonBuilder().registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer()).create()
+        val gson = GsonBuilder()
+            .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
+            .registerTypeAdapter(CriterionReference::class.java, CriterionReferenceDeserializer())
+            .create()
         return gson.fromJson(json, Trial::class.java)
     }
 
@@ -73,9 +78,5 @@ object TrialJson {
         } catch (e: IOException) {
             throw RuntimeException(e)
         }
-    }
-
-    private fun toJsonReferenceText(text: String): String {
-        return text.replace(JAVA_REFERENCE_TEXT_LINE_BREAK.toRegex(), JSON_REFERENCE_TEXT_LINE_BREAK)
     }
 }

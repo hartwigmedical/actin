@@ -2,8 +2,10 @@ package com.hartwig.actin.algo.serialization
 
 import com.google.gson.GsonBuilder
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
+import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.util.Paths
+import com.hartwig.actin.util.json.CriterionReferenceDeserializer
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonSerializer
@@ -38,6 +40,7 @@ object TreatmentMatchJson {
     fun fromJson(json: String): TreatmentMatch {
         val gson = GsonBuilder()
             .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
+            .registerTypeAdapter(CriterionReference::class.java, CriterionReferenceDeserializer())
             .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
             .create()
         return gson.fromJson(json, TreatmentMatch::class.java)

@@ -12,7 +12,8 @@ object LabInterpreter {
     )
     
     fun interpret(labValues: List<LabValue>): LabInterpretation {
-        val baseMeasurements = LabMeasurement.values().associateWith { filterByCode(labValues, it.code) }
+        val labValuesByCode = labValues.groupBy(LabValue::code)
+        val baseMeasurements = LabMeasurement.values().associateWith { labValuesByCode[it.code] ?: emptyList() }
         val mappedMeasurements = MAPPINGS.entries.associate { (fromMeasurement, toMeasurement) ->
             toMeasurement to baseMeasurements[fromMeasurement]!!.map { convert(it, toMeasurement) }
         }
@@ -25,9 +26,5 @@ object LabInterpreter {
 
     private fun convert(labValue: LabValue, targetMeasure: LabMeasurement): LabValue {
         return labValue.copy(code = targetMeasure.code, unit = targetMeasure.defaultUnit)
-    }
-
-    private fun filterByCode(labValues: List<LabValue>, code: String): List<LabValue> {
-        return labValues.filter { it.code == code }
     }
 }

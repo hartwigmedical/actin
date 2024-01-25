@@ -15,19 +15,18 @@ class LabInterpreterTest {
 
     @Test
     fun `Should map values according to mapping`() {
-        val firstKey = LabInterpreter.MAPPINGS.keys.first()
-        val firstValue = LabInterpreter.MAPPINGS[firstKey]
+        val (fromMeasurement, toMeasurement) = LabInterpreter.MAPPINGS.entries.first()
         val values = listOf(
-            LabInterpretationTestFactory.createMinimal().copy(code = firstKey.code, unit = firstKey.defaultUnit),
-            LabInterpretationTestFactory.createMinimal().copy(code = firstValue!!.code, unit = firstValue.defaultUnit)
+            LabInterpretationTestFactory.createMinimal().copy(code = fromMeasurement.code, unit = fromMeasurement.defaultUnit),
+            LabInterpretationTestFactory.createMinimal().copy(code = toMeasurement.code, unit = toMeasurement.defaultUnit)
         )
         val interpretation = interpret(values)
 
-        assertThat(interpretation.allValues(firstKey)!!).hasSize(1)
-        assertThat(interpretation.allValues(firstValue)!!).hasSize(2)
-        for (labValue in interpretation.allValues(firstValue)!!) {
-            assertThat(labValue.code).isEqualTo(firstValue.code)
-            assertThat(labValue.unit).isEqualTo(firstValue.defaultUnit)
+        assertThat(interpretation.allValues(fromMeasurement)!!).hasSize(1)
+        assertThat(interpretation.allValues(toMeasurement)!!).hasSize(2)
+        for (labValue in interpretation.allValues(toMeasurement)!!) {
+            assertThat(labValue.code).isEqualTo(toMeasurement.code)
+            assertThat(labValue.unit).isEqualTo(toMeasurement.defaultUnit)
         }
     }
 }

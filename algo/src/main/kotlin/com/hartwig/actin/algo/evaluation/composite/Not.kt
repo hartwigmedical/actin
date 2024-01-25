@@ -5,13 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class Not(function: EvaluationFunction) : EvaluationFunction {
-
-    private val function: EvaluationFunction
-
-    init {
-        this.function = function
-    }
+class Not(private val function: EvaluationFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluation: Evaluation = function.evaluate(record)
@@ -22,30 +16,36 @@ class Not(function: EvaluationFunction) : EvaluationFunction {
         val passGeneralMessages: Set<String>
         val failSpecificMessages: Set<String>
         val failGeneralMessages: Set<String>
-        if (evaluation.result == EvaluationResult.PASS) {
-            negatedResult = EvaluationResult.FAIL
-            inclusionMolecularEvents = evaluation.exclusionMolecularEvents
-            exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-            passSpecificMessages = evaluation.failSpecificMessages
-            passGeneralMessages = evaluation.failGeneralMessages
-            failSpecificMessages = evaluation.passSpecificMessages
-            failGeneralMessages = evaluation.passGeneralMessages
-        } else if (evaluation.result == EvaluationResult.FAIL) {
-            negatedResult = EvaluationResult.PASS
-            inclusionMolecularEvents = evaluation.exclusionMolecularEvents
-            exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-            passSpecificMessages = evaluation.failSpecificMessages
-            passGeneralMessages = evaluation.failGeneralMessages
-            failSpecificMessages = evaluation.passSpecificMessages
-            failGeneralMessages = evaluation.passGeneralMessages
-        } else {
-            negatedResult = evaluation.result
-            inclusionMolecularEvents = evaluation.inclusionMolecularEvents
-            exclusionMolecularEvents = evaluation.exclusionMolecularEvents
-            passSpecificMessages = evaluation.passSpecificMessages
-            passGeneralMessages = evaluation.passGeneralMessages
-            failSpecificMessages = evaluation.failSpecificMessages
-            failGeneralMessages = evaluation.failGeneralMessages
+        when (evaluation.result) {
+            EvaluationResult.PASS -> {
+                negatedResult = EvaluationResult.FAIL
+                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
+                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
+                passSpecificMessages = evaluation.failSpecificMessages
+                passGeneralMessages = evaluation.failGeneralMessages
+                failSpecificMessages = evaluation.passSpecificMessages
+                failGeneralMessages = evaluation.passGeneralMessages
+            }
+
+            EvaluationResult.FAIL -> {
+                negatedResult = EvaluationResult.PASS
+                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
+                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
+                passSpecificMessages = evaluation.failSpecificMessages
+                passGeneralMessages = evaluation.failGeneralMessages
+                failSpecificMessages = evaluation.passSpecificMessages
+                failGeneralMessages = evaluation.passGeneralMessages
+            }
+
+            else -> {
+                negatedResult = evaluation.result
+                inclusionMolecularEvents = evaluation.inclusionMolecularEvents
+                exclusionMolecularEvents = evaluation.exclusionMolecularEvents
+                passSpecificMessages = evaluation.passSpecificMessages
+                passGeneralMessages = evaluation.passGeneralMessages
+                failSpecificMessages = evaluation.failSpecificMessages
+                failGeneralMessages = evaluation.failGeneralMessages
+            }
         }
         return Evaluation(
             result = negatedResult,
