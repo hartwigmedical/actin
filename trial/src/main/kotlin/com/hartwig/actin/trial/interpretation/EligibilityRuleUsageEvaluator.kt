@@ -71,7 +71,9 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X,
         EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY,
         EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES,
-        EligibilityRule.NON_EXPRESSION_OF_GENE_X
+        EligibilityRule.NON_EXPRESSION_OF_GENE_X,
+        EligibilityRule.HAS_HAD_CYTOREDUCTIVE_SURGERY,
+        EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS
     )
 
     fun evaluate(trials: List<Trial>) {
