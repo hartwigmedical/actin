@@ -6,6 +6,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
@@ -168,6 +169,19 @@ internal object TumorTestFactory {
         return ImmutablePatientRecord.builder()
             .from(base)
             .molecular(ImmutableMolecularRecord.builder().from(base.molecular()).type(type).build())
+            .build()
+    }
+
+    fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<PriorMolecularTest>, doids: Set<String>?): PatientRecord {
+        return ImmutablePatientRecord.builder()
+            .from(TestDataFactory.createMinimalTestPatientRecord())
+            .clinical(
+                ImmutableClinicalRecord.builder()
+                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
+                    .tumor(builder().doids(doids).build())
+                    .priorMolecularTests(priorMolecularTests)
+                    .build()
+            )
             .build()
     }
 }
