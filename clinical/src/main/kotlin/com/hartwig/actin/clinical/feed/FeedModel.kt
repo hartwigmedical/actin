@@ -17,6 +17,10 @@ class FeedModel(private val feed: ClinicalFeed) {
         return feed.patientEntries.map { it.subject }.toSortedSet()
     }
 
+    fun validationWarnings(subject: String): Set<FeedValidationWarning> {
+        return feed.validationWarnings.filter { it.subject == subject }.toSet()
+    }
+
     fun patientEntry(subject: String): PatientEntry {
         return entriesForSubject(feed.patientEntries, subject).firstOrNull()
             ?: throw IllegalStateException("Could not find patient for subject $subject")
@@ -24,16 +28,16 @@ class FeedModel(private val feed: ClinicalFeed) {
 
     fun bloodTransfusionEntries(subject: String): List<DigitalFileEntry> {
         return entriesForSubject(feed.digitalFileEntries, subject)
-            .filter { obj: DigitalFileEntry -> obj.isBloodTransfusionEntry }
+            .filter(DigitalFileEntry::isBloodTransfusionEntry)
     }
 
     fun toxicityEntries(subject: String): List<DigitalFileEntry> {
         return entriesForSubject(feed.digitalFileEntries, subject)
-            .filter { obj: DigitalFileEntry -> obj.isToxicityEntry }
+            .filter(DigitalFileEntry::isToxicityEntry)
     }
 
     fun latestQuestionnaireEntry(subject: String): QuestionnaireEntry? {
-        return entriesForSubject(feed.questionnaireEntries, subject).maxByOrNull { obj: QuestionnaireEntry -> obj.authored }
+        return entriesForSubject(feed.questionnaireEntries, subject).maxByOrNull(QuestionnaireEntry::authored)
     }
 
     fun uniqueSurgeryEntries(subject: String): List<SurgeryEntry> {
@@ -55,10 +59,10 @@ class FeedModel(private val feed: ClinicalFeed) {
         ).distinctBy {
             VitalFunctionProperties(
                 it.effectiveDateTime,
-                it.quantityValue,
+                it.quantityValue ?: Double.NaN,
                 it.quantityUnit,
                 it.componentCodeDisplay,
-                it.valid
+                it.isValid()
             )
         }
     }

@@ -56,7 +56,7 @@ class ClinicalFeedReaderTest {
             assertEquals("ACTN-01-02-9999", entry.subject)
             assertEquals("INT Consult", entry.description)
             assertEquals("Beloop", entry.itemText)
-            assertEquals(26, entry.text.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong())
+            assertEquals(26, entry.text.split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong())
             assertTrue(entry.text.startsWith("ACTIN Questionnaire"))
             assertTrue(entry.text.contains("CNS lesions yes/no/unknown"))
             assertTrue(entry.text.contains("Other (e.g. Osteoporosis, Pleural effusion)"))
@@ -135,11 +135,11 @@ class ClinicalFeedReaderTest {
             assertEquals(1, entries.size.toLong())
             val entry = entries[0]
             assertEquals("ACTN-01-02-9999", entry.subject)
-            assertEquals(LocalDateTime.of(2019, 4, 28, 13, 45, 0), entry.effectiveDateTime)
+            assertEquals(LocalDateTime.of(2019, 4, 28, 13, 45), entry.effectiveDateTime)
             assertEquals("NIBP", entry.codeDisplayOriginal)
             assertEquals("Systolic blood pressure", entry.componentCodeDisplay)
             assertEquals("mmHg", entry.quantityUnit)
-            assertEquals(108.0, entry.quantityValue, EPSILON)
+            assertEquals(108.0, entry.quantityValue!!, EPSILON)
         }
 
         private fun assertIntolerances(entries: List<IntoleranceEntry>) {
