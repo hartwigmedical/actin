@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage;
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType;
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType;
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory;
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent;
 import com.hartwig.actin.treatment.datamodel.EligibilityFunction;
 import com.hartwig.actin.treatment.datamodel.EligibilityRule;
 import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction;
@@ -145,6 +146,12 @@ public class ParameterizedFunctionTestFactory {
             }
             case ONE_DOID_TERM: {
                 return List.of(doidTermToUse);
+            }
+            case MANY_INTENTS_ONE_INTEGER: {
+                return List.of(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display(), "1");
+            }
+            case MANY_INTENTS: {
+                return List.of(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display());
             }
             default: {
                 throw new IllegalStateException("Could not create inputs for " + input);
