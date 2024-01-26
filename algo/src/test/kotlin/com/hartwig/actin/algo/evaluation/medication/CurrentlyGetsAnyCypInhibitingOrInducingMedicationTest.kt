@@ -8,35 +8,57 @@ import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class CurrentlyGetsAnyCypInhibitingOrInducingMedicationTest {
+
+    private val alwaysActiveFunction = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive())
+    private val alwaysPlannedFunction = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysPlanned())
+
     @Test
-    fun shouldPassWhenAnyCypInhibitingOrInducingMedication() {
+    fun `Should pass when any CYP inhibiting or inducing medication`() {
         val medications = listOf(
             TestMedicationFactory.builder().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.PASS, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenNoCypInhibitingOrInducingMedication() {
+    fun `Should fail when no CYP inhibiting or inducing medication`() {
         val medications = listOf(
             TestMedicationFactory.builder().addCypInteractions(
                 ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
                     .build()
             ).build()
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientUsesNoMedication() {
+    fun `Should fail when patient uses no medication`() {
         val medications = listOf(TestMedicationFactory.builder().build())
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
-    companion object {
-        private val FUNCTION = CurrentlyGetsAnyCypInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive())
+    @Test
+    fun `Should warn when patient plans to use CYP inhibiting or inducing medication`() {
+        val medications = listOf(
+            TestMedicationFactory.builder().addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build()
+        )
+        assertEvaluation(EvaluationResult.WARN, alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun `Should fail when patient plans to use medication which is not CYP inhibiting or inducing`() {
+        val medications = listOf(
+            TestMedicationFactory.builder().addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build()
+        )
+        assertEvaluation(EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 }

@@ -8,26 +8,38 @@ import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class CurrentlyGetsQTProlongatingMedicationTest {
+
+    private val alwaysActiveFunction = CurrentlyGetsQTProlongatingMedication(MedicationTestFactory.alwaysActive())
+    private val alwaysPlannedFunction = CurrentlyGetsQTProlongatingMedication(MedicationTestFactory.alwaysPlanned())
+
     @Test
-    fun shouldPassWhenPatientUsesKnownQTProlongatingMedication() {
+    fun `Should pass when patient uses known QT prolongating medication`() {
         val medications = listOf(TestMedicationFactory.builder().qtProlongatingRisk(QTProlongatingRisk.KNOWN).build())
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.PASS, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientDoesNotUseQTProlongatingMedication() {
+    fun `Should fail when patient does not use QT prolongating medication`() {
         val medications = listOf(TestMedicationFactory.builder().qtProlongatingRisk(QTProlongatingRisk.NONE).build())
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
-
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientUsesNoMedication() {
+    fun `Should fail when patient uses no medication`() {
         val medications = emptyList<Medication>()
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
-    companion object {
-        private val FUNCTION = CurrentlyGetsQTProlongatingMedication(MedicationTestFactory.alwaysActive())
+    @Test
+    fun `Should warn when patient plans to use known QT prolongating medication`() {
+        val medications = listOf(TestMedicationFactory.builder().qtProlongatingRisk(QTProlongatingRisk.KNOWN).build())
+        assertEvaluation(EvaluationResult.WARN, alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
+
+    @Test
+    fun `Should fail when patient plans to use medication that is not QT prolongating`() {
+        val medications = listOf(TestMedicationFactory.builder().qtProlongatingRisk(QTProlongatingRisk.NONE).build())
+        assertEvaluation(EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
 }

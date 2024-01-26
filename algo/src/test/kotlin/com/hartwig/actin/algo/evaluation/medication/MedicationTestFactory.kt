@@ -22,6 +22,10 @@ internal object MedicationTestFactory {
         return createConstantSelector(MedicationStatusInterpretation.CANCELLED)
     }
 
+    fun alwaysPlanned(): MedicationSelector {
+        return createConstantSelector(MedicationStatusInterpretation.PLANNED)
+    }
+
     fun withMedications(medications: List<Medication>): PatientRecord {
         return ImmutablePatientRecord.builder()
             .from(TestDataFactory.createMinimalTestPatientRecord())

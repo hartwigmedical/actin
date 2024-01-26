@@ -8,23 +8,37 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.algo.evaluation.util.Format
 
 class CurrentlyGetsAnyCypInhibitingOrInducingMedication(private val selector: MedicationSelector) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val activeMedications = selector.active(record.clinical().medications())
-        val cypMedications = activeMedications.filter { medication ->
+        val cypMedications = record.clinical().medications().filter { medication ->
             medication.cypInteractions()
                 .any { it.type() == CypInteraction.Type.INDUCER || it.type() == CypInteraction.Type.INHIBITOR }
-        }.map { it.name() }
+        }
 
-        return if (cypMedications.isNotEmpty()) {
-            EvaluationFactory.recoverablePass(
-                "Patient currently gets CYP inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(cypMedications)}",
-                "CYP inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(cypMedications)}"
-            )
-        } else {
-            EvaluationFactory.recoverableFail(
-                "Patient currently does not get CYP inhibiting/inducing medication ",
-                "No CYP inhibiting/inducing medication use "
-            )
+        val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name() }
+        val plannedCypMedications = cypMedications.filter { selector.isPlanned(it) }.map { it.name() }
+
+        return when {
+            activeCypMedications.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(
+                    "Patient currently gets CYP inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(activeCypMedications)}",
+                    "CYP inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(activeCypMedications)}"
+                )
+            }
+
+            plannedCypMedications.isNotEmpty() -> {
+                EvaluationFactory.recoverableWarn(
+                    "Patient plans to get CYP inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(plannedCypMedications)}",
+                    "Planned CYP inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(plannedCypMedications)}"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Patient currently does not get CYP inhibiting/inducing medication ",
+                    "No CYP inhibiting/inducing medication use "
+                )
+            }
         }
     }
 }
