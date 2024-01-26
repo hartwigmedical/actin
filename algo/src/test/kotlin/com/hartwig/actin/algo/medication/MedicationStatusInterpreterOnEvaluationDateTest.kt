@@ -88,16 +88,16 @@ class MedicationStatusInterpreterOnEvaluationDateTest {
         assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusNoStartDateAndNotStopped))
 
         val unknownStatusStartedAndNoStopDate = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartedAndNoStopDate))
+        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartedAndNoStopDate))
         val unknownStatusStartedAndStopped = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartedAndStopped))
+        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartedAndStopped))
         val unknownStatusStartedAndNotStopped = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartedAndNotStopped))
+        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartedAndNotStopped))
 
         val unknownStatusStartingInFutureAndNoStopDate = create(MedicationStatus.UNKNOWN, evaluationDate.plusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartingInFutureAndNoStopDate))
+        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartingInFutureAndNoStopDate))
         val unknownStatusStartingInFutureAndNotStopped = create(MedicationStatus.UNKNOWN, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartingInFutureAndNotStopped))
+        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartingInFutureAndNotStopped))
     }
 
     @Test

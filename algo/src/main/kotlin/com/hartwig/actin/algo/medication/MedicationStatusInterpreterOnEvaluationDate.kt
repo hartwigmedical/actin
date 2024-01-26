@@ -9,21 +9,29 @@ class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: Lo
     override fun interpret(medication: Medication): MedicationStatusInterpretation {
         val status = medication.status()
         val startDate = medication.startDate() ?: return MedicationStatusInterpretation.UNKNOWN
-        if (status == MedicationStatus.CANCELLED) {
-            return MedicationStatusInterpretation.CANCELLED
-        } else if (status == MedicationStatus.ON_HOLD) {
-            return MedicationStatusInterpretation.STOPPED
-        }
-        val startIsBeforeEvaluation = startDate.isBefore(evaluationDate)
-        return if (!startIsBeforeEvaluation) {
-            MedicationStatusInterpretation.PLANNED
-        } else {
-            val stopDate = medication.stopDate()
-            if (stopDate == null) {
-                if (status == MedicationStatus.UNKNOWN) MedicationStatusInterpretation.UNKNOWN else MedicationStatusInterpretation.ACTIVE
-            } else {
-                val stopIsBeforeEvaluation = stopDate.isBefore(evaluationDate)
-                if (stopIsBeforeEvaluation) MedicationStatusInterpretation.STOPPED else MedicationStatusInterpretation.ACTIVE
+        when (status) {
+            MedicationStatus.CANCELLED -> {
+                return MedicationStatusInterpretation.CANCELLED
+            }
+            MedicationStatus.ON_HOLD -> {
+                return MedicationStatusInterpretation.STOPPED
+            }
+            MedicationStatus.UNKNOWN -> {
+                return MedicationStatusInterpretation.UNKNOWN
+            }
+            else -> {
+                val startIsBeforeEvaluation = startDate.isBefore(evaluationDate)
+                return if (!startIsBeforeEvaluation) {
+                    MedicationStatusInterpretation.PLANNED
+                } else {
+                    val stopDate = medication.stopDate()
+                    if (stopDate == null) {
+                        MedicationStatusInterpretation.ACTIVE
+                    } else {
+                        val stopIsBeforeEvaluation = stopDate.isBefore(evaluationDate)
+                        if (stopIsBeforeEvaluation) MedicationStatusInterpretation.STOPPED else MedicationStatusInterpretation.ACTIVE
+                    }
+                }
             }
         }
     }
