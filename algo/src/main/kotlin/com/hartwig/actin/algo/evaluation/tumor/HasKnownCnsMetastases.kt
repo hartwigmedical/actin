@@ -12,7 +12,7 @@ class HasKnownCnsMetastases : EvaluationFunction {
         val hasBrainLesions = record.clinical().tumor().hasBrainLesions()
         if (hasCnsLesions == null && hasBrainLesions == null) {
             return EvaluationFactory.fail(
-                "Data regarding presence of CNS metastases is missing, assuming there are none",
+                "Data regarding presence of CNS metastases is missing - assuming there are none",
                 "Assuming no known CNS metastases"
             )
         }

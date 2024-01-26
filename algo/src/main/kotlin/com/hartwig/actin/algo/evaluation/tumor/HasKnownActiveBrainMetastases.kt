@@ -16,10 +16,17 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
             hasActiveBrainMetastases = hasActiveBrainMetastases ?: false
         }
         if (hasActiveBrainMetastases == null) {
-            return EvaluationFactory.undetermined(
-                "Data regarding presence of active brain metastases is missing",
-                "Missing active brain metastases data"
-            )
+            return if (hasBrainMetastases == true) {
+                EvaluationFactory.undetermined(
+                    "Brain metastases in history but data regarding active brain metastases is missing - assuming there are none",
+                    "Missing active brain metastases data - assuming there are none"
+                )
+            } else {
+                EvaluationFactory.recoverableUndetermined(
+                    "Data regarding presence of active brain metastases is missing",
+                    "Missing active brain metastases data"
+                )
+            }
         }
         return if (hasActiveBrainMetastases) {
             EvaluationFactory.pass("Active brain metastases are present", "Active brain metastases")

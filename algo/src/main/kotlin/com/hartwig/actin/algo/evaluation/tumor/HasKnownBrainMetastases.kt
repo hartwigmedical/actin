@@ -10,7 +10,7 @@ class HasKnownBrainMetastases : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasBrainMetastases = record.clinical().tumor().hasBrainLesions()
             ?: return EvaluationFactory.fail(
-                "Data regarding presence of brain metastases is missing, assuming there are none",
+                "Data regarding presence of brain metastases is missing - assuming there are none",
                 "Assuming no known brain metastases"
             )
         return if (hasBrainMetastases) {
