@@ -80,23 +80,23 @@ class MedicationStatusInterpreterOnEvaluationDateTest {
 
     @Test
     fun canInterpretMedicationWithUnknownStatus(){
-        val unknownStatusNoStartAndStopDate = create(MedicationStatus.ON_HOLD, null, null)
+        val unknownStatusNoStartAndStopDate = create(MedicationStatus.UNKNOWN, null, null)
         assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusNoStartAndStopDate))
-        val unknownStatusNoStartDateAndStopped = create(MedicationStatus.ON_HOLD, null, evaluationDate.minusDays(1))
+        val unknownStatusNoStartDateAndStopped = create(MedicationStatus.UNKNOWN, null, evaluationDate.minusDays(1))
         assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusNoStartDateAndStopped))
-        val unknownStatusNoStartDateAndNotStopped = create(MedicationStatus.ON_HOLD, null, evaluationDate.plusDays(1))
+        val unknownStatusNoStartDateAndNotStopped = create(MedicationStatus.UNKNOWN, null, evaluationDate.plusDays(1))
         assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusNoStartDateAndNotStopped))
 
-        val unknownStatusStartedAndNoStopDate = create(MedicationStatus.ON_HOLD, evaluationDate.minusDays(1), null)
+        val unknownStatusStartedAndNoStopDate = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(1), null)
         assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartedAndNoStopDate))
-        val unknownStatusStartedAndStopped = create(MedicationStatus.ON_HOLD, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
+        val unknownStatusStartedAndStopped = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
         assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartedAndStopped))
-        val unknownStatusStartedAndNotStopped = create(MedicationStatus.ON_HOLD, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
+        val unknownStatusStartedAndNotStopped = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
         assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartedAndNotStopped))
 
-        val unknownStatusStartingInFutureAndNoStopDate = create(MedicationStatus.ON_HOLD, evaluationDate.plusDays(1), null)
+        val unknownStatusStartingInFutureAndNoStopDate = create(MedicationStatus.UNKNOWN, evaluationDate.plusDays(1), null)
         assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartingInFutureAndNoStopDate))
-        val unknownStatusStartingInFutureAndNotStopped = create(MedicationStatus.ON_HOLD, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
+        val unknownStatusStartingInFutureAndNotStopped = create(MedicationStatus.UNKNOWN, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
         assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(unknownStatusStartingInFutureAndNotStopped))
     }
 
