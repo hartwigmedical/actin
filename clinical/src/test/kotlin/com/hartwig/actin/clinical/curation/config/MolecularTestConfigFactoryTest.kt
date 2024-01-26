@@ -9,7 +9,7 @@ import org.junit.Test
 class MolecularTestConfigFactoryTest {
 
     private val fields: Map<String, Int> =
-        TestCurationFactory.curationHeaders(CurationDatabaseReader.MOLECULAR_TEST_TSV)
+        TestCurationFactory.curationHeaders(CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV)
 
     @Test
     fun `Should return MolecularTestConfig from valid inputs`() {

@@ -12,11 +12,10 @@ private const val PATIENT_ID = "patient1"
 private const val CANNOT_CURATE = "cannot curate"
 
 private const val MOLECULAR_TEST_INPUT = "Molecular test input"
-private const val MOLECULAR_TEST_INPUT_SPECIFIC = "Molecular test input specific"
 
-private const val MOLECULAR_TEST_INTERPRETATION = "Molecular test interpretation"
-private const val MOLECULAR_TEST_INTERPRETATION_SPECIFIC = "Molecular test interpretation specific"
-private const val MOLECULAR_TEST_INTERPRETATION_FALLBACK = "Molecular test interpretation fallback"
+private const val MOLECULAR_TEST_INTERPRETATION_IHC = "Molecular test interpretation IHC"
+private const val MOLECULAR_TEST_INTERPRETATION_PDL1 = "Molecular test interpretation PD-L1"
+
 
 class PriorMolecularTestsExtractorTest {
 
@@ -26,18 +25,26 @@ class PriorMolecularTestsExtractorTest {
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
                 curated = ImmutablePriorMolecularTest.builder().impliesPotentialIndeterminateStatus(false)
-                    .test(MOLECULAR_TEST_INTERPRETATION).item("item").build()
+                    .test(MOLECULAR_TEST_INTERPRETATION_IHC).item("item").build()
             )
-        )
+        ),
+        TestCurationFactory.curationDatabase(
+            MolecularTestConfig(
+                input = MOLECULAR_TEST_INPUT,
+                ignore = false,
+                curated = ImmutablePriorMolecularTest.builder().impliesPotentialIndeterminateStatus(false)
+                    .test(MOLECULAR_TEST_INTERPRETATION_PDL1).item("item").build()
+            )
+        ),
     )
 
     @Test
-    fun `Should curate prior molecular tests`() {
+    fun `Should curate prior molecular IHC tests`() {
         val inputs = listOf(MOLECULAR_TEST_INPUT, CANNOT_CURATE)
         val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = inputs)
         val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(priorMolecularTests).hasSize(1)
-        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION)
+        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION_IHC)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
@@ -50,62 +57,35 @@ class PriorMolecularTestsExtractorTest {
         assertThat(evaluation.molecularTestEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
     }
 
-    private val pdl1Extractor = PriorMolecularTestsExtractor(
-        TestCurationFactory.curationDatabase(
-            MolecularTestConfig(
-                input = "PD-L1 $MOLECULAR_TEST_INPUT_SPECIFIC",
-                ignore = false,
-                curated = ImmutablePriorMolecularTest.builder().impliesPotentialIndeterminateStatus(false)
-                    .test(MOLECULAR_TEST_INTERPRETATION_SPECIFIC).item("item").build()
-            ),
-            MolecularTestConfig(
-                input = MOLECULAR_TEST_INPUT_SPECIFIC,
-                ignore = false,
-                curated = ImmutablePriorMolecularTest.builder().impliesPotentialIndeterminateStatus(false)
-                    .test(MOLECULAR_TEST_INTERPRETATION_FALLBACK).item("item").build()
-            ),
-            MolecularTestConfig(
-                input = MOLECULAR_TEST_INPUT,
-                ignore = false,
-                curated = ImmutablePriorMolecularTest.builder().impliesPotentialIndeterminateStatus(false)
-                    .test(MOLECULAR_TEST_INTERPRETATION).item("item").build()
-            ),
+    @Test
+    fun `Should curate prior molecular PD-L1 tests`() {
+        val inputs = listOf(MOLECULAR_TEST_INPUT, CANNOT_CURATE)
+        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(pdl1TestResults = inputs)
+        val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(priorMolecularTests).hasSize(1)
+        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION_PDL1)
+
+        assertThat(evaluation.warnings).containsOnly(
+            CurationWarning(
+                PATIENT_ID,
+                CurationCategory.MOLECULAR_TEST,
+                CANNOT_CURATE,
+                "Could not find PD-L1 molecular test config for input '$CANNOT_CURATE'"
+            )
         )
-    )
-
-    @Test
-    fun `Should curate input from PD-L1 field when specific curation when available`() {
-        val inputs = listOf(MOLECULAR_TEST_INPUT_SPECIFIC)
-        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(pdl1TestResults = inputs)
-        val (priorMolecularTests, evaluation) = pdl1Extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(priorMolecularTests).hasSize(1)
-        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION_SPECIFIC)
-
-        assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.molecularTestEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
     }
 
     @Test
-    fun `Should curate input from PD-L1 field when no specific curation config available`() {
-        val inputs = listOf(MOLECULAR_TEST_INPUT)
-        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(pdl1TestResults = inputs)
-        val (priorMolecularTests, evaluation) = pdl1Extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(priorMolecularTests).hasSize(1)
-        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION)
+    fun `Should differentiate IHC and PD-L1 tests with same input`() {
+        val ihcInputs = listOf(MOLECULAR_TEST_INPUT)
+        val pdl1Inputs = listOf(MOLECULAR_TEST_INPUT)
+        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = ihcInputs, pdl1TestResults = pdl1Inputs)
+        val (priorMolecularTests, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(priorMolecularTests).hasSize(2)
+        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION_IHC)
+        assertThat(priorMolecularTests[1].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION_PDL1)
 
         assertThat(evaluation.warnings).isEmpty()
-        assertThat(evaluation.molecularTestEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
-    }
-
-    @Test
-    fun `Should curate input from IHC field`() {
-        val inputs = listOf(MOLECULAR_TEST_INPUT)
-        val questionnaire = TestCurationFactory.emptyQuestionnaire().copy(ihcTestResults = inputs)
-        val (priorMolecularTests, evaluation) = pdl1Extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(priorMolecularTests).hasSize(1)
-        assertThat(priorMolecularTests[0].test()).isEqualTo(MOLECULAR_TEST_INTERPRETATION)
-
-        assertThat(evaluation.warnings).isEmpty()
-        assertThat(evaluation.molecularTestEvaluatedInputs).isEqualTo(inputs.map(String::lowercase).toSet())
     }
 }
