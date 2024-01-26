@@ -8,12 +8,12 @@ class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: Lo
 
     override fun interpret(medication: Medication): MedicationStatusInterpretation {
         val status = medication.status()
+        val startDate = medication.startDate() ?: return MedicationStatusInterpretation.UNKNOWN
         if (status == MedicationStatus.CANCELLED) {
             return MedicationStatusInterpretation.CANCELLED
         } else if (status == MedicationStatus.ON_HOLD) {
             return MedicationStatusInterpretation.STOPPED
         }
-        val startDate = medication.startDate() ?: return MedicationStatusInterpretation.UNKNOWN
         val startIsBeforeEvaluation = startDate.isBefore(evaluationDate)
         return if (!startIsBeforeEvaluation) {
             MedicationStatusInterpretation.PLANNED
