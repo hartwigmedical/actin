@@ -7,6 +7,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class HasLimitedPTT internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined("PTT cannot be determined yet")
+        return EvaluationFactory.recoverableUndeterminedNoGeneral("PTT cannot be determined yet")
     }
 }

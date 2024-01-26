@@ -22,15 +22,17 @@ class LabMeasurementEvaluator(
         if (!isValid(mostRecent, measurement)) {
             return when {
                 mostRecent == null -> {
-                    EvaluationFactory.recoverableUndetermined("No measurement found for ${measurement.display()}")
+                    EvaluationFactory.recoverableUndeterminedNoGeneral("No measurement found for ${measurement.display()}")
                 }
 
                 mostRecent.unit != measurement.defaultUnit -> {
-                    EvaluationFactory.recoverableUndetermined("Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit}")
+                    EvaluationFactory.recoverableUndeterminedNoGeneral(
+                        "Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit}"
+                    )
                 }
 
                 mostRecent.date.isBefore(minValidDate) -> {
-                    EvaluationFactory.recoverableUndetermined("Most recent measurement too old for ${measurement.display()}")
+                    EvaluationFactory.recoverableUndeterminedNoGeneral("Most recent measurement too old for ${measurement.display()}")
                 }
 
                 else -> {

@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-class HasIntoleranceRelatedToStudyMedication() : EvaluationFunction {
+class HasIntoleranceRelatedToStudyMedication : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
         val allergies = record.clinical.intolerances
@@ -17,12 +17,11 @@ class HasIntoleranceRelatedToStudyMedication() : EvaluationFunction {
             .toSet()
 
         return if (allergies.isNotEmpty()) {
-            val generalMessage = "Patient has medication-related allergies: ${concat(allergies)}"
-            EvaluationFactory.undetermined(
-                "$generalMessage. Currently not determined if this could be related to potential study medication",
-                generalMessage
+            EvaluationFactory.undeterminedNoGeneral(
+                "Patient has medication-related allergies: ${concat(allergies)}."
+                        + " Currently not determined if this could be related to potential study medication"
             )
-        } else EvaluationFactory.fail("Patient has no known allergies with category 'medication'")
+        } else EvaluationFactory.failNoGeneral("Patient has no known allergies with category 'medication'")
     }
 
     companion object {

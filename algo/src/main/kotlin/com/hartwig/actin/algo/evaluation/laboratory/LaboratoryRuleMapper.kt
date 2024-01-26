@@ -278,7 +278,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             return FunctionCreator {
                 object : EvaluationFunction {
                     override fun evaluate(record: PatientRecord): Evaluation {
-                        return EvaluationFactory.recoverableUndetermined("It is not clear yet under what code '$measure' is measured")
+                        return EvaluationFactory.recoverableUndeterminedNoGeneral(
+                            "It is not clear yet under what code '$measure' is measured"
+                        )
                     }
                 }
             }
