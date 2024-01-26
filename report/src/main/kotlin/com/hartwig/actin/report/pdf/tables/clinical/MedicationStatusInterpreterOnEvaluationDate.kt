@@ -1,9 +1,10 @@
-package com.hartwig.actin.algo.medication
+package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import java.time.LocalDate
 
+// TODO (CB): move this class and the copy in algo and the test files to common module once common is converted to kotlin
 class MedicationStatusInterpreterOnEvaluationDate(private val evaluationDate: LocalDate) : MedicationStatusInterpreter {
 
     override fun interpret(medication: Medication): MedicationStatusInterpretation {

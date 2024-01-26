@@ -10,23 +10,35 @@ import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSelector) : EvaluationFunction {
         
     override fun evaluate(record: PatientRecord): Evaluation {
-        val activeMedications = selector.active(record.clinical.medications)
-        val qtMedication = activeMedications.filter { it.qtProlongatingRisk != QTProlongatingRisk.NONE }
-        
-        return if (qtMedication.isNotEmpty()) {
-            EvaluationFactory.recoverablePass(
-                "Patient currently gets QT prolongating medication (risk type): " + concatWithType(qtMedication),
-                "QT prolongating medication use (risk type): " + concatWithType(qtMedication)
-            )
-        } else {
-            EvaluationFactory.recoverableFail(
-                "Patient currently does not get QT prolongating medication ",
-                "No QT prolongating medication use "
-            )
+        val qtMedication = record.clinical.medications.filter { it.qtProlongatingRisk != QTProlongatingRisk.NONE }
+        val activeQtMedication = qtMedication.filter(selector::isActive)
+        val plannedQtMedication = qtMedication.filter(selector::isPlanned)
+
+        return when {
+            activeQtMedication.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(
+                    "Patient currently gets QT prolongating medication (risk type): " + concatWithType(activeQtMedication),
+                    "QT prolongating medication use (risk type): " + concatWithType(activeQtMedication)
+                )
+            }
+
+            plannedQtMedication.isNotEmpty() -> {
+                EvaluationFactory.recoverableWarn(
+                    "Patient plans to get QT prolongating medication (risk type): " + concatWithType(plannedQtMedication),
+                    "Planned QT prolongating medication use (risk type): " + concatWithType(plannedQtMedication)
+                )
+            }
+
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Patient currently does not get QT prolongating medication ",
+                    "No QT prolongating medication use "
+                )
+            }
         }
     }
 
     private fun concatWithType(medications: List<Medication>): String {
-        return medications.joinToString(" and ") { it -> "${it.name} (${it.qtProlongatingRisk})".lowercase() }
+        return medications.joinToString(" and ") { "${it.name} (${it.qtProlongatingRisk})".lowercase() }
     }
 }

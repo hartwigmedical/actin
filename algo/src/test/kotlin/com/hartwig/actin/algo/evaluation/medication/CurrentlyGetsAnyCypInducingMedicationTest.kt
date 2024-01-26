@@ -6,28 +6,35 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 import org.junit.Test
 
 class CurrentlyGetsAnyCypInducingMedicationTest {
-    private val function = CurrentlyGetsAnyCypInducingMedication(MedicationTestFactory.alwaysActive())
+    private val alwaysActiveFunction = CurrentlyGetsAnyCypInducingMedication(MedicationTestFactory.alwaysActive())
+    private val alwaysPlannedFunction = CurrentlyGetsAnyCypInducingMedication(MedicationTestFactory.alwaysPlanned())
+    private val patientWithCypInducingMedication =
+        MedicationTestFactory.withCypInteraction("9A9", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
+    private val patientWithCypSubstrateMedication =
+        MedicationTestFactory.withCypInteraction("9A9", CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
     
     @Test
     fun `Should pass when any CYP-inducing medication`() {
-        assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
-            )
-        )
+        assertEvaluation(EvaluationResult.PASS, alwaysActiveFunction.evaluate(patientWithCypInducingMedication))
     }
 
     @Test
     fun `Should fail when no CYP-inducing medication`() {
-        assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
-            )
-        )
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(patientWithCypSubstrateMedication))
     }
 
     @Test
     fun `Should fail when patient uses no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+    }
+
+    @Test
+    fun `Should warn when patient plans to use CYP inducing medication`() {
+        assertEvaluation(EvaluationResult.WARN, alwaysPlannedFunction.evaluate(patientWithCypInducingMedication))
+    }
+
+    @Test
+    fun `Should fail when patient plans to medication which is not CYP inducing`() {
+        assertEvaluation(EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(patientWithCypSubstrateMedication))
     }
 }

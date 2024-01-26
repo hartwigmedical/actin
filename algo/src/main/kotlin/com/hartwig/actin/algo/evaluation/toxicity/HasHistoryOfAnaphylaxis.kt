@@ -12,8 +12,8 @@ class HasHistoryOfAnaphylaxis internal constructor() : EvaluationFunction {
             EvaluationFactory.fail("Patient has no known history of anaphylaxis", "No known history of anaphylaxis")
         } else {
             EvaluationFactory.undetermined(
-                "Cannot be determined if patient has history of anaphylaxis",
-                "Undetermined previous history of anaphylaxis"
+                "Drug allergies present but cannot be determined if patient has history of anaphylaxis",
+                "Drug allergies present but unknown if history of anaphylaxis"
             )
         }
     }

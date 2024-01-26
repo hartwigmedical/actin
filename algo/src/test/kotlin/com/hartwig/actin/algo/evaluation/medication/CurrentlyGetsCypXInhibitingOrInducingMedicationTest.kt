@@ -8,57 +8,73 @@ import org.junit.Test
 private const val TARGET_CYP = "9A9"
 
 class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
-    private val function = CurrentlyGetsCypXInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive(), TARGET_CYP)
-    
+    private val alwaysActiveFunction = CurrentlyGetsCypXInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive(), TARGET_CYP)
+    private val alwaysPlannedFunction = CurrentlyGetsCypXInhibitingOrInducingMedication(MedicationTestFactory.alwaysPlanned(), TARGET_CYP)
+
     @Test
-    fun `Should pass when CYP-inhibiting or -inducing medication`() {
+    fun `Should pass when CYP inhibiting or inducing medication`() {
         assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(
-                MedicationTestFactory.withCypInteraction(
-                    TARGET_CYP, CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG
-                )
+            EvaluationResult.PASS, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
             )
         )
         assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(
-                MedicationTestFactory.withCypInteraction(
-                    TARGET_CYP, CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG
-                )
+            EvaluationResult.PASS, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG)
             )
         )
     }
 
     @Test
-    fun `Should fail with CYP-inhibiting or -inducing medication that does not match CYP`() {
+    fun `Should fail with CYP inhibiting or inducing medication that does not match CYP`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
+            EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(
                     "3A4", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG
                 )
             )
         )
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
-                MedicationTestFactory.withCypInteraction(
-                    "3A4", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG
-                )
+            EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction("3A4", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG)
             )
         )
     }
 
     @Test
-    fun `Should fail when no CYP-inhibiting or -inducing medication`() {
+    fun `Should fail when no CYP inhibiting or inducing medication`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
-                MedicationTestFactory.withCypInteraction(
-                    TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG
-                )
+            EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
             )
         )
     }
 
     @Test
     fun `Should fail when patient uses no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+    }
+
+    @Test
+    fun `Should warn when patient plans to use CYP inhibiting or inducing medication`() {
+        assertEvaluation(
+            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG)
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG)
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail when patient plans to use medication which is not CYP inhibiting or inducing`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
+            )
+        )
     }
 }

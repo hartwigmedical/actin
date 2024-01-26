@@ -8,23 +8,38 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 
 class CurrentlyGetsCypXInhibitingOrInducingMedication(
-    private val selector: MedicationSelector,
-    private val termToFind: String
+    private val selector: MedicationSelector, private val termToFind: String
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val activeMedications = selector.active(record.clinical.medications)
-        val cypMedications = activeMedications.filter { medication ->
-            medication.cypInteractions.any {
-                it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR)
-            }
-        }.map { it.name }
+        val cypMedications = record.clinical.medications.filter { medication ->
+            medication.cypInteractions
+                .any { it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR) }
+        }
+
+        val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name }
+        val plannedCypMedications = cypMedications.filter { selector.isPlanned(it) }.map { it.name }
 
         return when {
-            cypMedications.isNotEmpty() -> {
+            activeCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets CYP$termToFind inhibiting/inducing medication: ${Format.concatLowercaseWithAnd(cypMedications)}",
-                    "CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(cypMedications)}"
+                    "Patient currently gets CYP$termToFind inhibiting/inducing medication: ${
+                        Format.concatLowercaseWithAnd(
+                            activeCypMedications
+                        )
+                    }",
+                    "CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(activeCypMedications)}"
+                )
+            }
+
+            plannedCypMedications.isNotEmpty() -> {
+                EvaluationFactory.recoverableWarn(
+                    "Patient plans to get CYP$termToFind inhibiting/inducing medication: ${
+                        Format.concatLowercaseWithAnd(
+                            plannedCypMedications
+                        )
+                    }",
+                    "Planned CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(plannedCypMedications)}"
                 )
             }
 

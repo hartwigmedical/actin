@@ -8,10 +8,13 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 
 class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSelector, private val termToFind: String) : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val cypInhibitorsReceived =
             selector.activeWithCypInteraction(record.clinical.medications, termToFind, CypInteraction.Type.INHIBITOR).map { it.name }
+
+        val cypInhibitorsPlanned =
+            selector.plannedWithCypInteraction(record.clinical.medications, termToFind, CypInteraction.Type.INHIBITOR).map { it.name }
 
         return when {
             cypInhibitorsReceived.isNotEmpty() -> {
@@ -25,6 +28,13 @@ class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSele
                 EvaluationFactory.undetermined(
                     "Undetermined if patient currently gets CYP$termToFind inhibiting medication",
                     "Undetermined CYP$termToFind inhibiting medication use"
+                )
+            }
+
+            cypInhibitorsPlanned.isNotEmpty() -> {
+                EvaluationFactory.recoverableWarn(
+                    "Patient plans to get CYP$termToFind inhibiting medication: ${Format.concatLowercaseWithAnd(cypInhibitorsPlanned)}",
+                    "Planned CYP$termToFind inhibiting medication use: ${Format.concatLowercaseWithAnd(cypInhibitorsPlanned)}"
                 )
             }
 

@@ -8,15 +8,14 @@ import org.junit.Test
 private const val TARGET_CYP = "9A9"
 
 class CurrentlyGetsCypXSubstrateMedicationTest {
-    private val function = CurrentlyGetsCypXSubstrateMedication(MedicationTestFactory.alwaysActive(), TARGET_CYP)
-    
+    private val alwaysActiveFunction = CurrentlyGetsCypXSubstrateMedication(MedicationTestFactory.alwaysActive(), TARGET_CYP)
+    private val alwaysPlannedFunction = CurrentlyGetsCypXSubstrateMedication(MedicationTestFactory.alwaysPlanned(), TARGET_CYP)
+
     @Test
     fun `Should pass with CYP substrate medication`() {
         assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(
-                MedicationTestFactory.withCypInteraction(
-                    TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG
-                )
+            EvaluationResult.PASS, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
             )
         )
     }
@@ -24,10 +23,8 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
     @Test
     fun `Should fail with CYP substrate medication that does not match CYP`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
-                MedicationTestFactory.withCypInteraction(
-                    "3A4", CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG
-                )
+            EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction("3A4", CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
             )
         )
     }
@@ -35,16 +32,33 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
     @Test
     fun `Should fail when no CYP substrate medication`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
-                MedicationTestFactory.withCypInteraction(
-                    TARGET_CYP, CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG
-                )
+            EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG)
             )
         )
     }
 
     @Test
+    fun `Should warn when patient plans to use CYP substrate medication`() {
+        assertEvaluation(
+            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail when patient plans to use medication which is not CYP substrate medication`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG)
+            )
+        )
+    }
+
+
+    @Test
     fun `Should fail when patient uses no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
     }
 }

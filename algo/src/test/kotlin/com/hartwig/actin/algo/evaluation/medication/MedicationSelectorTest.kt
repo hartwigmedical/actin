@@ -17,6 +17,13 @@ class MedicationSelectorTest {
     }
 
     @Test
+    fun `Should filter for planned`() {
+        val medications = listOf(MedicationTestFactory.medication(name = "planned"))
+        val filtered = MedicationTestFactory.alwaysPlanned().planned(medications)
+        assertThat(filtered.map(Medication::name)).containsExactly("planned")
+    }
+
+    @Test
     fun `Should filter on active or recently stopped`() {
         val minStopDate = LocalDate.of(2019, 11, 20)
         val medications = listOf(
@@ -29,7 +36,7 @@ class MedicationSelectorTest {
     }
 
     @Test
-    fun `Should filter on any term in name`() {
+    fun `Should filter on active with any term in name`() {
         val medications = listOf(
             MedicationTestFactory.medication(name = "name 1"),
             MedicationTestFactory.medication(name = "name 1 with some extension"),
@@ -37,6 +44,18 @@ class MedicationSelectorTest {
             MedicationTestFactory.medication(name = "name 3")
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithAnyTermInName(medications, setOf("Name 1", "2"))
+        assertThat(filtered.map(Medication::name)).containsExactlyInAnyOrder("name 1", "name 1 with some extension", "name 2")
+    }
+
+    @Test
+    fun `Should filter on planned with any term in name`() {
+        val medications = listOf(
+            MedicationTestFactory.medication(name = "name 1"),
+            MedicationTestFactory.medication(name = "name 1 with some extension"),
+            MedicationTestFactory.medication(name = "name 2"),
+            MedicationTestFactory.medication(name = "name 3")
+        )
+        val filtered = MedicationTestFactory.alwaysPlanned().plannedWithAnyTermInName(medications, setOf("Name 1", "2"))
         assertThat(filtered.map(Medication::name)).containsExactlyInAnyOrder("name 1", "name 1 with some extension", "name 2")
     }
 
@@ -59,6 +78,24 @@ class MedicationSelectorTest {
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
         assertThat(filtered.map(Medication::name)).containsExactly("uses CYP9A9 inhibitor")
+    }
+
+    @Test
+    fun `Should filter on planned with cyp interaction`() {
+        val medications = listOf(
+            MedicationTestFactory.medication(name = "no cyp interactions"),
+            MedicationTestFactory.medicationWithCypInteraction(
+                "9A9", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, name = "plans to use CYP9A9 inducer"
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                "9A9", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG, name = "plans to use CYP9A9 inhibitor"
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                "3A4", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG, name = "plans to use different CYP inhibitor"
+            )
+        )
+        val filtered = MedicationTestFactory.alwaysPlanned().plannedWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
+        assertThat(filtered.map(Medication::name)).containsExactly("plans to use CYP9A9 inhibitor")
     }
 
     @Test

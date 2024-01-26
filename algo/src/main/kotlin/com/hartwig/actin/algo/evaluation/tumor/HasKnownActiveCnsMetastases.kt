@@ -17,10 +17,17 @@ class HasKnownActiveCnsMetastases : EvaluationFunction {
         val hasActiveBrainMetastases = record.clinical.tumor.hasActiveBrainLesions ?: if (hasBrainMetastases == false) false else null
 
         if (hasActiveCnsLesions == null && hasActiveBrainMetastases == null) {
-            return EvaluationFactory.undetermined(
-                "Data regarding presence of active CNS metastases is missing",
-                "Missing active CNS metastases data"
-            )
+            return if (hasCnsMetastases == true || hasBrainMetastases == true) {
+                EvaluationFactory.undetermined(
+                    "CNS metastases in history but data regarding active CNS metastases is missing - assuming there are none",
+                    "Missing active CNS metastases data - assuming there are none"
+                )
+            } else {
+                EvaluationFactory.recoverableUndetermined(
+                    "Data regarding presence of active CNS metastases is missing",
+                    "Missing active CNS metastases data"
+                )
+            }
         }
         return when {
             hasActiveCnsLesions == true ->
