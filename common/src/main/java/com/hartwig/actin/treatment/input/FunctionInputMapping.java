@@ -64,6 +64,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_LYMPH_NODE_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_VISCERAL_METASTASES, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_BIOPSY_AMENABLE_LESION, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS, FunctionInput.NONE);
@@ -119,6 +120,8 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES,
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT, FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_MONTHS, FunctionInput.MANY_INTENTS_ONE_INTEGER);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X, FunctionInput.MANY_INTENTS);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_NON_INTERNAL_RADIOTHERAPY, FunctionInput.NONE);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, FunctionInput.ONE_SPECIFIC_TREATMENT);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT,
@@ -389,6 +392,7 @@ final class FunctionInputMapping {
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS, FunctionInput.ONE_INTEGER);
         RULE_INPUT_MAP.put(EligibilityRule.HAS_PLANNED_SURGERY, FunctionInput.NONE);
+        RULE_INPUT_MAP.put(EligibilityRule.HAS_HAD_CYTOREDUCTIVE_SURGERY, FunctionInput.NONE);
     }
 
     private FunctionInputMapping() {

@@ -12,7 +12,8 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.HAS_HAD_RECENT_SURGERY to hasHadRecentSurgeryCreator(),
             EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS to hasHadSurgeryInPastWeeksCreator(),
             EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS to hasHadSurgeryInPastMonthsCreator(),
-            EligibilityRule.HAS_PLANNED_SURGERY to hasPlannedSurgery(),
+            EligibilityRule.HAS_PLANNED_SURGERY to hasPlannedSurgeryCreator(),
+            EligibilityRule.HAS_HAD_CYTOREDUCTIVE_SURGERY to hasHadCytoreductiveSurgeryCreator(),
         )
     }
 
@@ -40,8 +41,12 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         }
     }
 
-    private fun hasPlannedSurgery(): FunctionCreator {
+    private fun hasPlannedSurgeryCreator(): FunctionCreator {
         val evaluationDate = referenceDateProvider().date()
         return FunctionCreator { HasHadAnySurgeryAfterSpecificDate(evaluationDate, evaluationDate) }
+    }
+
+    private fun hasHadCytoreductiveSurgeryCreator(): FunctionCreator {
+        return FunctionCreator { HasHadCytoreductiveSurgery() }
     }
 }
