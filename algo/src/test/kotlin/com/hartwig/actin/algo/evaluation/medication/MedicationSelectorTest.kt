@@ -18,6 +18,14 @@ class MedicationSelectorTest {
     }
 
     @Test
+    fun canFilterForPlanned() {
+        val medications = listOf(TestMedicationFactory.builder().name("planned").build())
+        val filtered = MedicationTestFactory.alwaysPlanned().planned(medications)
+        Assert.assertEquals(1, filtered.size.toLong())
+        Assert.assertEquals("planned", filtered[0].name())
+    }
+
+    @Test
     fun canFilterOnActiveOrRecentlyStopped() {
         val minStopDate = LocalDate.of(2019, 11, 20)
         val medications = listOf(
@@ -37,7 +45,7 @@ class MedicationSelectorTest {
     }
 
     @Test
-    fun canFilterOnAnyTermInName() {
+    fun canFilterOnActiveWithAnyTermInName() {
         val medications = listOf(
             TestMedicationFactory.builder().name("name 1").build(),
             TestMedicationFactory.builder().name("name 1 with some extension").build(),
@@ -45,6 +53,21 @@ class MedicationSelectorTest {
             TestMedicationFactory.builder().name("name 3").build()
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithAnyTermInName(medications, setOf("Name 1", "2"))
+        Assert.assertEquals(3, filtered.size.toLong())
+        Assert.assertNotNull(findByName(filtered, "name 1"))
+        Assert.assertNotNull(findByName(filtered, "name 1 with some extension"))
+        Assert.assertNotNull(findByName(filtered, "name 2"))
+    }
+
+    @Test
+    fun canFilterOnPlannedWithAnyTermInName() {
+        val medications = listOf(
+            TestMedicationFactory.builder().name("name 1").build(),
+            TestMedicationFactory.builder().name("name 1 with some extension").build(),
+            TestMedicationFactory.builder().name("name 2").build(),
+            TestMedicationFactory.builder().name("name 3").build()
+        )
+        val filtered = MedicationTestFactory.alwaysPlanned().plannedWithAnyTermInName(medications, setOf("Name 1", "2"))
         Assert.assertEquals(3, filtered.size.toLong())
         Assert.assertNotNull(findByName(filtered, "name 1"))
         Assert.assertNotNull(findByName(filtered, "name 1 with some extension"))
@@ -71,6 +94,28 @@ class MedicationSelectorTest {
         val filtered = MedicationTestFactory.alwaysActive().activeWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
         Assert.assertEquals(1, filtered.size.toLong())
         Assert.assertNotNull(findByName(medications, "uses CYP9A9 inhibitor"))
+    }
+
+    @Test
+    fun canFilterOnPlannedWithCypInteraction() {
+        val medications = listOf(
+            TestMedicationFactory.builder().name("no cyp interactions").build(),
+            TestMedicationFactory.builder().name("plans to use CYP9A9 inducer").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+            TestMedicationFactory.builder().name("plans to use CYP9A9 inhibitor").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+            TestMedicationFactory.builder().name("plans to use different CYP inhibitor").addCypInteractions(
+                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
+                    .build()
+            ).build(),
+        )
+        val filtered = MedicationTestFactory.alwaysPlanned().plannedWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
+        Assert.assertEquals(1, filtered.size.toLong())
+        Assert.assertNotNull(findByName(medications, "plans to use CYP9A9 inhibitor"))
     }
 
     @Test

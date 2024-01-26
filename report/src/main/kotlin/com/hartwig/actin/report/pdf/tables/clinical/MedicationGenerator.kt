@@ -9,7 +9,8 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
-class MedicationGenerator(private val medications: List<Medication>, private val totalWidth: Float) : TableGenerator {
+class MedicationGenerator(private val medications: List<Medication>, private val totalWidth: Float, private val interpreter: MedicationStatusInterpreter) : TableGenerator {
+
     override fun title(): String {
         return "Active medication details"
     }
@@ -25,7 +26,7 @@ class MedicationGenerator(private val medications: List<Medication>, private val
         table.addHeaderCell(Cells.createHeader("Dosage"))
         table.addHeaderCell(Cells.createHeader("Frequency"))
         medications.distinct()
-            .filter { it.status()?.display() == "Active" || it.status()?.display() == "Planned" }
+            .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
             .forEach { medication: Medication ->
                 table.addCell(Cells.createContent(medication.name()))
                 table.addCell(Cells.createContent(administrationRoute(medication)))
