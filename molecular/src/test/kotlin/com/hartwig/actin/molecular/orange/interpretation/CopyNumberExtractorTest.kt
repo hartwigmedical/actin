@@ -100,8 +100,6 @@ class CopyNumberExtractorTest {
         assertEquals(20, gene4.maxCopies().toLong())
 
         val geneCopyNumbers = copyNumberExtractor.extractGeneCopyNumbers(purple, copyNumbers)
-        for (cn in geneCopyNumbers) println(cn)
-        println()
     }
 
     @Test(expected = IllegalStateException::class)
