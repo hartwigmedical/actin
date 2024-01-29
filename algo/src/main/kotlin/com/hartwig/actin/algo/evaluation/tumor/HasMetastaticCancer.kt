@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasMetastaticCancer (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage = record.clinical().tumor().stage()
+        val stage = record.clinical.tumor.stage
             ?: return EvaluationFactory.undetermined(
                 "Tumor stage details are missing, if cancer is metastatic cannot be determined",
                 "Undetermined metastatic cancer"
@@ -20,7 +20,7 @@ class HasMetastaticCancer (private val doidModel: DoidModel) : EvaluationFunctio
         return if (isStageMatch(stage, TumorStage.III) || isStageMatch(stage, TumorStage.IV)) {
             EvaluationFactory.pass("Tumor stage $stage is considered metastatic", METASTATIC_CANCER)
         } else if (isStageMatch(stage, TumorStage.II)) {
-            val tumorDoids = record.clinical().tumor().doids()
+            val tumorDoids = record.clinical.tumor.doids
             if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
                 EvaluationFactory.undetermined(
                     "Could not be determined if tumor stage $stage is considered metastatic",
@@ -45,7 +45,7 @@ class HasMetastaticCancer (private val doidModel: DoidModel) : EvaluationFunctio
         private const val NOT_METASTATIC_CANCER: String = "No metastatic cancer"
 
         private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
-            return stage == stageToMatch || stage.category() == stageToMatch
+            return stage == stageToMatch || stage.category == stageToMatch
         }
 
         private fun failEvaluation(stage: TumorStage): Evaluation {

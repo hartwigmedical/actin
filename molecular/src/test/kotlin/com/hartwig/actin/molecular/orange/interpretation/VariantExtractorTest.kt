@@ -4,7 +4,6 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
@@ -17,27 +16,24 @@ import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
-import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 
 class VariantExtractorTest {
 
     @Test
-    fun shouldExtractSetOfVariantsSuccessfully() {
+    fun `Should extract set of variants successfully`() {
         val driver1: PurpleDriver = TestPurpleFactory.driverBuilder()
             .gene("gene 1")
             .transcript("ENST-canonical")
             .type(PurpleDriverType.MUTATION)
             .driverLikelihood(0.1)
             .build()
+
         val driver2: PurpleDriver = TestPurpleFactory.driverBuilder()
             .gene("gene 1")
             .transcript("ENST-canonical")
@@ -100,51 +96,52 @@ class VariantExtractorTest {
         val variantExtractor = VariantExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
 
         val variants = variantExtractor.extract(purple)
-        assertEquals(1, variants.size.toLong())
+        assertThat(variants).hasSize(1)
 
-        val variant = findByGene(variants, "gene 1")
-        assertTrue(variant.isReportable())
-        assertEquals(DriverLikelihood.MEDIUM, variant.driverLikelihood())
-        assertEquals(VariantType.MNV, variant.type())
-        assertEquals(0.4, variant.variantCopyNumber(), EPSILON)
-        assertEquals(0.8, variant.totalCopyNumber(), EPSILON)
-        assertFalse(variant.isBiallelic())
-        assertFalse(variant.isHotspot())
-        assertEquals(0.7, variant.clonalLikelihood(), EPSILON)
-        assertEquals(Sets.newHashSet(1), variant.phaseGroups())
+        val variant = variants.find { it.gene == "gene 1" }!!
+        assertThat(variant.isReportable).isTrue
+        assertThat(variant.driverLikelihood).isEqualTo(DriverLikelihood.MEDIUM)
+        assertThat(variant.type).isEqualTo(VariantType.MNV)
+        assertThat(variant.variantCopyNumber).isEqualTo(0.4, Offset.offset(EPSILON))
+        assertThat(variant.totalCopyNumber).isEqualTo(0.8, Offset.offset(EPSILON))
+        assertThat(variant.isBiallelic).isFalse
+        assertThat(variant.isHotspot).isFalse
+        assertThat(variant.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
+        assertThat(variant.phaseGroups).isEqualTo(Sets.newHashSet(1))
 
-        val canonical = variant.canonicalImpact()
-        assertEquals("ENST-canonical", canonical.transcriptId())
-        assertEquals("canonical hgvs coding", canonical.hgvsCodingImpact())
-        assertEquals("canonical hgvs protein", canonical.hgvsProteinImpact())
-        assertEquals(2, (canonical.affectedCodon() as Int).toLong())
-        assertEquals(3, (canonical.affectedExon() as Int).toLong())
-        assertFalse(canonical.isSpliceRegion())
-        assertTrue(canonical.effects().contains(VariantEffect.MISSENSE))
-        assertEquals(CodingEffect.MISSENSE, canonical.codingEffect())
-        assertEquals(1, variant.otherImpacts().size.toLong())
+        val canonical = variant.canonicalImpact
+        assertThat(canonical.transcriptId).isEqualTo("ENST-canonical")
+        assertThat(canonical.hgvsCodingImpact).isEqualTo("canonical hgvs coding")
+        assertThat(canonical.hgvsProteinImpact).isEqualTo("canonical hgvs protein")
+        assertThat(canonical.affectedCodon).isEqualTo(2)
+        assertThat(canonical.affectedExon).isEqualTo(3)
+        assertThat(canonical.isSpliceRegion).isFalse
+        assertThat(canonical.effects.contains(VariantEffect.MISSENSE)).isTrue
+        assertThat(canonical.codingEffect).isEqualTo(CodingEffect.MISSENSE)
+        assertThat(variant.otherImpacts).hasSize(1)
 
-        val other = variant.otherImpacts().iterator().next()
-        assertEquals("ENST-other", other.transcriptId())
-        assertEquals("other hgvs coding", other.hgvsCodingImpact())
-        assertEquals("other hgvs protein", other.hgvsProteinImpact())
-        assertNull(other.affectedCodon())
-        assertNull(other.affectedExon())
-        assertTrue(other.isSpliceRegion())
-        assertTrue(other.effects().contains(VariantEffect.SPLICE_DONOR))
-        assertTrue(other.effects().contains(VariantEffect.SYNONYMOUS))
-        assertEquals(CodingEffect.SPLICE, other.codingEffect())
+        val other = variant.otherImpacts.iterator().next()
+        assertThat(other.transcriptId).isEqualTo("ENST-other")
+        assertThat(other.hgvsCodingImpact).isEqualTo("other hgvs coding")
+        assertThat(other.hgvsProteinImpact).isEqualTo("other hgvs protein")
+        assertThat(other.affectedCodon).isNull()
+        assertThat(other.affectedExon).isNull()
+        assertThat(other.isSpliceRegion).isTrue
+        assertThat(other.effects.contains(VariantEffect.SPLICE_DONOR)).isTrue
+        assertThat(other.effects.contains(VariantEffect.SYNONYMOUS)).isTrue
+        assertThat(other.codingEffect).isEqualTo(CodingEffect.SPLICE)
     }
 
     @Test
-    fun shouldRetainEnsemblTranscriptsOnly() {
-        val purpleVariant: PurpleVariant = TestPurpleFactory.variantBuilder()
+    fun `Should retain ensembl transcripts only`() {
+        val purpleVariant = TestPurpleFactory.variantBuilder()
             .reported(true)
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().build())
             .addOtherImpacts(TestPurpleFactory.transcriptImpactBuilder().transcript("ENST-correct").build())
             .addOtherImpacts(TestPurpleFactory.transcriptImpactBuilder().transcript("weird one").build())
             .build()
-        val purple: PurpleRecord = ImmutablePurpleRecord.builder()
+
+        val purple = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addAllSomaticVariants(purpleVariant)
             .build()
@@ -152,78 +149,79 @@ class VariantExtractorTest {
         val variantExtractor = VariantExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
 
         val variants = variantExtractor.extract(purple)
-        assertEquals(1, variants.size.toLong())
+        assertThat(variants).hasSize(1)
 
         val variant = variants.iterator().next()
-        assertEquals(1, variant.otherImpacts().size.toLong())
-        assertEquals("ENST-correct", variant.otherImpacts().iterator().next().transcriptId())
+        assertThat(variant.otherImpacts).hasSize(1)
+        assertThat(variant.otherImpacts.first().transcriptId).isEqualTo("ENST-correct")
     }
 
     @Test(expected = IllegalStateException::class)
-    fun shouldThrowExceptionWhenFilteringReportedVariant() {
+    fun `Should throw exception when filtering reported variant`() {
         val purpleVariant: PurpleVariant = TestPurpleFactory.variantBuilder()
             .reported(true)
             .gene("gene 1")
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(PurpleCodingEffect.SPLICE).build())
             .build()
+
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addAllSomaticVariants(purpleVariant)
             .build()
+
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
         val variantExtractor = VariantExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
         variantExtractor.extract(purple)
     }
 
     @Test
-    fun shouldDetermineCorrectTypeForAllVariantTypes() {
-        val mnp: PurpleVariant = TestPurpleFactory.variantBuilder().type(PurpleVariantType.MNP).build()
-        assertEquals(VariantType.MNV, VariantExtractor.determineVariantType(mnp))
+    fun `Should determine correct type for all variant types`() {
+        val mnp = TestPurpleFactory.variantBuilder().type(PurpleVariantType.MNP).build()
+        assertThat(VariantExtractor.determineVariantType(mnp)).isEqualTo(VariantType.MNV)
 
-        val snp: PurpleVariant = TestPurpleFactory.variantBuilder().type(PurpleVariantType.SNP).build()
-        assertEquals(VariantType.SNV, VariantExtractor.determineVariantType(snp))
+        val snp = TestPurpleFactory.variantBuilder().type(PurpleVariantType.SNP).build()
+        assertThat(VariantExtractor.determineVariantType(snp)).isEqualTo(VariantType.SNV)
 
-        val insert: PurpleVariant = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("A").alt("AT").build()
-        assertEquals(VariantType.INSERT, VariantExtractor.determineVariantType(insert))
+        val insert = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("A").alt("AT").build()
+        assertThat(VariantExtractor.determineVariantType(insert)).isEqualTo(VariantType.INSERT)
 
-        val delete: PurpleVariant = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("AT").alt("A").build()
-        assertEquals(VariantType.DELETE, VariantExtractor.determineVariantType(delete))
+        val delete = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("AT").alt("A").build()
+        assertThat(VariantExtractor.determineVariantType(delete)).isEqualTo(VariantType.DELETE)
     }
 
     @Test
-    fun shouldDetermineDriverLikelihoodForAllPurpleDriverLikelihoods() {
-        assertNull(VariantExtractor.determineDriverLikelihood(null))
-        assertEquals(DriverLikelihood.HIGH, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(1.0)))
-        assertEquals(DriverLikelihood.HIGH, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.8)))
-        assertEquals(DriverLikelihood.MEDIUM, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.5)))
-        assertEquals(DriverLikelihood.MEDIUM, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.2)))
-        assertEquals(DriverLikelihood.LOW, VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.0)))
+    fun `Should determine driver likelihood for all purple driver likelihoods`() {
+        assertThat(VariantExtractor.determineDriverLikelihood(null)).isNull()
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(1.0))).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.8))).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.5))).isEqualTo(DriverLikelihood.MEDIUM)
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.2))).isEqualTo(DriverLikelihood.MEDIUM)
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.0))).isEqualTo(DriverLikelihood.LOW)
     }
 
     @Test
-    fun shouldCorrectlyAssessWhetherTranscriptIsEnsembl() {
-        val ensembl: PurpleTranscriptImpact = TestPurpleFactory.transcriptImpactBuilder().transcript("ENST01").build()
-        assertTrue(VariantExtractor.isEnsemblTranscript(ensembl))
+    fun `Should correctly assess whether transcript is ensembl`() {
+        val ensembl = TestPurpleFactory.transcriptImpactBuilder().transcript("ENST01").build()
+        assertThat(VariantExtractor.isEnsemblTranscript(ensembl)).isTrue
 
-        val nonEnsembl: PurpleTranscriptImpact = TestPurpleFactory.transcriptImpactBuilder().transcript("something else").build()
-        assertFalse(VariantExtractor.isEnsemblTranscript(nonEnsembl))
+        val nonEnsembl = TestPurpleFactory.transcriptImpactBuilder().transcript("something else").build()
+        assertThat(VariantExtractor.isEnsemblTranscript(nonEnsembl)).isFalse
     }
 
     @Test
-    fun shouldDetermineAnEffectForAllVariantEffects() {
+    fun `Should determine an effect for all variant effects`() {
         for (variantEffect in PurpleVariantEffect.values()) {
-            assertNotNull(VariantExtractor.determineVariantEffect(variantEffect))
+            assertThat(VariantExtractor.determineVariantEffect(variantEffect)).isNotNull()
         }
     }
 
     @Test
-    fun shouldDetermineAnEffectForAllDefinedCodingEffects() {
-        assertNull(VariantExtractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED))
-        for (codingEffect in PurpleCodingEffect.values()) {
-            if (codingEffect != PurpleCodingEffect.UNDEFINED) {
-                assertNotNull(VariantExtractor.determineCodingEffect(codingEffect))
+    fun `Should determine an effect for all defined coding effects`() {
+        assertThat(VariantExtractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED)).isNull()
+        PurpleCodingEffect.values().filter { it != PurpleCodingEffect.UNDEFINED }
+            .forEach { codingEffect ->
+                assertThat(VariantExtractor.determineCodingEffect(codingEffect)).isNotNull()
             }
-        }
     }
 
     companion object {
@@ -233,13 +231,5 @@ class VariantExtractorTest {
             return TestPurpleFactory.driverBuilder().driverLikelihood(driverLikelihood).build()
         }
 
-        private fun findByGene(variants: MutableSet<Variant>, geneToFind: String): Variant {
-            for (variant in variants) {
-                if (variant.gene() == geneToFind) {
-                    return variant
-                }
-            }
-            throw IllegalStateException("Could not find variant with gene: $geneToFind")
-        }
     }
 }

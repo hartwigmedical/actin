@@ -37,8 +37,8 @@ class BloodTransfusionsExtractorTest {
         )
         val (extracted, evaluation) = extractor.extract(PATIENT_ID, inputs.map { entry.copy(itemAnswerValueValueString = it) })
         assertThat(extracted).hasSize(2)
-        assertThat(extracted[0].product()).isEqualTo(TRANSLATED_BLOOD_TRANSFUSION)
-        assertThat(extracted[1].product()).isEqualTo(CANNOT_TRANSLATE)
+        assertThat(extracted[0].product).isEqualTo(TRANSLATED_BLOOD_TRANSFUSION)
+        assertThat(extracted[1].product).isEqualTo(CANNOT_TRANSLATE)
 
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(

@@ -9,16 +9,16 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadPartialResection : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val lowercaseTreatmentNames = record.clinical().oncologicalHistory()
-            .flatMap { entry -> entry.treatments().flatMap { it.synonyms() + it.name() }.map(String::lowercase) }
+        val lowercaseTreatmentNames = record.clinical.oncologicalHistory
+            .flatMap { entry -> entry.treatments.flatMap { it.synonyms + it.name }.map(String::lowercase) }
 
         return when {
             lowercaseTreatmentNames.contains(PARTIAL_RESECTION) -> {
                 EvaluationFactory.pass("Patient has had a partial resection", "Has had partial resection")
             }
 
-            lowercaseTreatmentNames.any { it.contains(RESECTION_KEYWORD) } || record.clinical().oncologicalHistory().any { entry ->
-                entry.treatments().any { it.categories().contains(TreatmentCategory.SURGERY) && it.name().isEmpty() }
+            lowercaseTreatmentNames.any { it.contains(RESECTION_KEYWORD) } || record.clinical.oncologicalHistory.any { entry ->
+                entry.treatments.any { it.categories().contains(TreatmentCategory.SURGERY) && it.name.isEmpty() }
             } -> {
                 EvaluationFactory.undetermined(
                     "Could not be determined whether patient has had a partial resection",

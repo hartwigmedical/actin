@@ -6,30 +6,49 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.clinical.datamodel.Medication
 
 class CurrentlyGetsMedicationOfAtcLevel(
-    private val selector: MedicationSelector,
-    private val categoryName: String,
-    private val categoryAtcLevels: Set<AtcLevel>
+    private val selector: MedicationSelector, private val categoryName: String, private val categoryAtcLevels: Set<AtcLevel>
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
+        val medicationsWithAtcLevel = record.clinical.medications.filter {
+            (it.allLevels() intersect categoryAtcLevels).isNotEmpty()
+        }
 
-        val medications =
-            selector.active(record.clinical().medications())
-                .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
+        val activeMedicationsWithAtcLevel = filteredMedicationNames(medicationsWithAtcLevel, selector::isActive)
+        val plannedMedicationsWithAtcLevel = filteredMedicationNames(medicationsWithAtcLevel, selector::isPlanned)
 
-        val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }
+        return when {
+            activeMedicationsWithAtcLevel.isNotEmpty() -> {
+                val foundMedicationString = concatLowercaseWithAnd(activeMedicationsWithAtcLevel)
+                EvaluationFactory.recoverablePass(
+                    "Patient currently gets medication: $foundMedicationString which belong(s) to category '$categoryName'",
+                    "$categoryName medication use: $foundMedicationString"
+                )
+            }
 
-        return if (medications.isNotEmpty()) {
-            val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
-            EvaluationFactory.recoverablePass(
-                "Patient currently gets medication$foundMedicationString which belong(s) to category '$categoryName'",
-                "$categoryName medication use$foundMedicationString"
-            )
-        } else
-            EvaluationFactory.recoverableFail(
-                "Patient currently does not get medication of category '$categoryName'",
-                "No $categoryName medication use"
-            )
+            plannedMedicationsWithAtcLevel.isNotEmpty() -> {
+                val foundMedicationString = concatLowercaseWithAnd(plannedMedicationsWithAtcLevel)
+                EvaluationFactory.recoverableWarn(
+                    "Patient plans to get medication: $foundMedicationString which belong(s) to category '$categoryName'",
+                    "Planned $categoryName medication use: $foundMedicationString"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Patient currently does not get medication of category '$categoryName'",
+                    "No $categoryName medication use"
+                )
+            }
+        }
     }
+
+    private fun filteredMedicationNames(
+        medications: List<Medication>, filter: (Medication) -> Boolean
+    ) = medications.filter(filter::invoke).map(Medication::name)
+
 }
+

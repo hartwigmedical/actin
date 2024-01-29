@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.hartwig.actin.treatment.datamodel.TestTrialFactory
+import com.hartwig.actin.trial.datamodel.TestTrialFactory
 import org.junit.Test
 
 class EligibilityRuleUsageEvaluatorTest {

@@ -13,14 +13,14 @@ internal class CopyNumberEvidence private constructor(
     private val actionableLosses: List<ActionableGene>
 ) : EvidenceMatcher<PurpleGainLoss> {
 
-    override fun findMatches(gainLoss: PurpleGainLoss): List<ActionableEvent> {
-        return when (gainLoss.interpretation()) {
+    override fun findMatches(event: PurpleGainLoss): List<ActionableEvent> {
+        return when (event.interpretation()) {
             CopyNumberInterpretation.FULL_GAIN, CopyNumberInterpretation.PARTIAL_GAIN -> {
-                findMatches(gainLoss, actionableAmplifications)
+                findMatches(event, actionableAmplifications)
             }
 
             CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
-                findMatches(gainLoss, actionableLosses)
+                findMatches(event, actionableLosses)
             }
 
             else -> {
@@ -44,7 +44,7 @@ internal class CopyNumberEvidence private constructor(
         }
 
         private fun findMatches(gainLoss: PurpleGainLoss, actionableEvents: List<ActionableGene>): List<ActionableEvent> {
-            return actionableEvents.filter { it.gene() == gainLoss.gene() }.toList()
+            return actionableEvents.filter { it.gene() == gainLoss.gene() }
         }
     }
 }

@@ -2,25 +2,50 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
 class CurrentlyGetsMedicationOfNameTest {
+    private val alwaysActiveFunction = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysActive(), setOf("term 1"))
+    private val alwaysPlannedFunction = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysPlanned(), setOf("term 1"))
+
     @Test
-    fun canEvaluate() {
-        val function = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysActive(), setOf("term 1"))
+    fun `Should fail when patient uses no medications`() {
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+    }
 
-        // No medications yet
-        val medications: MutableList<Medication> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    @Test
+    fun `Should fail when patient uses medication with wrong name`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 2")))
+            )
+        )
+    }
 
-        // Medication with wrong name
-        medications.add(TestMedicationFactory.builder().name("This is Term 2").build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    @Test
+    fun `Should pass when patient uses medication with correct name`() {
+        assertEvaluation(
+            EvaluationResult.PASS, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 1")))
+            )
+        )
+    }
 
-        // Medication with right name
-        medications.add(TestMedicationFactory.builder().name("This is Term 1").build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+    @Test
+    fun `Should warn when patient plans to use medication with correct name`() {
+        assertEvaluation(
+            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 1")))
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail when patient plans to use medication with wrong name`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 2")))
+            )
+        )
     }
 }

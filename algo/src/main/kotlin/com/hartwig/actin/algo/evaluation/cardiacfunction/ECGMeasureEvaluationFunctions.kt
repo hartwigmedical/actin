@@ -9,7 +9,7 @@ object ECGMeasureEvaluationFunctions {
             ECGMeasureName.QTCF,
             maxQTCF,
             ECGUnit.MILLISECONDS,
-            { ecg: ECG -> ecg.qtcfMeasure() },
+            ECG::qtcfMeasure,
             ThresholdCriteria.MAXIMUM
         )
     }
@@ -19,7 +19,7 @@ object ECGMeasureEvaluationFunctions {
             ECGMeasureName.QTCF,
             minQTCF,
             ECGUnit.MILLISECONDS,
-            { ecg: ECG -> ecg.qtcfMeasure() },
+            ECG::qtcfMeasure,
             ThresholdCriteria.MINIMUM
         )
     }
@@ -29,7 +29,7 @@ object ECGMeasureEvaluationFunctions {
             ECGMeasureName.JTC,
             minJTC,
             ECGUnit.MILLISECONDS,
-            { ecg: ECG -> ecg.jtcMeasure() },
+            ECG::jtcMeasure,
             ThresholdCriteria.MINIMUM
         )
     }

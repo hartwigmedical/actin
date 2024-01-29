@@ -1,121 +1,137 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
 import org.junit.Test
 
+private const val MATCHING_GENE = "gene A"
+
+private const val MATCHING_PROTEIN_IMPACT = "V600E"
+
 class GeneHasVariantWithProteinImpactTest {
+    private val function = GeneHasVariantWithProteinImpact(MATCHING_GENE, listOf(MATCHING_PROTEIN_IMPACT, "V600K"))
+    
     @Test
-    fun canEvaluate() {
-        val function = GeneHasVariantWithProteinImpact("gene A", Lists.newArrayList("V600E", "V600K"))
-
-        // gene not present
+    fun `Should fail when gene not present`() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+    }
 
-        // correct gene, no protein impacts configured
+    @Test
+    fun `Should fail when no protein impacts configured`() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(gene = MATCHING_GENE, isReportable = true))
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail when no protein impacts match`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .build()
+                    TestVariantFactory.createMinimal().copy(
+                        gene = MATCHING_GENE,
+                        isReportable = true,
+                        canonicalImpact = proteinImpact("V600P"),
+                        otherImpacts = setOf(proteinImpact("V600P")),
+                    )
                 )
             )
         )
+    }
 
-        // correct gene, only wrong protein impacts configured
+    @Test
+    fun `Should fail for incorrect gene with matching impact`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
-                        .build()
+                    TestVariantFactory.createMinimal().copy(
+                        gene = "gene B",
+                        isReportable = true,
+                        canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
+                    )
+
                 )
             )
         )
+    }
 
-        // incorrect gene, protein impact detected in canonical
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene B")
-                        .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
-                        .build()
-                )
-            )
-        )
-
-        // correct gene, protein impact detected in canonical
+    @Test
+    fun `Should pass for correct gene with matching canonical impact`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .clonalLikelihood(1.0)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
-                        .build()
+                    TestVariantFactory.createMinimal().copy(
+                        gene = MATCHING_GENE,
+                        isReportable = true,
+                        clonalLikelihood = 1.0,
+                        canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
+                    )
                 )
             )
         )
+    }
 
-        // correct gene, protein impact detected in canonical, but non-reportable
+    @Test
+    fun `Should warn for correct gene with matching canonical impact but not reportable`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(false)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
-                        .build()
+                    TestVariantFactory.createMinimal().copy(
+                        gene = MATCHING_GENE,
+                        isReportable = false,
+                        canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
+                    )
                 )
             )
         )
+    }
 
-        // correct gene, protein impact detected in canonical, but non-reportable
+    @Test
+    fun `Should warn for correct gene with matching canonical impact but subclonal`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .clonalLikelihood(0.3)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
-                        .build()
+                    TestVariantFactory.createMinimal().copy(
+                        gene = MATCHING_GENE,
+                        isReportable = true,
+                        clonalLikelihood = 0.3,
+                        canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
+                    )
                 )
             )
         )
+    }
 
-        // correct gene, protein impact detected in non-canonical only
+    @Test
+    fun `Should warn for correct gene with matching non-canonical impact`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600P").build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().hgvsProteinImpact("V600E").build())
-                        .build()
+                    TestVariantFactory.createMinimal().copy(
+                        gene = MATCHING_GENE,
+                        isReportable = true,
+                        canonicalImpact = proteinImpact("V600P"),
+                        otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT))
+                    )
                 )
             )
         )
+    }
+
+    private fun proteinImpact(hgvsProteinImpact: String): TranscriptImpact {
+        return TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = hgvsProteinImpact)
     }
 }

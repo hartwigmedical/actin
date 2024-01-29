@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 class CurrentlyGetsPGPInhibitingMedicationTest {
+
     @Test
     fun canEvaluate() {
         val function = CurrentlyGetsPGPInhibitingMedication()

@@ -4,8 +4,8 @@ import com.google.common.collect.Sets
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -72,14 +72,14 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerOneStringInput(function)
-            HasToxicityWithGrade(input.integer(), input.string(), Sets.newHashSet())
+            HasToxicityWithGrade(input.integer, input.string, emptySet())
         }
     }
 
     private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerManyStringsInput(function)
-            HasToxicityWithGrade(input.integer(), null, Sets.newHashSet(input.strings()))
+            HasToxicityWithGrade(input.integer, null, input.strings.toSet())
         }
     }
 }

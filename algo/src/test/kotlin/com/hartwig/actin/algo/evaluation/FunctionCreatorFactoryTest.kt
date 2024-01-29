@@ -4,10 +4,10 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory.createCu
 import com.hartwig.actin.algo.evaluation.FunctionCreatorFactory.create
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.TestFunctionInputResolveFactory
-import com.hartwig.actin.treatment.input.ParameterizedFunctionTestFactory
-import com.hartwig.actin.treatment.input.composite.CompositeRules
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory
+import com.hartwig.actin.trial.input.ParameterizedFunctionTestFactory
+import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.junit.Assert
 import org.junit.Test
 

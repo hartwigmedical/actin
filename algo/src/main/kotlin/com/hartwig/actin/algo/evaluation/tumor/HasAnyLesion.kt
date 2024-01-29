@@ -8,13 +8,13 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasAnyLesion : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasLiverMetastases = record.clinical().tumor().hasLiverLesions()
-        val hasCnsMetastases = record.clinical().tumor().hasCnsLesions()
-        val hasBrainMetastases = record.clinical().tumor().hasBrainLesions()
-        val hasBoneLesions = record.clinical().tumor().hasBoneLesions()
-        val hasLungLesions = record.clinical().tumor().hasLungLesions()
-        val hasLymphNodeLesions = record.clinical().tumor().hasLymphNodeLesions()
-        val otherLesions = record.clinical().tumor().otherLesions()
+        val hasLiverMetastases = record.clinical.tumor.hasLiverLesions
+        val hasCnsMetastases = record.clinical.tumor.hasCnsLesions
+        val hasBrainMetastases = record.clinical.tumor.hasBrainLesions
+        val hasBoneLesions = record.clinical.tumor.hasBoneLesions
+        val hasLungLesions = record.clinical.tumor.hasLungLesions
+        val hasLymphNodeLesions = record.clinical.tumor.hasLymphNodeLesions
+        val otherLesions = record.clinical.tumor.otherLesions
         if (listOf(
                 hasLiverMetastases,
                 hasCnsMetastases,

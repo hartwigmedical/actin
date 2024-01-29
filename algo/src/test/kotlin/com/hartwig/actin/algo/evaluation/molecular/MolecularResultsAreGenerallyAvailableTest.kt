@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 class MolecularResultsAreGenerallyAvailableTest {
+
     @Test
     fun canEvaluate() {
         val function = MolecularResultsAreGenerallyAvailable()

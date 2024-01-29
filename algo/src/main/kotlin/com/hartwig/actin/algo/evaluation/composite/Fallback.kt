@@ -8,6 +8,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class Fallback(private val primary: EvaluationFunction, private val secondary: EvaluationFunction) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val primaryEvaluation = primary.evaluate(record)
-        return if (primaryEvaluation.result() != EvaluationResult.UNDETERMINED) primaryEvaluation else secondary.evaluate(record)
+        return if (primaryEvaluation.result != EvaluationResult.UNDETERMINED) primaryEvaluation else secondary.evaluate(record)
     }
 }

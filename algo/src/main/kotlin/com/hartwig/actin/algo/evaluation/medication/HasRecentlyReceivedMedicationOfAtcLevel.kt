@@ -14,19 +14,19 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
     private val categoryAtcLevels: Set<AtcLevel>,
     private val minStopDate: LocalDate
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (minStopDate.isBefore(record.clinical().patient().registrationDate())) {
+        if (minStopDate.isBefore(record.clinical.patient.registrationDate)) {
             return EvaluationFactory.undetermined(
                 "Required stop date prior to registration date for recent medication usage evaluation of $categoryName",
                 "Recent $categoryName medication"
             )
         }
 
-        val medications =
-            selector.activeOrRecentlyStopped(record.clinical().medications(), minStopDate)
+        val medications = selector.activeOrRecentlyStopped(record.clinical.medications, minStopDate)
                 .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
 
-        val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }
+        val foundMedicationNames = medications.map { it.name }.filter { it.isNotEmpty() }
 
         return if (medications.isNotEmpty()) {
             val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""

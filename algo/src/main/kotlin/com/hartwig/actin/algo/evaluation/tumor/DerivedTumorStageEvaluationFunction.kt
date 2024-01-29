@@ -1,13 +1,10 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
 internal class DerivedTumorStageEvaluationFunction(
@@ -15,10 +12,10 @@ internal class DerivedTumorStageEvaluationFunction(
     private val originalFunction: EvaluationFunction
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.clinical().tumor().stage() != null) {
+        if (record.clinical.tumor.stage != null) {
             return originalFunction.evaluate(record)
         }
-        val derivedResults = tumorStageDerivationFunction.apply(record.clinical().tumor())
+        val derivedResults = tumorStageDerivationFunction.apply(record.clinical.tumor)
             .associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
 
         if (derivedResults.isEmpty()) {
@@ -42,11 +39,7 @@ internal class DerivedTumorStageEvaluationFunction(
 
     private fun evaluatedDerivedStage(record: PatientRecord, newStage: TumorStage): Evaluation {
         return originalFunction.evaluate(
-            ImmutablePatientRecord.copyOf(record)
-                .withClinical(
-                    ImmutableClinicalRecord.copyOf(record.clinical())
-                        .withTumor(ImmutableTumorDetails.copyOf(record.clinical().tumor()).withStage(newStage))
-                )
+            record.copy(clinical = record.clinical.copy(tumor = record.clinical.tumor.copy(stage = newStage)))
         )
     }
 
@@ -55,12 +48,12 @@ internal class DerivedTumorStageEvaluationFunction(
             val singleDerivedResult = derivedResults.values.iterator().next()
             return if (derivableResult(singleDerivedResult)) createEvaluationForDerivedResult(
                 derivedResults,
-                singleDerivedResult.result()
+                singleDerivedResult.result
             ) else singleDerivedResult
         }
 
         private fun derivableResult(singleDerivedResult: Evaluation): Boolean {
-            return singleDerivedResult.result() in
+            return singleDerivedResult.result in
                     setOf(EvaluationResult.PASS, EvaluationResult.FAIL, EvaluationResult.UNDETERMINED, EvaluationResult.WARN)
         }
 
@@ -81,11 +74,11 @@ internal class DerivedTumorStageEvaluationFunction(
         }
 
         private fun anyDerivedResultMatches(derivedResults: Map<TumorStage, Evaluation>, result: EvaluationResult): Boolean {
-            return derivedResults.values.any { it.result() == result }
+            return derivedResults.values.any { it.result == result }
         }
 
         private fun allDerivedResultsMatch(derivedResults: Map<TumorStage, Evaluation>, result: EvaluationResult): Boolean {
-            return derivedResults.values.all { it.result() == result }
+            return derivedResults.values.all { it.result == result }
         }
     }
 }

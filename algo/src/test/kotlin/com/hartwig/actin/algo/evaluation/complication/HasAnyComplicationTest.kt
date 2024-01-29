@@ -11,8 +11,7 @@ class HasAnyComplicationTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComplicationTestFactory.withComplications(null)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(emptyList())))
         assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(ComplicationTestFactory.withComplication(ComplicationTestFactory.builder().build()))
+            EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(ComplicationTestFactory.complication()))
         )
     }
 }

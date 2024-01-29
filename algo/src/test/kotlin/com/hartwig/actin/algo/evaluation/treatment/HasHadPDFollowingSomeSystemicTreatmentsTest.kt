@@ -2,8 +2,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import org.assertj.core.api.Assertions.assertThat
@@ -44,8 +45,8 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
 
         val radiologicalEvaluation = RADIOLOGICAL_FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, radiologicalEvaluation)
-        assertThat(radiologicalEvaluation.passGeneralMessages()).hasSize(1)
-        assertThat(radiologicalEvaluation.passGeneralMessages().iterator().next()).contains("(assumed PD is radiological)")
+        assertThat(radiologicalEvaluation.passGeneralMessages).hasSize(1)
+        assertThat(radiologicalEvaluation.passGeneralMessages.iterator().next()).contains("(assumed PD is radiological)")
     }
 
     @Test
@@ -73,8 +74,8 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
         FUNCTIONS.forEach {
             val evaluation = it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
             assertEvaluation(EvaluationResult.PASS, evaluation)
-            assertThat(evaluation.passGeneralMessages()).hasSize(1)
-            assertThat(evaluation.passGeneralMessages().iterator().next()).contains("PD is assumed")
+            assertThat(evaluation.passGeneralMessages).hasSize(1)
+            assertThat(evaluation.passGeneralMessages.iterator().next()).contains("PD is assumed")
         }
     }
 
@@ -91,8 +92,8 @@ class HasHadPDFollowingSomeSystemicTreatmentsTest {
         FUNCTIONS.forEach {
             val evaluation = it.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
             assertEvaluation(EvaluationResult.PASS, evaluation)
-            assertThat(evaluation.passGeneralMessages()).hasSize(1)
-            assertThat(evaluation.passGeneralMessages().iterator().next()).contains("with PD")
+            assertThat(evaluation.passGeneralMessages).hasSize(1)
+            assertThat(evaluation.passGeneralMessages.iterator().next()).contains("with PD")
         }
     }
 

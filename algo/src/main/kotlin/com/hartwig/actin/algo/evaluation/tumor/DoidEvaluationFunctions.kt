@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager
 internal object DoidEvaluationFunctions {
 
     private val LOGGER = LogManager.getLogger(DoidEvaluationFunctions::class.java)
-    fun hasConfiguredDoids(tumorDoids: Set<String?>?): Boolean {
+    fun hasConfiguredDoids(tumorDoids: Set<String>?): Boolean {
         return !tumorDoids.isNullOrEmpty()
     }
 
@@ -79,23 +79,8 @@ internal object DoidEvaluationFunctions {
         }
     }
 
-    fun hasAtLeastOneCombinationOfDoids(tumorDoids: Set<String?>?, validDoidCombinations: Set<Set<String>>): Boolean {
-        if (tumorDoids == null) {
-            return false
-        }
-        for (validDoidCombination in validDoidCombinations) {
-            var containsAll = true
-            for (doid in validDoidCombination) {
-                if (!tumorDoids.contains(doid)) {
-                    containsAll = false
-                    break
-                }
-            }
-            if (containsAll) {
-                return true
-            }
-        }
-        return false
+    fun hasAtLeastOneCombinationOfDoids(tumorDoids: Set<String>?, validDoidCombinations: Set<Set<String>>): Boolean {
+        return tumorDoids != null && validDoidCombinations.any(tumorDoids::containsAll)
     }
 
     fun createFullExpandedDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?): Set<String> {

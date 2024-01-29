@@ -1,10 +1,10 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.Trial
-import com.hartwig.actin.treatment.input.composite.CompositeRules
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.apache.logging.log4j.LogManager
 
 object EligibilityRuleUsageEvaluator {
@@ -71,13 +71,17 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X,
         EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY,
         EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES,
-        EligibilityRule.NON_EXPRESSION_OF_GENE_X
+        EligibilityRule.NON_EXPRESSION_OF_GENE_X,
+        EligibilityRule.HAS_HAD_CYTOREDUCTIVE_SURGERY,
+        EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS,
+        EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_MONTHS,
+        EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X
     )
 
     fun evaluate(trials: List<Trial>) {
         val usedRules = trials.flatMap {
-            extractRules(it.generalEligibility()) + it.cohorts().flatMap { cohort ->
-                extractRules(cohort.eligibility())
+            extractRules(it.generalEligibility) + it.cohorts.flatMap { cohort ->
+                extractRules(cohort.eligibility)
             }
         }.toSet()
         val unusedRules = EligibilityRule.values().toSet() - usedRules
@@ -102,7 +106,7 @@ object EligibilityRuleUsageEvaluator {
     }
 
     private fun extractRules(eligibilities: List<Eligibility>): Collection<EligibilityRule> {
-        return eligibilities.flatMap { extract(listOf(it.function()), emptyList()) }
+        return eligibilities.flatMap { extract(listOf(it.function), emptyList()) }
     }
 
     private tailrec fun extract(functions: List<EligibilityFunction>, accumulated: List<EligibilityRule>): List<EligibilityRule> {
@@ -110,10 +114,10 @@ object EligibilityRuleUsageEvaluator {
             return accumulated
         }
         val function = functions.first()
-        val functionsToAdd = if (CompositeRules.isComposite(function.rule())) {
-            function.parameters().map { it as EligibilityFunction }
+        val functionsToAdd = if (CompositeRules.isComposite(function.rule)) {
+            function.parameters.map { it as EligibilityFunction }
         } else emptyList()
 
-        return extract(functionsToAdd + functions.drop(1), accumulated + function.rule())
+        return extract(functionsToAdd + functions.drop(1), accumulated + function.rule)
     }
 }

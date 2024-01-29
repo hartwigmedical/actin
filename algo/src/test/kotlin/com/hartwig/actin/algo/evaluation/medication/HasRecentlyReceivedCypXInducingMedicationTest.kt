@@ -3,65 +3,58 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
-import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
+private const val TARGET_CYP = "9A9"
+
 class HasRecentlyReceivedCypXInducingMedicationTest {
+    private val evaluationDate = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
+    private val function =
+        HasRecentlyReceivedCypXInducingMedication(MedicationTestFactory.alwaysStopped(), TARGET_CYP, evaluationDate.minusDays(1))
+    
     @Test
-    fun shouldPassWhenPatientRecentlyReceivedCypInducingMedication() {
+    fun `Should pass when patient recently received CYP-inducing medication`() {
         val medications = listOf(
-            TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+            MedicationTestFactory.medicationWithCypInteraction(
+                TARGET_CYP, CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, evaluationDate
+            )
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientRecentlyReceivedCypInducingMedicationThatDoesNotMatchCyp() {
+    fun `Should fail when patient recently received CYP-inducing medication that does not match CYP`() {
         val medications = listOf(
-            TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+            MedicationTestFactory.medicationWithCypInteraction(
+                "3A4", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, evaluationDate
+            )
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientReceivedCypInducingMedicationBeforeMinStopDate() {
+    fun `Should fail when patient received CYP-inducing medication before min stop date`() {
         val medications = listOf(
-            TestMedicationFactory.builder().stopDate(EVALUATION_DATE.minusWeeks(3)).addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+            MedicationTestFactory.medicationWithCypInteraction(
+                TARGET_CYP, CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, evaluationDate.minusWeeks(3)
+            )
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientDoesNotRecentlyReceivedCypInducingMedication() {
+    fun `Should fail when patient does not recently received CYP-inducing medication`() {
         val medications = listOf(
-            TestMedicationFactory.builder().stopDate(EVALUATION_DATE).addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+            MedicationTestFactory.medicationWithCypInteraction(
+                TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG, evaluationDate
+            )
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientUsesNoMedication() {
-        val medications = listOf(TestMedicationFactory.builder().build())
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
-    }
-
-    companion object {
-        private val EVALUATION_DATE = TestClinicalFactory.createMinimalTestClinicalRecord().patient().registrationDate().plusWeeks(1)
-        private val FUNCTION =
-            HasRecentlyReceivedCypXInducingMedication(MedicationTestFactory.alwaysStopped(), "9A9", EVALUATION_DATE.minusDays(1))
+    fun `Should fail when patient uses no medication`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
     }
 }

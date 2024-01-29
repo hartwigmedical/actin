@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class NotTest {
@@ -26,19 +26,19 @@ class NotTest {
         val passFunction = CompositeTestFactory.create(EvaluationResult.PASS, true)
         val passed = passFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(passFunction).evaluate(TEST_PATIENT)
-        Assert.assertEquals(result.recoverable(), passed.recoverable())
-        Assert.assertFalse(passed.inclusionMolecularEvents().isEmpty())
-        Assert.assertEquals(passed.inclusionMolecularEvents(), result.exclusionMolecularEvents())
-        Assert.assertFalse(passed.exclusionMolecularEvents().isEmpty())
-        Assert.assertEquals(passed.exclusionMolecularEvents(), result.inclusionMolecularEvents())
-        Assert.assertEquals(passed.passSpecificMessages(), result.failSpecificMessages())
-        Assert.assertEquals(passed.passGeneralMessages(), result.failGeneralMessages())
-        Assert.assertEquals(passed.failSpecificMessages(), result.passSpecificMessages())
-        Assert.assertEquals(passed.failGeneralMessages(), result.passGeneralMessages())
-        Assert.assertEquals(passed.undeterminedSpecificMessages(), result.undeterminedSpecificMessages())
-        Assert.assertEquals(passed.undeterminedGeneralMessages(), result.undeterminedGeneralMessages())
-        Assert.assertEquals(passed.warnSpecificMessages(), result.warnSpecificMessages())
-        Assert.assertEquals(passed.warnGeneralMessages(), result.warnGeneralMessages())
+        assertThat(passed.recoverable).isEqualTo(result.recoverable)
+        assertThat(passed.inclusionMolecularEvents).isNotEmpty()
+        assertThat(result.exclusionMolecularEvents).isEqualTo(passed.inclusionMolecularEvents)
+        assertThat(passed.exclusionMolecularEvents).isNotEmpty()
+        assertThat(result.inclusionMolecularEvents).isEqualTo(passed.exclusionMolecularEvents)
+        assertThat(result.failSpecificMessages).isEqualTo(passed.passSpecificMessages)
+        assertThat(result.failGeneralMessages).isEqualTo(passed.passGeneralMessages)
+        assertThat(result.passSpecificMessages).isEqualTo(passed.failSpecificMessages)
+        assertThat(result.passGeneralMessages).isEqualTo(passed.failGeneralMessages)
+        assertThat(result.undeterminedSpecificMessages).isEqualTo(passed.undeterminedSpecificMessages)
+        assertThat(result.undeterminedGeneralMessages).isEqualTo(passed.undeterminedGeneralMessages)
+        assertThat(result.warnSpecificMessages).isEqualTo(passed.warnSpecificMessages)
+        assertThat(result.warnGeneralMessages).isEqualTo(passed.warnGeneralMessages)
     }
 
     @Test
@@ -46,19 +46,19 @@ class NotTest {
         val failFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true)
         val failed = failFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(failFunction).evaluate(TEST_PATIENT)
-        Assert.assertEquals(result.recoverable(), failed.recoverable())
-        Assert.assertFalse(failed.inclusionMolecularEvents().isEmpty())
-        Assert.assertEquals(failed.inclusionMolecularEvents(), result.exclusionMolecularEvents())
-        Assert.assertFalse(failed.exclusionMolecularEvents().isEmpty())
-        Assert.assertEquals(failed.exclusionMolecularEvents(), result.inclusionMolecularEvents())
-        Assert.assertEquals(failed.passSpecificMessages(), result.failSpecificMessages())
-        Assert.assertEquals(failed.passGeneralMessages(), result.failGeneralMessages())
-        Assert.assertEquals(failed.failSpecificMessages(), result.passSpecificMessages())
-        Assert.assertEquals(failed.failGeneralMessages(), result.passGeneralMessages())
-        Assert.assertEquals(failed.undeterminedSpecificMessages(), result.undeterminedSpecificMessages())
-        Assert.assertEquals(failed.undeterminedGeneralMessages(), result.undeterminedGeneralMessages())
-        Assert.assertEquals(failed.warnSpecificMessages(), result.warnSpecificMessages())
-        Assert.assertEquals(failed.warnGeneralMessages(), result.warnGeneralMessages())
+        assertThat(failed.recoverable).isEqualTo(result.recoverable)
+        assertThat(failed.inclusionMolecularEvents).isNotEmpty()
+        assertThat(result.exclusionMolecularEvents).isEqualTo(failed.inclusionMolecularEvents)
+        assertThat(failed.exclusionMolecularEvents).isNotEmpty()
+        assertThat(result.inclusionMolecularEvents).isEqualTo(failed.exclusionMolecularEvents)
+        assertThat(result.failSpecificMessages).isEqualTo(failed.passSpecificMessages)
+        assertThat(result.failGeneralMessages).isEqualTo(failed.passGeneralMessages)
+        assertThat(result.passSpecificMessages).isEqualTo(failed.failSpecificMessages)
+        assertThat(result.passGeneralMessages).isEqualTo(failed.failGeneralMessages)
+        assertThat(result.undeterminedSpecificMessages).isEqualTo(failed.undeterminedSpecificMessages)
+        assertThat(result.undeterminedGeneralMessages).isEqualTo(failed.undeterminedGeneralMessages)
+        assertThat(result.warnSpecificMessages).isEqualTo(failed.warnSpecificMessages)
+        assertThat(result.warnGeneralMessages).isEqualTo(failed.warnGeneralMessages)
     }
 
     @Test
@@ -66,19 +66,19 @@ class NotTest {
         val undeterminedFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, true)
         val undetermined = undeterminedFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(undeterminedFunction).evaluate(TEST_PATIENT)
-        Assert.assertEquals(result.recoverable(), undetermined.recoverable())
-        Assert.assertFalse(undetermined.inclusionMolecularEvents().isEmpty())
-        Assert.assertEquals(undetermined.inclusionMolecularEvents(), result.inclusionMolecularEvents())
-        Assert.assertFalse(undetermined.exclusionMolecularEvents().isEmpty())
-        Assert.assertEquals(undetermined.exclusionMolecularEvents(), result.exclusionMolecularEvents())
-        Assert.assertEquals(undetermined.passSpecificMessages(), result.passSpecificMessages())
-        Assert.assertEquals(undetermined.passGeneralMessages(), result.passGeneralMessages())
-        Assert.assertEquals(undetermined.failSpecificMessages(), result.failSpecificMessages())
-        Assert.assertEquals(undetermined.failGeneralMessages(), result.failGeneralMessages())
-        Assert.assertEquals(undetermined.undeterminedSpecificMessages(), result.undeterminedSpecificMessages())
-        Assert.assertEquals(undetermined.undeterminedGeneralMessages(), result.undeterminedGeneralMessages())
-        Assert.assertEquals(undetermined.warnSpecificMessages(), result.warnSpecificMessages())
-        Assert.assertEquals(undetermined.warnGeneralMessages(), result.warnGeneralMessages())
+        assertThat(undetermined.recoverable).isEqualTo(result.recoverable)
+        assertThat(undetermined.inclusionMolecularEvents).isNotEmpty()
+        assertThat(result.inclusionMolecularEvents).isEqualTo(undetermined.inclusionMolecularEvents)
+        assertThat(undetermined.exclusionMolecularEvents).isNotEmpty()
+        assertThat(result.exclusionMolecularEvents).isEqualTo(undetermined.exclusionMolecularEvents)
+        assertThat(result.passSpecificMessages).isEqualTo(undetermined.passSpecificMessages)
+        assertThat(result.passGeneralMessages).isEqualTo(undetermined.passGeneralMessages)
+        assertThat(result.failSpecificMessages).isEqualTo(undetermined.failSpecificMessages)
+        assertThat(result.failGeneralMessages).isEqualTo(undetermined.failGeneralMessages)
+        assertThat(result.undeterminedSpecificMessages).isEqualTo(undetermined.undeterminedSpecificMessages)
+        assertThat(result.undeterminedGeneralMessages).isEqualTo(undetermined.undeterminedGeneralMessages)
+        assertThat(result.warnSpecificMessages).isEqualTo(undetermined.warnSpecificMessages)
+        assertThat(result.warnGeneralMessages).isEqualTo(undetermined.warnGeneralMessages)
     }
 
     companion object {

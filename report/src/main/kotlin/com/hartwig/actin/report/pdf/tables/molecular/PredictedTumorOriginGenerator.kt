@@ -9,7 +9,6 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
-import kotlin.reflect.KFunction1
 
 class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
 
@@ -18,7 +17,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
     }
 
     override fun contents(): Table {
-        val predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin()
+        val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
         val predictions = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
         return if (predictions.isEmpty()) {
             val message = if (predictedTumorOrigin == null) Formats.VALUE_UNKNOWN else String.format(
@@ -32,14 +31,14 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
             val table = Table(numColumns)
             table.addHeaderCell(Cells.createEmpty())
             predictions.indices.asSequence()
-                .map { i: Int -> "${i + 1}. ${predictions[i].cancerType()}" }
+                .map { i: Int -> "${i + 1}. ${predictions[i].cancerType}" }
                 .map { Cells.createHeader(it).setPaddingLeft(PADDING_LEFT.toFloat()) }
                 .forEach(table::addHeaderCell)
 
             table.addCell(Cells.createContentBold("Combined prediction score"))
             predictions.map {
-                val likelihoodCell = Cells.createContentBold(Formats.percentage(it.likelihood())).setPaddingLeft(PADDING_LEFT.toFloat())
-                if (!TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(it.likelihood())) {
+                val likelihoodCell = Cells.createContentBold(Formats.percentage(it.likelihood)).setPaddingLeft(PADDING_LEFT.toFloat())
+                if (!TumorOriginInterpreter.likelihoodMeetsConfidenceThreshold(it.likelihood)) {
                     likelihoodCell.addStyle(Styles.tableNoticeStyle())
                 }
                 likelihoodCell
@@ -72,13 +71,13 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularRecord, priv
 
         private fun addClassifierRow(
             classifierText: String, predictions: List<CupPrediction>,
-            classifierFunction: KFunction1<CupPrediction, Double?>, table: Table
+            classifierFunction: (CupPrediction) -> Double, table: Table
         ) {
             table.addCell(Cells.createContent(classifierText).setPaddingLeft(PADDING_LEFT.toFloat()))
             predictions
                 .asSequence()
                 .map(classifierFunction)
-                .map { Formats.percentage(it ?: 0.0) }
+                .map(Formats::percentage)
                 .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
                 .forEach(table::addCell)
         }

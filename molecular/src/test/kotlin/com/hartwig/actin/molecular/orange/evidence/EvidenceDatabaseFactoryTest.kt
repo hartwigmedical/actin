@@ -5,25 +5,17 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.KnownEvents
-import org.junit.Assert.assertNotNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvidenceDatabaseFactoryTest {
 
     @Test
-    fun canCreateFromMinimalInputs() {
+    fun `Should create from minimal inputs`() {
         val knownEvents: KnownEvents = ImmutableKnownEvents.builder().build()
         val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder().build()
         val doidEntry = TestDoidEntryFactory.createMinimalTestDoidEntry()
-        val tumorDoids: MutableSet<String> = mutableSetOf()
 
-        assertNotNull(
-            EvidenceDatabaseFactory.create(
-                knownEvents,
-                actionableEvents,
-                doidEntry,
-                tumorDoids
-            )
-        )
+        assertThat(EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, emptySet())).isNotNull()
     }
 }

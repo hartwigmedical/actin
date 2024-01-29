@@ -6,12 +6,13 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.clinical.datamodel.Intolerance
 
 class HasIntoleranceToPlatinumCompounds : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val platinumAllergies = record.clinical().intolerances()
-            .filter { stringCaseInsensitivelyMatchesQueryCollection(it.name(), PLATINUM_COMPOUNDS) }
-            .map { it.name() }
+        val platinumAllergies = record.clinical.intolerances
+            .filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, PLATINUM_COMPOUNDS) }
+            .map(Intolerance::name)
             .toSet()
 
         return if (platinumAllergies.isNotEmpty()) {

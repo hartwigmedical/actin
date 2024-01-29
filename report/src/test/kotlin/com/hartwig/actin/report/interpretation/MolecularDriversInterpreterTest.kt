@@ -1,9 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
@@ -73,7 +71,7 @@ class MolecularDriversInterpreterTest {
 
         private fun assertCountForRecordAndCohorts(expectedCount: Int, molecularRecord: MolecularRecord, cohorts: List<EvaluatedCohort>) {
             val interpreter =
-                MolecularDriversInterpreter(molecularRecord.drivers(), EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+                MolecularDriversInterpreter(molecularRecord.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
             assertThat(interpreter.filteredVariants()).hasSize(expectedCount)
             assertThat(interpreter.filteredCopyNumbers()).hasSize(expectedCount)
             assertThat(interpreter.filteredHomozygousDisruptions()).hasSize(expectedCount)
@@ -87,33 +85,30 @@ class MolecularDriversInterpreterTest {
         }
 
         private fun createTestMolecularRecordWithDriverEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularRecord {
-            return ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .drivers(createDriversWithEvidence(evidence, isReportable))
-                .build()
+            return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
         }
 
         private fun createDriversWithEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularDrivers {
-            return ImmutableMolecularDrivers.builder()
-                .addVariants(TestVariantFactory.builder().isReportable(isReportable).evidence(evidence).event(EVENT_VARIANT).build())
-                .addCopyNumbers(TestCopyNumberFactory.builder().isReportable(isReportable).evidence(evidence).event(EVENT_CN).build())
-                .addHomozygousDisruptions(
-                    TestHomozygousDisruptionFactory.builder()
-                        .isReportable(isReportable)
-                        .evidence(evidence)
-                        .event(EVENT_HD)
-                        .build()
+            return MolecularDrivers(
+                variants = setOf(
+                    TestVariantFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_VARIANT)
+                ),
+                copyNumbers = setOf(
+                    TestCopyNumberFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_CN)
+                ),
+                homozygousDisruptions = setOf(
+                    TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_HD)
+                ),
+                disruptions = setOf(
+                    TestDisruptionFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_DISRUPTION)
+                ),
+                fusions = setOf(
+                    TestFusionFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_FUSION)
+                ),
+                viruses = setOf(
+                    TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_VIRUS)
                 )
-                .addDisruptions(
-                    TestDisruptionFactory.builder()
-                        .isReportable(isReportable)
-                        .evidence(evidence)
-                        .event(EVENT_DISRUPTION)
-                        .build()
-                )
-                .addFusions(TestFusionFactory.builder().isReportable(isReportable).evidence(evidence).event(EVENT_FUSION).build())
-                .addViruses(TestVirusFactory.builder().isReportable(isReportable).evidence(evidence).event(EVENT_VIRUS).build())
-                .build()
+            )
         }
 
         private fun createCohortsForEvents(events: List<String>): List<EvaluatedCohort> {

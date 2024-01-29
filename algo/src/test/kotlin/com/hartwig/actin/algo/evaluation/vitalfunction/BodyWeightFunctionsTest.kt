@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientForMaximumBodyWeight
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientForMinimumBodyWeight
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.weight
 import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -32,7 +32,7 @@ class BodyWeightFunctionsTest {
     @Test
     fun `Should evaluate to undetermined when weight measurement invalid`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(148.0).unit("pounds").valid(false).build()
+            weight(referenceDateTime, 148.0, false, "pounds")
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -48,44 +48,44 @@ class BodyWeightFunctionsTest {
     @Test
     fun `Should fail on median weight above max`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(148.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(1)).value(155.0).valid(true).build()
+            weight(referenceDateTime, 148.0, true),
+            weight(referenceDateTime.plusDays(1), 155.0, true)
         )
-        assertEvaluation(EvaluationResult.FAIL, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
-        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
     }
 
     @Test
     fun `Should pass on median weight below max`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(151.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(1)).value(148.0).valid(true).build()
+            weight(referenceDateTime, 151.0, true),
+            weight(referenceDateTime.plusDays(1), 148.0, true)
         )
-        assertEvaluation(EvaluationResult.PASS, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
-        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
     }
 
     @Test
     fun `Should pass on median weight equal to max`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(152.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(1)).value(148.0).valid(true).build()
+            weight(referenceDateTime, 152.0, true),
+            weight(referenceDateTime.plusDays(1), 148.0, true)
         )
-        assertEvaluation(EvaluationResult.PASS, evaluatePatientForMaximumBodyWeight(
-            VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate
-        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
     }
 
     @Test
     fun `Should fail on median weight below min`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(41.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(1)).value(38.0).valid(true).build()
+            weight(referenceDateTime, 41.0, true),
+            weight(referenceDateTime.plusDays(1), 38.0, true)
         )
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -96,8 +96,8 @@ class BodyWeightFunctionsTest {
     @Test
     fun `Should pass on median weight above min`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(38.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(1)).value(43.0).valid(true).build()
+            weight(referenceDateTime, 38.0, true),
+            weight(referenceDateTime.plusDays(1), 43.0, true)
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -108,8 +108,8 @@ class BodyWeightFunctionsTest {
     @Test
     fun `Should pass on median weight equal to min`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(39.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(1)).value(41.0).valid(true).build()
+            weight(referenceDateTime, 39.0, true),
+            weight(referenceDateTime.plusDays(1), 41.0, true)
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -120,13 +120,13 @@ class BodyWeightFunctionsTest {
     @Test
     fun `Should take most recent and max 5 entries`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(150.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(1)).value(150.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(2)).value(150.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(3)).value(150.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(4)).value(150.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(5)).value(280.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(6)).value(280.0).valid(true).build()
+            weight(referenceDateTime, 150.0, true),
+            weight(referenceDateTime.plusDays(1), 150.0, true),
+            weight(referenceDateTime.plusDays(2), 150.0, true),
+            weight(referenceDateTime.plusDays(3), 150.0, true),
+            weight(referenceDateTime.plusDays(4), 150.0, true),
+            weight(referenceDateTime.plusDays(5), 280.0, true),
+            weight(referenceDateTime.plusDays(6), 280.0, true)
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -137,9 +137,9 @@ class BodyWeightFunctionsTest {
     @Test
     fun `Should take only one and the correct median per day`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(125.0).valid(true).build(),
-            weight().date(referenceDateTime).value(175.0).valid(true).build(),
-            weight().date(referenceDateTime.plusDays(1)).value(150.0).valid(true).build()
+            weight(referenceDateTime, 125.0, true),
+            weight(referenceDateTime, 175.0, true),
+            weight(referenceDateTime.plusDays(1), 150.0, true)
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -152,28 +152,24 @@ class BodyWeightFunctionsTest {
     @Test
     fun `Should return null if no valid measurements present`() {
         val weights = listOf(
-            weight().date(referenceDateTime).value(1250.0).valid(false).build(),
-            weight().date(referenceDateTime).value(125.0).unit("pounds").valid(false).build()
+            weight(referenceDateTime, 1250.0, false),
+            weight(referenceDateTime, 125.0, false, "pounds")
         )
-        Assert.assertEquals(null, selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimumValidDate))
+        assertThat(selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimumValidDate)).isNull()
     }
 
     @Test
     fun `Should not take body weight measurements outside of date cutoff`() {
         val weights = listOf(
-            weight().date(referenceDateTime.plusDays(1)).value(110.0).valid(true).build(),
-            weight().date(referenceDateTime).value(120.0).valid(true).build(),
-            weight().date(referenceDateTime.minusDays(3)).value(130.0).valid(true).build()
+            weight(referenceDateTime.plusDays(1), 110.0, true),
+            weight(referenceDateTime, 120.0, true),
+            weight(referenceDateTime.minusDays(3), 130.0, true)
         )
-        Assert.assertEquals(
-            listOf(110.0, 120.0),
-            selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimumValidDate)?.map { it.value() })
-    }
-
-    companion object {
-        private fun weight(): ImmutableBodyWeight.Builder {
-            return VitalFunctionTestFactory.bodyWeight().unit(BodyWeightFunctions.EXPECTED_UNIT)
-        }
+        assertThat(
+            selectMedianBodyWeightPerDay(VitalFunctionTestFactory.withBodyWeights(weights), minimumValidDate)
+                ?.map(BodyWeight::value)
+        )
+            .isEqualTo(listOf(110.0, 120.0))
     }
 }
 

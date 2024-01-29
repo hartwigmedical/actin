@@ -2,9 +2,9 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -30,9 +30,9 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "UNKNOWN_THERAPY",
                 "treatment",
                 "Treatment with name UNKNOWN_THERAPY does not exist in database. Please add with one of the following templates: " +
-                        "[{\"name\":\"UNKNOWN_THERAPY\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
-                        "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"categories\":[]," +
-                        "\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
+                        "[{\"name\":\"UNKNOWN_THERAPY\",\"drugs\":[],\"synonyms\":[],\"isSystemic\":?,\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"UNKNOWN_THERAPY\"," +
+                        "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"UNKNOWN_THERAPY\",\"isSystemic\":?," +
+                        "\"synonyms\":[],\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
             )
         )
     }
@@ -54,7 +54,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
 
-        val treatments = config.curated!!.treatments()
+        val treatments = config.curated!!.treatments
         assertThat(treatments).containsExactly(treatmentDatabase.findTreatmentByName(treatmentName))
     }
 
@@ -74,11 +74,23 @@ class TreatmentHistoryEntryConfigFactoryTest {
 
         val expected = TreatmentHistoryEntryConfig(
             input = input, ignore = false,
-            curated = ImmutableTreatmentHistoryEntry.builder()
-                .startYear(2022)
-                .isTrial(true)
-                .treatmentHistoryDetails(ImmutableTreatmentHistoryDetails.builder().build())
-                .build()
+            curated = TreatmentTestFactory.treatmentHistoryEntry(
+                startYear = 2022,
+                isTrial = true
+            ).copy(
+                treatmentHistoryDetails = TreatmentHistoryDetails(
+                    stopReason = null,
+                    bestResponse = null,
+                    stopYear = null,
+                    stopMonth = null,
+                    cycles = null,
+                    switchToTreatments = null,
+                    maintenanceTreatment = null,
+                    stopReasonDetail = null,
+                    ongoingAsOf = null
+                ),
+                intents = null
+            )
         )
 
         assertThat(config.config).isEqualTo(expected)
@@ -106,9 +118,9 @@ class TreatmentHistoryEntryConfigFactoryTest {
                 "TRIAL_NAME",
                 "treatment",
                 "Treatment with name TRIAL_NAME does not exist in database. Please add with one of the following templates: " +
-                        "[{\"name\":\"TRIAL_NAME\",\"synonyms\":[],\"isSystemic\":?,\"drugs\":[],\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
+                        "[{\"name\":\"TRIAL_NAME\",\"drugs\":[],\"synonyms\":[],\"isSystemic\":?,\"treatmentClass\":\"DRUG_TREATMENT\"}, {\"name\":\"TRIAL_NAME\"," +
                         "\"synonyms\":[],\"isSystemic\":?,\"radioType\":null,\"isInternal\":null,\"treatmentClass\":\"RADIOTHERAPY\"}, {\"name\":\"TRIAL_NAME\"," +
-                        "\"categories\":[],\"synonyms\":[],\"isSystemic\":?,\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
+                        "\"isSystemic\":?,\"synonyms\":[],\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"}]"
             )
         )
     }
@@ -146,7 +158,7 @@ class TreatmentHistoryEntryConfigFactoryTest {
         assertThat(config.ignore).isFalse
         assertThat(config.curated).isNotNull
 
-        val treatments = config.curated!!.treatments()
+        val treatments = config.curated!!.treatments
         assertThat(treatments).hasSize(2)
             .isEqualTo(treatmentNames.mapNotNull(treatmentDatabase::findTreatmentByName).toSet())
     }
@@ -175,23 +187,24 @@ class TreatmentHistoryEntryConfigFactoryTest {
         val curated = config.config.curated
         assertThat(curated).isNotNull
 
-        val treatments = curated!!.treatments()
+        val treatments = curated!!.treatments
         assertThat(treatments).containsExactly(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.RADIOTHERAPY))
-        val treatmentDetails = curated.treatmentHistoryDetails()!!
-        assertThat(treatmentDetails.switchToTreatments()).containsExactly(
-            ImmutableTreatmentStage.builder()
-                .treatment(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN)!!)
-                .startYear(2023)
-                .startMonth(4)
-                .cycles(2)
-                .build()
+        val treatmentDetails = curated.treatmentHistoryDetails!!
+        assertThat(treatmentDetails.switchToTreatments).containsExactly(
+            TreatmentStage(
+                treatment = treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN)!!,
+                startYear = 2023,
+                startMonth = 4,
+                cycles = 2
+            )
         )
-        assertThat(treatmentDetails.maintenanceTreatment()).isEqualTo(
-            ImmutableTreatmentStage.builder()
-                .treatment(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.ABLATION)!!)
-                .startYear(2023)
-                .startMonth(8)
-                .build()
+        assertThat(treatmentDetails.maintenanceTreatment).isEqualTo(
+            TreatmentStage(
+                treatment = treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.ABLATION)!!,
+                startYear = 2023,
+                startMonth = 8,
+                cycles = null
+            )
         )
     }
 

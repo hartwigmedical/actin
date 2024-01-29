@@ -454,7 +454,6 @@ The details may include multiple treatment stages representing switches from the
 | atc.chemicalSubstance.name       | codeine and ibuprofen 	                                           | Optional/added in curation               |
 | qtProlongatingRisk               | NONE 	                                                            | Added in curation                        |
 
-
 ### Filtering of Clinical Data
 
 When the clinical data is mapped onto the ACTIN clinical data model, as described above, filtering is applied to exclude non-valid

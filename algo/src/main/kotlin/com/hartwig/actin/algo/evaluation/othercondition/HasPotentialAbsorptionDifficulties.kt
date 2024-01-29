@@ -11,11 +11,11 @@ import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.util.ApplicationConfig
 
 class HasPotentialAbsorptionDifficulties internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val conditions = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions()).flatMap { it.doids() }
+        val conditions = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions).flatMap { it.doids }
             .filter { doidModel.doidWithParents(it).contains(DoidConstants.GASTROINTESTINAL_SYSTEM_DISEASE_DOID) }
             .map { doidModel.resolveTermForDoid(it) }
 
@@ -25,9 +25,8 @@ class HasPotentialAbsorptionDifficulties internal constructor(private val doidMo
                 "Potential absorption difficulties: " + concat(conditions.filterNotNull())
             )
         }
-        val complications =
-            record.clinical().complications()?.filter { isOfCategory(it, GASTROINTESTINAL_DISORDER_CATEGORY) }?.map { it.name() }
-                ?: emptyList()
+        val complications = record.clinical.complications?.filter { isOfCategory(it, GASTROINTESTINAL_DISORDER_CATEGORY) }
+            ?.map { it.name } ?: emptyList()
 
         if (complications.isNotEmpty()) {
             return EvaluationFactory.pass(
@@ -35,9 +34,9 @@ class HasPotentialAbsorptionDifficulties internal constructor(private val doidMo
                 "Potential absorption difficulties: " + concat(complications)
             )
         }
-        val toxicities = record.clinical().toxicities()
-            .filter { it.source() == ToxicitySource.QUESTIONNAIRE || (it.grade() ?: 0) >= 2 }
-            .map { it.name() }
+        val toxicities = record.clinical.toxicities
+            .filter { it.source == ToxicitySource.QUESTIONNAIRE || (it.grade ?: 0) >= 2 }
+            .map { it.name }
             .filter { stringCaseInsensitivelyMatchesQueryCollection(it, TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY) }
 
         return if (toxicities.isNotEmpty()) {
@@ -57,13 +56,7 @@ class HasPotentialAbsorptionDifficulties internal constructor(private val doidMo
         val TOXICITIES_CAUSING_ABSORPTION_DIFFICULTY = setOf("diarrhea", "nausea", "vomit")
 
         private fun isOfCategory(complication: Complication, categoryToFind: String): Boolean {
-            return complication.categories().any {
-                it.lowercase().contains(
-                    categoryToFind.lowercase(
-                        ApplicationConfig.LOCALE
-                    )
-                )
-            }
+            return complication.categories.any { it.lowercase().contains(categoryToFind.lowercase()) }
         }
     }
 }

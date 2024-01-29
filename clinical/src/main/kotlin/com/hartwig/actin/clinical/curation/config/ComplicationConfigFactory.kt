@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication
+import com.hartwig.actin.clinical.datamodel.Complication
 
 class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<ComplicationConfig> {
@@ -28,16 +28,10 @@ class ComplicationConfigFactory : CurationConfigFactory<ComplicationConfig> {
         )
     }
 
-    private fun toCuratedComplication(
-        fields: Map<String, Int>,
-        parts: Array<String>,
-        year: Int?,
-        month: Int?,
-
-        ) = ImmutableComplication.builder()
-        .name(parts[fields["name"]!!])
-        .categories(CurationUtil.toCategories(parts[fields["categories"]!!]))
-        .year(year)
-        .month(month)
-        .build()
+    private fun toCuratedComplication(fields: Map<String, Int>, parts: Array<String>, year: Int?, month: Int?) = Complication(
+        name = parts[fields["name"]!!],
+        categories = CurationUtil.toCategories(parts[fields["categories"]!!]),
+        year = year,
+        month = month
+    )
 }

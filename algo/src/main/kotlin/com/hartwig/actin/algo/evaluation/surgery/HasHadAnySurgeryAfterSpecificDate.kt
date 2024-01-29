@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import java.time.LocalDate
 
 class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private val evaluationDate: LocalDate) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasFinishedSurgeryBetweenMinAndEval = false
         var hasUnexpectedSurgeryBetweenMinAndEval = false
@@ -18,23 +19,33 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
         var hasPlannedSurgeryAfterEval = false
         var hasUnexpectedSurgeryAfterEval = false
         var hasCancelledSurgeryAfterEval = false
-        for (surgery in record.clinical().surgeries()) {
-            if (minDate.isBefore(surgery.endDate())) {
-                if (minDate.isBefore(surgery.endDate())) {
-                    if (evaluationDate.isBefore(surgery.endDate())) {
-                        if (surgery.status() == SurgeryStatus.CANCELLED) {
+        for (surgery in record.clinical.surgeries) {
+            if (minDate.isBefore(surgery.endDate)) {
+                if (evaluationDate.isBefore(surgery.endDate)) {
+                    when (surgery.status) {
+                        SurgeryStatus.CANCELLED -> {
                             hasCancelledSurgeryAfterEval = true
-                        } else if (surgery.status() == SurgeryStatus.PLANNED) {
+                        }
+
+                        SurgeryStatus.PLANNED -> {
                             hasPlannedSurgeryAfterEval = true
-                        } else {
+                        }
+
+                        else -> {
                             hasUnexpectedSurgeryAfterEval = true
                         }
-                    } else {
-                        if (surgery.status() == SurgeryStatus.FINISHED) {
+                    }
+                } else {
+                    when (surgery.status) {
+                        SurgeryStatus.FINISHED -> {
                             hasFinishedSurgeryBetweenMinAndEval = true
-                        } else if (surgery.status() == SurgeryStatus.CANCELLED) {
+                        }
+
+                        SurgeryStatus.CANCELLED -> {
                             hasCancelledSurgeryBetweenMinAndEval = true
-                        } else {
+                        }
+
+                        else -> {
                             hasUnexpectedSurgeryBetweenMinAndEval = true
                         }
                     }
@@ -58,9 +69,9 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
             )
         }
 
-        val surgicalTreatmentsOccurredAfterMinDate = record.clinical().oncologicalHistory()
+        val surgicalTreatmentsOccurredAfterMinDate = record.clinical.oncologicalHistory
             .filter { it.categories().contains(TreatmentCategory.SURGERY) }
-            .map { isAfterDate(minDate, it.startYear(), it.startMonth()) }
+            .map { isAfterDate(minDate, it.startYear, it.startMonth) }
 
         return when {
             surgicalTreatmentsOccurredAfterMinDate.any { it == true } -> {

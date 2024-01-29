@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication
+import com.hartwig.actin.clinical.datamodel.Complication
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,7 +16,7 @@ class ComplicationsExtractorTest {
         ComplicationConfig(
             input = "term",
             ignore = false,
-            curated = ImmutableComplication.builder().name("Curated").build(),
+            curated = Complication(name = "Curated", categories = emptySet(), year = null, month = null),
             impliesUnknownComplicationState = false
         ),
         ComplicationConfig(
@@ -56,7 +56,7 @@ class ComplicationsExtractorTest {
         val (complications, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(complications).isNotNull
         assertThat(complications!!).hasSize(1)
-        assertThat(complications).anyMatch { it.name() == "Curated" }
+        assertThat(complications).anyMatch { it.name == "Curated" }
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

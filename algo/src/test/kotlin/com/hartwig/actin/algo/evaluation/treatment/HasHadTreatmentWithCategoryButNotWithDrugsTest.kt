@@ -2,11 +2,11 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
@@ -50,7 +50,7 @@ class HasHadTreatmentWithCategoryButNotWithDrugsTest {
     companion object {
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private const val IGNORE_DRUG_NAME = "match"
-        private val IGNORE_DRUG_SET = setOf(ImmutableDrug.builder().name(IGNORE_DRUG_NAME).category(MATCHING_CATEGORY).build())
+        private val IGNORE_DRUG_SET = setOf(Drug(name = IGNORE_DRUG_NAME, category = MATCHING_CATEGORY, drugTypes = emptySet()))
         private val FUNCTION = HasHadTreatmentWithCategoryButNotWithDrugs(MATCHING_CATEGORY, IGNORE_DRUG_SET)
     }
 }

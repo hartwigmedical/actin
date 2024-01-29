@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasBreastCancerHormonePositiveHER2Negative (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical().tumor().doids()
+        val tumorDoids = record.clinical.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether patient has hormone-positive HER2-negative breast cancer",

@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
@@ -16,6 +15,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
     private val maxCreatinineClearance: Double, private val minimumDateForBodyWeights: LocalDate
 ) : LabEvaluationFunction {
+
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         return when (method) {
             CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)
@@ -26,36 +26,36 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
     private fun evaluateMDRD(record: PatientRecord, creatinine: LabValue): Evaluation {
         val mdrdValues = CreatinineFunctions.calcMDRD(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             creatinine
         )
-        return evaluateValues("MDRD", mdrdValues, creatinine.comparator())
+        return evaluateValues("MDRD", mdrdValues, creatinine.comparator)
     }
 
     private fun evaluateCKDEPI(record: PatientRecord, creatinine: LabValue): Evaluation {
         val ckdepiValues = CreatinineFunctions.calcCKDEPI(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             creatinine
         )
-        return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator())
+        return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator)
     }
 
     private fun evaluateCockcroftGault(record: PatientRecord, creatinine: LabValue): Evaluation {
-        val weight =
-            selectMedianBodyWeightPerDay(record, minimumDateForBodyWeights)?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
+        val weight = selectMedianBodyWeightPerDay(record, minimumDateForBodyWeights)
+            ?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             weight,
             creatinine
         )
 
-        val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator(), maxCreatinineClearance)
+        val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator, maxCreatinineClearance)
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
@@ -83,33 +83,34 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
                 "Cockcroft-Gault below max of $maxCreatinineClearance",
             )
 
-            else -> recoverable().result(result).build()
+            else -> Evaluation(result = result, recoverable = true)
         }
     }
 
     private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
         val evaluations = values.map { evaluateVersusMaxValue(it, comparator, maxCreatinineClearance) }.toSet()
 
-        val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)
-        val builder = recoverable().result(result)
-        when (result) {
+        return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("$code exceeds maximum of $maxCreatinineClearance")
-                builder.addFailGeneralMessages("$code exceeds max of $maxCreatinineClearance")
+                EvaluationFactory.recoverableFail(
+                    "$code exceeds maximum of $maxCreatinineClearance", "$code exceeds max of $maxCreatinineClearance"
+                )
             }
-
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("$code evaluation led to ambiguous results")
-                builder.addUndeterminedGeneralMessages("$code could not be determined")
+                EvaluationFactory.recoverableUndetermined(
+                    "$code evaluation led to ambiguous results", "$code could not be determined"
+                )
             }
 
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("$code below maximum of $maxCreatinineClearance")
-                builder.addPassGeneralMessages("$code below max of $maxCreatinineClearance")
+                EvaluationFactory.recoverablePass(
+                    "$code below maximum of $maxCreatinineClearance", "$code below max of $maxCreatinineClearance"
+                )
             }
 
-            else -> {}
+            else -> {
+                Evaluation(result = result, recoverable = true)
+            }
         }
-        return builder.build()
     }
 }

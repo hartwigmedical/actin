@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import org.junit.Test
 
 class HasSufficientTumorMutationalBurdenTest {
+
     @Test
     fun canEvaluate() {
         val function = HasSufficientTumorMutationalBurden(10.0)
