@@ -27,14 +27,16 @@ class PriorMolecularTestsExtractorTest {
                 curated = PriorMolecularTest(
                     impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_IHC, item = "item"
                 )
-            ),
+            )
+        ),
+        TestCurationFactory.curationDatabase(
             MolecularTestConfig(
                 input = MOLECULAR_TEST_INPUT,
                 ignore = false,
                 curated = PriorMolecularTest(
                     impliesPotentialIndeterminateStatus = false, test = MOLECULAR_TEST_INTERPRETATION_PDL1, item = "item"
                 )
-            ),
+            )
         )
     )
 
