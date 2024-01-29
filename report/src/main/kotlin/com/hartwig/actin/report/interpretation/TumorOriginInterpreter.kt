@@ -25,7 +25,7 @@ object TumorOriginInterpreter {
 
     fun predictionsToDisplay(predictedTumorOrigin: PredictedTumorOrigin?): List<CupPrediction> {
         return if (predictedTumorOrigin == null) emptyList() else bestNPredictions(predictedTumorOrigin, MAX_PREDICTIONS_TO_DISPLAY)
-            .filter { it.likelihood() > LIKELIHOOD_DISPLAY_THRESHOLD }
+            .filter { it.likelihood > LIKELIHOOD_DISPLAY_THRESHOLD }
     }
 
     fun greatestOmittedLikelihood(predictedTumorOrigin: PredictedTumorOrigin): Double {
@@ -34,6 +34,6 @@ object TumorOriginInterpreter {
     }
 
     private fun bestNPredictions(predictedTumorOrigin: PredictedTumorOrigin, limit: Int): List<CupPrediction> {
-        return predictedTumorOrigin.predictions().sortedWith(compareByDescending(CupPrediction::likelihood)).take(limit)
+        return predictedTumorOrigin.predictions.sortedWith(compareByDescending(CupPrediction::likelihood)).take(limit)
     }
 }

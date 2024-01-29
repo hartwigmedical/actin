@@ -2,10 +2,10 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
+import com.hartwig.actin.doid.DoidModel
 
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
@@ -15,7 +15,7 @@ class PrimaryTumorLocationBelongsToDoid(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm: String? = doidModel.resolveTermForDoid(doidToMatch)
-        val tumorDoids = record.clinical().tumor().doids()
+        val tumorDoids = record.clinical.tumor.doids
         val tumorBelongsToDoid = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)
         return when {
             !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined(
@@ -24,7 +24,7 @@ class PrimaryTumorLocationBelongsToDoid(
             )
 
             tumorBelongsToDoid && subLocationQuery != null -> {
-                val subLocation = record.clinical().tumor().primaryTumorSubLocation()
+                val subLocation = record.clinical.tumor.primaryTumorSubLocation
                 when {
                     subLocation != null && subLocation.lowercase()
                         .contains(subLocationQuery.lowercase()) ->
@@ -54,7 +54,7 @@ class PrimaryTumorLocationBelongsToDoid(
     }
 
     private fun isPotentialAdenoSquamousMatch(patientDoids: Set<String>, doidToMatch: String): Boolean {
-        val doidTreeToMatch: Set<String> = doidModel.adenoSquamousMappingsForDoid(doidToMatch).map { it.adenoSquamousDoid() }.toSet()
+        val doidTreeToMatch: Set<String> = doidModel.adenoSquamousMappingsForDoid(doidToMatch).map { it.adenoSquamousDoid }.toSet()
         return isOfAtLeastOneDoidType(doidModel, patientDoids, doidTreeToMatch)
     }
 

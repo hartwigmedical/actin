@@ -3,7 +3,6 @@ package com.hartwig.actin.clinical.curation.config
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.CurationUtil
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 
 class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: CurationDoidValidator) :
@@ -65,14 +64,14 @@ class NonOncologicalHistoryConfigFactory(private val curationDoidValidator: Cura
             val (year, yearValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "year", fields, parts)
             val (month, monthValidationErrors) = validateInteger(CurationCategory.NON_ONCOLOGICAL_HISTORY, input, "month", fields, parts)
 
-            ImmutablePriorOtherCondition.builder()
-                .name(parts[fields["name"]!!])
-                .year(year)
-                .month(month)
-                .doids(doids ?: emptySet())
-                .category(parts[fields["category"]!!])
-                .isContraindicationForTherapy(isContraindicationForTherapy ?: false)
-                .build() to doidValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
+            PriorOtherCondition(
+                name = parts[fields["name"]!!],
+                year = year,
+                month = month,
+                doids = doids ?: emptySet(),
+                category = parts[fields["category"]!!],
+                isContraindicationForTherapy = isContraindicationForTherapy ?: false
+            ) to doidValidationErrors + isContraindicationForTherapyValidationErrors + yearValidationErrors + monthValidationErrors
         } else {
             null to emptyList()
         }

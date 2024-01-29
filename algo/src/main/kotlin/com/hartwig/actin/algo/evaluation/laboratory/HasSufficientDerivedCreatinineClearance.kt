@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions
 import com.hartwig.actin.clinical.datamodel.LabValue
@@ -27,37 +26,37 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
     private fun evaluateMDRD(record: PatientRecord, creatinine: LabValue): Evaluation {
         val mdrdValues = CreatinineFunctions.calcMDRD(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             creatinine
         )
-        return evaluateValues("MDRD", mdrdValues, creatinine.comparator())
+        return evaluateValues("MDRD", mdrdValues, creatinine.comparator)
     }
 
     private fun evaluateCKDEPI(record: PatientRecord, creatinine: LabValue): Evaluation {
         val ckdepiValues = CreatinineFunctions.calcCKDEPI(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             creatinine
         )
-        return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator())
+        return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator)
     }
 
     private fun evaluateCockcroftGault(record: PatientRecord, creatinine: LabValue): Evaluation {
         val weight = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDateForBodyWeights)
             ?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
-            record.clinical().patient().birthYear(),
+            record.clinical.patient.birthYear,
             referenceYear,
-            record.clinical().patient().gender(),
+            record.clinical.patient.gender,
             weight,
             creatinine
         )
 
-        val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator(), minCreatinineClearance)
-        val unit = LabMeasurement.CREATININE.defaultUnit().display()
+        val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator, minCreatinineClearance)
+        val unit = LabMeasurement.CREATININE.defaultUnit.display()
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
@@ -85,33 +84,33 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
                 "eGFR (Cockcroft-Gault) above min of $minCreatinineClearance",
             )
 
-            else -> recoverable().result(result).build()
+            else -> Evaluation(result = result, recoverable = true)
         }
     }
 
     private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
         val evaluations = values.map { evaluateVersusMinValue(it, comparator, minCreatinineClearance) }.toSet()
 
-        val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)
-        val builder = recoverable().result(result)
-        when (result) {
+        return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages("eGFR ($code) below minimum of $minCreatinineClearance")
-                builder.addFailGeneralMessages("eGFR ($code) below min of $minCreatinineClearance")
+                EvaluationFactory.recoverableFail(
+                    "eGFR ($code) below minimum of $minCreatinineClearance", "eGFR ($code) below min of $minCreatinineClearance"
+                )
             }
-
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages("eGFR ($code) evaluation led to ambiguous results")
-                builder.addUndeterminedGeneralMessages("eGFR ($code) could not be determined")
+                EvaluationFactory.recoverableUndetermined(
+                    "eGFR ($code) evaluation led to ambiguous results", "eGFR ($code) could not be determined"
+                )
             }
-
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages("eGFR ($code) above minimum of $minCreatinineClearance")
-                builder.addPassGeneralMessages("eGFR ($code) above min of $minCreatinineClearance")
+                EvaluationFactory.recoverablePass(
+                    "eGFR ($code) above minimum of $minCreatinineClearance", "eGFR ($code) above min of $minCreatinineClearance"
+                )
             }
 
-            else -> {}
+            else -> {
+                Evaluation(result = result, recoverable = true)
+            }
         }
-        return builder.build()
     }
 }

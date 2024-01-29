@@ -57,10 +57,7 @@ class ActionableEventMatcherFactory(
                 .build()
         }
 
-        private fun <T : ActionableEvent> filterEventsForApplicability(
-            list: List<T>,
-            predicate: (T) -> Boolean
-        ): List<T> {
+        private fun <T : ActionableEvent> filterEventsForApplicability(list: List<T>, predicate: (T) -> Boolean): List<T> {
             return list.filter { predicate(it) }.toList()
         }
 

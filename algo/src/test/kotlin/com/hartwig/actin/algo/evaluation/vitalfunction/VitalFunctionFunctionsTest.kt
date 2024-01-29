@@ -2,46 +2,47 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionFunctions.determineMedianValue
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionFunctions.selectMedianFunction
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.vitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
+
+private const val EPSILON = 1.0E-10
 
 class VitalFunctionFunctionsTest {
 
     // Testing selectMedianFunction
     @Test
     fun `Should sort values and select correct median`() {
-        val builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE)
         val vitalFunctions =
-            listOf(builder.value(2.0).valid(true).build(), builder.value(1.0).valid(true).build(), builder.value(3.0).valid(true).build())
-        Assert.assertEquals(2.0, selectMedianFunction(vitalFunctions).value(), EPSILON)
+            listOf(
+                vitalFunction(VitalFunctionCategory.HEART_RATE, value = 2.0),
+                vitalFunction(VitalFunctionCategory.HEART_RATE, value = 1.0),
+                vitalFunction(VitalFunctionCategory.HEART_RATE, value = 3.0)
+            )
+        assertThat(selectMedianFunction(vitalFunctions).value).isEqualTo(2.0, Offset.offset(EPSILON))
     }
 
     @Test
     fun `Should select one below ideal median when list is even`() {
-        val builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE)
         val vitalFunctions =
             listOf(
-                builder.value(1.7).valid(true).build(),
-                builder.value(3.0).valid(true).build(),
-                builder.value(1.0).valid(true).build(),
-                builder.value(2.0).valid(true).build()
+                vitalFunction(VitalFunctionCategory.HEART_RATE, value = 1.7),
+                vitalFunction(VitalFunctionCategory.HEART_RATE, value = 3.0),
+                vitalFunction(VitalFunctionCategory.HEART_RATE, value = 1.0),
+                vitalFunction(VitalFunctionCategory.HEART_RATE, value = 2.0)
             )
-        Assert.assertEquals(1.7, selectMedianFunction(vitalFunctions).value(), EPSILON)
+        assertThat(selectMedianFunction(vitalFunctions).value).isEqualTo(1.7, Offset.offset(EPSILON))
     }
 
     // Testing determineMedianValue
     @Test
     fun `Should determine exact median value`() {
-        val builder = VitalFunctionTestFactory.vitalFunction().category(VitalFunctionCategory.HEART_RATE)
         val vitalFunctions = listOf(
-            builder.value(1.0).valid(true).build(),
-            builder.value(3.0).valid(true).build()
+            vitalFunction(VitalFunctionCategory.HEART_RATE, value = 1.0),
+            vitalFunction(VitalFunctionCategory.HEART_RATE, value = 3.0)
         )
-        Assert.assertEquals(2.0, determineMedianValue(vitalFunctions), EPSILON)
-    }
-
-    companion object {
-        private const val EPSILON = 1.0E-10
+        assertThat(determineMedianValue(vitalFunctions)).isEqualTo(2.0, Offset.offset(EPSILON))
     }
 }

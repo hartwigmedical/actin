@@ -43,7 +43,7 @@ class HasTumorStageTest {
 
     private fun assertDerivedEvaluation(expectedResult: EvaluationResult, vararg derivedStages: TumorStage) {
         val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.clinical().tumor()
+        val tumorDetails = patientRecord.clinical.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(tumorDetails) } returns listOf(*derivedStages)
         assertEvaluation(expectedResult, tumorStageFunction(derivationFunction).evaluate(patientRecord))

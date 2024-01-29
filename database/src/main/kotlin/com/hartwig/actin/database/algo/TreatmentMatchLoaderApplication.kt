@@ -19,7 +19,7 @@ class TreatmentMatchLoaderApplication(private val config: TreatmentMatchLoaderCo
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
         val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
-        LOGGER.info("Writing treatment match results for {}", treatmentMatch.patientId())
+        LOGGER.info("Writing treatment match results for {}", treatmentMatch.patientId)
         access.writeTreatmentMatch(treatmentMatch)
         LOGGER.info("Done!")
     }

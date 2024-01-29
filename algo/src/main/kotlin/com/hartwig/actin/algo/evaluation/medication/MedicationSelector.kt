@@ -21,11 +21,11 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
     }
 
     fun activeWithAnyTermInName(medications: List<Medication>, termsToFind: Set<String>): List<Medication> {
-        return active(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name(), termsToFind) }
+        return active(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, termsToFind) }
     }
 
     fun plannedWithAnyTermInName(medications: List<Medication>, termsToFind: Set<String>): List<Medication> {
-        return planned(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name(), termsToFind) }
+        return planned(medications).filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, termsToFind) }
     }
 
     fun activeWithCypInteraction(
@@ -34,7 +34,7 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         typeOfCyp: CypInteraction.Type
     ): List<Medication> {
         return active(medications).filter { medication ->
-            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCyp == it.type() }
+            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.cyp) && typeOfCyp == it.type }
         }
     }
 
@@ -44,7 +44,7 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         typeOfCyp: CypInteraction.Type
     ): List<Medication> {
         return planned(medications).filter { medication ->
-            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCyp == it.type() }
+            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.cyp) && typeOfCyp == it.type }
         }
     }
 
@@ -52,13 +52,13 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
         medications: List<Medication>, interactionToFind: String?, typeOfCyp: CypInteraction.Type, minStopDate: LocalDate
     ): List<Medication> {
         return medications.filter { medication ->
-            medication.cypInteractions().any { (interactionToFind == null || interactionToFind == it.cyp()) && typeOfCyp == it.type() }
+            medication.cypInteractions.any { (interactionToFind == null || interactionToFind == it.cyp) && typeOfCyp == it.type }
         }
             .filter { isActive(it) || isRecentlyStopped(it, minStopDate) }
     }
 
     private fun isRecentlyStopped(medication: Medication, minStopDate: LocalDate): Boolean {
-        return medication.stopDate()?.isAfter(minStopDate) ?: false
+        return medication.stopDate?.isAfter(minStopDate) ?: false
     }
 
     fun isActive(medication: Medication): Boolean {

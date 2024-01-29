@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 class HasPSMAPositivePETScanTest {
+   
     @Test
     fun canEvaluate() {
         val function = HasPSMAPositivePETScan()

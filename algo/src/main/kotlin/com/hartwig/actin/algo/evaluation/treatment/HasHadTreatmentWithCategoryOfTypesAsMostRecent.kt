@@ -12,13 +12,8 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorAntiCancerDrugs = record.clinical().oncologicalHistory()
-            .filter {
-                it.categories().any { category ->
-                    TreatmentCategory.CANCER_TREATMENT_CATEGORIES
-                        .contains(category)
-                }
-            }
+        val priorAntiCancerDrugs = record.clinical.oncologicalHistory
+            .filter { it.categories().any { category -> TreatmentCategory.CANCER_TREATMENT_CATEGORIES.contains(category) } }
 
         val treatmentMatch = if (type != null) {
             priorAntiCancerDrugs
@@ -52,7 +47,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
                 )
             }
 
-            treatmentMatch.any { it.startYear() == null } -> {
+            treatmentMatch.any { it.startYear == null } -> {
                 EvaluationFactory.undetermined(
                     "Has received$nullableTypeString ${category.display()} but undetermined if most recent (dates missing in treatment list)",
                     "Has received$nullableTypeString ${category.display()} but undetermined if most recent"

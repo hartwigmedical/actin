@@ -13,7 +13,7 @@ internal class HistoricDateProvider private constructor(private val historicDate
 
     companion object {
         fun fromClinical(clinical: ClinicalRecord): HistoricDateProvider {
-            val historicDate = clinical.patient().registrationDate().plusWeeks(3)
+            val historicDate = clinical.patient.registrationDate.plusWeeks(3)
             val currentDate = LocalDate.now()
             val effectiveDate = if (currentDate.isBefore(historicDate)) currentDate else historicDate
             return HistoricDateProvider(effectiveDate)

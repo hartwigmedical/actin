@@ -22,10 +22,10 @@ class EligibleApprovedTreatmentGenerator(
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(width)
         table.addHeaderCell(Cells.createHeader("Treatment"))
-        val isCUP = TumorDetailsInterpreter.isCUP(clinical.tumor())
-        val hasConfidentPrediction = TumorOriginInterpreter.hasConfidentPrediction(molecular.characteristics().predictedTumorOrigin())
+        val isCUP = TumorDetailsInterpreter.isCUP(clinical.tumor)
+        val hasConfidentPrediction = TumorOriginInterpreter.hasConfidentPrediction(molecular.characteristics.predictedTumorOrigin)
         if (isCUP && hasConfidentPrediction) {
-            table.addCell(Cells.createContent("Potential SOC for " + molecular.characteristics().predictedTumorOrigin()!!.cancerType()))
+            table.addCell(Cells.createContent("Potential SOC for " + molecular.characteristics.predictedTumorOrigin!!.cancerType()))
         } else {
             table.addCell(Cells.createContent("Not yet determined"))
         }

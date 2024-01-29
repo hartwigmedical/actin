@@ -5,76 +5,82 @@ import com.hartwig.actin.clinical.feed.TestFeedFactory
 import com.hartwig.actin.clinical.feed.lab.LabExtraction.extract
 import com.hartwig.actin.clinical.feed.lab.LabExtraction.extractLimits
 import com.hartwig.actin.clinical.feed.lab.LabExtraction.findSeparatingHyphenIndex
-import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 import java.time.LocalDate
 
+private const val EPSILON = 1.0E-10
+
 class LabExtractionTest {
+
     @Test
     fun canExtractLabValues() {
         val testEntries = TestFeedFactory.createTestLabEntries()
         val lab1 = extract(findByCodeCodeOriginal(testEntries, "LAB1"))
-        Assert.assertEquals(LocalDate.of(2018, 5, 29), lab1.date())
-        Assert.assertEquals(Strings.EMPTY, lab1.comparator())
-        Assert.assertEquals(30.0, lab1.value(), EPSILON)
-        Assert.assertEquals(LabUnit.UNITS_PER_LITER, lab1.unit())
-        Assert.assertEquals(20.0, lab1.refLimitLow()!!, EPSILON)
-        Assert.assertEquals(40.0, lab1.refLimitUp()!!, EPSILON)
-        Assert.assertFalse(lab1.isOutsideRef!!)
+        assertThat(lab1.date).isEqualTo(LocalDate.of(2018, 5, 29))
+        assertThat(lab1.comparator).isEqualTo("")
+        assertThat(lab1.value).isEqualTo(30.0, Offset.offset(EPSILON))
+        assertThat(lab1.unit).isEqualTo(LabUnit.UNITS_PER_LITER)
+        assertThat(lab1.refLimitLow!!).isEqualTo(20.0, Offset.offset(EPSILON))
+        assertThat(lab1.refLimitUp!!).isEqualTo(40.0, Offset.offset(EPSILON))
+        assertThat(lab1.isOutsideRef!!).isFalse
+        
         val lab2 = extract(findByCodeCodeOriginal(testEntries, "LAB2"))
-        Assert.assertEquals(LocalDate.of(2018, 5, 29), lab2.date())
-        Assert.assertEquals(Strings.EMPTY, lab2.comparator())
-        Assert.assertEquals(22.0, lab2.value(), EPSILON)
-        Assert.assertEquals(LabUnit.MILLIMOLES_PER_LITER, lab2.unit())
-        Assert.assertEquals(30.0, lab2.refLimitLow()!!, EPSILON)
-        Assert.assertNull(lab2.refLimitUp())
-        Assert.assertTrue(lab2.isOutsideRef!!)
+        assertThat(lab2.date).isEqualTo(LocalDate.of(2018, 5, 29))
+        assertThat(lab2.comparator).isEqualTo("")
+        assertThat(lab2.value).isEqualTo(22.0, Offset.offset(EPSILON))
+        assertThat(lab2.unit).isEqualTo(LabUnit.MILLIMOLES_PER_LITER)
+        assertThat(lab2.refLimitLow!!).isEqualTo(30.0, Offset.offset(EPSILON))
+        assertThat(lab2.refLimitUp).isNull()
+        assertThat(lab2.isOutsideRef!!).isTrue
+        
         val lab3 = extract(findByCodeCodeOriginal(testEntries, "LAB3"))
-        Assert.assertEquals(LocalDate.of(2018, 5, 29), lab3.date())
-        Assert.assertEquals(">", lab3.comparator())
-        Assert.assertEquals(50.0, lab3.value(), EPSILON)
-        Assert.assertEquals(LabUnit.MILLILITERS_PER_MINUTE, lab3.unit())
-        Assert.assertEquals(50.0, lab3.refLimitLow()!!, EPSILON)
-        Assert.assertNull(lab3.refLimitUp())
-        Assert.assertFalse(lab3.isOutsideRef!!)
+        assertThat(lab3.date).isEqualTo(LocalDate.of(2018, 5, 29))
+        assertThat(lab3.comparator).isEqualTo(">")
+        assertThat(lab3.value).isEqualTo(50.0, Offset.offset(EPSILON))
+        assertThat(lab3.unit).isEqualTo(LabUnit.MILLILITERS_PER_MINUTE)
+        assertThat(lab3.refLimitLow!!).isEqualTo(50.0, Offset.offset(EPSILON))
+        assertThat(lab3.refLimitUp).isNull()
+        assertThat(lab3.isOutsideRef!!).isFalse
+        
         val lab4 = extract(findByCodeCodeOriginal(testEntries, "LAB4"))
-        Assert.assertNull(lab4.refLimitLow())
-        Assert.assertNull(lab4.refLimitUp())
-        Assert.assertNull(lab4.isOutsideRef)
+        assertThat(lab4.refLimitLow).isNull()
+        assertThat(lab4.refLimitUp).isNull()
+        assertThat(lab4.isOutsideRef).isNull()
     }
 
     @Test
     fun canExtractLimits() {
         val bothPositive = extractLimits("12 - 14")
-        Assert.assertEquals(12.0, bothPositive.lower()!!, EPSILON)
-        Assert.assertEquals(14.0, bothPositive.upper()!!, EPSILON)
+        assertThat(bothPositive.lower!!).isEqualTo(12.0, Offset.offset(EPSILON))
+        assertThat(bothPositive.upper!!).isEqualTo(14.0, Offset.offset(EPSILON))
         val bothOneNegative = extractLimits("-3 - 3")
-        Assert.assertEquals(-3.0, bothOneNegative.lower()!!, EPSILON)
-        Assert.assertEquals(3.0, bothOneNegative.upper()!!, EPSILON)
+        assertThat(bothOneNegative.lower!!).isEqualTo(-3.0, Offset.offset(EPSILON))
+        assertThat(bothOneNegative.upper!!).isEqualTo(3.0, Offset.offset(EPSILON))
         val bothTwoNegative = extractLimits("-6 - -3")
-        Assert.assertEquals(-6.0, bothTwoNegative.lower()!!, EPSILON)
-        Assert.assertEquals(-3.0, bothTwoNegative.upper()!!, EPSILON)
+        assertThat(bothTwoNegative.lower!!).isEqualTo(-6.0, Offset.offset(EPSILON))
+        assertThat(bothTwoNegative.upper!!).isEqualTo(-3.0, Offset.offset(EPSILON))
         val lowerOnlyPositive = extractLimits("> 50")
-        Assert.assertEquals(50.0, lowerOnlyPositive.lower()!!, EPSILON)
-        Assert.assertNull(lowerOnlyPositive.upper())
+        assertThat(lowerOnlyPositive.lower!!).isEqualTo(50.0, Offset.offset(EPSILON))
+        assertThat(lowerOnlyPositive.upper).isNull()
         val lowerOnlyNegative = extractLimits("> -6")
-        Assert.assertEquals(-6.0, lowerOnlyNegative.lower()!!, EPSILON)
-        Assert.assertNull(lowerOnlyNegative.upper())
+        assertThat(lowerOnlyNegative.lower!!).isEqualTo(-6.0, Offset.offset(EPSILON))
+        assertThat(lowerOnlyNegative.upper).isNull()
         val upperOnly = extractLimits("<90")
-        Assert.assertNull(upperOnly.lower())
-        Assert.assertEquals(90.0, upperOnly.upper()!!, EPSILON)
+        assertThat(upperOnly.lower).isNull()
+        assertThat(upperOnly.upper!!).isEqualTo(90.0, Offset.offset(EPSILON))
         val failed = extractLimits("not a limit")
-        Assert.assertNull(failed.lower())
-        Assert.assertNull(failed.upper())
+        assertThat(failed.lower).isNull()
+        assertThat(failed.upper).isNull()
     }
 
     @Test
     fun canFindSeparatingHyphen() {
-        Assert.assertEquals(2, findSeparatingHyphenIndex("3 - 5").toLong())
-        Assert.assertEquals(4, findSeparatingHyphenIndex("3,1 - 5,1").toLong())
-        Assert.assertEquals(2, findSeparatingHyphenIndex("-3-5").toLong())
-        Assert.assertEquals(2, findSeparatingHyphenIndex("-3--5").toLong())
+        assertThat(findSeparatingHyphenIndex("3 - 5")).isEqualTo(2)
+        assertThat(findSeparatingHyphenIndex("3,1 - 5,1")).isEqualTo(4)
+        assertThat(findSeparatingHyphenIndex("-3-5")).isEqualTo(2)
+        assertThat(findSeparatingHyphenIndex("-3--5")).isEqualTo(2)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -87,11 +93,7 @@ class LabExtractionTest {
         findSeparatingHyphenIndex("not a reference-range-text")
     }
 
-    companion object {
-        private const val EPSILON = 1.0E-10
-
-        private fun findByCodeCodeOriginal(entries: List<LabEntry>, code: String): LabEntry {
-            return entries.find { it.codeCodeOriginal == code } ?: throw IllegalStateException("Could not find lab entry with code: $code")
-        }
+    private fun findByCodeCodeOriginal(entries: List<LabEntry>, code: String): LabEntry {
+        return entries.find { it.codeCodeOriginal == code } ?: throw IllegalStateException("Could not find lab entry with code: $code")
     }
 }

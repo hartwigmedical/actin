@@ -4,26 +4,17 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 
-class CurrentlyGetsCypXSubstrateMedication(
-    private val selector: MedicationSelector,
-    private val termToFind: String
-) : EvaluationFunction {
+class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelector, private val termToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypSubstratesReceived = selector.activeWithCypInteraction(
-            record.clinical().medications(),
-            termToFind,
-            CypInteraction.Type.SUBSTRATE
-        ).map { it.name() }
+        val cypSubstratesReceived =
+            selector.activeWithCypInteraction(record.clinical.medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
 
-        val cypSubstratesPlanned = selector.plannedWithCypInteraction(
-            record.clinical().medications(),
-            termToFind,
-            CypInteraction.Type.SUBSTRATE
-        ).map { it.name() }
+        val cypSubstratesPlanned =
+            selector.plannedWithCypInteraction(record.clinical.medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
 
         return when {
             cypSubstratesReceived.isNotEmpty() -> {

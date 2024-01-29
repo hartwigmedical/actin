@@ -8,11 +8,11 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.Medication
 
-
 class CurrentlyGetsStableMedicationOfCategory(
     private val selector: MedicationSelector,
     private val categoriesToFind: Map<String, Set<AtcLevel>>
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val categoryNamesToFind = categoriesToFind.keys
         var hasFoundOnePassingCategory = false
@@ -20,11 +20,11 @@ class CurrentlyGetsStableMedicationOfCategory(
             var hasActiveAndStableMedication = false
             var referenceDosing: Medication? = null
             val filtered =
-                selector.active(record.clinical().medications())
+                selector.active(record.clinical.medications)
                     .filter { (it.allLevels() intersect categoryToFind.value).isNotEmpty() }
             for (medication in filtered) {
                 if (referenceDosing != null) {
-                    if (!MedicationDosage.hasMatchingDosing(medication.dosage(), referenceDosing.dosage())) {
+                    if (!MedicationDosage.hasMatchingDosing(medication.dosage, referenceDosing.dosage)) {
                         hasActiveAndStableMedication = false
                     }
                 } else {

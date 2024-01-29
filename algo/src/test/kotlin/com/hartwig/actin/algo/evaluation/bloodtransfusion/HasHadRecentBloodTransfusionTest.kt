@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import org.junit.Test
 import java.time.LocalDate
 
@@ -23,7 +22,7 @@ class HasHadRecentBloodTransfusionTest {
 
     companion object {
         private fun create(product: TransfusionProduct, date: LocalDate): BloodTransfusion {
-            return ImmutableBloodTransfusion.builder().product(product.display()).date(date).build()
+            return BloodTransfusion(product = product.display(), date = date)
         }
     }
 }

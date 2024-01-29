@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import org.apache.logging.log4j.LogManager
@@ -23,7 +22,7 @@ class TumorDetailsExtractor(
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<TumorDetails> {
         if (questionnaire == null) {
-            return ExtractionResult(ImmutableTumorDetails.builder().build(), ExtractionEvaluation())
+            return ExtractionResult(TumorDetails(), ExtractionEvaluation())
         }
         val lesionsToCheck = ((questionnaire.otherLesions ?: emptyList()) + listOfNotNull(questionnaire.biopsyLocation)).flatMap {
             lesionLocationCuration.find(it).mapNotNull(LesionLocationConfig::category)
@@ -41,21 +40,20 @@ class TumorDetailsExtractor(
             )
         }
 
-        val tumorDetails =
-            ImmutableTumorDetails.builder().from(primaryTumorDetails)
-                .biopsyLocation(biopsyCuration?.config()?.location)
-                .stage(questionnaire.stage)
-                .hasMeasurableDisease(questionnaire.hasMeasurableDisease)
-                .hasBrainLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions))
-                .hasActiveBrainLesions(questionnaire.hasActiveBrainLesions)
-                .hasCnsLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.CNS, questionnaire.hasCnsLesions))
-                .hasActiveCnsLesions(questionnaire.hasActiveCnsLesions)
-                .hasBoneLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.BONE, questionnaire.hasBoneLesions))
-                .hasLiverLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.LIVER, questionnaire.hasLiverLesions))
-                .hasLungLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.LUNG))
-                .hasLymphNodeLesions(determineLesionPresence(lesionsToCheck, LesionLocationCategory.LYMPH_NODE))
-                .otherLesions(curatedOtherLesions)
-                .build()
+        val tumorDetails = primaryTumorDetails.copy(
+            biopsyLocation = biopsyCuration?.config()?.location,
+            stage = questionnaire.stage,
+            hasMeasurableDisease = questionnaire.hasMeasurableDisease,
+            hasBrainLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions),
+            hasActiveBrainLesions = questionnaire.hasActiveBrainLesions,
+            hasCnsLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.CNS, questionnaire.hasCnsLesions),
+            hasActiveCnsLesions = questionnaire.hasActiveCnsLesions,
+            hasBoneLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.BONE, questionnaire.hasBoneLesions),
+            hasLiverLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.LIVER, questionnaire.hasLiverLesions),
+            hasLungLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.LUNG),
+            hasLymphNodeLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.LYMPH_NODE),
+            otherLesions = curatedOtherLesions
+        )
 
         return ExtractionResult(tumorDetails, otherLesionsResult + tumorExtractionResult + biopsyCuration?.extractionEvaluation)
     }
@@ -65,9 +63,9 @@ class TumorDetailsExtractor(
         inputTumorLocation: String?,
         inputTumorType: String?
     ): Pair<TumorDetails, ExtractionEvaluation> {
-        val builder = ImmutableTumorDetails.builder()
-        val inputPrimaryTumor =
-            (tumorInput(inputTumorLocation, inputTumorType) ?: return Pair(builder.build(), ExtractionEvaluation())).lowercase()
+        val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType)?.lowercase()
+            ?: return Pair(TumorDetails(), ExtractionEvaluation())
+            
         val primaryTumorCuration = CurationResponse.createFromConfigs(
             primaryTumorCuration.find(inputPrimaryTumor),
             patientId,
@@ -77,15 +75,17 @@ class TumorDetailsExtractor(
             true
         )
 
-        primaryTumorCuration.config()?.let {
-            builder.primaryTumorLocation(it.primaryTumorLocation)
-                .primaryTumorSubLocation(it.primaryTumorSubLocation)
-                .primaryTumorType(it.primaryTumorType)
-                .primaryTumorSubType(it.primaryTumorSubType)
-                .primaryTumorExtraDetails(it.primaryTumorExtraDetails)
-                .doids(it.doids)
-        }
-        return Pair(builder.build(), primaryTumorCuration.extractionEvaluation)
+        val tumor = primaryTumorCuration.config()?.let {
+            TumorDetails(
+                primaryTumorLocation = it.primaryTumorLocation,
+                primaryTumorSubLocation = it.primaryTumorSubLocation,
+                primaryTumorType = it.primaryTumorType,
+                primaryTumorSubType = it.primaryTumorSubType,
+                primaryTumorExtraDetails = it.primaryTumorExtraDetails,
+                doids = it.doids
+            )
+        } ?: TumorDetails()
+        return Pair(tumor, primaryTumorCuration.extractionEvaluation)
     }
 
     private fun tumorInput(inputTumorLocation: String?, inputTumorType: String?): String? {

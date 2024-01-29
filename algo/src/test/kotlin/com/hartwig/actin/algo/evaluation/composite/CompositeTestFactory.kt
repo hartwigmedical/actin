@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.composite
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 internal object CompositeTestFactory {
@@ -30,22 +29,20 @@ internal object CompositeTestFactory {
     }
 
     private fun create(result: EvaluationResult, recoverable: Boolean, includeMolecular: Boolean, index: Int): EvaluationFunction {
-        val builder = ImmutableEvaluation.builder()
-            .result(result)
-            .recoverable(recoverable)
-            .addPassSpecificMessages("pass specific $index")
-            .addPassGeneralMessages("pass general $index")
-            .addWarnSpecificMessages("warn specific $index")
-            .addWarnGeneralMessages("warn general $index")
-            .addUndeterminedSpecificMessages("undetermined specific $index")
-            .addUndeterminedGeneralMessages("undetermined general $index")
-            .addFailSpecificMessages("fail specific $index")
-            .addFailGeneralMessages("fail general $index")
-        if (includeMolecular) {
-            builder.addInclusionMolecularEvents("inclusion event $index")
-            builder.addExclusionMolecularEvents("exclusion event $index")
-        }
-        val evaluation = builder.build()
+        val evaluation = Evaluation(
+            result = result,
+            recoverable = recoverable,
+            passSpecificMessages = setOf("pass specific $index"),
+            passGeneralMessages = setOf("pass general $index"),
+            warnSpecificMessages = setOf("warn specific $index"),
+            warnGeneralMessages = setOf("warn general $index"),
+            undeterminedSpecificMessages = setOf("undetermined specific $index"),
+            undeterminedGeneralMessages = setOf("undetermined general $index"),
+            failSpecificMessages = setOf("fail specific $index"),
+            failGeneralMessages = setOf("fail general $index"),
+            inclusionMolecularEvents = if (includeMolecular) setOf("inclusion event $index") else emptySet(),
+            exclusionMolecularEvents = if (includeMolecular) setOf("exclusion event $index") else emptySet()
+        )
         return evaluationFunction { evaluation }
     }
 

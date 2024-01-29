@@ -12,22 +12,22 @@ import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
 
 class HasHadPriorConditionWithDoidRecently internal constructor(
-    private val doidModel: DoidModel, private val doidToFind: String,
-    private val minDate: LocalDate
+    private val doidModel: DoidModel, private val doidToFind: String, private val minDate: LocalDate
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToFind)
         var matchingConditionAfterMinDate: String? = null
         var matchingConditionUnclearDate: String? = null
         var matchingConditionIsWithinWarnDate = false
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
             if (conditionHasDoid(condition, doidToFind)) {
-                val isAfterMinDate = isAfterDate(minDate, condition.year(), condition.month())
+                val isAfterMinDate = isAfterDate(minDate, condition.year, condition.month)
                 if (isAfterMinDate == null) {
-                    matchingConditionUnclearDate = condition.name()
+                    matchingConditionUnclearDate = condition.name
                 } else if (isAfterMinDate) {
-                    matchingConditionAfterMinDate = condition.name()
-                    val isBeforeWarnDate = isBeforeDate(minDate.plusMonths(2), condition.year(), condition.month())
+                    matchingConditionAfterMinDate = condition.name
+                    val isBeforeWarnDate = isBeforeDate(minDate.plusMonths(2), condition.year, condition.month)
                     matchingConditionIsWithinWarnDate = isBeforeWarnDate != null && isBeforeWarnDate
                 }
             }
@@ -58,6 +58,6 @@ class HasHadPriorConditionWithDoidRecently internal constructor(
     }
 
     private fun conditionHasDoid(condition: PriorOtherCondition, doidToFind: String): Boolean {
-        return condition.doids().flatMap { doidModel.doidWithParents(it) }.contains(doidToFind)
+        return condition.doids.flatMap { doidModel.doidWithParents(it) }.contains(doidToFind)
     }
 }

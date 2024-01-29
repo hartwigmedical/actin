@@ -12,47 +12,47 @@ class MolecularDriversSummarizer private constructor(
     private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
 ) {
     fun keyGenesWithVariants(): List<String> {
-        return keyGenesForAlterations(molecularDrivers.variants())
+        return keyGenesForAlterations(molecularDrivers.variants)
     }
 
     fun keyAmplifiedGenes(): List<String> {
-        return molecularDrivers.copyNumbers()
+        return molecularDrivers.copyNumbers
             .asSequence()
-            .filter { it.type().isGain }
+            .filter { it.type.isGain }
             .filter(::isKeyDriver)
-            .map { it.gene() + if (it.type() == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" }
+            .map { it.gene + if (it.type == CopyNumberType.PARTIAL_GAIN) " (partial)" else "" }
             .distinct()
             .toList()
     }
 
     fun keyDeletedGenes(): List<String> {
-        return keyGenesForAlterations(molecularDrivers.copyNumbers().filter { it.type().isLoss })
+        return keyGenesForAlterations(molecularDrivers.copyNumbers.filter { it.type.isLoss })
     }
 
     fun keyHomozygouslyDisruptedGenes(): List<String> {
-        return keyGenesForAlterations(molecularDrivers.homozygousDisruptions())
+        return keyGenesForAlterations(molecularDrivers.homozygousDisruptions)
     }
 
     fun keyFusionEvents(): List<String> {
-        return molecularDrivers.fusions().filter(::isKeyDriver).map(Fusion::event).distinct()
+        return molecularDrivers.fusions.filter(::isKeyDriver).map(Fusion::event).distinct()
     }
 
     fun keyVirusEvents(): List<String> {
-        return molecularDrivers.viruses()
+        return molecularDrivers.viruses
             .filter(::isKeyDriver)
-            .map { String.format("%s (%s int. detected)", it.event(), it.integrations()) }
+            .map { String.format("%s (%s int. detected)", it.event, it.integrations) }
             .distinct()
     }
 
     fun actionableEventsThatAreNotKeyDrivers(): List<String> {
         val nonDisruptionDrivers = listOf(
-            molecularDrivers.variants(),
-            molecularDrivers.copyNumbers(),
-            molecularDrivers.fusions(),
-            molecularDrivers.homozygousDisruptions(),
-            molecularDrivers.viruses()
+            molecularDrivers.variants,
+            molecularDrivers.copyNumbers,
+            molecularDrivers.fusions,
+            molecularDrivers.homozygousDisruptions,
+            molecularDrivers.viruses
         ).flatten().filterNot(::isKeyDriver)
-        return (nonDisruptionDrivers + molecularDrivers.disruptions().toList())
+        return (nonDisruptionDrivers + molecularDrivers.disruptions.toList())
             .filter(evaluatedCohortsInterpreter::driverIsActionable)
             .map(Driver::event)
             .distinct()
@@ -67,7 +67,7 @@ class MolecularDriversSummarizer private constructor(
         }
 
         private fun isKeyDriver(driver: Driver): Boolean {
-            return driver.driverLikelihood() == DriverLikelihood.HIGH && driver.isReportable
+            return driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
         }
 
         private fun <T> keyGenesForAlterations(geneAlterationStream: Iterable<T>): List<String> where T : GeneAlteration, T : Driver {

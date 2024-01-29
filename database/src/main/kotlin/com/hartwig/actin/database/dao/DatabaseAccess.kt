@@ -3,7 +3,7 @@ package com.hartwig.actin.database.dao
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.treatment.datamodel.Trial
+import com.hartwig.actin.trial.datamodel.Trial
 import org.apache.logging.log4j.LogManager
 import org.jooq.SQLDialect
 import org.jooq.conf.MappedSchema
@@ -21,15 +21,15 @@ class DatabaseAccess private constructor(
         LOGGER.info(" Clearing all clinical data")
         clinicalDAO.clear()
         for (record in records) {
-            LOGGER.info(" Writing clinical data for {}", record.patientId())
+            LOGGER.info(" Writing clinical data for {}", record.patientId)
             clinicalDAO.writeClinicalRecord(record)
         }
     }
 
     fun writeMolecularRecord(record: MolecularRecord) {
-        LOGGER.info(" Clearing molecular data for {}", record.sampleId())
+        LOGGER.info(" Clearing molecular data for {}", record.sampleId)
         molecularDAO.clear(record)
-        LOGGER.info(" Writing molecular data for {}", record.sampleId())
+        LOGGER.info(" Writing molecular data for {}", record.sampleId)
         molecularDAO.writeMolecularRecord(record)
     }
 
@@ -37,15 +37,15 @@ class DatabaseAccess private constructor(
         LOGGER.info(" Clearing all trial data")
         trialDAO.clear()
         for (trial in trials) {
-            LOGGER.info(" Writing trial data for {}", trial.identification().acronym())
+            LOGGER.info(" Writing trial data for {}", trial.identification.acronym)
             trialDAO.writeTrial(trial)
         }
     }
 
     fun writeTreatmentMatch(treatmentMatch: TreatmentMatch) {
-        LOGGER.info(" Clearing treatment match data for {}", treatmentMatch.patientId())
+        LOGGER.info(" Clearing treatment match data for {}", treatmentMatch.patientId)
         treatmentMatchDAO.clear(treatmentMatch)
-        LOGGER.info(" Writing treatment match data for {}", treatmentMatch.patientId())
+        LOGGER.info(" Writing treatment match data for {}", treatmentMatch.patientId)
         treatmentMatchDAO.writeTreatmentMatch(treatmentMatch)
     }
 

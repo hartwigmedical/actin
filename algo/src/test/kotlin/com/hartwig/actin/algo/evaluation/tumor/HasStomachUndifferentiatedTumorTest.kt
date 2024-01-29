@@ -12,26 +12,15 @@ class HasStomachUndifferentiatedTumorTest {
         val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
         val function = HasStomachUndifferentiatedTumor(doidModel)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
-        val missingType = TumorTestFactory.withTumorDetails(
-            TumorTestFactory.builder()
-                .addDoids(DoidConstants.STOMACH_CANCER_DOID)
-                .primaryTumorType("wrong")
-                .build()
-        )
+
+        val missingType = TumorTestFactory.withDoidAndType(DoidConstants.STOMACH_CANCER_DOID, "wrong")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(missingType))
-        val missingDoid = TumorTestFactory.withTumorDetails(
-            TumorTestFactory.builder()
-                .addDoids("wrong")
-                .primaryTumorType(HasStomachUndifferentiatedTumor.UNDIFFERENTIATED_TYPES.iterator().next())
-                .build()
-        )
+
+        val targetType = HasStomachUndifferentiatedTumor.UNDIFFERENTIATED_TYPES.iterator().next()
+        val missingDoid = TumorTestFactory.withDoidAndType("wrong", targetType)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(missingDoid))
-        val correct = TumorTestFactory.withTumorDetails(
-            TumorTestFactory.builder()
-                .addDoids(DoidConstants.STOMACH_CANCER_DOID)
-                .primaryTumorType(HasStomachUndifferentiatedTumor.UNDIFFERENTIATED_TYPES.iterator().next())
-                .build()
-        )
+
+        val correct = TumorTestFactory.withDoidAndType(DoidConstants.STOMACH_CANCER_DOID, targetType)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(correct))
     }
 }

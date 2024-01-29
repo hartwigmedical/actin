@@ -2,9 +2,8 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.apache.logging.log4j.util.Strings
 import org.junit.Test
 
 class HasPotentialSignificantHeartDiseaseTest {
@@ -15,28 +14,25 @@ class HasPotentialSignificantHeartDiseaseTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withECG(null)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(false)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(CardiacFunctionTestFactory.withHasSignificantECGAberration(true)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(CardiacFunctionTestFactory.withPriorOtherCondition(builder().build())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(CardiacFunctionTestFactory.withPriorOtherCondition(priorOtherCondition()))
+        )
         val firstDoid = HasPotentialSignificantHeartDisease.HEART_DISEASE_DOIDS.iterator().next()
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(CardiacFunctionTestFactory.withPriorOtherCondition(builder().addDoids(firstDoid).build()))
+            function.evaluate(CardiacFunctionTestFactory.withPriorOtherCondition(priorOtherCondition(doid = firstDoid)))
         )
         val firstTerm = HasPotentialSignificantHeartDisease.HEART_DISEASE_TERMS.iterator().next()
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(
-                CardiacFunctionTestFactory.withPriorOtherCondition(
-                    builder().name(
-                        "this is a $firstTerm"
-                    ).build()
-                )
-            )
+            function.evaluate(CardiacFunctionTestFactory.withPriorOtherCondition(priorOtherCondition(name = "this is a $firstTerm")))
         )
     }
 
     companion object {
-        private fun builder(): ImmutablePriorOtherCondition.Builder {
-            return ImmutablePriorOtherCondition.builder().name(Strings.EMPTY).category(Strings.EMPTY).isContraindicationForTherapy(true)
+        private fun priorOtherCondition(name: String = "", doid: String? = null): PriorOtherCondition {
+            return PriorOtherCondition(name = name, category = "", isContraindicationForTherapy = true, doids = setOfNotNull(doid))
         }
     }
 }

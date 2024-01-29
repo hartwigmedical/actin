@@ -11,21 +11,14 @@ object GeneAlterationFactory {
         input: GeneAlteration?
     ): com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
         return object : com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
-            override fun gene(): String {
-                return gene
-            }
+            override val gene: String = gene
 
-            override fun geneRole(): GeneRole {
-                return if (input != null) convertGeneRole(input.geneRole()) else GeneRole.UNKNOWN
-            }
+            override val geneRole: GeneRole = if (input != null) convertGeneRole(input.geneRole()) else GeneRole.UNKNOWN
 
-            override fun proteinEffect(): ProteinEffect {
-                return if (input != null) convertProteinEffect(input.proteinEffect()) else ProteinEffect.UNKNOWN
-            }
+            override val proteinEffect: ProteinEffect =
+                if (input != null) convertProteinEffect(input.proteinEffect()) else ProteinEffect.UNKNOWN
 
-            override fun isAssociatedWithDrugResistance(): Boolean? {
-                return input?.associatedWithDrugResistance()
-            }
+            override val isAssociatedWithDrugResistance: Boolean? = input?.associatedWithDrugResistance()
         }
     }
 

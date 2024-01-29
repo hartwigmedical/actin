@@ -4,22 +4,21 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.clinical.datamodel.CypInteraction
 
 class CurrentlyGetsCypXInhibitingOrInducingMedication(
-    private val selector: MedicationSelector,
-    private val termToFind: String
+    private val selector: MedicationSelector, private val termToFind: String
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypMedications = record.clinical().medications().filter { medication ->
-            medication.cypInteractions()
-                .any { it.cyp() == termToFind && (it.type() == CypInteraction.Type.INDUCER || it.type() == CypInteraction.Type.INHIBITOR) }
+        val cypMedications = record.clinical.medications.filter { medication ->
+            medication.cypInteractions
+                .any { it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR) }
         }
 
-        val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name() }
-        val plannedCypMedications = cypMedications.filter { selector.isPlanned(it) }.map { it.name() }
+        val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name }
+        val plannedCypMedications = cypMedications.filter { selector.isPlanned(it) }.map { it.name }
 
         return when {
             activeCypMedications.isNotEmpty() -> {

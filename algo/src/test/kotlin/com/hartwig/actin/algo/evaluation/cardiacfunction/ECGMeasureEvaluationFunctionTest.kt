@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.cardiacfunction.ECGMeasureEvaluationFunction.ThresholdCriteria
 import com.hartwig.actin.clinical.datamodel.ECG
-import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
+import com.hartwig.actin.clinical.datamodel.ECGMeasure
 import org.junit.Test
 
 class ECGMeasureEvaluationFunctionTest {
@@ -27,9 +27,9 @@ class ECGMeasureEvaluationFunctionTest {
             EvaluationResult.UNDETERMINED,
             withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
                 CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(400).unit("wrong unit").build())
-                        .build()
+                    CardiacFunctionTestFactory.createMinimal().copy(
+                        qtcfMeasure = ECGMeasure(value = 400, unit = "wrong unit")
+                    )
                 )
             )
         )
@@ -41,9 +41,9 @@ class ECGMeasureEvaluationFunctionTest {
             EvaluationResult.PASS,
             withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
                 CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(300).unit(ECGUnit.MILLISECONDS.symbol()).build())
-                        .build()
+                    CardiacFunctionTestFactory.createMinimal().copy(
+                        qtcfMeasure = ECGMeasure(value = 300, unit = ECGUnit.MILLISECONDS.symbol())
+                    )
                 )
             )
         )
@@ -55,9 +55,9 @@ class ECGMeasureEvaluationFunctionTest {
             EvaluationResult.PASS,
             withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
                 CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(450).unit(ECGUnit.MILLISECONDS.symbol()).build())
-                        .build()
+                    CardiacFunctionTestFactory.createMinimal().copy(
+                        qtcfMeasure = ECGMeasure(value = 450, unit = ECGUnit.MILLISECONDS.symbol())
+                    )
                 )
             )
         )
@@ -69,9 +69,9 @@ class ECGMeasureEvaluationFunctionTest {
             EvaluationResult.FAIL,
             withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(
                 CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(500).unit(ECGUnit.MILLISECONDS.symbol()).build())
-                        .build()
+                    CardiacFunctionTestFactory.createMinimal().copy(
+                        qtcfMeasure = ECGMeasure(value = 500, unit = ECGUnit.MILLISECONDS.symbol())
+                    )
                 )
             )
         )
@@ -83,9 +83,9 @@ class ECGMeasureEvaluationFunctionTest {
             EvaluationResult.PASS,
             withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(
                 CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(500).unit(ECGUnit.MILLISECONDS.symbol()).build())
-                        .build()
+                    CardiacFunctionTestFactory.createMinimal().copy(
+                        qtcfMeasure = ECGMeasure(value = 500, unit = ECGUnit.MILLISECONDS.symbol())
+                    )
                 )
             )
         )
@@ -97,9 +97,9 @@ class ECGMeasureEvaluationFunctionTest {
             EvaluationResult.PASS,
             withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(
                 CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(450).unit(ECGUnit.MILLISECONDS.symbol()).build())
-                        .build()
+                    CardiacFunctionTestFactory.createMinimal().copy(
+                        qtcfMeasure = ECGMeasure(value = 450, unit = ECGUnit.MILLISECONDS.symbol())
+                    )
                 )
             )
         )
@@ -111,9 +111,9 @@ class ECGMeasureEvaluationFunctionTest {
             EvaluationResult.FAIL,
             withThresholdCriteria(ThresholdCriteria.MINIMUM).evaluate(
                 CardiacFunctionTestFactory.withECG(
-                    CardiacFunctionTestFactory.builder()
-                        .qtcfMeasure(ImmutableECGMeasure.builder().value(300).unit(ECGUnit.MILLISECONDS.symbol()).build())
-                        .build()
+                    CardiacFunctionTestFactory.createMinimal().copy(
+                        qtcfMeasure = ECGMeasure(value = 300, unit = ECGUnit.MILLISECONDS.symbol())
+                    )
                 )
             )
         )

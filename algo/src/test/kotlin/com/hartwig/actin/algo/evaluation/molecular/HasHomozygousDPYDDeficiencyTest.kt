@@ -2,8 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry
-import com.hartwig.actin.molecular.datamodel.pharmaco.TestPharmacoFactory
+import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import org.junit.Test
 
 class HasHomozygousDPYDDeficiencyTest {
@@ -16,10 +16,7 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    ImmutablePharmacoEntry.builder()
-                        .gene("DPYD")
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Reduced function").build())
-                        .build()
+                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Reduced function")))
                 )
             )
         )
@@ -31,11 +28,13 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    ImmutablePharmacoEntry.builder()
-                        .gene("DPYD")
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Reduced function").build())
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Reduced function").build())
-                        .build()
+                    PharmacoEntry(
+                        gene = "DPYD",
+                        haplotypes = setOf(
+                            Haplotype(name = "*1_HET", function = "Reduced function"),
+                            Haplotype(name = "*1_HET", function = "Reduced function")
+                        )
+                    )
                 )
             )
         )
@@ -47,11 +46,13 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    ImmutablePharmacoEntry.builder()
-                        .gene("DPYD")
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Normal function").build())
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Reduced function").build())
-                        .build()
+                    PharmacoEntry(
+                        gene = "DPYD",
+                        haplotypes = setOf(
+                            Haplotype(name = "*1_HET", function = "Normal function"),
+                            Haplotype(name = "*1_HET", function = "Reduced function")
+                        )
+                    )
                 )
             )
         )
@@ -63,10 +64,7 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    ImmutablePharmacoEntry.builder()
-                        .gene("DPYD")
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Normal function").build())
-                        .build()
+                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")))
                 )
             )
         )
@@ -78,10 +76,7 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    ImmutablePharmacoEntry.builder()
-                        .gene("UGT1A1")
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Normal function").build())
-                        .build()
+                    PharmacoEntry(gene = "UGT1A1", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")))
                 )
             )
         )

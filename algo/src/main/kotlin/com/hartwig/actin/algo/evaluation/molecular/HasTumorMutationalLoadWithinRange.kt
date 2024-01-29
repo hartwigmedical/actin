@@ -2,65 +2,48 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
-class HasTumorMutationalLoadWithinRange internal constructor(
-    private val minTumorMutationalLoad: Int,
-    private val maxTumorMutationalLoad: Int?
+class HasTumorMutationalLoadWithinRange(
+    private val minTumorMutationalLoad: Int, private val maxTumorMutationalLoad: Int?
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorMutationalLoad = record.molecular().characteristics().tumorMutationalLoad()
-            ?: return unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Unknown tumor mutational load (TML)")
-                .addFailGeneralMessages("TML unknown")
-                .build()
+        val tumorMutationalLoad = record.molecular.characteristics.tumorMutationalLoad
+            ?: return EvaluationFactory.fail("Unknown tumor mutational load (TML)", "TML unknown")
+
         val meetsMinTumorLoad = tumorMutationalLoad >= minTumorMutationalLoad
         val meetsMaxTumorLoad = maxTumorMutationalLoad == null || tumorMutationalLoad <= maxTumorMutationalLoad
-        val tumorMutationalLoadIsAllowed = meetsMinTumorLoad && meetsMaxTumorLoad
-        if (tumorMutationalLoadIsAllowed) {
+        if (meetsMinTumorLoad && meetsMaxTumorLoad) {
             return if (maxTumorMutationalLoad == null) {
-                unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(
-                        "Tumor mutational load (TML) of sample " + tumorMutationalLoad + " is higher than requested minimal TML of "
-                                + minTumorMutationalLoad
-                    )
-                    .addPassGeneralMessages("Adequate TML")
-                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD)
-                    .build()
+                EvaluationFactory.pass(
+                    "Tumor mutational load (TML) of sample $tumorMutationalLoad is higher than requested minimal TML of $minTumorMutationalLoad",
+                    "Adequate TML",
+                    inclusionEvents = setOf(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD)
+                )
             } else {
-                unrecoverable()
-                    .result(EvaluationResult.PASS)
-                    .addPassSpecificMessages(
-                        "Tumor mutational load (TML) of sample " + tumorMutationalLoad + " is between requested TML range of " + minTumorMutationalLoad
-                                + " - " + maxTumorMutationalLoad
-                    )
-                    .addPassGeneralMessages("Adequate TML")
-                    .addInclusionMolecularEvents(MolecularCharacteristicEvents.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
-                    .build()
+                EvaluationFactory.pass(
+                    "Tumor mutational load (TML) of sample $tumorMutationalLoad is between requested TML range of"
+                            + " $minTumorMutationalLoad - $maxTumorMutationalLoad",
+                    "Adequate TML",
+                    inclusionEvents = setOf(MolecularCharacteristicEvents.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
+                )
             }
         }
         val tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5
-        return if (tumorMutationalLoadIsAlmostAllowed && record.molecular().hasSufficientQuality() && !record.molecular()
-                .hasSufficientQualityAndPurity()
+        return if (tumorMutationalLoadIsAlmostAllowed && record.molecular.hasSufficientQuality
+            && !record.molecular.hasSufficientQualityAndPurity
         ) {
-            unrecoverable()
-                .result(EvaluationResult.WARN)
-                .addWarnSpecificMessages(
-                    "Tumor mutational load (TML) of sample " + tumorMutationalLoad + " almost exceeds " + minTumorMutationalLoad
-                            + " while purity is low: perhaps a few mutations are missed and TML is adequate"
-                )
-                .addWarnGeneralMessages("TML almost sufficient while purity is low")
-                .addInclusionMolecularEvents(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
-                .build()
-        } else unrecoverable()
-            .result(EvaluationResult.FAIL)
-            .addFailSpecificMessages("Tumor mutational load (TML) of sample $tumorMutationalLoad is not within specified range")
-            .addFailGeneralMessages("Inadequate TML")
-            .build()
+            EvaluationFactory.warn(
+                "Tumor mutational load (TML) of sample $tumorMutationalLoad almost exceeds $minTumorMutationalLoad"
+                        + " while purity is low: perhaps a few mutations are missed and TML is adequate",
+                "TML almost sufficient while purity is low",
+                inclusionEvents = setOf(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
+            )
+        } else EvaluationFactory.fail(
+            "Tumor mutational load (TML) of sample $tumorMutationalLoad is not within specified range", "Inadequate TML"
+        )
     }
 }

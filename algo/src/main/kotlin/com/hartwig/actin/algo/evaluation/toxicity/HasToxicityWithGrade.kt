@@ -16,28 +16,29 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 class HasToxicityWithGrade internal constructor(
     private val minGrade: Int, private val nameFilter: String?, private val ignoreFilters: Set<String>
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasUnresolvableQuestionnaireToxicities = false
         var hasAtLeastOneMatchingQuestionnaireToxicity = false
         val unresolvableToxicities: MutableSet<String> = Sets.newHashSet()
         val toxicities: MutableSet<String> = Sets.newHashSet()
-        for (toxicity in selectRelevantToxicities(record.clinical())) {
-            val grade = if (toxicity.grade() == null && toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
+        for (toxicity in selectRelevantToxicities(record.clinical)) {
+            val grade = if (toxicity.grade == null && toxicity.source == ToxicitySource.QUESTIONNAIRE) {
                 if (minGrade > DEFAULT_QUESTIONNAIRE_GRADE) {
                     hasUnresolvableQuestionnaireToxicities = true
-                    unresolvableToxicities.add(toxicity.name())
+                    unresolvableToxicities.add(toxicity.name)
                 }
                 DEFAULT_QUESTIONNAIRE_GRADE
-            } else toxicity.grade()
+            } else toxicity.grade
 
             val gradeMatch = grade != null && grade >= minGrade
-            val nameMatch = nameFilter == null || toxicity.name().lowercase()
+            val nameMatch = nameFilter == null || toxicity.name.lowercase()
                 .contains(nameFilter.lowercase())
             if (gradeMatch && nameMatch) {
-                if (toxicity.source() == ToxicitySource.QUESTIONNAIRE) {
+                if (toxicity.source == ToxicitySource.QUESTIONNAIRE) {
                     hasAtLeastOneMatchingQuestionnaireToxicity = true
                 }
-                toxicities.add(toxicity.name())
+                toxicities.add(toxicity.name)
             }
         }
         if (toxicities.isNotEmpty()) {
@@ -66,9 +67,9 @@ class HasToxicityWithGrade internal constructor(
     }
 
     private fun selectRelevantToxicities(clinical: ClinicalRecord): List<Toxicity> {
-        val withoutOutdatedEHRToxicities = dropOutdatedEHRToxicities(clinical.toxicities())
+        val withoutOutdatedEHRToxicities = dropOutdatedEHRToxicities(clinical.toxicities)
         val withoutEHRToxicitiesThatAreComplications =
-            dropEHRToxicitiesThatAreComplications(withoutOutdatedEHRToxicities, clinical.complications())
+            dropEHRToxicitiesThatAreComplications(withoutOutdatedEHRToxicities, clinical.complications)
         return applyIgnoreFilters(withoutEHRToxicitiesThatAreComplications, ignoreFilters)
     }
 
@@ -79,10 +80,10 @@ class HasToxicityWithGrade internal constructor(
             val filtered: MutableList<Toxicity> = mutableListOf()
             val mostRecentToxicityByName: MutableMap<String, Toxicity> = mutableMapOf()
             for (toxicity in toxicities) {
-                if (toxicity.source() == ToxicitySource.EHR) {
-                    val current = mostRecentToxicityByName[toxicity.name()]
-                    if (current == null || current.evaluatedDate().isBefore(toxicity.evaluatedDate())) {
-                        mostRecentToxicityByName[toxicity.name()] = toxicity
+                if (toxicity.source == ToxicitySource.EHR) {
+                    val current = mostRecentToxicityByName[toxicity.name]
+                    if (current == null || current.evaluatedDate.isBefore(toxicity.evaluatedDate)) {
+                        mostRecentToxicityByName[toxicity.name] = toxicity
                     }
                 } else {
                     filtered.add(toxicity)
@@ -93,15 +94,15 @@ class HasToxicityWithGrade internal constructor(
         }
 
         private fun dropEHRToxicitiesThatAreComplications(toxicities: List<Toxicity>, complications: List<Complication>?): List<Toxicity> {
-            return toxicities.filter { it.source() != ToxicitySource.EHR || !hasComplicationWithName(complications, it.name()) }
+            return toxicities.filter { it.source != ToxicitySource.EHR || !hasComplicationWithName(complications, it.name) }
         }
 
         private fun hasComplicationWithName(complications: List<Complication>?, nameToFind: String): Boolean {
-            return complications?.any { it.name() == nameToFind } ?: false
+            return complications?.any { it.name == nameToFind } ?: false
         }
 
         private fun applyIgnoreFilters(toxicities: List<Toxicity>, ignoreFilters: Set<String>): List<Toxicity> {
-            return toxicities.filterNot { stringCaseInsensitivelyMatchesQueryCollection(it.name(), ignoreFilters) }
+            return toxicities.filterNot { stringCaseInsensitivelyMatchesQueryCollection(it.name, ignoreFilters) }
         }
 
         private fun formatToxicities(toxicityNames: Iterable<String>): String {

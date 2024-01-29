@@ -17,10 +17,10 @@ class EvaluatedTreatmentInterpreter(private val recommendedTreatments: List<Eval
     fun csv(): String {
         return "Treatment,Optional,Score,Warnings\n" + recommendedTreatments.joinToString("\n") { evaluatedTreatment: EvaluatedTreatment ->
             val warningSummary: String = evaluatedTreatment.evaluations.toSet().flatMap { eval ->
-                setOf(eval.failSpecificMessages(), eval.warnSpecificMessages(), eval.undeterminedSpecificMessages()).flatten()
+                setOf(eval.failSpecificMessages, eval.warnSpecificMessages, eval.undeterminedSpecificMessages).flatten()
             }.joinToString()
             listOf(
-                evaluatedTreatment.treatmentCandidate.treatment.name(),
+                evaluatedTreatment.treatmentCandidate.treatment.name,
                 evaluatedTreatment.treatmentCandidate.isOptional,
                 evaluatedTreatment.score,
                 warningSummary

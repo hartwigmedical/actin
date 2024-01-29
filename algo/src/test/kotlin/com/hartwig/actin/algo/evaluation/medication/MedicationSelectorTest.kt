@@ -1,188 +1,148 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.clinical.datamodel.CypInteraction
-import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
 class MedicationSelectorTest {
+
     @Test
-    fun canFilterForActive() {
-        val medications = listOf(TestMedicationFactory.builder().name("active").build())
+    fun `Should filter for active`() {
+        val medications = listOf(MedicationTestFactory.medication(name = "active"))
         val filtered = MedicationTestFactory.alwaysActive().active(medications)
-        Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertEquals("active", filtered[0].name())
+        assertThat(filtered).hasSize(1)
+        assertThat(filtered[0].name).isEqualTo("active")
     }
 
     @Test
-    fun canFilterForPlanned() {
-        val medications = listOf(TestMedicationFactory.builder().name("planned").build())
+    fun `Should filter for planned`() {
+        val medications = listOf(MedicationTestFactory.medication(name = "planned"))
         val filtered = MedicationTestFactory.alwaysPlanned().planned(medications)
-        Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertEquals("planned", filtered[0].name())
+        assertThat(filtered.map(Medication::name)).containsExactly("planned")
     }
 
     @Test
-    fun canFilterOnActiveOrRecentlyStopped() {
+    fun `Should filter on active or recently stopped`() {
         val minStopDate = LocalDate.of(2019, 11, 20)
         val medications = listOf(
-            TestMedicationFactory.builder()
-                .name("recently stopped")
-                .stopDate(minStopDate.plusDays(1))
-                .build(),
-            TestMedicationFactory.builder()
-                .name("stopped long ago")
-                .stopDate(minStopDate.minusDays(1))
-                .build()
+            MedicationTestFactory.medication(name = "recently stopped", stopDate = minStopDate.plusDays(1)),
+            MedicationTestFactory.medication(name = "stopped long ago", stopDate = minStopDate.minusDays(1))
         )
         val filtered =
             MedicationTestFactory.alwaysInactive().activeOrRecentlyStopped(medications, minStopDate)
-        Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertNotNull(findByName(filtered, "recently stopped"))
+        assertThat(filtered.map(Medication::name)).containsExactly("recently stopped")
     }
 
     @Test
-    fun canFilterOnActiveWithAnyTermInName() {
+    fun `Should filter on active with any term in name`() {
         val medications = listOf(
-            TestMedicationFactory.builder().name("name 1").build(),
-            TestMedicationFactory.builder().name("name 1 with some extension").build(),
-            TestMedicationFactory.builder().name("name 2").build(),
-            TestMedicationFactory.builder().name("name 3").build()
+            MedicationTestFactory.medication(name = "name 1"),
+            MedicationTestFactory.medication(name = "name 1 with some extension"),
+            MedicationTestFactory.medication(name = "name 2"),
+            MedicationTestFactory.medication(name = "name 3")
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithAnyTermInName(medications, setOf("Name 1", "2"))
-        Assert.assertEquals(3, filtered.size.toLong())
-        Assert.assertNotNull(findByName(filtered, "name 1"))
-        Assert.assertNotNull(findByName(filtered, "name 1 with some extension"))
-        Assert.assertNotNull(findByName(filtered, "name 2"))
+        assertThat(filtered.map(Medication::name)).containsExactlyInAnyOrder("name 1", "name 1 with some extension", "name 2")
     }
 
     @Test
-    fun canFilterOnPlannedWithAnyTermInName() {
+    fun `Should filter on planned with any term in name`() {
         val medications = listOf(
-            TestMedicationFactory.builder().name("name 1").build(),
-            TestMedicationFactory.builder().name("name 1 with some extension").build(),
-            TestMedicationFactory.builder().name("name 2").build(),
-            TestMedicationFactory.builder().name("name 3").build()
+            MedicationTestFactory.medication(name = "name 1"),
+            MedicationTestFactory.medication(name = "name 1 with some extension"),
+            MedicationTestFactory.medication(name = "name 2"),
+            MedicationTestFactory.medication(name = "name 3")
         )
         val filtered = MedicationTestFactory.alwaysPlanned().plannedWithAnyTermInName(medications, setOf("Name 1", "2"))
-        Assert.assertEquals(3, filtered.size.toLong())
-        Assert.assertNotNull(findByName(filtered, "name 1"))
-        Assert.assertNotNull(findByName(filtered, "name 1 with some extension"))
-        Assert.assertNotNull(findByName(filtered, "name 2"))
+        assertThat(filtered.map(Medication::name)).containsExactlyInAnyOrder("name 1", "name 1 with some extension", "name 2")
     }
 
     @Test
-    fun canFilterOnActiveWithCypInteraction() {
+    fun `Should filter on active with CYP interaction`() {
         val medications = listOf(
-            TestMedicationFactory.builder().name("no cyp interactions").build(),
-            TestMedicationFactory.builder().name("uses CYP9A9 inducer").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
-            TestMedicationFactory.builder().name("uses CYP9A9 inhibitor").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
-            TestMedicationFactory.builder().name("uses different CYP inhibitor").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
+            MedicationTestFactory.medication(name = "no cyp interactions"),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "uses CYP9A9 inducer", cyp = "9A9", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "uses CYP9A9 inhibitor", cyp = "9A9", type = CypInteraction.Type.INHIBITOR, strength = CypInteraction.Strength.STRONG
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "uses different CYP inhibitor",
+                cyp = "3A4",
+                type = CypInteraction.Type.INHIBITOR,
+                strength = CypInteraction.Strength.STRONG
+            )
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
-        Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertNotNull(findByName(medications, "uses CYP9A9 inhibitor"))
+        assertThat(filtered.map(Medication::name)).containsExactly("uses CYP9A9 inhibitor")
     }
 
     @Test
-    fun canFilterOnPlannedWithCypInteraction() {
+    fun `Should filter on planned with cyp interaction`() {
         val medications = listOf(
-            TestMedicationFactory.builder().name("no cyp interactions").build(),
-            TestMedicationFactory.builder().name("plans to use CYP9A9 inducer").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
-            TestMedicationFactory.builder().name("plans to use CYP9A9 inhibitor").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
-            TestMedicationFactory.builder().name("plans to use different CYP inhibitor").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
+            MedicationTestFactory.medication(name = "no cyp interactions"),
+            MedicationTestFactory.medicationWithCypInteraction(
+                "9A9", CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, name = "plans to use CYP9A9 inducer"
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                "9A9", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG, name = "plans to use CYP9A9 inhibitor"
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                "3A4", CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG, name = "plans to use different CYP inhibitor"
+            )
         )
         val filtered = MedicationTestFactory.alwaysPlanned().plannedWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR)
-        Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertNotNull(findByName(medications, "plans to use CYP9A9 inhibitor"))
+        assertThat(filtered.map(Medication::name)).containsExactly("plans to use CYP9A9 inhibitor")
     }
 
     @Test
-    fun canFilterOnActiveWithAnyCypInducer() {
+    fun `Should filter on active with any CYP inducer`() {
         val medications = listOf(
-            TestMedicationFactory.builder().name("uses any CYP inducer").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
-            TestMedicationFactory.builder().name("uses any CYP inducer").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
-            TestMedicationFactory.builder().name("uses CYP inhibitor").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "uses a CYP inducer", cyp = "9A9", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "uses other CYP inducer", cyp = "3A4", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "uses CYP inhibitor", cyp = "3A4", type = CypInteraction.Type.INHIBITOR, strength = CypInteraction.Strength.STRONG
+            )
         )
         val filtered = MedicationTestFactory.alwaysActive().activeWithCypInteraction(medications, null, CypInteraction.Type.INDUCER)
-        Assert.assertEquals(2, filtered.size.toLong())
-        Assert.assertNotNull(findByName(medications, "uses any CYP inducer"))
+        assertThat(filtered.map(Medication::name)).containsExactlyInAnyOrder("uses a CYP inducer", "uses other CYP inducer")
     }
 
     @Test
-    fun canFilterOnActiveOrRecentlyStoppedWithCypInteraction() {
+    fun `Should filter on active or recently stopped with CYP interaction`() {
         val minStopDate = LocalDate.of(2019, 11, 20)
         val medications = listOf(
-            TestMedicationFactory.builder().name("no cyp interactions").build(),
-            TestMedicationFactory.builder().name("uses CYP9A9 inducer").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
-            TestMedicationFactory.builder().name("uses different CYP inducer").addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build(),
-            TestMedicationFactory.builder()
-                .name("CYP9A9 inhibitor recently stopped")
-                .addCypInteractions(
-                    ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR)
-                        .strength(CypInteraction.Strength.STRONG).build()
-                )
-                .stopDate(minStopDate.plusDays(1))
-                .build(),
-            TestMedicationFactory.builder()
-                .name("CYP9A9 inhibitor stopped long ago")
-                .addCypInteractions(
-                    ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INDUCER).strength(CypInteraction.Strength.STRONG)
-                        .build()
-                )
-                .stopDate(minStopDate.minusDays(1))
-                .build()
+            MedicationTestFactory.medication(name = "no cyp interactions"),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "uses CYP9A9 inducer", cyp = "9A9", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "uses other CYP inducer", cyp = "3A4", type = CypInteraction.Type.INDUCER, strength = CypInteraction.Strength.STRONG
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "CYP9A9 inhibitor recently stopped",
+                cyp = "9A9",
+                type = CypInteraction.Type.INHIBITOR,
+                strength = CypInteraction.Strength.STRONG,
+                stopDate = minStopDate.plusDays(1)
+            ),
+            MedicationTestFactory.medicationWithCypInteraction(
+                name = "CYP9A9 inhibitor stopped long ago",
+                cyp = "9A9",
+                type = CypInteraction.Type.INDUCER,
+                strength = CypInteraction.Strength.STRONG,
+                stopDate = minStopDate.minusDays(1)
+            )
         )
         val filtered = MedicationTestFactory.alwaysInactive()
             .activeOrRecentlyStoppedWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR, minStopDate)
-        Assert.assertEquals(1, filtered.size.toLong())
-        Assert.assertNotNull(findByName(medications, "CYP9A9 inhibitor recently stopped"))
-    }
-
-    companion object {
-        private fun findByName(medications: List<Medication>, nameToFind: String): Medication {
-            for (medication in medications) {
-                if (medication.name() == nameToFind) {
-                    return medication
-                }
-            }
-            throw IllegalStateException("Could not find medication with name: $nameToFind")
-        }
+        assertThat(filtered.map(Medication::name)).containsExactly("CYP9A9 inhibitor recently stopped")
     }
 }

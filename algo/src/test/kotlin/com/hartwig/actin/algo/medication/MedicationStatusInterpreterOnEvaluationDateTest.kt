@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.medication
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -13,116 +13,77 @@ class MedicationStatusInterpreterOnEvaluationDateTest {
     private val interpreter = MedicationStatusInterpreterOnEvaluationDate(evaluationDate)
 
     @Test
-    fun canInterpretMedicationWithActiveStatus() {
-        val activeNoStartAndStopDate = create(MedicationStatus.ACTIVE, null, null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(activeNoStartAndStopDate))
-        val activeNoStartDateAndStopped = create(MedicationStatus.ACTIVE, null, evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(activeNoStartDateAndStopped))
-        val activeNoStartDateAndNotStopped = create(MedicationStatus.ACTIVE, null, evaluationDate.plusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(activeNoStartDateAndNotStopped))
+    fun `Should always interpret medication status as unknown when no start date provided`() {
+        listOf(MedicationStatus.ACTIVE, MedicationStatus.CANCELLED, MedicationStatus.ON_HOLD, MedicationStatus.UNKNOWN, null)
+            .forEach(::assertMedicationStatusUnknownWithNoStartDate)
+    }
 
+    @Test
+    fun `Should interpret medication with active status`() {
         val activeStartedAndNoStopDate = create(MedicationStatus.ACTIVE, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.ACTIVE, interpreter.interpret(activeStartedAndNoStopDate))
+        assertThat(interpreter.interpret(activeStartedAndNoStopDate)).isEqualTo(MedicationStatusInterpretation.ACTIVE)
         val activeStartedAndStopped = create(MedicationStatus.ACTIVE, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(activeStartedAndStopped))
+        assertThat(interpreter.interpret(activeStartedAndStopped)).isEqualTo(MedicationStatusInterpretation.STOPPED)
         val activeStartedAndNotStopped = create(MedicationStatus.ACTIVE, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.ACTIVE, interpreter.interpret(activeStartedAndNotStopped))
+        assertThat(interpreter.interpret(activeStartedAndNotStopped)).isEqualTo(MedicationStatusInterpretation.ACTIVE)
 
-        val activeStartingInFutureAndNoStopDate = create(MedicationStatus.ACTIVE, evaluationDate.plusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.PLANNED, interpreter.interpret(activeStartingInFutureAndNoStopDate))
-        val activeStartingInFutureAndNotStopped = create(MedicationStatus.ACTIVE, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.PLANNED, interpreter.interpret(activeStartingInFutureAndNotStopped))
+        assertInterpretationForFutureMedication(MedicationStatus.ACTIVE, MedicationStatusInterpretation.PLANNED)
     }
 
     @Test
-    fun canInterpretMedicationWithCancelledStatus() {
-        val cancelledNoStartAndStopDate = create(MedicationStatus.CANCELLED, null, null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(cancelledNoStartAndStopDate))
-        val cancelledNoStartDateAndStopped = create(MedicationStatus.CANCELLED, null, evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(cancelledNoStartDateAndStopped))
-        val cancelledNoStartDateAndNotStopped = create(MedicationStatus.CANCELLED, null, evaluationDate.plusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(cancelledNoStartDateAndNotStopped))
-
-        val cancelledStartedAndNoStopDate = create(MedicationStatus.CANCELLED, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.CANCELLED, interpreter.interpret(cancelledStartedAndNoStopDate))
-        val cancelledStartedAndStopped = create(MedicationStatus.CANCELLED, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.CANCELLED, interpreter.interpret(cancelledStartedAndStopped))
-        val cancelledStartedAndNotStopped = create(MedicationStatus.CANCELLED, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.CANCELLED, interpreter.interpret(cancelledStartedAndNotStopped))
-
-        val cancelledStartingInFutureAndNoStopDate = create(MedicationStatus.CANCELLED, evaluationDate.plusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.CANCELLED, interpreter.interpret(cancelledStartingInFutureAndNoStopDate))
-        val cancelledStartingInFutureAndNotStopped = create(MedicationStatus.CANCELLED, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.CANCELLED, interpreter.interpret(cancelledStartingInFutureAndNotStopped))
+    fun `Should interpret medication with cancelled status`() {
+        assertInterpretationForStartedMedication(MedicationStatus.CANCELLED, MedicationStatusInterpretation.CANCELLED)
+        assertInterpretationForFutureMedication(MedicationStatus.CANCELLED, MedicationStatusInterpretation.CANCELLED)
     }
 
     @Test
-    fun canInterpretMedicationWithOnHoldStatus() {
-        val onHoldNoStartAndStopDate = create(MedicationStatus.ON_HOLD, null, null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(onHoldNoStartAndStopDate))
-        val onHoldNoStartDateAndStopped = create(MedicationStatus.ON_HOLD, null, evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(onHoldNoStartDateAndStopped))
-        val onHoldNoStartDateAndNotStopped = create(MedicationStatus.ON_HOLD, null, evaluationDate.plusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(onHoldNoStartDateAndNotStopped))
-
-        val onHoldStartedAndNoStopDate = create(MedicationStatus.ON_HOLD, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(onHoldStartedAndNoStopDate))
-        val onHoldStartedAndStopped = create(MedicationStatus.ON_HOLD, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(onHoldStartedAndStopped))
-        val onHoldStartedAndNotStopped = create(MedicationStatus.ON_HOLD, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(onHoldStartedAndNotStopped))
-
-        val onHoldStartingInFutureAndNoStopDate = create(MedicationStatus.ON_HOLD, evaluationDate.plusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(onHoldStartingInFutureAndNoStopDate))
-        val onHoldStartingInFutureAndNotStopped = create(MedicationStatus.ON_HOLD, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(onHoldStartingInFutureAndNotStopped))
+    fun `Should interpret medication with on hold status`() {
+        assertInterpretationForStartedMedication(MedicationStatus.ON_HOLD, MedicationStatusInterpretation.STOPPED)
+        assertInterpretationForFutureMedication(MedicationStatus.ON_HOLD, MedicationStatusInterpretation.STOPPED)
     }
 
     @Test
-    fun canInterpretMedicationWithUnknownStatus(){
-        val unknownStatusNoStartAndStopDate = create(MedicationStatus.UNKNOWN, null, null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusNoStartAndStopDate))
-        val unknownStatusNoStartDateAndStopped = create(MedicationStatus.UNKNOWN, null, evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusNoStartDateAndStopped))
-        val unknownStatusNoStartDateAndNotStopped = create(MedicationStatus.UNKNOWN, null, evaluationDate.plusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusNoStartDateAndNotStopped))
-
-        val unknownStatusStartedAndNoStopDate = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartedAndNoStopDate))
-        val unknownStatusStartedAndStopped = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartedAndStopped))
-        val unknownStatusStartedAndNotStopped = create(MedicationStatus.UNKNOWN, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartedAndNotStopped))
-
-        val unknownStatusStartingInFutureAndNoStopDate = create(MedicationStatus.UNKNOWN, evaluationDate.plusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartingInFutureAndNoStopDate))
-        val unknownStatusStartingInFutureAndNotStopped = create(MedicationStatus.UNKNOWN, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(unknownStatusStartingInFutureAndNotStopped))
+    fun `Should interpret medication with unknown status`() {
+        assertInterpretationForStartedMedication(MedicationStatus.UNKNOWN, MedicationStatusInterpretation.UNKNOWN)
+        assertInterpretationForFutureMedication(MedicationStatus.UNKNOWN, MedicationStatusInterpretation.UNKNOWN)
     }
 
     @Test
-    fun canInterpretMedicationWithoutStatus() {
-        val noStatusNoStartAndStopDate = create(null, null, null)
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(noStatusNoStartAndStopDate))
-        val noStatusNoStartDateAndStopped = create(null, null, evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(noStatusNoStartDateAndStopped))
-        val noStatusNoStartDateAndNotStopped = create(null, null, evaluationDate.plusDays(1))
-        assertEquals(MedicationStatusInterpretation.UNKNOWN, interpreter.interpret(noStatusNoStartDateAndNotStopped))
-
+    fun `Should interpret medication without status`() {
         val noStatusStartedAndNoStopDate = create(null, evaluationDate.minusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.ACTIVE, interpreter.interpret(noStatusStartedAndNoStopDate))
+        assertThat(interpreter.interpret(noStatusStartedAndNoStopDate)).isEqualTo(MedicationStatusInterpretation.ACTIVE)
         val noStatusStartedAndStopped = create(null, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
-        assertEquals(MedicationStatusInterpretation.STOPPED, interpreter.interpret(noStatusStartedAndStopped))
+        assertThat(interpreter.interpret(noStatusStartedAndStopped)).isEqualTo(MedicationStatusInterpretation.STOPPED)
         val noStatusStartedAndNotStopped = create(null, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.ACTIVE, interpreter.interpret(noStatusStartedAndNotStopped))
+        assertThat(interpreter.interpret(noStatusStartedAndNotStopped)).isEqualTo(MedicationStatusInterpretation.ACTIVE)
 
-        val noStatusStartingInFutureAndNoStopDate = create(null, evaluationDate.plusDays(1), null)
-        assertEquals(MedicationStatusInterpretation.PLANNED, interpreter.interpret(noStatusStartingInFutureAndNoStopDate))
-        val noStatusStartingInFutureAndNotStopped = create(null, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
-        assertEquals(MedicationStatusInterpretation.PLANNED, interpreter.interpret(noStatusStartingInFutureAndNotStopped))
+        assertInterpretationForFutureMedication(null, MedicationStatusInterpretation.PLANNED)
+    }
+
+    private fun assertMedicationStatusUnknownWithNoStartDate(providedStatus: MedicationStatus?) {
+        listOf(null, evaluationDate.minusDays(1), evaluationDate.plusDays(1)).forEach { stopDate ->
+            val medication = create(providedStatus, null, stopDate)
+            assertThat(interpreter.interpret(medication)).isEqualTo(MedicationStatusInterpretation.UNKNOWN)
+        }
+    }
+
+    private fun assertInterpretationForStartedMedication(providedStatus: MedicationStatus, expectedStatus: MedicationStatusInterpretation) {
+        val startedAndNoStopDate = create(providedStatus, evaluationDate.minusDays(1), null)
+        assertThat(interpreter.interpret(startedAndNoStopDate)).isEqualTo(expectedStatus)
+        val startedAndStopped = create(providedStatus, evaluationDate.minusDays(2), evaluationDate.minusDays(1))
+        assertThat(interpreter.interpret(startedAndStopped)).isEqualTo(expectedStatus)
+        val startedAndNotStopped = create(providedStatus, evaluationDate.minusDays(1), evaluationDate.plusDays(2))
+        assertThat(interpreter.interpret(startedAndNotStopped)).isEqualTo(expectedStatus)
+    }
+
+    private fun assertInterpretationForFutureMedication(providedStatus: MedicationStatus?, expectedStatus: MedicationStatusInterpretation) {
+        val startingInFutureAndNoStopDate = create(providedStatus, evaluationDate.plusDays(1), null)
+        assertThat(interpreter.interpret(startingInFutureAndNoStopDate)).isEqualTo(expectedStatus)
+        val startingInFutureAndNotStopped = create(providedStatus, evaluationDate.plusDays(1), evaluationDate.plusDays(2))
+        assertThat(interpreter.interpret(startingInFutureAndNotStopped)).isEqualTo(expectedStatus)
     }
 
     private fun create(status: MedicationStatus?, startDate: LocalDate?, stopDate: LocalDate?): Medication {
-        return TestMedicationFactory.builder().status(status).startDate(startDate).stopDate(stopDate).build()
+        return TestMedicationFactory.createMinimal().copy(status = status, startDate = startDate, stopDate = stopDate)
     }
 }

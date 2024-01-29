@@ -15,7 +15,11 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
 
         if (relevant.isEmpty()) {
             return EvaluationFactory.undetermined(
-                if (wrongUnit.isEmpty()) "No (recent) pulse oximetry data found" else "Pulse oximetry measurements not in correct unit (${EXPECTED_UNIT})"
+                if (wrongUnit.isEmpty()) {
+                    "No (recent) pulse oximetry data found"
+                } else {
+                    "Pulse oximetry measurements not in correct unit (${EXPECTED_UNIT})"
+                }
             )
         }
 

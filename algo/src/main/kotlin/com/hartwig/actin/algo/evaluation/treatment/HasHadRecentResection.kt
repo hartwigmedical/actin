@@ -15,14 +15,14 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
         var hasHadResectionAfterMoreLenientMinDate = false
         var mayHaveHadResectionAfterMinDate = false
 
-        for (treatmentHistoryEntry in record.clinical().oncologicalHistory()) {
-            val isPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
+        for (treatmentHistoryEntry in record.clinical.oncologicalHistory) {
+            val isPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val isPastMoreLenientMinDate =
-                isAfterDate(minDate.minusWeeks(2), treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
+                isAfterDate(minDate.minusWeeks(2), treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val isResection =
-                treatmentHistoryEntry.treatments().any { it.name().lowercase().contains(RESECTION_KEYWORD) }
-            val isPotentialResection = treatmentHistoryEntry.treatments().any {
-                it.categories().contains(TreatmentCategory.SURGERY) && it.name().isEmpty()
+                treatmentHistoryEntry.treatments.any { it.name.lowercase().contains(RESECTION_KEYWORD) }
+            val isPotentialResection = treatmentHistoryEntry.treatments.any {
+                it.categories().contains(TreatmentCategory.SURGERY) && it.name.isEmpty()
             }
             if (isResection) {
                 if (isPastMinDate == null) {

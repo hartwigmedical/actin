@@ -2,20 +2,19 @@ package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 
-class HasHadOrganTransplant internal constructor(private val minYear: Int?) : EvaluationFunction {
+class HasHadOrganTransplant(private val minYear: Int?) : EvaluationFunction {
+    
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasOrganTransplantWithUnknownYear = false
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
-            if (condition.category() == ORGAN_TRANSPLANT_CATEGORY) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+            if (condition.category == ORGAN_TRANSPLANT_CATEGORY) {
                 var isPass = minYear == null
                 if (minYear != null) {
-                    val conditionYear = condition.year()
+                    val conditionYear = condition.year
                     if (conditionYear == null) {
                         hasOrganTransplantWithUnknownYear = true
                     } else {
@@ -23,15 +22,14 @@ class HasHadOrganTransplant internal constructor(private val minYear: Int?) : Ev
                     }
                 }
                 if (isPass) {
-                    val builder = unrecoverable().result(EvaluationResult.PASS)
-                    if (minYear != null) {
-                        builder.addPassSpecificMessages("Patient has had an organ transplant at some point in or after $minYear")
-                        builder.addPassGeneralMessages("Patient had organ transplant in or after $minYear")
+                    return if (minYear != null) {
+                        EvaluationFactory.pass(
+                            "Patient has had an organ transplant at some point in or after $minYear",
+                            "Patient had organ transplant in or after $minYear"
+                        )
                     } else {
-                        builder.addPassSpecificMessages("Patient has had an organ transplant")
-                        builder.addPassGeneralMessages("Has had organ transplant")
+                        EvaluationFactory.pass("Patient has had an organ transplant", "Has had organ transplant")
                     }
-                    return builder.build()
                 }
             }
         }

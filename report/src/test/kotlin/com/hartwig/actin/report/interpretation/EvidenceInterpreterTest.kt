@@ -2,7 +2,6 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidence
-import com.hartwig.actin.molecular.interpretation.ImmutableAggregatedEvidence
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,28 +11,19 @@ class EvidenceInterpreterTest {
     fun shouldInterpretEvidence() {
         val cohortWithInclusion: EvaluatedCohort = evaluatedCohort(molecularEvents = setOf("inclusion"))
         val interpreter = EvidenceInterpreter.fromEvaluatedCohorts(listOf(cohortWithInclusion))
-        val evidence: AggregatedEvidence = ImmutableAggregatedEvidence.builder()
-            .putApprovedTreatmentsPerEvent("approved", "treatment")
-            .putExternalEligibleTrialsPerEvent(
-                "external",
-                TestExternalTrialFactory.createTestTrial()
-            )
-            .putExternalEligibleTrialsPerEvent(
-                "approved",
-                TestExternalTrialFactory.createTestTrial()
-            )
-            .putExternalEligibleTrialsPerEvent(
-                "inclusion",
-                TestExternalTrialFactory.createTestTrial()
-            )
-            .putOnLabelExperimentalTreatmentsPerEvent("on-label", "treatment")
-            .putOnLabelExperimentalTreatmentsPerEvent("approved", "treatment")
-            .putOffLabelExperimentalTreatmentsPerEvent("off-label", "treatment")
-            .putOffLabelExperimentalTreatmentsPerEvent("on-label", "treatment")
-            .putPreClinicalTreatmentsPerEvent("pre-clinical", "treatment")
-            .putKnownResistantTreatmentsPerEvent("known", "treatment")
-            .putSuspectResistanceTreatmentsPerEvent("suspect", "treatment")
-            .build()
+        val evidence = AggregatedEvidence(
+            approvedTreatmentsPerEvent = mapOf("approved" to listOf("treatment")),
+            externalEligibleTrialsPerEvent = mapOf(
+                "external" to listOf(TestExternalTrialFactory.createTestTrial()),
+                "approved" to listOf(TestExternalTrialFactory.createTestTrial()),
+                "inclusion" to listOf(TestExternalTrialFactory.createTestTrial())
+            ),
+            onLabelExperimentalTreatmentsPerEvent = mapOf("on-label" to listOf("treatment"), "approved" to listOf("treatment")),
+            offLabelExperimentalTreatmentsPerEvent = mapOf("off-label" to listOf("treatment"), "on-label" to listOf("treatment")),
+            preClinicalTreatmentsPerEvent = mapOf("pre-clinical" to listOf("treatment")),
+            knownResistantTreatmentsPerEvent = mapOf("known" to listOf("treatment")),
+            suspectResistantTreatmentsPerEvent = mapOf("suspect" to listOf("treatment"))
+        )
 
         val approved = interpreter.eventsWithApprovedEvidence(evidence)
         assertThat(approved).containsExactly("approved")

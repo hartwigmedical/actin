@@ -8,20 +8,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasKnownActiveCnsMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasCnsMetastases = record.clinical().tumor().hasCnsLesions()
-        var hasActiveCnsLesions = record.clinical().tumor().hasActiveCnsLesions()
-        val hasBrainMetastases = record.clinical().tumor().hasBrainLesions()
-        var hasActiveBrainMetastases = record.clinical().tumor().hasActiveBrainLesions()
+        val hasCnsMetastases = record.clinical.tumor.hasCnsLesions
+        // If a patient's active CNS lesion status is unknown, set to false if patient is known to have no CNS metastases
+        val hasActiveCnsLesions = record.clinical.tumor.hasActiveCnsLesions ?: if (hasCnsMetastases == false) false else null
 
-        // If a patient is known to have no cns metastases, update active to false in case it is unknown.
-        if (hasCnsMetastases != null && !hasCnsMetastases) {
-            hasActiveCnsLesions = hasActiveCnsLesions ?: false
-        }
+        val hasBrainMetastases = record.clinical.tumor.hasBrainLesions
+        // If a patient's active brain metastases status is unknown, set to false if patient is known to have no brain metastases
+        val hasActiveBrainMetastases = record.clinical.tumor.hasActiveBrainLesions ?: if (hasBrainMetastases == false) false else null
 
-        // If a patient is known to have no brain metastases, update active to false in case it is unknown.
-        if (hasBrainMetastases != null && !hasBrainMetastases) {
-            hasActiveBrainMetastases = hasActiveBrainMetastases ?: false
-        }
         if (hasActiveCnsLesions == null && hasActiveBrainMetastases == null) {
             return if (hasCnsMetastases == true || hasBrainMetastases == true) {
                 EvaluationFactory.undetermined(

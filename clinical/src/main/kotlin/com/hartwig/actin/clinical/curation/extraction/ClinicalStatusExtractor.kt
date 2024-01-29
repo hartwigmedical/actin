@@ -10,10 +10,7 @@ import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ECG
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableECG
-import com.hartwig.actin.clinical.datamodel.ImmutableECGMeasure
-import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
+import com.hartwig.actin.clinical.datamodel.ECGMeasure
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 
@@ -25,24 +22,25 @@ class ClinicalStatusExtractor(
 
     fun extract(patientId: String, questionnaire: Questionnaire?, hasComplications: Boolean?): ExtractionResult<ClinicalStatus> {
         if (questionnaire == null) {
-            return ExtractionResult(ImmutableClinicalStatus.builder().build(), ExtractionEvaluation())
+            return ExtractionResult(ClinicalStatus(), ExtractionEvaluation())
         }
         val ecgCuration = curateECG(patientId, questionnaire.ecg)
         val infectionCuration = curateInfection(patientId, questionnaire.infectionStatus)
 
-        val clinicalStatus = ImmutableClinicalStatus.builder()
-            .who(questionnaire.whoStatus)
-            .infectionStatus(infectionCuration.extracted)
-            .ecg(ecgCuration.extracted)
-            .lvef(determineLVEF(questionnaire.nonOncologicalHistory))
-            .hasComplications(hasComplications)
-            .build()
+        val clinicalStatus = ClinicalStatus(
+            who = questionnaire.whoStatus,
+            infectionStatus = infectionCuration.extracted,
+            ecg = ecgCuration.extracted,
+            lvef = determineLVEF(questionnaire.nonOncologicalHistory),
+            hasComplications = hasComplications
+        )
+            
 
         return ExtractionResult(clinicalStatus, ecgCuration.evaluation + infectionCuration.evaluation)
     }
 
     private fun curateECG(patientId: String, rawECG: ECG?): ExtractionResult<ECG?> {
-        val curationResponse = rawECG?.aberrationDescription()?.let {
+        val curationResponse = rawECG?.aberrationDescription?.let {
             CurationResponse.createFromConfigs(
                 ecgCuration.find(it), patientId, CurationCategory.ECG, it, "ECG", true
             )
@@ -51,22 +49,19 @@ class ClinicalStatusExtractor(
             0 -> {
                 rawECG
             }
-
             1 -> {
                 val config = curationResponse.configs.first()
                 if (config.ignore) null else {
                     return ExtractionResult(
-                        ImmutableECG.builder()
-                            .from(rawECG)
-                            .aberrationDescription(config.interpretation.ifEmpty { null })
-                            .qtcfMeasure(maybeECGMeasure(config.qtcfValue, config.qtcfUnit))
-                            .jtcMeasure(maybeECGMeasure(config.jtcValue, config.jtcUnit))
-                            .build(),
+                        rawECG.copy(
+                            aberrationDescription = config.interpretation.ifEmpty { null },
+                            qtcfMeasure = maybeECGMeasure(config.qtcfValue, config.qtcfUnit),
+                            jtcMeasure = maybeECGMeasure(config.jtcValue, config.jtcUnit)
+                        ),
                         curationResponse.extractionEvaluation
                     )
                 }
             }
-
             else -> {
                 null
             }
@@ -75,7 +70,7 @@ class ClinicalStatusExtractor(
     }
 
     private fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
-        val curationResponse = rawInfectionStatus?.description()?.let {
+        val curationResponse = rawInfectionStatus?.description?.let {
             CurationResponse.createFromConfigs(
                 infectionCuration.find(it), patientId, CurationCategory.INFECTION, it, "infection", true
             )
@@ -84,17 +79,10 @@ class ClinicalStatusExtractor(
             0 -> {
                 rawInfectionStatus
             }
-
             1 -> {
                 val config = curationResponse.configs.first()
-                if (config.ignore) null else {
-                    ImmutableInfectionStatus.builder()
-                        .from(rawInfectionStatus)
-                        .description(config.interpretation.ifEmpty { null })
-                        .build()
-                }
+                if (config.ignore) null else rawInfectionStatus.copy(description = config.interpretation.ifEmpty { null })
             }
-
             else -> {
                 null
             }
@@ -102,10 +90,10 @@ class ClinicalStatusExtractor(
         return ExtractionResult(infectionStatus, curationResponse?.extractionEvaluation ?: ExtractionEvaluation())
     }
 
-    private fun maybeECGMeasure(value: Int?, unit: String?): ImmutableECGMeasure? {
+    private fun maybeECGMeasure(value: Int?, unit: String?): ECGMeasure? {
         return if (value == null || unit == null) {
             null
-        } else ImmutableECGMeasure.builder().value(value).unit(unit).build()
+        } else ECGMeasure(value = value, unit = unit)
     }
 
     private fun determineLVEF(nonOncologicalHistoryEntries: List<String>?): Double? {

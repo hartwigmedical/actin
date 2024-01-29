@@ -2,11 +2,10 @@ package com.hartwig.actin.clinical
 
 import com.google.common.collect.Lists
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Gender
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.PatientDetails
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
@@ -19,7 +18,7 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
         val patientId = command.getOptionValue(PATIENT)
-        val doids = toStringSet(command.getOptionValue(PRIMARY_TUMOR_DOIDS), ";")
+        val doids = toStringSet(command.getOptionValue(PRIMARY_TUMOR_DOIDS))
 
         LOGGER.info("Creating clinical record for {} with doids {}", patientId, doids)
         val record = createRecord(patientId, doids)
@@ -32,27 +31,42 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
     }
 
     companion object {
+        private const val SEPARATOR = ";"
         private val LOGGER = LogManager.getLogger(BuildClinicalFromDoidsOnly::class.java)
         private val VERSION = BuildClinicalFromDoidsOnly::class.java.getPackage().implementationVersion
 
         private fun createRecord(patientId: String, doids: Set<String>): ClinicalRecord {
-            return ImmutableClinicalRecord.builder()
-                .patientId(patientId)
-                .patient(
-                    ImmutablePatientDetails.builder()
-                        .gender(Gender.FEMALE)
-                        .birthYear(LocalDate.now().year)
-                        .registrationDate(LocalDate.now())
-                        .build()
-                )
-                .tumor(ImmutableTumorDetails.builder().doids(doids).build())
-                .clinicalStatus(ImmutableClinicalStatus.builder().build())
-                .build()
+            return ClinicalRecord(
+                patientId = patientId,
+                patient = PatientDetails(
+                    gender = Gender.FEMALE,
+                    birthYear = LocalDate.now().year,
+                    registrationDate = LocalDate.now(),
+                    questionnaireDate = null,
+                    otherMolecularPatientId = null
+                ),
+                tumor = TumorDetails(doids = doids),
+                clinicalStatus = ClinicalStatus(),
+                oncologicalHistory = emptyList(),
+                priorSecondPrimaries = emptyList(),
+                priorOtherConditions = emptyList(),
+                priorMolecularTests = emptyList(),
+                complications = null,
+                labValues = emptyList(),
+                toxicities = emptyList(),
+                intolerances = emptyList(),
+                surgeries = emptyList(),
+                bodyWeights = emptyList(),
+                vitalFunctions = emptyList(),
+                bloodTransfusions = emptyList(),
+                medications = emptyList()
+            )
         }
 
-        private fun toStringSet(paramValue: String, separator: String): Set<String> {
-            return if (paramValue.isNotEmpty()) paramValue.split(separator.toRegex()).dropLastWhile { it.isEmpty() }
-                .toSet() else emptySet()
+        private fun toStringSet(paramValue: String): Set<String> {
+            return if (paramValue.isNotEmpty()) {
+                paramValue.split(SEPARATOR).dropLastWhile { it.isEmpty() }.toSet()
+            } else emptySet()
         }
     }
 }

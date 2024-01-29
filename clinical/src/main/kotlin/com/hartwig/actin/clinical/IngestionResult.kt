@@ -36,7 +36,7 @@ data class PatientIngestionResult(
             feedValidationWarnings: Set<FeedValidationWarning>
         ): PatientIngestionResult {
             return PatientIngestionResult(
-                record.patientId(),
+                record.patientId,
                 status(questionnaire, warnings),
                 record,
                 warnings.groupBy { it.category.categoryName }.map { (categoryName, warnings) ->

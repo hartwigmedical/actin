@@ -1,62 +1,47 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ECG
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableECG
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 
 internal object CardiacFunctionTestFactory {
-    fun builder(): ImmutableECG.Builder {
-        return ImmutableECG.builder().hasSigAberrationLatestECG(false)
+    fun createMinimal(): ECG {
+        return ECG(hasSigAberrationLatestECG = false, null, null, null)
     }
 
     fun withHasSignificantECGAberration(hasSignificantECGAberration: Boolean): PatientRecord {
-        return withECG(builder().hasSigAberrationLatestECG(hasSignificantECGAberration).build())
+        return withHasSignificantECGAberration(hasSignificantECGAberration, null)
     }
 
     fun withHasSignificantECGAberration(hasSignificantECGAberration: Boolean, description: String?): PatientRecord {
-        return withECG(builder().hasSigAberrationLatestECG(hasSignificantECGAberration).aberrationDescription(description).build())
+        return withECG(createMinimal().copy(hasSigAberrationLatestECG = hasSignificantECGAberration, aberrationDescription = description))
     }
 
     fun withLVEF(lvef: Double?): PatientRecord {
         val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder()
-            .from(base)
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(base.clinical())
-                    .clinicalStatus(ImmutableClinicalStatus.builder().from(base.clinical().clinicalStatus()).lvef(lvef).build())
-                    .build()
-            )
-            .build()
+        return base.copy(
+            clinical = (base.clinical.copy(
+                clinicalStatus = base.clinical.clinicalStatus.copy(lvef = lvef)
+            ))
+        )
     }
 
     fun withECG(ecg: ECG?): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .clinicalStatus(ImmutableClinicalStatus.builder().ecg(ecg).build())
-                    .build()
+        return TestDataFactory.createMinimalTestPatientRecord().copy(
+            clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(
+                clinicalStatus = ClinicalStatus(ecg = ecg)
             )
-            .build()
+        )
     }
 
     fun withPriorOtherCondition(priorOtherCondition: PriorOtherCondition): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .priorOtherConditions(listOf(priorOtherCondition))
-                    .build()
+        return TestDataFactory.createMinimalTestPatientRecord().copy(
+            clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(
+                priorOtherConditions = listOf(priorOtherCondition)
             )
-            .build()
+        )
     }
 }

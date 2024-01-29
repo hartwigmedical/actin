@@ -10,8 +10,8 @@ import com.hartwig.actin.doid.DoidModel
 class HasSpecificInfection internal constructor(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToFind)
-        val hasSpecificInfection = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())
-            .flatMap { it.doids() }
+        val hasSpecificInfection = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+            .flatMap { it.doids }
             .flatMap { doidModel.doidWithParents(it) }
             .contains(doidToFind)
 

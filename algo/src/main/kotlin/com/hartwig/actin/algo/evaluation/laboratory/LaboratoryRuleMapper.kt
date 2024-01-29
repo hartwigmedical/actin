@@ -2,9 +2,8 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
@@ -16,8 +15,8 @@ import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctionFactory
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import java.time.LocalDate
 
 class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -123,7 +122,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasSufficientLabValueCreator(
         measurement: LabMeasurement,
-        targetUnit: LabUnit = measurement.defaultUnit()
+        targetUnit: LabUnit = measurement.defaultUnit
     ): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minValue = functionInputResolver().createOneDoubleInput(function)
@@ -138,7 +137,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
-    private fun hasLimitedLabValueCreator(measurement: LabMeasurement, targetUnit: LabUnit = measurement.defaultUnit()): FunctionCreator {
+    private fun hasLimitedLabValueCreator(measurement: LabMeasurement, targetUnit: LabUnit = measurement.defaultUnit): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val maxValue = functionInputResolver().createOneDoubleInput(function)
             createLabEvaluator(measurement, HasLimitedLabValue(maxValue, measurement, targetUnit))
@@ -184,7 +183,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val main = createLabEvaluator(
                 measurement,
-                HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit())
+                HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit)
             )
             val fallback = createLabEvaluator(
                 LabMeasurement.CREATININE,
@@ -206,21 +205,11 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val mininumDateForBodyWeights = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val minFunction = createLabEvaluator(
                 measurement,
-                HasSufficientDerivedCreatinineClearance(
-                    referenceDateProvider().year(),
-                    method,
-                    inputs.double1(),
-                    mininumDateForBodyWeights
-                )
+                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1, mininumDateForBodyWeights)
             )
             val maxFunction = createLabEvaluator(
                 measurement,
-                HasLimitedDerivedCreatinineClearance(
-                    referenceDateProvider().year(),
-                    method,
-                    inputs.double2(),
-                    mininumDateForBodyWeights
-                )
+                HasLimitedDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double2, mininumDateForBodyWeights)
             )
             And(listOf(minFunction, maxFunction))
         }
@@ -289,10 +278,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             return FunctionCreator {
                 object : EvaluationFunction {
                     override fun evaluate(record: PatientRecord): Evaluation {
-                        return recoverable()
-                            .result(EvaluationResult.UNDETERMINED)
-                            .addUndeterminedSpecificMessages("It is not clear yet under what code '$measure' is measured")
-                            .build()
+                        return EvaluationFactory.recoverableUndeterminedNoGeneral(
+                            "It is not clear yet under what code '$measure' is measured"
+                        )
                     }
                 }
             }
