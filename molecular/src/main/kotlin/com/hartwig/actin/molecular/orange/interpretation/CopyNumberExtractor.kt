@@ -9,9 +9,12 @@ import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
+import javax.swing.Action
+import kotlin.collections.emptyList as emptyList
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
 
@@ -81,4 +84,38 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
             return null
         }
     }
+
+    fun extractGeneCopyNumbers(purple: PurpleRecord, reportableCopyNumbers: MutableSet<CopyNumber>): MutableSet<CopyNumber> {
+        val copyNumbers: MutableSet<CopyNumber> = Sets.newTreeSet(CopyNumberComparator())
+        val drivers: MutableSet<PurpleDriver> = VariantExtractor.relevantPurpleDrivers(purple)
+        val reportable = reportableCopyNumbers.map{it.gene()}
+        for (geneCopyNumber in purple.allSomaticGeneCopyNumbers()) {
+            println("Processing " + geneCopyNumber.gene())
+            val driver = findCopyNumberDriver(drivers, geneCopyNumber.gene())
+            println("Is driver? " + driver)
+
+            if (geneFilter.include(geneCopyNumber.gene()) && geneCopyNumber.gene() !in reportable) {
+                println("Adding " + geneCopyNumber.gene())
+                copyNumbers.add(
+                    ImmutableCopyNumber.builder()
+                        .from(
+                            GeneAlterationFactory.convertAlteration(
+                                geneCopyNumber.gene(),
+                                null
+                            )
+                        )
+                        .isReportable(false)
+                        .event("copy number event")
+                        .driverLikelihood(DriverLikelihood.LOW)
+                        .evidence(ActionableEvidenceFactory.createNoEvidence())
+                        .type(CopyNumberType.NONE)
+                        .minCopies(Math.round(geneCopyNumber.minCopyNumber()).toInt())
+                        .maxCopies(Math.round(geneCopyNumber.minCopyNumber()).toInt()) //TODO: maxCopies should be retrievable from ORANGE datamodel.
+                        .build()
+                )
+            }
+        }
+        return copyNumbers
+    }
+
 }

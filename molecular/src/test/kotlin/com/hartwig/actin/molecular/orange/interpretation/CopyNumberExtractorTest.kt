@@ -12,6 +12,7 @@ import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.PurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -49,14 +50,34 @@ class CopyNumberExtractorTest {
             .maxCopies(20.4)
             .interpretation(CopyNumberInterpretation.FULL_GAIN)
             .build()
+        val geneCopyNumber1: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder()
+            .gene("gene 1")
+            .minCopyNumber(1.1)
+            .minMinorAlleleCopyNumber(0.0)
+            .build()
+        val geneCopyNumber2: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder()
+            .gene("gene 2")
+            .minCopyNumber(4.2)
+            .minMinorAlleleCopyNumber(1.8)
+            .build()
+        val geneCopyNumber3: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder()
+            .gene("gene 3")
+            .minCopyNumber(5.1)
+            .minMinorAlleleCopyNumber(2.2)
+            .build()
+        val geneCopyNumber4: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder()
+            .gene("gene 5")
+            .minCopyNumber(1.0)
+            .minMinorAlleleCopyNumber(2.0)
+            .build()
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addSomaticDrivers(driver1)
             .addAllSomaticGainsLosses(gainLoss1, gainLoss2, gainLoss3, gainLoss4)
+            .addAllSomaticGeneCopyNumbers(geneCopyNumber1, geneCopyNumber2, geneCopyNumber3, geneCopyNumber4)
             .build()
-        val geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene())
+        val geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene(), geneCopyNumber4.gene())
         val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
-
         val copyNumbers = copyNumberExtractor.extract(purple)
         assertEquals(3, copyNumbers.size.toLong())
 
@@ -77,6 +98,10 @@ class CopyNumberExtractorTest {
         val gene4 = findByGene(copyNumbers, "gene 4")
         assertEquals(20, gene4.minCopies().toLong())
         assertEquals(20, gene4.maxCopies().toLong())
+
+        val geneCopyNumbers = copyNumberExtractor.extractGeneCopyNumbers(purple, copyNumbers)
+        for (cn in geneCopyNumbers) println(cn)
+        println()
     }
 
     @Test(expected = IllegalStateException::class)
