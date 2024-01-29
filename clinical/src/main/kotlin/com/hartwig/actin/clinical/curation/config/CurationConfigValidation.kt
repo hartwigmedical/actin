@@ -10,7 +10,17 @@ data class CurationConfigValidationError(
     val invalidValue: String,
     val validType: String,
     val additionalMessage: String? = null
-)
+) : Comparable<CurationConfigValidationError> {
+
+    override fun compareTo(other: CurationConfigValidationError): Int {
+        return Comparator.comparing(CurationConfigValidationError::categoryName)
+            .thenComparing(CurationConfigValidationError::fieldName)
+            .thenComparing(CurationConfigValidationError::input)
+            .thenComparing(CurationConfigValidationError::invalidValue)
+            .thenComparing(CurationConfigValidationError::validType)
+            .compare(this, other)
+    }
+}
 
 data class ValidatedCurationConfig<T : CurationConfig>(val config: T, val errors: List<CurationConfigValidationError> = emptyList())
 
