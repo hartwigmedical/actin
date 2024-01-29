@@ -24,8 +24,8 @@ class PriorMolecularTestsExtractor(
         }
 
         val curation = listOf(
-            curate(patientId, "IHC", questionnaire.ihcTestResults ?: emptyList(), molecularTestIhcCuration),
-            curate(patientId, "PD-L1", questionnaire.pdl1TestResults ?: emptyList(), molecularTestPdl1Curation)
+            curate(patientId, "IHC", questionnaire.ihcTestResults, molecularTestIhcCuration),
+            curate(patientId, "PD-L1", questionnaire.pdl1TestResults, molecularTestPdl1Curation)
         )
             .flatten().fold(CurationResponse<MolecularTestConfig>()) { acc, cur -> acc + cur }
 
@@ -36,8 +36,8 @@ class PriorMolecularTestsExtractor(
         fun create(curationDatabaseContext: CurationDatabaseContext) =
             PriorMolecularTestsExtractor(curationDatabaseContext.molecularTestIhcCuration, curationDatabaseContext.molecularTestPdl1Curation)
 
-        private fun curate(patientId: String, testType: String, testResults: List<String>, curationDatabase: CurationDatabase<MolecularTestConfig>) =
-            testResults.map {
+        private fun curate(patientId: String, testType: String, testResults: List<String>?, curationDatabase: CurationDatabase<MolecularTestConfig>) =
+            testResults?.map {
                 val input = CurationUtil.fullTrim(it)
                 CurationResponse.createFromConfigs(
                     curationDatabase.find(input),
@@ -46,6 +46,6 @@ class PriorMolecularTestsExtractor(
                     input,
                     "$testType molecular test"
                 )
-            }
+            } ?: emptyList()
     }
 }
