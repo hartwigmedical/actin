@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.LabValue
 class EhrLabValuesExtractor : EhrExtractor<List<LabValue>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<LabValue>> {
         return ExtractionResult(ehrPatientRecord.labValues.map {
-            ImmutableLabValue.builder().date(it.dateTime.toLocalDate()).name(it.measure).unit(LabUnit.fromString(it.unit)).value(it.value)
+            ImmutableLabValue.builder().date(it.evaluationTime.toLocalDate()).name(it.name).unit(LabUnit.fromString(it.unit)).value(it.value)
                 .code(it.code).comparator("").build()
         }, ExtractionEvaluation())
     }

@@ -25,30 +25,30 @@ class EhrMedicationExtractor(
         return ehrPatientRecord.medications.map {
             val atcClassification = atcModel.resolveByCode(it.atcCode)
             val curatedQT = CurationResponse.createFromConfigs(
-                qtPrologatingRiskCuration.find(it.drugName),
+                qtPrologatingRiskCuration.find(it.name),
                 ehrPatientRecord.patientDetails.patientId,
                 CurationCategory.QT_PROLONGATION,
-                it.drugName,
-                "medication name",
+                it.name,
+                "qt prolongating risk",
                 true
             )
             val curatedCyp = CurationResponse.createFromConfigs(
-                cypInteractionCuration.find(it.drugName),
+                cypInteractionCuration.find(it.name),
                 ehrPatientRecord.patientDetails.patientId,
                 CurationCategory.CYP_INTERACTION,
-                it.drugName,
-                "medication name",
+                it.name,
+                "cyp interaction",
                 true
             )
             val curatedDosage = CurationResponse.createFromConfigs(
-                dosageCuration.find(it.drugName),
+                dosageCuration.find(it.name),
                 ehrPatientRecord.patientDetails.patientId,
                 CurationCategory.MEDICATION_DOSAGE,
-                it.drugName,
-                "medication name",
+                it.name,
+                "dosage",
                 true
             )
-            val medication = ImmutableMedication.builder().name(it.drugName).administrationRoute(it.administrationRoute)
+            val medication = ImmutableMedication.builder().name(it.name).administrationRoute(it.administrationRoute)
                 .dosage(
                     curatedDosage.config()?.curated ?: ImmutableDosage.builder().dosageMax(it.dosage).dosageMin(it.dosage)
                         .dosageUnit(it.dosageUnit).frequency(it.frequency)

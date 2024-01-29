@@ -3,8 +3,10 @@ package com.hartwig.actin.clinical.nki
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentStage
@@ -13,14 +15,17 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 
-class EhrTreatmentHistoryExtractor(private val treatmentDatabase: TreatmentDatabase) : EhrExtractor<List<TreatmentHistoryEntry>> {
+class EhrTreatmentHistoryExtractor(
+    private val treatmentDatabase: TreatmentDatabase,
+    private val intentTranslation: TranslationDatabase<String>
+) : EhrExtractor<List<TreatmentHistoryEntry>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
         val extracted = ehrPatientRecord.treatmentHistory.map {
 
             val treatment = treatmentDatabase.findTreatmentByName(it.treatmentName)
 
             val switchToTreatments = it.modifications.map { modification ->
-                val modificationTreatment = treatmentDatabase.findTreatmentByName(modification.treatmentName)
+                val modificationTreatment = treatmentDatabase.findTreatmentByName(modification.name)
                 modificationTreatment?.let { t ->
                     Pair(
                         ImmutableTreatmentStage.builder()
@@ -36,8 +41,8 @@ class EhrTreatmentHistoryExtractor(private val treatmentDatabase: TreatmentDatab
                         CurationWarning(
                             ehrPatientRecord.patientDetails.patientId,
                             CurationCategory.ONCOLOGICAL_HISTORY,
-                            modification.treatmentName,
-                            "Treatment ${modification.treatmentName} not found in database"
+                            modification.name,
+                            "Treatment ${modification.name} not found in database"
                         )
                     )
                 )
@@ -50,7 +55,13 @@ class EhrTreatmentHistoryExtractor(private val treatmentDatabase: TreatmentDatab
                 .switchToTreatments(switchToTreatments.mapNotNull { switch -> switch.first }.toSet())
                 .cycles(it.administeredCycles)
                 .build()
-
+            val translatedIntent = CurationResponse.createFromTranslation(
+                intentTranslation.find(it.intention),
+                ehrPatientRecord.patientDetails.patientId,
+                CurationCategory.ONCOLOGICAL_HISTORY,
+                it.intention,
+                "treatment intention"
+            )
             Pair(
                 ImmutableTreatmentHistoryEntry.builder().startYear(it.startDate.year)
                     .startMonth(it.startDate.monthValue).intents(listOf(Intent.valueOf(it.intention)))

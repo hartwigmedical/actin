@@ -8,8 +8,9 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 class EhrIntolerancesExtractor : EhrExtractor<List<Intolerance>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Intolerance>> {
         return ExtractionResult(ehrPatientRecord.allergies.map {
-            ImmutableIntolerance.builder().name(it.description).category(it.category).type("unspecified").clinicalStatus(it.clinicalStatus)
-                .verificationStatus(it.verificationStatus).criticality(it.severity).build()
+            ImmutableIntolerance.builder().name(it.name).category(it.category.name).type("unspecified")
+                .clinicalStatus(it.clinicalStatus.name)
+                .verificationStatus(it.verificationStatus.name).criticality(it.severity.name).build()
         }, ExtractionEvaluation())
     }
 }

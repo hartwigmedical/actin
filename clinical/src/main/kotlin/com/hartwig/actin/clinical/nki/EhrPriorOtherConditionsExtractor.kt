@@ -1,15 +1,32 @@
 package com.hartwig.actin.clinical.nki
 
 import com.hartwig.actin.clinical.ExtractionResult
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 
-class EhrPriorOtherConditionsExtractor : EhrExtractor<List<PriorOtherCondition>> {
+class EhrPriorOtherConditionsExtractor(private val priorOtherConditionsCuration: CurationDatabase<NonOncologicalHistoryConfig>) :
+    EhrExtractor<List<PriorOtherCondition>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<PriorOtherCondition>> {
-        return ExtractionResult(ehrPatientRecord.priorOtherConditions.map {
-            ImmutablePriorOtherCondition.builder().name(it.diagnosis).year(it.startDate.year).month(it.startDate.monthValue).category("")
-                .isContraindicationForTherapy(false).build()
-        }, ExtractionEvaluation())
+        return ehrPatientRecord.priorOtherConditions.map {
+            val curatedPriorOtherCondition = CurationResponse.createFromConfigs(
+                priorOtherConditionsCuration.find(it.name),
+                ehrPatientRecord.patientDetails.patientId,
+                CurationCategory.NON_ONCOLOGICAL_HISTORY,
+                it.name,
+                "non-oncological history"
+            )
+            ExtractionResult(
+                listOfNotNull(curatedPriorOtherCondition.config()?.priorOtherCondition?.let { poc ->
+                    ImmutablePriorOtherCondition.builder().from(poc).year(it.startDate.year).month(it.startDate.monthValue).build()
+                }), curatedPriorOtherCondition.extractionEvaluation
+            )
+        }.fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { acc, extractionResult ->
+            ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
+        }
     }
 }

@@ -3,7 +3,11 @@
     {
       "description": "some string",
       "start_date": "2020-01-01",
-      "end_date": "2020-01-01"
+      "end_date": "2020-01-01",
+      "severity": "some string",
+      "category": "some string",
+      "verification_status": "some string",
+      "clinical_status": "some string"
     }
   ],
   "blood_transfusions": [
@@ -28,8 +32,9 @@
       "date_time": "2020-01-01T00:00:00.000Z",
       "measure": "some string",
       "category": "some string",
+      "code": "some string",
       "value": "1.0",
-      "unit": "ng/L",
+      "unit": "some string",
       "ref_range": "some string",
       "ref_flag": "some string",
       "note": "some string"
@@ -48,7 +53,9 @@
       "frequency_unit": "some string",
       "period_between_dosages_value": 3.5,
       "period_between_dosages_unit": "some string",
-      "administration_only_if_needed": true
+      "administration_only_if_needed": true,
+      "is_trial": false,
+      "is_self_care": false
     }
   ],
   "molecular_test_history": [
@@ -65,7 +72,7 @@
     "birth_year": 5,
     "gender": "MALE",
     "registration_date": "2020-01-01",
-    "patient_id": "ACTIN01029999",
+    "patient_id": "ACTN01029999",
     "hashed_id": "some string"
   },
   "who_evaluations": [
@@ -87,7 +94,7 @@
     {
       "surgery_name": "some string",
       "end_date": "2020-01-01",
-      "status": "PLANNED"
+      "status": "some string"
     }
   ],
   "toxicities": [
@@ -103,7 +110,7 @@
   "treatment_history": [
     {
       "treatment_name": "CAPECITABINE+OXALIPLATIN",
-      "intention": "NEOADJUVANT",
+      "intention": "some string",
       "start_date": "2020-01-01",
       "end_date": "2020-01-01",
       "stop_reason": "some string",
@@ -113,7 +120,11 @@
       "intended_cycles": 5,
       "administered_cycles": 5,
       "modifications": [
-        "RADIOTHERAPY"
+        {
+          "date": "2020-01-01",
+          "treatment_name": "some string",
+          "administered_cycles": 5
+        }
       ],
       "grade_2_toxicities": "some string",
       "grade_2_toxicities_date": "2020-01-01",
@@ -132,11 +143,28 @@
     "lesion_site": "some string",
     "lesion_site_date": "2020-01-01"
   },
+  "prior_primaries": [
+    {
+      "diagnosis_date": "2020-01-01",
+      "tumor_localization": "some string",
+      "tumor_type_details": "some string",
+      "status_details": "some string",
+      "status_details_date": "2020-01-01"
+    }
+  ],
   "vital_functions": [
     {
       "date": "2020-01-01",
-      "measure": "Non-invasive blood pressure",
+      "measure": "some string",
       "value": 3.5,
+      "unit": "some string",
+      "subcategory": "some string"
+    }
+  ],
+  "body_weights": [
+    {
+      "date": "2020-01-01",
+      "value": 70,
       "unit": "some string"
     }
   ]

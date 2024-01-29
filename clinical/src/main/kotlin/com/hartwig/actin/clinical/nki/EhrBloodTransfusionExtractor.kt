@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 class EhrBloodTransfusionExtractor : EhrExtractor<List<BloodTransfusion>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<BloodTransfusion>> {
         return ExtractionResult(ehrPatientRecord.bloodTransfusions.map {
-            ImmutableBloodTransfusion.builder().product(it.product).date(it.dateTime.toLocalDate()).build()
+            ImmutableBloodTransfusion.builder().product(it.product).date(it.evaluationTime.toLocalDate()).build()
         }, ExtractionEvaluation())
     }
 }

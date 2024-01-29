@@ -1,15 +1,26 @@
 package com.hartwig.actin.clinical.nki
 
 import com.hartwig.actin.clinical.ExtractionResult
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication
 
-class EhrComplicationExtractor : EhrExtractor<List<Complication>> {
+class EhrComplicationExtractor(val complicationCuration: CurationDatabase<ComplicationConfig>) : EhrExtractor<List<Complication>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Complication>> {
-        return ExtractionResult(ehrPatientRecord.complications.map {
-            ImmutableComplication.builder().name(it.name).year(it.startDate.year).month(it.startDate.monthValue).build()
-        }, ExtractionEvaluation())
+        return ehrPatientRecord.complications.map {
+            val curatedComplication = CurationResponse.createFromConfigs(
+                complicationCuration.find(it.name),
+                ehrPatientRecord.patientDetails.patientId,
+                CurationCategory.COMPLICATION,
+                it.name,
+                "complication"
+            )
+            ExtractionResult(listOfNotNull(curatedComplication.config()?.curated), curatedComplication.extractionEvaluation)
+        }.fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { acc, extractionResult ->
+            ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
+        }
     }
-
 }

@@ -74,7 +74,7 @@ data class CurationResponse<T>(
                 CurationCategory.BLOOD_TRANSFUSION_TRANSLATION -> ExtractionEvaluation()
                 CurationCategory.TOXICITY_TRANSLATION -> ExtractionEvaluation(toxicityTranslationEvaluatedInputs = foundTranslations)
                 CurationCategory.DOSAGE_UNIT_TRANSLATION -> ExtractionEvaluation(dosageUnitEvaluatedInputs = foundTranslations)
-                else -> throw IllegalStateException("Unsupported curation category for translation lookup: $curationCategory")
+                else -> ExtractionEvaluation()
             }
             return CurationResponse(foundTranslations, evaluation.copy(warnings = warnings))
         }
