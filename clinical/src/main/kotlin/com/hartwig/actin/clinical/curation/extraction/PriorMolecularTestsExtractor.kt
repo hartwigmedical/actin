@@ -22,23 +22,12 @@ class PriorMolecularTestsExtractor(
         if (questionnaire == null) {
             return ExtractionResult(emptyList(), ExtractionEvaluation())
         }
+
         val curation = listOf(
-            Triple("IHC", questionnaire.ihcTestResults ?: emptyList(), molecularTestIhcCuration),
-            Triple("PD-L1", questionnaire.pdl1TestResults ?: emptyList(), molecularTestPdl1Curation)
+            curate(patientId, "IHC", questionnaire.ihcTestResults ?: emptyList(), molecularTestIhcCuration),
+            curate(patientId, "PD-L1", questionnaire.pdl1TestResults ?: emptyList(), molecularTestPdl1Curation)
         )
-            .flatMap { (testType, testResults, curation) ->
-                testResults.map {
-                    val input = CurationUtil.fullTrim(it)
-                    CurationResponse.createFromConfigs(
-                        curation.find(input),
-                        patientId,
-                        CurationCategory.MOLECULAR_TEST,
-                        input,
-                        "$testType molecular test"
-                    )
-                }
-            }
-            .fold(CurationResponse<MolecularTestConfig>()) { acc, cur -> acc + cur }
+            .flatten().fold(CurationResponse<MolecularTestConfig>()) { acc, cur -> acc + cur }
 
         return ExtractionResult(curation.configs.filterNot(MolecularTestConfig::ignore).map { it.curated!! }, curation.extractionEvaluation)
     }
@@ -46,5 +35,17 @@ class PriorMolecularTestsExtractor(
     companion object {
         fun create(curationDatabaseContext: CurationDatabaseContext) =
             PriorMolecularTestsExtractor(curationDatabaseContext.molecularTestIhcCuration, curationDatabaseContext.molecularTestPdl1Curation)
+
+        private fun curate(patientId: String, testType: String, testResults: List<String>, curationDatabase: CurationDatabase<MolecularTestConfig>) =
+            testResults.map {
+                val input = CurationUtil.fullTrim(it)
+                CurationResponse.createFromConfigs(
+                    curationDatabase.find(input),
+                    patientId,
+                    CurationCategory.MOLECULAR_TEST,
+                    input,
+                    "$testType molecular test"
+                )
+            }
     }
 }
