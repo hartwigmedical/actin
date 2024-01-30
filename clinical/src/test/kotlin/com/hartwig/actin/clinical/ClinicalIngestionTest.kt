@@ -16,7 +16,9 @@ import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCurationError
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.util.json.GsonSerializer
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
 
 val EXPECTED_CLINICAL_RECORD: String =
@@ -83,5 +85,33 @@ class ClinicalIngestionTest {
             UnusedCurationConfig(categoryName = "Molecular Test", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk")
         )
+
+        val gson = GsonSerializer.create()
+        val serialized = gson.toJson(ingestionResult).toByteArray()
+
+        val deserialized = gson.fromJson(serialized.decodeToString(), IngestionResult::class.java)
+        // The clinical record is not serialized, so we need to compare the patient results separately:
+        assertThat(deserialized.copy(patientResults = emptyList())).isEqualTo(ingestionResult.copy(patientResults = emptyList()))
+
+        val patientIngestionResult = ingestionResult.patientResults.first()
+        assertThat(deserialized.patientResults).extracting(
+            PatientIngestionResult::patientId,
+            PatientIngestionResult::status,
+            PatientIngestionResult::clinicalRecord,
+            PatientIngestionResult::curationResults,
+            PatientIngestionResult::questionnaireCurationErrors,
+            PatientIngestionResult::feedValidationWarnings
+        )
+            .containsExactly(
+                tuple(
+                    patientIngestionResult.patientId,
+                    patientIngestionResult.status,
+                    null,
+                    patientIngestionResult.curationResults,
+                    patientIngestionResult.questionnaireCurationErrors,
+                    patientIngestionResult.feedValidationWarnings
+                )
+            )
+        
     }
 }
