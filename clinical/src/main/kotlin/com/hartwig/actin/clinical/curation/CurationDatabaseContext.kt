@@ -159,14 +159,14 @@ data class CurationDatabaseContext(
             molecularTestIhcCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV,
-                MolecularTestConfigFactory(),
-                CurationCategory.MOLECULAR_TEST
+                MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC),
+                CurationCategory.MOLECULAR_TEST_IHC
             ) { it.molecularTestEvaluatedInputs },
             molecularTestPdl1Curation = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MOLECULAR_TEST_PDL1_TSV,
-                MolecularTestConfigFactory(),
-                CurationCategory.MOLECULAR_TEST
+                MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_PDL1),
+                CurationCategory.MOLECULAR_TEST_PDL1
             ) { it.molecularTestEvaluatedInputs },
             toxicityCuration = CurationDatabaseReader.read(
                 curationDir,

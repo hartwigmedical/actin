@@ -13,7 +13,7 @@ class MolecularTestConfigFactoryTest {
 
     @Test
     fun `Should return MolecularTestConfig from valid inputs`() {
-        val config = MolecularTestConfigFactory().create(
+        val config = MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC).create(
             fields,
             arrayOf("input", "test", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "1")
         )
@@ -32,7 +32,7 @@ class MolecularTestConfigFactoryTest {
 
     @Test
     fun `Should set curated test to null when ignore is set`() {
-        val config: ValidatedCurationConfig<MolecularTestConfig> = MolecularTestConfigFactory().create(
+        val config: ValidatedCurationConfig<MolecularTestConfig> = MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC).create(
             fields,
             arrayOf("input", "<ignore>", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "1")
         )
@@ -44,13 +44,13 @@ class MolecularTestConfigFactoryTest {
 
     @Test
     fun `Should return validation error and set curated test to null when invalid impliesPotentialIndeterminateStatus`() {
-        val config: ValidatedCurationConfig<MolecularTestConfig> = MolecularTestConfigFactory().create(
+        val config: ValidatedCurationConfig<MolecularTestConfig> = MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC).create(
             fields,
             arrayOf("input", "test", "item", "measure", "scoreText", "scoreValuePrefix", "1.0", "scoreValueUnit", "invalid")
         )
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.MOLECULAR_TEST.categoryName,
+                CurationCategory.MOLECULAR_TEST_IHC.categoryName,
                 "input",
                 "impliesPotentialIndeterminateStatus",
                 "invalid",
