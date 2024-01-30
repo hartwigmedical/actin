@@ -11,7 +11,6 @@ import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
-import javax.swing.Action
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
 
@@ -92,7 +91,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
 
             if (geneFilter.include(geneCopyNumber.gene()) && geneCopyNumber.gene() !in reportable) {
                 copyNumbers.add(
-                    ImmutableCopyNumber.builder()
+                    CopyNumber.builder()
                         .from(
                             GeneAlterationFactory.convertAlteration(
                                 geneCopyNumber.gene(),

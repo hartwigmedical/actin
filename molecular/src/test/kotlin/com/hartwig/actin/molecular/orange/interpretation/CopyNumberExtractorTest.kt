@@ -96,7 +96,7 @@ class CopyNumberExtractorTest {
         assertThat(gene4.maxCopies).isEqualTo(20)
 
         val geneCopyNumbers = copyNumberExtractor.extractGeneCopyNumbers(purple, copyNumbers)
-        assertThat(geneCopyNumbers.size.toLong()).isEqualTo(3)
+        assertThat(geneCopyNumbers).isEqualTo(3)
 
         val cn2 = findByGene(geneCopyNumbers, "gene 5")
         assertThat(cn2.isReportable).isFalse
