@@ -6,27 +6,30 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
+import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.doid.DoidModel
 
-class HasInheritedPredispositionToBleedingOrThrombosis (private val doidModel: DoidModel) : EvaluationFunction {
+class HasInheritedPredispositionToBleedingOrThrombosis(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
-            for (doid in condition.doids) {
-                for (doidToMatch in DOID_CONSTANTS_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS) {
-                    if (doidModel.doidWithParents(doid).contains(doidToMatch)) {
-                        return EvaluationFactory.pass(
-                            "Patient has inherited predisposition to bleeding or thrombosis: " + doidModel.resolveTermForDoid(doid),
-                            "History of inherited predisposition to bleeding or thrombosis : " + doidModel.resolveTermForDoid(doid)
-                        )
-                    }
-                }
+        val matchingDoidTerm = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+            .flatMap(PriorOtherCondition::doids)
+            .find {
+                doidModel.doidWithParents(it).any(DOID_CONSTANTS_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS::contains)
             }
+            ?.let { doidModel::resolveTermForDoid }
+
+        return if (matchingDoidTerm != null) {
+            EvaluationFactory.pass(
+                "Patient has inherited predisposition to bleeding or thrombosis: $matchingDoidTerm",
+                "History of inherited predisposition to bleeding or thrombosis: $matchingDoidTerm"
+            )
+        } else {
+            EvaluationFactory.fail(
+                "Patient has no inherited predisposition to bleeding or thrombosis",
+                "No inherited predisposition to bleeding or thrombosis"
+            )
         }
-        return EvaluationFactory.fail(
-            "Patient has no inherited predisposition to bleeding or thrombosis",
-            "No inherited predisposition to bleeding or thrombosis"
-        )
     }
 
     companion object {

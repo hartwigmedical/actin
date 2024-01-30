@@ -38,7 +38,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
                         doids = setOf(
-                            DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID, "wrong doid"
+                            "wrong doid", DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID
                         )
                     )
                 )
