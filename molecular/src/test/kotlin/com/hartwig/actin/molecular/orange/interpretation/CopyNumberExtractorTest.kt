@@ -96,28 +96,28 @@ class CopyNumberExtractorTest {
         assertThat(gene4.maxCopies).isEqualTo(20)
 
         val geneCopyNumbers = copyNumberExtractor.extractGeneCopyNumbers(purple, copyNumbers)
-        assertThat(geneCopyNumbers).isEqualTo(3)
+        assertThat(geneCopyNumbers).hasSize(3)
 
         val cn2 = findByGene(geneCopyNumbers, "gene 5")
         assertThat(cn2.isReportable).isFalse
         assertThat(cn2.driverLikelihood).isNull()
         assertThat(cn2.type).isEqualTo(CopyNumberType.NONE)
         assertThat(cn2.minCopies).isEqualTo(4)
-        assertThat(cn2.minCopies).isEqualTo(4)
+        assertThat(cn2.maxCopies).isEqualTo(4)
 
         val cn3 = findByGene(geneCopyNumbers, "gene 6")
         assertThat(cn3.isReportable).isFalse
         assertThat(cn3.driverLikelihood).isNull()
         assertThat(cn3.type).isEqualTo(CopyNumberType.NONE)
         assertThat(cn3.minCopies).isEqualTo(5)
-        assertThat(cn3.minCopies).isEqualTo(5)
+        assertThat(cn3.maxCopies).isEqualTo(5)
 
         val cn4 = findByGene(geneCopyNumbers, "gene 7")
         assertThat(cn4.isReportable).isFalse
         assertThat(cn4.driverLikelihood).isNull()
         assertThat(cn4.type).isEqualTo(CopyNumberType.NONE)
-        assertThat(cn4.minCopies).isEqualTo(5)
-        assertThat(cn4.minCopies).isEqualTo(5)
+        assertThat(cn4.minCopies).isEqualTo(1)
+        assertThat(cn4.maxCopies).isEqualTo(1)
 
     }
 

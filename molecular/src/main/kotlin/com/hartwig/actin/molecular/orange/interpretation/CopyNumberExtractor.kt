@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -83,33 +82,60 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
     }
 
     fun extractGeneCopyNumbers(purple: PurpleRecord, reportableCopyNumbers: Set<CopyNumber>): Set<CopyNumber> {
-        val copyNumbers: MutableSet<CopyNumber> = Sets.newTreeSet(CopyNumberComparator())
         val drivers: Set<PurpleDriver> = VariantExtractor.relevantPurpleDrivers(purple)
         val reportable = reportableCopyNumbers.map{it.gene}
-        for (geneCopyNumber in purple.allSomaticGeneCopyNumbers()) {
-            val driver = findCopyNumberDriver(drivers, geneCopyNumber.gene())
-
-            if (geneFilter.include(geneCopyNumber.gene()) && geneCopyNumber.gene() !in reportable) {
-                copyNumbers.add(
-                    CopyNumber.builder()
-                        .from(
-                            GeneAlterationFactory.convertAlteration(
-                                geneCopyNumber.gene(),
-                                null
-                            )
-                        )
-                        .isReportable(false)
-                        .event("copy number event")
-                        .driverLikelihood(if (driver != null) DriverLikelihood.HIGH else null)
-                        .evidence(ActionableEvidenceFactory.createNoEvidence())
-                        .type(CopyNumberType.NONE)
-                        .minCopies(Math.round(geneCopyNumber.minCopyNumber()).toInt())
-                        .maxCopies(Math.round(geneCopyNumber.minCopyNumber()).toInt()) //TODO: maxCopies should be retrievable from ORANGE datamodel.
-                        .build()
+        return purple.allSomaticGeneCopyNumbers()
+            .map { geneCopyNumber ->
+                Pair(geneCopyNumber, findCopyNumberDriver(drivers, geneCopyNumber.gene()))
+            }
+            .filter{ (geneCopyNumber) ->
+                val geneIncluded = geneFilter.include(geneCopyNumber.gene()) && geneCopyNumber.gene() !in reportable
+                geneIncluded}
+            .map { (geneCopyNumber, driver) ->
+                val alteration = GeneAlterationFactory.convertAlteration(
+                    geneCopyNumber.gene(), null
+                )
+                CopyNumber(
+                    gene = alteration.gene,
+                    geneRole = alteration.geneRole,
+                    proteinEffect = alteration.proteinEffect,
+                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                    isReportable = false,
+                    event = "copy number event",
+                    driverLikelihood = if (driver != null) DriverLikelihood.HIGH else null,
+                    evidence = ActionableEvidenceFactory.createNoEvidence(),
+                    type = CopyNumberType.NONE,
+                    minCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt(),
+                    maxCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt() //TODO: maxCopies should be retrievable from ORANGE datamodel.
                 )
             }
-        }
-        return copyNumbers
+            .toSortedSet(CopyNumberComparator())
+/*
+for (geneCopyNumber in purple.allSomaticGeneCopyNumbers()) {
+    val driver = findCopyNumberDriver(drivers, geneCopyNumber.gene())
+
+    if (geneFilter.include(geneCopyNumber.gene()) && geneCopyNumber.gene() !in reportable) {
+        copyNumbers.add(
+            CopyNumber.builder()
+                .from(
+                    GeneAlterationFactory.convertAlteration(
+                        geneCopyNumber.gene(),
+                        null
+                    )
+                )
+                .isReportable(false)
+                .event("copy number event")
+                .driverLikelihood(if (driver != null) DriverLikelihood.HIGH else null)
+                .evidence(ActionableEvidenceFactory.createNoEvidence())
+                .type(CopyNumberType.NONE)
+                .minCopies(Math.round(geneCopyNumber.minCopyNumber()).toInt())
+                .maxCopies(Math.round(geneCopyNumber.minCopyNumber()).toInt())
+                .build()
+        )
     }
+}
+return copyNumbers
+
+ */ }
 
 }
