@@ -31,13 +31,13 @@ class HasInheritedPredispositionToBleedingOrThrombosis (private val doidModel: D
 
     companion object {
         val DOID_CONSTANTS_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS = setOf(
-            DoidConstants.AUTOSOMAL_HEMOPHILIA_A,
-            DoidConstants.HEMOPHILIA_B,
-            DoidConstants.VON_WILLEBRANDS_DISEASE,
-            DoidConstants.FACTOR_V_DEFICIENCY,
-            DoidConstants.PROTEIN_C_DEFICIENCY,
-            DoidConstants.PROTEIN_S_DEFICIENCY,
-            DoidConstants.ANTITHROMBIN_III_DEFICIENCY
+            DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID,
+            DoidConstants.HEMOPHILIA_B_DOID,
+            DoidConstants.VON_WILLEBRANDS_DISEASE_DOID,
+            DoidConstants.FACTOR_V_DEFICIENCY_DOID,
+            DoidConstants.PROTEIN_C_DEFICIENCY_DOID,
+            DoidConstants.PROTEIN_S_DEFICIENCY_DOID,
+            DoidConstants.ANTITHROMBIN_III_DEFICIENCY_DOID
         )
     }
 }
