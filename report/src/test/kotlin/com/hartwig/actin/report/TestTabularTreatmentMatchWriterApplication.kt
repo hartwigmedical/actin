@@ -18,7 +18,7 @@ object TestTabularTreatmentMatchWriterApplication {
     @Throws(IOException::class)
     private fun writeTestTabularTreatmentMatches() {
         val treatmentMatch = TestReportFactory.createProperTestReport().treatmentMatch
-        val filename = WORK_DIRECTORY + File.separator + treatmentMatch.patientId()
+        val filename = WORK_DIRECTORY + File.separator + treatmentMatch.patientId
         val summaryFile = "$filename.evaluation.summary.tsv"
         LOGGER.info("Printing summary to $summaryFile")
         TabularTreatmentMatchWriter.writeEvaluationSummaryToTsv(treatmentMatch, summaryFile)

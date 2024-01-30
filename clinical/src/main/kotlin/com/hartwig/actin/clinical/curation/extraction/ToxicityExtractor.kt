@@ -9,7 +9,6 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
@@ -38,25 +37,26 @@ class ToxicityExtractor(
     private fun extractFeedToxicities(toxicityEntries: List<DigitalFileEntry>, patientId: String): ExtractionResult<List<Toxicity>> {
         return toxicityEntries.mapNotNull { toxicityEntry ->
             extractGrade(toxicityEntry)?.let { grade ->
-                ImmutableToxicity.builder()
-                    .name(toxicityEntry.itemText)
-                    .evaluatedDate(toxicityEntry.authored)
-                    .source(ToxicitySource.EHR)
-                    .grade(grade)
-                    .build()
+                Toxicity(
+                    name = toxicityEntry.itemText,
+                    evaluatedDate = toxicityEntry.authored,
+                    source = ToxicitySource.EHR,
+                    grade = grade,
+                    categories = emptySet()
+                )
             }
         }
             .map { rawToxicity ->
-                if (rawToxicity.name().isEmpty()) ExtractionResult(listOf(rawToxicity), ExtractionEvaluation()) else {
+                if (rawToxicity.name.isEmpty()) ExtractionResult(listOf(rawToxicity), ExtractionEvaluation()) else {
                     val translationResponse = CurationResponse.createFromTranslation(
-                        toxicityTranslation.find(rawToxicity.name()),
+                        toxicityTranslation.find(rawToxicity.name),
                         patientId,
                         CurationCategory.TOXICITY_TRANSLATION,
-                        rawToxicity.name(),
+                        rawToxicity.name,
                         "toxicity"
                     )
                     ExtractionResult(
-                        listOf(translationResponse.config()?.translated?.let(rawToxicity::withName) ?: rawToxicity),
+                        listOf(translationResponse.config()?.translated?.let { rawToxicity.copy(name = it) } ?: rawToxicity),
                         translationResponse.extractionEvaluation
                     )
                 }
@@ -73,13 +73,13 @@ class ToxicityExtractor(
                 toxicityCuration.find(trimmedInput), patientId, CurationCategory.TOXICITY, trimmedInput, "toxicity"
             )
             val toxicities = curationResponse.configs.filterNot(CurationConfig::ignore).map { config ->
-                ImmutableToxicity.builder()
-                    .name(config.name)
-                    .categories(config.categories)
-                    .evaluatedDate(questionnaire.date)
-                    .source(ToxicitySource.QUESTIONNAIRE)
-                    .grade(config.grade)
-                    .build()
+                Toxicity(
+                    name = config.name,
+                    categories = config.categories,
+                    evaluatedDate = questionnaire.date,
+                    source = ToxicitySource.QUESTIONNAIRE,
+                    grade = config.grade
+                )
             }
             ExtractionResult(toxicities, curationResponse.extractionEvaluation)
         }

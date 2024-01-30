@@ -14,27 +14,27 @@ class MolecularDriversInterpreter(
     private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
 ) {
     fun filteredVariants(): List<Variant> {
-        return filterDrivers(molecularDrivers.variants())
+        return filterDrivers(molecularDrivers.variants)
     }
 
     fun filteredCopyNumbers(): List<CopyNumber> {
-        return filterDrivers(molecularDrivers.copyNumbers())
+        return filterDrivers(molecularDrivers.copyNumbers)
     }
 
     fun filteredHomozygousDisruptions(): List<HomozygousDisruption> {
-        return filterDrivers(molecularDrivers.homozygousDisruptions())
+        return filterDrivers(molecularDrivers.homozygousDisruptions)
     }
 
     fun filteredDisruptions(): List<Disruption> {
-        return filterDrivers(molecularDrivers.disruptions())
+        return filterDrivers(molecularDrivers.disruptions)
     }
 
     fun filteredFusions(): List<Fusion> {
-        return filterDrivers(molecularDrivers.fusions())
+        return filterDrivers(molecularDrivers.fusions)
     }
 
     fun filteredViruses(): List<Virus> {
-        return filterDrivers(molecularDrivers.viruses())
+        return filterDrivers(molecularDrivers.viruses)
     }
 
     fun hasPotentiallySubClonalVariants(): Boolean {

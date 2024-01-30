@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasProstateCancerWithSmallCellComponent (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical().tumor().doids()
+        val tumorDoids = record.clinical.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether patient has prostate cancer with small cell histology",
@@ -22,23 +22,14 @@ class HasProstateCancerWithSmallCellComponent (private val doidModel: DoidModel)
             DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROSTATE_SMALL_CELL_CARCINOMA_DOID)
         val hasProstateCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROSTATE_CANCER_DOID)
         val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(
-            record.clinical().tumor(),
+            record.clinical.tumor,
             Sets.newHashSet(SMALL_CELL_DETAILS)
         )
         if (isProstateSmallCellCarcinoma || hasProstateCancer && hasSmallCellDetails) {
             return EvaluationFactory.pass("Patient has prostate cancer with small cell histology", "Tumor type")
         }
-        var hasProstateWarnType = false
-        for (warnDoidCombination in PROSTATE_WARN_DOID_SETS) {
-            var matchesWithCombination = true
-            for (warnDoid in warnDoidCombination) {
-                if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, warnDoid)) {
-                    matchesWithCombination = false
-                }
-            }
-            if (matchesWithCombination) {
-                hasProstateWarnType = true
-            }
+        val hasProstateWarnType = PROSTATE_WARN_DOID_SETS.any { warnDoidCombination ->
+            warnDoidCombination.all { DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, it) }
         }
         if (hasProstateWarnType) {
             return EvaluationFactory.warn(

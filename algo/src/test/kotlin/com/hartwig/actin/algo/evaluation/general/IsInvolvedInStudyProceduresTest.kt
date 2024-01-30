@@ -6,12 +6,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import org.junit.Test
 
 class IsInvolvedInStudyProceduresTest {
+
     @Test
     fun canEvaluate() {
         val function = IsInvolvedInStudyProcedures()
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
-            function.evaluate(TestDataFactory.createMinimalTestPatientRecord())
+            EvaluationResult.NOT_EVALUATED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord())
         )
     }
 }

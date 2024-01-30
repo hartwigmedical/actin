@@ -7,31 +7,20 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasOvarianBorderlineTumorTest {
+    private val function = HasOvarianBorderlineTumor(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val targetedType = HasOvarianBorderlineTumor.OVARIAN_BORDERLINE_TYPES.iterator().next()
+    
     @Test
     fun canEvaluate() {
-        val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-        val function = HasOvarianBorderlineTumor(doidModel)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
-        val missingType = TumorTestFactory.withTumorDetails(
-            TumorTestFactory.builder()
-                .addDoids(DoidConstants.OVARIAN_CANCER_DOID)
-                .primaryTumorType("wrong")
-                .build()
-        )
+
+        val missingType = TumorTestFactory.withDoidAndType(DoidConstants.OVARIAN_CANCER_DOID, "wrong")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(missingType))
-        val missingDoid = TumorTestFactory.withTumorDetails(
-            TumorTestFactory.builder()
-                .addDoids("wrong")
-                .primaryTumorType(HasOvarianBorderlineTumor.OVARIAN_BORDERLINE_TYPES.iterator().next())
-                .build()
-        )
+
+        val missingDoid = TumorTestFactory.withDoidAndType("wrong", targetedType)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(missingDoid))
-        val correct = TumorTestFactory.withTumorDetails(
-            TumorTestFactory.builder()
-                .addDoids(DoidConstants.OVARIAN_CANCER_DOID)
-                .primaryTumorType(HasOvarianBorderlineTumor.OVARIAN_BORDERLINE_TYPES.iterator().next())
-                .build()
-        )
+
+        val correct = TumorTestFactory.withDoidAndType(DoidConstants.OVARIAN_CANCER_DOID, targetedType)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(correct))
     }
 }

@@ -5,8 +5,8 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.translation.LaboratoryIdentifiers
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.datamodel.ImmutableLabValue
 import com.hartwig.actin.clinical.datamodel.LabUnit
+import com.hartwig.actin.clinical.datamodel.LabValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -41,20 +41,20 @@ class LabValueExtractorTest {
 
     @Test
     fun `Should extract and translate laboratory values`() {
-        val labValue = ImmutableLabValue.builder()
-            .date(LocalDate.of(2020, 1, 1))
-            .code(LAB_CODE_INPUT)
-            .name(LAB_NAME_INPUT)
-            .comparator("")
-            .value(0.0)
-            .unit(LabUnit.NONE)
-            .isOutsideRef(false)
-            .build()
-        val rawValues = listOf(labValue, ImmutableLabValue.builder().from(labValue).code(CANNOT_CURATE).name(CANNOT_CURATE).build())
+        val labValue = LabValue(
+            date = LocalDate.of(2020, 1, 1),
+            code = LAB_CODE_INPUT,
+            name = LAB_NAME_INPUT,
+            comparator = "",
+            value = 0.0,
+            unit = LabUnit.NONE,
+            isOutsideRef = false
+        )
+        val rawValues = listOf(labValue, labValue.copy(code = CANNOT_CURATE, name = CANNOT_CURATE))
         val (extractedValues, evaluation) = extractor.extract(PATIENT_ID, rawValues)
         assertThat(extractedValues).hasSize(1)
-        assertThat(extractedValues[0].code()).isEqualTo(LAB_CODE_TRANSLATED)
-        assertThat(extractedValues[0].name()).isEqualTo(LAB_NAME_TRANSLATED)
+        assertThat(extractedValues[0].code).isEqualTo(LAB_CODE_TRANSLATED)
+        assertThat(extractedValues[0].name).isEqualTo(LAB_NAME_TRANSLATED)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

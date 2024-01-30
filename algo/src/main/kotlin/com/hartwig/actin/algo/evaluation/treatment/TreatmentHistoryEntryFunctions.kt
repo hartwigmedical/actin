@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
@@ -15,12 +13,12 @@ object TreatmentHistoryEntryFunctions {
         .thenComparing(TreatmentStage::startMonth, nullSafeComparator)
 
     fun fullTreatmentDisplay(entry: TreatmentHistoryEntry): String {
-        return entry.treatmentHistoryDetails()?.let { details ->
-            val switchToTreatmentDisplay = if (details.switchToTreatments().isNullOrEmpty()) "" else {
-                " with switch to " + details.switchToTreatments()!!.joinToString(" then ") { it.treatment().display() }
+        return entry.treatmentHistoryDetails?.let { details ->
+            val switchToTreatmentDisplay = if (details.switchToTreatments.isNullOrEmpty()) "" else {
+                " with switch to " + details.switchToTreatments!!.joinToString(" then ") { it.treatment.display() }
             }
-            val maintenanceTreatmentDisplay = details.maintenanceTreatment()?.let {
-                " continued with ${details.maintenanceTreatment()!!.treatment().display()} maintenance"
+            val maintenanceTreatmentDisplay = details.maintenanceTreatment?.let {
+                " continued with ${details.maintenanceTreatment!!.treatment.display()} maintenance"
             } ?: ""
             entry.treatmentDisplay() + switchToTreatmentDisplay + maintenanceTreatmentDisplay
         } ?: entry.treatmentDisplay()
@@ -29,18 +27,18 @@ object TreatmentHistoryEntryFunctions {
     fun portionOfTreatmentHistoryEntryMatchingPredicate(
         entry: TreatmentHistoryEntry, predicate: (Treatment) -> Boolean
     ): TreatmentHistoryEntry? {
-        val initialTreatmentStageMatches = entry.treatments().any(predicate)
-        val details = entry.treatmentHistoryDetails()
-        val additionalTreatmentStages = (details?.switchToTreatments() ?: emptyList()) + listOfNotNull(details?.maintenanceTreatment())
+        val initialTreatmentStageMatches = entry.treatments.any(predicate)
+        val details = entry.treatmentHistoryDetails
+        val additionalTreatmentStages = (details?.switchToTreatments ?: emptyList()) + listOfNotNull(details?.maintenanceTreatment)
 
         val matchingAdditionalStages = dropNonMatchingStagesFromStartAndEnd(additionalTreatmentStages, predicate)
 
         return if (matchingAdditionalStages.isNotEmpty()) {
             val (initialMatchingTreatments, matchStartYearAndMonth, initialMatchingCycles) = if (initialTreatmentStageMatches) {
                 Triple(
-                    entry.treatments(),
-                    NullableYearMonth(entry.startYear(), entry.startMonth()),
-                    listOfNotNull(details?.cycles())
+                    entry.treatments,
+                    NullableYearMonth(entry.startYear, entry.startMonth),
+                    listOfNotNull(details?.cycles)
                 )
             } else {
                 Triple(emptySet(), firstStartYearAndMonthFromStageList(matchingAdditionalStages), emptyList())
@@ -48,7 +46,7 @@ object TreatmentHistoryEntryFunctions {
 
             val matchingStageStopYearAndMonth =
                 startYearAndMonthOfFirstTrailingNonMatchingStage(additionalTreatmentStages, predicate)
-                    ?: NullableYearMonth(details?.stopYear(), details?.stopMonth())
+                    ?: NullableYearMonth(details?.stopYear, details?.stopMonth)
 
             createSubEntryWithMatchingTreatmentsAndDatesAndCycles(
                 entry,
@@ -60,10 +58,10 @@ object TreatmentHistoryEntryFunctions {
         } else if (initialTreatmentStageMatches) {
             val newDetails = if (additionalTreatmentStages.isEmpty()) details else {
                 val stopYearAndMonth = firstStartYearAndMonthFromStageList(additionalTreatmentStages)
-                createTreatmentHistoryDetailsWithMatchingDateAndCycles(details, stopYearAndMonth, details?.cycles())
+                createTreatmentHistoryDetailsWithMatchingDateAndCycles(details, stopYearAndMonth, details?.cycles)
             }
 
-            ImmutableTreatmentHistoryEntry.copyOf(entry).withTreatmentHistoryDetails(newDetails)
+            entry.copy(treatmentHistoryDetails = newDetails)
         } else {
             null
         }
@@ -72,32 +70,41 @@ object TreatmentHistoryEntryFunctions {
     private fun sumOrNullIfEmpty(list: List<Int>) = if (list.isEmpty()) null else list.sum()
 
     private fun firstStartYearAndMonthFromStageList(additionalTreatmentStages: List<TreatmentStage>): NullableYearMonth {
-        return additionalTreatmentStages.minWith(stageDateComparatorNullsLast).let { NullableYearMonth(it.startYear(), it.startMonth()) }
+        return additionalTreatmentStages.minWith(stageDateComparatorNullsLast).let { NullableYearMonth(it.startYear, it.startMonth) }
     }
 
     private fun startYearAndMonthOfFirstTrailingNonMatchingStage(
         additionalStages: List<TreatmentStage>, predicate: (Treatment) -> Boolean
     ): NullableYearMonth? {
-        val trailingNonMatchingStages = additionalStages.takeLastWhile { !predicate.invoke(it.treatment()) }
+        val trailingNonMatchingStages = additionalStages.takeLastWhile { !predicate.invoke(it.treatment) }
         return if (trailingNonMatchingStages.isEmpty()) null else firstStartYearAndMonthFromStageList(trailingNonMatchingStages)
     }
 
     private fun dropNonMatchingStagesFromStartAndEnd(
         additionalStages: List<TreatmentStage>, predicate: (Treatment) -> Boolean
-    ) = additionalStages.dropWhile { !predicate.invoke(it.treatment()) }
-        .dropLastWhile { !predicate.invoke(it.treatment()) }
+    ) = additionalStages.dropWhile { !predicate.invoke(it.treatment) }
+        .dropLastWhile { !predicate.invoke(it.treatment) }
 
     private fun createTreatmentHistoryDetailsWithMatchingDateAndCycles(
         details: TreatmentHistoryDetails?, stopYearMonth: NullableYearMonth, cycles: Int?
-    ): ImmutableTreatmentHistoryDetails {
-        return details?.let {
-            ImmutableTreatmentHistoryDetails.copyOf(it)
-                .withStopYear(stopYearMonth.year)
-                .withStopMonth(stopYearMonth.month)
-                .withMaintenanceTreatment(null)
-                .withSwitchToTreatments(emptyList())
-                .withCycles(cycles)
-        } ?: ImmutableTreatmentHistoryDetails.builder().stopYear(stopYearMonth.year).stopMonth(stopYearMonth.month).cycles(cycles).build()
+    ): TreatmentHistoryDetails {
+        return details?.copy(
+            stopYear = stopYearMonth.year,
+            stopMonth = stopYearMonth.month,
+            maintenanceTreatment = null,
+            switchToTreatments = emptyList(),
+            cycles = cycles
+        ) ?: TreatmentHistoryDetails(
+            stopYear = stopYearMonth.year,
+            stopMonth = stopYearMonth.month,
+            ongoingAsOf = null,
+            cycles = cycles,
+            bestResponse = null,
+            stopReason = null,
+            stopReasonDetail = null,
+            switchToTreatments = emptyList(),
+            maintenanceTreatment = null
+        )
     }
 
     private fun createSubEntryWithMatchingTreatmentsAndDatesAndCycles(
@@ -106,13 +113,14 @@ object TreatmentHistoryEntryFunctions {
         startYearMonth: NullableYearMonth,
         stopYearMonth: NullableYearMonth,
         cycles: Int?
-    ): ImmutableTreatmentHistoryEntry {
-        return ImmutableTreatmentHistoryEntry.copyOf(entry)
-            .withTreatments(treatments)
-            .withStartYear(startYearMonth.year)
-            .withStartMonth(startYearMonth.month)
-            .withTreatmentHistoryDetails(
-                createTreatmentHistoryDetailsWithMatchingDateAndCycles(entry.treatmentHistoryDetails(), stopYearMonth, cycles)
+    ): TreatmentHistoryEntry {
+        return entry.copy(
+            treatments = treatments.toSet(),
+            startYear = startYearMonth.year,
+            startMonth = startYearMonth.month,
+            treatmentHistoryDetails = createTreatmentHistoryDetailsWithMatchingDateAndCycles(
+                entry.treatmentHistoryDetails, stopYearMonth, cycles
             )
+        )
     }
 }

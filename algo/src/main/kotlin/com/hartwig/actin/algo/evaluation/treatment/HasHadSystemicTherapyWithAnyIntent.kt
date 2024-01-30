@@ -18,9 +18,9 @@ class HasHadSystemicTherapyWithAnyIntent(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingTreatments = record.clinical().oncologicalHistory()
+        val matchingTreatments = record.clinical.oncologicalHistory
             .filter { it.allTreatments().any(Treatment::isSystemic) }
-            .groupBy { it.intents()?.any { intent -> intent in intents } }
+            .groupBy { it.intents?.any { intent -> intent in intents } }
 
         val intentsLowercase = concatItemsWithOr(intents).lowercase()
 
@@ -43,7 +43,12 @@ class HasHadSystemicTherapyWithAnyIntent(
                 )
             }
 
-            ((monthsAgo == null) && matchingTreatments.containsKey(null)) || matchingTreatments[null]?.any { treatmentSinceMinDate(it, true) } ?: false -> {
+            ((monthsAgo == null) && matchingTreatments.containsKey(null)) || matchingTreatments[null]?.any {
+                treatmentSinceMinDate(
+                    it,
+                    true
+                )
+            } ?: false -> {
                 EvaluationFactory.undetermined("Undetermined if intent of received systemic treatment is $intentsLowercase")
             }
 
@@ -64,8 +69,8 @@ class HasHadSystemicTherapyWithAnyIntent(
     }
 
     private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
-        return isAfterDate(minDate!!, treatment.treatmentHistoryDetails()?.stopYear(), treatment.treatmentHistoryDetails()?.stopMonth())
-            ?: isAfterDate(minDate, treatment.startYear(), treatment.startMonth())
+        return isAfterDate(minDate!!, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth)
+            ?: isAfterDate(minDate, treatment.startYear, treatment.startMonth)
             ?: includeUnknown
     }
 }

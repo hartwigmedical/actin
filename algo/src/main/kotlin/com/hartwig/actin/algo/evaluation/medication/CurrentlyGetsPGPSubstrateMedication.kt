@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class CurrentlyGetsPGPSubstrateMedication internal constructor() : EvaluationFunction {
+class CurrentlyGetsPGPSubstrateMedication() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
             "Currently not determined if patient gets PGP substrate medication",

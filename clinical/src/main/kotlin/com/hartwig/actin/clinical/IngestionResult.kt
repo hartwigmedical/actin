@@ -36,7 +36,7 @@ data class PatientIngestionResult(
             feedValidationWarnings: Set<FeedValidationWarning>
         ): PatientIngestionResult {
             return PatientIngestionResult(
-                record.patientId(),
+                record.patientId,
                 status(questionnaire, warnings),
                 record,
                 warnings.groupBy { it.category.categoryName }.map { (categoryName, warnings) ->
@@ -63,5 +63,21 @@ data class PatientIngestionResult(
 }
 
 data class CurationRequirement(val feedInput: String, val message: String)
-data class CurationResult(val categoryName: String, val requirements: List<CurationRequirement>)
-data class UnusedCurationConfig(val categoryName: String, val input: String)
+
+data class CurationResult(val categoryName: String, val requirements: List<CurationRequirement>) : Comparable<CurationResult> {
+
+    override fun compareTo(other: CurationResult): Int {
+        return Comparator.comparing(CurationResult::categoryName)
+            .thenComparing({ it.requirements.size }, Int::compareTo)
+            .compare(this, other)
+    }
+}
+
+data class UnusedCurationConfig(val categoryName: String, val input: String) : Comparable<UnusedCurationConfig> {
+
+    override fun compareTo(other: UnusedCurationConfig): Int {
+        return Comparator.comparing(UnusedCurationConfig::categoryName)
+            .thenComparing(UnusedCurationConfig::input)
+            .compare(this, other)
+    }
+}

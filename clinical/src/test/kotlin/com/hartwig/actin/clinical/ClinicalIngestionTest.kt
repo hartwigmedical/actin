@@ -15,7 +15,7 @@ import com.hartwig.actin.clinical.feed.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCurationError
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.doid.config.ImmutableDoidManualConfig
+import com.hartwig.actin.doid.config.DoidManualConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -30,12 +30,17 @@ class ClinicalIngestionTest {
             CURATION_DIRECTORY,
             CurationDoidValidator(
                 TestDoidModelFactory.createWithDoidManualConfig(
-                    ImmutableDoidManualConfig.builder()
-                        .putAdditionalDoidsPerDoid("2513", CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
-                        .putAdditionalDoidsPerDoid("299", CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID)
-                        .putAdditionalDoidsPerDoid("5082", CurationDoidValidator.DISEASE_DOID)
-                        .putAdditionalDoidsPerDoid("11335", CurationDoidValidator.DISEASE_DOID)
-                        .putAdditionalDoidsPerDoid("0060500", CurationDoidValidator.DISEASE_DOID).build()
+                    DoidManualConfig(
+                        emptySet(),
+                        emptySet(),
+                        mapOf(
+                            "2513" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "5082" to CurationDoidValidator.DISEASE_DOID,
+                            "11335" to CurationDoidValidator.DISEASE_DOID,
+                            "0060500" to CurationDoidValidator.DISEASE_DOID
+                        )
+                    )
                 )
             ),
             TestTreatmentDatabaseFactory.createProper()
@@ -75,6 +80,7 @@ class ClinicalIngestionTest {
 
         assertThat(ingestionResult.unusedConfigs).containsExactly(
             UnusedCurationConfig(categoryName = "Molecular Test", input = "ihc erbb2 3+"),
+            UnusedCurationConfig(categoryName = "Molecular Test", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk")
         )
     }

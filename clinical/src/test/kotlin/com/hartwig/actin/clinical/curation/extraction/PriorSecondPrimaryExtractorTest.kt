@@ -6,9 +6,9 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnaire
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.TumorStatus
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -27,18 +27,19 @@ class PriorSecondPrimaryExtractorTest {
             SecondPrimaryConfig(
                 input = SECOND_PRIMARY_INPUT,
                 ignore = false,
-                curated = ImmutablePriorSecondPrimary.builder().status(TumorStatus.ACTIVE).tumorType("tumorType")
-                    .tumorSubType("tumorSubType")
-                    .treatmentHistory("treatmentHistory")
-                    .tumorLocation(TUMOR_LOCATION_INTERPRETATION)
-                    .tumorSubLocation("tumorSubLocation")
-                    .build()
+                curated = PriorSecondPrimary(
+                    status = TumorStatus.ACTIVE,
+                    tumorType = "tumorType",
+                    tumorSubType = "tumorSubType",
+                    treatmentHistory = "treatmentHistory",
+                    tumorLocation = TUMOR_LOCATION_INTERPRETATION,
+                    tumorSubLocation = "tumorSubLocation"
+                )
             )
-        ), TestCurationFactory.curationDatabase(
+        ),
+        TestCurationFactory.curationDatabase(
             TreatmentHistoryEntryConfig(
-                input = TREATMENT_HISTORY_INPUT,
-                ignore = false,
-                curated = ImmutableTreatmentHistoryEntry.builder().build()
+                input = TREATMENT_HISTORY_INPUT, ignore = false, curated = TreatmentTestFactory.treatmentHistoryEntry()
             )
         )
     )
@@ -49,7 +50,7 @@ class PriorSecondPrimaryExtractorTest {
         val questionnaire = emptyQuestionnaire().copy(secondaryPrimaries = inputs)
         val (priorSecondPrimaries, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(priorSecondPrimaries).hasSize(1)
-        assertThat(priorSecondPrimaries[0].tumorLocation()).isEqualTo(TUMOR_LOCATION_INTERPRETATION)
+        assertThat(priorSecondPrimaries[0].tumorLocation).isEqualTo(TUMOR_LOCATION_INTERPRETATION)
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
-import com.google.common.collect.Multimap
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -11,13 +10,13 @@ import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EligibleDutchExternalTrialsGenerator(
-    private val source: String, private val externalTrialsPerEvent: Multimap<String, ExternalTrial>, private val width: Float
+    private val source: String, private val externalTrialsPerEvent: Map<String, List<ExternalTrial>>, private val width: Float
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
             "%s trials potentially eligible based on molecular results which are potentially recruiting in The Netherlands (%d)",
             source,
-            externalTrialsPerEvent.size()
+            externalTrialsPerEvent.values.flatten().size
         )
     }
 
@@ -32,20 +31,13 @@ class EligibleDutchExternalTrialsGenerator(
         listOf("Trial title", "NCT number").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
         table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
-        for (event in externalTrialsPerEvent.keySet()) {
+        externalTrialsPerEvent.forEach { (event, externalTrials) ->
             val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth)
-            externalTrialsPerEvent[event].forEach {
-                subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(it.title())))
-                subTable.addCell(
-                    Cells.createContentNoBorder(it.nctId()).setAction(PdfAction.createURI(it.url()))
-                        .addStyle(
-                            Styles.urlStyle()
-                        )
-                )
+            externalTrials.forEach {
+                subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(it.title)))
+                subTable.addCell(Cells.createContentNoBorder(it.nctId).setAction(PdfAction.createURI(it.url)).addStyle(Styles.urlStyle()))
             }
-            table.addCell(
-                Cells.createContent(event)
-            )
+            table.addCell(Cells.createContent(event))
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
         }
 

@@ -7,9 +7,8 @@ import com.hartwig.actin.clinical.curation.config.ECGConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableECG
-import com.hartwig.actin.clinical.datamodel.ImmutableInfectionStatus
+import com.hartwig.actin.clinical.datamodel.ECG
+import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -54,7 +53,7 @@ class ClinicalStatusExtractorTest {
     @Test
     fun `Should return empty extraction when no questionnaire`() {
         val (clinicalStatus, evaluation) = extractor.extract(PATIENT_ID, null, true)
-        assertThat(clinicalStatus).isEqualTo(ImmutableClinicalStatus.builder().build())
+        assertThat(clinicalStatus).isEqualTo(ClinicalStatus())
         assertThat(evaluation.warnings).isEmpty()
         assertThat(evaluation.ecgEvaluatedInputs).isEmpty()
         assertThat(evaluation.infectionEvaluatedInputs).isEmpty()
@@ -105,19 +104,19 @@ class ClinicalStatusExtractorTest {
         )
     }
 
-    private fun ecg(input: String): ImmutableECG? =
-        ImmutableECG.builder().aberrationDescription(input).hasSigAberrationLatestECG(true).build()
+    private fun ecg(input: String) = ECG(
+        aberrationDescription = input, hasSigAberrationLatestECG = true, jtcMeasure = null, qtcfMeasure = null
+    )
 
-    private fun infectionStatus(input: String): ImmutableInfectionStatus? =
-        ImmutableInfectionStatus.builder().description(input).hasActiveInfection(true).build()
+    private fun infectionStatus(input: String) = InfectionStatus(description = input, hasActiveInfection = true)
 
     private fun assertClinicalStatus(clinicalStatus: ClinicalStatus) {
-        assertThat(clinicalStatus.who()).isEqualTo(1)
-        assertThat(clinicalStatus.infectionStatus()?.hasActiveInfection()).isTrue()
-        assertThat(clinicalStatus.infectionStatus()?.description()).isEqualTo(CURATED_INFECTION)
-        assertThat(clinicalStatus.ecg()?.hasSigAberrationLatestECG()).isTrue()
-        assertThat(clinicalStatus.ecg()?.aberrationDescription()).isEqualTo(CURATED_ECG)
-        assertThat(clinicalStatus.lvef()).isEqualTo(CURATED_LVEF)
-        assertThat(clinicalStatus.hasComplications()).isTrue()
+        assertThat(clinicalStatus.who).isEqualTo(1)
+        assertThat(clinicalStatus.infectionStatus?.hasActiveInfection).isTrue
+        assertThat(clinicalStatus.infectionStatus?.description).isEqualTo(CURATED_INFECTION)
+        assertThat(clinicalStatus.ecg?.hasSigAberrationLatestECG).isTrue
+        assertThat(clinicalStatus.ecg?.aberrationDescription).isEqualTo(CURATED_ECG)
+        assertThat(clinicalStatus.lvef).isEqualTo(CURATED_LVEF)
+        assertThat(clinicalStatus.hasComplications).isTrue
     }
 }

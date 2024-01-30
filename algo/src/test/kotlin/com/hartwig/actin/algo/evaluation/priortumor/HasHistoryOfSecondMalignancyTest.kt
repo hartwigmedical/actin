@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import org.junit.Test
 
 class HasHistoryOfSecondMalignancyTest {
+
     @Test
     fun canEvaluate() {
         val function = HasHistoryOfSecondMalignancy()
@@ -15,7 +16,7 @@ class HasHistoryOfSecondMalignancyTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
 
         // One prior tumor
-        priorTumors.add(PriorTumorTestFactory.builder().build())
+        priorTumors.add(PriorTumorTestFactory.priorSecondPrimary())
         assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
     }
 }

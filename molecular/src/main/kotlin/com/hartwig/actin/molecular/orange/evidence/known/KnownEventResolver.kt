@@ -15,30 +15,24 @@ import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
 import com.hartwig.serve.datamodel.range.KnownExon
 
-class KnownEventResolver internal constructor(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: Set<KnownGene>) {
+class KnownEventResolver(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: Set<KnownGene>) {
 
     fun resolveForVariant(variant: PurpleVariant): GeneAlteration? {
-        val hotspot = findHotspot(knownEvents.hotspots(), variant)
-        if (hotspot != null) {
-            return hotspot
-        }
-        val codon = findCodon(knownEvents.codons(), variant)
-        if (codon != null) {
-            return codon
-        }
-        val exon = findExon(knownEvents.exons(), variant)
-        return exon ?: GeneLookup.find(aggregatedKnownGenes, variant.gene())
+        return findHotspot(knownEvents.hotspots(), variant)
+            ?: findCodon(knownEvents.codons(), variant)
+            ?: findExon(knownEvents.exons(), variant)
+            ?: GeneLookup.find(aggregatedKnownGenes, variant.gene())
     }
 
     fun resolveForCopyNumber(gainLoss: PurpleGainLoss): GeneAlteration? {
-        val knownCopyNumber = CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), gainLoss)
-        return knownCopyNumber ?: GeneLookup.find(aggregatedKnownGenes, gainLoss.gene())
+        return CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), gainLoss)
+            ?: GeneLookup.find(aggregatedKnownGenes, gainLoss.gene())
     }
 
     fun resolveForHomozygousDisruption(linxHomozygousDisruption: LinxHomozygousDisruption): GeneAlteration? {
         // Assume a homozygous disruption always has the same annotation as a loss.
-        val knownCopyNumber = CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), linxHomozygousDisruption)
-        return knownCopyNumber ?: GeneLookup.find(aggregatedKnownGenes, linxHomozygousDisruption.gene())
+        return CopyNumberLookup.findForHomozygousDisruption(knownEvents.copyNumbers(), linxHomozygousDisruption)
+            ?: GeneLookup.find(aggregatedKnownGenes, linxHomozygousDisruption.gene())
     }
 
     fun resolveForBreakend(breakend: LinxBreakend): GeneAlteration? {
@@ -51,30 +45,15 @@ class KnownEventResolver internal constructor(private val knownEvents: KnownEven
 
     companion object {
         private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: PurpleVariant): KnownHotspot? {
-            for (knownHotspot in knownHotspots) {
-                if (HotspotMatching.isMatch(knownHotspot, variant)) {
-                    return knownHotspot
-                }
-            }
-            return null
+            return knownHotspots.find { HotspotMatching.isMatch(it, variant) }
         }
 
         private fun findCodon(knownCodons: Iterable<KnownCodon>, variant: PurpleVariant): KnownCodon? {
-            for (knownCodon in knownCodons) {
-                if (RangeMatching.isMatch(knownCodon, variant)) {
-                    return knownCodon
-                }
-            }
-            return null
+            return knownCodons.find { RangeMatching.isMatch(it, variant) }
         }
 
         private fun findExon(knownExons: Iterable<KnownExon>, variant: PurpleVariant): KnownExon? {
-            for (knownExon in knownExons) {
-                if (RangeMatching.isMatch(knownExon, variant)) {
-                    return knownExon
-                }
-            }
-            return null
+            return knownExons.find { RangeMatching.isMatch(it, variant) }
         }
     }
 }

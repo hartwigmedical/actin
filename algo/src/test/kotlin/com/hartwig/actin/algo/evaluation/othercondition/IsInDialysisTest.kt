@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 class IsInDialysisTest {
+
     @Test
     fun canEvaluate() {
         val function = IsInDialysis()

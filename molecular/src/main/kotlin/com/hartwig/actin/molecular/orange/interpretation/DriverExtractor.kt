@@ -1,11 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Driver
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
@@ -40,17 +37,17 @@ internal class DriverExtractor private constructor(
         LOGGER.info(" Extracted {} fusions of which {} reportable", fusions.size, reportableCount(fusions))
 
         val virusInterpreter = record.virusInterpreter()
-        val viruses: MutableSet<Virus> = if (virusInterpreter != null) virusExtractor.extract(virusInterpreter) else mutableSetOf()
+        val viruses = if (virusInterpreter != null) virusExtractor.extract(virusInterpreter) else emptySet()
         LOGGER.info(" Extracted {} viruses of which {} reportable", viruses.size, reportableCount(viruses))
 
-        return ImmutableMolecularDrivers.builder()
-            .variants(variants)
-            .copyNumbers(copyNumbers)
-            .homozygousDisruptions(homozygousDisruptions)
-            .disruptions(disruptions)
-            .fusions(fusions)
-            .viruses(viruses)
-            .build()
+        return MolecularDrivers(
+            variants = variants,
+            copyNumbers = copyNumbers,
+            homozygousDisruptions = homozygousDisruptions,
+            disruptions = disruptions,
+            fusions = fusions,
+            viruses = viruses
+        )
     }
 
     companion object {
@@ -67,24 +64,14 @@ internal class DriverExtractor private constructor(
             )
         }
 
-        internal fun reportableLostGenes(copyNumbers: Iterable<CopyNumber>): MutableSet<String> {
-            val lostGenes: MutableSet<String> = Sets.newHashSet()
-            for (copyNumber in copyNumbers) {
-                if (copyNumber.isReportable && copyNumber.type().isLoss) {
-                    lostGenes.add(copyNumber.gene())
-                }
-            }
-            return lostGenes
+        internal fun reportableLostGenes(copyNumbers: Iterable<CopyNumber>): Set<String> {
+            return copyNumbers.filter { copyNumber -> copyNumber.isReportable && copyNumber.type.isLoss }
+                .map(CopyNumber::gene)
+                .toSet()
         }
 
-        internal fun <T : Driver> reportableCount(drivers: Iterable<T>): Int {
-            var count = 0
-            for (driver in drivers) {
-                if (driver.isReportable) {
-                    count++
-                }
-            }
-            return count
+        internal fun <T : Driver> reportableCount(drivers: Collection<T>): Int {
+            return drivers.count(Driver::isReportable)
         }
     }
 }

@@ -18,12 +18,7 @@ internal class PersonalizedActionabilityFactory internal constructor(
         if (!expandedTumorDoids.contains(event.applicableCancerType().doid())) {
             return false
         }
-        for (blacklist in event.blacklistCancerTypes()) {
-            if (expandedTumorDoids.contains(blacklist.doid())) {
-                return false
-            }
-        }
-        return true
+        return event.blacklistCancerTypes().none { expandedTumorDoids.contains(it.doid()) }
     }
 
     companion object {

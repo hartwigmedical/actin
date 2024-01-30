@@ -4,24 +4,25 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasLabValueWithinInstitutionalNormalLimitTest {
+
     @Test
     fun canEvaluate() {
         val function = HasLabValueWithinInstitutionalNormalLimit()
         val record = TestDataFactory.createMinimalTestPatientRecord()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.builder().isOutsideRef(null).build())
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 0.0))
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.builder().isOutsideRef(false).build())
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 0.0).copy(isOutsideRef = false))
         )
-        val actual = function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.builder().isOutsideRef(true).build())
+        val actual = function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 0.0).copy(isOutsideRef = true))
         assertEvaluation(EvaluationResult.FAIL, actual)
-        assertTrue(actual.recoverable())
+        assertThat(actual.recoverable).isTrue
     }
 }

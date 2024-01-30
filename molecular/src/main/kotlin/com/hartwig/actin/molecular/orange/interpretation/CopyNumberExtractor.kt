@@ -4,7 +4,6 @@ import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableCopyNumber
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
@@ -16,42 +15,46 @@ import javax.swing.Action
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
 
-    fun extract(purple: PurpleRecord): MutableSet<CopyNumber> {
-        val copyNumbers: MutableSet<CopyNumber> = Sets.newTreeSet(CopyNumberComparator())
-        val drivers: MutableSet<PurpleDriver> = VariantExtractor.relevantPurpleDrivers(purple)
-        for (gainLoss in purple.allSomaticGainsLosses()) {
-            val driver = findCopyNumberDriver(drivers, gainLoss.gene())
-            val event = DriverEventFactory.gainLossEvent(gainLoss)
-
-            if (geneFilter.include(gainLoss.gene())) {
-                copyNumbers.add(
-                    ImmutableCopyNumber.builder()
-                        .from(
-                            GeneAlterationFactory.convertAlteration(
-                                gainLoss.gene(),
-                                evidenceDatabase.geneAlterationForCopyNumber(gainLoss)
-                            )
-                        )
-                        .isReportable(driver != null)
-                        .event(event)
-                        .driverLikelihood(if (driver != null) DriverLikelihood.HIGH else null)
-                        .evidence(ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss)))
-                        .type(determineType(gainLoss.interpretation()))
-                        .minCopies(Math.round(gainLoss.minCopies()).toInt())
-                        .maxCopies(Math.round(gainLoss.maxCopies()).toInt())
-                        .build()
-                )
-            } else check(driver == null) {
-                ("Filtered a reported copy number through gene filtering: '" + event + "'. Please make sure '" + gainLoss.gene()
-                        + "' is configured as a known gene.")
+    fun extract(purple: PurpleRecord): Set<CopyNumber> {
+        val drivers = VariantExtractor.relevantPurpleDrivers(purple)
+        return purple.allSomaticGainsLosses()
+            .map { gainLoss ->
+                Triple(gainLoss, findCopyNumberDriver(drivers, gainLoss.gene()), DriverEventFactory.gainLossEvent(gainLoss))
             }
-        }
-        return copyNumbers
+            .filter { (gainLoss, driver, event) ->
+                val geneIncluded = geneFilter.include(gainLoss.gene())
+                if (!geneIncluded && driver != null) {
+                    throw IllegalStateException(
+                        "Filtered a reported copy number through gene filtering: '$event'."
+                                + " Please make sure '${gainLoss.gene()}' is configured as a known gene."
+                    )
+                }
+                geneIncluded
+            }
+            .map { (gainLoss, driver, event) ->
+                val alteration = GeneAlterationFactory.convertAlteration(
+                    gainLoss.gene(), evidenceDatabase.geneAlterationForCopyNumber(gainLoss)
+                )
+                CopyNumber(
+                    gene = alteration.gene,
+                    geneRole = alteration.geneRole,
+                    proteinEffect = alteration.proteinEffect,
+                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                    isReportable = driver != null,
+                    event = event,
+                    driverLikelihood = if (driver != null) DriverLikelihood.HIGH else null,
+                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss))!!,
+                    type = determineType(gainLoss.interpretation()),
+                    minCopies = Math.round(gainLoss.minCopies()).toInt(),
+                    maxCopies = Math.round(gainLoss.maxCopies()).toInt()
+                )
+            }
+            .toSortedSet(CopyNumberComparator())
     }
 
     companion object {
-        private val AMP_DRIVERS: Set<PurpleDriverType> = setOf(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
-        private val DEL_DRIVERS: Set<PurpleDriverType> = setOf(PurpleDriverType.DEL)
+        private val AMP_DRIVERS = setOf(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
+        private val DEL_DRIVERS = setOf(PurpleDriverType.DEL)
 
         internal fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {
             return when (interpretation) {
@@ -74,19 +77,16 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
         }
 
         private fun findCopyNumberDriver(drivers: Set<PurpleDriver>, geneToFind: String): PurpleDriver? {
-            for (driver in drivers) {
-                if ((DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) && driver.gene() == geneToFind) {
-                    return driver
-                }
+            return drivers.find { driver ->
+                (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) && driver.gene() == geneToFind
             }
-            return null
         }
     }
 
-    fun extractGeneCopyNumbers(purple: PurpleRecord, reportableCopyNumbers: MutableSet<CopyNumber>): MutableSet<CopyNumber> {
+    fun extractGeneCopyNumbers(purple: PurpleRecord, reportableCopyNumbers: Set<CopyNumber>): Set<CopyNumber> {
         val copyNumbers: MutableSet<CopyNumber> = Sets.newTreeSet(CopyNumberComparator())
-        val drivers: MutableSet<PurpleDriver> = VariantExtractor.relevantPurpleDrivers(purple)
-        val reportable = reportableCopyNumbers.map{it.gene()}
+        val drivers: Set<PurpleDriver> = VariantExtractor.relevantPurpleDrivers(purple)
+        val reportable = reportableCopyNumbers.map{it.gene}
         for (geneCopyNumber in purple.allSomaticGeneCopyNumbers()) {
             val driver = findCopyNumberDriver(drivers, geneCopyNumber.gene())
 

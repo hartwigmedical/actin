@@ -5,7 +5,7 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
-import com.hartwig.actin.treatment.TreatmentConstants
+import com.hartwig.actin.trial.TreatmentConstants
 import com.itextpdf.layout.element.Table
 
 class IneligibleActinTrialsGenerator private constructor(

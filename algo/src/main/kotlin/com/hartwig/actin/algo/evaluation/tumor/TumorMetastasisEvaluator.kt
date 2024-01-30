@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.util.ApplicationConfig
 
 object TumorMetastasisEvaluator {
     fun evaluate(hasMetastases: Boolean?, metastasisType: String): Evaluation {
@@ -12,7 +11,7 @@ object TumorMetastasisEvaluator {
                 "Missing $metastasisType metastasis data"
             )
         } else if (hasMetastases) {
-            val capitalizedType = metastasisType.substring(0, 1).uppercase(ApplicationConfig.LOCALE) + metastasisType.substring(1)
+            val capitalizedType = metastasisType.substring(0, 1).uppercase() + metastasisType.substring(1)
             EvaluationFactory.pass("$capitalizedType metastases are present", "$capitalizedType metastases")
         } else {
             EvaluationFactory.fail("No $metastasisType metastases present", "No $metastasisType metastases")

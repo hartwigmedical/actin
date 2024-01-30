@@ -1,9 +1,7 @@
 package com.hartwig.actin.molecular.orange.evidence.known
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.serve.datamodel.ImmutableKnownEvents
-import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.KnownEvent
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.fusion.KnownFusion
@@ -15,7 +13,7 @@ import com.hartwig.serve.datamodel.range.KnownExon
 
 object KnownEventResolverFactory {
 
-    val KNOWN_EVENT_SOURCES: MutableSet<Knowledgebase> = Sets.newHashSet(ActionabilityConstants.EVIDENCE_SOURCE)
+    val KNOWN_EVENT_SOURCES = setOf(ActionabilityConstants.EVIDENCE_SOURCE)
 
     fun create(knownEvents: KnownEvents): KnownEventResolver {
         return KnownEventResolver(filterKnownEvents(knownEvents), GeneAggregator.aggregate(knownEvents.genes()))
@@ -33,21 +31,7 @@ object KnownEventResolverFactory {
     }
 
     private fun <T : KnownEvent> filterKnown(knowns: Set<T>): Set<T> {
-        val filtered: MutableSet<T> = Sets.newHashSet()
-        for (known in knowns) {
-            if (hasAtLeastOneSourceToInclude(known.sources(), KNOWN_EVENT_SOURCES)) {
-                filtered.add(known)
-            }
-        }
-        return filtered
+        return knowns.filter { it.sources().intersect(KNOWN_EVENT_SOURCES).isNotEmpty() }.toSet()
     }
 
-    private fun hasAtLeastOneSourceToInclude(sources: Set<Knowledgebase>, sourcesToInclude: Set<Knowledgebase>): Boolean {
-        for (source in sources) {
-            if (sourcesToInclude.contains(source)) {
-                return true
-            }
-        }
-        return false
-    }
 }

@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class OrTest {
@@ -58,30 +58,30 @@ class OrTest {
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, 3)
         val function4: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, 4)
         val result: Evaluation = Or(listOf(function1, function2, function3, function4)).evaluate(TEST_PATIENT)
-        Assert.assertEquals(2, result.passSpecificMessages().size.toLong())
-        Assert.assertTrue(result.passSpecificMessages().contains("pass specific 3"))
-        Assert.assertTrue(result.passSpecificMessages().contains("pass specific 4"))
-        Assert.assertEquals(2, result.passGeneralMessages().size.toLong())
-        Assert.assertTrue(result.passGeneralMessages().contains("pass general 3"))
-        Assert.assertTrue(result.passGeneralMessages().contains("pass general 4"))
-        Assert.assertEquals(2, result.warnSpecificMessages().size.toLong())
-        Assert.assertTrue(result.warnSpecificMessages().contains("warn specific 3"))
-        Assert.assertTrue(result.warnSpecificMessages().contains("warn specific 4"))
-        Assert.assertEquals(2, result.warnGeneralMessages().size.toLong())
-        Assert.assertTrue(result.warnGeneralMessages().contains("warn general 3"))
-        Assert.assertTrue(result.warnGeneralMessages().contains("warn general 4"))
-        Assert.assertEquals(2, result.failSpecificMessages().size.toLong())
-        Assert.assertTrue(result.failSpecificMessages().contains("fail specific 3"))
-        Assert.assertTrue(result.failSpecificMessages().contains("fail specific 4"))
-        Assert.assertEquals(2, result.failGeneralMessages().size.toLong())
-        Assert.assertTrue(result.failGeneralMessages().contains("fail general 3"))
-        Assert.assertTrue(result.failGeneralMessages().contains("fail general 4"))
-        Assert.assertEquals(2, result.undeterminedSpecificMessages().size.toLong())
-        Assert.assertTrue(result.undeterminedSpecificMessages().contains("undetermined specific 3"))
-        Assert.assertTrue(result.undeterminedSpecificMessages().contains("undetermined specific 4"))
-        Assert.assertEquals(2, result.undeterminedGeneralMessages().size.toLong())
-        Assert.assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 3"))
-        Assert.assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 4"))
+        assertThat(result.passSpecificMessages).hasSize(2)
+        assertThat(result.passSpecificMessages).contains("pass specific 3")
+        assertThat(result.passSpecificMessages).contains("pass specific 4")
+        assertThat(result.passGeneralMessages).hasSize(2)
+        assertThat(result.passGeneralMessages).contains("pass general 3")
+        assertThat(result.passGeneralMessages).contains("pass general 4")
+        assertThat(result.warnSpecificMessages).hasSize(2)
+        assertThat(result.warnSpecificMessages).contains("warn specific 3")
+        assertThat(result.warnSpecificMessages).contains("warn specific 4")
+        assertThat(result.warnGeneralMessages).hasSize(2)
+        assertThat(result.warnGeneralMessages).contains("warn general 3")
+        assertThat(result.warnGeneralMessages).contains("warn general 4")
+        assertThat(result.failSpecificMessages).hasSize(2)
+        assertThat(result.failSpecificMessages).contains("fail specific 3")
+        assertThat(result.failSpecificMessages).contains("fail specific 4")
+        assertThat(result.failGeneralMessages).hasSize(2)
+        assertThat(result.failGeneralMessages).contains("fail general 3")
+        assertThat(result.failGeneralMessages).contains("fail general 4")
+        assertThat(result.undeterminedSpecificMessages).hasSize(2)
+        assertThat(result.undeterminedSpecificMessages).contains("undetermined specific 3")
+        assertThat(result.undeterminedSpecificMessages).contains("undetermined specific 4")
+        assertThat(result.undeterminedGeneralMessages).hasSize(2)
+        assertThat(result.undeterminedGeneralMessages).contains("undetermined general 3")
+        assertThat(result.undeterminedGeneralMessages).contains("undetermined general 4")
     }
 
     @Test
@@ -90,12 +90,12 @@ class OrTest {
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, true, 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, true, 3)
         val result: Evaluation = Or(listOf(function1, function2, function3)).evaluate(TEST_PATIENT)
-        Assert.assertEquals(2, result.inclusionMolecularEvents().size.toLong())
-        Assert.assertTrue(result.inclusionMolecularEvents().contains("inclusion event 2"))
-        Assert.assertTrue(result.inclusionMolecularEvents().contains("inclusion event 3"))
-        Assert.assertEquals(2, result.exclusionMolecularEvents().size.toLong())
-        Assert.assertTrue(result.exclusionMolecularEvents().contains("exclusion event 2"))
-        Assert.assertTrue(result.exclusionMolecularEvents().contains("exclusion event 3"))
+        assertThat(result.inclusionMolecularEvents).hasSize(2)
+        assertThat(result.inclusionMolecularEvents).contains("inclusion event 2")
+        assertThat(result.inclusionMolecularEvents).contains("inclusion event 3")
+        assertThat(result.exclusionMolecularEvents).hasSize(2)
+        assertThat(result.exclusionMolecularEvents).contains("exclusion event 2")
+        assertThat(result.exclusionMolecularEvents).contains("exclusion event 3")
     }
 
     @Test
@@ -103,10 +103,10 @@ class OrTest {
         val recoverable: EvaluationFunction = CompositeTestFactory.create(true, 1)
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(false, 2)
         val result: Evaluation = Or(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
-        Assert.assertTrue(result.recoverable())
-        Assert.assertEquals(2, result.undeterminedGeneralMessages().size.toLong())
-        Assert.assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 1"))
-        Assert.assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 2"))
+        assertThat(result.recoverable).isTrue
+        assertThat(result.undeterminedGeneralMessages).hasSize(2)
+        assertThat(result.undeterminedGeneralMessages).contains("undetermined general 1")
+        assertThat(result.undeterminedGeneralMessages).contains("undetermined general 2")
     }
 
     @Test(expected = IllegalStateException::class)

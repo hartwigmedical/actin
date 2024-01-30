@@ -1,62 +1,51 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.assertj.core.api.Assertions
-import org.junit.Before
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TumorStageDerivationFunctionTest {
-    private var victim: TumorStageDerivationFunction? = null
-
-    @Before
-    fun setUp() {
-        victim = TumorStageDerivationFunction.create(TestDoidModelFactory.createMinimalTestDoidModel())
-    }
+    private val derivationFunction = TumorStageDerivationFunction.create(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val tumorDetailsWithNoStage = TumorDetails(doids = setOf(DoidConstants.BREAST_CANCER_DOID))
 
     @Test
     fun shouldReturnEmptySetOfDerivationWhenNoDoidsConfigured() {
-        Assertions.assertThat(victim!!.apply(tumorBuilderWithNoStage().build())).isEmpty()
+        assertThat(derivationFunction.apply(tumorDetailsWithNoStage)).isEmpty()
     }
 
     @Test
     fun shouldReturnEmptySetOfDerivationWhenNoLesionDetailsConfigured() {
-        Assertions.assertThat(victim!!.apply(tumorBuilderWithNoStage().build())).isEmpty()
+        assertThat(derivationFunction.apply(tumorDetailsWithNoStage)).isEmpty()
     }
 
     @Test
     fun shouldReturnStageIAndIIWhenNoLesions() {
-        Assertions.assertThat(
-            victim!!.apply(
-                tumorBuilderWithNoStage().hasBoneLesions(false)
-                    .hasBrainLesions(false)
-                    .hasLiverLesions(false)
-                    .hasLymphNodeLesions(false)
-                    .hasBoneLesions(false)
-                    .hasCnsLesions(false)
-                    .hasLungLesions(false)
-                    .build()
+        assertThat(
+            derivationFunction.apply(
+                tumorDetailsWithNoStage.copy(
+                    hasBoneLesions = false,
+                    hasBrainLesions = false,
+                    hasLiverLesions = false,
+                    hasLymphNodeLesions = false,
+                    hasCnsLesions = false,
+                    hasLungLesions = false
+                )
             )
         ).containsOnly(TumorStage.I, TumorStage.II)
     }
 
     @Test
     fun shouldReturnStageIIIAndIVWhenOneCategorizedLocation() {
-        Assertions.assertThat(victim!!.apply(tumorBuilderWithNoStage().hasLymphNodeLesions(true).build()))
+        assertThat(derivationFunction.apply(tumorDetailsWithNoStage.copy(hasLymphNodeLesions = true)))
             .containsOnly(TumorStage.III, TumorStage.IV)
     }
 
     @Test
     fun shouldReturnStageIVWhenMultipleLesions() {
-        Assertions.assertThat(victim!!.apply(tumorBuilderWithNoStage().hasBoneLesions(true).hasBrainLesions(true).build()))
+        assertThat(derivationFunction.apply(tumorDetailsWithNoStage.copy(hasBoneLesions = true, hasBrainLesions = true)))
             .containsOnly(TumorStage.IV)
-    }
-
-    companion object {
-        private fun tumorBuilderWithNoStage(): ImmutableTumorDetails.Builder {
-            return TumorTestFactory.builder().stage(null).doids(listOf(DoidConstants.BREAST_CANCER_DOID))
-        }
     }
 }

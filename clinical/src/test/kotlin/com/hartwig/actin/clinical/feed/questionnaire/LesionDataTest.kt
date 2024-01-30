@@ -1,22 +1,23 @@
 package com.hartwig.actin.clinical.feed.questionnaire
 
 import com.hartwig.actin.clinical.feed.questionnaire.LesionData.Companion.fromString
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class LesionDataTest {
+
     @Test
-    fun shouldReturnNullForEmptyResponse() {
+    fun `Should return null for empty response`() {
         assertResultForInput("", "", null, null)
     }
 
     @Test
-    fun shouldReturnNullForUnknownResponse() {
+    fun `Should return null for unknown response`() {
         assertResultForInput("unknown", "n.v.t.", null, null)
     }
 
     @Test
-    fun shouldReturnTrueForAffirmativeResponseAndAccuratelyReportIfActive() {
+    fun `Should return true for affirmative response and accurately report if active`() {
         assertResultForInput("YES", "yes", true, true)
         assertResultForInput("YES", "no", true, false)
         assertResultForInput("YES", "unknown ", true, null)
@@ -24,18 +25,15 @@ class LesionDataTest {
     }
 
     @Test
-    fun shouldReturnFalseForNegativeResponseAndReportInactiveIfProvided() {
+    fun `Should return false for negative response and report inactive if provided`() {
         assertResultForInput("NO", "no", false, false)
         assertResultForInput("NO", "unknown", false, null)
         assertResultForInput("NO", "", false, null)
     }
 
-    private fun assertResultForInput(
-        presentInput: String, activeInput: String, present: Boolean?,
-        active: Boolean?
-    ) {
+    private fun assertResultForInput(presentInput: String, activeInput: String, present: Boolean?, active: Boolean?) {
         val lesionData = fromString("subject", presentInput, activeInput)
-        Assert.assertEquals(present, lesionData.curated?.present())
-        Assert.assertEquals(active, lesionData.curated?.active())
+        assertThat(lesionData.curated?.present()).isEqualTo(present)
+        assertThat(lesionData.curated?.active()).isEqualTo(active)
     }
 }

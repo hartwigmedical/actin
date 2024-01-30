@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.datamodel.Complication
 import org.junit.Test
 
 class HasSpecificComplicationTest {
+
     @Test
     fun canEvaluate() {
         val function = HasSpecificComplication("name to find")
@@ -15,9 +16,9 @@ class HasSpecificComplicationTest {
             function.evaluate(ComplicationTestFactory.withComplications(listOf(ComplicationTestFactory.yesInputComplication())))
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(emptyList())))
-        val wrong: Complication = ComplicationTestFactory.builder().name("just a name").build()
+        val wrong: Complication = ComplicationTestFactory.complication(name = "just a name")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(wrong)))
-        val match: Complication = ComplicationTestFactory.builder().name("this includes name to find").build()
+        val match: Complication = ComplicationTestFactory.complication(name = "this includes name to find")
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(match)))
     }
 }

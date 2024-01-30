@@ -14,17 +14,13 @@ import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CopyNumberExtractorTest {
 
     @Test
-    fun canExtractCopyNumbers() {
+    fun `Should extract copy numbers`() {
         val driver1: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build()
         val gainLoss1: PurpleGainLoss = TestPurpleFactory.gainLossBuilder()
             .gene("gene 1")
@@ -79,49 +75,49 @@ class CopyNumberExtractorTest {
         val geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene(), geneCopyNumber2.gene(), geneCopyNumber3.gene(), geneCopyNumber4.gene())
         val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
         val copyNumbers = copyNumberExtractor.extract(purple)
-        assertEquals(3, copyNumbers.size.toLong())
+        assertThat(copyNumbers).hasSize(3)
 
         val gene1 = findByGene(copyNumbers, "gene 1")
-        assertTrue(gene1.isReportable())
-        assertEquals(DriverLikelihood.HIGH, gene1.driverLikelihood())
-        assertEquals(CopyNumberType.LOSS, gene1.type())
-        assertEquals(0, gene1.minCopies().toLong())
-        assertEquals(1, gene1.maxCopies().toLong())
+        assertThat(gene1.isReportable).isTrue
+        assertThat(gene1.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(gene1.type).isEqualTo(CopyNumberType.LOSS)
+        assertThat(gene1.minCopies).isEqualTo(0)
+        assertThat(gene1.maxCopies).isEqualTo(1)
 
         val gene2 = findByGene(copyNumbers, "gene 2")
-        assertFalse(gene2.isReportable())
-        assertNull(gene2.driverLikelihood())
-        assertEquals(CopyNumberType.FULL_GAIN, gene2.type())
-        assertEquals(20, gene2.minCopies().toLong())
-        assertEquals(21, gene2.maxCopies().toLong())
+        assertThat(gene2.isReportable).isFalse
+        assertThat(gene2.driverLikelihood).isNull()
+        assertThat(gene2.type).isEqualTo(CopyNumberType.FULL_GAIN)
+        assertThat(gene2.minCopies).isEqualTo(20)
+        assertThat(gene2.maxCopies).isEqualTo(21)
 
         val gene4 = findByGene(copyNumbers, "gene 4")
-        assertEquals(20, gene4.minCopies().toLong())
-        assertEquals(20, gene4.maxCopies().toLong())
+        assertThat(gene4.minCopies).isEqualTo(20)
+        assertThat(gene4.maxCopies).isEqualTo(20)
 
         val geneCopyNumbers = copyNumberExtractor.extractGeneCopyNumbers(purple, copyNumbers)
-        assertEquals(3, geneCopyNumbers.size.toLong())
+        assertThat(geneCopyNumbers.size.toLong()).isEqualTo(3)
 
         val cn2 = findByGene(geneCopyNumbers, "gene 5")
-        assertFalse(cn2.isReportable())
-        assertNull(cn2.driverLikelihood())
-        assertEquals(CopyNumberType.NONE, cn2.type())
-        assertEquals(4, cn2.minCopies().toLong())
-        assertEquals(4, cn2.minCopies().toLong())
+        assertThat(cn2.isReportable).isFalse
+        assertThat(cn2.driverLikelihood).isNull()
+        assertThat(cn2.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(cn2.minCopies).isEqualTo(4)
+        assertThat(cn2.minCopies).isEqualTo(4)
 
         val cn3 = findByGene(geneCopyNumbers, "gene 6")
-        assertFalse(cn3.isReportable())
-        assertNull(cn3.driverLikelihood())
-        assertEquals(CopyNumberType.NONE, cn3.type())
-        assertEquals(5, cn3.minCopies().toLong())
-        assertEquals(5, cn3.minCopies().toLong())
+        assertThat(cn3.isReportable).isFalse
+        assertThat(cn3.driverLikelihood).isNull()
+        assertThat(cn3.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(cn3.minCopies).isEqualTo(5)
+        assertThat(cn3.minCopies).isEqualTo(5)
 
         val cn4 = findByGene(geneCopyNumbers, "gene 7")
-        assertFalse(cn4.isReportable())
-        assertNull(cn4.driverLikelihood())
-        assertEquals(CopyNumberType.NONE, cn4.type())
-        assertEquals(1, cn4.minCopies().toLong())
-        assertEquals(1, cn4.minCopies().toLong())
+        assertThat(cn4.isReportable).isFalse
+        assertThat(cn4.driverLikelihood).isNull()
+        assertThat(cn4.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(cn4.minCopies).isEqualTo(5)
+        assertThat(cn4.minCopies).isEqualTo(5)
 
     }
 
@@ -142,20 +138,16 @@ class CopyNumberExtractorTest {
     }
 
     @Test
-    fun canDetermineTypeForAllInterpretations() {
+    fun `Should determine type for all interpretations`() {
         for (interpretation in CopyNumberInterpretation.values()) {
-            assertNotNull(CopyNumberExtractor.determineType(interpretation))
+            assertThat(CopyNumberExtractor.determineType(interpretation)).isNotNull()
         }
     }
 
     companion object {
         private fun findByGene(copyNumbers: Iterable<CopyNumber>, geneToFind: String): CopyNumber {
-            for (copyNumber in copyNumbers) {
-                if (copyNumber.gene() == geneToFind) {
-                    return copyNumber
-                }
-            }
-            throw IllegalStateException("Could not find copy number for gene: $geneToFind")
+            return copyNumbers.find { it.gene == geneToFind }
+                ?: throw IllegalStateException("Could not find copy number for gene: $geneToFind")
         }
     }
 }

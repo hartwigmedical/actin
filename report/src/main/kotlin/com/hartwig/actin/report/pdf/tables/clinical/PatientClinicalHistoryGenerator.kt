@@ -52,11 +52,11 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
     }
 
     private fun relevantSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
-        return treatmentHistoryTable(record.oncologicalHistory(), true)
+        return treatmentHistoryTable(record.oncologicalHistory, true)
     }
 
     private fun relevantNonSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
-        return treatmentHistoryTable(record.oncologicalHistory(), false)
+        return treatmentHistoryTable(record.oncologicalHistory, false)
     }
 
     private fun treatmentHistoryTable(treatmentHistory: List<TreatmentHistoryEntry>, requireSystemic: Boolean): Table {
@@ -78,7 +78,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
     private fun secondPrimaryHistoryTable(record: ClinicalRecord): Table {
         val table: Table = createSingleColumnTable(valueWidth)
 
-        record.priorSecondPrimaries().sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
+        record.priorSecondPrimaries.sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
             .forEach { table.addCell(createSingleTableEntry(toSecondPrimaryString(it))) }
 
         return table
@@ -89,8 +89,8 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        record.priorOtherConditions().forEach { priorOtherCondition: PriorOtherCondition ->
-            val dateString = toDateString(priorOtherCondition.year(), priorOtherCondition.month())
+        record.priorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
+            val dateString = toDateString(priorOtherCondition.year, priorOtherCondition.month)
             if (dateString != null) {
                 table.addCell(createSingleTableEntry(dateString))
                 table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)))
@@ -105,8 +105,8 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
         private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
-            val startString = toDateString(treatmentHistoryEntry.startYear(), treatmentHistoryEntry.startMonth())
-            val stopString = treatmentHistoryEntry.treatmentHistoryDetails()?.let { toDateString(it.stopYear(), it.stopMonth()) }
+            val startString = toDateString(treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
+            val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let { toDateString(it.stopYear, it.stopMonth) }
 
             return when {
                 startString != null && stopString != null -> "$startString-$stopString"
@@ -117,7 +117,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         }
 
         private fun extractTreatmentString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
-            val intentNames = treatmentHistoryEntry.intents()
+            val intentNames = treatmentHistoryEntry.intents
                 ?.filter { it != Intent.PALLIATIVE }
                 ?.map { it.name.lowercase() }
 
@@ -131,27 +131,27 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 else -> null
             }
 
-            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails()?.cycles()?.let { if (it == 1) "$it cycle" else "$it cycles" }
+            val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails?.cycles?.let { if (it == 1) "$it cycle" else "$it cycles" }
 
-            val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails()?.stopReasonDetail()
+            val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails?.stopReasonDetail
                 ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
 
             val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
             val treatmentWithAnnotation = listOfNotNull(
                 treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)",
-                treatmentHistoryEntry.treatmentHistoryDetails()?.switchToTreatments()?.let { switchToTreatments ->
+                treatmentHistoryEntry.treatmentHistoryDetails?.switchToTreatments?.let { switchToTreatments ->
                     "with switch to " + switchToTreatments.joinToString(" then ") {
-                        it.treatment().display() + it.cycles()?.let { cycles -> " (${cycles} cycles)" }
+                        it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)" }
                     }
                 },
-                treatmentHistoryEntry.treatmentHistoryDetails()?.maintenanceTreatment()?.let { maintenanceTreatment ->
-                    "continued with ${maintenanceTreatment.treatment().display()} maintenance"
+                treatmentHistoryEntry.treatmentHistoryDetails?.maintenanceTreatment?.let { maintenanceTreatment ->
+                    "continued with ${maintenanceTreatment.treatment.display()} maintenance"
                 }
             ).joinToString(" ")
 
             return if (treatmentHistoryEntry.isTrial) {
-                val acronym = if (treatmentHistoryEntry.trialAcronym().isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym()})"
+                val acronym = if (treatmentHistoryEntry.trialAcronym.isNullOrEmpty()) "" else "(${treatmentHistoryEntry.trialAcronym})"
                 val trial = "Clinical trial"
                 when {
                     acronym.isEmpty() && treatmentWithAnnotation.isEmpty() -> "$trial (details unknown)"
@@ -165,25 +165,25 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         }
 
         private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {
-            val tumorLocation = priorSecondPrimary.tumorLocation()
+            val tumorLocation = priorSecondPrimary.tumorLocation
             val tumorDetails = when {
-                priorSecondPrimary.tumorSubType().isNotEmpty() -> {
-                    tumorLocation + " " + priorSecondPrimary.tumorSubType().lowercase()
+                priorSecondPrimary.tumorSubType.isNotEmpty() -> {
+                    tumorLocation + " " + priorSecondPrimary.tumorSubType.lowercase()
                 }
 
-                priorSecondPrimary.tumorType().isNotEmpty() -> {
-                    tumorLocation + " " + priorSecondPrimary.tumorType().lowercase()
+                priorSecondPrimary.tumorType.isNotEmpty() -> {
+                    tumorLocation + " " + priorSecondPrimary.tumorType.lowercase()
                 }
 
                 else -> tumorLocation
             }
-            val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear(), priorSecondPrimary.diagnosedMonth())
+            val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear, priorSecondPrimary.diagnosedMonth)
                     ?.let { "diagnosed $it, " } ?: ""
 
-            val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear(), priorSecondPrimary.lastTreatmentMonth())
+            val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear, priorSecondPrimary.lastTreatmentMonth)
                     ?.let { "last treatment $it, " } ?: ""
 
-            val status = when (priorSecondPrimary.status()) {
+            val status = when (priorSecondPrimary.status) {
                 TumorStatus.ACTIVE -> "considered active"
                 TumorStatus.INACTIVE -> "considered non-active"
                 TumorStatus.EXPECTATIVE -> "considered expectative"
@@ -193,7 +193,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
         private fun toPriorOtherConditionString(priorOtherCondition: PriorOtherCondition): String {
             val note = if (!priorOtherCondition.isContraindicationForTherapy) " (no contraindication for therapy)" else ""
-            return priorOtherCondition.name() + note
+            return priorOtherCondition.name + note
         }
 
         private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {

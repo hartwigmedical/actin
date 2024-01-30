@@ -9,11 +9,11 @@ import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 
 class HasKnownEBVInfection internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingCondition = OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())
-            .find { stringCaseInsensitivelyMatchesQueryCollection(it.name(), EBV_TERMS) }
+        val matchingCondition = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+            .find { stringCaseInsensitivelyMatchesQueryCollection(it.name, EBV_TERMS) }
 
         return if (matchingCondition != null) {
-            EvaluationFactory.pass("Patient has known EBV infection: " + matchingCondition.name(), "Present EBV infection")
+            EvaluationFactory.pass("Patient has known EBV infection: " + matchingCondition.name, "Present EBV infection")
         } else {
             EvaluationFactory.fail("Patient has no known EBV infection", "EBV infection(s) not present")
         }

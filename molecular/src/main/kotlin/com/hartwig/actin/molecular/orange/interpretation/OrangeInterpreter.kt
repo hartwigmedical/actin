@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.filter.GeneFilter
@@ -19,22 +18,22 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
         val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase)
         val characteristicsExtractor = CharacteristicsExtractor(evidenceDatabase)
 
-        return ImmutableMolecularRecord.builder()
-            .patientId(toPatientId(record.sampleId()))
-            .sampleId(record.sampleId())
-            .type(determineExperimentType(record.experimentType()))
-            .refGenomeVersion(determineRefGenomeVersion(record.refGenomeVersion()))
-            .date(record.samplingDate())
-            .evidenceSource(ActionabilityConstants.EVIDENCE_SOURCE.display())
-            .externalTrialSource(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display())
-            .containsTumorCells(containsTumorCells(record))
-            .hasSufficientQualityAndPurity(hasSufficientQualityAndPurity(record))
-            .hasSufficientQuality(hasSufficientQuality(record))
-            .characteristics(characteristicsExtractor.extract(record))
-            .drivers(driverExtractor.extract(record))
-            .immunology(ImmunologyExtraction.extract(record))
-            .pharmaco(PharmacoExtraction.extract(record))
-            .build()
+        return MolecularRecord(
+            patientId = toPatientId(record.sampleId()),
+            sampleId = record.sampleId(),
+            type = determineExperimentType(record.experimentType()),
+            refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
+            date = record.samplingDate(),
+            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
+            externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
+            containsTumorCells = containsTumorCells(record),
+            hasSufficientQualityAndPurity = hasSufficientQualityAndPurity(record),
+            hasSufficientQuality = hasSufficientQuality(record),
+            characteristics = characteristicsExtractor.extract(record),
+            drivers = driverExtractor.extract(record),
+            immunology = ImmunologyExtraction.extract(record),
+            pharmaco = PharmacoExtraction.extract(record)
+        )
     }
 
     companion object {
@@ -51,7 +50,7 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
         }
 
         fun containsTumorCells(record: OrangeRecord): Boolean {
-            return PurpleQCStatus.FAIL_NO_TUMOR !in record.purple().fit().qc().status();
+            return PurpleQCStatus.FAIL_NO_TUMOR !in record.purple().fit().qc().status()
         }
 
         fun hasSufficientQualityAndPurity(record: OrangeRecord): Boolean {

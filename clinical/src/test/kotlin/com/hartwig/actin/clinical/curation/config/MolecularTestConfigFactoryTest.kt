@@ -9,7 +9,7 @@ import org.junit.Test
 class MolecularTestConfigFactoryTest {
 
     private val fields: Map<String, Int> =
-        TestCurationFactory.curationHeaders(CurationDatabaseReader.MOLECULAR_TEST_TSV)
+        TestCurationFactory.curationHeaders(CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV)
 
     @Test
     fun `Should return MolecularTestConfig from valid inputs`() {
@@ -21,13 +21,13 @@ class MolecularTestConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isEqualTo(false)
         val curated = config.config.curated!!
-        assertThat(curated.test()).isEqualTo("test")
-        assertThat(curated.item()).isEqualTo("item")
-        assertThat(curated.measure()).isEqualTo("measure")
-        assertThat(curated.scoreValuePrefix()).isEqualTo("scoreValuePrefix")
-        assertThat(curated.scoreValue()).isEqualTo(1.0)
-        assertThat(curated.scoreValueUnit()).isEqualTo("scoreValueUnit")
-        assertThat(curated.impliesPotentialIndeterminateStatus()).isEqualTo(true)
+        assertThat(curated.test).isEqualTo("test")
+        assertThat(curated.item).isEqualTo("item")
+        assertThat(curated.measure).isEqualTo("measure")
+        assertThat(curated.scoreValuePrefix).isEqualTo("scoreValuePrefix")
+        assertThat(curated.scoreValue).isEqualTo(1.0)
+        assertThat(curated.scoreValueUnit).isEqualTo("scoreValueUnit")
+        assertThat(curated.impliesPotentialIndeterminateStatus).isEqualTo(true)
     }
 
     @Test

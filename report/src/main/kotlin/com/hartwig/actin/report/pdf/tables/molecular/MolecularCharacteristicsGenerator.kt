@@ -24,21 +24,21 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })
 
         listOf(
-            createPurityCell(molecular.characteristics().purity()),
-            Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQualityAndPurity())),
+            createPurityCell(molecular.characteristics.purity),
+            Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQualityAndPurity)),
             createTMLStatusCell(),
             createTMBStatusCell(),
             createMSStabilityCell(),
             createHRStatusCell(),
-            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco(), "DPYD")),
-            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco(), "UGT1A1"))
+            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "DPYD")),
+            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "UGT1A1"))
         ).forEach { table.addCell(it) }
 
         return table
     }
 
     private fun createPurityCell(purity: Double?): Cell {
-        if (!molecular.containsTumorCells()) {
+        if (!molecular.containsTumorCells) {
             return Cells.createContentWarn("None")
         }
         if (purity == null) {
@@ -53,15 +53,15 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     }
 
     fun createTMLAndTMBStatusString(): String {
-        val hasHighTumorMutationalLoad = molecular.characteristics().hasHighTumorMutationalLoad()
-        val tumorMutationalLoad = molecular.characteristics().tumorMutationalLoad()
+        val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
+        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
         val TMLString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
             "TML %s (%d)",
             if (hasHighTumorMutationalLoad) "high" else "low",
             tumorMutationalLoad
         )
-        val hasHighTumorMutationalBurden = molecular.characteristics().hasHighTumorMutationalBurden()
-        val tumorMutationalBurden = molecular.characteristics().tumorMutationalBurden()
+        val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
+        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
         val TMBString = if (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null) Formats.VALUE_UNKNOWN else String.format(
             "TMB %s (%s)",
             if (hasHighTumorMutationalBurden) "high" else "low",
@@ -71,8 +71,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     }
 
     private fun createTMLStatusString(): String? {
-        val hasHighTumorMutationalLoad = molecular.characteristics().hasHighTumorMutationalLoad()
-        val tumorMutationalLoad = molecular.characteristics().tumorMutationalLoad()
+        val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
+        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
         return if (hasHighTumorMutationalLoad == null || tumorMutationalLoad == null) {
             null
         } else {
@@ -81,21 +81,21 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     }
 
     private fun createTMLStatusCell(): Cell {
-        return createCellForCharacteristic(createTMLStatusString(), molecular.characteristics().hasHighTumorMutationalLoad())
+        return createCellForCharacteristic(createTMLStatusString(), molecular.characteristics.hasHighTumorMutationalLoad)
     }
 
     private fun createTMBStatusCell(): Cell {
-        if (!molecular.containsTumorCells()) {
+        if (!molecular.containsTumorCells) {
             return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         }
-        val hasHighTumorMutationalBurden = molecular.characteristics().hasHighTumorMutationalBurden()
-        val tumorMutationalBurden = molecular.characteristics().tumorMutationalBurden()
+        val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
+        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
         if (hasHighTumorMutationalBurden == null || tumorMutationalBurden == null) {
             return Cells.createContentWarn(Formats.VALUE_UNKNOWN)
         }
         val interpretation = if (hasHighTumorMutationalBurden) "High" else "Low"
         val value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")"
-        val cell = if (molecular.hasSufficientQualityAndPurity()) Cells.createContent(value) else Cells.createContentWarn(value)
+        val cell = if (molecular.hasSufficientQualityAndPurity) Cells.createContent(value) else Cells.createContentWarn(value)
         if (hasHighTumorMutationalBurden) {
             cell.addStyle(Styles.tableHighlightStyle())
         }
@@ -103,31 +103,31 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     }
 
     fun createMSStabilityString(): String? {
-        return molecular.characteristics().isMicrosatelliteUnstable?.let { unstable -> if (unstable) "Unstable" else "Stable" }
+        return molecular.characteristics.isMicrosatelliteUnstable?.let { unstable -> if (unstable) "Unstable" else "Stable" }
     }
 
     private fun createMSStabilityCell(): Cell {
-        return createCellForCharacteristic(createMSStabilityString(), molecular.characteristics().isMicrosatelliteUnstable)
+        return createCellForCharacteristic(createMSStabilityString(), molecular.characteristics.isMicrosatelliteUnstable)
     }
 
     fun createHRStatusString(): String? {
-        val homologousRepairScore = molecular.characteristics().homologousRepairScore()
-        molecular.characteristics().isHomologousRepairDeficient ?: return null
-        val statusInterpretation = if (molecular.characteristics().isHomologousRepairDeficient!!) "Deficient" else "Proficient"
+        val homologousRepairScore = molecular.characteristics.homologousRepairScore
+        molecular.characteristics.isHomologousRepairDeficient ?: return null
+        val statusInterpretation = if (molecular.characteristics.isHomologousRepairDeficient!!) "Deficient" else "Proficient"
         val scoreInterpretation = homologousRepairScore?.let { " (${Formats.twoDigitNumber(it)})" } ?: ""
         return statusInterpretation + scoreInterpretation
     }
 
     private fun createHRStatusCell(): Cell {
-        return createCellForCharacteristic(createHRStatusString(), molecular.characteristics().isHomologousRepairDeficient)
+        return createCellForCharacteristic(createHRStatusString(), molecular.characteristics.isHomologousRepairDeficient)
     }
 
     private fun createCellForCharacteristic(summaryString: String?, shouldHighlight: Boolean?): Cell {
-        return if (!molecular.containsTumorCells()) {
+        return if (!molecular.containsTumorCells) {
             Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         } else {
             summaryString?.let { value: String ->
-                val cell = if (molecular.hasSufficientQualityAndPurity()) Cells.createContent(value) else Cells.createContentWarn(value)
+                val cell = if (molecular.hasSufficientQualityAndPurity) Cells.createContent(value) else Cells.createContentWarn(value)
                 if (true == shouldHighlight) {
                     cell.addStyle(Styles.tableHighlightStyle())
                 }
@@ -139,11 +139,11 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     companion object {
         private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): String {
             val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
-            return pharmacoEntry.haplotypes().joinToString(", ") { "${it.name()} (${it.function()})" }
+            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
         }
 
         private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: String): PharmacoEntry? {
-            return pharmaco.find { it.gene() == geneToFind }
+            return pharmaco.find { it.gene == geneToFind }
         }
     }
 }

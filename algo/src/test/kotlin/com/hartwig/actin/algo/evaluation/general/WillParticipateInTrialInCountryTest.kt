@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import org.junit.Test
 
 class WillParticipateInTrialInCountryTest {
+
     @Test
     fun canEvaluate() {
         val netherlands = WillParticipateInTrialInCountry("The Netherlands")

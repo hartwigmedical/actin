@@ -24,16 +24,16 @@ class WGSSummaryGenerator(
     private val summarizer: MolecularDriversSummarizer
 
     init {
-        summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers(), cohorts)
+        summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
     }
 
     override fun title(): String {
         return String.format(
             ApplicationConfig.LOCALE,
             "%s of %s (%s)",
-            molecular.type().display(),
-            clinical.patientId(),
-            date(molecular.date())
+            molecular.type.display(),
+            clinical.patientId,
+            date(molecular.date)
         )
     }
 
@@ -42,7 +42,7 @@ class WGSSummaryGenerator(
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createKey("Biopsy location"))
         table.addCell(biopsySummary())
-        if (molecular.containsTumorCells()) {
+        if (molecular.containsTumorCells) {
             table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
             table.addCell(tumorOriginPredictionCell())
             listOf(
@@ -73,21 +73,21 @@ class WGSSummaryGenerator(
     }
 
     private fun biopsySummary(): Cell {
-        val biopsyLocation = if (clinical.tumor().biopsyLocation() != null) clinical.tumor().biopsyLocation() else Formats.VALUE_UNKNOWN
-        val purity = molecular.characteristics().purity()
+        val biopsyLocation = clinical.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN
+        val purity = molecular.characteristics.purity
         return if (purity != null) {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
-            purityText.addStyle(if (molecular.hasSufficientQualityAndPurity()) Styles.tableHighlightStyle() else Styles.tableNoticeStyle())
+            purityText.addStyle(if (molecular.hasSufficientQualityAndPurity) Styles.tableHighlightStyle() else Styles.tableNoticeStyle())
             Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
         } else {
-            Cells.createValue(biopsyLocation!!)
+            Cells.createValue(biopsyLocation)
         }
     }
 
     private fun tumorOriginPredictionCell(): Cell {
         val paragraph = Paragraph(Text(tumorOriginPrediction()).addStyle(Styles.tableHighlightStyle()))
-        val purity = molecular.characteristics().purity()
+        val purity = molecular.characteristics.purity
         if (purity != null && purity < 0.2) {
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity))).addStyle(Styles.tableNoticeStyle())
             paragraph.add(purityText)
@@ -96,10 +96,10 @@ class WGSSummaryGenerator(
     }
 
     private fun tumorOriginPrediction(): String {
-        val predictedTumorOrigin = molecular.characteristics().predictedTumorOrigin()
-        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
+        val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
+        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity) {
             TumorOriginInterpreter.interpret(predictedTumorOrigin)
-        } else if (molecular.hasSufficientQuality() && predictedTumorOrigin != null) {
+        } else if (molecular.hasSufficientQuality && predictedTumorOrigin != null) {
             val predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
             if (predictionsMeetingThreshold.isEmpty()) {
                 String.format(
@@ -109,7 +109,7 @@ class WGSSummaryGenerator(
                 )
             } else {
                 String.format("Inconclusive (%s)", predictionsMeetingThreshold.joinToString(", ") {
-                    "${it.cancerType()} ${Formats.percentage(it.likelihood())}"
+                    "${it.cancerType} ${Formats.percentage(it.likelihood)}"
                 })
             }
         } else {

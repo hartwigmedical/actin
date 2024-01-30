@@ -40,12 +40,12 @@ class NonOncologicalHistoryConfigFactoryTest {
         assertThat(config.config.ignore).isEqualTo(false)
         assertThat(config.config.lvef).isNull()
         val priorOtherCondition = config.config.priorOtherCondition!!
-        assertThat(priorOtherCondition.doids()).containsExactly("123")
-        assertThat(priorOtherCondition.name()).isEqualTo("name")
-        assertThat(priorOtherCondition.year()).isEqualTo(2023)
-        assertThat(priorOtherCondition.month()).isEqualTo(12)
-        assertThat(priorOtherCondition.category()).isEqualTo("category")
-        assertThat(priorOtherCondition.isContraindicationForTherapy()).isEqualTo(true)
+        assertThat(priorOtherCondition.doids).containsExactly("123")
+        assertThat(priorOtherCondition.name).isEqualTo("name")
+        assertThat(priorOtherCondition.year).isEqualTo(2023)
+        assertThat(priorOtherCondition.month).isEqualTo(12)
+        assertThat(priorOtherCondition.category).isEqualTo("category")
+        assertThat(priorOtherCondition.isContraindicationForTherapy).isEqualTo(true)
     }
 
     @Test

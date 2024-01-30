@@ -7,27 +7,20 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import java.time.LocalDate
 
 class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasMatch = false
         var hasPotentialMatch = false
         var hasUsableData = false
-        for (priorSecondPrimary in record.clinical().priorSecondPrimaries()) {
-            var effectiveMinDate = minDate.minusYears(1)
-            var secondPrimaryYear = priorSecondPrimary.diagnosedYear()
-            var secondPrimaryMonth = priorSecondPrimary.diagnosedMonth()
-            if (priorSecondPrimary.lastTreatmentYear() != null) {
-                effectiveMinDate = minDate
-                secondPrimaryYear = priorSecondPrimary.lastTreatmentYear()
-                secondPrimaryMonth = if (priorSecondPrimary.lastTreatmentMonth() != null) {
-                    priorSecondPrimary.lastTreatmentMonth()
-                } else {
-                    null
-                }
+        for (priorSecondPrimary in record.clinical.priorSecondPrimaries) {
+            val (effectiveMinDate, secondPrimaryYear, secondPrimaryMonth) = if (priorSecondPrimary.lastTreatmentYear != null) {
+                Triple(minDate, priorSecondPrimary.lastTreatmentYear, priorSecondPrimary.lastTreatmentMonth)
+            } else {
+                Triple(minDate.minusYears(1), priorSecondPrimary.diagnosedYear, priorSecondPrimary.diagnosedMonth)
             }
             if (secondPrimaryYear != null) {
                 hasUsableData = true
-                val secondPrimaryDate = LocalDate.of(secondPrimaryYear, secondPrimaryMonth ?: 1, 1)
-                if (!secondPrimaryDate.isBefore(effectiveMinDate)) {
+                if (!LocalDate.of(secondPrimaryYear, secondPrimaryMonth ?: 1, 1).isBefore(effectiveMinDate)) {
                     hasMatch = true
                 } else if (secondPrimaryYear == effectiveMinDate.year && secondPrimaryMonth == null) {
                     hasPotentialMatch = true
@@ -44,7 +37,7 @@ class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate) : 
                 "Patient has history of recent previous malignancy with unclear dates"
             )
         } else {
-            if (record.clinical().priorSecondPrimaries().isEmpty() || hasUsableData) {
+            if (record.clinical.priorSecondPrimaries.isEmpty() || hasUsableData) {
                 EvaluationFactory.fail(
                     "Patient has no history of recent previous malignancy", "No recent previous malignancy"
                 )

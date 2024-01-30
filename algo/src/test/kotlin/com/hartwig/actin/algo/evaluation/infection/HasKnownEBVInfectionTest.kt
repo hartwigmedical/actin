@@ -2,25 +2,26 @@ package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import org.junit.Test
 
 class HasKnownEBVInfectionTest {
+
+    private val function = HasKnownEBVInfection()
+    
     @Test
-    fun canEvaluate() {
-        val function = HasKnownEBVInfection()
+    fun `Should fail with no prior conditions`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(InfectionTestFactory.withPriorOtherConditions(emptyList())))
+    }
 
-        // Test without conditions
-        val conditions: MutableList<PriorOtherCondition> = mutableListOf()
+    @Test
+    fun `Should fail with prior conditions but no EBV`() {
+        val conditions = listOf(InfectionTestFactory.priorOtherCondition(name = "this is nothing serious"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(InfectionTestFactory.withPriorOtherConditions(conditions)))
+    }
 
-        // Add with a wrong condition
-        conditions.add(InfectionTestFactory.builder().name("this is nothing serious").build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(InfectionTestFactory.withPriorOtherConditions(conditions)))
-
-        // Test with ebv
-        val realEBV = HasKnownEBVInfection.EBV_TERMS.iterator().next()
-        conditions.add(InfectionTestFactory.builder().name("This is real $realEBV").build())
+    @Test
+    fun `Should pass with prior conditions and EBV`() {
+        val conditions = listOf(InfectionTestFactory.priorOtherCondition(name = "This is real ${HasKnownEBVInfection.EBV_TERMS.first()}"))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(InfectionTestFactory.withPriorOtherConditions(conditions)))
     }
 }

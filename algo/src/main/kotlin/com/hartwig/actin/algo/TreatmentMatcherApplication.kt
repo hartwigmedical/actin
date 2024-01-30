@@ -3,7 +3,6 @@ package com.hartwig.actin.algo
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory.create
-import com.hartwig.actin.algo.datamodel.ImmutableTreatmentMatch
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
@@ -14,7 +13,7 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
-import com.hartwig.actin.treatment.serialization.TrialJson
+import com.hartwig.actin.trial.serialization.TrialJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -43,7 +42,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
@@ -58,10 +57,13 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         )
         val trialMatches = matcher.determineEligibility(patient, trials)
 
-        val match: TreatmentMatch =
-            ImmutableTreatmentMatch.builder().patientId(patient.patientId()).sampleId(patient.molecular().sampleId())
-                .referenceDate(referenceDateProvider.date()).referenceDateIsLive(referenceDateProvider.isLive).trialMatches(trialMatches)
-                .build()
+        val match = TreatmentMatch(
+            patientId = patient.patientId,
+            sampleId = patient.molecular.sampleId,
+            referenceDate = referenceDateProvider.date(),
+            referenceDateIsLive = referenceDateProvider.isLive,
+            trialMatches = trialMatches
+        )
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)

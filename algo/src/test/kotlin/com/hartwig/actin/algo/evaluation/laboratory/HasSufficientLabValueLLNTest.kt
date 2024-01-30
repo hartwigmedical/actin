@@ -8,21 +8,22 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HasSufficientLabValueLLNTest {
+
     @Test
     fun canEvaluate() {
         val function = HasSufficientLabValueLLN(2.0)
         val record = TestDataFactory.createMinimalTestPatientRecord()
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.builder().value(80.0).refLimitLow(35.0).build())
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 80.0, refLimitLow = 35.0))
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.builder().value(80.0).build())
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 80.0))
         )
 
-        val actual = function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.builder().value(100.0).refLimitLow(75.0).build())
+        val actual = function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 100.0, refLimitLow = 75.0))
         assertEvaluation(EvaluationResult.FAIL, actual)
-        assertTrue(actual.recoverable())
+        assertTrue(actual.recoverable)
     }
 }

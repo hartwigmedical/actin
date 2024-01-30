@@ -7,13 +7,13 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class AndTest {
 
     @Test
-    fun canCombineEvaluations() {
+    fun `Should combine evaluations`() {
         assertEvaluation(EvaluationResult.NOT_EVALUATED, combineWithNotEvaluated(TestEvaluationFunctionFactory.notEvaluated()))
         assertEvaluation(EvaluationResult.PASS, combineWithNotEvaluated(TestEvaluationFunctionFactory.pass()))
         assertEvaluation(EvaluationResult.UNDETERMINED, combineWithNotEvaluated(TestEvaluationFunctionFactory.undetermined()))
@@ -53,50 +53,50 @@ class AndTest {
     }
 
     @Test
-    fun canRetainMessages() {
+    fun `Should retain messages`() {
         val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, 1)
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, 3)
         val function4: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, 4)
         val result: Evaluation = And(listOf(function1, function2, function3, function4)).evaluate(TEST_PATIENT)
-        Assert.assertEquals(2, result.passSpecificMessages().size.toLong())
-        Assert.assertTrue(result.passSpecificMessages().contains("pass specific 1"))
-        Assert.assertTrue(result.passSpecificMessages().contains("pass specific 2"))
-        Assert.assertEquals(2, result.passGeneralMessages().size.toLong())
-        Assert.assertTrue(result.passGeneralMessages().contains("pass general 1"))
-        Assert.assertTrue(result.passGeneralMessages().contains("pass general 2"))
-        Assert.assertEquals(2, result.warnSpecificMessages().size.toLong())
-        Assert.assertTrue(result.warnSpecificMessages().contains("warn specific 1"))
-        Assert.assertTrue(result.warnSpecificMessages().contains("warn specific 2"))
-        Assert.assertEquals(2, result.warnGeneralMessages().size.toLong())
-        Assert.assertTrue(result.warnGeneralMessages().contains("warn general 1"))
-        Assert.assertTrue(result.warnGeneralMessages().contains("warn general 2"))
-        Assert.assertEquals(2, result.failSpecificMessages().size.toLong())
-        Assert.assertTrue(result.failSpecificMessages().contains("fail specific 1"))
-        Assert.assertTrue(result.failSpecificMessages().contains("fail specific 2"))
-        Assert.assertEquals(2, result.failGeneralMessages().size.toLong())
-        Assert.assertTrue(result.failGeneralMessages().contains("fail general 1"))
-        Assert.assertTrue(result.failGeneralMessages().contains("fail general 2"))
-        Assert.assertEquals(2, result.undeterminedSpecificMessages().size.toLong())
-        Assert.assertTrue(result.undeterminedSpecificMessages().contains("undetermined specific 1"))
-        Assert.assertTrue(result.undeterminedSpecificMessages().contains("undetermined specific 2"))
-        Assert.assertEquals(2, result.undeterminedGeneralMessages().size.toLong())
-        Assert.assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 1"))
-        Assert.assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 2"))
+        assertThat(result.passSpecificMessages).hasSize(2)
+        assertThat(result.passSpecificMessages).contains("pass specific 1")
+        assertThat(result.passSpecificMessages).contains("pass specific 2")
+        assertThat(result.passGeneralMessages).hasSize(2)
+        assertThat(result.passGeneralMessages).contains("pass general 1")
+        assertThat(result.passGeneralMessages).contains("pass general 2")
+        assertThat(result.warnSpecificMessages).hasSize(2)
+        assertThat(result.warnSpecificMessages).contains("warn specific 1")
+        assertThat(result.warnSpecificMessages).contains("warn specific 2")
+        assertThat(result.warnGeneralMessages).hasSize(2)
+        assertThat(result.warnGeneralMessages).contains("warn general 1")
+        assertThat(result.warnGeneralMessages).contains("warn general 2")
+        assertThat(result.failSpecificMessages).hasSize(2)
+        assertThat(result.failSpecificMessages).contains("fail specific 1")
+        assertThat(result.failSpecificMessages).contains("fail specific 2")
+        assertThat(result.failGeneralMessages).hasSize(2)
+        assertThat(result.failGeneralMessages).contains("fail general 1")
+        assertThat(result.failGeneralMessages).contains("fail general 2")
+        assertThat(result.undeterminedSpecificMessages).hasSize(2)
+        assertThat(result.undeterminedSpecificMessages).contains("undetermined specific 1")
+        assertThat(result.undeterminedSpecificMessages).contains("undetermined specific 2")
+        assertThat(result.undeterminedGeneralMessages).hasSize(2)
+        assertThat(result.undeterminedGeneralMessages).contains("undetermined general 1")
+        assertThat(result.undeterminedGeneralMessages).contains("undetermined general 2")
     }
 
     @Test
-    fun combinesMolecularInclusionExclusionEvents() {
+    fun shouldCombinesMolecularInclusionExclusionEvents() {
         val function1: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true, 1)
         val function2: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true, 2)
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, true, 3)
         val result: Evaluation = And(listOf(function1, function2, function3)).evaluate(TEST_PATIENT)
-        Assert.assertEquals(2, result.inclusionMolecularEvents().size.toLong())
-        Assert.assertTrue(result.inclusionMolecularEvents().contains("inclusion event 1"))
-        Assert.assertTrue(result.inclusionMolecularEvents().contains("inclusion event 2"))
-        Assert.assertEquals(2, result.exclusionMolecularEvents().size.toLong())
-        Assert.assertTrue(result.exclusionMolecularEvents().contains("exclusion event 1"))
-        Assert.assertTrue(result.exclusionMolecularEvents().contains("exclusion event 2"))
+        assertThat(result.inclusionMolecularEvents).hasSize(2)
+        assertThat(result.inclusionMolecularEvents).contains("inclusion event 1")
+        assertThat(result.inclusionMolecularEvents).contains("inclusion event 2")
+        assertThat(result.exclusionMolecularEvents).hasSize(2)
+        assertThat(result.exclusionMolecularEvents).contains("exclusion event 1")
+        assertThat(result.exclusionMolecularEvents).contains("exclusion event 2")
     }
 
     @Test
@@ -104,9 +104,9 @@ class AndTest {
         val recoverable: EvaluationFunction = CompositeTestFactory.create(true, 1)
         val unrecoverable: EvaluationFunction = CompositeTestFactory.create(false, 2)
         val result: Evaluation = And(listOf(recoverable, unrecoverable)).evaluate(TEST_PATIENT)
-        Assert.assertFalse(result.recoverable())
-        Assert.assertEquals(1, result.undeterminedGeneralMessages().size.toLong())
-        Assert.assertTrue(result.undeterminedGeneralMessages().contains("undetermined general 2"))
+        assertThat(result.recoverable).isFalse
+        assertThat(result.undeterminedGeneralMessages).hasSize(1)
+        assertThat(result.undeterminedGeneralMessages).contains("undetermined general 2")
     }
 
     @Test(expected = IllegalStateException::class)

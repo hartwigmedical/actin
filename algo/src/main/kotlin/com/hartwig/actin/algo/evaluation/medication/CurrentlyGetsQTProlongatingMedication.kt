@@ -7,12 +7,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 
-class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSelector) :
-    EvaluationFunction {
+class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSelector) : EvaluationFunction {
+        
     override fun evaluate(record: PatientRecord): Evaluation {
-        val qtMedication = record.clinical().medications().filter { it.qtProlongatingRisk() != QTProlongatingRisk.NONE }
-        val activeQtMedication = qtMedication.filter { selector.isActive(it) }
-        val plannedQtMedication = qtMedication.filter { selector.isPlanned(it) }
+        val qtMedication = record.clinical.medications.filter { it.qtProlongatingRisk != QTProlongatingRisk.NONE }
+        val activeQtMedication = qtMedication.filter(selector::isActive)
+        val plannedQtMedication = qtMedication.filter(selector::isPlanned)
 
         return when {
             activeQtMedication.isNotEmpty() -> {
@@ -39,6 +39,6 @@ class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSele
     }
 
     private fun concatWithType(medications: List<Medication>): String {
-        return medications.joinToString(" and ") { it -> "${it.name()} (${it.qtProlongatingRisk()})".lowercase() }
+        return medications.joinToString(" and ") { "${it.name} (${it.qtProlongatingRisk})".lowercase() }
     }
 }

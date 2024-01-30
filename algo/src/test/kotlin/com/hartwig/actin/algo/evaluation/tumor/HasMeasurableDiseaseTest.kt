@@ -10,21 +10,21 @@ class HasMeasurableDiseaseTest {
     fun shouldPassWhenHasMeasurableDiseaseIsTrue() {
         val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(true))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertTrue(evaluation.recoverable())
+        assertTrue(evaluation.recoverable)
     }
 
     @Test
     fun shouldFailWhenHasMeasurableDiseaseIsFalse() {
         val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(false))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertTrue(evaluation.recoverable())
+        assertTrue(evaluation.recoverable)
     }
 
     @Test
     fun shouldBeUndeterminedWhenHasMeasurableDiseaseIsUndetermined() {
         val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(null))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertTrue(evaluation.recoverable())
+        assertTrue(evaluation.recoverable)
     }
 
     companion object {

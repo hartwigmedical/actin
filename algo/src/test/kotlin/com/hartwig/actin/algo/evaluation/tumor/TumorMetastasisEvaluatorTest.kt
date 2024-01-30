@@ -2,40 +2,33 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import kotlin.String
+
+private const val METASTASIS_TYPE: String = "bone"
 
 class TumorMetastasisEvaluatorTest {
     @Test
-    fun shouldBeUndeterminedWhenBooleanIsNull() {
-        val undetermined = TumorMetastasisEvaluator.evaluate(null, metastasisType)
+    fun `Should be undetermined when boolean is null`() {
+        val undetermined = TumorMetastasisEvaluator.evaluate(null, METASTASIS_TYPE)
         assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
-        Assert.assertTrue(
-            undetermined.undeterminedSpecificMessages().contains(
-                "Data regarding presence of bone metastases is missing"
-            )
-        )
-        Assert.assertTrue(undetermined.undeterminedGeneralMessages().contains("Missing bone metastasis data"))
+        assertThat(undetermined.undeterminedSpecificMessages).contains("Data regarding presence of bone metastases is missing")
+        assertThat(undetermined.undeterminedGeneralMessages).contains("Missing bone metastasis data")
     }
 
     @Test
-    fun shouldPassWhenBooleanIsTrue() {
-        val pass = TumorMetastasisEvaluator.evaluate(true, metastasisType)
+    fun `Should pass when boolean is true`() {
+        val pass = TumorMetastasisEvaluator.evaluate(true, METASTASIS_TYPE)
         assertEvaluation(EvaluationResult.PASS, pass)
-        Assert.assertTrue(pass.passSpecificMessages().contains("Bone metastases are present"))
-        Assert.assertTrue(pass.passGeneralMessages().contains("Bone metastases"))
+        assertThat(pass.passSpecificMessages).contains("Bone metastases are present")
+        assertThat(pass.passGeneralMessages).contains("Bone metastases")
     }
 
     @Test
-    fun shouldFailWhenBooleanIsFalse() {
-        val fail = TumorMetastasisEvaluator.evaluate(false, metastasisType)
+    fun `Should fail when boolean is false`() {
+        val fail = TumorMetastasisEvaluator.evaluate(false, METASTASIS_TYPE)
         assertEvaluation(EvaluationResult.FAIL, fail)
-        Assert.assertTrue(fail.failSpecificMessages().contains("No bone metastases present"))
-        Assert.assertTrue(fail.failGeneralMessages().contains("No bone metastases"))
-    }
-
-    companion object {
-        private const val metastasisType: String = "bone"
+        assertThat(fail.failSpecificMessages).contains("No bone metastases present")
+        assertThat(fail.failGeneralMessages).contains("No bone metastases")
     }
 }

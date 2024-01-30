@@ -10,9 +10,11 @@ class HasLeptomeningealDiseaseTest {
     fun canEvaluate() {
         val function = HasLeptomeningealDisease()
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplications(emptyList())))
-        val different: Complication = ComplicationTestFactory.builder().addCategories("other complication").build()
+
+        val different: Complication = ComplicationTestFactory.complication(categories = setOf("other complication"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withComplication(different)))
-        val matching: Complication = ComplicationTestFactory.builder().addCategories("leptomeningeal disease type 1").build()
+
+        val matching: Complication = ComplicationTestFactory.complication(categories = setOf("leptomeningeal disease type 1"))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComplicationTestFactory.withComplication(matching)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComplicationTestFactory.withCnsLesion("just a lesion")))
         assertEvaluation(

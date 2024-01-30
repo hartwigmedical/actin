@@ -2,10 +2,10 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 import java.time.LocalDate
@@ -49,7 +49,6 @@ class HasHadRecentResectionTest {
     companion object {
         private val MIN_DATE = LocalDate.of(2022, 10, 12)
         private val FUNCTION = HasHadRecentResection(MIN_DATE)
-        private val MATCHING_TREATMENT_SET =
-            setOf(treatment("some form of " + HasHadRecentResection.RESECTION_KEYWORD, false))
+        private val MATCHING_TREATMENT_SET = setOf(treatment("some form of " + HasHadRecentResection.RESECTION_KEYWORD, false))
     }
 }
