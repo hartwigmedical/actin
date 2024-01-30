@@ -89,4 +89,11 @@ object DoidConstants {
     const val MYOCARDIAL_INFARCT_DOID = "5844"
     const val STROKE_DOID = "6713"
     const val VASCULAR_DISEASE_DOID = "178"
+    const val AUTOSOMAL_HEMOPHILIA_A = "0111823"
+    const val HEMOPHILIA_B = "12259"
+    const val VON_WILLEBRANDS_DISEASE = "12531"
+    const val FACTOR_V_DEFICIENCY = "2216"
+    const val PROTEIN_C_DEFICIENCY = "3756"
+    const val PROTEIN_S_DEFICIENCY = "2451"
+    const val ANTITHROMBIN_III_DEFICIENCY = "3755"
 }

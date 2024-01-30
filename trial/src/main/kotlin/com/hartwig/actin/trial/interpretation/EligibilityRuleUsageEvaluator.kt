@@ -75,7 +75,8 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_HAD_CYTOREDUCTIVE_SURGERY,
         EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS,
         EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_MONTHS,
-        EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X
+        EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X,
+        EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS
     )
 
     fun evaluate(trials: List<Trial>) {
