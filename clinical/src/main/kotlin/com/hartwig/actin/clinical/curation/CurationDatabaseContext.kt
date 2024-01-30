@@ -190,13 +190,13 @@ data class CurationDatabaseContext(
                 curationDir,
                 CurationDatabaseReader.QT_PROLONGATING_TSV,
                 QTProlongatingConfigFactory(),
-                CurationCategory.QT_PROLONGATION
+                CurationCategory.QT_PROLONGATING
             ) { emptySet() },
             cypInteractionCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.CYP_INTERACTIONS_TSV,
                 CypInteractionConfigFactory(),
-                CurationCategory.CYP_INTERACTION
+                CurationCategory.CYP_INTERACTIONS
             ) { emptySet() },
             medicationNameCuration = CurationDatabaseReader.read(
                 curationDir,
