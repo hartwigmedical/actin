@@ -45,8 +45,6 @@
         <mysqlconnector.version>8.0.31</mysqlconnector.version>
         <itext.version>7.2.4</itext.version>
 
-        <immutables.version>2.9.2</immutables.version>
-
         <kotlin.version>1.8.21</kotlin.version>
         <kotlin.jvm.target>11</kotlin.jvm.target>
         <kotlin.code.style>official</kotlin.code.style>
@@ -244,13 +242,6 @@
                 <groupId>com.itextpdf</groupId>
                 <artifactId>io</artifactId>
                 <version>${itext.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.immutables</groupId>
-                <artifactId>value</artifactId>
-                <version>${immutables.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>
