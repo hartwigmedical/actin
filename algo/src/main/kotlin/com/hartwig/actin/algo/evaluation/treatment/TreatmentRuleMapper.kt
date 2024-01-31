@@ -7,7 +7,7 @@ import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
-   
+
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to isNotEligibleForCurativeTreatmentCreator(),
@@ -166,7 +166,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadTreatmentCategoryOfAllTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            HasHadSomeTreatmentsWithCategoryOfAllTypes(input.category(), input.types(), 1)
+            HasHadSomeTreatmentsWithCategoryOfAllTypes(input.category, input.types, 1)
         }
     }
 
