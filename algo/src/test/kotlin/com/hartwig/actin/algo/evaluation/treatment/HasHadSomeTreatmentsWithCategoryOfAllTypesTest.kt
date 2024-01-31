@@ -87,7 +87,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     }
 
     @Test
-    fun `Should fail when treatment history contains treatments of the correct category but not all treatments are of the requested types`() {
+    fun `Should fail when treatment history contains treatments of the correct category but no treatment is of all requested types`() {
         val treatmentHistoryEntry = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
