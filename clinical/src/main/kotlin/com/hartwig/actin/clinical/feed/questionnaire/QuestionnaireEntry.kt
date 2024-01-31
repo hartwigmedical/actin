@@ -3,10 +3,10 @@ package com.hartwig.actin.clinical.feed.questionnaire
 import com.hartwig.actin.clinical.feed.FeedEntry
 import com.hartwig.actin.clinical.feed.FeedValidation
 import com.hartwig.actin.clinical.feed.FeedValidator
-import com.hartwig.actin.clinical.feed.TsvRow
+import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 
-@TsvRow
+@JacksonSerializable
 data class QuestionnaireEntry(
     override val subject: String,
     val authored: LocalDate,

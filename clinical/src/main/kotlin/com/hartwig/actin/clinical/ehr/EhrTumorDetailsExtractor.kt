@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.nki
+package com.hartwig.actin.clinical.ehr
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
@@ -13,20 +13,20 @@ class EhrTumorDetailsExtractor : EhrExtractor<TumorDetails> {
             TumorDetails(
                 primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
                 primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
-                stage = TumorStage.valueOf(ehrPatientRecord.tumorDetails.tumorStage.name),
+                stage = TumorStage.valueOf(ehrPatientRecord.tumorDetails.tumorStage.acceptedValues.name),
                 hasBoneLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.BONE),
                 hasBrainLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.BRAIN),
                 hasLiverLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.LIVER),
                 hasLungLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.LUNG),
                 hasLymphNodeLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.LYMPH_NODE),
                 hasCnsLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.CNS),
-                otherLesions = ehrPatientRecord.tumorDetails.lesions.filter { it.location == EhrLesionLocation.OTHER }
-                    .map { it.location.name }
+                otherLesions = ehrPatientRecord.tumorDetails.lesions.filter { it.location.acceptedValues == EhrLesionLocation.OTHER }
+                    .map { it.location.acceptedValues.name }
             ), ExtractionEvaluation()
         )
     }
 
     private fun hasLesions(lesions: List<EhrLesion>, location: EhrLesionLocation): Boolean {
-        return lesions.any { it.location == location }
+        return lesions.any { it.location.acceptedValues == location }
     }
 }

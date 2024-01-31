@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.nki
+package com.hartwig.actin.clinical.ehr
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
@@ -12,7 +12,7 @@ class EhrSecondPrimariesExtractor :
             PriorSecondPrimary(
                 tumorLocation = it.tumorLocation,
                 tumorType = it.tumorType,
-                status = TumorStatus.valueOf(it.status.name),
+                status = TumorStatus.valueOf(it.status.acceptedValues.name),
                 diagnosedYear = it.diagnosisDate.year,
                 diagnosedMonth = it.diagnosisDate.monthValue,
                 tumorSubLocation = "",

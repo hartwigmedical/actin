@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.nki
+package com.hartwig.actin.clinical.ehr
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
@@ -14,12 +14,12 @@ class EhrBloodTransfusionExtractor : EhrExtractor<List<BloodTransfusion>> {
         }, ExtractionEvaluation())
     }
 
-    private fun mapTransfusionProduct(product: EhrBloodTransfusionProduct): String {
-        return when (product) {
+    private fun mapTransfusionProduct(product: EnumeratedInput<EhrBloodTransfusionProduct>): String {
+        return when (product.acceptedValues) {
             EhrBloodTransfusionProduct.PLASMA_A, EhrBloodTransfusionProduct.PLASMA_B, EhrBloodTransfusionProduct.PLASMA_O, EhrBloodTransfusionProduct.PLASMA_AB, EhrBloodTransfusionProduct.APHERESIS_PLASMA -> "Plasma"
             EhrBloodTransfusionProduct.PLATELETS_POOLED, EhrBloodTransfusionProduct.PLATELETS_APHERESIS, EhrBloodTransfusionProduct.PLATELETS_POOLED_RADIATED -> "Trombocyte"
             EhrBloodTransfusionProduct.ERTHROCYTES_FILTERED, EhrBloodTransfusionProduct.ERYTHROCYTES_RADIATED -> "Erythrocytes"
-            else -> "Other"
+            else -> product.input
         }
     }
 }

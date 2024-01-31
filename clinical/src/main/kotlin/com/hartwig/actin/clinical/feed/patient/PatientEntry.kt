@@ -2,10 +2,10 @@ package com.hartwig.actin.clinical.feed.patient
 
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.FeedEntry
-import com.hartwig.actin.clinical.feed.TsvRow
+import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 
-@TsvRow
+@JacksonSerializable
 data class PatientEntry(
     override val subject: String,
     val birthYear: Int,

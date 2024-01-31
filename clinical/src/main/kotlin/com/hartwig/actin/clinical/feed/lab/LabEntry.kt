@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.EuropeanDecimalDeserializer
 import com.hartwig.actin.clinical.feed.FeedEntry
-import com.hartwig.actin.clinical.feed.TsvRow
+import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 
-@TsvRow
+@JacksonSerializable
 data class LabEntry(
     @JsonProperty("subject")
     override val subject: String,

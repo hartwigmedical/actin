@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.nki
+package com.hartwig.actin.clinical.ehr
 
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ExtractionResult

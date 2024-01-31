@@ -7,10 +7,10 @@ import com.hartwig.actin.clinical.feed.FeedEntry
 import com.hartwig.actin.clinical.feed.FeedValidation
 import com.hartwig.actin.clinical.feed.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.FeedValidator
-import com.hartwig.actin.clinical.feed.TsvRow
+import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDateTime
 
-@TsvRow
+@JacksonSerializable
 data class VitalFunctionEntry(
     @JsonProperty("subject")
     override val subject: String,

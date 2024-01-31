@@ -2,10 +2,10 @@ package com.hartwig.actin.clinical.feed.digitalfile
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.hartwig.actin.clinical.feed.FeedEntry
-import com.hartwig.actin.clinical.feed.TsvRow
+import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 
-@TsvRow
+@JacksonSerializable
 data class DigitalFileEntry(
     @JsonProperty("subject")
     override val subject: String,

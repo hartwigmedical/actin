@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.EuropeanDecimalDeserializer
 import com.hartwig.actin.clinical.feed.FeedEntry
-import com.hartwig.actin.clinical.feed.TsvRow
+import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 
 class ActiveDeserializer : JsonDeserializer<Boolean>() {
@@ -23,7 +23,7 @@ class ActiveDeserializer : JsonDeserializer<Boolean>() {
     }
 }
 
-@TsvRow
+@JacksonSerializable
 data class MedicationEntry(
     @JsonProperty("subject")
     override val subject: String,

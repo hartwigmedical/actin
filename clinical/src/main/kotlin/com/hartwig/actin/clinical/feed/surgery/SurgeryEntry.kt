@@ -3,12 +3,12 @@ package com.hartwig.actin.clinical.feed.surgery
 import com.hartwig.actin.clinical.feed.FeedEntry
 import com.hartwig.actin.clinical.feed.FeedValidation
 import com.hartwig.actin.clinical.feed.FeedValidator
-import com.hartwig.actin.clinical.feed.TsvRow
+import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 
 private const val BIOPSY_PROCEDURE_DISPLAY = "Procedurele sedatie analgesie ANE op OK"
 
-@TsvRow
+@JacksonSerializable
 data class SurgeryEntry(
     override val subject: String,
     val classDisplay: String,

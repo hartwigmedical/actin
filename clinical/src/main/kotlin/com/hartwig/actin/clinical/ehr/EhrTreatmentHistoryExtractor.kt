@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.nki
+package com.hartwig.actin.clinical.ehr
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.ExtractionResult
@@ -47,8 +47,8 @@ class EhrTreatmentHistoryExtractor(
                 TreatmentHistoryDetails(
                     stopYear = it.endDate.year,
                     stopMonth = it.endDate.monthValue,
-                    stopReason = StopReason.valueOf(it.stopReason.name),
-                    bestResponse = TreatmentResponse.valueOf(it.response.name),
+                    stopReason = StopReason.valueOf(it.stopReason.acceptedValues.name),
+                    bestResponse = TreatmentResponse.valueOf(it.response.acceptedValues.name),
                     switchToTreatments = switchToTreatments.mapNotNull { switch -> switch.first },
                     cycles = it.administeredCycles,
                 )
@@ -56,7 +56,7 @@ class EhrTreatmentHistoryExtractor(
                 TreatmentHistoryEntry(
                     startYear = it.startDate.year,
                     startMonth = it.startDate.monthValue,
-                    intents = setOf(Intent.valueOf(it.intention.name)),
+                    intents = setOf(Intent.valueOf(it.intention.acceptedValues.name)),
                     treatments = setOfNotNull(treatment),
                     treatmentHistoryDetails = historyDetails,
                     isTrial = it.administeredInStudy

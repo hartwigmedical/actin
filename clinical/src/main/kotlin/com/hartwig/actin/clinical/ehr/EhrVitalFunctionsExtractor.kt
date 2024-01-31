@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.nki
+package com.hartwig.actin.clinical.ehr
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
@@ -7,26 +7,26 @@ import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
 class EhrVitalFunctionsExtractor : EhrExtractor<List<VitalFunction>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<VitalFunction>> {
-        return ExtractionResult(ehrPatientRecord.vitalFunctions.filter {
+        return ExtractionResult(ehrPatientRecord.measurements.filter {
             !setOf(
                 EhrMeasurementCategory.BMI,
                 EhrMeasurementCategory.BODY_HEIGHT,
                 EhrMeasurementCategory.BODY_WEIGHT
-            ).contains(it.category)
+            ).contains(it.category.acceptedValues)
         }.map {
             VitalFunction(
                 date = it.date.atStartOfDay(),
                 category = mapCategory(it),
                 subcategory = mapSubcategory(it),
                 value = it.value,
-                unit = it.unit.name.lowercase(),
+                unit = it.unit.acceptedValues.name.lowercase(),
                 valid = true
             )
         }, ExtractionEvaluation())
     }
 
     private fun mapCategory(it: EhrMeasurement): VitalFunctionCategory {
-        return when (it.category) {
+        return when (it.category.acceptedValues) {
             EhrMeasurementCategory.ARTERIAL_BLOOD_PRESSURE -> VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
             EhrMeasurementCategory.NON_INVASIVE_BLOOD_PRESSURE -> VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
             EhrMeasurementCategory.HEART_RATE -> VitalFunctionCategory.HEART_RATE
@@ -37,11 +37,11 @@ class EhrVitalFunctionsExtractor : EhrExtractor<List<VitalFunction>> {
     }
 
     private fun mapSubcategory(it: EhrMeasurement): String {
-        return when (it.subcategory) {
+        return when (it.subcategory.acceptedValues) {
             EhrMeasurementSubcategory.MEAN_BLOOD_PRESSURE -> "mean blood pressure"
             EhrMeasurementSubcategory.DIASTOLIC_BLOOD_PRESSURE -> "diastolic blood pressure"
             EhrMeasurementSubcategory.SYSTOLIC_BLOOD_PRESSURE -> "systolic blood pressure"
-            else -> "N/A"
+            else -> it.subcategory.input
         }
     }
 }

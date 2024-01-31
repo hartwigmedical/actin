@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.nki
+package com.hartwig.actin.clinical.ehr
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
@@ -9,7 +9,7 @@ class EhrPatientDetailsExtractor : EhrExtractor<PatientDetails> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<PatientDetails> {
         return ExtractionResult(
             PatientDetails(
-                gender = Gender.valueOf(ehrPatientRecord.patientDetails.gender.name),
+                gender = Gender.valueOf(ehrPatientRecord.patientDetails.gender.acceptedValues.name),
                 birthYear = ehrPatientRecord.patientDetails.birthYear,
                 registrationDate = ehrPatientRecord.patientDetails.registrationDate,
             ), ExtractionEvaluation()

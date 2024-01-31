@@ -1,5 +1,9 @@
-package com.hartwig.actin.clinical.nki
+package com.hartwig.actin.clinical.ehr
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
@@ -7,6 +11,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
+
 
 class EhrDataFeed(
     private val directory: String,
@@ -26,10 +31,15 @@ class EhrDataFeed(
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
     private val bodyWeightExtractor: EhrBodyWeightExtractor
 ) {
+    private val mapper = ObjectMapper().apply {
+        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+        registerModule(JavaTimeModule())
+    }
 
     fun ingest(): List<PatientIngestionResult> {
         return Files.list(Paths.get(directory)).map {
-            val ehrPatientRecord = feedJson.decodeFromString(EhrPatientRecord.serializer(), Files.readString(it))
+            val ehrPatientRecord = mapper.readValue(Files.readString(it), EhrPatientRecord::class.java)
             val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
             val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
             val secondPrimaries = secondPrimaryExtractor.extract(ehrPatientRecord)
