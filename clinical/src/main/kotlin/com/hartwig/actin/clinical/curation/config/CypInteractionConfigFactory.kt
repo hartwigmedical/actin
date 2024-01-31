@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.datamodel.CypInteraction
-import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
 
 private const val STRONG = "Strg"
 private const val MODERATE = "Mod"
@@ -62,13 +61,8 @@ class CypInteractionConfigFactory : CurationConfigFactory<CypInteractionConfig> 
     }
 
     private fun extractInteractions(
-        parts: Array<String>,
-        fields: Map<String, Int>,
-        fieldName: String,
-        strength: CypInteraction.Strength,
-        type: CypInteraction.Type
-    ) =
-        parts[fields[fieldName]!!].split(";").map { it.trim() }.filter { it.isNotEmpty() }
-            .map { cyp -> ImmutableCypInteraction.builder().cyp(cyp).strength(strength).type(type).build() }
+        parts: Array<String>, fields: Map<String, Int>, fieldName: String, strength: CypInteraction.Strength, type: CypInteraction.Type
+    ) = parts[fields[fieldName]!!].split(";").map { it.trim() }.filter { it.isNotEmpty() }
+        .map { cyp -> CypInteraction(cyp = cyp, strength = strength, type = type) }
 
 }

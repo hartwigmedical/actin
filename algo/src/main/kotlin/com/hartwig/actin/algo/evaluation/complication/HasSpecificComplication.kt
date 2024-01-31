@@ -8,12 +8,12 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 
 class HasSpecificComplication internal constructor(private val termToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val complications = record.clinical().complications() ?: return EvaluationFactory.undetermined(
+        val complications = record.clinical.complications ?: return EvaluationFactory.undetermined(
             "Undetermined whether patient has cancer-related complications",
             "Undetermined complication status"
         )
 
-        val matchingComplications = complications.map { it.name() }
+        val matchingComplications = complications.map { it.name }
             .filter { it.lowercase().contains(termToFind.lowercase()) }
 
         if (matchingComplications.isNotEmpty()) {
@@ -36,8 +36,8 @@ class HasSpecificComplication internal constructor(private val termToFind: Strin
 
     companion object {
         private fun hasComplicationsWithoutNames(record: PatientRecord): Boolean {
-            return record.clinical().clinicalStatus().hasComplications() == true
-                    && record.clinical().complications()?.any { ComplicationFunctions.isYesInputComplication(it) } ?: false
+            return record.clinical.clinicalStatus.hasComplications == true
+                    && record.clinical.complications?.any { ComplicationFunctions.isYesInputComplication(it) } ?: false
         }
     }
 }

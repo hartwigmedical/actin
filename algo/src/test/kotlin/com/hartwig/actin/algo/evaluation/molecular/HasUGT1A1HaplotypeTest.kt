@@ -2,8 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.molecular.datamodel.pharmaco.ImmutablePharmacoEntry
-import com.hartwig.actin.molecular.datamodel.pharmaco.TestPharmacoFactory
+import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import org.junit.Test
 
 class HasUGT1A1HaplotypeTest {
@@ -16,11 +16,13 @@ class HasUGT1A1HaplotypeTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    ImmutablePharmacoEntry.builder()
-                        .gene("UGT1A1")
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HET").function("Normal function").build())
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*18_HET").function("Normal function").build())
-                        .build()
+                    PharmacoEntry(
+                        gene = "UGT1A1",
+                        haplotypes = setOf(
+                            Haplotype(name = "*1_HET", function = "Normal function"),
+                            Haplotype(name = "*18_HET", function = "Normal function")
+                        )
+                    )
                 )
             )
         )
@@ -32,11 +34,13 @@ class HasUGT1A1HaplotypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    ImmutablePharmacoEntry.builder()
-                        .gene("UGT1A1")
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*17_HET").function("Normal function").build())
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*18_HET").function("Normal function").build())
-                        .build()
+                    PharmacoEntry(
+                        gene = "UGT1A1",
+                        haplotypes = setOf(
+                            Haplotype(name = "*17_HET", function = "Normal function"),
+                            Haplotype(name = "*18_HET", function = "Normal function")
+                        )
+                    )
                 )
             )
         )
@@ -48,10 +52,10 @@ class HasUGT1A1HaplotypeTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    ImmutablePharmacoEntry.builder()
-                        .gene("DPYD")
-                        .addHaplotypes(TestPharmacoFactory.builder().name("*1_HOM").function("Normal function").build())
-                        .build()
+                    PharmacoEntry(
+                        gene = "DPYD",
+                        haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")),
+                    )
                 )
             )
         )

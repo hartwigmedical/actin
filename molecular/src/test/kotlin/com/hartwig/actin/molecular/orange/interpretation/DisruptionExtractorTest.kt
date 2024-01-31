@@ -1,8 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.RegionType
@@ -17,21 +15,18 @@ import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
-import com.hartwig.hmftools.datamodel.linx.LinxDriver
 import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
-import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 
 class DisruptionExtractorTest {
 
     @Test
-    fun canExtractBreakends() {
-        val structuralVariant1: LinxSvAnnotation = structuralVariantBuilder().svId(1).clusterId(5).build()
-        val linxBreakend: LinxBreakend = breakendBuilder()
+    fun `Should extract breakends`() {
+        val structuralVariant1 = structuralVariantBuilder().svId(1).clusterId(5).build()
+        val linxBreakend = breakendBuilder()
             .gene("gene 1")
             .reported(true)
             .type(LinxBreakendType.DUP)
@@ -41,7 +36,8 @@ class DisruptionExtractorTest {
             .codingType(TranscriptCodingType.CODING)
             .svId(1)
             .build()
-        val linx: LinxRecord = ImmutableLinxRecord.builder()
+
+        val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
             .addAllSomaticStructuralVariants(structuralVariant1)
             .addAllSomaticBreakends(linxBreakend)
@@ -49,94 +45,94 @@ class DisruptionExtractorTest {
         val geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene())
         val disruptionExtractor = DisruptionExtractor(geneFilter, createEmptyDatabase())
 
-        val disruptions = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet(), listOf())
-        assertEquals(1, disruptions.size.toLong())
+        val disruptions = disruptionExtractor.extractDisruptions(linx, emptySet(), listOf())
+        assertThat(disruptions).hasSize(1)
 
         val disruption = disruptions.iterator().next()
-        assertTrue(disruption.isReportable)
-        assertEquals(DriverLikelihood.LOW, disruption.driverLikelihood())
-        assertEquals(DisruptionType.DUP, disruption.type())
-        assertEquals(0.2, disruption.junctionCopyNumber(), EPSILON)
-        assertEquals(1.6, disruption.undisruptedCopyNumber(), EPSILON)
-        assertEquals(RegionType.EXONIC, disruption.regionType())
-        assertEquals(CodingContext.CODING, disruption.codingContext())
-        assertEquals(5, disruption.clusterGroup().toLong())
+        assertThat(disruption.isReportable).isTrue
+        assertThat(disruption.driverLikelihood).isEqualTo(DriverLikelihood.LOW)
+        assertThat(disruption.type).isEqualTo(DisruptionType.DUP)
+        assertThat(disruption.junctionCopyNumber).isEqualTo(0.2, Offset.offset(EPSILON))
+        assertThat(disruption.undisruptedCopyNumber).isEqualTo(1.6, Offset.offset(EPSILON))
+        assertThat(disruption.regionType).isEqualTo(RegionType.EXONIC)
+        assertThat(disruption.codingContext).isEqualTo(CodingContext.CODING)
+        assertThat(disruption.clusterGroup).isEqualTo(5)
     }
 
     @Test(expected = IllegalStateException::class)
     fun shouldThrowExceptionWhenFilteringReportedDisruption() {
-        val linxBreakend: LinxBreakend = breakendBuilder().gene("gene 1").reported(true).build()
-        val linx: LinxRecord = ImmutableLinxRecord.builder()
+        val linxBreakend = breakendBuilder().gene("gene 1").reported(true).build()
+        val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
             .addAllSomaticBreakends(linxBreakend)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
         val disruptionExtractor = DisruptionExtractor(geneFilter, createEmptyDatabase())
-        disruptionExtractor.extractDisruptions(linx, mutableSetOf(), listOf())
+        disruptionExtractor.extractDisruptions(linx, emptySet(), emptyList())
     }
 
     @Test
-    fun canFilterBreakendWithLosses() {
+    fun `Should filter breakend with losses`() {
         val gene = "gene"
         val disruptionExtractor = DisruptionExtractor(TestGeneFilterFactory.createAlwaysValid(), createEmptyDatabase())
 
-        val breakend1: LinxBreakend = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build()
-        assertEquals(0, disruptionExtractor.extractDisruptions(withBreakend(breakend1), Sets.newHashSet(gene), listOf()).size.toLong())
+        val breakend1 = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build()
+        assertThat(disruptionExtractor.extractDisruptions(withBreakend(breakend1), setOf(gene), listOf())).hasSize(0)
 
-        val breakend2: LinxBreakend = breakendBuilder().gene(gene).type(LinxBreakendType.DUP).build()
-        assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend2), Sets.newHashSet(gene), listOf()).size.toLong())
+        val breakend2 = breakendBuilder().gene(gene).type(LinxBreakendType.DUP).build()
+        assertThat(disruptionExtractor.extractDisruptions(withBreakend(breakend2), setOf(gene), listOf())).hasSize(1)
 
-        val breakend3: LinxBreakend = breakendBuilder().gene("other").type(LinxBreakendType.DEL).build()
-        assertEquals(1, disruptionExtractor.extractDisruptions(withBreakend(breakend3), Sets.newHashSet(gene), listOf()).size.toLong())
+        val breakend3 = breakendBuilder().gene("other").type(LinxBreakendType.DEL).build()
+        assertThat(disruptionExtractor.extractDisruptions(withBreakend(breakend3), setOf(gene), listOf())).hasSize(1)
     }
 
     @Test
-    fun canDetermineAllDisruptionTypes() {
+    fun `Should determine all disruption types`() {
         for (breakendType in LinxBreakendType.values()) {
-            assertNotNull(DisruptionExtractor.determineDisruptionType(breakendType))
+            assertThat(DisruptionExtractor.determineDisruptionType(breakendType)).isNotNull()
         }
     }
 
     @Test
-    fun canDetermineAllRegionTypes() {
+    fun `Should determine all region types`() {
         for (regionType in TranscriptRegionType.values()) {
             if (regionType != TranscriptRegionType.UNKNOWN) {
-                assertNotNull(DisruptionExtractor.determineRegionType(regionType))
+                assertThat(DisruptionExtractor.determineRegionType(regionType)).isNotNull()
             }
         }
     }
 
     @Test
-    fun canDetermineAllCodingTypes() {
+    fun `Should determine all coding types`() {
         for (codingType in TranscriptCodingType.values()) {
             if (codingType != TranscriptCodingType.UNKNOWN) {
-                assertNotNull(DisruptionExtractor.determineCodingContext(codingType))
+                assertThat(DisruptionExtractor.determineCodingContext(codingType)).isNotNull()
             }
         }
     }
 
     @Test
-    fun canGenerateUndisruptedCopyNumberForHomDupDisruptions() {
-        val linxBreakend: LinxBreakend = breakendBuilder()
+    fun `Should generate undisrupted copy number for hom dup disruptions`() {
+        val linxBreakend = breakendBuilder()
             .gene("gene")
             .type(LinxBreakendType.DUP)
             .junctionCopyNumber(1.2)
             .undisruptedCopyNumber(1.4)
             .svId(1)
             .build()
-        val structuralVariant1: LinxSvAnnotation = structuralVariantBuilder().svId(1).clusterId(2).build()
-        val linx: LinxRecord = ImmutableLinxRecord.builder()
+        val structuralVariant1 = structuralVariantBuilder().svId(1).clusterId(2).build()
+        val linx = ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
             .addAllSomaticStructuralVariants(structuralVariant1)
             .addAllSomaticBreakends(linxBreakend)
             .build()
-        val driver: LinxDriver = TestLinxFactory.driverBuilder().gene("gene").type(LinxDriverType.HOM_DUP_DISRUPTION).build()
+        val driver = TestLinxFactory.driverBuilder().gene("gene").type(LinxDriverType.HOM_DUP_DISRUPTION).build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene())
         val disruptionExtractor = DisruptionExtractor(geneFilter, createEmptyDatabase())
 
-        val disruptions: Set<Disruption> = disruptionExtractor.extractDisruptions(linx, Sets.newHashSet(), listOf(driver))
-        val disruption = disruptions.iterator().next()
-        assertEquals(0.2, disruption.undisruptedCopyNumber(), EPSILON)
+        val disruptions = disruptionExtractor.extractDisruptions(linx, emptySet(), listOf(driver))
+        val disruption = disruptions.first()
+        assertThat(disruption.undisruptedCopyNumber).isEqualTo(0.2, Offset.offset(EPSILON))
     }
 
     companion object {

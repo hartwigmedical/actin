@@ -80,8 +80,7 @@ data class EhrPatientRecord(
     val treatmentHistory: List<EhrTreatmentHistory>,
     val tumorDetails: EhrTumorDetail,
     val priorPrimaries: List<EhrPriorPrimary>,
-    val vitalFunctions: List<EhrVitalFunction>,
-    val bodyWeights: List<EhrBodyWeight>,
+    val vitalFunctions: List<EhrMeasurement>,
     val whoEvaluations: List<EhrWhoEvaluation>
 )
 
@@ -141,9 +140,17 @@ data class EhrBloodTransfusion(
 
 @Serializable(with = EhrBloodTransfusionProductSerializer::class)
 enum class EhrBloodTransfusionProduct {
-    ERYTHROCYTE,
-    THROMBOCYTE,
-    OTHER
+    PLASMA_A,
+    PLASMA_B,
+    PLASMA_O,
+    PLASMA_AB,
+    PLATELETS_POOLED,
+    PLATELETS_POOLED_RADIATED,
+    ERYTHROCYTES_RADIATED,
+    APHERESIS_PLASMA,
+    ERTHROCYTES_FILTERED,
+    OTHER,
+    PLATELETS_APHERESIS
 }
 
 object EhrBloodTransfusionProductSerializer : KSerializer<EhrBloodTransfusionProduct> by enumSerializer()
@@ -239,6 +246,7 @@ enum class EhrSurgeryStatus {
     IN_PROGRESS,
     FINISHED,
     CANCELLED,
+    UNKNOWN,
     OTHER
 }
 
@@ -275,10 +283,12 @@ data class EhrTreatmentHistory(
 
 @Serializable(with = EhrTreatmentIntentionSerializer::class)
 enum class EhrTreatmentIntention {
-    CURATIVE,
-    PALLIATIVE,
     ADJUVANT,
-    NEO_ADJUVANT,
+    NEOADJUVANT,
+    INDUCTION,
+    CONSOLIDATION,
+    MAINTENANCE,
+    PALLIATIVE,
     OTHER
 }
 
@@ -317,9 +327,9 @@ data class EhrTreatmentModification(
 data class EhrTumorDetail(
     @Contextual
     val diagnosisDate: LocalDate,
-    val tumorLocation: EhrTumorLocation,
+    val tumorLocation: String,
     val tumorType: String,
-    val tumorGradeDifferentation: String,
+    val tumorGradeDifferentiation: String,
     val tumorStage: EhrTumorStage,
     @Contextual
     val tumorStageDate: LocalDate,
@@ -330,13 +340,11 @@ data class EhrTumorDetail(
 )
 
 @Serializable
-data class EhrLesion(val location: EhrLesionLocation, @Contextual val diagnosisDate: LocalDate)
+data class EhrLesion(val location: EhrLesionLocation, val sublocation: String?, @Contextual val diagnosisDate: LocalDate)
 
 enum class EhrLesionLocation {
     BRAIN,
-    BRAIN_ACTIVE,
     CNS,
-    ACTIVE_CNS,
     BONE,
     LIVER,
     LUNG,
@@ -348,8 +356,8 @@ enum class EhrLesionLocation {
 data class EhrPriorPrimary(
     @Contextual
     val diagnosisDate: LocalDate,
-    val tumorLocation: EhrTumorLocation,
-    val tumorType: EhrTumorType,
+    val tumorLocation: String,
+    val tumorType: String,
     val status: EhrTumorStatus,
     @Contextual
     val statusDate: LocalDate
@@ -364,24 +372,6 @@ enum class EhrTumorStatus {
 }
 
 object EhrTumorStatusSerializer : KSerializer<EhrTumorStatus> by enumSerializer()
-
-@Serializable(with = EhrTumorLocationSerializer::class)
-enum class EhrTumorLocation {
-    UNKNOWN,
-    OTHER
-}
-
-object EhrTumorLocationSerializer : KSerializer<EhrTumorLocation> by enumSerializer()
-
-@Serializable(with = EhrTumorTypeSerializer::class)
-enum class EhrTumorType {
-    UNDIFFERENTIATED,
-    BORDERLINE,
-    BORDERLINE_OVARIAN,
-    OTHER
-}
-
-object EhrTumorTypeSerializer : KSerializer<EhrTumorType> by enumSerializer()
 
 @Serializable(with = EhrTumorStageSerializer::class)
 enum class EhrTumorStage {
@@ -400,28 +390,31 @@ enum class EhrTumorStage {
 object EhrTumorStageSerializer : KSerializer<EhrTumorStage> by enumSerializer()
 
 @Serializable
-data class EhrVitalFunction(
+data class EhrMeasurement(
     @Contextual
     val date: LocalDate,
-    val category: EhrVitalFunctionCategory,
-    val subcategory: EhrVitalFunctionSubcategory,
+    val category: EhrMeasurementCategory,
+    val subcategory: EhrMeasurementSubcategory,
     val value: Double,
     val unit: EhrVitalFunctionUnit
 )
 
 @Serializable(with = EhrVitalFunctionCategorySerializer::class)
-enum class EhrVitalFunctionCategory {
+enum class EhrMeasurementCategory {
     HEART_RATE,
     PULSE_OXIMETRY,
     NON_INVASIVE_BLOOD_PRESSURE,
     ARTERIAL_BLOOD_PRESSURE,
+    BODY_WEIGHT,
+    BODY_HEIGHT,
+    BMI,
     OTHER
 }
 
-object EhrVitalFunctionCategorySerializer : KSerializer<EhrVitalFunctionCategory> by enumSerializer()
+object EhrVitalFunctionCategorySerializer : KSerializer<EhrMeasurementCategory> by enumSerializer()
 
 @Serializable(with = EhrVitalFunctionSubcategorySerializer::class)
-enum class EhrVitalFunctionSubcategory {
+enum class EhrMeasurementSubcategory {
     NA,
     SYSTOLIC_BLOOD_PRESSURE,
     DIASTOLIC_BLOOD_PRESSURE,
@@ -429,31 +422,18 @@ enum class EhrVitalFunctionSubcategory {
     OTHER
 }
 
-object EhrVitalFunctionSubcategorySerializer : KSerializer<EhrVitalFunctionSubcategory> by enumSerializer()
+object EhrVitalFunctionSubcategorySerializer : KSerializer<EhrMeasurementSubcategory> by enumSerializer()
 
 @Serializable(with = EhrVitalFunctionUnitSerializer::class)
 enum class EhrVitalFunctionUnit {
     BPM,
     PERCENT,
     MMHG,
+    KG,
+    CM,
+    KG_M2,
     OTHER
 }
 
 object EhrVitalFunctionUnitSerializer : KSerializer<EhrVitalFunctionUnit> by enumSerializer()
-
-@Serializable
-data class EhrBodyWeight(
-    @Contextual
-    val evaluationTime: LocalDateTime,
-    val value: Double,
-    val unit: EhrBodyWeightUnit
-)
-
-@Serializable(with = EhrBodyWeightUnitSerializer::class)
-enum class EhrBodyWeightUnit {
-    KILOGRAM,
-    OTHER
-}
-
-object EhrBodyWeightUnitSerializer : KSerializer<EhrBodyWeightUnit> by enumSerializer()
 

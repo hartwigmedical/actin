@@ -3,64 +3,38 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
-class HasLimitedLabValueULN internal constructor(private val maxULNFactor: Double) : LabEvaluationFunction {
+class HasLimitedLabValueULN(private val maxULNFactor: Double) : LabEvaluationFunction {
+    
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val result = LabEvaluation.evaluateVersusMaxULN(labValue, maxULNFactor)
-        val builder = recoverable().result(result)
-        when (result) {
+        val labValueString = "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${String.format("%.1f", labValue.value)}"
+        val referenceString = "$maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp})"
+
+        return when (result) {
             EvaluationResult.FAIL -> {
-                builder.addFailSpecificMessages(
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
-                        String.format(
-                            "%.1f",
-                            labValue.value()
-                        )
-                    } exceeds maximum of $maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp()})"
-                )
-                builder.addFailGeneralMessages(
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
-                        String.format(
-                            "%.1f",
-                            labValue.value()
-                        )
-                    } exceeds max of $maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp()})"
+                EvaluationFactory.recoverableFail(
+                    "$labValueString exceeds maximum of $referenceString", "$labValueString exceeds max of $referenceString"
                 )
             }
-
             EvaluationResult.UNDETERMINED -> {
-                builder.addUndeterminedSpecificMessages(
-                    "${
-                        labMeasurement.display().replaceFirstChar { it.uppercase() }
-                    } could not be evaluated against maximum ULN"
+                EvaluationFactory.recoverableUndetermined(
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} could not be evaluated against maximum ULN",
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
                 )
-                builder.addUndeterminedGeneralMessages("${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined")
             }
-
             EvaluationResult.PASS -> {
-                builder.addPassSpecificMessages(
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
-                        String.format(
-                            "%.1f",
-                            labValue.value()
-                        )
-                    } below maximum of $maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp()})"
-                )
-                builder.addPassGeneralMessages(
-                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
-                        String.format(
-                            "%.1f",
-                            labValue.value()
-                        )
-                    } below max of $maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp()})"
+                EvaluationFactory.recoverablePass(
+                    "$labValueString below maximum of $referenceString", "$labValueString below max of $referenceString"
                 )
             }
 
-            else -> {}
+            else -> {
+                Evaluation(result = result, recoverable = true)
+            }
         }
-        return builder.build()
     }
 }

@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage
 class HasIncurableCancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage = record.clinical().tumor().stage()
+        val stage = record.clinical.tumor.stage
             ?: return EvaluationFactory.undetermined(
                 "Tumor stage details are missing, if cancer is considered incurable cannot be determined",
                 "Undetermined incurable cancer"
@@ -35,7 +35,7 @@ class HasIncurableCancer : EvaluationFunction {
 
     companion object {
         private fun isStageMatch(stage: TumorStage, stageToMatch: TumorStage): Boolean {
-            return stage == stageToMatch || stage.category() == stageToMatch
+            return stage == stageToMatch || stage.category == stageToMatch
         }
     }
 }

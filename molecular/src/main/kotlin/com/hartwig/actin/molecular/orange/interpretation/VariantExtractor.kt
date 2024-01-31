@@ -1,15 +1,11 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableTranscriptImpact
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableVariant
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
@@ -26,47 +22,55 @@ import org.apache.logging.log4j.LogManager
 
 internal class VariantExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
 
-    fun extract(purple: PurpleRecord): MutableSet<Variant> {
-        val variants: MutableSet<Variant> = Sets.newTreeSet(VariantComparator())
-        val purpleVariants = relevantPurpleVariants(purple)
+    fun extract(purple: PurpleRecord): Set<Variant> {
         val drivers = relevantPurpleDrivers(purple)
 
-        for (variant in VariantDedup.apply(purpleVariants)) {
-            val reportedOrCoding = variant.reported() || RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())
-            val event = DriverEventFactory.variantEvent(variant)
-            if (geneFilter.include(variant.gene()) && reportedOrCoding) {
+        return VariantDedup.apply(relevantPurpleVariants(purple)).filter { variant ->
+            val reported = variant.reported()
+            val coding = RELEVANT_CODING_EFFECTS.contains(variant.canonicalImpact().codingEffect())
+            val geneIncluded = geneFilter.include(variant.gene())
+            if (reported && !geneIncluded) {
+                throw IllegalStateException(
+                    "Filtered a reported variant through gene filtering: '${DriverEventFactory.variantEvent(variant)}'."
+                            + " Please make sure '${variant.gene()}' is configured as a known gene."
+                )
+            }
+            geneIncluded && (reported || coding)
+        }
+            .map { variant ->
+                val event = DriverEventFactory.variantEvent(variant)
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
-                val evidence: ActionableEvidence? = if (driverLikelihood == DriverLikelihood.HIGH) {
+                val evidence = if (driverLikelihood == DriverLikelihood.HIGH) {
                     ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant))
                 } else {
                     ActionableEvidenceFactory.createNoEvidence()
                 }
 
-                variants.add(
-                    ImmutableVariant.builder()
-                        .from(GeneAlterationFactory.convertAlteration(variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)))
-                        .isReportable(variant.reported())
-                        .event(event)
-                        .driverLikelihood(driverLikelihood)
-                        .evidence(evidence)
-                        .type(determineVariantType(variant))
-                        .variantCopyNumber(ExtractionUtil.keep3Digits(variant.variantCopyNumber()))
-                        .totalCopyNumber(ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()))
-                        .isBiallelic(variant.biallelic())
-                        .isHotspot(variant.hotspot() == HotspotType.HOTSPOT)
-                        .clonalLikelihood(ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()))
-                        .phaseGroups(variant.localPhaseSets())
-                        .canonicalImpact(extractCanonicalImpact(variant))
-                        .otherImpacts(extractOtherImpacts(variant))
-                        .build()
+                val alteration = GeneAlterationFactory.convertAlteration(
+                    variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)
                 )
-            } else check(!variant.reported()) {
-                ("Filtered a reported variant through gene filtering: '" + event + "'. Please make sure '" + variant.gene()
-                        + "' is configured as a known gene.")
+                Variant(
+                    gene = alteration.gene,
+                    geneRole = alteration.geneRole,
+                    proteinEffect = alteration.proteinEffect,
+                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                    isReportable = variant.reported(),
+                    event = event,
+                    driverLikelihood = driverLikelihood,
+                    evidence = evidence!!,
+                    type = determineVariantType(variant),
+                    variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
+                    totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
+                    isBiallelic = variant.biallelic(),
+                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
+                    clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
+                    phaseGroups = variant.localPhaseSets()?.toSet(),
+                    canonicalImpact = extractCanonicalImpact(variant),
+                    otherImpacts = extractOtherImpacts(variant)
+                )
             }
-        }
-        return variants
+            .toSortedSet(VariantComparator())
     }
 
     companion object {
@@ -82,7 +86,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
 
         private val MUTATION_DRIVER_TYPES = setOf(PurpleDriverType.MUTATION, PurpleDriverType.GERMLINE_MUTATION)
 
-        internal fun determineVariantType(variant: PurpleVariant): VariantType {
+        fun determineVariantType(variant: PurpleVariant): VariantType {
             return when (variant.type()) {
                 PurpleVariantType.MNP -> {
                     VariantType.MNV
@@ -109,16 +113,23 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             }
         }
 
-        internal fun determineDriverLikelihood(driver: PurpleDriver?): DriverLikelihood? {
-            if (driver == null) {
-                return null
-            }
-            return if (driver.driverLikelihood() >= 0.8) {
-                DriverLikelihood.HIGH
-            } else if (driver.driverLikelihood() >= 0.2) {
-                DriverLikelihood.MEDIUM
-            } else {
-                DriverLikelihood.LOW
+        fun determineDriverLikelihood(driver: PurpleDriver?): DriverLikelihood? {
+            return when {
+                driver == null -> {
+                    null
+                }
+
+                driver.driverLikelihood() >= 0.8 -> {
+                    DriverLikelihood.HIGH
+                }
+
+                driver.driverLikelihood() >= 0.2 -> {
+                    DriverLikelihood.MEDIUM
+                }
+
+                else -> {
+                    DriverLikelihood.LOW
+                }
             }
         }
 
@@ -126,16 +137,12 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             drivers: Set<PurpleDriver>, geneToFind: String,
             transcriptToFind: String
         ): PurpleDriver? {
-            var best: PurpleDriver? = null
-            for (driver in drivers) {
+            return drivers.filter { driver ->
                 val hasMutationType = MUTATION_DRIVER_TYPES.contains(driver.type())
                 val hasMatchingGeneTranscript = driver.gene() == geneToFind && driver.transcript() == transcriptToFind
-                val isBetter = best == null || driver.driverLikelihood() > best.driverLikelihood()
-                if (hasMutationType && hasMatchingGeneTranscript && isBetter) {
-                    best = driver
-                }
+                hasMutationType && hasMatchingGeneTranscript
             }
-            return best
+                .maxByOrNull(PurpleDriver::driverLikelihood)
         }
 
         private fun extractCanonicalImpact(variant: PurpleVariant): TranscriptImpact {
@@ -158,16 +165,16 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
         }
 
         private fun toTranscriptImpact(purpleTranscriptImpact: PurpleTranscriptImpact): TranscriptImpact {
-            return ImmutableTranscriptImpact.builder()
-                .transcriptId(purpleTranscriptImpact.transcript())
-                .hgvsCodingImpact(purpleTranscriptImpact.hgvsCodingImpact())
-                .hgvsProteinImpact(AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()))
-                .affectedCodon(purpleTranscriptImpact.affectedCodon())
-                .affectedExon(purpleTranscriptImpact.affectedExon())
-                .isSpliceRegion(purpleTranscriptImpact.inSpliceRegion())
-                .effects(toEffects(purpleTranscriptImpact.effects()))
-                .codingEffect(determineCodingEffect(purpleTranscriptImpact.codingEffect()))
-                .build()
+            return TranscriptImpact(
+                transcriptId = purpleTranscriptImpact.transcript(),
+                hgvsCodingImpact = purpleTranscriptImpact.hgvsCodingImpact(),
+                hgvsProteinImpact = AminoAcid.forceSingleLetterAminoAcids(purpleTranscriptImpact.hgvsProteinImpact()),
+                affectedCodon = purpleTranscriptImpact.affectedCodon(),
+                affectedExon = purpleTranscriptImpact.affectedExon(),
+                isSpliceRegion = purpleTranscriptImpact.inSpliceRegion(),
+                effects = toEffects(purpleTranscriptImpact.effects()),
+                codingEffect = determineCodingEffect(purpleTranscriptImpact.codingEffect())
+            )
         }
 
         private fun toEffects(effects: Set<PurpleVariantEffect>): Set<VariantEffect> {
@@ -294,24 +301,12 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
             }
         }
 
-        fun relevantPurpleVariants(purple: PurpleRecord): MutableSet<PurpleVariant> {
-            val purpleVariants: MutableSet<PurpleVariant> = Sets.newHashSet()
-            purpleVariants.addAll(purple.allSomaticVariants())
-            val reportableGermlineVariants = purple.reportableGermlineVariants()
-            if (reportableGermlineVariants != null) {
-                purpleVariants.addAll(reportableGermlineVariants)
-            }
-            return purpleVariants
+        fun relevantPurpleVariants(purple: PurpleRecord): Set<PurpleVariant> {
+            return listOfNotNull(purple.allSomaticVariants(), purple.reportableGermlineVariants()).flatten().toSet()
         }
 
-        fun relevantPurpleDrivers(purple: PurpleRecord): MutableSet<PurpleDriver> {
-            val purpleDrivers: MutableSet<PurpleDriver> = Sets.newHashSet()
-            purpleDrivers.addAll(purple.somaticDrivers())
-            val germlineDrivers = purple.germlineDrivers()
-            if (germlineDrivers != null) {
-                purpleDrivers.addAll(germlineDrivers)
-            }
-            return purpleDrivers
+        fun relevantPurpleDrivers(purple: PurpleRecord): Set<PurpleDriver> {
+            return listOfNotNull(purple.somaticDrivers(), purple.germlineDrivers()).flatten().toSet()
         }
     }
 }

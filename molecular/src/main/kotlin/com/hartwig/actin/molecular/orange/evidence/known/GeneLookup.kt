@@ -8,12 +8,7 @@ import com.hartwig.serve.datamodel.gene.KnownGene
 internal object GeneLookup {
 
     fun find(knownGenes: Set<KnownGene>, gene: String): GeneAlteration? {
-        for (knownGene in GeneAggregator.aggregate(knownGenes)) {
-            if (knownGene.gene() == gene) {
-                return fromKnownGene(knownGene)
-            }
-        }
-        return null
+        return GeneAggregator.aggregate(knownGenes).find { it.gene() == gene }?.let { fromKnownGene(it) }
     }
 
     private fun fromKnownGene(knownGene: KnownGene): GeneAlteration {

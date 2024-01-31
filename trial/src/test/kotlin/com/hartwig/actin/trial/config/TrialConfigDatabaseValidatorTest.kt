@@ -1,10 +1,10 @@
 package com.hartwig.actin.trial.config
 
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
 import com.hartwig.actin.trial.CohortDefinitionValidationError
 import com.hartwig.actin.trial.InclusionCriteriaValidationError
 import com.hartwig.actin.trial.InclusionReferenceValidationError
 import com.hartwig.actin.trial.TrialDefinitionValidationError
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.interpretation.TestEligibilityFactoryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

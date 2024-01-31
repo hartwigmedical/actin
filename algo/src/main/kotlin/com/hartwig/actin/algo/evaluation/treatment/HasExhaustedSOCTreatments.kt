@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasExhaustedSOCTreatments : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (record.clinical().oncologicalHistory().isEmpty()) {
+        return if (record.clinical.oncologicalHistory.isEmpty()) {
             EvaluationFactory.undetermined(
                 "Patient has not had any prior cancer treatments and therefore undetermined exhaustion of SOC",
                 "Undetermined exhaustion of SOC"

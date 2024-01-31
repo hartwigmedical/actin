@@ -43,7 +43,7 @@ class CTCModelTest {
         val closedCohort: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(ctcCohortIds = setOf("2"), open = false)
 
         // Cohort ID 2 is assumed to be open in proper test CTC database
-        assertThat(model.resolveCohortMetadata(closedCohort).open()).isTrue
+        assertThat(model.resolveCohortMetadata(closedCohort).open).isTrue
     }
 
     @Test
@@ -53,14 +53,14 @@ class CTCModelTest {
             open = true,
             slotsAvailable = true
         )
-        assertThat(model.resolveCohortMetadata(openNotAvailable).open()).isTrue
+        assertThat(model.resolveCohortMetadata(openNotAvailable).open).isTrue
 
         val closedNotAvailable: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(
             ctcCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
             open = false,
             slotsAvailable = false
         )
-        assertThat(model.resolveCohortMetadata(closedNotAvailable).open()).isFalse
+        assertThat(model.resolveCohortMetadata(closedNotAvailable).open).isFalse
     }
 
     @Test
@@ -72,8 +72,8 @@ class CTCModelTest {
         )
 
         val metadata = model.resolveCohortMetadata(missing)
-        assertThat(metadata.open()).isFalse
-        assertThat(metadata.slotsAvailable()).isFalse
+        assertThat(metadata.open).isFalse
+        assertThat(metadata.slotsAvailable).isFalse
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter.interpret
 import org.assertj.core.api.Assertions.assertThat
@@ -27,13 +26,13 @@ class PriorMolecularTestInterpreterTest {
     companion object {
 
         private fun create(scoreText: String?, scoreValue: Double?, test: String, item: String): PriorMolecularTest {
-            return ImmutablePriorMolecularTest.builder()
-                .test(test)
-                .item(item)
-                .scoreText(scoreText)
-                .scoreValue(scoreValue)
-                .impliesPotentialIndeterminateStatus(false)
-                .build()
+            return PriorMolecularTest(
+                test = test,
+                item = item,
+                scoreText = scoreText,
+                scoreValue = scoreValue,
+                impliesPotentialIndeterminateStatus = false
+            )
         }
     }
 }

@@ -6,13 +6,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class HasHistoryOfAnaphylaxis internal constructor() : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (record.clinical().intolerances().isEmpty()) {
+        return if (record.clinical.intolerances.isEmpty()) {
             EvaluationFactory.fail("Patient has no known history of anaphylaxis", "No known history of anaphylaxis")
         } else {
             EvaluationFactory.undetermined(
-                "Cannot be determined if patient has history of anaphylaxis",
-                "Undetermined previous history of anaphylaxis"
+                "Drug allergies present but cannot be determined if patient has history of anaphylaxis",
+                "Drug allergies present but unknown if history of anaphylaxis"
             )
         }
     }

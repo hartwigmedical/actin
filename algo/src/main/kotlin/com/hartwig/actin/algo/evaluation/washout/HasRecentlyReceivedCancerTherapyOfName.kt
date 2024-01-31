@@ -7,19 +7,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
+import com.hartwig.actin.clinical.datamodel.Medication
 
 class HasRecentlyReceivedCancerTherapyOfName(
-    private val namesToFind: Set<String>,
-    private val interpreter: MedicationStatusInterpreter
+    private val namesToFind: Set<String>, private val interpreter: MedicationStatusInterpreter
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val lowercaseNamesToFind = namesToFind.map { it.lowercase() }.toSet()
-        val namesFound = record.clinical().medications()
+        val namesFound = record.clinical.medications
             .filter {
-                lowercaseNamesToFind.contains(it.name().lowercase()) &&
-                        interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
+                lowercaseNamesToFind.contains(it.name.lowercase()) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
             }
-            .map { it.name() }
+            .map(Medication::name)
 
         return if (namesFound.isNotEmpty()) {
             EvaluationFactory.pass(

@@ -6,25 +6,24 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.clinical.datamodel.Medication
 import java.time.LocalDate
 
 class HasRecentlyReceivedTrialMedication(
-    private val selector: MedicationSelector,
-    private val minStopDate: LocalDate
+    private val selector: MedicationSelector, private val minStopDate: LocalDate
 ) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (minStopDate.isBefore(record.clinical().patient().registrationDate())) {
+        if (minStopDate.isBefore(record.clinical.patient.registrationDate)) {
             return EvaluationFactory.undetermined(
                 "Required stop date prior to registration date for recent trial medication usage evaluation",
                 "Recent trial medication"
             )
         }
 
-        val medications =
-            selector.activeOrRecentlyStopped(record.clinical().medications(), minStopDate)
-                .filter { it.isTrialMedication }
+        val medications = selector.activeOrRecentlyStopped(record.clinical.medications, minStopDate).filter(Medication::isTrialMedication)
 
-        val foundMedicationNames = medications.map { it.name() }.filter { it.isNotEmpty() }
+        val foundMedicationNames = medications.map { it.name }.filter { it.isNotEmpty() }
 
         return if (medications.isNotEmpty()) {
             val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""

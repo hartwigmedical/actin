@@ -3,51 +3,62 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.CypInteraction
-import com.hartwig.actin.clinical.datamodel.ImmutableCypInteraction
-import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
 import org.junit.Test
 
+private const val TARGET_CYP = "9A9"
+
 class CurrentlyGetsCypXSubstrateMedicationTest {
+    private val alwaysActiveFunction = CurrentlyGetsCypXSubstrateMedication(MedicationTestFactory.alwaysActive(), TARGET_CYP)
+    private val alwaysPlannedFunction = CurrentlyGetsCypXSubstrateMedication(MedicationTestFactory.alwaysPlanned(), TARGET_CYP)
+
     @Test
-    fun shouldPassWhenCypSubstrateMedication() {
-        val medications = listOf(
-            TestMedicationFactory.builder().addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+    fun `Should pass with CYP substrate medication`() {
+        assertEvaluation(
+            EvaluationResult.PASS, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
+            )
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenCypSubstrateMedicationThatDoesNotMatchCyp() {
-        val medications = listOf(
-            TestMedicationFactory.builder().addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("3A4").type(CypInteraction.Type.SUBSTRATE).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+    fun `Should fail with CYP substrate medication that does not match CYP`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction("3A4", CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
+            )
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenNoCypSubstrateMedication() {
-        val medications = listOf(
-            TestMedicationFactory.builder().addCypInteractions(
-                ImmutableCypInteraction.builder().cyp("9A9").type(CypInteraction.Type.INHIBITOR).strength(CypInteraction.Strength.STRONG)
-                    .build()
-            ).build()
+    fun `Should fail when no CYP substrate medication`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG)
+            )
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
     }
 
     @Test
-    fun shouldFailWhenPatientUsesNoMedication() {
-        val medications = listOf(TestMedicationFactory.builder().build())
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(MedicationTestFactory.withMedications(medications)))
+    fun `Should warn when patient plans to use CYP substrate medication`() {
+        assertEvaluation(
+            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.SUBSTRATE, CypInteraction.Strength.STRONG)
+            )
+        )
     }
 
-    companion object {
-        private val FUNCTION = CurrentlyGetsCypXSubstrateMedication(MedicationTestFactory.alwaysActive(), "9A9")
+    @Test
+    fun `Should fail when patient plans to use medication which is not CYP substrate medication`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, CypInteraction.Type.INHIBITOR, CypInteraction.Strength.STRONG)
+            )
+        )
+    }
+
+
+    @Test
+    fun `Should fail when patient uses no medication`() {
+        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
     }
 }

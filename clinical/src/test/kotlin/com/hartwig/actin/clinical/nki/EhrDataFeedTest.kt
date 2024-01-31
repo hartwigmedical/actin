@@ -3,14 +3,12 @@ package com.hartwig.actin.clinical.nki
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
-import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
-import com.hartwig.actin.clinical.curation.translation.Translation
-import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.doid.config.ImmutableDoidManualConfig
+import com.hartwig.actin.doid.config.DoidManualConfig
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -24,7 +22,7 @@ class EhrDataFeedTest {
             CURATION_DIRECTORY,
             CurationDoidValidator(
                 TestDoidModelFactory.createWithDoidManualConfig(
-                    ImmutableDoidManualConfig.builder().build()
+                    DoidManualConfig(emptySet(), emptySet(), emptyMap())
                 )
             ),
             TestTreatmentDatabaseFactory.createProper()
@@ -38,21 +36,13 @@ class EhrDataFeedTest {
                 dosageCuration = curationDatabase.medicationDosageCuration
             ),
             surgeryExtractor = EhrSurgeryExtractor(),
-            toxicityExtractor = EhrToxicityExtractor(),
+            toxicityExtractor = EhrToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = EhrVitalFunctionsExtractor(),
-            priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(),
+            priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(curationDatabase.nonOncologicalHistoryCuration),
             intolerancesExtractor = EhrIntolerancesExtractor(),
-            complicationExtractor = EhrComplicationExtractor(),
+            complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(TestTreatmentDatabaseFactory.createProper()),
-            secondPrimaryExtractor = EhrSecondPrimariesExtractor(
-                TranslationDatabase(
-                    mapOf(
-                        "some string" to Translation(
-                            "some string",
-                            "ACTIVE"
-                        )
-                    ), CurationCategory.SECOND_PRIMARY
-                ) { emptySet() }),
+            secondPrimaryExtractor = EhrSecondPrimariesExtractor(),
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(),
             labValuesExtractor = EhrLabValuesExtractor(),
@@ -60,8 +50,6 @@ class EhrDataFeedTest {
             bodyWeightExtractor = EhrBodyWeightExtractor(),
             bloodTransfusionExtractor = EhrBloodTransfusionExtractor()
         )
-
         assertThat(feed.ingest()).isNotNull
     }
-
 }

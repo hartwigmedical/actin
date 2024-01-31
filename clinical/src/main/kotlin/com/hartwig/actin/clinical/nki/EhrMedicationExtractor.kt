@@ -9,8 +9,7 @@ import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutableDosage
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
+import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 
@@ -48,24 +47,23 @@ class EhrMedicationExtractor(
                 "dosage",
                 true
             )
-            val medication = ImmutableMedication.builder().name(it.name).administrationRoute(it.administrationRoute)
-                .dosage(
-                    curatedDosage.config()?.curated ?: ImmutableDosage.builder().dosageMax(it.dosage).dosageMin(it.dosage)
-                        .dosageUnit(it.dosageUnit).frequency(it.frequency)
-                        .frequencyUnit(it.frequencyUnit)
-                        .periodBetweenValue(it.periodBetweenDosagesValue)
-                        .periodBetweenUnit(it.periodBetweenDosagesUnit)
-                        .ifNeeded(it.administrationOnlyIfNeeded)
-                        .build()
-                )
-                .startDate(it.startDate)
-                .stopDate(it.endDate)
-                .atc(atcClassification)
-                .qtProlongatingRisk(curatedQT.config()?.status ?: QTProlongatingRisk.UNKNOWN)
-                .cypInteractions(curatedCyp.config()?.interactions ?: emptyList())
-                .isTrialMedication(false)
-                .isSelfCare(false)
-                .build()
+            val medication = Medication(
+                name = it.name,
+                administrationRoute = it.administrationRoute,
+                dosage = curatedDosage.config()?.curated ?: Dosage(
+                    dosageMin = it.dosage, dosageMax = it.dosage,
+                    dosageUnit = it.dosageUnit, frequency = it.frequency, frequencyUnit = it.frequencyUnit,
+                    periodBetweenValue = it.periodBetweenDosagesValue, periodBetweenUnit = it.periodBetweenDosagesUnit,
+                    ifNeeded = it.administrationOnlyIfNeeded
+                ),
+                startDate = it.startDate,
+                stopDate = it.endDate,
+                atc = atcClassification,
+                qtProlongatingRisk = curatedQT.config()?.status ?: QTProlongatingRisk.UNKNOWN,
+                cypInteractions = curatedCyp.config()?.interactions ?: emptyList(),
+                isTrialMedication = false,
+                isSelfCare = false
+            )
             ExtractionResult(listOf(medication),
                 listOf(
                     ExtractionResult(curatedQT.config(), curatedQT.extractionEvaluation),

@@ -38,16 +38,16 @@ class SecondPrimaryConfigFactoryTest {
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isFalse()
         val secondPrimary = config.config.curated!!
-        assertThat(secondPrimary.tumorLocation()).isEqualTo("tumorLocation")
-        assertThat(secondPrimary.tumorSubLocation()).isEqualTo("tumorSubLocation")
-        assertThat(secondPrimary.tumorType()).isEqualTo("tumorType")
-        assertThat(secondPrimary.tumorSubType()).isEqualTo("tumorSubType")
-        assertThat(secondPrimary.doids()).containsExactly("123")
-        assertThat(secondPrimary.diagnosedYear()).isEqualTo(2023)
-        assertThat(secondPrimary.diagnosedMonth()).isEqualTo(12)
-        assertThat(secondPrimary.treatmentHistory()).isEqualTo("treatmentHistory")
-        assertThat(secondPrimary.lastTreatmentYear()).isEqualTo(2023)
-        assertThat(secondPrimary.lastTreatmentMonth()).isEqualTo(12)
+        assertThat(secondPrimary.tumorLocation).isEqualTo("tumorLocation")
+        assertThat(secondPrimary.tumorSubLocation).isEqualTo("tumorSubLocation")
+        assertThat(secondPrimary.tumorType).isEqualTo("tumorType")
+        assertThat(secondPrimary.tumorSubType).isEqualTo("tumorSubType")
+        assertThat(secondPrimary.doids).containsExactly("123")
+        assertThat(secondPrimary.diagnosedYear).isEqualTo(2023)
+        assertThat(secondPrimary.diagnosedMonth).isEqualTo(12)
+        assertThat(secondPrimary.treatmentHistory).isEqualTo("treatmentHistory")
+        assertThat(secondPrimary.lastTreatmentYear).isEqualTo(2023)
+        assertThat(secondPrimary.lastTreatmentMonth).isEqualTo(12)
     }
 
     @Test

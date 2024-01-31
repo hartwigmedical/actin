@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 
 class EhrPriorOtherConditionsExtractor(private val priorOtherConditionsCuration: CurationDatabase<NonOncologicalHistoryConfig>) :
@@ -21,9 +20,12 @@ class EhrPriorOtherConditionsExtractor(private val priorOtherConditionsCuration:
                 "non-oncological history"
             )
             ExtractionResult(
-                listOfNotNull(curatedPriorOtherCondition.config()?.priorOtherCondition?.let { poc ->
-                    ImmutablePriorOtherCondition.builder().from(poc).year(it.startDate.year).month(it.startDate.monthValue).build()
-                }), curatedPriorOtherCondition.extractionEvaluation
+                listOfNotNull(
+                    curatedPriorOtherCondition.config()?.priorOtherCondition?.copy(
+                        year = it.startDate.year,
+                        month = it.startDate.monthValue
+                    )
+                ), curatedPriorOtherCondition.extractionEvaluation
             )
         }.fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)

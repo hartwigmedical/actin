@@ -1,12 +1,10 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentStage
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryDetails
-import com.hartwig.actin.clinical.datamodel.treatment.history.ImmutableTreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -31,14 +29,12 @@ class TreatmentHistoryEntryFunctionsTest {
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
-                ImmutableTreatmentHistoryEntry.copyOf(entry)
-                    .withTreatments(entry.treatments() + switchToTreatment.treatment() + maintenanceTreatment.treatment())
-                    .withTreatmentHistoryDetails(
-                        ImmutableTreatmentHistoryDetails.copyOf(entry.treatmentHistoryDetails()!!)
-                            .withCycles(5)
-                            .withSwitchToTreatments(emptyList())
-                            .withMaintenanceTreatment(null)
+                entry.copy(
+                    treatments = entry.treatments + switchToTreatment.treatment + maintenanceTreatment.treatment,
+                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
+                        cycles = 5, switchToTreatments = emptyList(), maintenanceTreatment = null
                     )
+                )
             )
     }
 
@@ -55,14 +51,14 @@ class TreatmentHistoryEntryFunctionsTest {
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
-                ImmutableTreatmentHistoryEntry.copyOf(entry)
-                    .withTreatmentHistoryDetails(
-                        ImmutableTreatmentHistoryDetails.copyOf(entry.treatmentHistoryDetails()!!)
-                            .withStopYear(switchToTreatment.startYear())
-                            .withStopMonth(switchToTreatment.startMonth())
-                            .withSwitchToTreatments(emptyList())
-                            .withMaintenanceTreatment(null)
+                entry.copy(
+                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
+                        stopYear = switchToTreatment.startYear,
+                        stopMonth = switchToTreatment.startMonth,
+                        switchToTreatments = emptyList(),
+                        maintenanceTreatment = null
                     )
+                )
             )
     }
 
@@ -84,16 +80,16 @@ class TreatmentHistoryEntryFunctionsTest {
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
-                ImmutableTreatmentHistoryEntry.copyOf(entry)
-                    .withTreatments(entry.treatments() + switchToTreatment.treatment())
-                    .withTreatmentHistoryDetails(
-                        ImmutableTreatmentHistoryDetails.copyOf(entry.treatmentHistoryDetails()!!)
-                            .withCycles(5)
-                            .withSwitchToTreatments(emptyList())
-                            .withMaintenanceTreatment(null)
-                            .withStopYear(maintenanceTreatment.startYear())
-                            .withStopMonth(maintenanceTreatment.startMonth())
+                entry.copy(
+                    treatments = entry.treatments + switchToTreatment.treatment,
+                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
+                        cycles = 5,
+                        switchToTreatments = emptyList(),
+                        maintenanceTreatment = null,
+                        stopYear = maintenanceTreatment.startYear,
+                        stopMonth = maintenanceTreatment.startMonth
                     )
+                )
             )
     }
 
@@ -115,14 +111,14 @@ class TreatmentHistoryEntryFunctionsTest {
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
-                ImmutableTreatmentHistoryEntry.copyOf(entry)
-                    .withTreatments(entry.treatments() + maintenanceTreatment.treatment())
-                    .withTreatmentHistoryDetails(
-                        ImmutableTreatmentHistoryDetails.copyOf(entry.treatmentHistoryDetails()!!)
-                            .withCycles(2)
-                            .withSwitchToTreatments(emptyList())
-                            .withMaintenanceTreatment(null)
+                entry.copy(
+                    treatments = entry.treatments + maintenanceTreatment.treatment,
+                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
+                        cycles = 2,
+                        switchToTreatments = emptyList(),
+                        maintenanceTreatment = null
                     )
+                )
             )
     }
 
@@ -146,18 +142,18 @@ class TreatmentHistoryEntryFunctionsTest {
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
-                ImmutableTreatmentHistoryEntry.copyOf(entry)
-                    .withTreatments(switchToTreatment.treatment())
-                    .withStartYear(switchToTreatment.startYear())
-                    .withStartMonth(switchToTreatment.startMonth())
-                    .withTreatmentHistoryDetails(
-                        ImmutableTreatmentHistoryDetails.copyOf(entry.treatmentHistoryDetails()!!)
-                            .withCycles(3)
-                            .withSwitchToTreatments(emptyList())
-                            .withMaintenanceTreatment(null)
-                            .withStopYear(maintenanceTreatment.startYear())
-                            .withStopMonth(maintenanceTreatment.startMonth())
+                entry.copy(
+                    treatments = setOf(switchToTreatment.treatment),
+                    startYear = switchToTreatment.startYear,
+                    startMonth = switchToTreatment.startMonth,
+                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
+                        cycles = 3,
+                        switchToTreatments = emptyList(),
+                        maintenanceTreatment = null,
+                        stopYear = maintenanceTreatment.startYear,
+                        stopMonth = maintenanceTreatment.startMonth,
                     )
+                )
             )
     }
 

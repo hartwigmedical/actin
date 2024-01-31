@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.curation.TestCurationFactory.emptyQuestionnair
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -43,8 +43,8 @@ class TumorDetailsExtractorTest {
                 )
             )
         ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
-        assertThat(curatedWithoutType.primaryTumorLocation()).isEqualTo(CURATED_LOCATION)
-        assertThat(curatedWithoutType.primaryTumorType()).isEmpty()
+        assertThat(curatedWithoutType.primaryTumorLocation).isEqualTo(CURATED_LOCATION)
+        assertThat(curatedWithoutType.primaryTumorType).isEmpty()
 
         assertThat(evaluation.warnings).isEmpty()
     }
@@ -65,8 +65,8 @@ class TumorDetailsExtractorTest {
                 )
             )
         ).curateTumorDetails(PATIENT_ID, null, TUMOR_TYPE_INPUT)
-        assertThat(curatedWithoutLocation.primaryTumorLocation()).isEmpty()
-        assertThat(curatedWithoutLocation.primaryTumorType()).isEqualTo(CURATED_TUMOR_TYPE)
+        assertThat(curatedWithoutLocation.primaryTumorLocation).isEmpty()
+        assertThat(curatedWithoutLocation.primaryTumorType).isEqualTo(CURATED_TUMOR_TYPE)
 
         assertThat(evaluation.warnings).isEmpty()
     }
@@ -76,8 +76,8 @@ class TumorDetailsExtractorTest {
         val (missing, evaluation) = TumorDetailsExtractor(
             TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase()
         ).curateTumorDetails(PATIENT_ID, CANNOT_CURATE, CANNOT_CURATE)
-        assertThat(missing.primaryTumorLocation()).isNull()
-        assertThat(missing.primaryTumorType()).isNull()
+        assertThat(missing.primaryTumorLocation).isNull()
+        assertThat(missing.primaryTumorType).isNull()
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
@@ -96,7 +96,7 @@ class TumorDetailsExtractorTest {
         val (tumorDetails, evaluation) = TumorDetailsExtractor(
             TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase()
         ).extract(PATIENT_ID, questionnaire)
-        assertThat(tumorDetails).isEqualTo(ImmutableTumorDetails.builder().otherLesions(emptyList()).build())
+        assertThat(tumorDetails).isEqualTo(TumorDetails(otherLesions = emptyList()))
         assertThat(evaluation.warnings).containsExactlyInAnyOrder(
             CurationWarning(
                 PATIENT_ID,
@@ -119,9 +119,9 @@ class TumorDetailsExtractorTest {
 
     @Test
     fun `Should override has liver lesions when listed in other lesions`() {
-        assertThat(baseTumor.hasLiverLesions()).isNull()
+        assertThat(baseTumor.hasLiverLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.LIVER)))
-        val expected = ImmutableTumorDetails.builder().otherLesions(emptyList()).hasLiverLesions(true).build()
+        val expected = TumorDetails(otherLesions = emptyList(), hasLiverLesions = true)
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -133,11 +133,10 @@ class TumorDetailsExtractorTest {
 
     @Test
     fun `Should override has liver lesions when listed as biopsy`() {
-        assertThat(baseTumor.hasLiverLesions()).isNull()
+        assertThat(baseTumor.hasLiverLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(biopsyLocation = locationLesionInput(LesionLocationCategory.LIVER))
-        val expected =
-            ImmutableTumorDetails.builder().biopsyLocation(curatedLocationLesionInput(LesionLocationCategory.LIVER)).hasLiverLesions(true)
-                .build()
+        val expected = TumorDetails(biopsyLocation = curatedLocationLesionInput(LesionLocationCategory.LIVER), hasLiverLesions = true)
+                
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -149,9 +148,9 @@ class TumorDetailsExtractorTest {
 
     @Test
     fun `Should override has cns lesions when listed in other lesions`() {
-        assertThat(baseTumor.hasCnsLesions()).isNull()
+        assertThat(baseTumor.hasCnsLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.CNS)))
-        val expected = ImmutableTumorDetails.builder().otherLesions(emptyList()).hasCnsLesions(true).build()
+        val expected = TumorDetails(otherLesions = emptyList(), hasCnsLesions = true)
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -163,9 +162,9 @@ class TumorDetailsExtractorTest {
 
     @Test
     fun `Should override has brain lesions when listed in other lesions`() {
-        assertThat(baseTumor.hasBrainLesions()).isNull()
+        assertThat(baseTumor.hasBrainLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.BRAIN)))
-        val expected = ImmutableTumorDetails.builder().otherLesions(emptyList()).hasBrainLesions(true).build()
+        val expected = TumorDetails(otherLesions = emptyList(), hasBrainLesions = true)
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -177,10 +176,11 @@ class TumorDetailsExtractorTest {
 
     @Test
     fun `Should override has lymph node lesions when listed in other lesions`() {
-        assertThat(baseTumor.hasLymphNodeLesions()).isNull()
+        assertThat(baseTumor.hasLymphNodeLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.LYMPH_NODE)))
-        val expected = ImmutableTumorDetails.builder().addOtherLesions(curatedLocationLesionInput(LesionLocationCategory.LYMPH_NODE))
-            .hasLymphNodeLesions(true).build()
+        val expected = TumorDetails(
+            otherLesions = listOf(curatedLocationLesionInput(LesionLocationCategory.LYMPH_NODE)), hasLymphNodeLesions = true
+        )
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -192,9 +192,9 @@ class TumorDetailsExtractorTest {
 
     @Test
     fun `Should override has bone lesions when listed in other lesions`() {
-        assertThat(baseTumor.hasBoneLesions()).isNull()
+        assertThat(baseTumor.hasBoneLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.BONE)))
-        val expected = ImmutableTumorDetails.builder().otherLesions(emptyList()).hasBoneLesions(true).build()
+        val expected = TumorDetails(otherLesions = emptyList(), hasBoneLesions = true)
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
@@ -204,7 +204,7 @@ class TumorDetailsExtractorTest {
         )
     }
 
-    private fun assertTumorExtraction(extractor: TumorDetailsExtractor, questionnaire: Questionnaire, expected: ImmutableTumorDetails) {
+    private fun assertTumorExtraction(extractor: TumorDetailsExtractor, questionnaire: Questionnaire, expected: TumorDetails) {
         val (tumorDetails, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
         assertThat(tumorDetails).isEqualTo(expected)
         assertThat(evaluation.warnings).isEmpty()
@@ -249,5 +249,5 @@ class TumorDetailsExtractorTest {
         return "Curated ${category.name.lowercase()}"
     }
 
-    private val baseTumor = ImmutableTumorDetails.builder().build()
+    private val baseTumor = TumorDetails()
 }

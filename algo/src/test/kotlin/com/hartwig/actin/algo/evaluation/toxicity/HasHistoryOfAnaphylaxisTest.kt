@@ -11,7 +11,7 @@ class HasHistoryOfAnaphylaxisTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withIntolerances(emptyList())))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(ToxicityTestFactory.withIntolerance(ToxicityTestFactory.intolerance().build()))
+            function.evaluate(ToxicityTestFactory.withIntolerance(ToxicityTestFactory.intolerance()))
         )
     }
 }

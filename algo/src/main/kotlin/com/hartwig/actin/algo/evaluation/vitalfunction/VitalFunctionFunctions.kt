@@ -8,7 +8,7 @@ internal object VitalFunctionFunctions {
         val values = sortedValues(vitalFunctions)
         val median = values[ceil(values.size / 2.0).toInt() - 1]
         for (vitalFunction in vitalFunctions) {
-            if (vitalFunction.value().compareTo(median) == 0) {
+            if (vitalFunction.value.compareTo(median) == 0) {
                 return vitalFunction
             }
         }
@@ -26,6 +26,6 @@ internal object VitalFunctionFunctions {
     }
 
     private fun sortedValues(vitalFunctions: Iterable<VitalFunction>): List<Double> {
-        return vitalFunctions.map { it.value() }.sortedWith(Comparator.naturalOrder())
+        return vitalFunctions.map { it.value }.sortedWith(Comparator.naturalOrder())
     }
 }

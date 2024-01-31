@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.nki
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.PatientIngestionStatus
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
@@ -67,29 +67,31 @@ class EhrDataFeed(
                 .fold(ExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
 
             Pair(
-                patientEvaluation, ImmutableClinicalRecord.builder()
-                    .patientId(ehrPatientRecord.patientDetails.patientId)
-                    .patient(patientDetails.extracted)
-                    .tumor(tumorDetails.extracted)
-                    .clinicalStatus(clinicalStatus.extracted)
-                    .oncologicalHistory(treatmentHistory.extracted)
-                    .priorOtherConditions(priorOtherCondition.extracted)
-                    .complications(complications.extracted)
-                    .toxicities(toxicities.extracted)
-                    .medications(medications.extracted)
-                    .labValues(labValues.extracted)
-                    .bloodTransfusions(bloodTransfusions.extracted)
-                    .vitalFunctions(vitalFunctions.extracted)
-                    .intolerances(intolerances.extracted)
-                    .surgeries(surgeries.extracted)
-                    .bodyWeights(bodyWeights.extracted)
-                    .priorSecondPrimaries(secondPrimaries.extracted)
-                    .build()
+                patientEvaluation,
+                ClinicalRecord(
+                    patientId = ehrPatientRecord.patientDetails.patientId,
+                    patient = patientDetails.extracted,
+                    tumor = tumorDetails.extracted,
+                    clinicalStatus = clinicalStatus.extracted,
+                    oncologicalHistory = treatmentHistory.extracted,
+                    priorOtherConditions = priorOtherCondition.extracted,
+                    complications = complications.extracted,
+                    toxicities = toxicities.extracted,
+                    medications = medications.extracted,
+                    labValues = labValues.extracted,
+                    bloodTransfusions = bloodTransfusions.extracted,
+                    vitalFunctions = vitalFunctions.extracted,
+                    intolerances = intolerances.extracted,
+                    surgeries = surgeries.extracted,
+                    bodyWeights = bodyWeights.extracted,
+                    priorSecondPrimaries = secondPrimaries.extracted,
+                    priorMolecularTests = emptyList()
+                )
             )
 
         }.map {
             PatientIngestionResult(
-                it.second.patientId(),
+                it.second.patientId,
                 PatientIngestionStatus.PASS,
                 it.second,
                 PatientIngestionResult.curationResults(it.first.warnings.toList()),

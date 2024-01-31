@@ -2,38 +2,70 @@ package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.priorOtherCondition
+import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionTestFactory.withPriorOtherConditions
 import org.junit.Test
 
 class HasHadOrganTransplantTest {
+    private val function = HasHadOrganTransplant(null)
+    private val functionWithMinYear = HasHadOrganTransplant(2021)
+
     @Test
-    fun canEvaluate() {
-        val function = HasHadOrganTransplant(null)
-        val conditions: MutableList<PriorOtherCondition> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
-        conditions.add(OtherConditionTestFactory.builder().build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
-        conditions.add(OtherConditionTestFactory.builder().category(HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
+    fun `Should fail with no prior conditions`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(emptyList())))
+    }
+    
+    @Test
+    fun `Should fail with no relevant prior condition`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(listOf(priorOtherCondition()))))
     }
 
     @Test
-    fun canEvaluateWithMinYear() {
-        val function = HasHadOrganTransplant(2021)
-        val conditions: MutableList<PriorOtherCondition> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
-        val builder = OtherConditionTestFactory.builder().category(HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY)
+    fun `Should pass with relevant prior condition`() {
+        assertEvaluation(
+            EvaluationResult.PASS, function.evaluate(
+                withPriorOtherConditions(
+                    listOf(priorOtherCondition(category = HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY))
+                )
+            )
+        )
+    }
 
-        // Too long ago.
-        conditions.add(builder.year(2020).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
+    @Test
+    fun `Should fail with min year when there are no prior conditions`() {
+        assertEvaluation(EvaluationResult.FAIL, functionWithMinYear.evaluate(withPriorOtherConditions(emptyList())))
+    }
 
-        // Unclear date
-        conditions.add(builder.year(null).build())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
+    @Test
+    fun `Should fail when transplant occurred before min year`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, functionWithMinYear.evaluate(
+                withPriorOtherConditions(
+                    listOf(priorOtherCondition(category = HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY, year = 2020))
+                )
+            )
+        )
+    }
 
-        // Exact match
-        conditions.add(builder.year(2021).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
+    @Test
+    fun `Should be undetermined when transplant year is unclear`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, functionWithMinYear.evaluate(
+                withPriorOtherConditions(
+                    listOf(priorOtherCondition(category = HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY, year = null))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass when transplant occurred in min year`() {
+        assertEvaluation(
+            EvaluationResult.PASS, functionWithMinYear.evaluate(
+                withPriorOtherConditions(
+                    listOf(priorOtherCondition(category = HasHadOrganTransplant.ORGAN_TRANSPLANT_CATEGORY, year = 2021))
+                )
+            )
+        )
     }
 }

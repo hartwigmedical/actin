@@ -6,12 +6,12 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
+import com.hartwig.actin.clinical.datamodel.Intolerance
 
 class HasIntoleranceToTaxanes : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val taxaneAllergies = record.clinical().intolerances()
-            .filter { stringCaseInsensitivelyMatchesQueryCollection(it.name(), TAXANES) }
-            .map { it.name() }
+        val taxaneAllergies = record.clinical.intolerances.map(Intolerance::name)
+            .filter { stringCaseInsensitivelyMatchesQueryCollection(it, TAXANES) }
             .toSet()
 
         return if (taxaneAllergies.isNotEmpty()) {

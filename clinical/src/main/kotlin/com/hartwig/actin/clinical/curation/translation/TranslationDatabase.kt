@@ -9,13 +9,12 @@ class TranslationDatabase<T>(
     private val category: CurationCategory,
     private val evaluatedInputFunction: (ExtractionEvaluation) -> Set<Translation<T>>
 ) {
+
     fun find(input: T) = translations[input]
 
     fun reportUnusedTranslations(evaluations: List<ExtractionEvaluation>): List<UnusedCurationConfig> {
         val evaluatedInputs = evaluations.flatMap(evaluatedInputFunction).map { it.input }
         return translations.keys.filter { !evaluatedInputs.contains(it) }
-            .map {
-                UnusedCurationConfig(category.categoryName, it.toString())
-            }
+            .map { UnusedCurationConfig(category.categoryName, it.toString()) }
     }
 }

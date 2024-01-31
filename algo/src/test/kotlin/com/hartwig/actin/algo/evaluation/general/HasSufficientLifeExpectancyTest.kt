@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import org.junit.Test
 
 class HasSufficientLifeExpectancyTest {
+
     @Test
     fun canEvaluate() {
         val function = HasSufficientLifeExpectancy()

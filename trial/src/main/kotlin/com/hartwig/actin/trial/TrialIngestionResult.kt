@@ -1,12 +1,12 @@
 package com.hartwig.actin.trial
 
-import com.hartwig.actin.treatment.datamodel.Trial
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.TrialConfig
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
+import com.hartwig.actin.trial.datamodel.Trial
 
 enum class TrialIngestionStatus {
     PASS,

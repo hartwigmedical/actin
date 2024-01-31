@@ -13,11 +13,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val namesToMatch = drugs.map { it.name().lowercase() }.toSet()
-        val matchingDrugs = record.clinical().oncologicalHistory()
+        val namesToMatch = drugs.map { it.name.lowercase() }.toSet()
+        val matchingDrugs = record.clinical.oncologicalHistory
             .flatMap(TreatmentHistoryEntry::allTreatments)
-            .flatMap { (it as? DrugTreatment)?.drugs() ?: emptyList() }
-            .filter { it.name().lowercase() in namesToMatch }
+            .flatMap { (it as? DrugTreatment)?.drugs ?: emptyList() }
+            .filter { it.name.lowercase() in namesToMatch }
 
         val drugList = concatItemsWithOr(drugs)
         return when {
@@ -25,9 +25,9 @@ class HasHadTreatmentWithDrug(private val drugs: Set<Drug>) : EvaluationFunction
                 EvaluationFactory.pass("Has received treatments with ${concatItemsWithAnd(matchingDrugs)}")
             }
 
-            record.clinical().oncologicalHistory().any {
+            record.clinical.oncologicalHistory.any {
                 it.isTrial && it.allTreatments().any { treatment ->
-                    (treatment as? DrugTreatment)?.drugs()?.isEmpty() ?: treatment.categories().isEmpty()
+                    (treatment as? DrugTreatment)?.drugs?.isEmpty() ?: treatment.categories().isEmpty()
                 }
             } -> {
                 EvaluationFactory.undetermined("Undetermined if received any treatments containing $drugList")

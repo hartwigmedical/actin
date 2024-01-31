@@ -1,8 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableCupPrediction
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutablePredictedTumorOrigin
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.greatestOmittedLikelihood
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.hasConfidentPrediction
@@ -13,8 +11,8 @@ import com.hartwig.actin.report.pdf.util.Formats
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
 import org.junit.Test
-import java.util.stream.Collectors
-import java.util.stream.IntStream
+
+const val EPSILON = 0.0001
 
 class TumorOriginInterpreterTest {
     @Test
@@ -56,7 +54,7 @@ class TumorOriginInterpreterTest {
     fun shouldOmitPredictionsBelowThresholdForDisplay() {
         val predictions = predictionsToDisplay(withPredictions(0.4, 0.02, 0.05, 0.08))
         assertThat(predictions).hasSize(1)
-        assertThat(predictions.iterator().next().likelihood()).isCloseTo(0.4, within(EPSILON))
+        assertThat(predictions.iterator().next().likelihood).isCloseTo(0.4, within(EPSILON))
     }
 
     @Test
@@ -75,22 +73,17 @@ class TumorOriginInterpreterTest {
         assertThat(greatestOmittedLikelihood(withPredictions(0.4, 0.12, 0.15, 0.25))).isCloseTo(0.12, within(EPSILON))
     }
 
-    companion object {
-        const val EPSILON = 0.0001
-        private fun withPredictions(vararg likelihoods: Double): PredictedTumorOrigin {
-            return ImmutablePredictedTumorOrigin.builder()
-                .predictions(IntStream.range(0, likelihoods.size)
-                    .mapToObj { i: Int ->
-                        ImmutableCupPrediction.builder()
-                            .cancerType(String.format("type %s", i + 1))
-                            .likelihood(likelihoods[i])
-                            .snvPairwiseClassifier(likelihoods[i])
-                            .genomicPositionClassifier(likelihoods[i])
-                            .featureClassifier(likelihoods[i])
-                            .build()
-                    }
-                    .collect(Collectors.toList()))
-                .build()
-        }
+    private fun withPredictions(vararg likelihoods: Double): PredictedTumorOrigin {
+        return PredictedTumorOrigin(
+            predictions = likelihoods.mapIndexed { i, likelihood ->
+                CupPrediction(
+                    cancerType = String.format("type %s", i + 1),
+                    likelihood = likelihood,
+                    snvPairwiseClassifier = likelihood,
+                    genomicPositionClassifier = likelihood,
+                    featureClassifier = likelihood
+                )
+            }
+        )
     }
 }

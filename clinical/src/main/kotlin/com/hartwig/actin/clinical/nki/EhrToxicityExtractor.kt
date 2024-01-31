@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 
@@ -22,9 +21,13 @@ class EhrToxicityExtractor(private val toxicityCuration: CurationDatabase<Toxici
                 "toxicity"
             )
             ExtractionResult(listOfNotNull(curatedToxicity.config()?.let {
-                ImmutableToxicity.builder().name(it.name).grade(it.grade).categories(it.categories).evaluatedDate(toxicity.evaluatedDate)
-                    .source(ToxicitySource.EHR)
-                    .build()
+                Toxicity(
+                    name = it.name,
+                    grade = it.grade,
+                    categories = it.categories,
+                    evaluatedDate = toxicity.evaluatedDate,
+                    source = ToxicitySource.EHR
+                )
             }), curatedToxicity.extractionEvaluation)
         }.fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)

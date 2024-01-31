@@ -12,67 +12,46 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 import org.junit.Test
 
 class GeneHasSpecificExonSkippingTest {
+
     @Test
     fun canEvaluate() {
         val function = GeneHasSpecificExonSkipping("gene A", 2)
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
-        val spliceVariant: Variant = TestVariantFactory.builder()
-            .gene("gene A")
-            .isReportable(true)
-            .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(2).isSpliceRegion(true).build())
-            .build()
+        val spliceVariant: Variant = TestVariantFactory.createMinimal().copy(
+            gene = "gene A",
+            isReportable = true,
+            canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = 2, isSpliceRegion = true)
+        )
         assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withVariant(spliceVariant)))
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .from(spliceVariant)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedExon(2).codingEffect(CodingEffect.SPLICE).build())
-                        .build()
+                    spliceVariant.copy(
+                        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(
+                            affectedExon = 2, codingEffect = CodingEffect.SPLICE
+                        )
+                    )
                 )
             )
         )
         assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .from(spliceVariant)
-                        .isReportable(false)
-                        .build()
-                )
-            )
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(spliceVariant.copy(isReportable = false)))
         )
-        val exonSkippingFusion: Fusion = TestFusionFactory.builder()
-            .isReportable(true)
-            .geneStart("gene A")
-            .fusedExonUp(1)
-            .geneEnd("gene A")
-            .fusedExonDown(3)
-            .build()
+
+        val exonSkippingFusion: Fusion = TestFusionFactory.createMinimal().copy(
+            isReportable = true,
+            geneStart = "gene A",
+            fusedExonUp = 1,
+            geneEnd = "gene A",
+            fusedExonDown = 3
+        )
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(exonSkippingFusion)))
         assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withFusion(
-                    TestFusionFactory.builder()
-                        .from(exonSkippingFusion)
-                        .isReportable(false)
-                        .build()
-                )
-            )
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(exonSkippingFusion.copy(isReportable = false)))
         )
         assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withFusion(
-                    TestFusionFactory.builder()
-                        .from(exonSkippingFusion)
-                        .fusedExonDown(5)
-                        .build()
-                )
-            )
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(exonSkippingFusion.copy(fusedExonDown = 5)))
         )
     }
 }

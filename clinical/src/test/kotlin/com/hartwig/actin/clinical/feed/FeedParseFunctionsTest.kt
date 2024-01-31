@@ -5,44 +5,43 @@ import com.hartwig.actin.clinical.feed.FeedParseFunctions.parseDate
 import com.hartwig.actin.clinical.feed.FeedParseFunctions.parseGender
 import com.hartwig.actin.clinical.feed.FeedParseFunctions.parseOptionalDate
 import com.hartwig.actin.clinical.feed.FeedParseFunctions.parseOptionalDouble
-import org.apache.logging.log4j.util.Strings
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 import java.time.LocalDate
 
+private const val EPSILON = 1.0E-10
+
 class FeedParseFunctionsTest {
+
     @Test
-    fun canParseGender() {
-        Assert.assertEquals(Gender.MALE, parseGender("Male"))
-        Assert.assertEquals(Gender.FEMALE, parseGender("Female"))
+    fun `Should parse gender`() {
+        assertThat(parseGender("Male")).isEqualTo(Gender.MALE)
+        assertThat(parseGender("Female")).isEqualTo(Gender.FEMALE)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun throwsExceptionOnInvalidGender() {
+    fun `Should throw exception on invalid gender`() {
         parseGender("no gender")
     }
 
     @Test
-    fun canParseDates() {
-        Assert.assertNull(parseOptionalDate(Strings.EMPTY))
+    fun `Should parse dates`() {
+        assertThat(parseOptionalDate("")).isNull()
         val correct = LocalDate.of(2020, 10, 23)
-        Assert.assertEquals(correct, parseOptionalDate("2020-10-23 13:10:55.0000000"))
-        Assert.assertEquals(correct, parseOptionalDate("2020-10-23 13:10:55.000"))
+        assertThat(parseOptionalDate("2020-10-23 13:10:55.0000000")).isEqualTo(correct)
+        assertThat(parseOptionalDate("2020-10-23 13:10:55.000")).isEqualTo(correct)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun crashOnInvalidDate() {
+    fun `Should crash on invalid date`() {
         parseDate("2020-23-10")
     }
 
     @Test
-    fun canParseDoubles() {
-        Assert.assertNull(parseOptionalDouble(Strings.EMPTY))
-        Assert.assertEquals(2.1, parseOptionalDouble("2.1")!!, EPSILON)
-        Assert.assertEquals(2.1, parseOptionalDouble("2,1")!!, EPSILON)
-    }
-
-    companion object {
-        private const val EPSILON = 1.0E-10
+    fun `Should parse doubles`() {
+        assertThat(parseOptionalDouble("")).isNull()
+        assertThat(parseOptionalDouble("2.1")!!).isEqualTo(2.1, Offset.offset(EPSILON))
+        assertThat(parseOptionalDouble("2,1")!!).isEqualTo(2.1, Offset.offset(EPSILON))
     }
 }

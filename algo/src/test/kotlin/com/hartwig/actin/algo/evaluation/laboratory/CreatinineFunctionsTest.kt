@@ -4,58 +4,59 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 
 class CreatinineFunctionsTest {
+
     @Test
     fun `Should correctly calculate MDRD`() {
-        val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
+        val creatinine: LabValue = LabTestFactory.create(LabMeasurement.CREATININE, 70.0)
         val maleValues = CreatinineFunctions.calcMDRD(1971, 2021, Gender.MALE, creatinine)
-        Assert.assertEquals(103.54, maleValues[0], EPSILON)
-        Assert.assertEquals(125.49, maleValues[1], EPSILON)
+        assertThat(maleValues[0]).isEqualTo(103.54, Offset.offset(EPSILON))
+        assertThat(maleValues[1]).isEqualTo(125.49, Offset.offset(EPSILON))
         val femaleValues = CreatinineFunctions.calcMDRD(1971, 2021, Gender.FEMALE, creatinine)
-        Assert.assertEquals(76.83, femaleValues[0], EPSILON)
-        Assert.assertEquals(93.11, femaleValues[1], EPSILON)
+        assertThat(femaleValues[0]).isEqualTo(76.83, Offset.offset(EPSILON))
+        assertThat(femaleValues[1]).isEqualTo(93.11, Offset.offset(EPSILON))
     }
 
     @Test
     fun `Should correctly calculate CDKEPI`() {
-        val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
+        val creatinine: LabValue = LabTestFactory.create(LabMeasurement.CREATININE, 70.0)
         val maleValues = CreatinineFunctions.calcCKDEPI(1971, 2021, Gender.MALE, creatinine)
-        Assert.assertEquals(104.62, maleValues[0], EPSILON)
-        Assert.assertEquals(121.25, maleValues[1], EPSILON)
+        assertThat(maleValues[0]).isEqualTo(104.62, Offset.offset(EPSILON))
+        assertThat(maleValues[1]).isEqualTo(121.25, Offset.offset(EPSILON))
         val femaleValues = CreatinineFunctions.calcCKDEPI(1971, 2021, Gender.FEMALE, creatinine)
-        Assert.assertEquals(87.07, femaleValues[0], EPSILON)
-        Assert.assertEquals(100.91, femaleValues[1], EPSILON)
+        assertThat(femaleValues[0]).isEqualTo(87.07, Offset.offset(EPSILON))
+        assertThat(femaleValues[1]).isEqualTo(100.91, Offset.offset(EPSILON))
     }
 
     @Test
     fun `Should correctly evaluate EGFR evaluations`() {
-        Assert.assertEquals(EvaluationResult.FAIL, CreatinineFunctions.interpretEGFREvaluations(setOf(EvaluationResult.FAIL)))
-        Assert.assertEquals(
-            EvaluationResult.UNDETERMINED,
-            CreatinineFunctions.interpretEGFREvaluations(setOf(EvaluationResult.FAIL, EvaluationResult.PASS))
-        )
-        Assert.assertEquals(
-            EvaluationResult.UNDETERMINED,
-            CreatinineFunctions.interpretEGFREvaluations(setOf(EvaluationResult.UNDETERMINED, EvaluationResult.PASS))
-        )
-        Assert.assertEquals(
-            EvaluationResult.PASS,
-            CreatinineFunctions.interpretEGFREvaluations(setOf(EvaluationResult.PASS))
-        )
+        assertThat(CreatinineFunctions.interpretEGFREvaluations(setOf(EvaluationResult.FAIL))).isEqualTo(EvaluationResult.FAIL)
+        assertThat(CreatinineFunctions.interpretEGFREvaluations(setOf(EvaluationResult.FAIL, EvaluationResult.PASS)))
+            .isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(CreatinineFunctions.interpretEGFREvaluations(setOf(EvaluationResult.UNDETERMINED, EvaluationResult.PASS)))
+            .isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(CreatinineFunctions.interpretEGFREvaluations(setOf(EvaluationResult.PASS))).isEqualTo(EvaluationResult.PASS)
     }
 
     @Test
     fun `Should correctly calculate Cockcroft Gault`() {
-        val creatinine: LabValue = LabTestFactory.forMeasurement(LabMeasurement.CREATININE).value(70.0).build()
-        Assert.assertEquals(95.24, CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.MALE, 60.0, creatinine), EPSILON)
-        Assert.assertEquals(80.95, CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.FEMALE, 60.0, creatinine), EPSILON)
-        Assert.assertEquals(111.11, CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.MALE, 70.0, creatinine), EPSILON)
-        Assert.assertEquals(94.44, CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.FEMALE, 70.0, creatinine), EPSILON)
-        Assert.assertEquals(103.17, CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.MALE, null, creatinine), EPSILON)
-        Assert.assertEquals(67.46, CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.FEMALE, null, creatinine), EPSILON)
+        val creatinine: LabValue = LabTestFactory.create(LabMeasurement.CREATININE, 70.0)
+        assertThat(CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.MALE, 60.0, creatinine))
+            .isEqualTo(95.24, Offset.offset(EPSILON))
+        assertThat(CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.FEMALE, 60.0, creatinine))
+            .isEqualTo(80.95, Offset.offset(EPSILON))
+        assertThat(CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.MALE, 70.0, creatinine))
+            .isEqualTo(111.11, Offset.offset(EPSILON))
+        assertThat(CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.FEMALE, 70.0, creatinine))
+            .isEqualTo(94.44, Offset.offset(EPSILON))
+        assertThat(CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.MALE, null, creatinine))
+            .isEqualTo(103.17, Offset.offset(EPSILON))
+        assertThat(CreatinineFunctions.calcCockcroftGault(1971, 2021, Gender.FEMALE, null, creatinine))
+            .isEqualTo(67.46, Offset.offset(EPSILON))
     }
 
     companion object {

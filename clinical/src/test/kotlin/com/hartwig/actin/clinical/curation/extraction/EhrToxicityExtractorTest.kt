@@ -49,11 +49,11 @@ class EhrToxicityExtractorTest {
         val (toxicities, evaluation) = extractor.extract(PATIENT_ID, emptyList(), questionnaire)
         assertThat(toxicities).hasSize(1)
         val toxicity = toxicities[0]
-        assertThat(toxicity.name()).isEqualTo(TOXICITY_NAME)
-        assertThat(toxicity.categories()).containsExactly(TOXICITY_CATEGORY)
-        assertThat(toxicity.evaluatedDate()).isEqualTo(date)
-        assertThat(toxicity.source()).isEqualTo(ToxicitySource.QUESTIONNAIRE)
-        assertThat(toxicity.grade()).isEqualTo(Integer.valueOf(3))
+        assertThat(toxicity.name).isEqualTo(TOXICITY_NAME)
+        assertThat(toxicity.categories).containsExactly(TOXICITY_CATEGORY)
+        assertThat(toxicity.evaluatedDate).isEqualTo(date)
+        assertThat(toxicity.source).isEqualTo(ToxicitySource.QUESTIONNAIRE)
+        assertThat(toxicity.grade).isEqualTo(Integer.valueOf(3))
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(
@@ -77,7 +77,7 @@ class EhrToxicityExtractorTest {
             )
         }
         val (toxicities, evaluation) = extractor.extract(PATIENT_ID, inputs, null)
-        assertThat(toxicities).hasSize(2).anyMatch { it.name() == TOXICITY_TRANSLATED }
+        assertThat(toxicities).hasSize(2).anyMatch { it.name == TOXICITY_TRANSLATED }
 
         assertThat(evaluation.warnings).containsOnly(
             CurationWarning(

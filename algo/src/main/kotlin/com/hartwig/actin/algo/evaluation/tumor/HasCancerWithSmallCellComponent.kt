@@ -10,8 +10,8 @@ import com.hartwig.actin.doid.DoidModel
 class HasCancerWithSmallCellComponent (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical().tumor().doids()
-        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) && record.clinical().tumor().primaryTumorExtraDetails() == null) {
+        val tumorDoids = record.clinical.tumor.doids
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) && record.clinical.tumor.primaryTumorExtraDetails == null) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether tumor of patient may have a small component",
                 "Undetermined small cell component"
@@ -19,7 +19,7 @@ class HasCancerWithSmallCellComponent (private val doidModel: DoidModel) : Evalu
         }
         val hasSmallCellDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, SMALL_CELL_DOIDS)
         val hasSmallCellTerm = DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, tumorDoids, SMALL_CELL_TERMS)
-        val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical().tumor(), SMALL_CELL_EXTRA_DETAILS)
+        val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical.tumor, SMALL_CELL_EXTRA_DETAILS)
         return if (hasSmallCellDoid || hasSmallCellTerm || hasSmallCellDetails) {
             EvaluationFactory.pass(
                 "Patient has cancer with small cell component",

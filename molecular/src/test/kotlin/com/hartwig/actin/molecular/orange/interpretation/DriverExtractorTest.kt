@@ -1,9 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.google.common.collect.Lists
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.Driver
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
@@ -11,59 +8,59 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DriverExtractorTest {
 
     @Test
-    fun canExtractFromMinimalTestData() {
+    fun `Should extract from minimal test data`() {
         val driverExtractor = createTestExtractor()
 
         val drivers = driverExtractor.extract(TestOrangeFactory.createMinimalTestOrangeRecord())
-        assertEquals(0, drivers.variants().size.toLong())
-        assertEquals(0, drivers.copyNumbers().size.toLong())
-        assertEquals(0, drivers.homozygousDisruptions().size.toLong())
-        assertEquals(0, drivers.disruptions().size.toLong())
-        assertEquals(0, drivers.fusions().size.toLong())
-        assertEquals(0, drivers.viruses().size.toLong())
+        assertThat(drivers.variants).hasSize(0)
+        assertThat(drivers.copyNumbers).hasSize(0)
+        assertThat(drivers.homozygousDisruptions).hasSize(0)
+        assertThat(drivers.disruptions).hasSize(0)
+        assertThat(drivers.fusions).hasSize(0)
+        assertThat(drivers.viruses).hasSize(0)
     }
 
     @Test
-    fun canExtractFromProperTestData() {
+    fun `Should extract from proper test data`() {
         val driverExtractor = createTestExtractor()
 
         val drivers = driverExtractor.extract(TestOrangeFactory.createProperTestOrangeRecord())
-        assertEquals(1, drivers.variants().size.toLong())
-        assertEquals(2, drivers.copyNumbers().size.toLong())
-        assertEquals(1, drivers.homozygousDisruptions().size.toLong())
-        assertEquals(1, drivers.disruptions().size.toLong())
-        assertEquals(1, drivers.fusions().size.toLong())
-        assertEquals(1, drivers.viruses().size.toLong())
+        assertThat(drivers.variants).hasSize(1)
+        assertThat(drivers.copyNumbers).hasSize(2)
+        assertThat(drivers.homozygousDisruptions).hasSize(1)
+        assertThat(drivers.disruptions).hasSize(1)
+        assertThat(drivers.fusions).hasSize(1)
+        assertThat(drivers.viruses).hasSize(1)
     }
 
     @Test
-    fun canDetermineReportableLostGenes() {
-        val copyNumbers: MutableList<CopyNumber> = Lists.newArrayList(
-            TestCopyNumberFactory.builder().gene("gene 1").type(CopyNumberType.LOSS).isReportable(true).build(),
-            TestCopyNumberFactory.builder().gene("gene 2").type(CopyNumberType.FULL_GAIN).isReportable(true).build(),
-            TestCopyNumberFactory.builder().gene("gene 3").type(CopyNumberType.LOSS).isReportable(false).build()
+    fun `Should determine reportable lost genes`() {
+        val copyNumbers = listOf(
+            TestCopyNumberFactory.createMinimal().copy(gene = "gene 1", type = CopyNumberType.LOSS, isReportable = true),
+            TestCopyNumberFactory.createMinimal().copy(gene = "gene 2", type = CopyNumberType.FULL_GAIN, isReportable = true),
+            TestCopyNumberFactory.createMinimal().copy(gene = "gene 3", type = CopyNumberType.LOSS, isReportable = false)
         )
-        val lostGenes: MutableSet<String> = DriverExtractor.reportableLostGenes(copyNumbers)
-        assertEquals(1, lostGenes.size.toLong())
-        assertEquals("gene 1", lostGenes.iterator().next())
+        val lostGenes = DriverExtractor.reportableLostGenes(copyNumbers)
+        assertThat(lostGenes).hasSize(1)
+        assertThat(lostGenes.first()).isEqualTo("gene 1")
     }
 
     @Test
-    fun canCountReportableDrivers() {
-        val drivers: MutableList<Driver> = Lists.newArrayList(
-            TestVariantFactory.builder().isReportable(true).build(),
-            TestCopyNumberFactory.builder().isReportable(false).build(),
-            TestFusionFactory.builder().isReportable(true).build(),
-            TestVirusFactory.builder().isReportable(false).build()
+    fun `Should count reportable drivers`() {
+        val drivers = listOf(
+            TestVariantFactory.createMinimal().copy(isReportable = true),
+            TestCopyNumberFactory.createMinimal().copy(isReportable = false),
+            TestFusionFactory.createMinimal().copy(isReportable = true),
+            TestVirusFactory.createMinimal().copy(isReportable = false)
         )
-        assertEquals(2, DriverExtractor.reportableCount(drivers).toLong())
-        assertEquals(0, DriverExtractor.reportableCount(emptyList()).toLong())
+        assertThat(DriverExtractor.reportableCount(drivers)).isEqualTo(2)
+        assertThat(DriverExtractor.reportableCount(emptyList())).isEqualTo(0)
     }
 
     companion object {

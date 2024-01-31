@@ -8,9 +8,10 @@ import com.hartwig.actin.doid.DoidModel
 
 class HasHistoryOfSecondMalignancyWithDoid internal constructor(private val doidModel: DoidModel, private val doidToMatch: String) :
     EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToMatch)
-        return if (record.clinical().priorSecondPrimaries().flatMap { it.doids() }.flatMap { doidModel.doidWithParents(it) }
+        return if (record.clinical.priorSecondPrimaries.flatMap { it.doids }.flatMap { doidModel.doidWithParents(it) }
                 .contains(doidToMatch)) {
             EvaluationFactory.pass(
                 "Patient has history of previous malignancy belonging to $doidTerm", "Present second primary history belonging to $doidTerm"

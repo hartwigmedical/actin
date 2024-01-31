@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.surgery
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -12,7 +12,8 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.HAS_HAD_RECENT_SURGERY to hasHadRecentSurgeryCreator(),
             EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_WEEKS to hasHadSurgeryInPastWeeksCreator(),
             EligibilityRule.HAS_HAD_SURGERY_WITHIN_LAST_X_MONTHS to hasHadSurgeryInPastMonthsCreator(),
-            EligibilityRule.HAS_PLANNED_SURGERY to hasPlannedSurgery(),
+            EligibilityRule.HAS_PLANNED_SURGERY to hasPlannedSurgeryCreator(),
+            EligibilityRule.HAS_HAD_CYTOREDUCTIVE_SURGERY to hasHadCytoreductiveSurgeryCreator(),
         )
     }
 
@@ -40,8 +41,12 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         }
     }
 
-    private fun hasPlannedSurgery(): FunctionCreator {
+    private fun hasPlannedSurgeryCreator(): FunctionCreator {
         val evaluationDate = referenceDateProvider().date()
         return FunctionCreator { HasHadAnySurgeryAfterSpecificDate(evaluationDate, evaluationDate) }
+    }
+
+    private fun hasHadCytoreductiveSurgeryCreator(): FunctionCreator {
+        return FunctionCreator { HasHadCytoreductiveSurgery() }
     }
 }

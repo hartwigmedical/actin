@@ -10,43 +10,32 @@ import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.range.ActionableRange
-import java.util.function.BiPredicate
 
 internal class VariantEvidence private constructor(
     private val actionableHotspots: List<ActionableHotspot>,
     private val actionableRanges: List<ActionableRange>, private val applicableActionableGenes: List<ActionableGene>
 ) : EvidenceMatcher<PurpleVariant> {
 
-    override fun findMatches(variant: PurpleVariant): List<ActionableEvent> {
-        return listOf(hotspotMatches(variant), rangeMatches(variant), geneMatches(variant)).flatten().toMutableList()
+    override fun findMatches(event: PurpleVariant): List<ActionableEvent> {
+        return listOf(hotspotMatches(event), rangeMatches(event), geneMatches(event)).flatten()
     }
 
     private fun hotspotMatches(variant: PurpleVariant): List<ActionableEvent> {
-        return filterMatchingEvents(
-            actionableHotspots,
-            variant
-        ) { obj: ActionableHotspot, hotspot: PurpleVariant -> HotspotMatching.isMatch(obj, hotspot) }
+        return filterMatchingEvents(actionableHotspots, variant, HotspotMatching::isMatch)
     }
 
     private fun rangeMatches(variant: PurpleVariant): List<ActionableEvent> {
-        return filterMatchingEvents(
-            actionableRanges,
-            variant
-        ) { obj: ActionableRange, rangeAnnotation: PurpleVariant -> RangeMatching.isMatch(obj, rangeAnnotation) }
+        return filterMatchingEvents(actionableRanges, variant, RangeMatching::isMatch)
     }
 
     private fun geneMatches(variant: PurpleVariant): List<ActionableEvent> {
-        return filterMatchingEvents(
-            applicableActionableGenes,
-            variant
-        ) { obj: ActionableGene, geneAnnotation: PurpleVariant -> GeneMatching.isMatch(obj, geneAnnotation) }
+        return filterMatchingEvents(applicableActionableGenes, variant, GeneMatching::isMatch)
     }
 
     private fun <T : ActionableEvent> filterMatchingEvents(
-        events: List<T>, variant: PurpleVariant,
-        predicate: BiPredicate<T, PurpleVariant>
+        events: List<T>, variant: PurpleVariant, predicate: (T, PurpleVariant) -> Boolean
     ): List<ActionableEvent> {
-        return if (!variant.reported()) listOf() else events.filter { event: T -> predicate.test(event, variant) }
+        return if (!variant.reported()) emptyList() else events.filter { predicate.invoke(it, variant) }
     }
 
     companion object {

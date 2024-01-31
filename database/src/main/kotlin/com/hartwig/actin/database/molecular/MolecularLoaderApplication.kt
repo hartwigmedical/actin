@@ -19,7 +19,7 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
         val record = MolecularRecordJson.read(config.molecularJson)
         val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
-        LOGGER.info("Writing molecular record for {}", record.sampleId())
+        LOGGER.info("Writing molecular record for {}", record.sampleId)
         access.writeMolecularRecord(record)
 
         LOGGER.info("Done!")

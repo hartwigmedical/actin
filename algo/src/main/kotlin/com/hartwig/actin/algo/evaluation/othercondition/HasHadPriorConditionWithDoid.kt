@@ -9,12 +9,12 @@ import com.hartwig.actin.algo.evaluation.othercondition.PriorConditionMessages.C
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.doid.DoidModel
 
-class HasHadPriorConditionWithDoid internal constructor(private val doidModel: DoidModel, private val doidToFind: String) :
-    EvaluationFunction {
+class HasHadPriorConditionWithDoid(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
+    
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToFind)
         val conditions =
-            OtherConditionSelector.selectConditionsMatchingDoid(record.clinical().priorOtherConditions(), doidToFind, doidModel)
+            OtherConditionSelector.selectConditionsMatchingDoid(record.clinical.priorOtherConditions, doidToFind, doidModel)
         return if (conditions.isNotEmpty()) {
             pass(
                 PriorConditionMessages.passSpecific(Characteristic.CONDITION, conditions, doidTerm),
