@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
