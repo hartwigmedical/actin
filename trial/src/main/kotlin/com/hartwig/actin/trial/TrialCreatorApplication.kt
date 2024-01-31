@@ -4,11 +4,11 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.treatment.serialization.TrialJson
 import com.hartwig.actin.trial.ctc.CTCModel
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.trial.interpretation.EligibilityRuleUsageEvaluator
 import com.hartwig.actin.trial.interpretation.TrialIngestion
+import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import org.apache.commons.cli.DefaultParser
@@ -28,7 +28,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes().size)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         LOGGER.info("Loading known genes from {}", config.knownGenesTsv)

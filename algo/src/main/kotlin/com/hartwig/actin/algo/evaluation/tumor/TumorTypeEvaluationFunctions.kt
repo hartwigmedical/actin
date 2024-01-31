@@ -5,11 +5,11 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 
 internal object TumorTypeEvaluationFunctions {
     fun hasTumorWithType(tumor: TumorDetails, validTypes: Set<String>): Boolean {
-        return listOf(tumor.primaryTumorType(), tumor.primaryTumorSubType()).any { stringNotNullAndMatchesCollection(it, validTypes) }
+        return listOf(tumor.primaryTumorType, tumor.primaryTumorSubType).any { stringNotNullAndMatchesCollection(it, validTypes) }
     }
 
     fun hasTumorWithDetails(tumor: TumorDetails, validDetails: Set<String>): Boolean {
-        return stringNotNullAndMatchesCollection(tumor.primaryTumorExtraDetails(), validDetails)
+        return stringNotNullAndMatchesCollection(tumor.primaryTumorExtraDetails, validDetails)
     }
 
     private fun stringNotNullAndMatchesCollection(nullableString: String?, collection: Collection<String>): Boolean {

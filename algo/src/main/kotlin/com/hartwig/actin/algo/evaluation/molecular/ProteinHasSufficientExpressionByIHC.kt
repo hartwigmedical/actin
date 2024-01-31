@@ -3,59 +3,52 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 
-class ProteinHasSufficientExpressionByIHC internal constructor(private val protein: String, private val minExpressionLevel: Int) :
-    EvaluationFunction {
+class ProteinHasSufficientExpressionByIHC(private val protein: String, private val minExpressionLevel: Int) : EvaluationFunction {
+    
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical().priorMolecularTests(), protein)
-        var mightMeetMinExpressionLevelByIHC = false
-        for (ihcTest in ihcTests) {
-            val scoreValue = ihcTest.scoreValue()
-            if (scoreValue != null) {
-                // We assume IHC prior molecular tests always have integer score values.
-                val evaluation =
-                    evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix(), minExpressionLevel.toDouble())
-                if (evaluation == EvaluationResult.PASS) {
-                    return unrecoverable()
-                        .result(EvaluationResult.PASS)
-                        .addPassSpecificMessages(
-                            "Protein $protein has expression level of at least $minExpressionLevel by IHC"
-                        )
-                        .addPassGeneralMessages("Adequate $protein expression level by IHC")
-                        .build()
-                } else if (evaluation == EvaluationResult.UNDETERMINED) {
-                    mightMeetMinExpressionLevelByIHC = true
-                }
+        val ihcTests = PriorMolecularTestFunctions.allIHCTestsForProtein(record.clinical.priorMolecularTests, protein)
+        val evaluationsVersusReference = ihcTests.mapNotNull { ihcTest ->
+            ihcTest.scoreValue?.let { scoreValue ->
+                evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minExpressionLevel.toDouble())
             }
-            val scoreText = ihcTest.scoreText()
-            if (scoreText != null && (scoreText.equals("positive", ignoreCase = true) || scoreText.equals("negative", ignoreCase = true))) {
-                mightMeetMinExpressionLevelByIHC = true
-            }
+        }.toSet()
+
+        val hasPositiveOrNegativeResult = ihcTests.any {
+            val scoreText = it.scoreText?.lowercase()
+            scoreText == "positive" || scoreText == "negative"
         }
-        if (mightMeetMinExpressionLevelByIHC) {
-            return unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages(
-                    "Unknown if protein $protein expression level is at least $minExpressionLevel by IHC"
+
+        return when {
+            EvaluationResult.PASS in evaluationsVersusReference -> {
+                EvaluationFactory.pass(
+                    "Protein $protein has expression level of at least $minExpressionLevel by IHC",
+                    "Adequate $protein expression level by IHC"
                 )
-                .addUndeterminedGeneralMessages("Exact expression level of $protein by IHC unknown")
-                .build()
-        } else if (ihcTests.isEmpty()) {
-            return unrecoverable()
-                .result(EvaluationResult.UNDETERMINED)
-                .addUndeterminedSpecificMessages("No test result found; protein $protein has not been tested by IHC")
-                .addUndeterminedGeneralMessages("No $protein IHC test result")
-                .build()
+            }
+
+            EvaluationResult.UNDETERMINED in evaluationsVersusReference || hasPositiveOrNegativeResult -> {
+                EvaluationFactory.undetermined(
+                    "Unknown if protein $protein expression level is at least $minExpressionLevel by IHC",
+                    "Exact expression level of $protein by IHC unknown"
+                )
+            }
+
+            ihcTests.isEmpty() -> {
+                EvaluationFactory.undetermined(
+                    "No test result found; protein $protein has not been tested by IHC", "No $protein IHC test result"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.fail(
+                    "Protein $protein does not meet required expression level $minExpressionLevel by IHC",
+                    "Inadequate $protein expression level by IHC"
+                )
+            }
         }
-        return unrecoverable()
-            .result(EvaluationResult.FAIL)
-            .addFailSpecificMessages(
-                "Protein $protein does not meet required expression level $minExpressionLevel by IHC"
-            )
-            .addFailGeneralMessages("Inadequate $protein expression level by IHC")
-            .build()
     }
 }

@@ -1,13 +1,11 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.AdenoSquamousMapping
-import com.hartwig.actin.doid.config.DoidManualConfig
-import com.hartwig.actin.doid.config.ImmutableAdenoSquamousMapping
 import com.hartwig.actin.doid.config.TestDoidManualConfigFactory
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 private const val PARENT_DOID = "100"
@@ -19,13 +17,13 @@ class PrimaryTumorLocationBelongsToDoidTest {
     private val subLocationFunction = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, CHILD_DOID, SUB_LOCATION)
 
     @Test
-    fun shouldEvaluateWhetherTumorDoidMatchesTarget() {
+    fun `Should evaluate whether tumor doid matches target`() {
         assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, PARENT_DOID, null), true)
         assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, CHILD_DOID, null), false)
     }
 
     @Test
-    fun canEvaluateUndeterminateMainCancerType() {
+    fun `Should evaluate undeterminate main cancer type`() {
         val cancer = "1"
         val stomachCancer = "2"
         val stomachCarcinoma = "3"
@@ -47,11 +45,10 @@ class PrimaryTumorLocationBelongsToDoidTest {
     }
 
     @Test
-    fun canResolveToAdenoSquamousType() {
-        val mapping: AdenoSquamousMapping =
-            ImmutableAdenoSquamousMapping.builder().adenoSquamousDoid("1").squamousDoid("2").adenoDoid("3").build()
-        val config: DoidManualConfig = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping)
-        val doidModel: DoidModel = TestDoidModelFactory.createWithDoidManualConfig(config)
+    fun `Should resolve to adeno squamous type`() {
+        val mapping = AdenoSquamousMapping(adenoSquamousDoid = "1", squamousDoid = "2", adenoDoid = "3")
+        val config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping)
+        val doidModel = TestDoidModelFactory.createWithDoidManualConfig(config)
         val function = PrimaryTumorLocationBelongsToDoid(doidModel, "2", null)
         assertResultForDoid(EvaluationResult.FAIL, function, "4")
         assertResultForDoid(EvaluationResult.WARN, function, "1")
@@ -68,39 +65,31 @@ class PrimaryTumorLocationBelongsToDoidTest {
         assertResultForDoids(EvaluationResult.UNDETERMINED, function, emptySet())
     }
 
-    private fun assertResultForDoid(
-        expectedResult: EvaluationResult,
-        function: PrimaryTumorLocationBelongsToDoid,
-        doid: String
-    ) {
+    private fun assertResultForDoid(expectedResult: EvaluationResult, function: PrimaryTumorLocationBelongsToDoid, doid: String) {
         assertResultForDoids(expectedResult, function, setOf(doid))
     }
 
-    private fun assertResultForDoids(
-        expectedResult: EvaluationResult,
-        function: PrimaryTumorLocationBelongsToDoid,
-        doids: Set<String>?
-    ) {
+    private fun assertResultForDoids(expectedResult: EvaluationResult, function: PrimaryTumorLocationBelongsToDoid, doids: Set<String>?) {
         assertEvaluation(expectedResult, function.evaluate(TumorTestFactory.withDoids(doids)))
     }
 
     @Test
-    fun shouldFailWhenSubLocationMatchesAndTumorDoidDoesNotMatch() {
+    fun `Should fail when sub location matches and tumor doid does not match`() {
         assertEvaluation(EvaluationResult.FAIL, subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation("10", SUB_LOCATION)))
     }
 
     @Test
-    fun shouldBeUndeterminedWhenSubLocationQueryProvidedAndTumorDoidsNotProvided() {
+    fun `Should be undetermined when sub location query provided and tumor doids not provided`() {
         assertResultForDoids(EvaluationResult.UNDETERMINED, subLocationFunction, null)
     }
 
     @Test
-    fun shouldWarnWhenSubLocationQueryProvidedAndDoidMatchAndTumorSubLocationIsNull() {
+    fun `Should warn when sub location query provided and doid match and tumor sub location is null`() {
         assertResultForDoid(EvaluationResult.WARN, subLocationFunction, CHILD_DOID)
     }
 
     @Test
-    fun shouldWarnWhenSubLocationQueryProvidedAndDoidMatchAndTumorSubLocationDoesNotMatch() {
+    fun `Should warn when sub location query provided and doid match and tumor sub location does not match`() {
         assertEvaluation(
             EvaluationResult.WARN,
             subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID, "another"))
@@ -108,7 +97,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
     }
 
     @Test
-    fun shouldPassWhenSubLocationAndDoidMatch() {
+    fun `Should pass when sub location and doid match`() {
         assertEvaluation(
             EvaluationResult.PASS,
             subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID, SUB_LOCATION))

@@ -17,21 +17,21 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentEvaluations = record.clinical().oncologicalHistory().map { treatmentHistoryEntry ->
+        val treatmentEvaluations = record.clinical.oncologicalHistory.map { treatmentHistoryEntry ->
             val isTrial = TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
             val categoryMatches = treatmentHistoryEntry.categories().contains(category)
 
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
                 categoryMatches && treatmentHistoryEntry.matchesTypeFromSet(types) == true
             }?.let { matchingPortionOfEntry ->
-                val cycles = matchingPortionOfEntry.treatmentHistoryDetails()?.cycles()
+                val cycles = matchingPortionOfEntry.treatmentHistoryDetails?.cycles
                 val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry)
 
                 val durationWeeks: Long? = minWeeksBetweenDates(
-                    matchingPortionOfEntry.startYear(),
-                    matchingPortionOfEntry.startMonth(),
-                    matchingPortionOfEntry.treatmentHistoryDetails()?.stopYear(),
-                    matchingPortionOfEntry.treatmentHistoryDetails()?.stopMonth()
+                    matchingPortionOfEntry.startYear,
+                    matchingPortionOfEntry.startMonth,
+                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
+                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
                 )
                 val meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles)
                 val meetsMinWeeks = minWeeks == null || (durationWeeks != null && durationWeeks >= minWeeks)

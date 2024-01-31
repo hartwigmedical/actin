@@ -8,19 +8,18 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasKnownCnsMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasCnsLesions = record.clinical().tumor().hasCnsLesions()
-        val hasBrainLesions = record.clinical().tumor().hasBrainLesions()
+        val hasCnsLesions = record.clinical.tumor.hasCnsLesions
+        val hasBrainLesions = record.clinical.tumor.hasBrainLesions
         if (hasCnsLesions == null && hasBrainLesions == null) {
             return EvaluationFactory.fail(
-                "Data regarding presence of CNS metastases is missing, assuming there are none",
+                "Data regarding presence of CNS metastases is missing - assuming there are none",
                 "Assuming no known CNS metastases"
             )
         }
-        var hasKnownCnsMetastases = hasCnsLesions != null && hasCnsLesions
-        var hasAtLeastActiveBrainMetastases = false
-        if (hasBrainLesions != null && hasBrainLesions) {
-            hasKnownCnsMetastases = true
-            hasAtLeastActiveBrainMetastases = true
+        val (hasKnownCnsMetastases, hasAtLeastActiveBrainMetastases) = if (hasBrainLesions == true) {
+            Pair(true, true)
+        } else {
+            Pair(hasCnsLesions != null && hasCnsLesions, false)
         }
         return if (!hasKnownCnsMetastases) {
             EvaluationFactory.fail("No known CNS metastases present", "No known CNS metastases")

@@ -11,30 +11,30 @@ import com.hartwig.actin.doid.DoidModel
 class HasBreastCancerHormonePositiveHER2Negative (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical().tumor().doids()
 
-        // No doids configured
+        val tumorDoids = record.clinical.tumor.doids
+
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether patient has hormone-positive HER2-negative breast cancer",
                 "Undetermined HR+ HER2- breast cancer type"
             )
         }
-        val priorMolecularTests = record.clinical().priorMolecularTests()
+        val priorMolecularTests = record.clinical.priorMolecularTests
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
         val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
         val isProgesteronePositive = DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID in expandedDoidSet
-                || priorMolecularTests.any { it.item() == "PR" && it.scoreText() == "Positive" }
+                || priorMolecularTests.any { it.item == "PR" && it.scoreText == "Positive" }
         val isProgesteroneNegative = DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID in expandedDoidSet
-                || priorMolecularTests.any { it.item() == "PR" && it.scoreText() == "Negative" }
+                || priorMolecularTests.any { it.item == "PR" && it.scoreText == "Negative" }
         val isEstrogenPositive = DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID in expandedDoidSet
-                || priorMolecularTests.any { it.item() == "ER" && it.scoreText() == "Positive" }
+                || priorMolecularTests.any { it.item == "ER" && it.scoreText == "Positive" }
         val isEstrogenNegative = DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID in expandedDoidSet
-                || priorMolecularTests.any { it.item() == "ER" && it.scoreText() == "Negative" }
+                || priorMolecularTests.any { it.item == "ER" && it.scoreText == "Negative" }
         val isHer2Positive = DoidConstants.HER2_POSITIVE_BREAST_CANCER_DOID in expandedDoidSet
-                || priorMolecularTests.any { it.item() == "HER2" && it.scoreText() == "Positive" }
+                || priorMolecularTests.any { it.item == "HER2" && it.scoreText == "Positive" }
         val isHer2Negative = DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID in expandedDoidSet
-                || priorMolecularTests.any { it.item() == "HER2" && it.scoreText() == "Negative" }
+                || priorMolecularTests.any { it.item == "HER2" && it.scoreText == "Negative" }
         val hasERBB2Amplified = geneIsAmplifiedForPatient("ERBB2", record)
 
         return when {

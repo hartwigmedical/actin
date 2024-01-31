@@ -1,24 +1,32 @@
 package com.hartwig.actin.algo.evaluation.priortumor
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.TumorStatus
-import org.apache.logging.log4j.util.Strings
 
 internal object PriorTumorTestFactory {
-    fun builder(): ImmutablePriorSecondPrimary.Builder {
-        return ImmutablePriorSecondPrimary.builder()
-            .tumorLocation(Strings.EMPTY)
-            .tumorSubLocation(Strings.EMPTY)
-            .tumorType(Strings.EMPTY)
-            .tumorSubType(Strings.EMPTY)
-            .treatmentHistory(Strings.EMPTY)
-            .status(TumorStatus.INACTIVE)
+    val base = TestDataFactory.createMinimalTestPatientRecord()
+
+    fun priorSecondPrimary(
+        doid: String? = null,
+        diagnosedYear: Int? = null,
+        lastTreatmentYear: Int? = null,
+        lastTreatmentMonth: Int? = null,
+        status: TumorStatus = TumorStatus.INACTIVE
+    ): PriorSecondPrimary {
+        return PriorSecondPrimary(
+            tumorLocation = "",
+            tumorSubLocation = "",
+            tumorType = "",
+            tumorSubType = "",
+            doids = setOfNotNull(doid),
+            diagnosedYear = diagnosedYear,
+            treatmentHistory = "",
+            lastTreatmentYear = lastTreatmentYear,
+            lastTreatmentMonth = lastTreatmentMonth,
+            status = status
+        )
     }
 
     fun withPriorSecondPrimary(priorSecondPrimary: PriorSecondPrimary): PatientRecord {
@@ -26,14 +34,6 @@ internal object PriorTumorTestFactory {
     }
 
     fun withPriorSecondPrimaries(priorSecondPrimaries: List<PriorSecondPrimary>): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .priorSecondPrimaries(priorSecondPrimaries)
-                    .build()
-            )
-            .build()
+        return base.copy(clinical = base.clinical.copy(priorSecondPrimaries = priorSecondPrimaries))
     }
 }

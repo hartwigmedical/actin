@@ -1,75 +1,53 @@
 package com.hartwig.actin.algo.evaluation.general
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.datamodel.*
-import org.apache.logging.log4j.util.Strings
+import com.hartwig.actin.clinical.datamodel.BodyWeight
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.clinical.datamodel.ClinicalStatus
+import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.clinical.datamodel.PatientDetails
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 
 internal object GeneralTestFactory {
+
     fun withBirthYear(birthYear: Int): PatientRecord {
-        val patientDetails: PatientDetails = ImmutablePatientDetails.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord().patient())
-            .birthYear(birthYear)
-            .build()
-        return withPatientDetails(patientDetails)
+        return withPatientDetails(TestClinicalFactory.createMinimalTestClinicalRecord().patient.copy(birthYear = birthYear))
     }
 
     fun withGender(gender: Gender): PatientRecord {
-        val patientDetails: PatientDetails = ImmutablePatientDetails.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord().patient())
-            .gender(gender)
-            .build()
-        return withPatientDetails(patientDetails)
+        return withPatientDetails(TestClinicalFactory.createMinimalTestClinicalRecord().patient.copy(gender = gender))
     }
 
     fun withWHO(who: Int?): PatientRecord {
-        val clinicalStatus: ClinicalStatus = ImmutableClinicalStatus.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus())
-            .who(who)
-            .build()
-        return withClinicalStatus(clinicalStatus)
+        return withClinicalStatus(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus.copy(who = who))
     }
 
     fun withWHOAndComplications(who: Int, complicationCategories: Iterable<String>): PatientRecord {
-        val clinicalStatus: ClinicalStatus = ImmutableClinicalStatus.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus())
-            .who(who)
-            .build()
-        val complication: Complication = ImmutableComplication.builder().name(Strings.EMPTY).categories(complicationCategories).build()
-        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-            .clinicalStatus(clinicalStatus)
-            .addComplications(complication)
-            .build()
+        val clinicalStatus = TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus.copy(who = who)
+        val complication = Complication(name = "", categories = complicationCategories.toSet(), year = null, month = null)
+        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord()
+            .copy(clinicalStatus = clinicalStatus, complications = listOf(complication))
         return withClinicalRecord(clinical)
     }
 
-    fun withBodyWeights(bodyWeights: Iterable<BodyWeight?>): PatientRecord {
-        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-            .bodyWeights(bodyWeights)
-            .build()
+    fun withBodyWeights(bodyWeights: Iterable<BodyWeight>): PatientRecord {
+        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(bodyWeights = bodyWeights.toList())
         return withClinicalRecord(clinical)
     }
 
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {
-        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-            .patient(patientDetails)
-            .build()
+        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(patient = patientDetails)
         return withClinicalRecord(clinical)
     }
 
     private fun withClinicalStatus(clinicalStatus: ClinicalStatus): PatientRecord {
-        val clinical: ClinicalRecord = ImmutableClinicalRecord.builder()
-            .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-            .clinicalStatus(clinicalStatus)
-            .build()
+        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(clinicalStatus = clinicalStatus)
         return withClinicalRecord(clinical)
     }
 
     private fun withClinicalRecord(clinical: ClinicalRecord): PatientRecord {
-        return ImmutablePatientRecord.builder().from(TestDataFactory.createMinimalTestPatientRecord()).clinical(clinical).build()
+        return TestDataFactory.createMinimalTestPatientRecord().copy(clinical = clinical)
     }
 }

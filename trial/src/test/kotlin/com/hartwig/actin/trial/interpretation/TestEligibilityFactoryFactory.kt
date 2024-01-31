@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.hartwig.actin.treatment.datamodel.TestFunctionInputResolveFactory
+import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory
 
 object TestEligibilityFactoryFactory {
 

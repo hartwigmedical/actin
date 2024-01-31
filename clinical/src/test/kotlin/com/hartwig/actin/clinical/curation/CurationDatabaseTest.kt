@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.InfectionConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.io.File
 
 private const val INPUT = "input"
 
@@ -40,5 +41,17 @@ class CurationDatabaseTest {
                 INPUT
             )
         )
+    }
+
+    @Test
+    fun `Should have category enums for all curation sheets`() {
+        val dir = File(CURATION_DIRECTORY)
+        val sheetNames = dir.listFiles()!!.map { it.name }.toSet()
+
+        val catNames =  CurationCategory.values()
+            .map {it.categoryName.lowercase().replace(" ", "_")+".tsv"}
+            .toSet()
+
+        assertThat(sheetNames).containsExactlyInAnyOrderElementsOf(catNames)
     }
 }

@@ -55,7 +55,8 @@ data class CurationDatabaseContext(
     val periodBetweenUnitCuration: CurationDatabase<PeriodBetweenUnitConfig>,
     val complicationCuration: CurationDatabase<ComplicationConfig>,
     val toxicityCuration: CurationDatabase<ToxicityConfig>,
-    val molecularTestCuration: CurationDatabase<MolecularTestConfig>,
+    val molecularTestIhcCuration: CurationDatabase<MolecularTestConfig>,
+    val molecularTestPdl1Curation: CurationDatabase<MolecularTestConfig>,
     val medicationNameCuration: CurationDatabase<MedicationNameConfig>,
     val medicationDosageCuration: CurationDatabase<MedicationDosageConfig>,
     val intoleranceCuration: CurationDatabase<IntoleranceConfig>,
@@ -79,7 +80,8 @@ data class CurationDatabaseContext(
             periodBetweenUnitCuration,
             complicationCuration,
             toxicityCuration,
-            molecularTestCuration,
+            molecularTestIhcCuration,
+            molecularTestPdl1Curation,
             medicationNameCuration,
             medicationDosageCuration,
             intoleranceCuration
@@ -100,7 +102,8 @@ data class CurationDatabaseContext(
             periodBetweenUnitCuration.validationErrors +
             complicationCuration.validationErrors +
             toxicityCuration.validationErrors +
-            molecularTestCuration.validationErrors +
+            molecularTestIhcCuration.validationErrors +
+            molecularTestPdl1Curation.validationErrors +
             medicationNameCuration.validationErrors +
             medicationDosageCuration.validationErrors +
             intoleranceCuration.validationErrors +
@@ -153,11 +156,17 @@ data class CurationDatabaseContext(
                 TreatmentHistoryEntryConfigFactory(treatmentDatabase),
                 CurationCategory.ONCOLOGICAL_HISTORY
             ) { it.treatmentHistoryEntryEvaluatedInputs },
-            molecularTestCuration = CurationDatabaseReader.read(
+            molecularTestIhcCuration = CurationDatabaseReader.read(
                 curationDir,
-                CurationDatabaseReader.MOLECULAR_TEST_TSV,
-                MolecularTestConfigFactory(),
-                CurationCategory.MOLECULAR_TEST
+                CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV,
+                MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC),
+                CurationCategory.MOLECULAR_TEST_IHC
+            ) { it.molecularTestEvaluatedInputs },
+            molecularTestPdl1Curation = CurationDatabaseReader.read(
+                curationDir,
+                CurationDatabaseReader.MOLECULAR_TEST_PDL1_TSV,
+                MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_PDL1),
+                CurationCategory.MOLECULAR_TEST_PDL1
             ) { it.molecularTestEvaluatedInputs },
             toxicityCuration = CurationDatabaseReader.read(
                 curationDir,
@@ -181,13 +190,13 @@ data class CurationDatabaseContext(
                 curationDir,
                 CurationDatabaseReader.QT_PROLONGATING_TSV,
                 QTProlongatingConfigFactory(),
-                CurationCategory.QT_PROLONGATION
+                CurationCategory.QT_PROLONGATING
             ) { emptySet() },
             cypInteractionCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.CYP_INTERACTIONS_TSV,
                 CypInteractionConfigFactory(),
-                CurationCategory.CYP_INTERACTION
+                CurationCategory.CYP_INTERACTIONS
             ) { emptySet() },
             medicationNameCuration = CurationDatabaseReader.read(
                 curationDir,

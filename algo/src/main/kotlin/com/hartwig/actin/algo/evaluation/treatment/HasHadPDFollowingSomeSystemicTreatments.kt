@@ -12,9 +12,9 @@ class HasHadPDFollowingSomeSystemicTreatments(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentHistory = record.clinical().oncologicalHistory()
+        val treatmentHistory = record.clinical.oncologicalHistory
         val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(treatmentHistory)
-        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical().oncologicalHistory())
+        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical.oncologicalHistory)
         val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(treatmentHistory)
         if (minSystemicCount >= minSystemicTreatments) {
             return when {
@@ -25,8 +25,8 @@ class HasHadPDFollowingSomeSystemicTreatments(
                     )
                 }
 
-                lastTreatment?.treatmentHistoryDetails()?.stopYear() == null
-                        || lastTreatment.treatmentHistoryDetails()?.stopReason() == StopReason.TOXICITY ->
+                lastTreatment?.treatmentHistoryDetails?.stopYear == null
+                        || lastTreatment.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY ->
                     EvaluationFactory.undetermined("Has had at least $minSystemicTreatments systemic treatments but undetermined if PD")
 
                 else ->

@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.ImmutableBloodTransfusion
 import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
 
 class BloodTransfusionsExtractor(private val bloodFusionTranslations: TranslationDatabase<String>) {
@@ -21,10 +20,10 @@ class BloodTransfusionsExtractor(private val bloodFusionTranslations: Translatio
                 transfusionProduct,
                 "blood transfusion with product"
             )
-            val transfusion = ImmutableBloodTransfusion.builder()
-                .date(entry.authored)
-                .product(curationResponse.config()?.translated ?: transfusionProduct)
-                .build()
+            val transfusion = BloodTransfusion(
+                date = entry.authored,
+                product = curationResponse.config()?.translated ?: transfusionProduct
+            )
             ExtractionResult(transfusion, curationResponse.extractionEvaluation)
         }.fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)

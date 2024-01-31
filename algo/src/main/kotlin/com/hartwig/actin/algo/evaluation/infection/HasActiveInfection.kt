@@ -9,9 +9,9 @@ import com.hartwig.actin.clinical.datamodel.InfectionStatus
 //TODO (ACTIN-38): Update according to README
 class HasActiveInfection internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val infection = record.clinical().clinicalStatus().infectionStatus()
+        val infection = record.clinical.clinicalStatus.infectionStatus
             ?: return EvaluationFactory.undetermined("Infection status data is missing", "Unknown infection status")
-        return if (infection.hasActiveInfection()) {
+        return if (infection.hasActiveInfection) {
             EvaluationFactory.pass(
                 "Patient has active infection: " + description(infection),
                 "Infection presence: " + description(infection)
@@ -23,8 +23,7 @@ class HasActiveInfection internal constructor() : EvaluationFunction {
 
     companion object {
         private fun description(infection: InfectionStatus): String {
-            val description = infection.description()
-            return description ?: "Unknown"
+            return infection.description ?: "Unknown"
         }
     }
 }

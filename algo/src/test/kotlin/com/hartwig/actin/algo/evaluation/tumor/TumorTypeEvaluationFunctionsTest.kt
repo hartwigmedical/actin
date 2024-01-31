@@ -1,49 +1,25 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import org.junit.Assert
+import com.hartwig.actin.clinical.datamodel.TumorDetails
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TumorTypeEvaluationFunctionsTest {
     @Test
     fun canDetermineIfTumorHasType() {
         val validTypes = setOf("Valid")
-        Assert.assertFalse(TumorTypeEvaluationFunctions.hasTumorWithType(TumorTestFactory.builder().build(), validTypes))
-        Assert.assertFalse(
-            TumorTypeEvaluationFunctions.hasTumorWithType(
-                TumorTestFactory.builder().primaryTumorType("wrong").build(),
-                validTypes
-            )
-        )
-        Assert.assertTrue(
-            TumorTypeEvaluationFunctions.hasTumorWithType(
-                TumorTestFactory.builder().primaryTumorType("valid type").build(),
-                validTypes
-            )
-        )
-        Assert.assertTrue(
-            TumorTypeEvaluationFunctions.hasTumorWithType(
-                TumorTestFactory.builder().primaryTumorSubType("valid sub-type").build(),
-                validTypes
-            )
-        )
+        assertThat(TumorTypeEvaluationFunctions.hasTumorWithType(TumorDetails(), validTypes)).isFalse
+        assertThat(TumorTypeEvaluationFunctions.hasTumorWithType(TumorDetails(primaryTumorType = "wrong"), validTypes)).isFalse
+        assertThat(TumorTypeEvaluationFunctions.hasTumorWithType(TumorDetails(primaryTumorType = "valid type"), validTypes)).isTrue
+        assertThat(TumorTypeEvaluationFunctions.hasTumorWithType(TumorDetails(primaryTumorSubType = "valid sub-type"), validTypes)).isTrue
     }
 
     @Test
     fun canDetermineIfTumorHasDetails() {
         val validDetails = setOf("Valid")
-        Assert.assertFalse(TumorTypeEvaluationFunctions.hasTumorWithDetails(TumorTestFactory.builder().build(), validDetails))
-        Assert.assertFalse(
-            TumorTypeEvaluationFunctions.hasTumorWithDetails(
-                TumorTestFactory.builder().primaryTumorExtraDetails("wrong").build(),
-                validDetails
-            )
-        )
-        Assert.assertTrue(
-            TumorTypeEvaluationFunctions.hasTumorWithDetails(
-                TumorTestFactory.builder()
-                    .primaryTumorExtraDetails("valid details")
-                    .build(), validDetails
-            )
-        )
+        assertThat(TumorTypeEvaluationFunctions.hasTumorWithDetails(TumorDetails(), validDetails)).isFalse
+        assertThat(TumorTypeEvaluationFunctions.hasTumorWithDetails(TumorDetails(primaryTumorExtraDetails = "wrong"), validDetails)).isFalse
+        assertThat(TumorTypeEvaluationFunctions.hasTumorWithDetails(TumorDetails(primaryTumorExtraDetails = "valid details"), validDetails))
+            .isTrue
     }
 }

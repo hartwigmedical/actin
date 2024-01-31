@@ -3,40 +3,42 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import org.junit.Test
 
+private const val MEASURE = "measure"
+
 class HasLimitedPDL1ByIHCTest {
+    private val function = HasLimitedPDL1ByIHC(MEASURE, 2.0)
+
+    private val pdl1Test = MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = MEASURE)
+    
     @Test
-    fun canEvaluate() {
-        val function = HasLimitedPDL1ByIHC(MEASURE, 2.0)
-
-        // No prior tests
-        val priorTests = mutableListOf<PriorMolecularTest>()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)))
-
-        // Add test with no result
-        priorTests.add(pdl1Builder().build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)))
-
-        // Add test with value too high
-        priorTests.add(pdl1Builder().scoreValue(3.0).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)))
-
-        // Add test with right value but wrong prefix
-        priorTests.add(pdl1Builder().scoreValuePrefix(ValueComparison.LARGER_THAN).scoreValue(1.0).build())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)))
-
-        // Add test with right value
-        priorTests.add(pdl1Builder().scoreValue(1.0).build())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)))
+    fun `Should fail with no prior tests`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(emptyList())))
     }
 
-    companion object {
-        private const val MEASURE = "measure"
-        private fun pdl1Builder(): ImmutablePriorMolecularTest.Builder {
-            return MolecularTestFactory.priorBuilder().test("IHC").item("PD-L1").measure(MEASURE)
-        }
+    @Test
+    fun `Should fail when no test contains result`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(listOf(pdl1Test))))
+    }
+
+    @Test
+    fun `Should fail when test value is too high`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(listOf(pdl1Test.copy(scoreValue = 3.0))))
+        )
+    }
+
+    @Test
+    fun `Should fail when test value has non-matching prefix`() {
+        val priorTests = listOf(pdl1Test.copy(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 1.0))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)))
+    }
+
+    @Test
+    fun `Should pass when test value is under limit`() {
+        assertEvaluation(
+            EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTests(listOf(pdl1Test.copy(scoreValue = 1.0))))
+        )
     }
 }

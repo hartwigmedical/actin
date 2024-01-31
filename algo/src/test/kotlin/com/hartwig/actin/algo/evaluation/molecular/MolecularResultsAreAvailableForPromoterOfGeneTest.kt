@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import org.junit.Test
 
 class MolecularResultsAreAvailableForPromoterOfGeneTest {
+
     @Test
     fun canEvaluate() {
         val function = MolecularResultsAreAvailableForPromoterOfGene("gene 1")
@@ -18,12 +19,7 @@ class MolecularResultsAreAvailableForPromoterOfGeneTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTest(create("gene 2 promoter", false))))
     }
 
-    companion object {
-        private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): PriorMolecularTest {
-            return MolecularTestFactory.priorBuilder()
-                .item(gene)
-                .impliesPotentialIndeterminateStatus(impliesPotentialDeterminateStatus)
-                .build()
-        }
+    private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): PriorMolecularTest {
+        return MolecularTestFactory.priorMolecularTest(item = gene, impliesIndeterminate = impliesPotentialDeterminateStatus)
     }
 }

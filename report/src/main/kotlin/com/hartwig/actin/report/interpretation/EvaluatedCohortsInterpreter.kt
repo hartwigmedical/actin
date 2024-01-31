@@ -8,13 +8,12 @@ class EvaluatedCohortsInterpreter(
 ) {
 
     fun trialsForDriver(driver: Driver): List<String> {
-        return eligibleOpenTrialsByInclusionEvent[driver.event()] ?: emptyList()
+        return eligibleOpenTrialsByInclusionEvent[driver.event] ?: emptyList()
     }
 
     fun driverIsActionable(driver: Driver): Boolean {
-        return (driver.evidence().externalEligibleTrials()
-            .isNotEmpty() || inclusionEventsOfOpenTrials.contains(driver.event())
-                || driver.evidence().approvedTreatments().isNotEmpty())
+        return (driver.evidence.externalEligibleTrials.isNotEmpty() || inclusionEventsOfOpenTrials.contains(driver.event)
+                || driver.evidence.approvedTreatments.isNotEmpty())
     }
 
     companion object {

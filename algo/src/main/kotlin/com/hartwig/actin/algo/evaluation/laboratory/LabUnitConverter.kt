@@ -8,16 +8,16 @@ import org.apache.logging.log4j.LogManager
 internal object LabUnitConverter {
     private val LOGGER = LogManager.getLogger(LabUnitConverter::class.java)
     fun convert(measurement: LabMeasurement, labValue: LabValue, targetUnit: LabUnit): Double? {
-        if (labValue.unit() == targetUnit) {
-            return labValue.value()
+        if (labValue.unit == targetUnit) {
+            return labValue.value
         }
-        val conversionFactor = LabUnitConversionTable.findConversionFactor(measurement, labValue.unit(), targetUnit)
+        val conversionFactor = LabUnitConversionTable.findConversionFactor(measurement, labValue.unit, targetUnit)
         if (conversionFactor == null) {
             LOGGER.warn(
-                "No conversion factor defined from for {} to go from '{}' to '{}'", measurement.display(), labValue.unit(), targetUnit
+                "No conversion factor defined from for {} to go from '{}' to '{}'", measurement.display, labValue.unit, targetUnit
             )
             return null
         }
-        return labValue.value() * conversionFactor
+        return labValue.value * conversionFactor
     }
 }

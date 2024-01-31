@@ -1,12 +1,12 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
@@ -24,7 +24,12 @@ import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evalua
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private const val EXPECTED_GENE = "found"
+private const val VIRUS_INTEGRATIONS = 3
+
 class MolecularDriversSummarizerTest {
+    private val minimalDrivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers
+    
     @Test
     fun shouldReturnKeyVariants() {
         val variants = setOf(
@@ -32,7 +37,7 @@ class MolecularDriversSummarizerTest {
             variant("non-reportable", DriverLikelihood.HIGH, false),
             variant("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
-        val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllVariants(variants).build()
+        val molecularDrivers = minimalDrivers.copy(variants = variants)
         assertExpectedListResult(summarizer(molecularDrivers).keyGenesWithVariants())
     }
 
@@ -47,7 +52,7 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.FULL_GAIN, "low", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.FULL_GAIN, "non-reportable", DriverLikelihood.HIGH, false)
         )
-        val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllCopyNumbers(copyNumbers).build()
+        val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         val amplifiedGenes = summarizer(molecularDrivers).keyAmplifiedGenes().toSet()
         assertThat(amplifiedGenes).containsExactlyInAnyOrder("$partialAmpGene (partial)", fullAmpGene)
     }
@@ -61,7 +66,7 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.LOSS, "low", DriverLikelihood.LOW, true),
             copyNumber(CopyNumberType.LOSS, "non-reportable", DriverLikelihood.HIGH, false)
         )
-        val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllCopyNumbers(copyNumbers).build()
+        val molecularDrivers = minimalDrivers.copy(copyNumbers = copyNumbers)
         assertExpectedListResult(summarizer(molecularDrivers).keyDeletedGenes())
     }
 
@@ -72,8 +77,7 @@ class MolecularDriversSummarizerTest {
             homozygousDisruption("non-reportable", DriverLikelihood.HIGH, false),
             homozygousDisruption("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
-        val molecularDrivers: MolecularDrivers =
-            ImmutableMolecularDrivers.builder().addAllHomozygousDisruptions(homozygousDisruptions).build()
+        val molecularDrivers = minimalDrivers.copy(homozygousDisruptions = homozygousDisruptions)
         assertExpectedListResult(summarizer(molecularDrivers).keyHomozygouslyDisruptedGenes())
     }
 
@@ -84,7 +88,7 @@ class MolecularDriversSummarizerTest {
             fusion("non-reportable", DriverLikelihood.HIGH, false),
             fusion("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
-        val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllFusions(fusions).build()
+        val molecularDrivers = minimalDrivers.copy(fusions = fusions)
         assertExpectedListResult(summarizer(molecularDrivers).keyFusionEvents())
     }
 
@@ -95,7 +99,7 @@ class MolecularDriversSummarizerTest {
             virus("non-reportable", DriverLikelihood.HIGH, false),
             virus("medium likelihood", DriverLikelihood.MEDIUM, true)
         )
-        val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder().addAllViruses(viruses).build()
+        val molecularDrivers = minimalDrivers.copy(viruses = viruses)
         val keyViruses = summarizer(molecularDrivers).keyVirusEvents().toSet()
         assertThat(keyViruses).containsExactly("virus ($VIRUS_INTEGRATIONS int. detected)")
     }
@@ -155,14 +159,14 @@ class MolecularDriversSummarizerTest {
             virus("key virus", DriverLikelihood.HIGH, true)
         )
 
-        val molecularDrivers: MolecularDrivers = ImmutableMolecularDrivers.builder()
-            .addAllVariants(variants)
-            .addAllCopyNumbers(copyNumbers)
-            .addAllHomozygousDisruptions(homozygousDisruptions)
-            .addAllDisruptions(disruptions)
-            .addAllFusions(fusions)
-            .addAllViruses(viruses)
-            .build()
+        val molecularDrivers = MolecularDrivers(
+            variants = variants,
+            copyNumbers = copyNumbers,
+            homozygousDisruptions = homozygousDisruptions,
+            disruptions = disruptions,
+            fusions = fusions,
+            viruses = viruses
+        )
 
         val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, cohorts)
         val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().toSet()
@@ -170,92 +174,87 @@ class MolecularDriversSummarizerTest {
         assertThat(otherActionableEvents).allSatisfy { it.startsWith("expected") }
     }
 
-    companion object {
-        private const val EXPECTED_GENE = "found"
-        private const val VIRUS_INTEGRATIONS = 3
+    private fun variant(
+        name: String,
+        driverLikelihood: DriverLikelihood,
+        isReportable: Boolean,
+        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+    ): Variant {
+        return TestVariantFactory.createMinimal().copy(
+            gene = name,
+            event = name,
+            driverLikelihood = driverLikelihood,
+            isReportable = isReportable,
+            evidence = evidence
+        )
+    }
 
-        private fun variant(
-            name: String,
-            driverLikelihood: DriverLikelihood,
-            isReportable: Boolean,
-            evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-        ): Variant {
-            return TestVariantFactory.builder()
-                .gene(name)
-                .event(name)
-                .driverLikelihood(driverLikelihood)
-                .isReportable(isReportable)
-                .evidence(evidence)
-                .build()
-        }
+    private fun copyNumber(type: CopyNumberType, name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean): CopyNumber {
+        return TestCopyNumberFactory.createMinimal().copy(
+            type = type,
+            gene = name,
+            event = name,
+            driverLikelihood = driverLikelihood,
+            isReportable = isReportable
+        )
+    }
 
-        private fun copyNumber(type: CopyNumberType, name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean): CopyNumber {
-            return TestCopyNumberFactory.builder()
-                .type(type)
-                .gene(name)
-                .event(name)
-                .driverLikelihood(driverLikelihood)
-                .isReportable(isReportable)
-                .build()
-        }
+    private fun homozygousDisruption(
+        name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean,
+        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+    ): HomozygousDisruption {
+        return TestHomozygousDisruptionFactory.createMinimal().copy(
+            gene = name,
+            event = name,
+            driverLikelihood = driverLikelihood,
+            isReportable = isReportable,
+            evidence = evidence
+        )
+    }
 
-        private fun homozygousDisruption(
-            name: String, driverLikelihood: DriverLikelihood?, isReportable: Boolean,
-            evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-        ): HomozygousDisruption {
-            return TestHomozygousDisruptionFactory.builder()
-                .gene(name)
-                .event(name)
-                .driverLikelihood(driverLikelihood)
-                .isReportable(isReportable)
-                .evidence(evidence)
-                .build()
-        }
+    private fun disruption(
+        name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
+        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+    ): Disruption {
+        return TestDisruptionFactory.createMinimal().copy(
+            gene = name,
+            event = name,
+            driverLikelihood = driverLikelihood,
+            isReportable = isReportable,
+            evidence = evidence
+        )
+    }
 
-        private fun disruption(
-            name: String, driverLikelihood: DriverLikelihood, isReportable: Boolean,
-            evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-        ): Disruption {
-            return TestDisruptionFactory.builder()
-                .gene(name)
-                .event(name)
-                .driverLikelihood(driverLikelihood)
-                .isReportable(isReportable)
-                .evidence(evidence)
-                .build()
-        }
+    private fun fusion(
+        event: String,
+        driverLikelihood: DriverLikelihood,
+        isReportable: Boolean,
+        evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
+    ): Fusion {
+        return TestFusionFactory.createMinimal().copy(
+            event = event,
+            driverLikelihood = driverLikelihood,
+            isReportable = isReportable,
+            evidence = evidence
+        )
+    }
 
-        private fun fusion(
-            event: String,
-            driverLikelihood: DriverLikelihood,
-            isReportable: Boolean,
-            evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-        ): Fusion {
-            return TestFusionFactory.builder()
-                .event(event)
-                .driverLikelihood(driverLikelihood)
-                .isReportable(isReportable)
-                .evidence(evidence)
-                .build()
-        }
+    private fun virus(event: String, driverLikelihood: DriverLikelihood, isReportable: Boolean): Virus {
+        return TestVirusFactory.createMinimal().copy(
+            event = event,
+            driverLikelihood = driverLikelihood,
+            isReportable = isReportable,
+            type = VirusType.MERKEL_CELL_VIRUS,
+            integrations = VIRUS_INTEGRATIONS
+        )
+    }
 
-        private fun virus(event: String, driverLikelihood: DriverLikelihood, isReportable: Boolean): Virus {
-            return TestVirusFactory.builder()
-                .event(event)
-                .driverLikelihood(driverLikelihood)
-                .isReportable(isReportable)
-                .type(VirusType.MERKEL_CELL_VIRUS)
-                .integrations(VIRUS_INTEGRATIONS)
-                .build()
-        }
+    private fun summarizer(molecularDrivers: MolecularDrivers): MolecularDriversSummarizer {
+        return MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, emptyList())
+    }
 
-        private fun summarizer(molecularDrivers: MolecularDrivers): MolecularDriversSummarizer {
-            return MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, emptyList())
-        }
-
-        private fun assertExpectedListResult(keyEntryList: List<String>) {
-            val keyEntries = keyEntryList.distinct()
-            assertThat(keyEntries).containsExactly(EXPECTED_GENE)
-        }
+    private fun assertExpectedListResult(keyEntryList: List<String>) {
+        val keyEntries = keyEntryList.distinct()
+        assertThat(keyEntries).containsExactly(EXPECTED_GENE)
     }
 }

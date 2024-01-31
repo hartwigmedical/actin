@@ -5,14 +5,14 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.database.Tables
-import com.hartwig.actin.treatment.datamodel.Eligibility
-import com.hartwig.actin.treatment.util.EligibilityFunctionDisplay
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext
 
 class TreatmentMatchDAO(private val context: DSLContext) {
 
     fun clear(treatmentMatch: TreatmentMatch) {
-        val patientId = treatmentMatch.patientId()
+        val patientId = treatmentMatch.patientId
         val treatmentMatchResults =
             context.select(Tables.TREATMENTMATCH.ID).from(Tables.TREATMENTMATCH).where(Tables.TREATMENTMATCH.PATIENTID.eq(patientId))
                 .fetch()
@@ -40,20 +40,20 @@ class TreatmentMatchDAO(private val context: DSLContext) {
             Tables.TREATMENTMATCH.REFERENCEDATEISLIVE
         )
             .values(
-                treatmentMatch.patientId(),
-                treatmentMatch.sampleId(),
-                treatmentMatch.referenceDate(),
-                treatmentMatch.referenceDateIsLive()
+                treatmentMatch.patientId,
+                treatmentMatch.sampleId,
+                treatmentMatch.referenceDate,
+                treatmentMatch.referenceDateIsLive
             )
             .returning(Tables.TREATMENTMATCH.ID)
             .fetchOne()!!
             .getValue(Tables.TREATMENTMATCH.ID)
-        for (trialMatch in treatmentMatch.trialMatches()) {
+        for (trialMatch in treatmentMatch.trialMatches) {
             val trialMatchId = writeTrialMatch(treatmentMatchId, trialMatch)
-            writeEvaluations(trialMatchId, null, trialMatch.evaluations())
-            for (cohortMatch in trialMatch.cohorts()) {
+            writeEvaluations(trialMatchId, null, trialMatch.evaluations)
+            for (cohortMatch in trialMatch.cohorts) {
                 val cohortMatchId = writeCohortMatch(trialMatchId, cohortMatch)
-                writeEvaluations(trialMatchId, cohortMatchId, cohortMatch.evaluations())
+                writeEvaluations(trialMatchId, cohortMatchId, cohortMatch.evaluations)
             }
         }
     }
@@ -70,10 +70,10 @@ class TreatmentMatchDAO(private val context: DSLContext) {
         )
             .values(
                 treatmentMatchId,
-                trialMatch.identification().trialId(),
-                trialMatch.identification().open(),
-                trialMatch.identification().acronym(),
-                trialMatch.identification().title(),
+                trialMatch.identification.trialId,
+                trialMatch.identification.open,
+                trialMatch.identification.acronym,
+                trialMatch.identification.title,
                 trialMatch.isPotentiallyEligible
             )
             .returning(Tables.TRIALMATCH.ID)
@@ -95,12 +95,12 @@ class TreatmentMatchDAO(private val context: DSLContext) {
         )
             .values(
                 trialMatchId,
-                cohortMatch.metadata().cohortId(),
-                cohortMatch.metadata().evaluable(),
-                cohortMatch.metadata().open(),
-                cohortMatch.metadata().slotsAvailable(),
-                cohortMatch.metadata().blacklist(),
-                cohortMatch.metadata().description(),
+                cohortMatch.metadata.cohortId,
+                cohortMatch.metadata.evaluable,
+                cohortMatch.metadata.open,
+                cohortMatch.metadata.slotsAvailable,
+                cohortMatch.metadata.blacklist,
+                cohortMatch.metadata.description,
                 cohortMatch.isPotentiallyEligible
             )
             .returning(Tables.COHORTMATCH.ID)
@@ -110,7 +110,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
 
     private fun writeEvaluations(trialMatchId: Int, cohortMatchId: Int?, evaluations: Map<Eligibility, Evaluation>) {
         for ((key, evaluation) in evaluations) {
-            val eligibility = EligibilityFunctionDisplay.format(key.function())
+            val eligibility = EligibilityFunctionDisplay.format(key.function)
             context.insertInto(
                 Tables.EVALUATION,
                 Tables.EVALUATION.TRIALMATCHID,
@@ -133,18 +133,18 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                     trialMatchId,
                     cohortMatchId,
                     eligibility,
-                    evaluation.result().toString(),
-                    evaluation.recoverable(),
-                    DataUtil.concat(evaluation.inclusionMolecularEvents()),
-                    DataUtil.concat(evaluation.exclusionMolecularEvents()),
-                    DataUtil.concat(evaluation.passSpecificMessages()),
-                    DataUtil.concat(evaluation.passGeneralMessages()),
-                    DataUtil.concat(evaluation.warnSpecificMessages()),
-                    DataUtil.concat(evaluation.warnGeneralMessages()),
-                    DataUtil.concat(evaluation.undeterminedSpecificMessages()),
-                    DataUtil.concat(evaluation.undeterminedGeneralMessages()),
-                    DataUtil.concat(evaluation.failSpecificMessages()),
-                    DataUtil.concat(evaluation.failGeneralMessages())
+                    evaluation.result.toString(),
+                    evaluation.recoverable,
+                    DataUtil.concat(evaluation.inclusionMolecularEvents),
+                    DataUtil.concat(evaluation.exclusionMolecularEvents),
+                    DataUtil.concat(evaluation.passSpecificMessages),
+                    DataUtil.concat(evaluation.passGeneralMessages),
+                    DataUtil.concat(evaluation.warnSpecificMessages),
+                    DataUtil.concat(evaluation.warnGeneralMessages),
+                    DataUtil.concat(evaluation.undeterminedSpecificMessages),
+                    DataUtil.concat(evaluation.undeterminedGeneralMessages),
+                    DataUtil.concat(evaluation.failSpecificMessages),
+                    DataUtil.concat(evaluation.failGeneralMessages)
                 )
                 .execute()
         }

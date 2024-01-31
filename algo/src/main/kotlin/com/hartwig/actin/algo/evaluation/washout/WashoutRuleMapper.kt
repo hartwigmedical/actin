@@ -8,8 +8,8 @@ import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.medication.MedicationCategories
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
 import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private val selector: MedicationSelector
@@ -40,14 +40,14 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasRecentlyReceivedCancerTherapyOfNamesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createManyStringsOneIntegerInput(function)
-            createReceivedCancerTherapyOfNameFunction(input.strings(), input.integer())
+            createReceivedCancerTherapyOfNameFunction(input.strings, input.integer)
         }
     }
 
     private fun hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createManyStringsTwoIntegersInput(function)
-            createReceivedCancerTherapyOfNameFunction(input.strings(), input.integer1())
+            createReceivedCancerTherapyOfNameFunction(input.strings, input.integer1)
         }
     }
 
@@ -59,14 +59,14 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasRecentlyReceivedCancerTherapyOfCategoriesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createManyStringsOneIntegerInput(function)
-            createReceivedCancerTherapyOfCategoryFunction(input.strings(), input.integer())
+            createReceivedCancerTherapyOfCategoryFunction(input.strings, input.integer)
         }
     }
 
     private fun hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createManyStringsTwoIntegersInput(function)
-            createReceivedCancerTherapyOfCategoryFunction(input.strings(), input.integer1())
+            createReceivedCancerTherapyOfCategoryFunction(input.strings, input.integer1)
         }
     }
 
@@ -87,7 +87,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasRecentlyReceivedTrialMedicationHalfLifeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createTwoIntegersInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer1().toLong())
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer1.toLong())
             HasRecentlyReceivedTrialMedication(selector, maxStopDate)
         }
     }
@@ -110,7 +110,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasRecentlyReceivedAnyCancerTherapyWithHalfLifeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createTwoIntegersInput(function)
-            createReceivedAnyCancerTherapyFunction(input.integer1())
+            createReceivedAnyCancerTherapyFunction(input.integer1)
         }
     }
 
@@ -123,14 +123,14 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createManyStringsOneIntegerInput(function)
-            createReceivedAnyCancerTherapyButSomeFunction(input.strings(), input.integer())
+            createReceivedAnyCancerTherapyButSomeFunction(input.strings, input.integer)
         }
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeWithHalfLifeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createManyStringsTwoIntegersInput(function)
-            createReceivedAnyCancerTherapyButSomeFunction(input.strings(), input.integer1())
+            createReceivedAnyCancerTherapyButSomeFunction(input.strings, input.integer1)
         }
     }
 

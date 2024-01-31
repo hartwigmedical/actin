@@ -1,9 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
@@ -40,7 +38,7 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun shouldIncludeNonReportableDriversWithActinTrialMatches() {
         val record = createTestMolecularRecordWithNonReportableDriverWithEvidence(TestActionableEvidenceFactory.createEmpty())
-        val driverToFind = record.drivers().viruses().iterator().next().event()
+        val driverToFind = record.drivers.viruses.iterator().next().event
         assertThat(createFactoryWithCohortsForEvent(record, driverToFind).create()).hasSize(1)
     }
 
@@ -66,9 +64,9 @@ class MolecularDriverEntryFactoryTest {
     @Test
     fun shouldMatchActinTrialToMolecularDrivers() {
         val record = TestMolecularFactory.createProperTestMolecularRecord()
-        assertThat(record.drivers().variants()).isNotEmpty
-        val firstVariant = record.drivers().variants().iterator().next()
-        val driverToFind = firstVariant.event()
+        assertThat(record.drivers.variants).isNotEmpty
+        val firstVariant = record.drivers.variants.iterator().next()
+        val driverToFind = firstVariant.event
         val entry = createFactoryWithCohortsForEvent(record, driverToFind).create()
             .find { it.driver.startsWith(driverToFind) }
             ?: throw IllegalStateException(
@@ -83,16 +81,13 @@ class MolecularDriverEntryFactoryTest {
         }
 
         private fun createTestMolecularRecordWithDriverEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularRecord {
-            return ImmutableMolecularRecord.builder()
-                .from(TestMolecularFactory.createMinimalTestMolecularRecord())
-                .drivers(createDriversWithEvidence(evidence, isReportable))
-                .build()
+            return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = createDriversWithEvidence(evidence, isReportable))
         }
 
         private fun createDriversWithEvidence(evidence: ActionableEvidence, isReportable: Boolean): MolecularDrivers {
-            return ImmutableMolecularDrivers.builder()
-                .addViruses(TestVirusFactory.builder().isReportable(isReportable).evidence(evidence).build())
-                .build()
+            return TestMolecularFactory.createMinimalTestMolecularRecord().drivers.copy(
+                viruses = setOf(TestVirusFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence))
+            )
         }
 
         private fun createFactoryForMolecularRecord(molecular: MolecularRecord): MolecularDriverEntryFactory {
@@ -103,7 +98,7 @@ class MolecularDriverEntryFactoryTest {
             molecular: MolecularRecord, cohorts: List<EvaluatedCohort>
         ): MolecularDriverEntryFactory {
             return MolecularDriverEntryFactory(
-                MolecularDriversInterpreter(molecular.drivers(), EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+                MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
             )
         }
 

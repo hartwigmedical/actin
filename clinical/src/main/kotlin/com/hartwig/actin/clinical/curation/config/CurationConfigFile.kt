@@ -12,10 +12,9 @@ object CurationConfigFile {
             .map { factory.create(fields, it.split(TabularFile.DELIMITER).toTypedArray()) }
     }
 
-    fun readTsv(tsv: String): Pair<MutableList<String>, MutableMap<String, Int>> {
+    fun readTsv(tsv: String): Pair<List<String>, Map<String, Int>> {
         val lines = Files.readAllLines(File(tsv).toPath())
-        val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }
-            .toTypedArray())
+        val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
         return Pair(lines, fields)
     }
 }

@@ -11,7 +11,7 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         // TODO: once we curate surgery names from the surgeries tsv file evaluate these as well
-        val oncologicalHistory = record.clinical().oncologicalHistory()
+        val oncologicalHistory = record.clinical.oncologicalHistory
 
         val undeterminedSurgery = oncologicalHistory
             .any { it.categories().contains(TreatmentCategory.SURGERY) && it.treatmentName().equals("surgery", true) }
@@ -19,7 +19,7 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
         val hasHadCytoreductiveSurgery = oncologicalHistory
             .any {
                 it.isOfType(OtherTreatmentType.CYTOREDUCTIVE_SURGERY) == true || it.allTreatments()
-                    .any { treatment -> treatment.name().uppercase() == "HIPEC" }
+                    .any { treatment -> treatment.name.uppercase() == "HIPEC" }
             }
 
         val hasHadDebulkingSurgery = oncologicalHistory

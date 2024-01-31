@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.clinical.datamodel.AtcLevel
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
 import com.hartwig.actin.util.TabularFile
 import java.io.File
 import java.nio.file.Files
@@ -9,7 +8,7 @@ import java.nio.file.Files
 class AtcTree(private val atcMap: Map<String, String>) {
     fun resolve(rawAtcCode: String): AtcLevel {
         val atcName = atcMap[rawAtcCode]
-        return atcName?.let { ImmutableAtcLevel.builder().name(atcName).code(rawAtcCode).build() }
+        return atcName?.let { AtcLevel(name = atcName, code = rawAtcCode) }
             ?: throw IllegalArgumentException("ATC code [$rawAtcCode] not found in tree")
     }
 

@@ -30,43 +30,43 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
         val driverType = "Mutation ($biallelicIndicator$mutationTypeString)"
 
-        val boundedVariantCopies = min(variant.variantCopyNumber(), variant.totalCopyNumber()).coerceAtLeast(0.0)
+        val boundedVariantCopies = min(variant.variantCopyNumber, variant.totalCopyNumber).coerceAtLeast(0.0)
         val variantCopyString =
             if (boundedVariantCopies < 1) Formats.singleDigitNumber(boundedVariantCopies) else Formats.noDigitNumber(boundedVariantCopies)
-        val boundedTotalCopies = variant.totalCopyNumber().coerceAtLeast(0.0)
+        val boundedTotalCopies = variant.totalCopyNumber.coerceAtLeast(0.0)
         val totalCopyString =
             if (boundedTotalCopies < 1) Formats.singleDigitNumber(boundedTotalCopies) else Formats.noDigitNumber(boundedTotalCopies)
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
-        val name = "${variant.event()} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
+        val name = "${variant.event} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
 
         return driverEntry(driverType, name, variant)
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): MolecularDriverEntry {
-        val driverType = if (copyNumber.type().isGain) "Amplification" else "Loss"
-        val name = copyNumber.event() + ", " + copyNumber.minCopies() + " copies"
+        val driverType = if (copyNumber.type.isGain) "Amplification" else "Loss"
+        val name = copyNumber.event + ", " + copyNumber.minCopies + " copies"
         return driverEntry(driverType, name, copyNumber)
     }
 
     private fun fromHomozygousDisruption(homozygousDisruption: HomozygousDisruption): MolecularDriverEntry {
-        return driverEntry("Disruption (homozygous)", homozygousDisruption.gene(), homozygousDisruption)
+        return driverEntry("Disruption (homozygous)", homozygousDisruption.gene, homozygousDisruption)
     }
 
     private fun fromDisruption(disruption: Disruption): MolecularDriverEntry {
-        val disruptionCopyNumber = Formats.singleDigitNumber(disruption.junctionCopyNumber())
-        val undisruptedCopyNumber = Formats.singleDigitNumber(disruption.undisruptedCopyNumber())
-        val name = "${disruption.gene()}, ${disruption.type()} ($disruptionCopyNumber disr. / $undisruptedCopyNumber undisr. copies)"
+        val disruptionCopyNumber = Formats.singleDigitNumber(disruption.junctionCopyNumber)
+        val undisruptedCopyNumber = Formats.singleDigitNumber(disruption.undisruptedCopyNumber)
+        val name = "${disruption.gene}, ${disruption.type} ($disruptionCopyNumber disr. / $undisruptedCopyNumber undisr. copies)"
 
         return driverEntry("Disruption", name, disruption)
     }
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
-        val name = fusion.event() + ", exon " + fusion.fusedExonUp() + " - exon " + fusion.fusedExonDown()
-        return driverEntry(fusion.driverType().display(), name, fusion)
+        val name = fusion.event + ", exon " + fusion.fusedExonUp + " - exon " + fusion.fusedExonDown
+        return driverEntry(fusion.driverType.display(), name, fusion)
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
-        val name = virus.event() + ", " + virus.integrations() + " integrations detected"
+        val name = virus.event + ", " + virus.integrations + " integrations detected"
         return driverEntry("Virus", name, virus)
     }
 
@@ -74,9 +74,9 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         return MolecularDriverEntry(
             driverType = driverType,
             driver = name,
-            driverLikelihood = driver.driverLikelihood(),
+            driverLikelihood = driver.driverLikelihood,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
-            externalTrials = driver.evidence().externalEligibleTrials(),
+            externalTrials = driver.evidence.externalEligibleTrials,
             bestResponsiveEvidence = bestResponsiveEvidence(driver),
             bestResistanceEvidence = bestResistanceEvidence(driver)
         )
@@ -84,39 +84,37 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
     companion object {
         private fun bestResponsiveEvidence(driver: Driver): String? {
-            val evidence = driver.evidence()
+            val evidence = driver.evidence
             return when {
-                evidence.approvedTreatments().isNotEmpty() -> {
+                evidence.approvedTreatments.isNotEmpty() -> {
                     "Approved"
                 }
 
-                evidence.onLabelExperimentalTreatments().isNotEmpty() -> {
+                evidence.onLabelExperimentalTreatments.isNotEmpty() -> {
                     "On-label experimental"
                 }
 
-                evidence.offLabelExperimentalTreatments().isNotEmpty() -> {
+                evidence.offLabelExperimentalTreatments.isNotEmpty() -> {
                     "Off-label experimental"
                 }
 
-                evidence.preClinicalTreatments().isNotEmpty() -> {
+                evidence.preClinicalTreatments.isNotEmpty() -> {
                     "Pre-clinical"
                 }
-
                 else -> null
             }
         }
 
         private fun bestResistanceEvidence(driver: Driver): String? {
-            val evidence = driver.evidence()
+            val evidence = driver.evidence
             return when {
-                evidence.knownResistantTreatments().isNotEmpty() -> {
+                evidence.knownResistantTreatments.isNotEmpty() -> {
                     "Known resistance"
                 }
 
-                evidence.suspectResistantTreatments().isNotEmpty() -> {
+                evidence.suspectResistantTreatments.isNotEmpty() -> {
                     "Suspect resistance"
                 }
-
                 else -> null
             }
         }

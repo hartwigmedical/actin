@@ -15,11 +15,7 @@ import com.hartwig.actin.clinical.curation.extraction.PriorSecondPrimaryExtracto
 import com.hartwig.actin.clinical.curation.extraction.ToxicityExtractor
 import com.hartwig.actin.clinical.curation.extraction.TumorDetailsExtractor
 import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
-import com.hartwig.actin.clinical.datamodel.ImmutableSurgery
-import com.hartwig.actin.clinical.datamodel.ImmutableVitalFunction
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.PatientDetails
 import com.hartwig.actin.clinical.datamodel.Surgery
 import com.hartwig.actin.clinical.datamodel.SurgeryStatus
@@ -83,25 +79,25 @@ class ClinicalIngestion(
             val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feed.bloodTransfusionEntries(subject))
             val medicationExtraction = medicationExtractor.extract(patientId, feed.medicationEntries(subject))
 
-            val record = ImmutableClinicalRecord.builder()
-                .patientId(patientId)
-                .patient(extractPatientDetails(subject, questionnaire))
-                .tumor(tumorExtraction.extracted)
-                .complications(complicationsExtraction.extracted)
-                .clinicalStatus(clinicalStatusExtraction.extracted)
-                .oncologicalHistory(oncologicalHistoryExtraction.extracted)
-                .priorSecondPrimaries(priorSecondPrimaryExtraction.extracted)
-                .priorOtherConditions(priorOtherConditionsExtraction.extracted)
-                .priorMolecularTests(priorMolecularTestsExtraction.extracted)
-                .labValues(labValuesExtraction.extracted)
-                .toxicities(toxicityExtraction.extracted)
-                .intolerances(intoleranceExtraction.extracted)
-                .surgeries(extractSurgeries(subject))
-                .bodyWeights(extractBodyWeights(subject))
-                .vitalFunctions(extractVitalFunctions(subject))
-                .bloodTransfusions(bloodTransfusionsExtraction.extracted)
-                .medications(medicationExtraction.extracted)
-                .build()
+            val record = ClinicalRecord(
+                patientId = patientId,
+                patient = extractPatientDetails(subject, questionnaire),
+                tumor = tumorExtraction.extracted,
+                complications = complicationsExtraction.extracted,
+                clinicalStatus = clinicalStatusExtraction.extracted,
+                oncologicalHistory = oncologicalHistoryExtraction.extracted,
+                priorSecondPrimaries = priorSecondPrimaryExtraction.extracted,
+                priorOtherConditions = priorOtherConditionsExtraction.extracted,
+                priorMolecularTests = priorMolecularTestsExtraction.extracted,
+                labValues = labValuesExtraction.extracted,
+                toxicities = toxicityExtraction.extracted,
+                intolerances = intoleranceExtraction.extracted,
+                surgeries = extractSurgeries(subject),
+                bodyWeights = extractBodyWeights(subject),
+                vitalFunctions = extractVitalFunctions(subject),
+                bloodTransfusions = bloodTransfusionsExtraction.extracted,
+                medications = medicationExtraction.extracted
+            )
 
             val patientEvaluation = listOf(
                 tumorExtraction,
@@ -143,28 +139,28 @@ class ClinicalIngestion(
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {
         val patient: PatientEntry = feed.patientEntry(subject)
-        return ImmutablePatientDetails.builder()
-            .gender(patient.gender)
-            .birthYear(patient.birthYear)
-            .registrationDate(patient.periodStart)
-            .questionnaireDate(questionnaire?.date)
-            .otherMolecularPatientId(questionnaire?.genayaSubjectNumber)
-            .build()
+        return PatientDetails(
+            gender = patient.gender,
+            birthYear = patient.birthYear,
+            registrationDate = patient.periodStart,
+            questionnaireDate = questionnaire?.date,
+            otherMolecularPatientId = questionnaire?.genayaSubjectNumber
+        )
     }
 
     private fun extractSurgeries(subject: String): List<Surgery> {
         return feed.uniqueSurgeryEntries(subject)
-            .map { ImmutableSurgery.builder().endDate(it.periodEnd).status(resolveSurgeryStatus(it.encounterStatus)).build() }
+            .map { Surgery(endDate = it.periodEnd, status = resolveSurgeryStatus(it.encounterStatus)) }
     }
 
     private fun extractBodyWeights(subject: String): List<BodyWeight> {
         return feed.uniqueBodyWeightEntries(subject).map { entry: BodyWeightEntry ->
-            ImmutableBodyWeight.builder()
-                .date(entry.effectiveDateTime)
-                .value(entry.valueQuantityValue)
-                .unit(entry.valueQuantityUnit)
-                .valid(bodyWeightIsValid(entry))
-                .build()
+            BodyWeight(
+                date = entry.effectiveDateTime,
+                value = entry.valueQuantityValue,
+                unit = entry.valueQuantityUnit,
+                valid = bodyWeightIsValid(entry)
+            )
         }
     }
 
@@ -173,16 +169,15 @@ class ClinicalIngestion(
     }
 
     private fun extractVitalFunctions(subject: String): List<VitalFunction> {
-        return feed.vitalFunctionEntries(subject).map { entry: VitalFunctionEntry ->
-            val category = VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal)
-            ImmutableVitalFunction.builder()
-                .date(entry.effectiveDateTime)
-                .category(category)
-                .subcategory(entry.componentCodeDisplay)
-                .value(safeQuantityValue(entry))
-                .unit(entry.quantityUnit)
-                .valid(vitalFunctionIsValid(entry))
-                .build()
+        return feed.vitalFunctionEntries(subject).map { entry ->
+            VitalFunction(
+                date = entry.effectiveDateTime,
+                category = VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal),
+                subcategory = entry.componentCodeDisplay,
+                value = safeQuantityValue(entry),
+                unit = entry.quantityUnit,
+                valid = vitalFunctionIsValid(entry)
+            )
         }
     }
 
@@ -191,15 +186,12 @@ class ClinicalIngestion(
             NON_INVASIVE_BLOOD_PRESSURE, ARTERIAL_BLOOD_PRESSURE -> {
                 safeQuantityValue(entry) in BLOOD_PRESSURE_MIN..BLOOD_PRESSURE_MAX && entry.quantityUnit.lowercase() == BLOOD_PRESSURE_EXPECTED_UNIT
             }
-
             HEART_RATE -> {
                 safeQuantityValue(entry) in HEART_RATE_MIN..HEART_RATE_MAX && entry.quantityUnit.lowercase() == HEART_RATE_EXPECTED_UNIT
             }
-
             SPO2 -> {
                 safeQuantityValue(entry) in SPO2_MIN..SPO2_MAX && entry.quantityUnit.lowercase() == SPO2_EXPECTED_UNIT
             }
-
             else -> {
                 false
             }

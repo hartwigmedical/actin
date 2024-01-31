@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.soc.datamodel
 
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
 
 data class TreatmentCandidate(
     val treatment: Treatment,

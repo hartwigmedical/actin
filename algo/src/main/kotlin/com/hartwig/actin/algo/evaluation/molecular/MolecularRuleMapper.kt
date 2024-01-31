@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.composite.Or
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
@@ -58,21 +58,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneIsActivatedOrAmplifiedCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            Or(listOf(GeneHasActivatingMutation(gene.geneName()), GeneIsAmplified(gene.geneName())))
+            Or(listOf(GeneHasActivatingMutation(gene.geneName), GeneIsAmplified(gene.geneName)))
         }
     }
 
     private fun geneIsInactivatedCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            GeneIsInactivated(gene.geneName())
+            GeneIsInactivated(gene.geneName)
         }
     }
 
     private fun geneHasActivatingMutationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            GeneHasActivatingMutation(gene.geneName())
+            GeneHasActivatingMutation(gene.geneName)
         }
     }
 
@@ -81,28 +81,28 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val input = functionInputResolver().createOneGeneManyProteinImpactsInput(
                 function
             )
-            GeneHasVariantWithProteinImpact(input.geneName(), input.proteinImpacts())
+            GeneHasVariantWithProteinImpact(input.geneName, input.proteinImpacts)
         }
     }
 
     private fun geneHasVariantInAnyCodonsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyCodonsInput(function)
-            GeneHasVariantInCodon(input.geneName(), input.codons())
+            GeneHasVariantInCodon(input.geneName, input.codons)
         }
     }
 
     private fun geneHasVariantInExonCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasVariantInExonRangeOfType(input.geneName(), input.integer(), input.integer(), null)
+            GeneHasVariantInExonRangeOfType(input.geneName, input.integer, input.integer, null)
         }
     }
 
     private fun geneHasVariantInExonRangeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneTwoIntegersInput(function)
-            GeneHasVariantInExonRangeOfType(input.geneName(), input.integer1(), input.integer2(), null)
+            GeneHasVariantInExonRangeOfType(input.geneName, input.integer1, input.integer2, null)
         }
     }
 
@@ -111,49 +111,49 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val input = functionInputResolver().createOneGeneOneIntegerOneVariantTypeInput(
                 function
             )
-            GeneHasVariantInExonRangeOfType(input.geneName(), input.integer(), input.integer(), input.variantType())
+            GeneHasVariantInExonRangeOfType(input.geneName, input.integer, input.integer, input.variantType)
         }
     }
 
     private fun geneHasUTR3LossCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            GeneHasUTR3Loss(gene.geneName())
+            GeneHasUTR3Loss(gene.geneName)
         }
     }
 
     private fun geneIsAmplifiedCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            GeneIsAmplified(gene.geneName())
+            GeneIsAmplified(gene.geneName)
         }
     }
 
     private fun geneIsAmplifiedMinCopiesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneIsAmplifiedMinCopies(input.geneName(), input.integer())
+            GeneIsAmplifiedMinCopies(input.geneName, input.integer)
         }
     }
 
     private fun hasFusionInGeneCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            HasFusionInGene(gene.geneName())
+            HasFusionInGene(gene.geneName)
         }
     }
 
     private fun geneIsWildTypeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            GeneIsWildType(gene.geneName())
+            GeneIsWildType(gene.geneName)
         }
     }
 
     private fun geneHasSpecificExonSkippingCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasSpecificExonSkipping(input.geneName(), input.integer())
+            GeneHasSpecificExonSkipping(input.geneName, input.integer)
         }
     }
 
@@ -179,21 +179,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasCertainTumorMutationalLoadCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createTwoIntegersInput(function)
-            HasTumorMutationalLoadWithinRange(input.integer1(), input.integer2())
+            HasTumorMutationalLoadWithinRange(input.integer1, input.integer2)
         }
     }
 
     private fun hasSpecificHLATypeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val hlaAlleleToFind = functionInputResolver().createOneHlaAlleleInput(function)
-            HasSpecificHLAType(hlaAlleleToFind.allele())
+            HasSpecificHLAType(hlaAlleleToFind.allele)
         }
     }
 
     private fun hasUGT1A1HaplotypeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val haplotypeToFind = functionInputResolver().createOneHaplotypeInput(function)
-            HasUGT1A1Haplotype(haplotypeToFind.haplotype())
+            HasUGT1A1Haplotype(haplotypeToFind.haplotype)
         }
     }
 
@@ -219,14 +219,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun proteinHasExactExpressionByIHCCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(input.string(), input.integer())
+            ProteinHasExactExpressionByIHC(input.string, input.integer)
         }
     }
 
     private fun proteinHasSufficientExpressionByIHCCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(input.string(), input.integer())
+            ProteinHasExactExpressionByIHC(input.string, input.integer)
         }
     }
 
@@ -280,14 +280,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun molecularResultsAreAvailableForGeneCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            MolecularResultsAreAvailableForGene(gene.geneName())
+            MolecularResultsAreAvailableForGene(gene.geneName)
         }
     }
 
     private fun molecularResultsAreAvailableForPromoterOfGeneCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            MolecularResultsAreAvailableForPromoterOfGene(gene.geneName())
+            MolecularResultsAreAvailableForPromoterOfGene(gene.geneName)
         }
     }
 }

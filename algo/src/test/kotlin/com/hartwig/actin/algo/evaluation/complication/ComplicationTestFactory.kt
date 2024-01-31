@@ -1,50 +1,46 @@
 package com.hartwig.actin.algo.evaluation.complication
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalStatus
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.Medication
-import org.apache.logging.log4j.util.Strings
 
 internal object ComplicationTestFactory {
-    fun builder(): ImmutableComplication.Builder {
-        return ImmutableComplication.builder().name(Strings.EMPTY)
+    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    
+    fun complication(name: String = "", categories: Set<String> = emptySet()): Complication {
+        return Complication(name = name, categories = categories, year = null, month = null)
     }
 
     fun yesInputComplication(): Complication {
-        return builder().build()
+        return complication()
     }
 
     fun withComplication(complication: Complication): PatientRecord {
         return withComplications(listOf(complication))
     }
 
-    fun withComplications(complications: List<Complication?>?): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder().from(base).clinical(
-            ImmutableClinicalRecord.builder().from(base.clinical()).complications(complications).clinicalStatus(
-                ImmutableClinicalStatus.builder().hasComplications(complications?.isNotEmpty()).build()
-            ).build()
-        ).build()
+    fun withComplications(complications: List<Complication>?): PatientRecord {
+        return base.copy(
+            clinical = base.clinical.copy(
+                complications = complications,
+                clinicalStatus = ClinicalStatus(hasComplications = complications?.isNotEmpty())
+            )
+        )
     }
 
     fun withMedication(medication: Medication): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder().from(base)
-            .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).medications(listOf(medication)).build()).build()
+        return base.copy(clinical = base.clinical.copy(medications = listOf(medication)))
     }
 
     fun withCnsLesion(lesion: String): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder().from(base).clinical(
-            ImmutableClinicalRecord.builder().from(base.clinical()).tumor(
-                ImmutableTumorDetails.builder().from(base.clinical().tumor()).hasCnsLesions(true).addOtherLesions(lesion).build()
-            ).build()
-        ).build()
+        return base.copy(
+            clinical = base.clinical.copy(
+                tumor = base.clinical.tumor.copy(
+                    hasCnsLesions = true, otherLesions = listOf(lesion)
+                )
+            )
+        )
     }
 }

@@ -20,8 +20,8 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapper
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper
 import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapper
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.input.FunctionInputResolver
+import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.input.FunctionInputResolver
 
 object FunctionCreatorFactory {
 

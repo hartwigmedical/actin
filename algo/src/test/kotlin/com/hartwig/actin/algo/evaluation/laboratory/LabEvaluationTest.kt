@@ -2,39 +2,40 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.clinical.datamodel.LabValue
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class LabEvaluationTest {
     @Test
     fun canEvaluateVersusMinLLN() {
-        val builder = LabTestFactory.builder().refLimitLow(30.0)
-        Assert.assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMinLLN(LabTestFactory.builder().build(), 2.0))
-        Assert.assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMinLLN(builder.value(80.0).build(), 2.0))
-        Assert.assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMinLLN(builder.value(50.0).build(), 2.0))
+        assertThat(LabEvaluation.evaluateVersusMinLLN(LabTestFactory.create(), 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+        val labValue = LabTestFactory.create(value = 80.0, refLimitLow = 30.0)
+        assertThat(LabEvaluation.evaluateVersusMinLLN(labValue, 2.0)).isEqualTo(EvaluationResult.PASS)
+        assertThat(LabEvaluation.evaluateVersusMinLLN(labValue.copy(value = 50.0), 2.0))
+            .isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
     fun canEvaluateVersusMinULN() {
-        val builder = LabTestFactory.builder().refLimitUp(50.0)
-        Assert.assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMinULN(LabTestFactory.builder().build(), 2.0))
-        Assert.assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMinULN(builder.value(40.0).build(), 0.5))
-        Assert.assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMinULN(builder.value(20.0).build(), 0.5))
+        assertThat(LabEvaluation.evaluateVersusMinULN(LabTestFactory.create(), 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+        val labValue = LabTestFactory.create(value = 40.0, refLimitUp = 50.0)
+        assertThat(LabEvaluation.evaluateVersusMinULN(labValue, 0.5)).isEqualTo(EvaluationResult.PASS)
+        assertThat(LabEvaluation.evaluateVersusMinULN(labValue.copy(value = 20.0), 0.5)).isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
     fun canEvaluateVersusMaxULN() {
-        val builder = LabTestFactory.builder().refLimitUp(50.0)
-        Assert.assertEquals(EvaluationResult.UNDETERMINED, LabEvaluation.evaluateVersusMaxULN(LabTestFactory.builder().build(), 2.0))
-        Assert.assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMaxULN(builder.value(70.0).build(), 2.0))
-        Assert.assertEquals(EvaluationResult.FAIL, LabEvaluation.evaluateVersusMaxULN(builder.value(120.0).build(), 2.0))
+        assertThat(LabEvaluation.evaluateVersusMaxULN(LabTestFactory.create(), 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+        val labValue = LabTestFactory.create(value = 70.0, refLimitUp = 50.0)
+        assertThat(LabEvaluation.evaluateVersusMaxULN(labValue, 2.0)).isEqualTo(EvaluationResult.PASS)
+        assertThat(LabEvaluation.evaluateVersusMaxULN(labValue.copy(value = 120.0), 2.0)).isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
     fun canUseOverridesForRefLimitUp() {
         val firstCode = LabEvaluation.REF_LIMIT_UP_OVERRIDES.keys.iterator().next()
         val overrideRefLimitUp: Double = LabEvaluation.REF_LIMIT_UP_OVERRIDES[firstCode]!!
-        val value: LabValue = LabTestFactory.builder().code(firstCode).value(1.8 * overrideRefLimitUp).build()
-        Assert.assertEquals(EvaluationResult.PASS, LabEvaluation.evaluateVersusMaxULN(value, 2.0))
+        val value: LabValue = LabTestFactory.create(value = 1.8 * overrideRefLimitUp).copy(code = firstCode)
+        assertThat(LabEvaluation.evaluateVersusMaxULN(value, 2.0)).isEqualTo(EvaluationResult.PASS)
     }
 }

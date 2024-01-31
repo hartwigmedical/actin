@@ -4,8 +4,8 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withOncologicalHistory
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
@@ -33,11 +33,23 @@ class HasHadCytoreductiveSurgeryTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(createPatientRecord("HIPEC", setOf(TreatmentCategory.CHEMOTHERAPY))))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(createPatientRecord("Cytoreductive surgery", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)))
+            function.evaluate(
+                createPatientRecord(
+                    "Cytoreductive surgery",
+                    setOf(TreatmentCategory.SURGERY),
+                    setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
+                )
+            )
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(createPatientRecord("Colorectal cancer cytoreduction", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)))
+            function.evaluate(
+                createPatientRecord(
+                    "Colorectal cancer cytoreduction",
+                    setOf(TreatmentCategory.SURGERY),
+                    setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
+                )
+            )
         )
 
     }
@@ -51,26 +63,35 @@ class HasHadCytoreductiveSurgeryTest {
     fun `Should return undetermined if debulking surgery is performed`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(createPatientRecord("Debulking", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.DEBULKING_SURGERY)))
+            function.evaluate(
+                createPatientRecord(
+                    "Debulking",
+                    setOf(TreatmentCategory.SURGERY),
+                    setOf(OtherTreatmentType.DEBULKING_SURGERY)
+                )
+            )
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(createPatientRecord("complete debulking", setOf(TreatmentCategory.SURGERY), setOf(OtherTreatmentType.DEBULKING_SURGERY)))
+            function.evaluate(
+                createPatientRecord(
+                    "complete debulking",
+                    setOf(TreatmentCategory.SURGERY),
+                    setOf(OtherTreatmentType.DEBULKING_SURGERY)
+                )
+            )
         )
     }
 
-    private fun createPatientRecord(name: String, categories: Set<TreatmentCategory>, types: Set<OtherTreatmentType> = emptySet()): PatientRecord {
+    private fun createPatientRecord(
+        name: String,
+        categories: Set<TreatmentCategory>,
+        types: Set<OtherTreatmentType> = emptySet()
+    ): PatientRecord {
         return withOncologicalHistory(
             listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = setOf(
-                        treatment(
-                            name = name,
-                            isSystemic = false,
-                            categories = categories,
-                            types = types
-                        )
-                    )
+                treatmentHistoryEntry(
+                    treatments = setOf(treatment(name = name, isSystemic = false, categories = categories, types = types))
                 )
             )
         )

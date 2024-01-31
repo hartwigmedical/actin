@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -58,15 +58,15 @@ class EligibilityFactoryTest {
     fun canGenerateSimpleEligibilityFunction() {
         val factory = TestEligibilityFactoryFactory.createTestEligibilityFactory()
         val function = factory.generateEligibilityFunction("HAS_INR_ULN_OF_AT_MOST_X[1]")
-        assertThat(function.rule()).isEqualTo(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X)
-        assertThat(function.parameters()).hasSize(1)
-        assertThat(function.parameters()).containsExactly("1")
+        assertThat(function.rule).isEqualTo(EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X)
+        assertThat(function.parameters).hasSize(1)
+        assertThat(function.parameters).containsExactly("1")
 
         val notFunction = factory.generateEligibilityFunction("NOT(HAS_INR_ULN_OF_AT_MOST_X[1])")
-        assertThat(notFunction.rule()).isEqualTo(EligibilityRule.NOT)
-        assertThat(notFunction.parameters()).hasSize(1)
+        assertThat(notFunction.rule).isEqualTo(EligibilityRule.NOT)
+        assertThat(notFunction.parameters).hasSize(1)
 
-        val subFunction = find(notFunction.parameters(), EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X)
+        val subFunction = find(notFunction.parameters, EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X)
         assertThat(subFunction).isEqualTo(function)
     }
 
@@ -75,36 +75,36 @@ class EligibilityFactoryTest {
         val factory = TestEligibilityFactoryFactory.createTestEligibilityFactory()
         val criterion = "OR(IS_PREGNANT, AND(OR(HAS_INR_ULN_OF_AT_MOST_X[1.5], HAS_PT_ULN_OF_AT_MOST_X[2]), HAS_APTT_ULN_OF_AT_MOST_X[3]))"
         val orRoot = factory.generateEligibilityFunction(criterion)
-        assertThat(orRoot.rule()).isEqualTo(EligibilityRule.OR)
-        assertThat(orRoot.parameters()).hasSize(2)
+        assertThat(orRoot.rule).isEqualTo(EligibilityRule.OR)
+        assertThat(orRoot.parameters).hasSize(2)
 
-        val orRootInput1 = find(orRoot.parameters(), EligibilityRule.IS_PREGNANT)
-        assertThat(orRootInput1.parameters()).hasSize(0)
+        val orRootInput1 = find(orRoot.parameters, EligibilityRule.IS_PREGNANT)
+        assertThat(orRootInput1.parameters).hasSize(0)
 
-        val orRootInput2 = find(orRoot.parameters(), EligibilityRule.AND)
-        assertThat(orRootInput2.parameters()).hasSize(2)
+        val orRootInput2 = find(orRoot.parameters, EligibilityRule.AND)
+        assertThat(orRootInput2.parameters).hasSize(2)
 
-        val andInput1 = find(orRootInput2.parameters(), EligibilityRule.OR)
-        assertThat(andInput1.parameters()).hasSize(2)
+        val andInput1 = find(orRootInput2.parameters, EligibilityRule.OR)
+        assertThat(andInput1.parameters).hasSize(2)
 
-        val andInput2 = find(orRootInput2.parameters(), EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X)
-        assertThat(andInput2.parameters()).hasSize(1)
-        assertThat(andInput2.parameters()).containsExactly("3")
+        val andInput2 = find(orRootInput2.parameters, EligibilityRule.HAS_APTT_ULN_OF_AT_MOST_X)
+        assertThat(andInput2.parameters).hasSize(1)
+        assertThat(andInput2.parameters).containsExactly("3")
 
-        val secondOrInput1 = find(andInput1.parameters(), EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X)
-        assertThat(secondOrInput1.parameters()).hasSize(1)
-        assertThat(secondOrInput1.parameters()).containsExactly("1.5")
+        val secondOrInput1 = find(andInput1.parameters, EligibilityRule.HAS_INR_ULN_OF_AT_MOST_X)
+        assertThat(secondOrInput1.parameters).hasSize(1)
+        assertThat(secondOrInput1.parameters).containsExactly("1.5")
 
-        val secondOrInput2 = find(andInput1.parameters(), EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X)
-        assertThat(secondOrInput2.parameters()).hasSize(1)
-        assertThat(secondOrInput2.parameters()).containsExactly("2")
+        val secondOrInput2 = find(andInput1.parameters, EligibilityRule.HAS_PT_ULN_OF_AT_MOST_X)
+        assertThat(secondOrInput2.parameters).hasSize(1)
+        assertThat(secondOrInput2.parameters).containsExactly("2")
     }
 
     companion object {
         private fun find(functions: List<Any>, rule: EligibilityRule): EligibilityFunction {
             for (function in functions) {
                 val eligibilityFunction = function as EligibilityFunction
-                if (eligibilityFunction.rule() == rule) {
+                if (eligibilityFunction.rule == rule) {
                     return eligibilityFunction
                 }
             }

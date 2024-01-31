@@ -8,99 +8,100 @@ import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import org.junit.Test
 
+private const val MATCHING_CODON = 100
+private const val OTHER_CODON = 300
+private const val TARGET_GENE = "gene A"
+
 class GeneHasVariantInCodonTest {
+    private val function = GeneHasVariantInCodon(TARGET_GENE, Lists.newArrayList("A100", "B200"))
+    
     @Test
-    fun canEvaluate() {
-        val function = GeneHasVariantInCodon("gene A", Lists.newArrayList("A100", "B200"))
-
-        // gene not present
+    fun `Should fail when gene not present`() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+    }
 
-        // no codons configured
+    @Test
+    fun `Should fail when no codons configured`() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(isReportable = true, gene = TARGET_GENE))
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail when no codons match`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .isReportable(true)
-                        .gene("gene A")
-                        .build()
-                )
-            )
-        )
-
-        // incorrect codon
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(300).build())
-                        .build()
-                )
-            )
-        )
-
-        // correct codon range
-        assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .clonalLikelihood(1.0)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
-                        .build()
-                )
-            )
-        )
-
-        // correct codon range, but not reportable
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(false)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
-                        .build()
-                )
-            )
-        )
-
-        // correct codon range, but subclonal
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .clonalLikelihood(0.3)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
-                        .build()
-                )
-            )
-        )
-
-        // correct codon range, but not on canonical transcript
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.builder()
-                        .gene("gene A")
-                        .isReportable(true)
-                        .canonicalImpact(TestTranscriptImpactFactory.builder().affectedCodon(300).build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().affectedCodon(300).build())
-                        .addOtherImpacts(TestTranscriptImpactFactory.builder().affectedCodon(100).build())
-                        .build()
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE, isReportable = true, canonicalImpact = impactWithCodon(OTHER_CODON)
+                    )
                 )
             )
         )
     }
+
+    @Test
+    fun `Should pass when reportable codon matches`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE, isReportable = true, clonalLikelihood = 1.0, canonicalImpact = impactWithCodon(MATCHING_CODON)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when codon matches but not reportable`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE, isReportable = false, canonicalImpact = impactWithCodon(MATCHING_CODON)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when reportable codon matches but subclonal`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE, isReportable = true, clonalLikelihood = 0.3, canonicalImpact = impactWithCodon(MATCHING_CODON)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when reportable codon matches but not on canonical transcript`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        canonicalImpact = impactWithCodon(OTHER_CODON),
+                        otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON))
+                    )
+                )
+            )
+        )
+    }
+
+    private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
 }

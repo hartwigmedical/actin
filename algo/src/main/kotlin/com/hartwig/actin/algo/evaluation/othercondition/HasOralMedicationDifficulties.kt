@@ -8,11 +8,11 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 
 class HasOralMedicationDifficulties internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (complication in record.clinical().complications() ?: emptyList()) {
-            if (stringCaseInsensitivelyMatchesQueryCollection(complication.name(), COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES)) {
+        for (complication in record.clinical.complications ?: emptyList()) {
+            if (stringCaseInsensitivelyMatchesQueryCollection(complication.name, COMPLICATIONS_CAUSING_SWALLOW_DIFFICULTIES)) {
                 return EvaluationFactory.pass(
-                    "Patient has potential oral medication difficulties due to " + complication.name(),
-                    "Potential oral medication difficulties: " + complication.name()
+                    "Patient has potential oral medication difficulties due to " + complication.name,
+                    "Potential oral medication difficulties: " + complication.name
                 )
             }
         }

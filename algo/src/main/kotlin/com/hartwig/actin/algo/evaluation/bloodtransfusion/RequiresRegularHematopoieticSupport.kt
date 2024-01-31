@@ -14,8 +14,8 @@ class RequiresRegularHematopoieticSupport(private val atcTree: AtcTree, private 
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
-        for (transfusion in record.clinical().bloodTransfusions()) {
-            if (transfusion.date().isAfter(minDate) && transfusion.date().isBefore(maxDate)) {
+        for (transfusion in record.clinical.bloodTransfusions) {
+            if (transfusion.date.isAfter(minDate) && transfusion.date.isBefore(maxDate)) {
                 return EvaluationFactory.pass(
                     "Patient has had blood transfusion $inBetweenRange",
                     "Has received recent hematopoietic support"
@@ -23,10 +23,10 @@ class RequiresRegularHematopoieticSupport(private val atcTree: AtcTree, private 
             }
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)
-        val medications = record.clinical().medications()
+        val medications = record.clinical.medications
             .filter { activeBetweenDates(it) }
-            .filter { it.atc()?.chemicalSubGroup() in resolvedCategories }
-            .map { it.name() }
+            .filter { it.atc?.chemicalSubGroup in resolvedCategories }
+            .map { it.name }
         return if (medications.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Patient has had medications " + concat(medications) + " " + inBetweenRange,
@@ -40,8 +40,8 @@ class RequiresRegularHematopoieticSupport(private val atcTree: AtcTree, private 
     }
 
     private fun activeBetweenDates(medication: Medication): Boolean {
-        val start = medication.startDate()
-        val stop = medication.stopDate()
+        val start = medication.startDate
+        val stop = medication.stopDate
         val startedBetweenDates = start != null && start.isAfter(minDate) && start.isBefore(maxDate)
         val stoppedBetweenDates = stop != null && stop.isAfter(minDate) && stop.isBefore(maxDate)
         val runningBetweenDates = start != null && start.isBefore(minDate) && (stop == null || stop.isAfter(minDate))

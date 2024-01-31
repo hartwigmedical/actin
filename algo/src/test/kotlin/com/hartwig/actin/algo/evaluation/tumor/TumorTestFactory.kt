@@ -1,102 +1,81 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.google.common.collect.Sets
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.ImmutableMolecularRecord
-import com.hartwig.actin.molecular.datamodel.characteristics.ImmutableMolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ImmutableMolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 
 internal object TumorTestFactory {
-    fun builder(): ImmutableTumorDetails.Builder {
-        return ImmutableTumorDetails.builder()
-    }
-
+    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    
     fun withDoids(vararg doids: String): PatientRecord {
-        return withDoids(Sets.newHashSet(*doids))
+        return withDoids(setOf(*doids))
     }
 
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder()
-            .from(base)
-            .clinical(ImmutableClinicalRecord.builder().from(base.clinical()).tumor(builder().doids(doids).build()).build())
-            .molecular(
-                ImmutableMolecularRecord.builder()
-                    .from(base.molecular())
-                    .characteristics(
-                        ImmutableMolecularCharacteristics.builder()
-                            .from(base.molecular().characteristics())
-                            .ploidy(2.0)
-                            .build()
+        return base.copy(
+            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids)),
+            molecular = base.molecular.copy(
+                characteristics = base.molecular.characteristics.copy(ploidy = 2.0),
+                drivers = base.molecular.drivers.copy(
+                    copyNumbers = setOf(
+                        TestCopyNumberFactory.createMinimal().copy(
+                            isReportable = true,
+                            gene = amplifiedGene,
+                            geneRole = GeneRole.ONCO,
+                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                            type = CopyNumberType.FULL_GAIN,
+                            minCopies = 20,
+                            maxCopies = 20
+                        )
                     )
-                    .drivers(
-                        ImmutableMolecularDrivers.builder()
-                            .from(base.molecular().drivers())
-                            .addCopyNumbers(
-                                TestCopyNumberFactory.builder()
-                                    .isReportable(true)
-                                    .gene(amplifiedGene)
-                                    .geneRole(GeneRole.ONCO)
-                                    .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION)
-                                    .type(CopyNumberType.FULL_GAIN)
-                                    .minCopies(20)
-                                    .maxCopies(20)
-                                    .build()
-                            )
-                            .build()
-                    )
-                    .build()
+                )
             )
-            .build()
+        )
+    }
+
+    fun withDoidAndType(doid: String, primaryTumorType: String?): PatientRecord {
+        return withTumorDetails(TumorDetails(doids = setOf(doid), primaryTumorType = primaryTumorType))
     }
 
     fun withDoidAndSubLocation(doid: String, primaryTumorSubLocation: String?): PatientRecord {
-        return withTumorDetails(builder().addDoids(doid).primaryTumorSubLocation(primaryTumorSubLocation).build())
+        return withTumorDetails(TumorDetails(doids = setOf(doid), primaryTumorSubLocation = primaryTumorSubLocation))
     }
 
     fun withDoidAndDetails(doid: String, extraDetails: String): PatientRecord {
-        return withTumorDetails(builder().addDoids(doid).primaryTumorExtraDetails(extraDetails).build())
+        return withTumorDetails(TumorDetails(doids = setOf(doid), primaryTumorExtraDetails = extraDetails))
     }
 
     fun withDoids(doids: Set<String>?): PatientRecord {
-        return withTumorDetails(builder().doids(doids).build())
+        return withTumorDetails(TumorDetails(doids = doids))
     }
 
     fun withTumorStage(stage: TumorStage?): PatientRecord {
-        return withTumorDetails(builder().stage(stage).build())
+        return withTumorDetails(TumorDetails(stage = stage))
     }
 
     fun withTumorStageAndDoid(stage: TumorStage?, doid: String?): PatientRecord {
-        var doids: Set<String>? = null
-        if (doid != null) {
-            doids = Sets.newHashSet(doid)
-        }
-        return withTumorDetails(builder().stage(stage).doids(doids).build())
+        val doids = doid?.let(::setOf)
+        return withTumorDetails(TumorDetails(stage = stage, doids = doids))
     }
 
     fun withMeasurableDisease(hasMeasurableDisease: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasMeasurableDisease(hasMeasurableDisease).build())
+        return withTumorDetails(TumorDetails(hasMeasurableDisease = hasMeasurableDisease))
     }
 
     fun withMeasurableDiseaseAndDoid(hasMeasurableDisease: Boolean?, doid: String): PatientRecord {
-        return withTumorDetails(builder().hasMeasurableDisease(hasMeasurableDisease).addDoids(doid).build())
+        return withTumorDetails(TumorDetails(hasMeasurableDisease = hasMeasurableDisease, doids = setOf(doid)))
     }
 
     fun withBrainAndCnsLesions(hasBrainLesions: Boolean?, hasCnsLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasBrainLesions(hasBrainLesions).hasCnsLesions(hasCnsLesions).build())
+        return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions, hasCnsLesions = hasCnsLesions))
     }
 
     fun withActiveBrainAndCnsLesionStatus(
@@ -104,84 +83,68 @@ internal object TumorTestFactory {
         hasActiveBrainLesions: Boolean?, hasCnsLesions: Boolean?, hasActiveCnsLesions: Boolean?
     ): PatientRecord {
         return withTumorDetails(
-            builder().hasBrainLesions(hasBrainLesions)
-                .hasActiveBrainLesions(hasActiveBrainLesions)
-                .hasCnsLesions(hasCnsLesions)
-                .hasActiveCnsLesions(hasActiveCnsLesions)
-                .build()
+            TumorDetails(
+                hasBrainLesions = hasBrainLesions,
+                hasActiveBrainLesions = hasActiveBrainLesions,
+                hasCnsLesions = hasCnsLesions,
+                hasActiveCnsLesions = hasActiveCnsLesions
+            )
         )
     }
 
     fun withBrainLesions(hasBrainLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasBrainLesions(hasBrainLesions).build())
+        return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions))
     }
 
     fun withBrainLesionStatus(hasBrainLesions: Boolean?, hasActiveBrainLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasBrainLesions(hasBrainLesions).hasActiveBrainLesions(hasActiveBrainLesions).build())
+        return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions, hasActiveBrainLesions = hasActiveBrainLesions))
     }
 
     fun withCnsLesions(hasCnsLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasCnsLesions(hasCnsLesions).build())
+        return withTumorDetails(TumorDetails(hasCnsLesions = hasCnsLesions))
     }
 
     fun withBoneLesions(hasBoneLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasBoneLesions(hasBoneLesions).build())
+        return withTumorDetails(TumorDetails(hasBoneLesions = hasBoneLesions))
     }
 
     fun withBoneAndLiverLesions(hasBoneLesions: Boolean?, hasLiverLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasBoneLesions(hasBoneLesions).hasLiverLesions(hasLiverLesions).build())
+        return withTumorDetails(TumorDetails(hasBoneLesions = hasBoneLesions, hasLiverLesions = hasLiverLesions))
     }
 
     fun withBoneAndOtherLesions(hasBoneLesions: Boolean?, otherLesions: List<String>): PatientRecord {
-        return withTumorDetails(builder().hasBoneLesions(hasBoneLesions).otherLesions(otherLesions).build())
+        return withTumorDetails(TumorDetails(hasBoneLesions = hasBoneLesions, otherLesions = otherLesions))
     }
 
     fun withLiverLesions(hasLiverLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasLiverLesions(hasLiverLesions).build())
+        return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions))
     }
 
     fun withLungLesions(hasLungLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasLungLesions(hasLungLesions).build())
+        return withTumorDetails(TumorDetails(hasLungLesions = hasLungLesions))
     }
 
     fun withLymphNodeLesions(hasLymphNodeLesions: Boolean?): PatientRecord {
-        return withTumorDetails(builder().hasLymphNodeLesions(hasLymphNodeLesions).build())
+        return withTumorDetails(TumorDetails(hasLymphNodeLesions = hasLymphNodeLesions))
     }
 
     fun withOtherLesions(otherLesions: List<String>?): PatientRecord {
-        return withTumorDetails(builder().otherLesions(otherLesions).build())
+        return withTumorDetails(TumorDetails(otherLesions = otherLesions))
     }
 
     fun withTumorDetails(tumor: TumorDetails): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .tumor(tumor)
-                    .build()
-            )
-            .build()
+        return base.copy(clinical = base.clinical.copy(tumor = tumor))
     }
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return ImmutablePatientRecord.builder()
-            .from(base)
-            .molecular(ImmutableMolecularRecord.builder().from(base.molecular()).type(type).build())
-            .build()
+        return base.copy(molecular = base.molecular.copy(type = type))
     }
 
     fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<PriorMolecularTest>, doids: Set<String>?): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .tumor(builder().doids(doids).build())
-                    .priorMolecularTests(priorMolecularTests)
-                    .build()
+        return base.copy(
+            clinical = base.clinical.copy(
+                tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests
             )
-            .build()
+        )
     }
 }

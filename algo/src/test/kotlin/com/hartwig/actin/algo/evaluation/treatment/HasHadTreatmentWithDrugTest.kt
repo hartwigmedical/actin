@@ -2,15 +2,14 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatmentNoDrugs
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatmentNoDrugs
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
-
 
 class HasHadTreatmentWithDrugTest {
    
@@ -78,8 +77,8 @@ class HasHadTreatmentWithDrugTest {
     companion object {
         private const val MATCHING_DRUG_NAME = "match"
         private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY
-        private val FUNCTION = HasHadTreatmentWithDrug(setOf(
-            ImmutableDrug.builder().name(MATCHING_DRUG_NAME).category(TREATMENT_CATEGORY).build()
-        ))
+        private val FUNCTION = HasHadTreatmentWithDrug(
+            setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet()))
+        )
     }
 }

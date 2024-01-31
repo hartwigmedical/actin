@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.calendar
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutablePatientDetails
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import org.junit.Assert
 import org.junit.Test
@@ -21,10 +19,7 @@ class HistoricDateProviderTest {
     companion object {
         private fun withRegistrationDate(date: LocalDate): ClinicalRecord {
             val base = TestClinicalFactory.createMinimalTestClinicalRecord()
-            return ImmutableClinicalRecord.builder()
-                .from(base)
-                .patient(ImmutablePatientDetails.builder().from(base.patient()).registrationDate(date).build())
-                .build()
+            return base.copy(patient = base.patient.copy(registrationDate = date))
         }
     }
 }

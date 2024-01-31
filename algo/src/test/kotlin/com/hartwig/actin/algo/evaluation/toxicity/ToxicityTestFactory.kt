@@ -1,49 +1,35 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutableComplication
-import com.hartwig.actin.clinical.datamodel.ImmutableIntolerance
-import com.hartwig.actin.clinical.datamodel.ImmutableToxicity
 import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import org.apache.logging.log4j.util.Strings
 import java.time.LocalDate
 
 internal object ToxicityTestFactory {
+    val base = TestDataFactory.createMinimalTestPatientRecord()
+    
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .toxicities(toxicities)
-                    .build()
-            )
-            .build()
+        return base.copy(clinical = base.clinical.copy(toxicities = toxicities))
     }
 
     fun withToxicityThatIsAlsoComplication(toxicity: Toxicity): PatientRecord {
-        val complication: Complication? = ImmutableComplication.builder().name(toxicity.name()).build()
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .toxicities(listOf(toxicity))
-                    .complications(listOf(complication))
-                    .build()
-            )
-            .build()
+        val complication = Complication(name = toxicity.name, categories = emptySet(), year = null, month = null)
+        return base.copy(clinical = base.clinical.copy(toxicities = listOf(toxicity), complications = listOf(complication)))
     }
 
-    fun toxicity(): ImmutableToxicity.Builder {
-        return ImmutableToxicity.builder().name(Strings.EMPTY).evaluatedDate(LocalDate.of(2020, 1, 1)).source(ToxicitySource.EHR)
+    fun toxicity(
+        name: String = "", source: ToxicitySource, grade: Int? = null, evaluatedDate: LocalDate = LocalDate.of(2010, 1, 1)
+    ): Toxicity {
+        return Toxicity(
+            name = name,
+            categories = emptySet(),
+            evaluatedDate = evaluatedDate,
+            source = source,
+            grade = grade
+        )
     }
 
     fun withIntolerance(intolerance: Intolerance): PatientRecord {
@@ -51,24 +37,19 @@ internal object ToxicityTestFactory {
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return ImmutablePatientRecord.builder()
-            .from(TestDataFactory.createMinimalTestPatientRecord())
-            .clinical(
-                ImmutableClinicalRecord.builder()
-                    .from(TestClinicalFactory.createMinimalTestClinicalRecord())
-                    .intolerances(intolerances)
-                    .build()
-            )
-            .build()
+        return base.copy(clinical = base.clinical.copy(intolerances = intolerances))
     }
 
-    fun intolerance(): ImmutableIntolerance.Builder {
-        return ImmutableIntolerance.builder()
-            .name("")
-            .category("")
-            .type("")
-            .clinicalStatus("")
-            .verificationStatus("")
-            .criticality("")
+    fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", doids: Set<String> = emptySet()): Intolerance {
+        return Intolerance(
+            name = name,
+            doids = doids,
+            category = category,
+            subcategories = emptySet(),
+            type = "",
+            clinicalStatus = clinicalStatus,
+            verificationStatus = "",
+            criticality = ""
+        )
     }
 }

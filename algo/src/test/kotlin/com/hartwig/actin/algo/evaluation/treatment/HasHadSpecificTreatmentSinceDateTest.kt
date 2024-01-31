@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrug
-import com.hartwig.actin.clinical.datamodel.treatment.ImmutableDrugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
@@ -70,10 +71,9 @@ class HasHadSpecificTreatmentSinceDateTest {
     }
 
     companion object {
-        private val TREATMENT_QUERY = ImmutableDrugTreatment.builder()
-            .name("treatment")
-            .addDrugs(ImmutableDrug.builder().name("Chemo drug").category(TreatmentCategory.CHEMOTHERAPY).build())
-            .build()
+        private val TREATMENT_QUERY = DrugTreatment(
+            name = "treatment", drugs = setOf(Drug(name = "Chemo drug", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
+        )
 
         private val TARGET_DATE: LocalDate = LocalDate.now().minusYears(1)
         private val RECENT_DATE: LocalDate = LocalDate.now().minusMonths(4)
