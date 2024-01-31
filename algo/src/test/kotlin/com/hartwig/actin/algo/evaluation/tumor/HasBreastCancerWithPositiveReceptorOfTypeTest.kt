@@ -24,7 +24,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     }
 
     @Test
-    fun `Should evaluate to undetermiend if no receptor info is present in doids or prior molecular tests`() {
+    fun `Should evaluate to undetermined if no receptor info is present in doids or prior molecular tests`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
@@ -36,7 +36,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     }
 
     @Test
-    fun `Should evaluate to undetermiend if IHC data and DOIDS are inconsistent`() {
+    fun `Should evaluate to undetermined if IHC data and DOIDS are inconsistent`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
@@ -72,7 +72,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     }
 
     @Test
-    fun `Should fail if target receptor type is negative`() {
+    fun `Should fail if target receptor type is negative with data source scoreText from prior molecular tests`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
@@ -83,9 +83,38 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         )
     }
 
+    @Test
+    fun `Should fail if target receptor type is negative with data source scoreValue from prior molecular tests`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                TumorTestFactory.withPriorMolecularTestsAndDoids(
+                    listOf(createPriorMolecularTest("PR", scoreValue = 0.0, scoreValueUnit = "%")),
+                    setOf(DoidConstants.BREAST_CANCER_DOID)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass if target receptor type is positive with data source scoreValue from prior molecular tests`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, "HER2").evaluate(
+                TumorTestFactory.withPriorMolecularTestsAndDoids(
+                    listOf(createPriorMolecularTest(item = "HER2", scoreValue = 3.0, scoreValueUnit = "+")),
+                    setOf(DoidConstants.BREAST_CANCER_DOID)
+                )
+            )
+        )
+    }
+
     companion object {
-        private fun createPriorMolecularTest(item: String, score: String): PriorMolecularTest {
-            return PriorMolecularTest(test = "IHC", item = item, scoreText = score, impliesPotentialIndeterminateStatus = false)
+        private fun createPriorMolecularTest(
+            item: String, score: String = "Score", scoreValue: Double = 50.0, scoreValueUnit: String = "Unit"
+        ): PriorMolecularTest {
+            return PriorMolecularTest(
+                test = "IHC", item = item, scoreText = score, scoreValue = scoreValue,
+                scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
+            )
         }
     }
 }

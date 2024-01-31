@@ -15,7 +15,9 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
         val targetPriorMolecularTest = record.clinical.priorMolecularTests.filter { it.item == receptorType }
         val targetPriorMolecularTestIsPositive = targetPriorMolecularTest.any { it.scoreText == "Positive" }
+                || positiveBasedOnScoreValue(record, receptorType)
         val targetPriorMolecularTestIsNegative = targetPriorMolecularTest.any { it.scoreText == "Negative" }
+                || negativeBasedOnScoreValue(record, receptorType)
         val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
         val targetReceptorNegativeInDoids = expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
 
@@ -58,6 +60,25 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
             "PR" to DoidConstants.PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID,
             "HER2" to DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID
         )
-    }
 
+        fun negativeBasedOnScoreValue(record: PatientRecord, molecularTest: String): Boolean {
+            val targetTest = record.clinical.priorMolecularTests.filter { it.item == molecularTest }
+
+            return if (targetTest.any { it.item == "PR" || it.item == "ER" }) {
+                targetTest.any { it.scoreValue?.toInt() == 0 && it.scoreValueUnit == "%" }
+            } else if (targetTest.any { it.item == "HER2" }) {
+                targetTest.any { it.scoreValue?.toInt() == 0 && it.scoreValueUnit == "+" }
+            } else false
+        }
+
+        fun positiveBasedOnScoreValue(record: PatientRecord, molecularTest: String): Boolean {
+            val targetTest = record.clinical.priorMolecularTests.filter { it.item == molecularTest }
+
+            return if (targetTest.any { it.item == "PR" || it.item == "ER" }) {
+                targetTest.any { it.scoreValue?.toInt() == 100 && it.scoreValueUnit == "%" }
+            } else if (targetTest.any { it.item == "HER2" }) {
+                targetTest.any { it.scoreValue?.toInt() == 3 && it.scoreValueUnit == "+" }
+            } else false
+        }
+    }
 }
