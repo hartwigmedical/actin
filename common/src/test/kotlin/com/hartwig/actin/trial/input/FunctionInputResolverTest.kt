@@ -24,6 +24,7 @@ import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
+import com.hartwig.actin.trial.input.single.OneReceptorType
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
@@ -453,6 +454,17 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("doid 1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("term 2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("term 1", "term 2")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one receptor type input`() {
+        val rule = firstOfType(FunctionInput.ONE_RECEPTOR_TYPE)
+        val valid = create(rule, listOf("ER"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createOneReceptorTypeInput(valid)).isEqualTo(OneReceptorType("ER"))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("ER", "something else")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a receptor")))!!).isFalse
     }
 
     @Test

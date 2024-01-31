@@ -30,6 +30,7 @@ import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
+import com.hartwig.actin.trial.input.single.OneReceptorType
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
@@ -224,6 +225,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_DOID_TERM -> {
                     createOneDoidTermInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_RECEPTOR_TYPE -> {
+                    createOneReceptorTypeInput(function)
                     return true
                 }
 
@@ -512,6 +518,17 @@ class FunctionInputResolver(
             throw IllegalStateException("Not a valid DOID term: $param")
         }
         return param
+    }
+
+    fun createOneReceptorTypeInput(function: EligibilityFunction): OneReceptorType {
+        assertParamConfig(function, FunctionInput.ONE_RECEPTOR_TYPE, 1)
+
+        val receptorType = function.parameters.first() as String
+        val allowedReceptors = setOf("ER", "PR", "HER2")
+        if (!allowedReceptors.contains(receptorType)) {
+            throw IllegalArgumentException("Not an allowed receptor type: $receptorType")
+        }
+        return OneReceptorType(receptorType)
     }
 
     fun createManyIntentsInput(function: EligibilityFunction): ManyIntents {
