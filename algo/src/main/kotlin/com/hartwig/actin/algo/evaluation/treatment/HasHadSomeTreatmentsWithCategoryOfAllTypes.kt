@@ -16,29 +16,31 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical().oncologicalHistory(), category) {
             types.all { type -> it.isOfType(type) == true }
         }
-        val typesList = Format.concatItems(types)
+        val typesList = Format.concatItemsWithAnd(types)
+        val baseMessage = "received at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"
+
         return when {
             treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
-                EvaluationFactory.pass("Has received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
+                EvaluationFactory.pass("Has $baseMessage")
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches >= minTreatmentLines -> {
                 EvaluationFactory.undetermined(
-                    "Can't determine whether patient has received at least $minTreatmentLines line(s) of $typesList ${category.display()}",
-                    "Undetermined if received at least $minTreatmentLines line(s) of $typesList ${category.display()}"
+                    "Can't determine whether patient has $baseMessage",
+                    "Undetermined if $baseMessage"
                 )
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches
                     >= minTreatmentLines -> {
                 EvaluationFactory.undetermined(
-                    "Patient may have received at least $minTreatmentLines line(s) of  ${category.display()} due to trial participation",
+                    "Patient may have received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation",
                     "Trial medication in history - undetermined if received at least $minTreatmentLines line(s) of ${category.display()}"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
+                EvaluationFactory.fail("Has not $baseMessage")
             }
         }
     }

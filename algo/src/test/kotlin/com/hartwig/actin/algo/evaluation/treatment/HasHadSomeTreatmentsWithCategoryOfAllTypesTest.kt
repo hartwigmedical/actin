@@ -11,7 +11,7 @@ import org.junit.Test
 class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
 
     @Test
-    fun `Should pass when treatment history contains HER2 ADC`() {
+    fun `Should pass when treatment history contains treatments of all requested types`() {
         val treatmentHistoryEntry = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
@@ -46,7 +46,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     }
 
     @Test
-    fun `Should fail when wrong category`() {
+    fun `Should fail when treatment history contains only treatments of the wrong category`() {
         val treatmentHistoryEntry = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
@@ -66,7 +66,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     }
 
     @Test
-    fun `Should fail for correct category but wrong type`() {
+    fun `Should fail when treatment history contains treatments of the correct category but of the wrong type`() {
         val treatmentHistoryEntry = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
@@ -86,7 +86,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     }
 
     @Test
-    fun `Should fail for correct category and only part of correct types`() {
+    fun `Should fail when treatment history contains treatments of the correct category but not all treatments are of the requested types`() {
         val treatmentHistoryEntry = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
@@ -106,7 +106,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     }
 
     @Test
-    fun `Should return fail when treatments with correct category and no type`() {
+    fun `Should return fail treatment history contains treatments of the correct category but without DrugType specified`() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(
                 TreatmentTestFactory.drugTreatment(
