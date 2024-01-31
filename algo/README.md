@@ -400,11 +400,11 @@ _Tumor markers_
 
 _Urine measurements_
 
-| Rule                                                         | When does a patient pass evaluation? | Note |
-|--------------------------------------------------------------|--------------------------------------|------|
-| HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X                     | Total protein in urine (TE_U) => X.  |      |
-| HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X                 | In g/24h. T.B.D                      |      |
-| HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X | Currently resolves to `UNDETERMINED` |      |
+| Rule                                                         | When does a patient pass evaluation?       | Note |
+|--------------------------------------------------------------|--------------------------------------------|------|
+| HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X                     | Total protein in urine (TE_U) in g/L => X. |      |
+| HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X                 | In g/24h. T.B.D                            |      |
+| HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X | Currently resolves to `UNDETERMINED`       |      |
 
 _Other_
 
