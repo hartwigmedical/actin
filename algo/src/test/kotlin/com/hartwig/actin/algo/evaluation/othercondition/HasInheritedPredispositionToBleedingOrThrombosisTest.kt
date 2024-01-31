@@ -50,7 +50,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
     fun `Should pass with at least one condition with certain name`() {
         val conditions = listOf(
             OtherConditionTestFactory.priorOtherCondition(name = "other name"),
-            OtherConditionTestFactory.priorOtherCondition(name = "FACTOR V LEIDEN")
+            OtherConditionTestFactory.priorOtherCondition(name = "disease FACTOR V LEIDEN")
         )
 
         EvaluationAssert.assertEvaluation(
