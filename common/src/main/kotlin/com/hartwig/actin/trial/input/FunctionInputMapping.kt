@@ -29,6 +29,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to FunctionInput.NONE,
         EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to FunctionInput.NONE,
         EligibilityRule.HAS_BREAST_CANCER_HORMONE_POSITIVE_AND_HER2_NEGATIVE to FunctionInput.NONE,
+        EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to FunctionInput.ONE_STRING,
         EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT to FunctionInput.NONE,
         EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to FunctionInput.NONE,
         EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to FunctionInput.NONE,

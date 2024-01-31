@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
@@ -86,8 +85,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     companion object {
         private fun createPriorMolecularTest(item: String, score: String): PriorMolecularTest {
-            return ImmutablePriorMolecularTest.builder().test("IHC").item(item).scoreText(score).impliesPotentialIndeterminateStatus(false)
-                .build()
+            return PriorMolecularTest(test = "IHC", item = item, scoreText = score, impliesPotentialIndeterminateStatus = false)
         }
     }
 }

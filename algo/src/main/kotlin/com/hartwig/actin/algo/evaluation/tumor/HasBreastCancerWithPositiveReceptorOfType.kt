@@ -10,12 +10,12 @@ import com.hartwig.actin.doid.DoidModel
 class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel, private val receptorType: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical().tumor().doids()
+        val tumorDoids = record.clinical.tumor.doids
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
         val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
-        val targetPriorMolecularTest = record.clinical().priorMolecularTests().filter { it.item() == receptorType }
-        val targetPriorMolecularTestIsPositive = targetPriorMolecularTest.any { it.scoreText() == "Positive" }
-        val targetPriorMolecularTestIsNegative = targetPriorMolecularTest.any { it.scoreText() == "Negative" }
+        val targetPriorMolecularTest = record.clinical.priorMolecularTests.filter { it.item == receptorType }
+        val targetPriorMolecularTestIsPositive = targetPriorMolecularTest.any { it.scoreText == "Positive" }
+        val targetPriorMolecularTestIsNegative = targetPriorMolecularTest.any { it.scoreText == "Negative" }
         val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
         val targetReceptorNegativeInDoids = expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
 
