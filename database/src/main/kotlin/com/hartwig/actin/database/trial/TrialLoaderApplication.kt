@@ -1,7 +1,7 @@
 package com.hartwig.actin.database.trial
 
 import com.hartwig.actin.database.dao.DatabaseAccess
-import com.hartwig.actin.treatment.serialization.TrialJson
+import com.hartwig.actin.trial.serialization.TrialJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options

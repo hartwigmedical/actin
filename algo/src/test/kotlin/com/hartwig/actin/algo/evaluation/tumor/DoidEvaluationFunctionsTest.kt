@@ -3,119 +3,108 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DoidEvaluationFunctionsTest {
 
     @Test
-    fun canDetermineIfTumorHasConfiguredDoids() {
-        Assert.assertFalse(DoidEvaluationFunctions.hasConfiguredDoids(null))
-        Assert.assertFalse(DoidEvaluationFunctions.hasConfiguredDoids(emptySet()))
-        Assert.assertTrue(DoidEvaluationFunctions.hasConfiguredDoids(setOf("yes!")))
+    fun `Should determine if tumor has configured doids`() {
+        assertThat(DoidEvaluationFunctions.hasConfiguredDoids(null)).isFalse
+        assertThat(DoidEvaluationFunctions.hasConfiguredDoids(emptySet())).isFalse
+        assertThat(DoidEvaluationFunctions.hasConfiguredDoids(setOf("yes!"))).isTrue
     }
 
     @Test
-    fun canDetermineIfTumorIsOfDoidType() {
+    fun `Should determine if tumor is of doid type`() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-        Assert.assertFalse(DoidEvaluationFunctions.isOfDoidType(doidModel, null, "child"))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfDoidType(doidModel, setOf("parent"), "child"))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfDoidType(doidModel, setOf("child"), "child"))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfDoidType(doidModel, setOf("child"), "parent"))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfDoidType(doidModel, setOf("child", "other"), "parent"))
+        assertThat(DoidEvaluationFunctions.isOfDoidType(doidModel, null, "child")).isFalse
+        assertThat(DoidEvaluationFunctions.isOfDoidType(doidModel, setOf("parent"), "child")).isFalse
+        assertThat(DoidEvaluationFunctions.isOfDoidType(doidModel, setOf("child"), "child")).isTrue
+        assertThat(DoidEvaluationFunctions.isOfDoidType(doidModel, setOf("child"), "parent")).isTrue
+        assertThat(DoidEvaluationFunctions.isOfDoidType(doidModel, setOf("child", "other"), "parent")).isTrue
     }
 
     @Test
-    fun canDetermineIfTumorIsOfLeastOneDoidType() {
+    fun `Should determine if tumor is of least one doid type`() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-        Assert.assertFalse(DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, null, setOf("child")))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, setOf("parent"), setOf("child")))
-        Assert.assertTrue(
-            DoidEvaluationFunctions.isOfAtLeastOneDoidType(
-                doidModel,
-                setOf("child"),
-                setOf("child", "other")
-            )
-        )
-        Assert.assertTrue(DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, setOf("child"), setOf("parent")))
-        Assert.assertTrue(
-            DoidEvaluationFunctions.isOfAtLeastOneDoidType(
-                doidModel,
-                setOf("child", "other"),
-                setOf("and another", "parent")
-            )
-        )
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, null, setOf("child"))).isFalse
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, setOf("parent"), setOf("child"))).isFalse
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, setOf("child"), setOf("child", "other"))).isTrue
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, setOf("child"), setOf("parent"))).isTrue
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, setOf("child", "other"), setOf("and another", "parent")))
+            .isTrue
     }
 
     @Test
-    fun canDetermineIfTumorIsOfAtLeastOneDoidTerm() {
+    fun `Should determine if tumor is of at least one doid term`() {
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("match doid", "match doid term")
         val validDoidTerms: Set<String> = setOf("match doid term")
-        Assert.assertFalse(DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, null, validDoidTerms))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, setOf(), validDoidTerms))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, setOf("wrong"), validDoidTerms))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, setOf("match doid"), validDoidTerms))
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, null, validDoidTerms)).isFalse
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, setOf(), validDoidTerms)).isFalse
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, setOf("wrong"), validDoidTerms)).isFalse
+        assertThat(DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, setOf("match doid"), validDoidTerms)).isTrue
     }
 
     @Test
-    fun canDetermineIfTumorHasExactDoid() {
-        Assert.assertFalse(DoidEvaluationFunctions.isOfExactDoid(null, "1"))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfExactDoid(setOf("1", "2"), "1"))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfExactDoid(setOf("1", "2"), "2"))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfExactDoid(setOf("2"), "1"))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfExactDoid(setOf("1"), "1"))
+    fun `Should determine if tumor has exact doid`() {
+        assertThat(DoidEvaluationFunctions.isOfExactDoid(null, "1")).isFalse
+        assertThat(DoidEvaluationFunctions.isOfExactDoid(setOf("1", "2"), "1")).isFalse
+        assertThat(DoidEvaluationFunctions.isOfExactDoid(setOf("1", "2"), "2")).isFalse
+        assertThat(DoidEvaluationFunctions.isOfExactDoid(setOf("2"), "1")).isFalse
+        assertThat(DoidEvaluationFunctions.isOfExactDoid(setOf("1"), "1")).isTrue
     }
 
     @Test
-    fun canDetermineIfTumorIsOfDoidCombinationType() {
-        Assert.assertFalse(DoidEvaluationFunctions.isOfDoidCombinationType(null, setOf("1", "2")))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfDoidCombinationType(setOf("1"), setOf("1", "2")))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfDoidCombinationType(setOf("1", "2"), setOf("2")))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfDoidCombinationType(setOf("1", "2"), setOf("2", "1")))
+    fun `Should determine if tumor is of doid combination type`() {
+        assertThat(DoidEvaluationFunctions.isOfDoidCombinationType(null, setOf("1", "2"))).isFalse
+        assertThat(DoidEvaluationFunctions.isOfDoidCombinationType(setOf("1"), setOf("1", "2"))).isFalse
+        assertThat(DoidEvaluationFunctions.isOfDoidCombinationType(setOf("1", "2"), setOf("2"))).isTrue
+        assertThat(DoidEvaluationFunctions.isOfDoidCombinationType(setOf("1", "2"), setOf("2", "1"))).isTrue
     }
 
     @Test
-    fun canDetermineIfTumorIsOfExclusiveDoidType() {
+    fun `Should determine if tumor is of exclusive doid type`() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-        Assert.assertFalse(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, null, "child"))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, setOf("parent"), "child"))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, setOf("child"), "child"))
-        Assert.assertTrue(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, setOf("child"), "parent"))
-        Assert.assertFalse(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, setOf("child", "other"), "parent"))
+        assertThat(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, null, "child")).isFalse
+        assertThat(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, setOf("parent"), "child")).isFalse
+        assertThat(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, setOf("child"), "child")).isTrue
+        assertThat(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, setOf("child"), "parent")).isTrue
+        assertThat(DoidEvaluationFunctions.isOfExclusiveDoidType(doidModel, setOf("child", "other"), "parent")).isFalse
     }
 
     @Test
-    fun canDetermineIfDoidIsExclusiveType() {
-        Assert.assertEquals(EvaluationResult.PASS, hasExclusiveTumorTypeOfDoid(MATCH_DOID))
+    fun `Should determine if doid is exclusive type`() {
+        assertThat(hasExclusiveTumorTypeOfDoid(MATCH_DOID)).isEqualTo(EvaluationResult.PASS)
         val firstWarnDoid = WARN_DOIDS.iterator().next()
-        Assert.assertEquals(EvaluationResult.WARN, hasExclusiveTumorTypeOfDoid(MATCH_DOID, firstWarnDoid))
+        assertThat(hasExclusiveTumorTypeOfDoid(MATCH_DOID, firstWarnDoid)).isEqualTo(EvaluationResult.WARN)
         val firstFailDoid = FAIL_DOIDS.iterator().next()
-        Assert.assertEquals(EvaluationResult.FAIL, hasExclusiveTumorTypeOfDoid(MATCH_DOID, firstWarnDoid, firstFailDoid))
-        Assert.assertEquals(EvaluationResult.FAIL, hasExclusiveTumorTypeOfDoid("arbitrary doid"))
-        Assert.assertEquals(EvaluationResult.FAIL, hasExclusiveTumorTypeOfDoid(MATCH_DOID, "arbitrary doid"))
+        assertThat(hasExclusiveTumorTypeOfDoid(MATCH_DOID, firstWarnDoid, firstFailDoid)).isEqualTo(EvaluationResult.FAIL)
+        assertThat(hasExclusiveTumorTypeOfDoid("arbitrary doid")).isEqualTo(EvaluationResult.FAIL)
+        assertThat(hasExclusiveTumorTypeOfDoid(MATCH_DOID, "arbitrary doid")).isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
-    fun canEvaluateIfPatientHasSpecificDoidCombination() {
-        val tumorDoids: Set<String> = setOf("1", "2", "3")
-        val set1: Set<String> = setOf("1", "4")
-        val set2: Set<String> = setOf("2", "3")
-        val set3: Set<String> = setOf("1")
-        val combinationSet1: Set<Set<String>> = setOf(set1)
-        val combinationSet2: Set<Set<String>> = setOf(set2)
-        val combinationSet3: Set<Set<String>> = setOf(set3)
-        val combinationSet4: Set<Set<String>> = setOf(set1, set2)
-        Assert.assertFalse(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(null, combinationSet1))
-        Assert.assertFalse(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet1))
-        Assert.assertTrue(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet2))
-        Assert.assertTrue(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet3))
-        Assert.assertTrue(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet4))
+    fun `Should evaluate if patient has specific doid combination`() {
+        val tumorDoids = setOf("1", "2", "3")
+        val set1 = setOf("1", "4")
+        val set2 = setOf("2", "3")
+        val set3 = setOf("1")
+        val combinationSet1 = setOf(set1)
+        val combinationSet2 = setOf(set2)
+        val combinationSet3 = setOf(set3)
+        val combinationSet4 = setOf(set1, set2)
+        assertThat(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(null, combinationSet1)).isFalse
+        assertThat(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet1)).isFalse
+        assertThat(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet2)).isTrue
+        assertThat(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet3)).isTrue
+        assertThat(DoidEvaluationFunctions.hasAtLeastOneCombinationOfDoids(tumorDoids, combinationSet4)).isTrue
     }
 
     companion object {
         private const val MATCH_DOID = "1"
-        private val FAIL_DOIDS: Set<String> = setOf("2", "3")
-        private val WARN_DOIDS: Set<String> = setOf("4", "5")
+        private val FAIL_DOIDS = setOf("2", "3")
+        private val WARN_DOIDS = setOf("4", "5")
         private val MATCHING_TEST_MODEL = createTestDoidModelForMatching()
         private fun hasExclusiveTumorTypeOfDoid(vararg tumorDoids: String): EvaluationResult {
             return DoidEvaluationFunctions.evaluateAllDoidsMatchWithFailAndWarns(

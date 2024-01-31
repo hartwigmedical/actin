@@ -36,7 +36,7 @@ class QTProlongatingConfigFactoryTest {
         val config = QTProlongatingConfigFactory().create(fields, arrayOf("name", "not known"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
-                CurationCategory.QT_PROLONGATION.categoryName,
+                CurationCategory.QT_PROLONGATING.categoryName,
                 "name",
                 "Risk",
                 "not known",

@@ -8,14 +8,14 @@ internal object PriorMolecularTestFunctions {
     private const val IHC = "IHC"
 
     fun allPDL1Tests(priorMolecularTests: List<PriorMolecularTest>, measureToFind: String): List<PriorMolecularTest> {
-        return allIHCTests(priorMolecularTests).filter { it.item() == PD_L1 && measureToFind == it.measure() }
+        return allIHCTests(priorMolecularTests).filter { it.item == PD_L1 && measureToFind == it.measure }
     }
 
     fun allIHCTestsForProtein(priorMolecularTests: List<PriorMolecularTest>, protein: String): List<PriorMolecularTest> {
-        return allIHCTests(priorMolecularTests).filter { it.item() == protein }
+        return allIHCTests(priorMolecularTests).filter { it.item == protein }
     }
 
     private fun allIHCTests(priorMolecularTests: List<PriorMolecularTest>): List<PriorMolecularTest> {
-        return priorMolecularTests.filter { it.test() == IHC }
+        return priorMolecularTests.filter { it.test == IHC }
     }
 }

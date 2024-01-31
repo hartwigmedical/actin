@@ -20,8 +20,8 @@ class BloodTransfusionGenerator(private val bloodTransfusions: List<BloodTransfu
         table.addHeaderCell(Cells.createHeader("Product"))
         table.addHeaderCell(Cells.createHeader("Date"))
         for (bloodTransfusion in bloodTransfusions) {
-            table.addCell(Cells.createContent(bloodTransfusion.product()))
-            table.addCell(Cells.createContent(date(bloodTransfusion.date())))
+            table.addCell(Cells.createContent(bloodTransfusion.product))
+            table.addCell(Cells.createContent(date(bloodTransfusion.date)))
         }
         return makeWrapping(table)
     }

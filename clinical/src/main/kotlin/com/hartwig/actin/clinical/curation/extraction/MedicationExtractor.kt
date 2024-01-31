@@ -17,8 +17,6 @@ import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
-import com.hartwig.actin.clinical.datamodel.ImmutableDosage
-import com.hartwig.actin.clinical.datamodel.ImmutableMedication
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
@@ -52,19 +50,19 @@ class MedicationExtractor(
                     LOGGER.warn("Medication $name has no ATC code and is not self-care or a trial")
                 }
 
-                val medication = ImmutableMedication.builder()
-                    .dosage(dosage.extracted)
-                    .name(name)
-                    .status(curateMedicationStatus(patientId, entry.status))
-                    .administrationRoute(administrationRouteCuration.extracted)
-                    .startDate(entry.periodOfUseValuePeriodStart)
-                    .stopDate(entry.periodOfUseValuePeriodEnd)
-                    .addAllCypInteractions(curateMedicationCypInteractions(name))
-                    .qtProlongatingRisk(annotateWithQTProlongating(name))
-                    .atc(atc)
-                    .isSelfCare(isSelfCare)
-                    .isTrialMedication(isTrialMedication)
-                    .build()
+                val medication = Medication(
+                    dosage = dosage.extracted,
+                    name = name,
+                    status = curateMedicationStatus(patientId, entry.status),
+                    administrationRoute = administrationRouteCuration.extracted,
+                    startDate = entry.periodOfUseValuePeriodStart,
+                    stopDate = entry.periodOfUseValuePeriodEnd,
+                    cypInteractions = curateMedicationCypInteractions(name),
+                    qtProlongatingRisk = annotateWithQTProlongating(name),
+                    atc = atc,
+                    isSelfCare = isSelfCare,
+                    isTrialMedication = isTrialMedication
+                )
 
                 val evaluation = listOf(nameCuration, administrationRouteCuration, dosage)
                     .fold(ExtractionEvaluation()) { acc, result -> acc + result.evaluation }
@@ -112,23 +110,23 @@ class MedicationExtractor(
                 "medication dosage",
                 true
             )
-            val dosage = curationResponse.config()?.curated ?: ImmutableDosage.builder().build()
+            val dosage = curationResponse.config()?.curated ?: Dosage()
 
             ExtractionResult(dosage, curationResponse.extractionEvaluation)
         } else {
             val dosageUnitTranslation = translateDosageUnit(patientId, entry.dosageInstructionDoseQuantityUnit)
             val periodBetweenUnitCuration = curatePeriodBetweenUnit(patientId, entry.dosageInstructionPeriodBetweenDosagesUnit)
             ExtractionResult(
-                ImmutableDosage.builder()
-                    .dosageMin(entry.dosageInstructionDoseQuantityValue)
-                    .dosageMax(correctDosageMax(entry))
-                    .dosageUnit(dosageUnitTranslation.extracted)
-                    .frequency(entry.dosageInstructionFrequencyValue)
-                    .frequencyUnit(entry.dosageInstructionFrequencyUnit)
-                    .periodBetweenValue(entry.dosageInstructionPeriodBetweenDosagesValue)
-                    .periodBetweenUnit(periodBetweenUnitCuration.extracted)
-                    .ifNeeded(extractIfNeeded(entry))
-                    .build(),
+                Dosage(
+                    dosageMin = entry.dosageInstructionDoseQuantityValue,
+                    dosageMax = correctDosageMax(entry),
+                    dosageUnit = dosageUnitTranslation.extracted,
+                    frequency = entry.dosageInstructionFrequencyValue,
+                    frequencyUnit = entry.dosageInstructionFrequencyUnit,
+                    periodBetweenValue = entry.dosageInstructionPeriodBetweenDosagesValue,
+                    periodBetweenUnit = periodBetweenUnitCuration.extracted,
+                    ifNeeded = extractIfNeeded(entry)
+                ),
                 dosageUnitTranslation.evaluation + periodBetweenUnitCuration.evaluation
             )
         }
@@ -161,19 +159,15 @@ class MedicationExtractor(
             "" -> {
                 null
             }
-
             "active" -> {
                 MedicationStatus.ACTIVE
             }
-
             "on-hold" -> {
                 MedicationStatus.ON_HOLD
             }
-
             "kuur geannuleerd" -> {
                 MedicationStatus.CANCELLED
             }
-
             else -> {
                 LOGGER.warn("Could not interpret medication status: $status for patient $patientId")
                 MedicationStatus.UNKNOWN

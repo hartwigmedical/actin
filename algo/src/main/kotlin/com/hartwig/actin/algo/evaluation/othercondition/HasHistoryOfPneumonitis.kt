@@ -11,9 +11,10 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.doid.DoidModel
 
 class HasHistoryOfPneumonitis internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical().priorOtherConditions())) {
-            for (doid in condition.doids()) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+            for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.PNEUMONITIS_DOID)) {
                     return EvaluationFactory.pass(
                         "Patient has pneumonitis: " + doidModel.resolveTermForDoid(doid),
@@ -22,11 +23,11 @@ class HasHistoryOfPneumonitis internal constructor(private val doidModel: DoidMo
                 }
             }
         }
-        for (toxicity in record.clinical().toxicities()) {
-            if (toxicity.source() == ToxicitySource.QUESTIONNAIRE || (toxicity.grade() ?: 0) >= 2) {
-                if (stringCaseInsensitivelyMatchesQueryCollection(toxicity.name(), TOXICITIES_CAUSING_PNEUMONITIS)) {
+        for (toxicity in record.clinical.toxicities) {
+            if (toxicity.source == ToxicitySource.QUESTIONNAIRE || (toxicity.grade ?: 0) >= 2) {
+                if (stringCaseInsensitivelyMatchesQueryCollection(toxicity.name, TOXICITIES_CAUSING_PNEUMONITIS)) {
                     return EvaluationFactory.pass(
-                        "Patient has pneumonitis: " + toxicity.name(),
+                        "Patient has pneumonitis: " + toxicity.name,
                         "History of pneumonitis"
                     )
                 }

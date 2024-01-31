@@ -18,15 +18,15 @@ class HasRecentlyReceivedCancerTherapyOfNameTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
 
         // Fail on medication with wrong name
-        medications.add(WashoutTestFactory.builder().name("other").stopDate(minDate.plusDays(1)).build())
+        medications.add(WashoutTestFactory.medication(name = "other", stopDate = minDate.plusDays(1)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
 
         // Fail on medication with old date
-        medications.add(WashoutTestFactory.builder().name("correct").stopDate(minDate.minusDays(1)).build())
+        medications.add(WashoutTestFactory.medication(name = "correct", stopDate = minDate.minusDays(1)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
 
         // Pass on medication with recent date
-        medications.add(WashoutTestFactory.builder().name("correct").stopDate(minDate.plusDays(1)).build())
+        medications.add(WashoutTestFactory.medication(name = "correct", stopDate = minDate.plusDays(1)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(WashoutTestFactory.withMedications(medications)))
     }
 }

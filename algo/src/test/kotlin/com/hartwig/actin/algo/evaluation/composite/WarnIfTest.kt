@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.TestEvaluationFunctionFactory
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class WarnIfTest {
@@ -25,9 +25,9 @@ class WarnIfTest {
     @Test
     fun canMoveMessagesToWarnOnPass() {
         val result: Evaluation = WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestDataFactory.createMinimalTestPatientRecord())
-        Assert.assertTrue(result.passSpecificMessages().isEmpty())
-        Assert.assertTrue(result.passGeneralMessages().isEmpty())
-        Assert.assertFalse(result.warnSpecificMessages().isEmpty())
-        Assert.assertFalse(result.warnGeneralMessages().isEmpty())
+        assertThat(result.passSpecificMessages).isEmpty()
+        assertThat(result.passGeneralMessages).isEmpty()
+        assertThat(result.warnSpecificMessages).isNotEmpty()
+        assertThat(result.warnGeneralMessages).isNotEmpty()
     }
 }

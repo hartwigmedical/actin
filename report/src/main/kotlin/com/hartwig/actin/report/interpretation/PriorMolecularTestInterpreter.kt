@@ -8,13 +8,13 @@ object PriorMolecularTestInterpreter {
 
     fun interpret(priorTests: List<PriorMolecularTest>): PriorMolecularTestInterpretation {
         val (textBasedPriorTests, valueBasedPriorTests) = priorTests.map { priorTest ->
-            val scoreText = priorTest.scoreText()
+            val scoreText = priorTest.scoreText
             if (scoreText != null) {
                 PriorMolecularTestCollection(
-                    listOf(PriorMolecularTestKey(test = priorTest.test(), scoreText = scoreText) to priorTest),
+                    listOf(PriorMolecularTestKey(test = priorTest.test, scoreText = scoreText) to priorTest),
                     emptySet()
                 )
-            } else if (priorTest.scoreValue() != null) {
+            } else if (priorTest.scoreValue != null) {
                 PriorMolecularTestCollection(emptyList(), setOf(priorTest))
             } else {
                 LOGGER.warn("Prior test is neither text-based nor value-based: {}", priorTest)

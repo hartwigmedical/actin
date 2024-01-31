@@ -1,10 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory.unrecoverable
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
@@ -12,58 +10,53 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 //TODO: Merge with GeneIsAmplified
 class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMinCopyNumber: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ploidy = record.molecular().characteristics().ploidy()
-            ?: return unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("Cannot determine amplification for gene $gene without ploidy")
-                .addFailGeneralMessages("Undetermined amplification for $gene")
-                .build()
-        val reportableFullAmps: MutableSet<String> = Sets.newHashSet()
-        val reportablePartialAmps: MutableSet<String> = Sets.newHashSet()
-        val ampsWithLossOfFunction: MutableSet<String> = Sets.newHashSet()
-        val ampsOnNonOncogenes: MutableSet<String> = Sets.newHashSet()
-        val ampsThatAreUnreportable: MutableSet<String> = Sets.newHashSet()
-        val ampsThatAreNearCutoff: MutableSet<String> = Sets.newHashSet()
-        val nonAmpsWithSufficientCopyNumber: MutableSet<String> = Sets.newHashSet()
-        val evidenceSource = record.molecular().evidenceSource()
+        val ploidy = record.molecular.characteristics.ploidy
+            ?: return EvaluationFactory.fail(
+                "Cannot determine amplification for gene $gene without ploidy", "Undetermined amplification for $gene"
+            )
+        val reportableFullAmps: MutableSet<String> = mutableSetOf()
+        val reportablePartialAmps: MutableSet<String> = mutableSetOf()
+        val ampsWithLossOfFunction: MutableSet<String> = mutableSetOf()
+        val ampsOnNonOncogenes: MutableSet<String> = mutableSetOf()
+        val ampsThatAreUnreportable: MutableSet<String> = mutableSetOf()
+        val ampsThatAreNearCutoff: MutableSet<String> = mutableSetOf()
+        val nonAmpsWithSufficientCopyNumber: MutableSet<String> = mutableSetOf()
+        val evidenceSource = record.molecular.evidenceSource
 
-        for (copyNumber in record.molecular().drivers().copyNumbers()) {
-            if (copyNumber.gene() == gene && copyNumber.minCopies() >= requestedMinCopyNumber) {
-                val relativeMinCopies = copyNumber.minCopies() / ploidy
-                val relativeMaxCopies = copyNumber.maxCopies() / ploidy
+        for (copyNumber in record.molecular.drivers.copyNumbers) {
+            if (copyNumber.gene == gene && copyNumber.minCopies >= requestedMinCopyNumber) {
+                val relativeMinCopies = copyNumber.minCopies / ploidy
+                val relativeMaxCopies = copyNumber.maxCopies / ploidy
                 val isAmplification = relativeMaxCopies >= HARD_PLOIDY_FACTOR
                 val isNearAmp = relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies <= HARD_PLOIDY_FACTOR
-                val isNoOncogene = copyNumber.geneRole() == GeneRole.TSG
-                val isLossOfFunction = (copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION
-                        || copyNumber.proteinEffect() == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
+                val isNoOncogene = copyNumber.geneRole == GeneRole.TSG
+                val isLossOfFunction = (copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION
+                        || copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
                 if (isAmplification) {
                     if (isNoOncogene) {
-                        ampsOnNonOncogenes.add(copyNumber.event())
+                        ampsOnNonOncogenes.add(copyNumber.event)
                     } else if (isLossOfFunction) {
-                        ampsWithLossOfFunction.add(copyNumber.event())
+                        ampsWithLossOfFunction.add(copyNumber.event)
                     } else if (!copyNumber.isReportable) {
-                        ampsThatAreUnreportable.add(copyNumber.event())
+                        ampsThatAreUnreportable.add(copyNumber.event)
                     } else if (relativeMinCopies < HARD_PLOIDY_FACTOR) {
-                        reportablePartialAmps.add(copyNumber.event())
+                        reportablePartialAmps.add(copyNumber.event)
                     } else {
-                        reportableFullAmps.add(copyNumber.event())
+                        reportableFullAmps.add(copyNumber.event)
                     }
                 } else if (isNearAmp) {
-                    ampsThatAreNearCutoff.add(copyNumber.event())
+                    ampsThatAreNearCutoff.add(copyNumber.event)
                 } else {
-                    nonAmpsWithSufficientCopyNumber.add(copyNumber.event())
+                    nonAmpsWithSufficientCopyNumber.add(copyNumber.event)
                 }
             }
         }
         if (reportableFullAmps.isNotEmpty()) {
-            return unrecoverable()
-                .result(EvaluationResult.PASS)
-                .addAllInclusionMolecularEvents(reportableFullAmps)
-                .addPassSpecificMessages(
-                    "Amplification detected of gene $gene with min copy number of $requestedMinCopyNumber"
-                )
-                .addPassGeneralMessages("$gene is amplified with >$requestedMinCopyNumber copies")
-                .build()
+            return EvaluationFactory.pass(
+                "Amplification detected of gene $gene with min copy number of $requestedMinCopyNumber",
+                "$gene is amplified with >$requestedMinCopyNumber copies",
+                inclusionEvents = reportableFullAmps
+            )
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(
             reportablePartialAmps,
@@ -75,11 +68,9 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
             evidenceSource
         )
         return potentialWarnEvaluation
-            ?: unrecoverable()
-                .result(EvaluationResult.FAIL)
-                .addFailSpecificMessages("No amplification detected of gene $gene with min copy number of $requestedMinCopyNumber")
-                .addFailGeneralMessages("No sufficient copies of $gene")
-                .build()
+            ?: EvaluationFactory.fail(
+                "No amplification detected of gene $gene with min copy number of $requestedMinCopyNumber", "No sufficient copies of $gene"
+            )
     }
 
     private fun evaluatePotentialWarns(
@@ -87,49 +78,40 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
         ampsOnNonOncogenes: Set<String>, ampsThatAreUnreportable: Set<String>,
         ampsThatAreNearCutoff: Set<String>, nonAmpsWithSufficientCopyNumber: Set<String>, evidenceSource: String
     ): Evaluation? {
-        val warnEvents: MutableSet<String> = Sets.newHashSet()
-        val warnSpecificMessages: MutableSet<String> = Sets.newHashSet()
-        val warnGeneralMessages: MutableSet<String> = Sets.newHashSet()
-        if (reportablePartialAmps.isNotEmpty()) {
-            warnEvents.addAll(reportablePartialAmps)
-            warnSpecificMessages.add("Gene $gene is partially amplified and not fully amplified")
-            warnGeneralMessages.add("$gene partially amplified")
-        }
-        if (ampsWithLossOfFunction.isNotEmpty()) {
-            warnEvents.addAll(ampsWithLossOfFunction)
-            warnSpecificMessages.add("Gene $gene is amplified but event is annotated as having loss-of-function impact in $evidenceSource")
-            warnGeneralMessages.add("$gene amplification but gene associated with loss-of-function protein impact in $evidenceSource")
-        }
-        if (ampsOnNonOncogenes.isNotEmpty()) {
-            warnEvents.addAll(ampsOnNonOncogenes)
-            warnSpecificMessages.add("Gene $gene is amplified but gene $gene is known as TSG in $evidenceSource")
-            warnGeneralMessages.add("$gene amplification but $gene known as TSG in $evidenceSource")
-        }
-        if (ampsThatAreUnreportable.isNotEmpty()) {
-            warnEvents.addAll(ampsThatAreUnreportable)
-            warnSpecificMessages.add("Gene $gene is amplified but not considered reportable")
-            warnGeneralMessages.add("$gene amplification but considered not reportable")
-        }
-        if (ampsThatAreNearCutoff.isNotEmpty()) {
-            warnEvents.addAll(ampsThatAreNearCutoff)
-            warnSpecificMessages.add("Gene $gene does not meet cut-off for amplification, but is near cut-off")
-            warnGeneralMessages.add("$gene near cut-off for amplification")
-        }
-        if (nonAmpsWithSufficientCopyNumber.isNotEmpty()) {
-            warnEvents.addAll(ampsThatAreNearCutoff)
-            warnSpecificMessages.add(
-                "Gene $gene does not meet cut-off for amplification, but has copy number > $requestedMinCopyNumber"
+        return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
+            listOf(
+                EventsWithMessages(
+                    reportablePartialAmps,
+                    "Gene $gene is partially amplified and not fully amplified",
+                    "$gene partially amplified"
+                ),
+                EventsWithMessages(
+                    ampsWithLossOfFunction,
+                    "Gene $gene is amplified but event is annotated as having loss-of-function impact in $evidenceSource",
+                    "$gene amplification but gene associated with loss-of-function protein impact in $evidenceSource"
+                ),
+                EventsWithMessages(
+                    ampsOnNonOncogenes,
+                    "Gene $gene is amplified but gene $gene is known as TSG in $evidenceSource",
+                    "$gene amplification but $gene known as TSG in $evidenceSource"
+                ),
+                EventsWithMessages(
+                    ampsThatAreUnreportable,
+                    "Gene $gene is amplified but not considered reportable",
+                    "$gene amplification but considered not reportable"
+                ),
+                EventsWithMessages(
+                    ampsThatAreNearCutoff,
+                    "Gene $gene does not meet cut-off for amplification, but is near cut-off",
+                    "$gene near cut-off for amplification"
+                ),
+                EventsWithMessages(
+                    nonAmpsWithSufficientCopyNumber,
+                    "Gene $gene does not meet cut-off for amplification, but has copy number > $requestedMinCopyNumber",
+                    "$gene has sufficient copies but not reported as amplification"
             )
-            warnGeneralMessages.add("$gene has sufficient copies but not reported as amplification")
-        }
-        return if (warnEvents.isNotEmpty() && warnSpecificMessages.isNotEmpty() && warnGeneralMessages.isNotEmpty()) {
-            unrecoverable()
-                .result(EvaluationResult.WARN)
-                .addAllInclusionMolecularEvents(warnEvents)
-                .addAllWarnSpecificMessages(warnSpecificMessages)
-                .addAllWarnGeneralMessages(warnGeneralMessages)
-                .build()
-        } else null
+            )
+        )
     }
 
     companion object {

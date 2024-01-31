@@ -19,7 +19,7 @@ import com.itextpdf.layout.element.Table
 
 object Cells {
     fun create(element: IBlockElement): Cell {
-        return create(element, 1, 1)
+        return create(element, 1)
     }
 
     fun createEmpty(): Cell {
@@ -31,13 +31,13 @@ object Cells {
     }
 
     fun createSpanningContent(text: String, table: Table): Cell {
-        val cell = create(Paragraph(text), 1, table.numberOfColumns)
+        val cell = create(Paragraph(text), table.numberOfColumns)
         cell.addStyle(Styles.tableContentStyle())
         return cell
     }
 
     fun createSpanningTitle(text: String, table: Table): Cell {
-        val cell = create(Paragraph(text), 1, table.numberOfColumns)
+        val cell = create(Paragraph(text), table.numberOfColumns)
         cell.addStyle(Styles.tableTitleStyle())
         return cell
     }
@@ -73,7 +73,7 @@ object Cells {
     }
 
     fun createSpanningSubNote(text: String, table: Table): Cell {
-        val cell = create(Paragraph(text), 1, table.numberOfColumns)
+        val cell = create(Paragraph(text), table.numberOfColumns)
         cell.addStyle(Styles.tableSubStyle())
         return cell
     }
@@ -84,7 +84,6 @@ object Cells {
         return cell
     }
 
-    @JvmOverloads
     fun createContent(element: IBlockElement, style: Style = Styles.tableContentStyle()): Cell {
         val cell = create(element)
         cell.addStyle(style)
@@ -114,7 +113,7 @@ object Cells {
         return createContentNoBorderDeemphasize(Paragraph(text))
     }
 
-    fun createContentNoBorderDeemphasize(element: IBlockElement): Cell {
+    private fun createContentNoBorderDeemphasize(element: IBlockElement): Cell {
         val cell = createContentNoBorder(element)
         cell.setFontColor(Styles.PALETTE_MID_GREY)
         return cell
@@ -139,7 +138,7 @@ object Cells {
     }
 
     fun createSpanningValue(text: String, table: Table): Cell {
-        val cell = create(Paragraph(text), 1, table.numberOfColumns)
+        val cell = create(Paragraph(text), table.numberOfColumns)
         cell.addStyle(styleForTableValue(text))
         return cell
     }
@@ -166,10 +165,9 @@ object Cells {
     }
 
     fun createEvaluation(evaluation: Evaluation): Cell {
-        return createEvaluationResult(evaluation.result(), evaluation.recoverable())
+        return createEvaluationResult(evaluation.result, evaluation.recoverable)
     }
 
-    @JvmOverloads
     fun createEvaluationResult(result: EvaluationResult, recoverable: Boolean = false): Cell {
         val addon = if (result == EvaluationResult.FAIL && recoverable) " (potentially recoverable)" else ""
         val cell = create(Paragraph(result.toString() + addon))
@@ -177,18 +175,18 @@ object Cells {
         return cell
     }
 
-    private fun create(element: IBlockElement, rows: Int, cols: Int): Cell {
-        val cell = createBorderless(rows, cols)
+    private fun create(element: IBlockElement, cols: Int): Cell {
+        val cell = createBorderless(cols)
         cell.add(element)
         return cell
     }
 
     private fun createBorderless(): Cell {
-        return createBorderless(1, 1)
+        return createBorderless(1)
     }
 
-    private fun createBorderless(rows: Int, cols: Int): Cell {
-        val cell = Cell(rows, cols)
+    private fun createBorderless(cols: Int): Cell {
+        val cell = Cell(1, cols)
         cell.setBorder(Border.NO_BORDER)
         return cell
     }

@@ -2,8 +2,8 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.ImmutableBodyWeight
-import org.junit.Assert
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.weight
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,14 +26,7 @@ class HasBMIUpToLimitTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 VitalFunctionTestFactory.withBodyWeights(
-                    listOf(
-                        ImmutableBodyWeight.builder()
-                            .date(referenceDate)
-                            .value(70.0)
-                            .unit("pound")
-                            .valid(false)
-                            .build()
-                    )
+                    listOf(weight(date = referenceDate, value = 70.0, unit = "pound", valid = false))
                 )
             )
         )
@@ -44,16 +37,13 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    ImmutableBodyWeight.builder().date(referenceDate).value(70.0).unit("Kilogram").valid(true).build(),
-                    ImmutableBodyWeight.builder().date(referenceDate.plusDays(1)).value(80.0).unit("Kilogram").valid(true).build()
+                    weight(date = referenceDate, value = 70.0, unit = "Kilogram", valid = true),
+                    weight(date = referenceDate.plusDays(1), value = 80.0, unit = "Kilogram", valid = true)
                 )
             )
         )
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        Assert.assertTrue(
-            evaluation.passSpecificMessages()
-                .contains("Median weight 75.0 kg will not exceed BMI limit of 40 for height >= 1.37 m")
-        )
+        assertThat(evaluation.passSpecificMessages).contains("Median weight 75.0 kg will not exceed BMI limit of 40 for height >= 1.37 m")
     }
 
     @Test
@@ -61,15 +51,13 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    ImmutableBodyWeight.builder().date(referenceDate).value(180.0).unit("Kilogram").valid(true).build(),
-                    ImmutableBodyWeight.builder().date(referenceDate.plusDays(1)).value(170.0).unit("Kilogram").valid(true).build()
+                    weight(date = referenceDate, value = 180.0, unit = "Kilogram", valid = true),
+                    weight(date = referenceDate.plusDays(1), value = 170.0, unit = "Kilogram", valid = true)
                 )
             )
         )
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        Assert.assertTrue(
-            evaluation.failSpecificMessages().contains("Median weight 175.0 kg will exceed BMI limit of 40 for height < 2.09 m")
-        )
+        assertThat(evaluation.failSpecificMessages).contains("Median weight 175.0 kg will exceed BMI limit of 40 for height < 2.09 m")
     }
 
     @Test
@@ -77,14 +65,12 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    ImmutableBodyWeight.builder().date(referenceDate).value(105.0).unit("Kilogram").valid(true).build(),
-                    ImmutableBodyWeight.builder().date(referenceDate.plusDays(1)).value(100.0).unit("Kilogram").valid(true).build()
+                    weight(date = referenceDate, value = 105.0, unit = "Kilogram", valid = true),
+                    weight(date = referenceDate.plusDays(1), value = 100.0, unit = "Kilogram", valid = true)
                 )
             )
         )
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        Assert.assertTrue(
-            evaluation.warnSpecificMessages().contains("Median weight 102.5 kg will exceed BMI limit of 40 for height < 1.60 m")
-        )
+        assertThat(evaluation.warnSpecificMessages).contains("Median weight 102.5 kg will exceed BMI limit of 40 for height < 1.60 m")
     }
 }

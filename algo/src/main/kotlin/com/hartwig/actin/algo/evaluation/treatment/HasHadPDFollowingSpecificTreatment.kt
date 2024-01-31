@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentNamesToMatch = treatments.map { it.name().lowercase() }.toSet()
+        val treatmentNamesToMatch = treatments.map { it.name.lowercase() }.toSet()
         val treatmentEvaluation = evaluateTreatmentHistory(record, treatmentNamesToMatch)
 
         return if (treatmentEvaluation.matchingTreatmentsWithPD.isNotEmpty()) {
@@ -32,7 +32,7 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
     }
 
     private fun evaluateTreatmentHistory(record: PatientRecord, treatmentNamesToMatch: Set<String>): TreatmentHistoryEvaluation {
-        val treatmentHistory = record.clinical().oncologicalHistory()
+        val treatmentHistory = record.clinical.oncologicalHistory
 
         return treatmentHistory.map { entry ->
             val isPD = treatmentResultedInPD(entry)
@@ -59,7 +59,7 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
 
     companion object {
         private fun treatmentsMatchingNameListExactly(treatments: Set<Treatment>, treatmentNamesToMatch: Set<String>): Set<Treatment> {
-            return treatments.filter { it.name().lowercase() in treatmentNamesToMatch }.toSet()
+            return treatments.filter { it.name.lowercase() in treatmentNamesToMatch }.toSet()
         }
     }
 

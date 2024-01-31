@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import org.junit.Test
 
 class HasHadPriorConditionWithNameTest {
+
     @Test
     fun canEvaluate() {
         val nameToFind = "severe condition"
@@ -16,11 +17,11 @@ class HasHadPriorConditionWithNameTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
 
         // Add a condition with wrong name
-        conditions.add(OtherConditionTestFactory.builder().name("benign condition").build())
+        conditions.add(OtherConditionTestFactory.priorOtherCondition(name = "benign condition"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
 
         // Add a condition with right name
-        conditions.add(OtherConditionTestFactory.builder().name("very severe condition").build())
+        conditions.add(OtherConditionTestFactory.priorOtherCondition(name = "very severe condition"))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
     }
 }

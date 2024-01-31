@@ -4,6 +4,7 @@ import org.junit.Assert
 import org.junit.Test
 
 class PerformanceScoreTest {
+
     @Test
     fun canConvertAllDisplays() {
         for (performanceScore in PerformanceScore.values()) {

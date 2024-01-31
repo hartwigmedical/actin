@@ -8,12 +8,12 @@ import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
 import kotlin.math.sqrt
 
-class HasBMIUpToLimit internal constructor(private val maximumBMI: Int, private val minimumDate: LocalDate) : EvaluationFunction {
+class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val allBodyWeights = record.clinical().bodyWeights()
+        val allBodyWeights = record.clinical.bodyWeights
         val relevant = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDate) ?: return EvaluationFactory.undetermined(
-            if (allBodyWeights.isNotEmpty() && allBodyWeights.none { it.unit().equals(EXPECTED_UNIT, ignoreCase = true) }) {
+            if (allBodyWeights.isNotEmpty() && allBodyWeights.none { it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }) {
                 "Body weights not measured in $EXPECTED_UNIT"
             } else {
                 "No (recent) body weights found"
@@ -59,6 +59,7 @@ class HasBMIUpToLimit internal constructor(private val maximumBMI: Int, private 
         private const val EXPECTED_UNIT: String = "kilogram"
         private const val MIN_EXPECTED_HEIGHT_METRES = 1.5
         private const val MAX_EXPECTED_HEIGHT_METRES = 2.0
+
         private fun calculateHeightForBmiAndWeight(bmi: Double, weight: Double): Double {
             return sqrt(weight / bmi)
         }

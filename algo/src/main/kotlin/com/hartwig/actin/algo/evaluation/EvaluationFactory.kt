@@ -2,102 +2,95 @@ package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.datamodel.ImmutableEvaluation
 
 object EvaluationFactory {
 
-    fun recoverable(): ImmutableEvaluation.Builder {
-        return ImmutableEvaluation.builder().recoverable(true)
-    }
-
-    fun unrecoverable(): ImmutableEvaluation.Builder {
-        return ImmutableEvaluation.builder().recoverable(false)
-    }
-
-    fun pass(specificMessage: String, generalMessage: String): Evaluation {
-        return buildPassEvaluation(unrecoverable(), specificMessage, generalMessage)
-    }
-
-    fun recoverablePass(specificMessage: String, generalMessage: String): Evaluation {
-        return buildPassEvaluation(recoverable(), specificMessage, generalMessage)
-    }
-
-    fun fail(specificMessage: String, generalMessage: String): Evaluation {
-        return buildFailEvaluation(unrecoverable(), specificMessage, generalMessage)
-    }
-
-    fun recoverableFail(specificMessage: String, generalMessage: String): Evaluation {
-        return buildFailEvaluation(recoverable(), specificMessage, generalMessage)
-    }
-
-    fun undetermined(specificMessage: String, generalMessage: String): Evaluation {
-        return buildUndeterminedEvaluation(unrecoverable(), specificMessage, generalMessage)
-    }
-
-    fun recoverableUndetermined(specificMessage: String, generalMessage: String): Evaluation {
-        return buildUndeterminedEvaluation(recoverable(), specificMessage, generalMessage)
-    }
-
-    fun warn(specificMessage: String, generalMessage: String): Evaluation {
-        return buildWarnEvaluation(unrecoverable(), specificMessage, generalMessage)
-    }
-
-    fun recoverableWarn(specificMessage: String, generalMessage: String): Evaluation {
-        return buildWarnEvaluation(recoverable(), specificMessage, generalMessage)
-    }
-
-    fun notEvaluated(specificMessage: String, generalMessage: String): Evaluation {
-        return unrecoverable().result(EvaluationResult.NOT_EVALUATED).addPassSpecificMessages(specificMessage)
-            .addPassGeneralMessages(generalMessage).build()
-    }
-
-    fun pass(message: String): Evaluation {
-        return buildPassEvaluation(unrecoverable(), message, message)
-    }
-
-    fun fail(message: String): Evaluation {
-        return buildFailEvaluation(unrecoverable(), message, message)
-    }
-
-    fun recoverableFail(message: String): Evaluation {
-        return buildFailEvaluation(recoverable(), message, message)
-    }
-
-    fun undetermined(message: String): Evaluation {
-        return buildUndeterminedEvaluation(unrecoverable(), message, message)
-    }
-
-    fun recoverableUndetermined(message: String): Evaluation {
-        return buildUndeterminedEvaluation(recoverable(), message, message)
-    }
-
-    fun warn(message: String): Evaluation {
-        return buildWarnEvaluation(unrecoverable(), message, message)
-    }
-
-    fun notEvaluated(message: String): Evaluation {
-        return unrecoverable().result(EvaluationResult.NOT_EVALUATED).addPassSpecificMessages(message)
-            .addPassGeneralMessages(message).build()
-    }
-
-    private fun buildPassEvaluation(builder: ImmutableEvaluation.Builder, specificMessage: String, generalMessage: String): Evaluation {
-        return builder.result(EvaluationResult.PASS).addPassSpecificMessages(specificMessage).addPassGeneralMessages(generalMessage).build()
-    }
-
-    private fun buildFailEvaluation(builder: ImmutableEvaluation.Builder, specificMessage: String, generalMessage: String): Evaluation {
-        return builder.result(EvaluationResult.FAIL).addFailSpecificMessages(specificMessage).addFailGeneralMessages(generalMessage).build()
-    }
-
-    private fun buildUndeterminedEvaluation(
-        builder: ImmutableEvaluation.Builder, specificMessage: String, generalMessage: String
+    fun pass(
+        specificMessage: String, generalMessage: String? = null, recoverable: Boolean = false, inclusionEvents: Set<String> = emptySet()
     ): Evaluation {
-        return builder.result(EvaluationResult.UNDETERMINED).addUndeterminedSpecificMessages(specificMessage)
-            .addUndeterminedGeneralMessages(generalMessage).build()
+        return Evaluation(
+            recoverable = recoverable,
+            result = EvaluationResult.PASS,
+            passSpecificMessages = setOf(specificMessage),
+            passGeneralMessages = setOf(generalMessage ?: specificMessage),
+            inclusionMolecularEvents = inclusionEvents
+        )
     }
 
-    private fun buildWarnEvaluation(
-        builder: ImmutableEvaluation.Builder, specificMessage: String, generalMessage: String
-    ): Evaluation {
-        return builder.result(EvaluationResult.WARN).addWarnSpecificMessages(specificMessage).addWarnGeneralMessages(generalMessage).build()
+    fun recoverablePass(specificMessage: String, generalMessage: String? = null): Evaluation {
+        return pass(specificMessage, generalMessage, true)
     }
+
+    fun fail(specificMessage: String, generalMessage: String? = null, recoverable: Boolean = false): Evaluation {
+        return createFail(recoverable, specificMessage, setOf(generalMessage ?: specificMessage))
+    }
+
+    fun failNoGeneral(specificMessage: String, recoverable: Boolean = false): Evaluation {
+        return createFail(recoverable, specificMessage, emptySet())
+    }
+
+    fun recoverableFail(specificMessage: String, generalMessage: String? = null): Evaluation {
+        return fail(specificMessage, generalMessage, true)
+    }
+
+    fun undetermined(specificMessage: String, generalMessage: String? = null, recoverable: Boolean = false): Evaluation {
+        return createUndetermined(recoverable, specificMessage, setOf(generalMessage ?: specificMessage))
+    }
+
+    fun recoverableUndetermined(specificMessage: String, generalMessage: String? = null): Evaluation {
+        return undetermined(specificMessage, generalMessage, true)
+    }
+
+    fun undeterminedNoGeneral(specificMessage: String, recoverable: Boolean = false): Evaluation {
+        return createUndetermined(recoverable, specificMessage, emptySet())
+    }
+
+    fun recoverableUndeterminedNoGeneral(specificMessage: String): Evaluation {
+        return undeterminedNoGeneral(specificMessage, true)
+    }
+
+    fun warn(
+        specificMessage: String, generalMessage: String? = null, recoverable: Boolean = false, inclusionEvents: Set<String> = emptySet()
+    ): Evaluation {
+        return Evaluation(
+            recoverable = recoverable,
+            result = EvaluationResult.WARN,
+            warnSpecificMessages = setOf(specificMessage),
+            warnGeneralMessages = setOf(generalMessage ?: specificMessage),
+            inclusionMolecularEvents = inclusionEvents
+        )
+    }
+
+    fun recoverableWarn(specificMessage: String, generalMessage: String? = null): Evaluation {
+        return warn(specificMessage, generalMessage, true)
+    }
+
+    fun notEvaluated(specificMessage: String, generalMessage: String? = null): Evaluation {
+        return createNotEvaluated(specificMessage, setOf(generalMessage ?: specificMessage))
+    }
+
+    fun notEvaluatedNoGeneral(specificMessage: String): Evaluation {
+        return createNotEvaluated(specificMessage, emptySet())
+    }
+
+    private fun createFail(recoverable: Boolean, specificMessage: String, generalMessages: Set<String>) = Evaluation(
+        recoverable = recoverable,
+        result = EvaluationResult.FAIL,
+        failSpecificMessages = setOf(specificMessage),
+        failGeneralMessages = generalMessages
+    )
+
+    private fun createNotEvaluated(specificMessage: String, generalMessages: Set<String>) = Evaluation(
+        recoverable = false,
+        result = EvaluationResult.NOT_EVALUATED,
+        passSpecificMessages = setOf(specificMessage),
+        passGeneralMessages = generalMessages
+    )
+
+    private fun createUndetermined(recoverable: Boolean, specificMessage: String, generalMessages: Set<String>) = Evaluation(
+        recoverable = recoverable,
+        result = EvaluationResult.UNDETERMINED,
+        undeterminedSpecificMessages = setOf(specificMessage),
+        undeterminedGeneralMessages = generalMessages
+    )
 }

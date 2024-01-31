@@ -2,7 +2,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import org.junit.Test
 import java.time.LocalDate

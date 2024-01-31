@@ -8,7 +8,7 @@ import java.util.function.Predicate
 
 internal class TumorStageDerivationFunction private constructor(private val derivationRules: Map<Predicate<TumorDetails>, Set<TumorStage>>) {
     fun apply(tumor: TumorDetails): List<TumorStage> {
-        return if (DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids()) && hasNoTumorStage(tumor)) {
+        return if (DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids) && hasNoTumorStage(tumor)) {
             derivationRules.entries
                 .filter { it.key.test(tumor) }
                 .flatMap { it.value }
@@ -33,7 +33,7 @@ internal class TumorStageDerivationFunction private constructor(private val deri
         }
 
         private fun hasNoTumorStage(tumor: TumorDetails): Boolean {
-            return tumor.stage() == null
+            return tumor.stage == null
         }
 
         private fun hasAtLeastCategorizedLesions(min: Int, doidModel: DoidModel): Predicate<TumorDetails> {
@@ -46,30 +46,30 @@ internal class TumorStageDerivationFunction private constructor(private val deri
 
         private fun lesionCount(doidModel: DoidModel, tumor: TumorDetails): Int {
             return listOf(
-                tumor.hasLiverLesions() to DoidConstants.LIVER_CANCER_DOID,
-                tumor.hasLymphNodeLesions() to DoidConstants.LYMPH_NODE_CANCER_DOID,
-                tumor.hasCnsLesions() to DoidConstants.CNS_CANCER_DOID,
-                tumor.hasBrainLesions() to DoidConstants.BRAIN_CANCER_DOID,
-                tumor.hasLungLesions() to DoidConstants.LUNG_CANCER_DOID,
-                tumor.hasBoneLesions() to DoidConstants.BONE_CANCER_DOID
+                tumor.hasLiverLesions to DoidConstants.LIVER_CANCER_DOID,
+                tumor.hasLymphNodeLesions to DoidConstants.LYMPH_NODE_CANCER_DOID,
+                tumor.hasCnsLesions to DoidConstants.CNS_CANCER_DOID,
+                tumor.hasBrainLesions to DoidConstants.BRAIN_CANCER_DOID,
+                tumor.hasLungLesions to DoidConstants.LUNG_CANCER_DOID,
+                tumor.hasBoneLesions to DoidConstants.BONE_CANCER_DOID
             ).count {
-                evaluateMetastases(it.first, tumor.doids(), it.second, doidModel)
+                evaluateMetastases(it.first, tumor.doids, it.second, doidModel)
             }
         }
 
         private fun hasNoUncategorizedLesions(): Predicate<TumorDetails> {
-            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherLesions().isNullOrEmpty() }
+            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherLesions.isNullOrEmpty() }
         }
 
         private fun hasAllKnownLesionDetails(): Predicate<TumorDetails> {
             return Predicate<TumorDetails> { tumor: TumorDetails ->
                 listOf(
-                    tumor.hasLiverLesions(),
-                    tumor.hasLymphNodeLesions(),
-                    tumor.hasCnsLesions(),
-                    tumor.hasBrainLesions(),
-                    tumor.hasLungLesions(),
-                    tumor.hasBoneLesions()
+                    tumor.hasLiverLesions,
+                    tumor.hasLymphNodeLesions,
+                    tumor.hasCnsLesions,
+                    tumor.hasBrainLesions,
+                    tumor.hasLungLesions,
+                    tumor.hasBoneLesions
                 ).all { it != null }
             }
         }

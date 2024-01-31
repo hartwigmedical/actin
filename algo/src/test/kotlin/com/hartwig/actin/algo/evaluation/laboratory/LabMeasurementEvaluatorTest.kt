@@ -12,54 +12,40 @@ import org.junit.Test
 import java.time.LocalDate
 
 class LabMeasurementEvaluatorTest {
+   
     @Test
-    fun canEvaluate() {
+    fun `Should evaluate`() {
         val measurement = LabMeasurement.ALBUMIN
-        val function = LabMeasurementEvaluator(
-            measurement,
-            passingLabEvaluationFunction,
-            ALWAYS_VALID_DATE,
-            ALWAYS_VALID_DATE
-        )
+        val function = LabMeasurementEvaluator(measurement, passingLabEvaluationFunction, ALWAYS_VALID_DATE, ALWAYS_VALID_DATE)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
-        val labValue: LabValue = LabTestFactory.forMeasurement(measurement).date(TEST_DATE).build()
+        val labValue: LabValue = LabTestFactory.create(measurement, date = TEST_DATE)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)))
     }
 
     @Test
-    fun canIgnoreOldDatesAndInvalidUnits() {
+    fun `Should ignore old dates and invalid units`() {
         val measurement = LabMeasurement.ALBUMIN
-        val function = LabMeasurementEvaluator(
-            measurement,
-            passingLabEvaluationFunction,
-            TEST_DATE,
-            TEST_DATE
-        )
-        val wrongUnit: LabValue = LabTestFactory.builder().code(measurement.code()).date(TEST_DATE).build()
+        val function = LabMeasurementEvaluator(measurement, passingLabEvaluationFunction, TEST_DATE, TEST_DATE)
+        val wrongUnit: LabValue = LabTestFactory.create(value = 0.0, date = TEST_DATE).copy(code = measurement.code)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(wrongUnit)))
-        val oldDate: LabValue = LabTestFactory.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build()
+        val oldDate: LabValue = LabTestFactory.create(measurement, date = TEST_DATE.minusDays(1))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(LabTestFactory.withLabValue(oldDate)))
     }
 
     @Test
-    fun warnsInCaseMeasurementIsOlderThanPassDate() {
+    fun `Should warn in case measurement is older than pass date`() {
         val measurement = LabMeasurement.ALBUMIN
-        val function = LabMeasurementEvaluator(
-            measurement,
-            passingLabEvaluationFunction,
-            TEST_DATE.minusDays(20),
-            TEST_DATE.plusDays(20)
-        )
-        val warnDate: LabValue = LabTestFactory.forMeasurement(measurement).date(TEST_DATE).build()
+        val function = LabMeasurementEvaluator(measurement, passingLabEvaluationFunction, TEST_DATE.minusDays(20), TEST_DATE.plusDays(20))
+        val warnDate: LabValue = LabTestFactory.create(measurement, date = TEST_DATE)
         assertEvaluation(EvaluationResult.WARN, function.evaluate(LabTestFactory.withLabValue(warnDate)))
     }
 
     @Test
-    fun canFallbackToSecondMostRecent() {
+    fun `Should fallback to second most recent`() {
         val measurement = LabMeasurement.ALBUMIN
-        val values: List<LabValue> = listOf(
-            LabTestFactory.forMeasurement(measurement).date(TEST_DATE).build(),
-            LabTestFactory.forMeasurement(measurement).date(TEST_DATE.minusDays(1)).build()
+        val values = listOf(
+            LabTestFactory.create(measurement, date = TEST_DATE),
+            LabTestFactory.create(measurement, date = TEST_DATE.minusDays(1))
         )
         val record = LabTestFactory.withLabValues(values)
         val functionPass = LabMeasurementEvaluator(
@@ -98,11 +84,7 @@ class LabMeasurementEvaluatorTest {
         private fun firstFailAndRestWithParam(defaultEvaluation: EvaluationResult): LabEvaluationFunction {
             return object : LabEvaluationFunction {
                 override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
-                    return if (labValue.date() == TEST_DATE) {
-                        EvaluationTestFactory.withResult(EvaluationResult.FAIL)
-                    } else {
-                        EvaluationTestFactory.withResult(defaultEvaluation)
-                    }
+                    return EvaluationTestFactory.withResult(if (labValue.date == TEST_DATE) EvaluationResult.FAIL else defaultEvaluation)
                 }
             }
         }

@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import java.time.LocalDate
 
 class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -46,7 +46,7 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     private fun hasRestingHeartRateWithinBoundsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createTwoDoublesInput(function)
-            HasRestingHeartRateWithinBounds(input.double1(), input.double2(), minimumDateForVitalFunction())
+            HasRestingHeartRateWithinBounds(input.double1, input.double2, minimumDateForVitalFunction())
         }
     }
 

@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 
 class IsEligibleForTreatmentLines(private val doidModel: DoidModel, private val lines: List<Int>) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.clinical().tumor().doids()?.flatMap { doidModel.doidWithParents(it) }?.toSet()
+        if (record.clinical.tumor.doids?.flatMap { doidModel.doidWithParents(it) }?.toSet()
                 ?.contains(DoidConstants.COLORECTAL_CANCER_DOID) != true
         ) {
             EvaluationFactory.undetermined("Treatment line determination is currently only supported for colorectal cancer")
@@ -25,8 +25,7 @@ class IsEligibleForTreatmentLines(private val doidModel: DoidModel, private val 
 
     companion object {
         private fun determineTreatmentLine(record: PatientRecord): Int {
-            val allTreatmentCategories =
-                record.clinical().oncologicalHistory().flatMap(TreatmentHistoryEntry::categories)
+            val allTreatmentCategories = record.clinical.oncologicalHistory.flatMap(TreatmentHistoryEntry::categories)
 
             return when {
                 allTreatmentCategories.none { it == TreatmentCategory.CHEMOTHERAPY || it == TreatmentCategory.IMMUNOTHERAPY } -> 1

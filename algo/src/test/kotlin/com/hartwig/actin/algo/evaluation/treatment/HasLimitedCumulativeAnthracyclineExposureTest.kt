@@ -1,16 +1,12 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.ImmutablePatientRecord
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.drugTreatment
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.clinical.datamodel.ImmutableClinicalRecord
-import com.hartwig.actin.clinical.datamodel.ImmutablePriorSecondPrimary
-import com.hartwig.actin.clinical.datamodel.ImmutableTumorDetails
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -83,33 +79,28 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         private val SUSPICIOUS_CANCER_TYPE = HasLimitedCumulativeAnthracyclineExposure.CANCER_DOIDS_FOR_ANTHRACYCLINE.iterator().next()
 
         private fun patientRecord(
-            tumorDoids: Set<String>?, priorSecondPrimaries: List<PriorSecondPrimary>,
-            treatmentHistory: List<TreatmentHistoryEntry>
+            tumorDoids: Set<String>?, priorSecondPrimaries: List<PriorSecondPrimary>, treatmentHistory: List<TreatmentHistoryEntry>
         ): PatientRecord {
             val base = TestDataFactory.createMinimalTestPatientRecord()
-            return ImmutablePatientRecord.builder()
-                .from(base)
-                .clinical(
-                    ImmutableClinicalRecord.builder()
-                        .from(base.clinical())
-                        .tumor(ImmutableTumorDetails.builder().from(base.clinical().tumor()).doids(tumorDoids).build())
-                        .oncologicalHistory(treatmentHistory)
-                        .priorSecondPrimaries(priorSecondPrimaries)
-                        .build()
+            return base.copy(
+                clinical = base.clinical.copy(
+                    tumor = base.clinical.tumor.copy(doids = tumorDoids),
+                    oncologicalHistory = treatmentHistory,
+                    priorSecondPrimaries = priorSecondPrimaries
                 )
-                .build()
+            )
         }
 
         private fun priorSecondPrimary(treatmentHistory: String = ""): PriorSecondPrimary {
-            return ImmutablePriorSecondPrimary.builder()
-                .addDoids(SUSPICIOUS_CANCER_TYPE)
-                .tumorLocation("")
-                .tumorSubLocation("")
-                .tumorType("")
-                .tumorSubType("")
-                .treatmentHistory(treatmentHistory)
-                .status(TumorStatus.INACTIVE)
-                .build()
+            return PriorSecondPrimary(
+                doids = setOf(SUSPICIOUS_CANCER_TYPE),
+                tumorLocation = "",
+                tumorSubLocation = "",
+                tumorType = "",
+                tumorSubType = "",
+                treatmentHistory = treatmentHistory,
+                status = TumorStatus.INACTIVE
+            )
         }
     }
 }

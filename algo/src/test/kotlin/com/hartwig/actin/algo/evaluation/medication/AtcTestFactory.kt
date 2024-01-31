@@ -1,20 +1,18 @@
 package com.hartwig.actin.algo.evaluation.medication
 
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcClassification
-import com.hartwig.actin.clinical.datamodel.ImmutableAtcLevel
+import com.hartwig.actin.clinical.datamodel.AtcClassification
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 
 internal object AtcTestFactory {
 
-    fun atcClassificationBuilder(): ImmutableAtcClassification.Builder {
-        return ImmutableAtcClassification.builder().anatomicalMainGroup(atcLevelBuilder().build())
-            .chemicalSubGroup(atcLevelBuilder().build())
-            .chemicalSubstance(atcLevelBuilder().build())
-            .pharmacologicalSubGroup(atcLevelBuilder().build())
-            .therapeuticSubGroup(atcLevelBuilder().build())
-    }
-
-    fun atcLevelBuilder(): ImmutableAtcLevel.Builder {
-        return ImmutableAtcLevel.builder().name("").code("")
+    fun atcClassification(anatomicalCode: String = ""): AtcClassification {
+        return AtcClassification(
+            anatomicalMainGroup = AtcLevel(name = "", code = anatomicalCode),
+            chemicalSubGroup = createMinimalAtcLevel(),
+            chemicalSubstance = createMinimalAtcLevel(),
+            pharmacologicalSubGroup = createMinimalAtcLevel(),
+            therapeuticSubGroup = createMinimalAtcLevel()
+        )
     }
 
     fun createProperAtcTree(): AtcTree {
@@ -83,6 +81,10 @@ internal object AtcTestFactory {
                 "string3" to NAME_NOT_APPLICABLE,
             )
         )
+    }
+
+    private fun createMinimalAtcLevel(): AtcLevel {
+        return AtcLevel(name = "", code = "")
     }
 
     private const val NAME_NOT_APPLICABLE = ""

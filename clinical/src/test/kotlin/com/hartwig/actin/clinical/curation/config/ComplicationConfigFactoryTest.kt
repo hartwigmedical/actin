@@ -18,18 +18,18 @@ class ComplicationConfigFactoryTest {
         val errors = config.errors
         val configObj = config.config
         val curated = configObj.curated
-        val curatedCategories = curated!!.categories()
+        val curatedCategories = curated!!.categories
 
         assertThat(errors).isEmpty()
 
         assertThat(configObj.input).isEqualTo("input")
         assertThat(configObj.ignore).isEqualTo(false)
-        assertThat(configObj.impliesUnknownComplicationState).isTrue()
+        assertThat(configObj.impliesUnknownComplicationState).isTrue
 
-        assertThat(curated.name()).isEqualTo("name")
+        assertThat(curated.name).isEqualTo("name")
         assertThat(curatedCategories).containsExactly("categories")
-        assertThat(curated.year()).isEqualTo(2023)
-        assertThat(curated.month()).isEqualTo(12)
+        assertThat(curated.year).isEqualTo(2023)
+        assertThat(curated.month).isEqualTo(12)
     }
 
     @Test

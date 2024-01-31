@@ -4,9 +4,8 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
-import com.hartwig.actin.treatment.datamodel.EligibilityRule
-import com.hartwig.actin.treatment.datamodel.ImmutableEligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -52,8 +51,8 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
         extraFunctions: Set<EligibilityFunction> = emptySet()
     ): TreatmentCandidate {
         val treatment = treatmentDatabase.findTreatmentByName(name)!!
-        val drugRequirements = (treatment as DrugTreatment).drugs().flatMap { drug ->
-            val drugName = drug.name()
+        val drugRequirements = (treatment as DrugTreatment).drugs.flatMap { drug ->
+            val drugName = drug.name
             listOf(setOf("OXALIPLATIN", TREATMENT_IRINOTECAN), setOf("FLUOROURACIL", "CAPECITABINE"))
                 .filter { drugName in it }
                 .map {
@@ -78,14 +77,14 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
     }
 
     private fun addBevacizumabToTreatment(treatmentCandidate: TreatmentCandidate): TreatmentCandidate {
-        val score = if (treatmentCandidate.treatment.name() == TREATMENT_FOLFOXIRI) {
+        val score = if (treatmentCandidate.treatment.name == TREATMENT_FOLFOXIRI) {
             SCORE_FOLFOXIRI_PLUS_BEVACIZUMAB
         } else {
             treatmentCandidate.expectedBenefitScore.coerceAtLeast(SCORE_MONOTHERAPY_PLUS_BEVACIZUMAB)
         }
 
         return TreatmentCandidate(
-            treatmentDatabase.findTreatmentByName(treatmentCandidate.treatment.name() + "+Bevacizumab")!!,
+            treatmentDatabase.findTreatmentByName(treatmentCandidate.treatment.name + "+Bevacizumab")!!,
             isOptional = true,
             score,
             treatmentCandidate.eligibilityFunctions
@@ -117,10 +116,10 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
 
     private fun combinedAntiEGFRTherapies(): List<TreatmentCandidate> {
         val capecitabine = treatmentDatabase.findDrugByName("CAPECITABINE")
-        return combinableChemotherapies().filterNot { (it.treatment as DrugTreatment).drugs().contains(capecitabine) }
-            .filterNot { it.treatment.name().equals(TREATMENT_FOLFOXIRI, ignoreCase = true) }
+        return combinableChemotherapies().filterNot { (it.treatment as DrugTreatment).drugs.contains(capecitabine) }
+            .filterNot { it.treatment.name.equals(TREATMENT_FOLFOXIRI, ignoreCase = true) }
             .flatMap { chemo: TreatmentCandidate ->
-                val combinedEligibilityCriteria = when (chemo.treatment.name().uppercase()) {
+                val combinedEligibilityCriteria = when (chemo.treatment.name.uppercase()) {
                     TREATMENT_IRINOTECAN -> setOf(eligibleForTreatmentLines(setOf(1, 2)))
                     "FLUOROURACIL" -> emptySet()
                     "OXALIPLATIN" -> emptySet()
@@ -128,7 +127,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
                 } + ANTI_EGFR_ELIGIBILITY_FUNCTIONS
 
                 antiEGFRTherapies().map { therapy: TreatmentCandidate ->
-                    val combinedName = "${chemo.treatment.name()}+${therapy.treatment.name()}"
+                    val combinedName = "${chemo.treatment.name}+${therapy.treatment.name}"
                     therapy.copy(
                         treatment = treatmentDatabase.findTreatmentByName(combinedName)!!,
                         eligibilityFunctions = combinedEligibilityCriteria + eligibleIfTreatmentNotInHistory(combinedName),
@@ -249,7 +248,7 @@ class RecommendationDatabase(val treatmentDatabase: TreatmentDatabase) {
         }
 
         private fun eligibilityFunction(rule: EligibilityRule, vararg parameters: Any): EligibilityFunction {
-            return ImmutableEligibilityFunction.builder().rule(rule).addParameters(*parameters).build()
+            return EligibilityFunction(rule = rule, parameters = listOf(*parameters))
         }
     }
 }

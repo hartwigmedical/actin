@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.treatment.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
 
 class RecommendationEngine private constructor(
     private val doidModel: DoidModel,
@@ -96,11 +96,11 @@ class RecommendationEngine private constructor(
         }
 
         private fun expandedTumorDoids(patientRecord: PatientRecord, doidModel: DoidModel): Set<String> {
-            return patientRecord.clinical().tumor().doids()?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
+            return patientRecord.clinical.tumor.doids?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
         }
 
         private fun treatmentHasNoFailedEvaluations(evaluatedTreatment: EvaluatedTreatment): Boolean {
-            return evaluatedTreatment.evaluations.none { it.result() == EvaluationResult.FAIL }
+            return evaluatedTreatment.evaluations.none { it.result == EvaluationResult.FAIL }
         }
     }
 }

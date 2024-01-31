@@ -9,7 +9,10 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
-class MedicationGenerator(private val medications: List<Medication>, private val totalWidth: Float) : TableGenerator {
+class MedicationGenerator(
+    private val medications: List<Medication>, private val totalWidth: Float, private val interpreter: MedicationStatusInterpreter
+) : TableGenerator {
+
     override fun title(): String {
         return "Active medication details"
     }
@@ -25,14 +28,14 @@ class MedicationGenerator(private val medications: List<Medication>, private val
         table.addHeaderCell(Cells.createHeader("Dosage"))
         table.addHeaderCell(Cells.createHeader("Frequency"))
         medications.distinct()
-            .filter { it.status()?.display() == "Active" || it.status()?.display() == "Planned" }
+            .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
             .forEach { medication: Medication ->
-                table.addCell(Cells.createContent(medication.name()))
+                table.addCell(Cells.createContent(medication.name))
                 table.addCell(Cells.createContent(administrationRoute(medication)))
-                table.addCell(Cells.createContent(Formats.date(medication.startDate(), "")))
-                table.addCell(Cells.createContent(Formats.date(medication.stopDate(), "")))
+                table.addCell(Cells.createContent(Formats.date(medication.startDate, "")))
+                table.addCell(Cells.createContent(Formats.date(medication.stopDate, "")))
                 table.addCell(Cells.createContent(dosage(medication)))
-                table.addCell(Cells.createContent(frequency(medication.dosage())))
+                table.addCell(Cells.createContent(frequency(medication.dosage)))
             }
         return makeWrapping(table)
     }
@@ -41,20 +44,20 @@ class MedicationGenerator(private val medications: List<Medication>, private val
         private const val SPECIFIC_OR_UNKNOWN = "specific prescription|unknown prescription"
 
         private fun administrationRoute(medication: Medication): String {
-            return if (medication.administrationRoute() != null) medication.administrationRoute()!! else ""
+            return if (medication.administrationRoute != null) medication.administrationRoute!! else ""
         }
 
         private fun dosage(medication: Medication): String {
-            val dosage = medication.dosage()
-            if (medication.administrationRoute() in setOf("Cutaneous", "Intravenous") && dosage.dosageMin() == 0.0) {
+            val dosage = medication.dosage
+            if (medication.administrationRoute in setOf("Cutaneous", "Intravenous") && dosage.dosageMin == 0.0) {
                 return ""
             }
-            val dosageMin = formatDosageLimit(dosage.dosageMin())
-            val dosageMax = formatDosageLimit(dosage.dosageMax())
+            val dosageMin = formatDosageLimit(dosage.dosageMin)
+            val dosageMax = formatDosageLimit(dosage.dosageMax)
             val dosageString = if (dosageMin == dosageMax) dosageMin else "$dosageMin - $dosageMax"
-            val result = if (dosage.ifNeeded() == true) "if needed $dosageString" else dosageString
+            val result = if (dosage.ifNeeded == true) "if needed $dosageString" else dosageString
 
-            val dosageUnit = dosage.dosageUnit()
+            val dosageUnit = dosage.dosageUnit
             return when {
                 dosageUnit == null -> {
                     "unknown prescription"
@@ -75,8 +78,8 @@ class MedicationGenerator(private val medications: List<Medication>, private val
 
         private fun frequency(dosage: Dosage): String {
             val frequency =
-                if (dosage.frequency() != null && dosage.frequency() != 0.0) Formats.twoDigitNumber(dosage.frequency()!!) else "?"
-            val frequencyUnit = dosage.frequencyUnit()
+                if (dosage.frequency != null && dosage.frequency != 0.0) Formats.twoDigitNumber(dosage.frequency!!) else "?"
+            val frequencyUnit = dosage.frequencyUnit
             return when {
                 frequencyUnit == null -> {
                     "unknown prescription"
@@ -86,8 +89,8 @@ class MedicationGenerator(private val medications: List<Medication>, private val
                     frequencyUnit
                 }
 
-                dosage.periodBetweenUnit() != null -> {
-                    "$frequency / ${Formats.noDigitNumber(dosage.periodBetweenValue()!! + 1)} ${dosage.periodBetweenUnit()}"
+                dosage.periodBetweenUnit != null -> {
+                    "$frequency / ${Formats.noDigitNumber(dosage.periodBetweenValue!! + 1)} ${dosage.periodBetweenUnit}"
                 }
 
                 else -> {
