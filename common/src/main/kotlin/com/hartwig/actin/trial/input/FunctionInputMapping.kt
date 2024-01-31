@@ -271,6 +271,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HYPERTENSION to FunctionInput.NONE,
         EligibilityRule.HAS_HYPOTENSION to FunctionInput.NONE,
         EligibilityRule.HAS_DIABETES to FunctionInput.NONE,
+        EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS to FunctionInput.NONE,
         EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES to FunctionInput.NONE,
         EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to FunctionInput.NONE,
         EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT to FunctionInput.NONE,
