@@ -240,7 +240,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
-        EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
+        EligibilityRule.HAS_GLUCOSE_FASTING_PLASMA_MMOL_PER_L_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to FunctionInput.NONE,
 
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X to FunctionInput.ONE_DOID_TERM,
