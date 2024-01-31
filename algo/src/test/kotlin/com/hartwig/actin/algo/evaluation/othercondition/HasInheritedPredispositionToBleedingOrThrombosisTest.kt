@@ -38,9 +38,26 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
                         doids = setOf(
-                            "wrong doid", DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID
+                            "other doid", DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID
                         )
                     )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass with at least one condition with certain name`() {
+        val conditions = listOf(
+            OtherConditionTestFactory.priorOtherCondition(name = "other name"),
+            OtherConditionTestFactory.priorOtherCondition(name = "FACTOR V LEIDEN")
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherConditions(
+                    conditions
                 )
             )
         )

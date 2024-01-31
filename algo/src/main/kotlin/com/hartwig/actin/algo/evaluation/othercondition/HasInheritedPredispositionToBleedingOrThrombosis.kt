@@ -19,15 +19,25 @@ class HasInheritedPredispositionToBleedingOrThrombosis(private val doidModel: Do
             }
             ?.let { doidModel::resolveTermForDoid }
 
+        val hasMatchingName = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+            .any { it.name.lowercase().contains(NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS.lowercase()) }
+
+        val baseMessage = "(typically) inherited predisposition to bleeding or thrombosis"
+
         return if (matchingDoidTerm != null) {
             EvaluationFactory.pass(
-                "Patient has inherited predisposition to bleeding or thrombosis: $matchingDoidTerm",
-                "History of inherited predisposition to bleeding or thrombosis: $matchingDoidTerm"
+                "Patient has $baseMessage: $matchingDoidTerm",
+                "History of $baseMessage: $matchingDoidTerm"
+            )
+        } else if (hasMatchingName) {
+            EvaluationFactory.pass(
+                "Patient has $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS",
+                "History of $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS"
             )
         } else {
             EvaluationFactory.fail(
-                "Patient has no inherited predisposition to bleeding or thrombosis",
-                "No inherited predisposition to bleeding or thrombosis"
+                "Patient has no $baseMessage",
+                "No history of $baseMessage"
             )
         }
     }
@@ -42,5 +52,6 @@ class HasInheritedPredispositionToBleedingOrThrombosis(private val doidModel: Do
             DoidConstants.PROTEIN_S_DEFICIENCY_DOID,
             DoidConstants.ANTITHROMBIN_III_DEFICIENCY_DOID
         )
+        const val NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS = "Factor V Leiden"
     }
 }
