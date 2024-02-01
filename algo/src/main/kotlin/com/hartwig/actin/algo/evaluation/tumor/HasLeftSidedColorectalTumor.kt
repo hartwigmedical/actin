@@ -9,12 +9,7 @@ import com.hartwig.actin.doid.DoidModel
 
 private const val TUMOR_SUB_LOCATION_SIDE_TEMPLATE = "Tumor sub-location %s is on %s side"
 
-class HasLeftSidedColorectalTumor (doidModel: DoidModel) : EvaluationFunction {
-    private val doidModel: DoidModel
-
-    init {
-        this.doidModel = doidModel
-    }
+class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.clinical.tumor.doids

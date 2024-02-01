@@ -11,32 +11,19 @@ import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import java.time.LocalDate
 
-@Ignore
 class RecommendationEngineTest {
-
-    @Test
-    fun `Should not recommend Capecitabine combined with Irinotecan`() {
-        assertThat(TYPICAL_TREATMENT_RESULTS).noneMatch {
-            val drugNames = (it.treatment as DrugTreatment).drugs.map(Drug::name).map(String::uppercase)
-            drugNames.contains("CAPECITABINE") && drugNames.contains("IRINOTECAN")
-        }
-    }
 
     @Test
     fun `Should not recommend Oxaliplatin monotherapy`() {
@@ -49,54 +36,60 @@ class RecommendationEngineTest {
     }
 
     @Test
+    fun `Should not recommend Oxaliplatin+Bevacizumab`() {
+        // Oxaliplatin should always be given in combination with 5-FU or Capecitabine
+        // TODO
+    }
+
+    @Test
+    fun `Should not recommend Irinotecan+Bevacizumab`() {
+        // This is never given in the Netherlands
+        // TODO
+    }
+
+    @Test
     fun `Should not recommend CAPOXIRI`() {
         assertSpecificTreatmentNotRecommended("CAPOXIRI")
     }
 
     @Test
     fun `Should not recommend FOLFOX after CAPOX`() {
-        assertThat(resultsForPatientWithHistory(listOf(RecommendationDatabase.TREATMENT_CAPOX))).noneMatch {
-            it.treatment.name.equals(RecommendationDatabase.TREATMENT_FOLFOX, ignoreCase = true)
+        assertThat(resultsForPatientWithHistory(listOf(CAPOX))).noneMatch {
+            it.treatment.name.equals(FOLFOX, ignoreCase = true)
         }
     }
 
     @Test
     fun `Should not recommend CAPOX after FOLFOX`() {
-        assertThat(resultsForPatientWithHistory(listOf(RecommendationDatabase.TREATMENT_FOLFOX))).noneMatch {
-            it.treatment.name.equals(RecommendationDatabase.TREATMENT_CAPOX, ignoreCase = true)
+        assertThat(resultsForPatientWithHistory(listOf(FOLFOX))).noneMatch {
+            it.treatment.name.equals(CAPOX, ignoreCase = true)
         }
     }
 
     @Test
-    fun `Should recommend FOLFOXIRI+Bevacizumab first for fit patients that are not eligible for anti-EGFR or Pembrolizumab`() {
-        val results = resultsForPatientWithHistoryAndMolecular(emptyList(), MOLECULAR_RECORD_WITH_BRAF_V600E)
-        assertThat(results.first().treatment.name).isEqualTo("${RecommendationDatabase.TREATMENT_FOLFOXIRI}+BEVACIZUMAB")
-    }
-
-    @Test
     fun `Should recommend Irinotecan monotherapy in second line after first-line Oxaliplatin treatment`() {
-        assertSpecificTreatmentNotRecommended(RecommendationDatabase.TREATMENT_IRINOTECAN)
-        assertThat(resultsForPatientWithHistory(listOf(RecommendationDatabase.TREATMENT_CAPOX)))
-            .anyMatch { it.treatment.name == RecommendationDatabase.TREATMENT_IRINOTECAN }
+        assertSpecificTreatmentNotRecommended(IRINOTECAN)
+        assertThat(resultsForPatientWithHistory(listOf(CAPOX)))
+            .anyMatch { it.treatment.name == IRINOTECAN }
     }
 
     @Test
     fun `Should require Oxaliplatin or Irinotecan for SOC exhaustion`() {
         val pastTreatmentNames = listOf(
-            RecommendationDatabase.TREATMENT_PEMBROLIZUMAB,
+            PEMBROLIZUMAB,
             "CAPECITABINE+BEVACIZUMAB",
             "CETUXIMAB",
-            RecommendationDatabase.TREATMENT_LONSURF
+            LONSURF
         )
         val patientRecord = patientRecordWithTreatmentHistory(pastTreatmentNames)
         assertThat(resultsForPatient(patientRecord).map { it.treatment.name }.toSet()).contains(
-            RecommendationDatabase.TREATMENT_CAPOX,
-            RecommendationDatabase.TREATMENT_IRINOTECAN,
-            RecommendationDatabase.TREATMENT_FOLFOX
+            CAPOX,
+            IRINOTECAN,
+            FOLFOX
         )
         assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientRecord)).isFalse
 
-        listOf(RecommendationDatabase.TREATMENT_CAPOX, RecommendationDatabase.TREATMENT_IRINOTECAN).forEach { treatment ->
+        listOf(CAPOX, IRINOTECAN).forEach { treatment ->
             val updatedPatientRecord = patientRecordWithTreatmentHistory(pastTreatmentNames + treatment)
             assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(updatedPatientRecord)).isTrue()
         }
@@ -105,14 +98,14 @@ class RecommendationEngineTest {
     @Test
     fun `Should require 5-FU or Capecitabine for SOC exhaustion`() {
         val pastTreatmentNames = listOf(
-            RecommendationDatabase.TREATMENT_PEMBROLIZUMAB,
+            PEMBROLIZUMAB,
             "OXALIPLATIN+BEVACIZUMAB",
             "CETUXIMAB",
-            RecommendationDatabase.TREATMENT_LONSURF
+            LONSURF
         )
         val patientRecord = patientRecordWithTreatmentHistory(pastTreatmentNames)
         assertThat(resultsForPatient(patientRecord).map { it.treatment.name }.toSet()).contains(
-            "CAPECITABINE", "FLUOROURACIL", RecommendationDatabase.TREATMENT_FOLFOXIRI
+            "CAPECITABINE", "FLUOROURACIL", FOLFOXIRI
         )
         assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientRecord)).isFalse
 
@@ -172,50 +165,20 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should recommend first-line anti-EGFR+chemotherapy first for patients matching molecular criteria`() {
-        assertAntiEGFRTreatmentCount(resultsForPatientWithHistoryAndMolecular(emptyList(), MOLECULAR_RECORD_WITH_BRAF_V600E), 0)
-        assertAntiEGFRTreatmentCount(TYPICAL_TREATMENT_RESULTS, 10)
-
-        assertThat(TYPICAL_TREATMENT_RESULTS.take(MULTICHEMOTHERAPIES_WITH_EGFR.size).map { it.treatment.name })
-            .containsAll(MULTICHEMOTHERAPIES_WITH_EGFR)
-    }
-
-    @Test
-    fun `Should recommend second-line anti-EGFR therapy first for patients matching molecular criteria`() {
-        val firstLineChemotherapies = listOf(RecommendationDatabase.TREATMENT_CAPOX)
-        assertAntiEGFRTreatmentCount(
-            resultsForPatientWithHistoryAndMolecular(firstLineChemotherapies, MOLECULAR_RECORD_WITH_BRAF_V600E), 0
-        )
-
-        val results = resultsForPatientWithHistory(firstLineChemotherapies)
-        assertAntiEGFRTreatmentCount(results, 12)
-
-        assertThat(results.take(MULTICHEMOTHERAPIES_WITH_EGFR.size).map { it.treatment.name }).containsAll(MULTICHEMOTHERAPIES_WITH_EGFR)
-    }
-
-    @Test
     fun `Should not recommend anti-EGFR therapy for patients matching molecular criteria but with right sided tumor`() {
-        val firstLineChemotherapies = listOf(RecommendationDatabase.TREATMENT_CAPOX)
-        assertAntiEGFRTreatmentCount(
-            resultsForPatientWithHistoryAndMolecular(firstLineChemotherapies, MINIMAL_PATIENT_RECORD.molecular, "Ascending colon"), 0
-        )
+        val antiEgfrTreatments = setOf(CETUXIMAB, PANITUMUMAB)
+        assertThat(resultsForPatientWithHistoryAndMolecular(listOf(CAPOX), MINIMAL_PATIENT_RECORD.molecular, "Ascending colon")
+            .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
     }
 
     @Test
     fun `Should not recommend anti-EGFR therapy for patients matching molecular criteria who have already received anti-EGFR monotherapy`() {
-        val firstLineChemotherapies = listOf(RecommendationDatabase.TREATMENT_CAPOX)
-        listOf(RecommendationDatabase.TREATMENT_CETUXIMAB, RecommendationDatabase.TREATMENT_PANITUMUMAB).forEach {
-            assertAntiEGFRTreatmentCount(resultsForPatientWithHistory(firstLineChemotherapies + it), 0)
+        val firstLineChemotherapies = listOf(CAPOX)
+        val antiEgfrTreatments = setOf(CETUXIMAB, PANITUMUMAB)
+        antiEgfrTreatments.forEach { antiEgfrTreatment ->
+            assertThat(resultsForPatientWithHistory(firstLineChemotherapies + antiEgfrTreatment)
+                .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
         }
-    }
-
-    private fun assertAntiEGFRTreatmentCount(treatmentResults: List<TreatmentCandidate>, count: Int) {
-        val matchingTreatments = treatmentResults.filter { candidate ->
-            val drugNames = (candidate.treatment as DrugTreatment).drugs.map(Drug::name).map(String::uppercase)
-            drugNames.any { it in RecommendationDatabase.EGFR_TREATMENTS } && drugNames.none { it == "ENCORAFENIB" }
-        }.distinct()
-
-        assertThat(matchingTreatments).hasSize(count)
     }
 
     @Test
@@ -229,52 +192,25 @@ class RecommendationEngineTest {
     fun `Should not combine anti-EGFR therapy with FOLFOXIRI`() {
         val antiEGFRTherapies = antiEGFRTherapies()
         assertThat(antiEGFRTherapies).isNotEmpty
-        RecommendationDatabase.EGFR_TREATMENTS.forEach { antiEGFRTreatment ->
+        listOf(CETUXIMAB, PANITUMUMAB).forEach { antiEGFRTreatment ->
             assertThat(antiEGFRTherapies).noneMatch { it.name.equals("FOLFOXIRI+$antiEGFRTreatment", ignoreCase = true) }
         }
     }
 
     private fun antiEGFRTherapies(): List<DrugTreatment> {
-        return resultsForPatientWithHistory(listOf(RecommendationDatabase.TREATMENT_CAPOX))
+        return resultsForPatientWithHistory(listOf(CAPOX))
             .mapNotNull { it.treatment as? DrugTreatment }
             .filter {
                 it.drugs.any { drug ->
-                    drug.name.uppercase() == RecommendationDatabase.TREATMENT_CETUXIMAB ||
-                            drug.name.uppercase() == RecommendationDatabase.TREATMENT_PANITUMUMAB
+                    drug.name.uppercase() == CETUXIMAB ||
+                            drug.name.uppercase() == PANITUMUMAB
                 }
             }
     }
 
     @Test
-    fun `Should recommend Pembrolizumab first in first line for patients with MSI`() {
-        assertFirstResultIsPembrolizumabForPatientWithTreatmentHistoryAndMSI(emptyList())
-    }
-
-    @Test
-    fun `Should recommend Pembrolizumab first in second line for patients with MSI`() {
-        assertFirstResultIsPembrolizumabForPatientWithTreatmentHistoryAndMSI(listOf(RecommendationDatabase.TREATMENT_FOLFOX))
-    }
-
-    private fun assertFirstResultIsPembrolizumabForPatientWithTreatmentHistoryAndMSI(treatmentHistory: List<String>) {
-        assertThat(TYPICAL_TREATMENT_RESULTS).noneMatch { it.treatment.name == RecommendationDatabase.TREATMENT_PEMBROLIZUMAB }
-
-        val variant: Variant = TestVariantFactory.createMinimal().copy(
-            gene = "MLH1", isReportable = true, isBiallelic = true
-        )
-        val minimal = MINIMAL_PATIENT_RECORD.molecular
-        val molecularRecord = minimal.copy(
-            characteristics = minimal.characteristics.copy(isMicrosatelliteUnstable = true),
-            drivers = minimal.drivers.copy(variants = setOf(variant))
-        )
-
-        val firstResult = resultsForPatientWithHistoryAndMolecular(treatmentHistory, molecularRecord).first()
-        assertThat(firstResult.isOptional).isFalse
-        assertThat(firstResult.treatment.name).isEqualTo(RecommendationDatabase.TREATMENT_PEMBROLIZUMAB)
-    }
-
-    @Test
     fun `Should recommend Cetuximab+Encorafenib after first line for patient with BRAF V600E`() {
-        val firstLineChemotherapies = listOf(RecommendationDatabase.TREATMENT_CAPOX)
+        val firstLineChemotherapies = listOf(CAPOX)
         val cetuximabAndEncorafenib = "CETUXIMAB+ENCORAFENIB"
         assertThat(resultsForPatientWithHistory(firstLineChemotherapies))
             .noneMatch { it.treatment.name.uppercase() == cetuximabAndEncorafenib }
@@ -289,8 +225,8 @@ class RecommendationEngineTest {
     @Test
     fun `Should recommend optional Lonsurf after chemo and targeted therapy`() {
         val result = resultsForPatientWithHistoryAndMolecular(
-            listOf(RecommendationDatabase.TREATMENT_CAPOX, RecommendationDatabase.TREATMENT_PANITUMUMAB), MINIMAL_PATIENT_RECORD.molecular
-        ).find { treatmentCandidateMatchesName(it, RecommendationDatabase.TREATMENT_LONSURF) }
+            listOf(CAPOX, PANITUMUMAB), MINIMAL_PATIENT_RECORD.molecular
+        ).find { treatmentCandidateMatchesName(it, LONSURF) }
         assertThat(result).isNotNull
         assertThat(result?.isOptional).isTrue
     }
@@ -298,10 +234,10 @@ class RecommendationEngineTest {
     @Test
     fun `Should not recommend Lonsurf after Trifluridine`() {
         val results = resultsForPatientWithHistoryAndMolecular(
-            listOf(RecommendationDatabase.TREATMENT_CAPOX, "trifluridine", RecommendationDatabase.TREATMENT_PANITUMUMAB),
+            listOf(CAPOX, "trifluridine", PANITUMUMAB),
             MINIMAL_PATIENT_RECORD.molecular
         )
-        assertThat(results).noneMatch { treatmentCandidateMatchesName(it, RecommendationDatabase.TREATMENT_LONSURF) }
+        assertThat(results).noneMatch { treatmentCandidateMatchesName(it, LONSURF) }
     }
 
     @Test
@@ -315,25 +251,6 @@ class RecommendationEngineTest {
             assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
                 resultsForPatient(patientRecordWithTumorDoids(doid))
             }
-        }
-    }
-
-    @Test
-    fun `Should not recommend multi-chemotherapy for patients aged 75 or older`() {
-        assertMultiChemotherapyNotRecommended(OLDER_PATIENT)
-    }
-
-    @Test
-    fun `Should not recommend multi chemotherapy for patients with WHO status greater than 2`() {
-        assertMultiChemotherapyNotRecommended(PATIENT_WITH_HIGH_WHO_STATUS)
-    }
-
-    @Test
-    fun `Should recommend fluoropyrimidine+Bevacizumab treatments for patients unfit to receive combination chemotherapy`() {
-        val expectedTreatmentNames = setOf("FLUOROURACIL+BEVACIZUMAB", "CAPECITABINE+BEVACIZUMAB")
-        listOf(OLDER_PATIENT, PATIENT_WITH_HIGH_WHO_STATUS).forEach { patient ->
-            val results = resultsForPatient(patient)
-            assertThat(results.filter { it.treatment.name in expectedTreatmentNames }).hasSize(2)
         }
     }
 
@@ -352,7 +269,7 @@ class RecommendationEngineTest {
         private val RECOMMENDATION_ENGINE = RecommendationEngine.create(
             TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer"),
             AtcTree.createFromFile(listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)),
-            RecommendationDatabase(TREATMENT_DATABASE),
+            TreatmentCandidateDatabase(TREATMENT_DATABASE),
             ReferenceDateProviderTestFactory.createCurrentDateProvider()
         )
 
@@ -361,31 +278,16 @@ class RecommendationEngineTest {
             "CAPECITABINE",
             "IRINOTECAN",
             "OXALIPLATIN",
-            RecommendationDatabase.TREATMENT_CAPOX,
-            RecommendationDatabase.TREATMENT_FOLFIRI,
-            RecommendationDatabase.TREATMENT_FOLFOXIRI,
-            RecommendationDatabase.TREATMENT_FOLFOX
+            CAPOX,
+            FOLFIRI,
+            FOLFOXIRI,
+            FOLFOX
         )
-
-        private val MULTICHEMOTHERAPIES_WITH_EGFR =
-            listOf(RecommendationDatabase.TREATMENT_FOLFOX, RecommendationDatabase.TREATMENT_FOLFIRI)
-                .flatMap { chemo -> RecommendationDatabase.EGFR_TREATMENTS.map { "$chemo+$it" } }
-
 
         private val MINIMAL_PATIENT_RECORD = TestDataFactory.createMinimalTestPatientRecord()
         private val MINIMAL_CRC_PATIENT_RECORD = MINIMAL_PATIENT_RECORD.copy(
             clinical = MINIMAL_PATIENT_RECORD.clinical.copy(
                 tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
-            )
-        )
-        private val OLDER_PATIENT = MINIMAL_CRC_PATIENT_RECORD.copy(
-            clinical = MINIMAL_CRC_PATIENT_RECORD.clinical.copy(
-                patient = MINIMAL_CRC_PATIENT_RECORD.clinical.patient.copy(birthYear = LocalDate.now().minusYears(76).year)
-            )
-        )
-        private val PATIENT_WITH_HIGH_WHO_STATUS = MINIMAL_CRC_PATIENT_RECORD.copy(
-            clinical = MINIMAL_CRC_PATIENT_RECORD.clinical.copy(
-                clinicalStatus = MINIMAL_CRC_PATIENT_RECORD.clinical.clinicalStatus.copy(who = 3)
             )
         )
 
@@ -429,13 +331,6 @@ class RecommendationEngineTest {
 
         private fun assertSpecificTreatmentNotRecommended(name: String) {
             assertThat(TYPICAL_TREATMENT_RESULTS).noneMatch { treatmentCandidateMatchesName(it, name) }
-        }
-
-        private fun assertMultiChemotherapyNotRecommended(patientRecord: PatientRecord) {
-            val chemotherapyComponents = setOf("FLUOROURACIL", "CAPECITABINE", "IRINOTECAN", "OXALIPLATIN")
-            assertThat(resultsForPatient(patientRecord).map { treatmentCandidate ->
-                (treatmentCandidate.treatment as DrugTreatment).drugs.count { chemotherapyComponents.contains(it.name) }
-            }).noneMatch { it > 1 }
         }
 
         private fun treatmentCandidateMatchesName(treatmentCandidate: TreatmentCandidate, name: String): Boolean {

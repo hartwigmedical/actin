@@ -4,6 +4,5 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 
 data class EvaluatedTreatment(
     val treatmentCandidate: TreatmentCandidate,
-    val evaluations: List<Evaluation>,
-    val score: Int,
+    val evaluations: List<Evaluation>
 )

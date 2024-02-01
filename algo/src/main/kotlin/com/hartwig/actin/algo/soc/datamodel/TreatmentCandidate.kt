@@ -6,7 +6,6 @@ import com.hartwig.actin.trial.datamodel.EligibilityFunction
 data class TreatmentCandidate(
     val treatment: Treatment,
     val isOptional: Boolean,
-    val expectedBenefitScore: Int,
     val eligibilityFunctions: Set<EligibilityFunction>,
     val additionalCriteriaForRequirement: Set<EligibilityFunction> = emptySet()
 ) {
@@ -23,7 +22,7 @@ data class TreatmentCandidate(
 
     fun eligibilityFunctionsForRequirement(): Set<EligibilityFunction> {
         if (isOptional) {
-            throw IllegalStateException("Requirement criteria undefined for optional treatment")
+            throw IllegalStateException("Requirement criteria are not defined for optional treatment")
         }
         return eligibilityFunctions union additionalCriteriaForRequirement
     }

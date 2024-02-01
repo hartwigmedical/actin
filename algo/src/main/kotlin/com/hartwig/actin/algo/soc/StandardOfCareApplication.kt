@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -49,13 +48,11 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
         LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
-        val recommendationDatabase = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory))
-        LOGGER.info("Loaded recommendation database for colorectal cancer with treatment candidates:")
-        recommendationDatabase.logRulesForDoidSet(setOf(DoidConstants.COLORECTAL_CANCER_DOID))
+        val treatmentCandidateDatabase = TreatmentCandidateDatabase(TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory))
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
         val recommendationEngine =
-            RecommendationEngine.create(doidModel, atcTree, recommendationDatabase, referenceDateProvider)
+            RecommendationEngine.create(doidModel, atcTree, treatmentCandidateDatabase, referenceDateProvider)
 
         LOGGER.info(recommendationEngine.provideRecommendations(patient))
         val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)

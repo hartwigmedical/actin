@@ -32,9 +32,7 @@ class TestStandardOfCareApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        val database = RecommendationDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
-        LOGGER.info("Loaded recommendation database for colorectal cancer with treatment candidates:")
-        database.logRulesForDoidSet(setOf(DoidConstants.COLORECTAL_CANCER_DOID))
+        val database = TreatmentCandidateDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
 
         val recommendationEngine =
             RecommendationEngine.create(

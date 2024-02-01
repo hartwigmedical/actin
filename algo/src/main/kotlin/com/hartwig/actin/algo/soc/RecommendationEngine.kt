@@ -13,7 +13,7 @@ import com.hartwig.actin.trial.datamodel.EligibilityFunction
 
 class RecommendationEngine private constructor(
     private val doidModel: DoidModel,
-    private val recommendationDatabase: RecommendationDatabase,
+    private val treatmentCandidateDatabase: TreatmentCandidateDatabase,
     private val evaluationFunctionFactory: EvaluationFunctionFactory
 ) {
 
@@ -22,18 +22,17 @@ class RecommendationEngine private constructor(
             "SOC recommendation only supported for colorectal carcinoma"
         }
 
-        return treatmentCandidateSequence(patientRecord)
+        return treatmentCandidateSequence()
             .map { evaluateTreatmentEligibilityForPatient(it, patientRecord) }
             .filter { treatmentHasNoFailedEvaluations(it) }
-            .filter { it.score >= 0 }
-            .sortedByDescending { it.score }.toList()
+            .toList()
     }
 
-    fun determineRequiredTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
-        return treatmentCandidateSequence(patientRecord)
+    private fun determineRequiredTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
+        return treatmentCandidateSequence()
             .filterNot(TreatmentCandidate::isOptional)
             .map { evaluateTreatmentRequirementForPatient(it, patientRecord) }
-            .filter { it.score >= 0 && treatmentHasNoFailedEvaluations(it) }
+            .filter(::treatmentHasNoFailedEvaluations)
             .toList()
     }
 
@@ -45,8 +44,7 @@ class RecommendationEngine private constructor(
         return determineRequiredTreatments(patientRecord).isEmpty()
     }
 
-    private fun treatmentCandidateSequence(patientRecord: PatientRecord) =
-        recommendationDatabase.treatmentCandidatesForDoidSet(expandedTumorDoids(patientRecord, doidModel)).asSequence()
+    private fun treatmentCandidateSequence() = CrcDecisionTree(treatmentCandidateDatabase).treatmentCandidates().asSequence()
 
     private fun evaluateTreatmentEligibilityForPatient(
         treatmentCandidate: TreatmentCandidate,
@@ -68,7 +66,7 @@ class RecommendationEngine private constructor(
         treatmentCandidate: TreatmentCandidate
     ): EvaluatedTreatment {
         val evaluations = eligibilityFunctions.map { evaluationFunctionFactory.create(it).evaluate(patientRecord) }
-        return EvaluatedTreatment(treatmentCandidate, evaluations, treatmentCandidate.expectedBenefitScore)
+        return EvaluatedTreatment(treatmentCandidate, evaluations)
     }
 
     companion object {
@@ -77,14 +75,14 @@ class RecommendationEngine private constructor(
         fun create(
             doidModel: DoidModel,
             atcTree: AtcTree,
-            recommendationDatabase: RecommendationDatabase,
+            treatmentCandidateDatabase: TreatmentCandidateDatabase,
             referenceDateProvider: ReferenceDateProvider
         ): RecommendationEngine {
             return RecommendationEngine(
-                doidModel, recommendationDatabase, EvaluationFunctionFactory.create(
+                doidModel, treatmentCandidateDatabase, EvaluationFunctionFactory.create(
                     doidModel,
                     referenceDateProvider,
-                    recommendationDatabase.treatmentDatabase,
+                    treatmentCandidateDatabase.treatmentDatabase,
                     atcTree
                 )
             )
