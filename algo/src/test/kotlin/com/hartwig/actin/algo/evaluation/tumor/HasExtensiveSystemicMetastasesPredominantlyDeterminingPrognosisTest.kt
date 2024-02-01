@@ -27,7 +27,6 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
         }
         val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysUndeterminedMetastaticCancerEvaluation)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
     @Test
@@ -36,7 +35,6 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
         val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysPassMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 }
