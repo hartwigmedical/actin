@@ -13,10 +13,10 @@ object CkbExtendedEvidenceJson {
 
     fun read(ckbExtendedEvidenceJson: String): List<CkbExtendedEvidenceEntry> {
         val json = Files.readString(File(ckbExtendedEvidenceJson).toPath())
-        val listType: Type = object : TypeToken<ArrayList<CkbExtendedEvidenceEntry?>?>() {}.type
+        val listType: Type = object : TypeToken<List<CkbExtendedEvidenceEntry>>() {}.type
 
-        return GsonBuilder().serializeNulls()
-            .enableComplexMapKeySerialization()
+        return GsonBuilder()
+            .setFieldNamingStrategy(MixedFieldNamingStrategy())
             .registerTypeAdapter(object : TypeToken<LocalDate?>() {}.type, GsonLocalDateAdapter())
             .create()
             .fromJson(json, listType)
