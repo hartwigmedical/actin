@@ -9,7 +9,8 @@ import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 
-class EhrToxicityExtractor(private val toxicityCuration: CurationDatabase<ToxicityConfig>) : EhrExtractor<List<Toxicity>> {
+class EhrToxicityExtractor(private val toxicityCuration: CurationDatabase<ToxicityConfig>) :
+    EhrExtractor<List<Toxicity>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Toxicity>> {
 
         return ehrPatientRecord.toxicities.map { toxicity ->
@@ -20,6 +21,7 @@ class EhrToxicityExtractor(private val toxicityCuration: CurationDatabase<Toxici
                 toxicity.name,
                 "toxicity"
             )
+
             ExtractionResult(listOfNotNull(curatedToxicity.config()?.let {
                 Toxicity(
                     name = it.name,

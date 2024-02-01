@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.Complication
 
-class EhrComplicationExtractor(val complicationCuration: CurationDatabase<ComplicationConfig>) : EhrExtractor<List<Complication>> {
+class EhrComplicationExtractor(private val complicationCuration: CurationDatabase<ComplicationConfig>) : EhrExtractor<List<Complication>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Complication>> {
         return ehrPatientRecord.complications.map {
             val curatedComplication = CurationResponse.createFromConfigs(

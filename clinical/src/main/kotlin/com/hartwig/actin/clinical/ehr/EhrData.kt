@@ -5,20 +5,19 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
-import kotlinx.serialization.Transient
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
-data class EnumeratedInput<T : Enum<T>>(val input: String, @Transient val acceptedValues: T)
+
+data class EnumeratedInput<T : Enum<T>>(val input: String, val acceptedValues: T)
 
 open class EnumInputDeserializer<T : Enum<T>>(private val enumClass: KClass<T>) : JsonDeserializer<EnumeratedInput<T>>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): EnumeratedInput<T> {
-        return runCatching {
-            EnumeratedInput(
-                p.text, enumClass.java.enumConstants.first { it.name == p.text.uppercase().replace(" ", "_") }
-            )
-        }.getOrDefault(EnumeratedInput(p.text, enumClass.java.enumConstants.first { it.name == "OTHER" }))
+        val input = p.text
+        val acceptedValues = enumClass.java.enumConstants.firstOrNull { it.name == input.uppercase().replace(" ", "_") }
+            ?: enumClass.java.enumConstants.first { it.name == "OTHER" }
+        return EnumeratedInput(input, acceptedValues)
     }
 }
 
@@ -45,13 +44,10 @@ data class EhrAllergy(
     val name: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    @JsonDeserialize(using = EhrAllergyCategoryDeserializer::class)
     val category: EnumeratedInput<EhrAllergyCategory>,
     @JsonDeserialize(using = EhrAllergySeverityDeserializer::class)
     val severity: EnumeratedInput<EhrAllergySeverity>,
-    @JsonDeserialize(using = EhrAllergyClinicalStatuDeserializer::class)
     val clinicalStatus: EnumeratedInput<EhrAllergyClinicalStatus>,
-    @JsonDeserialize(using = EhrAllergyVerificationStatusDeserializer::class)
     val verificationStatus: EnumeratedInput<EhrAllergyVerificationStatus>
 )
 
