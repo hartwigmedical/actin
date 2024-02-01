@@ -539,6 +539,7 @@ Systemic corticosteroids: ATC level code equal to "H02" or "M01BA" <br>
 Coumarin derivative medication: ATC level code equal to "B01AA" <br>
 Gonadorelin medication: ATC level code equal to "H01CC", "H01CA", "G03XA" or "L02AE" <br>
 Immunosuppressants: ATC level code equal to "L04" <br>
+Immunostimulants: ATC level code equal to "L03" <br>
 Other antianemic preparations: ATC level code equal to "B03X" <br>
 
 ##### Rules related to washout period
