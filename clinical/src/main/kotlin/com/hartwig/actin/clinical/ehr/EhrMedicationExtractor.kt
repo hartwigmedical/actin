@@ -26,7 +26,7 @@ class EhrMedicationExtractor(
             val curatedQT = CurationResponse.createFromConfigs(
                 qtPrologatingRiskCuration.find(it.name),
                 ehrPatientRecord.patientDetails.patientId,
-                CurationCategory.QT_PROLONGATION,
+                CurationCategory.QT_PROLONGATING,
                 it.name,
                 "qt prolongating risk",
                 true
@@ -34,7 +34,7 @@ class EhrMedicationExtractor(
             val curatedCyp = CurationResponse.createFromConfigs(
                 cypInteractionCuration.find(it.name),
                 ehrPatientRecord.patientDetails.patientId,
-                CurationCategory.CYP_INTERACTION,
+                CurationCategory.CYP_INTERACTIONS,
                 it.name,
                 "cyp interaction",
                 true

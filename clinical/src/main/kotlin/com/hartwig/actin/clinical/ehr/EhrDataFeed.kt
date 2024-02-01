@@ -4,8 +4,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.AtcModel
+import com.hartwig.actin.clinical.ClinicalDataFeed
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.PatientIngestionStatus
+import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import java.nio.file.Files
@@ -30,14 +34,14 @@ class EhrDataFeed(
     private val secondPrimaryExtractor: EhrSecondPrimariesExtractor,
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
     private val bodyWeightExtractor: EhrBodyWeightExtractor
-) {
+) : ClinicalDataFeed {
     private val mapper = ObjectMapper().apply {
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
         registerModule(JavaTimeModule())
     }
 
-    fun ingest(): List<PatientIngestionResult> {
+    override fun ingest(): List<Pair<PatientIngestionResult, ExtractionEvaluation>> {
         return Files.list(Paths.get(directory)).map {
             val ehrPatientRecord = mapper.readValue(Files.readString(it), EhrPatientRecord::class.java)
             val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
@@ -100,14 +104,48 @@ class EhrDataFeed(
             )
 
         }.map {
-            PatientIngestionResult(
-                it.second.patientId,
-                PatientIngestionStatus.PASS,
-                it.second,
-                PatientIngestionResult.curationResults(it.first.warnings.toList()),
-                emptySet(),
-                emptySet()
+            Pair(
+                PatientIngestionResult(
+                    it.second.patientId,
+                    PatientIngestionStatus.PASS,
+                    it.second,
+                    PatientIngestionResult.curationResults(it.first.warnings.toList()),
+                    emptySet(),
+                    emptySet()
+                ), it.first
             )
         }.collect(Collectors.toList())
+    }
+
+    companion object {
+        fun create(
+            directory: String,
+            curationDatabaseContext: CurationDatabaseContext,
+            atcModel: AtcModel,
+            treatmentDatabase: TreatmentDatabase
+        ) = EhrDataFeed(
+            directory,
+            EhrMedicationExtractor(
+                atcModel,
+                curationDatabaseContext.qtProlongingCuration,
+                curationDatabaseContext.cypInteractionCuration,
+                curationDatabaseContext.medicationDosageCuration
+            ),
+            EhrSurgeryExtractor(),
+            EhrIntolerancesExtractor(atcModel, curationDatabaseContext.intoleranceCuration),
+            EhrVitalFunctionsExtractor(),
+            EhrBloodTransfusionExtractor(),
+            EhrLabValuesExtractor(),
+            EhrToxicityExtractor(curationDatabaseContext.toxicityCuration),
+            EhrComplicationExtractor(curationDatabaseContext.complicationCuration),
+            EhrPriorOtherConditionsExtractor(curationDatabaseContext.nonOncologicalHistoryCuration),
+            EhrTreatmentHistoryExtractor(treatmentDatabase),
+            EhrClinicalStatusExtractor(),
+            EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration),
+            EhrSecondPrimariesExtractor(),
+            EhrPatientDetailsExtractor(),
+            EhrBodyWeightExtractor()
+        )
+
     }
 }

@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
+import com.hartwig.actin.clinical.feed.EmcDataFeed
 import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.FeedModel
 import com.hartwig.actin.clinical.feed.FeedValidationWarning
@@ -48,16 +49,18 @@ class ClinicalIngestionTest {
             TestTreatmentDatabaseFactory.createProper()
         )
         val clinicalFeed = ClinicalFeedReader.read(FEED_DIRECTORY)
-        val ingestion = ClinicalIngestion.create(
-            FeedModel(
-                clinicalFeed.copy(
-                    questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                        clinicalFeed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(CURATION_DIRECTORY)
+        val ingestion = ClinicalIngestion(
+            EmcDataFeed.create(
+                FeedModel(
+                    clinicalFeed.copy(
+                        questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                            clinicalFeed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(CURATION_DIRECTORY)
+                        )
                     )
-                )
-            ),
-            curationDatabase,
-            TestAtcFactory.createProperAtcModel()
+                ),
+                curationDatabase,
+                TestAtcFactory.createProperAtcModel()
+            ), curationDatabase
         )
 
         val validationErrors = curationDatabase.validate()
@@ -112,6 +115,6 @@ class ClinicalIngestionTest {
                     patientIngestionResult.feedValidationWarnings
                 )
             )
-        
+
     }
 }

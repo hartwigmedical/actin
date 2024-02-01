@@ -40,7 +40,7 @@ class EhrDataFeedTest {
             toxicityExtractor = EhrToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = EhrVitalFunctionsExtractor(),
             priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(curationDatabase.nonOncologicalHistoryCuration),
-            intolerancesExtractor = EhrIntolerancesExtractor(curationDatabase.intoleranceCuration, TestAtcFactory.createProperAtcModel()),
+            intolerancesExtractor = EhrIntolerancesExtractor(TestAtcFactory.createProperAtcModel(), curationDatabase.intoleranceCuration),
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(TestTreatmentDatabaseFactory.createProper()),
             secondPrimaryExtractor = EhrSecondPrimariesExtractor(),
