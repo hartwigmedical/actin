@@ -49,6 +49,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(),
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
+            EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to hasIrradiationAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
             EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideSampleForFurtherAnalysisCreator(),
@@ -254,6 +255,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasBiopsyAmenableLesionCreator(): FunctionCreator {
         return FunctionCreator { HasBiopsyAmenableLesion() }
+    }
+
+    private fun hasIrradiationAmenableLesionCreator(): FunctionCreator {
+        return FunctionCreator { HasIrradiationAmenableLesion(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasMinimumSitesWithLesionsCreator(): FunctionCreator {

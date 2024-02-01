@@ -60,6 +60,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to FunctionInput.NONE,
         EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to FunctionInput.NONE,
+        EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to FunctionInput.NONE,
         EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to FunctionInput.ONE_INTEGER,
         EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to FunctionInput.NONE,
         EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to FunctionInput.NONE,
