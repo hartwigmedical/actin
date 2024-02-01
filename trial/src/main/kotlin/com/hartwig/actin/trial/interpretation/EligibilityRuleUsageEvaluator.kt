@@ -79,7 +79,10 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS,
         EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X,
         EligibilityRule.HAS_POTENTIAL_UNCONTROLLED_TUMOR_RELATED_PAIN,
-        EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y
+        EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
+        EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS,
+        EligibilityRule.HAS_PHOSPHORUS_MMOL_PER_L_OF_AT_MOST_X,
+        EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME
     )
 
     fun evaluate(trials: List<Trial>) {
