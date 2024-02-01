@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
@@ -30,7 +31,6 @@ import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
-import com.hartwig.actin.trial.input.single.OneReceptorType
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
@@ -520,15 +520,14 @@ class FunctionInputResolver(
         return param
     }
 
-    fun createOneReceptorTypeInput(function: EligibilityFunction): OneReceptorType {
+    fun createOneReceptorTypeInput(function: EligibilityFunction): ReceptorType {
         assertParamConfig(function, FunctionInput.ONE_RECEPTOR_TYPE, 1)
 
         val receptorType = function.parameters.first() as String
-        val allowedReceptors = setOf("ER", "PR", "HER2")
-        if (!allowedReceptors.contains(receptorType)) {
+        if (receptorType != ReceptorType.valueOf(receptorType).display()) {
             throw IllegalArgumentException("Not an allowed receptor type: $receptorType")
         }
-        return OneReceptorType(receptorType)
+        return ReceptorType.valueOf(parameterAsString(function, 0))
     }
 
     fun createManyIntentsInput(function: EligibilityFunction): ManyIntents {

@@ -80,8 +80,8 @@ class HasBreastCancerHormonePositiveHER2Negative (private val doidModel: DoidMod
             // Unclear HR/HER2 status based on doids and no IHC data available
             isBreastCancer -> {
                 EvaluationFactory.undetermined(
-                    "Breast cancer with undetermined HR/Her2-status since IHC data missing",
-                    "Undetermined HR/Her2-status since IHC data missing"
+                    "Breast cancer with undetermined HR/HER2-status since IHC data missing",
+                    "Undetermined HR/HER2-status since IHC data missing"
                 )
             }
 

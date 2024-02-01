@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial.input
 
+import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -24,7 +25,6 @@ import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
-import com.hartwig.actin.trial.input.single.OneReceptorType
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
@@ -461,7 +461,7 @@ class FunctionInputResolverTest {
         val rule = firstOfType(FunctionInput.ONE_RECEPTOR_TYPE)
         val valid = create(rule, listOf("ER"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
-        assertThat(resolver.createOneReceptorTypeInput(valid)).isEqualTo(OneReceptorType("ER"))
+        assertThat(resolver.createOneReceptorTypeInput(valid)).isEqualTo(ReceptorType.ER)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("ER", "something else")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a receptor")))!!).isFalse

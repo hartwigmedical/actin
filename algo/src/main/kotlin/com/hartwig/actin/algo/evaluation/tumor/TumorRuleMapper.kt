@@ -104,7 +104,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasBreastCancerWithPositiveReceptorOfTypeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val receptorType = functionInputResolver().createOneReceptorTypeInput(function).toString()
+            val receptorType = functionInputResolver().createOneReceptorTypeInput(function)
             HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType)
         }
     }
