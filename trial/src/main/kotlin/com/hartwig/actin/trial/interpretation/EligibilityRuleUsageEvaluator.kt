@@ -82,7 +82,8 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_RESTING_HEART_RATE_BETWEEN_X_AND_Y,
         EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS,
         EligibilityRule.HAS_PHOSPHORUS_MMOL_PER_L_OF_AT_MOST_X,
-        EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME
+        EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME,
+        EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION
     )
 
     fun evaluate(trials: List<Trial>) {
