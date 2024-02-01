@@ -112,8 +112,8 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_PSA_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.PSA),
             EligibilityRule.HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.TOTAL_PROTEIN_URINE),
             EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X to undeterminedLabValueCreator("protein in 24h urine"),
-            EligibilityRule.HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X to undeterminedLabValueCreator("Urine protein to creatinine ratio"),
-            EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X to undeterminedLabValueCreator("Glucose"),
+            EligibilityRule.HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X to undeterminedLabValueCreator("urine protein to creatinine ratio"),
+            EligibilityRule.HAS_GLUCOSE_FASTING_PLASMA_MMOL_PER_L_OF_AT_MOST_X to undeterminedLabValueCreator("fasting plasma glucose"),
             EligibilityRule.HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.FREE_T4
             ),
@@ -279,7 +279,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 object : EvaluationFunction {
                     override fun evaluate(record: PatientRecord): Evaluation {
                         return EvaluationFactory.recoverableUndeterminedNoGeneral(
-                            "It is not clear yet under what code '$measure' is measured"
+                            "Lab measure '$measure' cannot be determined yet"
                         )
                     }
                 }

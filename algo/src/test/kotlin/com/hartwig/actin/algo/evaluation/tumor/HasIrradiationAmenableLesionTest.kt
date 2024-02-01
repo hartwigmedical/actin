@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
 
-class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
+class HasIrradiationAmenableLesionTest {
 
     private val patientRecord = TumorTestFactory.withTumorStage(null)
 
@@ -16,8 +16,8 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
         val alwaysFailsMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
-        val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysFailsMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+        val function = HasIrradiationAmenableLesion(alwaysFailsMetastaticCancerEvaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 
     @Test
@@ -25,8 +25,8 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
         val alwaysUndeterminedMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
-        val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysUndeterminedMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        val function = HasIrradiationAmenableLesion(alwaysUndeterminedMetastaticCancerEvaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
     @Test
@@ -34,7 +34,7 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
         val alwaysPassMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
-        val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysPassMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        val function = HasIrradiationAmenableLesion(alwaysPassMetastaticCancerEvaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 }

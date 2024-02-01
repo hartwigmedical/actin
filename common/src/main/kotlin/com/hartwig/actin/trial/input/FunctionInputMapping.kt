@@ -60,6 +60,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to FunctionInput.NONE,
         EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to FunctionInput.NONE,
+        EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to FunctionInput.NONE,
         EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to FunctionInput.ONE_INTEGER,
         EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to FunctionInput.NONE,
         EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to FunctionInput.NONE,
@@ -111,7 +112,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_MONTHS to FunctionInput.MANY_INTENTS_ONE_INTEGER,
         EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to FunctionInput.MANY_INTENTS,
         EligibilityRule.HAS_HAD_NON_INTERNAL_RADIOTHERAPY to FunctionInput.NONE,
-        EligibilityRule.HAS_RECEIVED_HER2_TARGETING_ADC to FunctionInput.NONE,
+        EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y_AND_AT_LEAST_Z_LINES to FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER,
         EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT to FunctionInput.ONE_SPECIFIC_TREATMENT,
         EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT to FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE,
         EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y to
@@ -240,7 +241,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_TOTAL_PROTEIN_IN_URINE_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_TOTAL_PROTEIN_IN_24H_URINE_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_URINE_PROTEIN_TO_CREATININE_RATIO_MG_PER_MG_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
-        EligibilityRule.HAS_GLUCOSE_PL_MMOL_PER_L_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
+        EligibilityRule.HAS_GLUCOSE_FASTING_PLASMA_MMOL_PER_L_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to FunctionInput.NONE,
 
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X to FunctionInput.ONE_DOID_TERM,
@@ -271,6 +272,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HYPERTENSION to FunctionInput.NONE,
         EligibilityRule.HAS_HYPOTENSION to FunctionInput.NONE,
         EligibilityRule.HAS_DIABETES to FunctionInput.NONE,
+        EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS to FunctionInput.NONE,
         EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES to FunctionInput.NONE,
         EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to FunctionInput.NONE,
         EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT to FunctionInput.NONE,

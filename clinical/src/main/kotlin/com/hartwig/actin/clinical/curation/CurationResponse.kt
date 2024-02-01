@@ -100,12 +100,13 @@ data class CurationResponse<T>(
 
                 CurationCategory.COMPLICATION -> ExtractionEvaluation(complicationEvaluatedInputs = evaluatedInputs)
                 CurationCategory.TOXICITY -> ExtractionEvaluation(toxicityEvaluatedInputs = evaluatedInputs)
-                CurationCategory.MOLECULAR_TEST -> ExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
+                CurationCategory.MOLECULAR_TEST_IHC -> ExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
+                CurationCategory.MOLECULAR_TEST_PDL1 -> ExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_NAME -> ExtractionEvaluation(medicationNameEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_DOSAGE -> ExtractionEvaluation(medicationDosageEvaluatedInputs = evaluatedInputs)
                 CurationCategory.INTOLERANCE -> ExtractionEvaluation(intoleranceEvaluatedInputs = evaluatedInputs)
-                CurationCategory.CYP_INTERACTION -> ExtractionEvaluation()
-                CurationCategory.QT_PROLONGATION -> ExtractionEvaluation()
+                CurationCategory.CYP_INTERACTIONS -> ExtractionEvaluation()
+                CurationCategory.QT_PROLONGATING -> ExtractionEvaluation()
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
             return CurationResponse(

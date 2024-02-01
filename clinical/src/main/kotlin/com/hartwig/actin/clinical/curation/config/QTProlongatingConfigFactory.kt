@@ -7,7 +7,7 @@ class QTProlongatingConfigFactory : CurationConfigFactory<QTProlongatingConfig> 
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<QTProlongatingConfig> {
         val input = parts[fields["Name"]!!]
         val (qtRisk, validationErrors) = validateMandatoryEnum(
-            CurationCategory.QT_PROLONGATION,
+            CurationCategory.QT_PROLONGATING,
             input,
             "Risk",
             fields,

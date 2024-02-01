@@ -5,12 +5,12 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.util.ResourceFile
 
-class MolecularTestConfigFactory : CurationConfigFactory<MolecularTestConfig> {
+class MolecularTestConfigFactory(private val curationCategory: CurationCategory) : CurationConfigFactory<MolecularTestConfig> {
     override fun create(fields: Map<String, Int>, parts: Array<String>): ValidatedCurationConfig<MolecularTestConfig> {
         val ignore = CurationUtil.isIgnoreString(parts[fields["test"]!!])
         val input = parts[fields["input"]!!]
         val (impliesPotentialIndeterminateStatus, impliesPotentialIndeterminateStatusValidationErrors)
-                = validateBoolean(CurationCategory.MOLECULAR_TEST, input, "impliesPotentialIndeterminateStatus", fields, parts)
+                = validateBoolean(curationCategory, input, "impliesPotentialIndeterminateStatus", fields, parts)
         val priorMolecularTest = impliesPotentialIndeterminateStatus?.let { curateObject(it, fields, parts) }
         return ValidatedCurationConfig(
             MolecularTestConfig(
