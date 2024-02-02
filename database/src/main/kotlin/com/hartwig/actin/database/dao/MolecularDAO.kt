@@ -94,6 +94,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         val drivers = record.drivers
         writeVariants(sampleId, drivers.variants)
         writeCopyNumbers(sampleId, drivers.copyNumbers)
+        writeCopyNumbers(sampleId, drivers.geneCopyNumbers)
         writeHomozygousDisruptions(sampleId, drivers.homozygousDisruptions)
         writeDisruptions(sampleId, drivers.disruptions)
         writeFusions(sampleId, drivers.fusions)
