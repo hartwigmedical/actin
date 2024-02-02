@@ -74,7 +74,7 @@ class CopyNumberExtractorTest {
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene(), geneCopyNumber2.gene(), geneCopyNumber3.gene(), geneCopyNumber4.gene())
         val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
-        val copyNumbers = copyNumberExtractor.extract(purple)
+        val copyNumbers = copyNumberExtractor.extractGainsLosses(purple)
         assertThat(copyNumbers).hasSize(3)
 
         val gene1 = findByGene(copyNumbers, "gene 1")
@@ -134,7 +134,7 @@ class CopyNumberExtractorTest {
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
         val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
-        copyNumberExtractor.extract(purple)
+        copyNumberExtractor.extractGainsLosses(purple)
     }
 
     @Test

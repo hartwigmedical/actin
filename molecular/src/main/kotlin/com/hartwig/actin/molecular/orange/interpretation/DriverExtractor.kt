@@ -19,8 +19,11 @@ internal class DriverExtractor private constructor(
         val variants = variantExtractor.extract(record.purple())
         LOGGER.info(" Extracted {} variants of which {} reportable", variants.size, reportableCount(variants))
 
-        val copyNumbers = copyNumberExtractor.extract(record.purple())
-        LOGGER.info(" Extracted {} copy numbers of which {} reportable", copyNumbers.size, reportableCount(copyNumbers))
+        val copyNumbers = copyNumberExtractor.extractGainsLosses(record.purple())
+        LOGGER.info(" Extracted {} gains and losses of which {} reportable", copyNumbers.size, reportableCount(copyNumbers))
+
+        val geneCopyNumbers = copyNumberExtractor.extractGeneCopyNumbers(record.purple(), copyNumbers)
+        LOGGER.info(" Extracted {} gene copy numbers", geneCopyNumbers.size)
 
         val homozygousDisruptions = homozygousDisruptionExtractor.extractHomozygousDisruptions(record.linx())
         LOGGER.info(

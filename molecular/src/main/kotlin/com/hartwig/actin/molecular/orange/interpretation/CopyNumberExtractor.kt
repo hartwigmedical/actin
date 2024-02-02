@@ -13,7 +13,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
 
-    fun extract(purple: PurpleRecord): Set<CopyNumber> {
+    fun extractGainsLosses(purple: PurpleRecord): Set<CopyNumber> {
         val drivers = VariantExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGainsLosses()
             .map { gainLoss ->
