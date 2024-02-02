@@ -110,32 +110,5 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
                 )
             }
             .toSortedSet(CopyNumberComparator())
-/*
-for (geneCopyNumber in purple.allSomaticGeneCopyNumbers()) {
-    val driver = findCopyNumberDriver(drivers, geneCopyNumber.gene())
-
-    if (geneFilter.include(geneCopyNumber.gene()) && geneCopyNumber.gene() !in reportable) {
-        copyNumbers.add(
-            CopyNumber.builder()
-                .from(
-                    GeneAlterationFactory.convertAlteration(
-                        geneCopyNumber.gene(),
-                        null
-                    )
-                )
-                .isReportable(false)
-                .event("copy number event")
-                .driverLikelihood(if (driver != null) DriverLikelihood.HIGH else null)
-                .evidence(ActionableEvidenceFactory.createNoEvidence())
-                .type(CopyNumberType.NONE)
-                .minCopies(Math.round(geneCopyNumber.minCopyNumber()).toInt())
-                .maxCopies(Math.round(geneCopyNumber.minCopyNumber()).toInt())
-                .build()
-        )
     }
-}
-return copyNumbers
-
- */ }
-
 }
