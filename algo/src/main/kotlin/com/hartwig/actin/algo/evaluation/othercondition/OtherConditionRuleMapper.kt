@@ -38,6 +38,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HYPERTENSION to hasPriorConditionWithDoidCreator(DoidConstants.HYPERTENSION_DOID),
             EligibilityRule.HAS_HYPOTENSION to hasPriorConditionWithNameCreator(HYPOTENSION_NAME),
             EligibilityRule.HAS_DIABETES to hasPriorConditionWithDoidCreator(DoidConstants.DIABETES_DOID),
+            EligibilityRule.HAS_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS to hasInheritedPredispositionToBleedingOrThrombosisCreator(),
             EligibilityRule.HAS_POTENTIAL_ABSORPTION_DIFFICULTIES to hasPotentialAbsorptionDifficultiesCreator(),
             EligibilityRule.HAS_POTENTIAL_ORAL_MEDICATION_DIFFICULTIES to hasOralMedicationDifficultiesCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_TO_CT to hasContraindicationToCTCreator(),
@@ -65,6 +66,10 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasPriorConditionWithDoidCreator(doidToFind: String): FunctionCreator {
         return FunctionCreator { HasHadPriorConditionWithDoid(doidModel(), doidToFind) }
+    }
+
+    private fun hasInheritedPredispositionToBleedingOrThrombosisCreator(): FunctionCreator {
+        return FunctionCreator { HasInheritedPredispositionToBleedingOrThrombosis(doidModel()) }
     }
 
     private fun hasRecentPriorConditionWithDoidCreator(doidToFind: String): FunctionCreator {
