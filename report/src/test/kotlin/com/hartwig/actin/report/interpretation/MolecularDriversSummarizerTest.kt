@@ -4,6 +4,7 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.driver.Driver
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
@@ -138,6 +139,11 @@ class MolecularDriversSummarizerTest {
             copyNumber(CopyNumberType.LOSS, "expected loss", DriverLikelihood.HIGH, false),
             copyNumber(CopyNumberType.FULL_GAIN, "no evidence", DriverLikelihood.LOW, true)
         )
+        val geneCopyNumbers = setOf(
+            copyNumber(CopyNumberType.NONE, "copy number event", driverLikelihood = null, isReportable = false),
+            copyNumber(CopyNumberType.NONE, "copy number event", driverLikelihood = DriverLikelihood.LOW, isReportable = false),
+            copyNumber(CopyNumberType.NONE, "copy number event", driverLikelihood = DriverLikelihood.HIGH, isReportable = false)
+        )
         val homozygousDisruptions = setOf(
             homozygousDisruption("key HD", DriverLikelihood.HIGH, true, approvedTreatment),
             homozygousDisruption("expected non-reportable HD", DriverLikelihood.HIGH, false, approvedTreatment),
@@ -162,6 +168,7 @@ class MolecularDriversSummarizerTest {
         val molecularDrivers = MolecularDrivers(
             variants = variants,
             copyNumbers = copyNumbers,
+            geneCopyNumbers = geneCopyNumbers,
             homozygousDisruptions = homozygousDisruptions,
             disruptions = disruptions,
             fusions = fusions,

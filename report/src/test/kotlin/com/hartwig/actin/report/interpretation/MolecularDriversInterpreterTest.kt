@@ -96,6 +96,9 @@ class MolecularDriversInterpreterTest {
                 copyNumbers = setOf(
                     TestCopyNumberFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_CN)
                 ),
+                geneCopyNumbers = setOf(
+                    TestCopyNumberFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_CN)
+                ),
                 homozygousDisruptions = setOf(
                     TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = isReportable, evidence = evidence, event = EVENT_HD)
                 ),

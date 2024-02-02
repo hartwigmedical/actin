@@ -147,6 +147,11 @@ object TestOrangeFactory {
                 .minCopies(0.0)
                 .maxCopies(0.0)
                 .build())
+            .addAllSomaticGeneCopyNumbers(TestPurpleFactory.geneCopyNumberBuilder()
+                .gene("AR")
+                .minCopyNumber(3.2)
+                .minMinorAlleleCopyNumber(0.0)
+                .build())
             .build()
     }
 

@@ -23,7 +23,7 @@ internal class DriverExtractor private constructor(
         LOGGER.info(" Extracted {} gains and losses of which {} reportable", copyNumbers.size, reportableCount(copyNumbers))
 
         val geneCopyNumbers = copyNumberExtractor.extractGeneCopyNumbers(record.purple(), copyNumbers)
-        LOGGER.info(" Extracted {} gene copy numbers", geneCopyNumbers.size)
+        LOGGER.info(" Extracted {} gene copy numbers of which {} reportable", geneCopyNumbers.size, reportableCount(geneCopyNumbers))
 
         val homozygousDisruptions = homozygousDisruptionExtractor.extractHomozygousDisruptions(record.linx())
         LOGGER.info(
