@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.ReceptorType.HER2
 import com.hartwig.actin.clinical.datamodel.ReceptorType.PR
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -19,7 +18,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(PR, "Positive")), emptySet()
+                    listOf(createPriorMolecularTest("PR", "Positive")), emptySet()
                 )
             )
         )
@@ -30,7 +29,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(PR, "Positive")),
+                    listOf(createPriorMolecularTest("PR", "Positive")),
                     setOf(DoidConstants.COLORECTAL_CANCER_DOID)
                 )
             )
@@ -42,7 +41,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    emptyList(),
+                    listOf(createPriorMolecularTest("some test", "Positive"), createPriorMolecularTest("other test", "Positive")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -54,7 +53,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(PR, "Negative"), createPriorMolecularTest(PR, "Positive")),
+                    listOf(createPriorMolecularTest("PR", "Negative"), createPriorMolecularTest("PR", "Positive")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -81,7 +80,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(PR, "Negative")),
+                    listOf(createPriorMolecularTest("PR", "Negative")),
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
                 )
             )
@@ -93,7 +92,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(HER2, "Negative")),
+                    listOf(createPriorMolecularTest("HER2", "Negative")),
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
                 )
             )
@@ -105,7 +104,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(PR, "Positive")),
+                    listOf(createPriorMolecularTest("PR", "Positive")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -117,19 +116,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(item = HER2, scoreValue = 3.0, scoreValueUnit = "+")),
-                    setOf(DoidConstants.BREAST_CANCER_DOID)
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should fail if target receptor type is negative with data source prior molecular tests`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
-                TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(PR, "Negative")),
+                    listOf(createPriorMolecularTest(item = "HER2", scoreValue = 3.0, scoreValueUnit = "+")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -153,7 +140,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(PR, "Negative")),
+                    listOf(createPriorMolecularTest("PR", "Negative")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -165,7 +152,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest(PR, scoreValue = 0.0, scoreValueUnit = "%")),
+                    listOf(createPriorMolecularTest("PR", scoreValue = 0.0, scoreValueUnit = "%")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -178,8 +165,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(
-                        createPriorMolecularTest(HER2, scoreValue = 0.0, scoreValueUnit = "%"),
-                        createPriorMolecularTest(PR, scoreValue = 80.0, scoreValueUnit = "%")
+                        createPriorMolecularTest("HER2", scoreValue = 0.0, scoreValueUnit = "%"),
+                        createPriorMolecularTest("PR", scoreValue = 80.0, scoreValueUnit = "%")
                     ),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
@@ -189,8 +176,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(
-                        createPriorMolecularTest(HER2, scoreValue = 1.0, scoreValueUnit = "+"),
-                        createPriorMolecularTest(PR, scoreValue = 3.0, scoreValueUnit = "%")
+                        createPriorMolecularTest("HER2", scoreValue = 1.0, scoreValueUnit = "+"),
+                        createPriorMolecularTest("PR", scoreValue = 3.0, scoreValueUnit = "%")
                     ),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
@@ -200,10 +187,10 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     companion object {
         private fun createPriorMolecularTest(
-            item: ReceptorType, score: String = "Score", scoreValue: Double = 50.0, scoreValueUnit: String = "Unit"
+            item: String, score: String = "Score", scoreValue: Double = 50.0, scoreValueUnit: String = "Unit"
         ): PriorMolecularTest {
             return PriorMolecularTest(
-                test = "IHC", item = item.display(), scoreText = score, scoreValue = scoreValue,
+                test = "IHC", item = item, scoreText = score, scoreValue = scoreValue,
                 scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
             )
         }

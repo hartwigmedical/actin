@@ -522,11 +522,6 @@ class FunctionInputResolver(
 
     fun createOneReceptorTypeInput(function: EligibilityFunction): ReceptorType {
         assertParamConfig(function, FunctionInput.ONE_RECEPTOR_TYPE, 1)
-
-        val receptorType = function.parameters.first() as String
-        if (receptorType != ReceptorType.valueOf(receptorType).display()) {
-            throw IllegalArgumentException("Not an allowed receptor type: $receptorType")
-        }
         return ReceptorType.valueOf(parameterAsString(function, 0))
     }
 
