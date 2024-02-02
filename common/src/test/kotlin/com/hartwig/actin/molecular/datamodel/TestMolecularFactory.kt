@@ -135,7 +135,7 @@ object TestMolecularFactory {
         )
     }
 
-    private fun createMinimalMolecularDrivers() = MolecularDrivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
+    private fun createMinimalMolecularDrivers() = MolecularDrivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
 
     private fun createProperTestDrivers(): MolecularDrivers {
         return createMinimalMolecularDrivers().copy(
@@ -190,6 +190,21 @@ object TestMolecularFactory {
                     type = CopyNumberType.LOSS,
                     minCopies = 0,
                     maxCopies = 0,
+                    isAssociatedWithDrugResistance = null
+                )
+            ),
+            geneCopyNumbers = setOf(
+                CopyNumber(
+                    isReportable = false,
+                    event = "copy number event",
+                    driverLikelihood = null,
+                    evidence = TestActionableEvidenceFactory.createEmpty(),
+                    gene = "AR",
+                    geneRole = GeneRole.ONCO,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    type = CopyNumberType.NONE,
+                    minCopies = 3,
+                    maxCopies = 3,
                     isAssociatedWithDrugResistance = null
                 )
             )
