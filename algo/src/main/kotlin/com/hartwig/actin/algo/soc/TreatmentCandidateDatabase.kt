@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
+const val BEVACIZUMAB = "BEVACIZUMAB"
 const val CAPECITABINE = "CAPECITABINE"
 const val CAPIRI = "CAPIRI"
 const val CAPOX = "CAPOX"
@@ -20,6 +21,7 @@ const val FOLFOXIRI = "FOLFOXIRI"
 const val FOLFOX = "FOLFOX"
 const val FOLFOX_CETUXIMAB = "FOLFOX+CETUXIMAB"
 const val FOLFOX_PANITUMUMAB = "FOLFOX+PANITUMUMAB"
+const val FOLINIC_ACID = "FOLINIC_ACID"
 const val FLUOROURACIL = "FLUOROURACIL"
 const val IRINOTECAN = "IRINOTECAN"
 const val IRINOTECAN_CETUXIMAB = "IRINOTECAN+CETUXIMAB"
@@ -29,7 +31,6 @@ const val NIVOLUMAB = "NIVOLUMAB"
 const val OXALIPLATIN = "OXALIPLATIN"
 const val PANITUMUMAB = "PANITUMUMAB"
 const val PEMBROLIZUMAB = "PEMBROLIZUMAB"
-private const val CHEMO_MAX_CYCLES = "12"
 private const val RECENT_TREATMENT_THRESHOLD_WEEKS = "26"
 
 class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
@@ -63,7 +64,7 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
     }
 
     fun treatmentCandidateWithBevacizumab(treatmentName: String): TreatmentCandidate {
-        return createTreatmentCandidate("$treatmentName+BEVACIZUMAB", setOf(1))
+        return createTreatmentCandidate("$treatmentName+$BEVACIZUMAB", setOf(1))
     }
 
     private fun createTreatmentCandidate(treatmentName: String, treatmentLines: Set<Int> = emptySet()): TreatmentCandidate {
@@ -73,37 +74,46 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
         return TreatmentCandidate(
             treatment = treatment,
             isOptional = false,
-            eligibilityFunctions = drugBasedExclusionsForTreatment(treatment) + treatmentLineFunctions
+            eligibilityFunctions = treatmentLineFunctions + drugBasedExclusionsForTreatment(treatment)
         )
     }
 
-    private fun drugBasedExclusionsForTreatment(treatment: Treatment): Set<EligibilityFunction> {
-        val additionalDrugsToExclude = when (treatment.name) {
-            CETUXIMAB -> listOf(PANITUMUMAB)
-            PANITUMUMAB -> listOf(CETUXIMAB)
-            else -> emptyList()
+    private fun drugBasedExclusionsForTreatment(treatment: Treatment): EligibilityFunction {
+        val treatmentDrugs = (treatment as DrugTreatment).drugs.map(Drug::name).toSet()
+        val additionalDrugsToExclude = if (treatmentDrugs.intersect(antiEgfrDrugs).isEmpty()) emptyList() else antiEgfrDrugs
+        val drugExclusionRule = eligibleIfDrugsNotInHistory(treatmentDrugs - drugExclusionExceptions + additionalDrugsToExclude)
+        return if (treatmentDrugs.intersect(drugExclusionExceptions).isEmpty()) drugExclusionRule else {
+            eligibilityFunction(EligibilityRule.AND, drugExclusionRule, eligibleIfTreatmentNotInHistory(treatment))
         }
-        val drugsToExclude = (treatment as DrugTreatment).drugs.map(Drug::name) + additionalDrugsToExclude
-        return drugsToExclude.map(::eligibleIfDrugNotInHistory).toSet()
     }
 
     companion object {
-        private fun eligibleIfDrugNotInHistory(drugName: String): EligibilityFunction {
-            // TODO: Create drug-based versions of these rules
+        private val drugExclusionExceptions = setOf(FLUOROURACIL, CAPECITABINE, FOLINIC_ACID)
+        private val antiEgfrDrugs = setOf(CETUXIMAB, PANITUMUMAB)
+
+        private fun eligibleIfDrugsNotInHistory(drugNames: Iterable<String>): EligibilityFunction {
+            val drugParameter = drugNames.joinToString(";")
             return eligibilityFunction(
                 EligibilityRule.NOT,
                 eligibilityFunction(
                     EligibilityRule.OR,
                     eligibilityFunction(
-                        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS,
-                        drugName,
-                        RECENT_TREATMENT_THRESHOLD_WEEKS
+                        EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_WITHIN_Y_WEEKS, drugParameter, RECENT_TREATMENT_THRESHOLD_WEEKS
                     ),
-                    eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, drugName),
+                    eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X, drugParameter),
+                )
+            )
+        }
+
+        private fun eligibleIfTreatmentNotInHistory(treatment: Treatment): EligibilityFunction {
+            return eligibilityFunction(
+                EligibilityRule.NOT,
+                eligibilityFunction(
+                    EligibilityRule.OR,
                     eligibilityFunction(
-                        EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES,
-                        drugName, CHEMO_MAX_CYCLES, CHEMO_MAX_CYCLES
-                    )
+                        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, treatment.name, RECENT_TREATMENT_THRESHOLD_WEEKS
+                    ),
+                    eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatment.name)
                 )
             )
         }

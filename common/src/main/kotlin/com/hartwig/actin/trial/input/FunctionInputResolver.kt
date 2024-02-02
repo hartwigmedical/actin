@@ -16,6 +16,7 @@ import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.FunctionInput
+import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
 import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
@@ -66,177 +67,146 @@ class FunctionInputResolver(
                 FunctionInput.NONE -> {
                     return function.parameters.isEmpty()
                 }
-
                 FunctionInput.ONE_INTEGER -> {
                     createOneIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.TWO_INTEGERS -> {
                     createTwoIntegersInput(function)
                     return true
                 }
-
                 FunctionInput.MANY_INTEGERS -> {
                     createManyIntegersInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_DOUBLE -> {
                     createOneDoubleInput(function)
                     return true
                 }
-
                 FunctionInput.TWO_DOUBLES -> {
                     createTwoDoublesInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE -> {
                     createOneTreatmentCategoryOrTypeInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER -> {
                     createOneTreatmentCategoryOrTypeOneIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
                     createOneTreatmentCategoryManyTypesInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER -> {
                     createOneTreatmentCategoryManyTypesOneIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_SPECIFIC_TREATMENT -> {
                     createOneSpecificTreatmentInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER -> {
                     createOneSpecificTreatmentOneIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS -> {
                     createManySpecificTreatmentsTwoIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_DRUGS -> {
                     createOneTreatmentCategoryManyDrugsInput(function)
                     return true
                 }
-
                 FunctionInput.MANY_DRUGS -> {
                     createManyDrugsInput(function)
                     return true
                 }
-
+                FunctionInput.MANY_DRUGS_ONE_INTEGER -> {
+                    createManyDrugsOneIntegerInput(function)
+                    return true
+                }
                 FunctionInput.ONE_TUMOR_TYPE -> {
                     createOneTumorTypeInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_STRING -> {
                     createOneStringInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_STRING_ONE_INTEGER -> {
                     createOneStringOneIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.MANY_STRINGS_ONE_INTEGER -> {
                     createManyStringsOneIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.MANY_STRINGS_TWO_INTEGERS -> {
                     createManyStringsTwoIntegersInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_INTEGER_ONE_STRING -> {
                     createOneIntegerOneStringInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_INTEGER_MANY_STRINGS -> {
                     createOneIntegerManyStringsInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_TUMOR_STAGE -> {
                     createOneTumorStageInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_HLA_ALLELE -> {
                     createOneHlaAlleleInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_HAPLOTYPE -> {
                     createOneHaplotypeInput(function)
                     return true
                 }
-                        
                 FunctionInput.ONE_GENE -> {
                     createOneGeneInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_GENE_ONE_INTEGER -> {
                     createOneGeneOneIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE -> {
                     createOneGeneOneIntegerOneVariantTypeInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_GENE_TWO_INTEGERS -> {
                     createOneGeneTwoIntegersInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_GENE_MANY_CODONS -> {
                     createOneGeneManyCodonsInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS -> {
                     createOneGeneManyProteinImpactsInput(function)
                     return true
                 }
-
                 FunctionInput.MANY_GENES -> {
                     createManyGenesInput(function)
                     return true
                 }
-
                 FunctionInput.ONE_DOID_TERM -> {
                     createOneDoidTermInput(function)
                     return true
                 }
-
                 FunctionInput.MANY_INTENTS_ONE_INTEGER -> {
                     createManyIntentsOneIntegerInput(function)
                     return true
                 }
-
                 FunctionInput.MANY_INTENTS -> {
                     createManyIntentsInput(function)
                     return true
                 }
-
                 else -> {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
                     return null
@@ -357,6 +327,11 @@ class FunctionInputResolver(
     fun createManyDrugsInput(function: EligibilityFunction): Set<Drug> {
         assertParamConfig(function, FunctionInput.MANY_DRUGS, 1)
         return toDrugSet(function.parameters.first())
+    }
+
+    fun createManyDrugsOneIntegerInput(function: EligibilityFunction): ManyDrugsOneInteger {
+        assertParamConfig(function, FunctionInput.MANY_DRUGS_ONE_INTEGER, 2)
+        return ManyDrugsOneInteger(toDrugSet(function.parameters.first()), parameterAsString(function, 1).toInt())
     }
 
     private fun toDrugSet(input: Any): Set<Drug> {

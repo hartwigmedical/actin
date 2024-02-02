@@ -76,6 +76,9 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
             FunctionInput.MANY_DRUGS -> {
                 listOf("CAPECITABINE;OXALIPLATIN")
             }
+            FunctionInput.MANY_DRUGS_ONE_INTEGER -> {
+                listOf("CAPECITABINE;OXALIPLATIN", "1")
+            }
             FunctionInput.ONE_TUMOR_TYPE -> {
                 listOf(TumorTypeInput.SQUAMOUS_CELL_CARCINOMA.display())
             }

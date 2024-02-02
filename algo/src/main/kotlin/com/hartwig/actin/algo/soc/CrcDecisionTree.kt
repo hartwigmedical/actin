@@ -40,10 +40,6 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
         falseBranch = DecisionTreeLeaf(emptyList())
     )
 
-    private val commonChemotherapies = listOf(
-        CAPECITABINE, CAPIRI, CAPOX, FOLFIRI, FOLFOXIRI, FOLFOX, FLUOROURACIL
-    )
-
     private val generallyAvailableTreatmentCandidates = listOf(
         commonChemotherapies.map(treatmentCandidateDatabase::treatmentCandidate),
         commonChemotherapies.map(treatmentCandidateDatabase::treatmentCandidateWithBevacizumab),
@@ -53,5 +49,11 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
     override fun treatmentCandidates(): List<TreatmentCandidate> {
         return listOf(primaryDecisionTree, msiDecisionTree).flatMap(DecisionTreeNode::treatmentCandidates) +
                 generallyAvailableTreatmentCandidates
+    }
+
+    companion object {
+        val commonChemotherapies = listOf(
+            CAPECITABINE, CAPIRI, CAPOX, FOLFIRI, FOLFOXIRI, FOLFOX, FLUOROURACIL
+        )
     }
 }

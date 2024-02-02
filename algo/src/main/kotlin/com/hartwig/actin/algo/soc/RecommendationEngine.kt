@@ -22,14 +22,14 @@ class RecommendationEngine private constructor(
             "SOC recommendation only supported for colorectal carcinoma"
         }
 
-        return treatmentCandidateSequence()
+        return treatmentCandidates().asSequence()
             .map { evaluateTreatmentEligibilityForPatient(it, patientRecord) }
             .filter { treatmentHasNoFailedEvaluations(it) }
             .toList()
     }
 
     private fun determineRequiredTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
-        return treatmentCandidateSequence()
+        return treatmentCandidates().asSequence()
             .filterNot(TreatmentCandidate::isOptional)
             .map { evaluateTreatmentRequirementForPatient(it, patientRecord) }
             .filter(::treatmentHasNoFailedEvaluations)
@@ -44,7 +44,7 @@ class RecommendationEngine private constructor(
         return determineRequiredTreatments(patientRecord).isEmpty()
     }
 
-    private fun treatmentCandidateSequence() = CrcDecisionTree(treatmentCandidateDatabase).treatmentCandidates().asSequence()
+    private fun treatmentCandidates() = CrcDecisionTree(treatmentCandidateDatabase).treatmentCandidates()
 
     private fun evaluateTreatmentEligibilityForPatient(
         treatmentCandidate: TreatmentCandidate,
