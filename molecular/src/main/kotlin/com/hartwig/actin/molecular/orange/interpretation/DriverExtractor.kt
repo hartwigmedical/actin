@@ -46,6 +46,7 @@ internal class DriverExtractor private constructor(
         return MolecularDrivers(
             variants = variants,
             copyNumbers = copyNumbers,
+            geneCopyNumbers = geneCopyNumbers,
             homozygousDisruptions = homozygousDisruptions,
             disruptions = disruptions,
             fusions = fusions,
