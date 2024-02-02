@@ -53,10 +53,11 @@ internal object MedicationTestFactory {
         dosage: Dosage = Dosage(),
         stopDate: LocalDate? = null,
         qtProlongatingRisk: QTProlongatingRisk = QTProlongatingRisk.NONE,
-        atc: AtcClassification? = null
+        atc: AtcClassification? = null,
+        isSelfCare: Boolean = false
     ): Medication {
         return TestMedicationFactory.createMinimal().copy(
-            name = name, dosage = dosage, stopDate = stopDate, qtProlongatingRisk = qtProlongatingRisk, atc = atc
+            name = name, dosage = dosage, stopDate = stopDate, qtProlongatingRisk = qtProlongatingRisk, atc = atc, isSelfCare = isSelfCare
         )
     }
 
