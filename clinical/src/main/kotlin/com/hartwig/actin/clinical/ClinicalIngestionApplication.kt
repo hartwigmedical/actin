@@ -5,10 +5,10 @@ import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.ehr.EhrDataFeed
 import com.hartwig.actin.clinical.feed.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.EmcDataFeed
 import com.hartwig.actin.clinical.feed.FeedModel
+import com.hartwig.actin.clinical.kaiko.EhrDataFeed
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -63,7 +63,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         val clinicalIngestion =
             ClinicalIngestion(
-                if (config.feedFormat == FeedFormat.TSV)
+                if (config.feedFormat == FeedSource.EMC)
                     EmcDataFeed.create(
                         feedModel,
                         curationDatabaseContext,

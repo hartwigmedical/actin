@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.ehr
+package com.hartwig.actin.clinical.kaiko
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper

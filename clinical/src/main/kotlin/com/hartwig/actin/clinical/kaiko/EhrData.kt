@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.ehr
+package com.hartwig.actin.clinical.kaiko
 
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate

@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.ehr
+package com.hartwig.actin.clinical.kaiko
 
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
@@ -13,7 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 @Suppress("UnstableApiUsage")
-val INPUT_JSON: String = Resources.getResource("nki-feed").path
+val INPUT_JSON: String = Resources.getResource("kaiko").path
 
 class EhrDataFeedTest {
 
