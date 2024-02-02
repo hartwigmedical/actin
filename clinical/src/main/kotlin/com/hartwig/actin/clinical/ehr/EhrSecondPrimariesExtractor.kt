@@ -12,7 +12,7 @@ class EhrSecondPrimariesExtractor :
             PriorSecondPrimary(
                 tumorLocation = it.tumorLocation,
                 tumorType = it.tumorType,
-                status = TumorStatus.valueOf(it.status.acceptedValues.name),
+                status = TumorStatus.valueOf(it.status),
                 diagnosedYear = it.diagnosisDate.year,
                 diagnosedMonth = it.diagnosisDate.monthValue,
                 tumorSubLocation = "",

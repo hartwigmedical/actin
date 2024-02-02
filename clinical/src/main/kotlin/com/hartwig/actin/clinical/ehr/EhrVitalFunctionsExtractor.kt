@@ -12,23 +12,23 @@ class EhrVitalFunctionsExtractor : EhrExtractor<List<VitalFunction>> {
                 EhrMeasurementCategory.BMI,
                 EhrMeasurementCategory.BODY_HEIGHT,
                 EhrMeasurementCategory.BODY_WEIGHT
-            ).contains(it.category.acceptedValues)
+            ).contains(enumeratedInput<EhrMeasurementCategory>(it.category))
         }.map {
             VitalFunction(
                 date = it.date.atStartOfDay(),
                 category = mapCategory(it),
                 subcategory = mapSubcategory(it),
                 value = it.value,
-                unit = it.unit.acceptedValues.name.lowercase(),
+                unit = it.unit,
                 valid = true
             )
         }, ExtractionEvaluation())
     }
 
     private fun mapCategory(it: EhrMeasurement): VitalFunctionCategory {
-        return when (it.category.acceptedValues) {
+        return when (enumeratedInput<EhrMeasurementCategory>(it.category)) {
             EhrMeasurementCategory.ARTERIAL_BLOOD_PRESSURE -> VitalFunctionCategory.ARTERIAL_BLOOD_PRESSURE
-            EhrMeasurementCategory.NON_INVASIVE_BLOOD_PRESSURE -> VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
+            EhrMeasurementCategory.`NON-INVASIVE_BLOOD_PRESSURE` -> VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
             EhrMeasurementCategory.HEART_RATE -> VitalFunctionCategory.HEART_RATE
             EhrMeasurementCategory.PULSE_OXIMETRY -> VitalFunctionCategory.SPO2
             EhrMeasurementCategory.OTHER -> VitalFunctionCategory.OTHER
@@ -37,11 +37,11 @@ class EhrVitalFunctionsExtractor : EhrExtractor<List<VitalFunction>> {
     }
 
     private fun mapSubcategory(it: EhrMeasurement): String {
-        return when (it.subcategory.acceptedValues) {
+        return when (enumeratedInput<EhrMeasurementSubcategory>(it.subcategory ?: "NA")) {
             EhrMeasurementSubcategory.MEAN_BLOOD_PRESSURE -> "mean blood pressure"
             EhrMeasurementSubcategory.DIASTOLIC_BLOOD_PRESSURE -> "diastolic blood pressure"
             EhrMeasurementSubcategory.SYSTOLIC_BLOOD_PRESSURE -> "systolic blood pressure"
-            else -> it.subcategory.input
+            else -> it.subcategory ?: "NA"
         }
     }
 }

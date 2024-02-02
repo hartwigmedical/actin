@@ -9,7 +9,7 @@ class EhrPatientDetailsExtractor : EhrExtractor<PatientDetails> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<PatientDetails> {
         return ExtractionResult(
             PatientDetails(
-                gender = Gender.valueOf(ehrPatientRecord.patientDetails.gender.acceptedValues.name),
+                gender = Gender.valueOf(enumeratedInput<EhrGender>(ehrPatientRecord.patientDetails.gender).toString()),
                 birthYear = ehrPatientRecord.patientDetails.birthYear,
                 registrationDate = ehrPatientRecord.patientDetails.registrationDate,
             ), ExtractionEvaluation()

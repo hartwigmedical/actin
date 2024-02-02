@@ -20,7 +20,7 @@ class EhrTreatmentHistoryExtractor(
 
             val treatment = treatmentDatabase.findTreatmentByName(it.treatmentName)
 
-            val switchToTreatments = it.modifications.map { modification ->
+            val switchToTreatments = it.modifications?.map { modification ->
                 val modificationTreatment = treatmentDatabase.findTreatmentByName(modification.name)
                 modificationTreatment?.let { t ->
                     Pair(
@@ -45,22 +45,22 @@ class EhrTreatmentHistoryExtractor(
             }
             val historyDetails =
                 TreatmentHistoryDetails(
-                    stopYear = it.endDate.year,
-                    stopMonth = it.endDate.monthValue,
-                    stopReason = StopReason.valueOf(it.stopReason.acceptedValues.name),
-                    bestResponse = TreatmentResponse.valueOf(it.response.acceptedValues.name),
-                    switchToTreatments = switchToTreatments.mapNotNull { switch -> switch.first },
+                    stopYear = it.endDate?.year,
+                    stopMonth = it.endDate?.monthValue,
+                    stopReason = it.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
+                    bestResponse = it.response?.let { response -> TreatmentResponse.valueOf(response) },
+                    switchToTreatments = switchToTreatments?.mapNotNull { switch -> switch.first },
                     cycles = it.administeredCycles,
                 )
             Pair(
                 TreatmentHistoryEntry(
                     startYear = it.startDate.year,
                     startMonth = it.startDate.monthValue,
-                    intents = setOf(Intent.valueOf(it.intention.acceptedValues.name)),
+                    intents = it.intention?.let { intent -> setOf(Intent.valueOf(intent)) },
                     treatments = setOfNotNull(treatment),
                     treatmentHistoryDetails = historyDetails,
                     isTrial = it.administeredInStudy
-                ), switchToTreatments.map { switch -> switch.second }.flatten().toSet()
+                ), switchToTreatments?.map { switch -> switch.second }?.flatten()?.toSet() ?: emptySet()
             )
         }
         return ExtractionResult(extracted.map { it.first }, ExtractionEvaluation(warnings = extracted.map { it.second }.flatten().toSet()))

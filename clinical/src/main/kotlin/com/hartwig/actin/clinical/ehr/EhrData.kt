@@ -1,25 +1,8 @@
 package com.hartwig.actin.clinical.ehr
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.reflect.KClass
-
-
-data class EnumeratedInput<T : Enum<T>>(val input: String, val acceptedValues: T)
-
-open class EnumInputDeserializer<T : Enum<T>>(private val enumClass: KClass<T>) : JsonDeserializer<EnumeratedInput<T>>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): EnumeratedInput<T> {
-        val input = p.text
-        val acceptedValues = enumClass.java.enumConstants.firstOrNull { it.name == input.uppercase().replace(" ", "_") }
-            ?: enumClass.java.enumConstants.first { it.name == "OTHER" }
-        return EnumeratedInput(input, acceptedValues)
-    }
-}
 
 @JacksonSerializable
 data class EhrPatientRecord(
@@ -44,17 +27,11 @@ data class EhrAllergy(
     val name: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val category: EnumeratedInput<EhrAllergyCategory>,
-    @JsonDeserialize(using = EhrAllergySeverityDeserializer::class)
-    val severity: EnumeratedInput<EhrAllergySeverity>,
-    val clinicalStatus: EnumeratedInput<EhrAllergyClinicalStatus>,
-    val verificationStatus: EnumeratedInput<EhrAllergyVerificationStatus>
+    val category: String,
+    val severity: String,
+    val clinicalStatus: String,
+    val verificationStatus: String
 )
-
-class EhrAllergyCategoryDeserializer : EnumInputDeserializer<EhrAllergyCategory>(EhrAllergyCategory::class)
-class EhrAllergySeverityDeserializer : EnumInputDeserializer<EhrAllergySeverity>(EhrAllergySeverity::class)
-class EhrAllergyClinicalStatuDeserializer : EnumInputDeserializer<EhrAllergyClinicalStatus>(EhrAllergyClinicalStatus::class)
-class EhrAllergyVerificationStatusDeserializer : EnumInputDeserializer<EhrAllergyVerificationStatus>(EhrAllergyVerificationStatus::class)
 
 enum class EhrAllergyCategory {
     MEDICATION,
@@ -83,7 +60,7 @@ enum class EhrAllergyVerificationStatus {
 @JacksonSerializable
 data class EhrBloodTransfusion(
     val evaluationTime: LocalDateTime,
-    val product: EnumeratedInput<EhrBloodTransfusionProduct>
+    val product: String
 )
 
 enum class EhrBloodTransfusionProduct {
@@ -111,12 +88,13 @@ data class EhrComplication(
 @JacksonSerializable
 data class EhrLabValue(
     val evaluationTime: LocalDateTime,
-    val name: String,
-    val code: String,
+    val measure: String,
+    val measureCode: String,
     val value: Double,
     val unit: String,
     val refUpperBound: Double,
     val refLowerBound: Double,
+    val comparator: String?,
     val refFlag: String,
 )
 
@@ -141,7 +119,7 @@ data class EhrMedication(
 @JacksonSerializable
 data class EhrPatientDetail(
     val birthYear: Int,
-    val gender: EnumeratedInput<EhrGender>,
+    val gender: String,
     val registrationDate: LocalDate,
     val patientId: String,
     val hashedId: String
@@ -169,7 +147,7 @@ data class EhrPriorOtherCondition(
 data class EhrSurgery(
     val name: String,
     val endDate: LocalDate,
-    val status: EnumeratedInput<EhrSurgeryStatus>
+    val status: String
 )
 
 enum class EhrSurgeryStatus {
@@ -192,16 +170,16 @@ data class EhrToxicity(
 @JacksonSerializable
 data class EhrTreatmentHistory(
     val treatmentName: String,
-    val intention: EnumeratedInput<EhrTreatmentIntention>,
+    val intention: String?,
     val startDate: LocalDate,
-    val endDate: LocalDate,
-    val stopReason: EnumeratedInput<EhrStopReason>,
-    val stopReasonDate: LocalDate,
-    val response: EnumeratedInput<EhrTreatmentResponse>,
-    val responseDate: LocalDate,
+    val endDate: LocalDate?,
+    val stopReason: String?,
+    val stopReasonDate: LocalDate?,
+    val response: String?,
+    val responseDate: LocalDate?,
     val intendedCycles: Int,
     val administeredCycles: Int,
-    val modifications: List<EhrTreatmentModification>,
+    val modifications: List<EhrTreatmentModification>?,
     val administeredInStudy: Boolean
 )
 
@@ -243,7 +221,7 @@ data class EhrTumorDetail(
     val tumorLocation: String,
     val tumorType: String,
     val tumorGradeDifferentiation: String,
-    val tumorStage: EnumeratedInput<EhrTumorStage>,
+    val tumorStage: String?,
     val tumorStageDate: LocalDate,
     val measurableDisease: Boolean,
     val measurableDiseaseDate: LocalDate,
@@ -251,7 +229,7 @@ data class EhrTumorDetail(
 )
 
 @JacksonSerializable
-data class EhrLesion(val location: EnumeratedInput<EhrLesionLocation>, val subLocation: String?, val diagnosisDate: LocalDate)
+data class EhrLesion(val location: String, val subLocation: String?, val diagnosisDate: LocalDate)
 
 enum class EhrLesionLocation {
     BRAIN,
@@ -268,7 +246,7 @@ data class EhrPriorPrimary(
     val diagnosisDate: LocalDate,
     val tumorLocation: String,
     val tumorType: String,
-    val status: EnumeratedInput<EhrTumorStatus>,
+    val status: String,
     val statusDate: LocalDate
 )
 
@@ -295,16 +273,16 @@ enum class EhrTumorStage {
 @JacksonSerializable
 data class EhrMeasurement(
     val date: LocalDate,
-    val category: EnumeratedInput<EhrMeasurementCategory>,
-    val subcategory: EnumeratedInput<EhrMeasurementSubcategory>,
+    val category: String,
+    val subcategory: String?,
     val value: Double,
-    val unit: EnumeratedInput<EhrMeasurementUnit>
+    val unit: String
 )
 
 enum class EhrMeasurementCategory {
     HEART_RATE,
     PULSE_OXIMETRY,
-    NON_INVASIVE_BLOOD_PRESSURE,
+    `NON-INVASIVE_BLOOD_PRESSURE`,
     ARTERIAL_BLOOD_PRESSURE,
     BODY_WEIGHT,
     BODY_HEIGHT,
@@ -324,10 +302,13 @@ enum class EhrMeasurementUnit {
     BPM,
     PERCENT,
     MMHG,
-    KG,
-    CM,
+    KILOGRAMS,
+    CENTIMETERS,
     KG_M2,
     OTHER
 }
+
+inline fun <reified T : Enum<T>> enumeratedInput(input: String) =
+    enumValues<T>().firstOrNull { it.name == input.uppercase().replace(" ", "_") } ?: { enumValueOf<T>("OTHER") }
 
 

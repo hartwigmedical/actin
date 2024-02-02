@@ -15,11 +15,11 @@ class EhrIntolerancesExtractor(private val atcModel: AtcModel, private val intol
         return ehrPatientRecord.allergies.map {
             Intolerance(
                 name = it.name,
-                category = it.category.acceptedValues.name,
+                category = it.category,
                 type = "unspecified",
-                clinicalStatus = if (it.clinicalStatus.acceptedValues != EhrAllergyClinicalStatus.OTHER) it.clinicalStatus.acceptedValues.name else it.clinicalStatus.input,
-                verificationStatus = if (it.verificationStatus.acceptedValues != EhrAllergyVerificationStatus.OTHER) it.verificationStatus.acceptedValues.name else it.verificationStatus.input,
-                criticality = if (it.severity.acceptedValues != EhrAllergySeverity.OTHER) it.severity.acceptedValues.name else it.severity.input,
+                clinicalStatus = it.clinicalStatus,
+                verificationStatus = it.verificationStatus,
+                criticality = it.severity,
                 doids = emptySet(),
                 subcategories = emptySet()
             )

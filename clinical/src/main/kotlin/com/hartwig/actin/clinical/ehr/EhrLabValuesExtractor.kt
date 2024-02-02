@@ -10,11 +10,11 @@ class EhrLabValuesExtractor : EhrExtractor<List<LabValue>> {
         return ExtractionResult(ehrPatientRecord.labValues.map {
             LabValue(
                 date = it.evaluationTime.toLocalDate(),
-                name = it.name,
+                name = it.measure,
                 unit = LabUnit.valueOf(it.unit),
                 value = it.value,
-                code = it.code,
-                comparator = "="
+                code = it.measureCode,
+                comparator = it.comparator ?: "="
             )
         }, ExtractionEvaluation())
     }

@@ -36,19 +36,19 @@ class EhrTumorDetailsExtractor(private val curationDatabase: CurationDatabase<Pr
         primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
         primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
         primaryTumorExtraDetails = ehrPatientRecord.tumorDetails.tumorGradeDifferentiation,
-        stage = TumorStage.valueOf(ehrPatientRecord.tumorDetails.tumorStage.acceptedValues.name),
+        stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
         hasBoneLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.BONE),
         hasBrainLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.BRAIN),
         hasLiverLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.LIVER),
         hasLungLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.LUNG),
         hasLymphNodeLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.LYMPH_NODE),
         hasCnsLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.CNS),
-        otherLesions = ehrPatientRecord.tumorDetails.lesions.filter { lesion -> lesion.location.acceptedValues == EhrLesionLocation.OTHER }
-            .map { lesion -> lesion.location.acceptedValues.name },
+        otherLesions = ehrPatientRecord.tumorDetails.lesions.filter { lesion -> enumeratedInput<EhrLesionLocation>(lesion.location) == EhrLesionLocation.OTHER }
+            .map { lesion -> lesion.location },
         doids = emptySet()
     )
 
     private fun hasLesions(lesions: List<EhrLesion>, location: EhrLesionLocation): Boolean {
-        return lesions.any { it.location.acceptedValues == location }
+        return lesions.any { enumeratedInput<EhrLesionLocation>(it.location) == location }
     }
 }

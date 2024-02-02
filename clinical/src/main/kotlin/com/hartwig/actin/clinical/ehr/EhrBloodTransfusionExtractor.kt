@@ -14,12 +14,13 @@ class EhrBloodTransfusionExtractor : EhrExtractor<List<BloodTransfusion>> {
         }, ExtractionEvaluation())
     }
 
-    private fun mapTransfusionProduct(product: EnumeratedInput<EhrBloodTransfusionProduct>): String {
-        return when (product.acceptedValues) {
+    private fun mapTransfusionProduct(input: String): String {
+        val product = enumeratedInput<EhrBloodTransfusionProduct>(input)
+        return when (product) {
             EhrBloodTransfusionProduct.PLASMA_A, EhrBloodTransfusionProduct.PLASMA_B, EhrBloodTransfusionProduct.PLASMA_O, EhrBloodTransfusionProduct.PLASMA_AB, EhrBloodTransfusionProduct.APHERESIS_PLASMA -> "Plasma"
             EhrBloodTransfusionProduct.PLATELETS_POOLED, EhrBloodTransfusionProduct.PLATELETS_APHERESIS, EhrBloodTransfusionProduct.PLATELETS_POOLED_RADIATED -> "Trombocyte"
             EhrBloodTransfusionProduct.ERTHROCYTES_FILTERED, EhrBloodTransfusionProduct.ERYTHROCYTES_RADIATED -> "Erythrocytes"
-            else -> product.input
+            else -> input
         }
     }
 }
