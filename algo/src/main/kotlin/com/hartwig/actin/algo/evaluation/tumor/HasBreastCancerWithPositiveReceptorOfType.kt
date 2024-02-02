@@ -33,14 +33,6 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         }
         val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments)
 
-//        Certainly Her2 negative + hormone positive (based on doids and/or IHC)
-//        isBreastCancer && isHer2Negative && (isProgesteronePositive || isEstrogenPositive) -> {
-//            if (hasERBB2Amplified) {
-//        EvaluationFactory.warn(
-//            "Patient has HER2-negative hormone-positive breast cancer but with ERBB2 amplified",
-//            "Undetermined HR+ HER2- breast cancer due to presence of ERBB2 gene amp"
-//        )
-
         return when {
             tumorDoids.isNullOrEmpty() -> {
                 EvaluationFactory.undetermined(
@@ -101,9 +93,6 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         )
 
         fun negativeBasedOnScoreValue(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
-//            val targetTest = record.clinical.priorMolecularTests.filter { it.item == receptorType.display() }
-//            val negativeTestResults = setOf(Triple("PR", 0, "%"), Triple("ER", 0, "%"), Triple("HER2", 0, "+"))
-//            return targetTest.map { Triple(it.item, it.scoreValue?.toInt(), it.scoreValueUnit) }.any(negativeTestResults::contains)
             val (scoreValue, scoreValueUnit) = when (receptorType) {
                 ReceptorType.PR, ReceptorType.ER -> {
                     Pair(0, "%")
@@ -119,9 +108,6 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         }
 
         fun hasPositiveTest(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
-//            val targetTest = record.clinical.priorMolecularTests.filter { it.item == receptorType.display() }
-//            val positiveTestResults = setOf(Triple("PR", 100, "%"), Triple("ER", 100, "%"), Triple("HER2", 3, "+"))
-//            return targetTest.map { Triple(it.item, it.scoreValue?.toInt(), it.scoreValueUnit) }.any(positiveTestResults::contains)
             val (scoreValue, scoreValueUnit) = when (receptorType) {
                 ReceptorType.PR, ReceptorType.ER -> {
                     Pair(100, "%")
