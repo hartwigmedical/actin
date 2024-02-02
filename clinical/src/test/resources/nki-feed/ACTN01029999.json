@@ -282,7 +282,7 @@
   ],
   "treatment_history": [
     {
-      "treatment_name": "eg. Radiotherapy",
+      "treatment_name": "Radiotherapy",
       "intention": null,
       "start_date": "2020-01-01T10:10:00",
       "end_date": "2020-01-01T10:10:00",
@@ -298,7 +298,7 @@
       "administered_in_study": true
     },
     {
-      "treatment_name": "eg. Radiotherapy",
+      "treatment_name": "Radiotherapy",
       "intention": null,
       "start_date": "2020-01-01T10:10:00",
       "end_date": "2020-01-01T10:10:00",
@@ -314,7 +314,7 @@
       "administered_in_study": true
     },
     {
-      "treatment_name": "eg. Radiotherapy",
+      "treatment_name": "Radiotherapy",
       "intention": null,
       "start_date": "2020-01-01T10:10:00",
       "end_date": "2020-01-01T10:10:00",
@@ -330,7 +330,7 @@
       "administered_in_study": true
     },
     {
-      "treatment_name": "eg. Radiotherapy",
+      "treatment_name": "Radiotherapy",
       "intention": null,
       "start_date": "2020-01-01T10:10:00",
       "end_date": "2020-01-01T10:10:00",
@@ -342,7 +342,6 @@
       "administered_cycles": 5,
       "modifications": [
         {
-          "name": "Radiotherapie",
           "date": "2020-01-01T10:10:00",
           "cycle": 6,
           "note": "akkoord durva vandaag"
@@ -353,7 +352,7 @@
       "administered_in_study": true
     },
     {
-      "treatment_name": "eg. Radiotherapy",
+      "treatment_name": "Radiotherapy",
       "intention": null,
       "start_date": "2020-01-01T10:10:00",
       "end_date": "2020-01-01T10:10:00",

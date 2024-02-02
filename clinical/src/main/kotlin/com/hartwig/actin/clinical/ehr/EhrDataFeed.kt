@@ -135,7 +135,7 @@ class EhrDataFeed(
             EhrIntolerancesExtractor(atcModel, curationDatabaseContext.intoleranceCuration),
             EhrVitalFunctionsExtractor(),
             EhrBloodTransfusionExtractor(),
-            EhrLabValuesExtractor(),
+            EhrLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
             EhrToxicityExtractor(curationDatabaseContext.toxicityCuration),
             EhrComplicationExtractor(curationDatabaseContext.complicationCuration),
             EhrPriorOtherConditionsExtractor(curationDatabaseContext.nonOncologicalHistoryCuration),

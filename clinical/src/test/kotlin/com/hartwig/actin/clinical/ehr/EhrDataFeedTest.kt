@@ -46,7 +46,7 @@ class EhrDataFeedTest {
             secondPrimaryExtractor = EhrSecondPrimariesExtractor(),
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(curationDatabase.primaryTumorCuration),
-            labValuesExtractor = EhrLabValuesExtractor(),
+            labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),
             bloodTransfusionExtractor = EhrBloodTransfusionExtractor()
