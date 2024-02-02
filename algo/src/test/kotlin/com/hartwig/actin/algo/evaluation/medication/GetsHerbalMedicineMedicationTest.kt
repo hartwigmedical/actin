@@ -43,7 +43,7 @@ class GetsHerbalMedicineMedicationTest {
     fun `Should be warn when medication is self care but planned`() {
         val medications = listOf(MedicationTestFactory.medication(isSelfCare = true))
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.WARN,
+            EvaluationResult.UNDETERMINED,
             alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
             )
