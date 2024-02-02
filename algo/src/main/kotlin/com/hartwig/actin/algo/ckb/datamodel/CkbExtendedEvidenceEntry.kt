@@ -13,7 +13,7 @@ data class CkbExtendedEvidenceEntry(
     val updateDate: String,
     val indications: List<CkbIndication>,
     val variantRequirementDetails: List<CkbVariantRequirementDetail>,
-    val clinicalTrialLocations: List<String>,
+    val clinicalTrialLocations: List<CkbClinicalTrialLocation>,
     val coveredCountries: List<String>,
     val trialReferences: List<CkbTrialReference>,
     val otherTrialRegistrationNumbers: String?,

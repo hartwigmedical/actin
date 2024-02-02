@@ -52,6 +52,21 @@ class MixedFieldNamingStrategy : FieldNamingStrategy {
                 "CkbMolecularProfile.id",
                 "CkbMolecularProfile.profileName",
 
+                "CkbClinicalTrialLocation.nctId",
+                "CkbClinicalTrialLocation.facility",
+                "CkbClinicalTrialLocation.city",
+                "CkbClinicalTrialLocation.country",
+                "CkbClinicalTrialLocation.status",
+                "CkbClinicalTrialLocation.state",
+                "CkbClinicalTrialLocation.zip",
+                "CkbClinicalTrialLocation.clinicalTrialContacts",
+
+                "CkbClinicalTrialContact.name",
+                "CkbClinicalTrialContact.email",
+                "CkbClinicalTrialContact.phone",
+                "CkbClinicalTrialContact.phoneExt",
+                "CkbClinicalTrialContact.role",
+
                 "CkbReference.id",
                 "CkbReference.pubMedId",
                 "CkbReference.title",

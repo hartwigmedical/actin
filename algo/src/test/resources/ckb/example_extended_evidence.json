@@ -41,6 +41,17 @@
       }
     ],
     "clinicalTrialLocations": [
+      {
+        "nctId": "NCT01",
+        "facility": "HMF Sequencing Lab",
+        "city": "Amsterdam",
+        "country": "Netherlands",
+        "status": null,
+        "state": "NH",
+        "zip": "1234 AM",
+        "clinicalTrialContacts": [
+        ]
+      }
     ],
     "coveredCountries": [
     ],
