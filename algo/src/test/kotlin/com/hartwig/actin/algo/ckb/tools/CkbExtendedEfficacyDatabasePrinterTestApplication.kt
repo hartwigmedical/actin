@@ -22,7 +22,6 @@ class CkbExtendedEfficacyDatabasePrinterTestApplication {
             "extended_ee_output.json"
         ).joinToString(File.separator)
     }
-
 }
 
 fun main() {
