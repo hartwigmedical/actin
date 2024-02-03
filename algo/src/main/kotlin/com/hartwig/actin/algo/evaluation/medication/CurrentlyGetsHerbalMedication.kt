@@ -15,21 +15,27 @@ class CurrentlyGetsHerbalMedication(private val selector: MedicationSelector) : 
             .filter { it.isSelfCare }
             .any(selector::isPlanned)
 
-        return if (hasActiveSelfCareMedication) {
-            EvaluationFactory.undetermined(
-                "Patient uses self care medication hence undetermined if patient may use herbal medications",
-                "Undetermined if patient may use herbal medications"
-            )
-        } else if (hasPlannedSelfCareMedication) {
-            return EvaluationFactory.undetermined(
-                "Patient plans to use self care medication hence undetermined if patient may plan to use herbal medications",
-                "Undetermined if patient may plan to use herbal medications"
-            )
-        } else {
-            return EvaluationFactory.fail(
-                "Patient does not use self care medication hence won't use herbal medications",
-                "No use of herbal medications"
-            )
+        return when {
+            hasActiveSelfCareMedication -> {
+                EvaluationFactory.undetermined(
+                    "Patient uses self care medication hence undetermined if patient may use herbal medications",
+                    "Undetermined if patient may use herbal medications"
+                )
+            }
+
+            hasPlannedSelfCareMedication -> {
+                return EvaluationFactory.undetermined(
+                    "Patient plans to use self care medication hence undetermined if patient may plan to use herbal medications",
+                    "Undetermined if patient may plan to use herbal medications"
+                )
+            }
+
+            else -> {
+                return EvaluationFactory.fail(
+                    "Patient does not use self care medication hence won't use herbal medications",
+                    "No use of herbal medications"
+                )
+            }
         }
     }
 }
