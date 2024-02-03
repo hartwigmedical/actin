@@ -5,22 +5,22 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class GetsHerbalMedicineMedication(private val selector: MedicationSelector) : EvaluationFunction {
+class CurrentlyGetsHerbalMedication(private val selector: MedicationSelector) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasActiveMedicationWithoutAtc = record.clinical.medications
+        val hasActiveSelfCareMedication = record.clinical.medications
             .filter { it.isSelfCare }
             .any(selector::isActive)
 
-        val hasPlannedMedicationWithoutAtc = record.clinical.medications
+        val hasPlannedSelfCareMedication = record.clinical.medications
             .filter { it.isSelfCare }
             .any(selector::isPlanned)
 
-        return if (hasActiveMedicationWithoutAtc) {
+        return if (hasActiveSelfCareMedication) {
             EvaluationFactory.undetermined(
                 "Patient uses self care medication hence undetermined if patient may use herbal medications",
                 "Undetermined if patient may use herbal medications"
             )
-        } else if (hasPlannedMedicationWithoutAtc) {
+        } else if (hasPlannedSelfCareMedication) {
             return EvaluationFactory.undetermined(
                 "Patient plans to use self care medication hence undetermined if patient may plan to use herbal medications",
                 "Undetermined if patient may plan to use herbal medications"

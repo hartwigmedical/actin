@@ -4,10 +4,10 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import org.junit.Test
 
-class GetsHerbalMedicineMedicationTest {
-    private val alwaysActiveFunction = GetsHerbalMedicineMedication(MedicationTestFactory.alwaysActive())
-    private val alwaysPlannedFunction = GetsHerbalMedicineMedication(MedicationTestFactory.alwaysPlanned())
-    private val alwaysInactiveFunction = GetsHerbalMedicineMedication(MedicationTestFactory.alwaysInactive())
+class CurrentlyGetsHerbalMedicationTest {
+    private val alwaysActiveFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysActive())
+    private val alwaysPlannedFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysPlanned())
+    private val alwaysInactiveFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysInactive())
 
     @Test
     fun `Should fail when patient uses no medications`() {
@@ -29,7 +29,7 @@ class GetsHerbalMedicineMedicationTest {
     }
 
     @Test
-    fun `Should be undetermined when medication is self care and active`() {
+    fun `Should be undetermined when medication is self care and active or planned`() {
         val medications = listOf(MedicationTestFactory.medication(isSelfCare = true))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -37,11 +37,6 @@ class GetsHerbalMedicineMedicationTest {
                 MedicationTestFactory.withMedications(medications)
             )
         )
-    }
-
-    @Test
-    fun `Should be warn when medication is self care but planned`() {
-        val medications = listOf(MedicationTestFactory.medication(isSelfCare = true))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             alwaysPlannedFunction.evaluate(
@@ -51,7 +46,7 @@ class GetsHerbalMedicineMedicationTest {
     }
 
     @Test
-    fun `Should be fail when medication is self care but inactive`() {
+    fun `Should be fail when medication is self care but not active or planned`() {
         val medications = listOf(MedicationTestFactory.medication(isSelfCare = true))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
