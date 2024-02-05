@@ -7,7 +7,7 @@ data class CkbEndPointMetric(
     val endPointType: String,
     val value: String,
     val confidenceInterval95: String?,
-    val numerator: String,
-    val denominator: String,
+    val numerator: String?,
+    val denominator: String?,
     val derivedMetrics: List<CkbDerivedMetric>
 )

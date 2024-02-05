@@ -64,8 +64,8 @@
             "is_control": true,
             "group_name": "Treatment 1",
             "n_patients_enrolled": null,
-            "n_patients": "20",
-            "n_female": "10",
+            "n_patients": "40",
+            "n_female": "30",
             "n_male": "10",
             "age_min": "50",
             "age_max": "60",
@@ -120,7 +120,7 @@
                   },
                   {
                     "id": 41,
-                    "trial_analysis_group_id": 17,
+                    "trial_analysis_group_id": 30,
                     "end_point": {
                       "id": 51,
                       "name": "Objective/Overall Response Rate",

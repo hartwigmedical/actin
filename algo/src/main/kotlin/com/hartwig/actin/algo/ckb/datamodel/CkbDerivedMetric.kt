@@ -4,6 +4,6 @@ data class CkbDerivedMetric(
     val relativeMetricId: Int,
     val comparatorStatistic: String?,
     val comparatorStatisticType: String?,
-    val comparatorInterval95Cs: String?,
+    val confidenceInterval95Cs: String?,
     val pValue: String
 )

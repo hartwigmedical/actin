@@ -164,7 +164,7 @@ class MixedFieldNamingStrategy : FieldNamingStrategy {
                 "CkbDerivedMetric.relativeMetricId",
                 "CkbDerivedMetric.comparatorStatistic",
                 "CkbDerivedMetric.comparatorStatisticType",
-                "CkbDerivedMetric.comparatorInterval95Cs",
+                "CkbDerivedMetric.confidenceInterval95Cs",
                 "CkbDerivedMetric.pValue"
             )
 
