@@ -1,0 +1,43 @@
+package com.hartwig.actin.algo.ckb.datamodel
+
+import com.google.gson.annotations.SerializedName
+
+data class CkbPatientPopulation(
+    val id: Int,
+    @SerializedName("is_control") val isControl: Boolean,
+    @SerializedName("group_name") val groupName: String,
+    @SerializedName("n_patients_enrolled") val nPatientsEnrolled: String?,
+    @SerializedName("n_patients") val nPatients: String,
+    @SerializedName("n_female") val nFemale: String,
+    @SerializedName("n_male") val nMale: String,
+    @SerializedName("age_min") val ageMin: String,
+    @SerializedName("age_max") val ageMax: String,
+    @SerializedName("median_age") val medianAge: String,
+    @SerializedName("n_65_or_older") val n65OrOlder: String?,
+    @SerializedName("n_ecog_0") val nEcog0: String?,
+    @SerializedName("n_ecog_1") val nEcog1: String?,
+    @SerializedName("n_ecog_2") val nEcog2: String?,
+    @SerializedName("n_ecog_3") val nEcog3: String?,
+    @SerializedName("n_ecog_4") val nEcog4: String?,
+    @SerializedName("highest_ecog_score") val highestEcogScore: Int,
+    @SerializedName("n_localization_primary_tumor") val nLocalizationPrimaryTumor: String?,
+    @SerializedName("other_mutations") val otherMutations: String,
+    @SerializedName("n_primary_tumor_removed_complete") val nPrimaryTumorRemovedComplete: String?,
+    @SerializedName("n_primary_tumor_removed_partial") val nPrimaryTumorRemovedPartial: String?,
+    @SerializedName("n_primary_tumor_removed") val nPrimaryTumorRemoved: String?,
+    @SerializedName("n_previous_lines_of_therapy_1") val nPreviousLinesOfTherapy1: String?,
+    @SerializedName("n_previous_lines_of_therapy_2") val nPreviousLinesOfTherapy2: String?,
+    @SerializedName("n_previous_lines_of_therapy_3") val nPreviousLinesOfTherapy3: String?,
+    @SerializedName("n_previous_lines_of_therapy_4_or_more") val nPreviousLinesOfTherapy4OrMore: String?,
+    @SerializedName("n_prior_systemic_therapy") val nPriorSystemicTherapy: String?,
+    @SerializedName("n_stage_description") val nStageDescription: String?,
+    @SerializedName("n_mutation_status") val nMutationStatus: String?,
+    @SerializedName("n_high_microsatellite_stability") val nHighMicrosatelliteStability: String?,
+    @SerializedName("median_follow_up_for_survival") val medianFollowUpForSurvival: String?,
+    @SerializedName("median_follow_up_for_progression_free_survival") val medianFollowUpForProgressionFreeSurvival: String?,
+    @SerializedName("median_follow_up_for_randomization_to_data_cut_off") val medianFollowUpForRandomizationToDataCutOff: String?,
+    @SerializedName("metastatic_sites") val metastaticSites: String,
+    @SerializedName("analysis_groups") val analysisGroups: List<CkbAnalysisGroup>,
+    @SerializedName("efficacy_evidence") val efficacyEvidence: List<CkbEfficacyEvidence>,
+    val notes: String?
+)

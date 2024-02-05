@@ -1,0 +1,311 @@
+[
+  {
+    "nctId": "NCT01",
+    "title": "Study of treatment 1 instead of treatment 2",
+    "phase": "Phase III",
+    "recruitment": "Completed",
+    "therapies": [
+      {
+        "id": 1,
+        "therapyName": "Treatment 1",
+        "synonyms": null
+      },
+      {
+        "id": 2,
+        "therapyName": "Treatment 2",
+        "synonyms": null
+      }
+    ],
+    "ageGroups": [
+      "adult",
+      "senior"
+    ],
+    "gender": "both",
+    "variantRequirements": "Yes",
+    "sponsors": "Hartwig Medical Foundation",
+    "updateDate": "12/05/2023",
+    "indications": [
+      {
+        "id": 162,
+        "name": "cancer",
+        "source": "DOID"
+      }
+    ],
+    "variantRequirementDetails": [
+      {
+        "molecularProfile": {
+          "id": 3,
+          "profileName": "EGFR positive"
+        },
+        "requirementType": "required"
+      }
+    ],
+    "clinicalTrialLocations": [
+      {
+        "nctId": "NCT01",
+        "facility": "HMF Sequencing Lab",
+        "city": "Amsterdam",
+        "country": "Netherlands",
+        "status": null,
+        "state": "NH",
+        "zip": "1234 AM",
+        "clinicalTrialContacts": [
+        ]
+      }
+    ],
+    "coveredCountries": [
+    ],
+    "trial_references": [
+      {
+        "id": 10,
+        "patient_populations": [
+          {
+            "id": 20,
+            "is_control": true,
+            "group_name": "Treatment 1",
+            "n_patients_enrolled": null,
+            "n_patients": "40",
+            "n_female": "30",
+            "n_male": "10",
+            "age_min": "50",
+            "age_max": "60",
+            "median_age": "55",
+            "n_65_or_older": null,
+            "n_ecog_0": "3",
+            "n_ecog_1": "27",
+            "n_ecog_2": "10",
+            "n_ecog_3": null,
+            "n_ecog_4": null,
+            "highest_ecog_score": 2,
+            "n_localization_primary_tumor": null,
+            "other_mutations": "EGFR Staining None: 0 (0%), Weak 1+: 40 (100.0%)",
+            "n_primary_tumor_removed_complete": null,
+            "n_primary_tumor_removed_partial": null,
+            "n_primary_tumor_removed": null,
+            "n_previous_lines_of_therapy_1": "40",
+            "n_previous_lines_of_therapy_2": null,
+            "n_previous_lines_of_therapy_3": null,
+            "n_previous_lines_of_therapy_4_or_more": null,
+            "n_prior_systemic_therapy": null,
+            "n_stage_description": null,
+            "n_mutation_status": null,
+            "n_high_microsatellite_instability": null,
+            "median_follow_up_for_survival": null,
+            "median_follow_up_for_progression_free_survival": null,
+            "median_follow_up_randomization_to_data_cut_off": null,
+            "metastatic_sites": "Liver: 20 (50.0%), Lung: 10 (25.0%)",
+            "analysis_groups": [
+              {
+                "id": 30,
+                "name": "Treatment 1",
+                "outcome": "N/A",
+                "n_patients": "40",
+                "end_point_metrics": [
+                  {
+                    "id": 40,
+                    "trial_analysis_group_id": 30,
+                    "end_point": {
+                      "id": 50,
+                      "name": "Disease Control Rate",
+                      "definition": "the proportion of patients who have achieved complete response, partial response, and stable disease",
+                      "unit_of_measure": "Percent"
+                    },
+                    "end_point_type": "NA",
+                    "value": "50.0",
+                    "confidence_interval_95": null,
+                    "numerator": "20",
+                    "denominator": "40",
+                    "derived_metrics": [
+                    ]
+                  },
+                  {
+                    "id": 41,
+                    "trial_analysis_group_id": 30,
+                    "end_point": {
+                      "id": 51,
+                      "name": "Objective/Overall Response Rate",
+                      "definition": "the proportion of patients with tumor size reduction of a predefined amount and for a minimum time period",
+                      "unit_of_measure": "Percent"
+                    },
+                    "end_point_type": "NA",
+                    "value": "25.0",
+                    "confidence_interval_95": null,
+                    "numerator": "10",
+                    "denominator": "40",
+                    "derived_metrics": [
+                    ]
+                  }
+                ],
+                "notes": null
+              }
+            ],
+            "efficacy_evidence": [
+            ],
+            "notes": null
+          },
+          {
+            "id": 21,
+            "is_control": false,
+            "group_name": "Treatment 2",
+            "n_patients_enrolled": null,
+            "n_patients": "40",
+            "n_female": "21",
+            "n_male": "19",
+            "age_min": "48",
+            "age_max": "84",
+            "median_age": "64",
+            "n_65_or_older": null,
+            "n_ecog_0": null,
+            "n_ecog_1": "37",
+            "n_ecog_2": "3",
+            "n_ecog_3": null,
+            "n_ecog_4": null,
+            "highest_ecog_score": 2,
+            "n_localization_primary_tumor": null,
+            "other_mutations": "EGFR Staining None: 2 (5.0%), Weak 1+: 38 (95.0%)",
+            "n_primary_tumor_removed_complete": null,
+            "n_primary_tumor_removed_partial": null,
+            "n_primary_tumor_removed": null,
+            "n_previous_lines_of_therapy_1": "40",
+            "n_previous_lines_of_therapy_2": null,
+            "n_previous_lines_of_therapy_3": null,
+            "n_previous_lines_of_therapy_4_or_more": null,
+            "n_prior_systemic_therapy": null,
+            "n_stage_description": null,
+            "n_mutation_status": null,
+            "n_high_microsatellite_instability": null,
+            "median_follow_up_for_survival": null,
+            "median_follow_up_for_progression_free_survival": null,
+            "median_follow_up_randomization_to_data_cut_off": null,
+            "metastatic_sites": "Liver: 30 (75.0%), Lung: 10 (25.0%)",
+            "analysis_groups": [
+              {
+                "id": 31,
+                "name": "Treatment 2",
+                "outcome": "Positive",
+                "n_patients": "40",
+                "end_point_metrics": [
+                  {
+                    "id": 42,
+                    "trial_analysis_group_id": 31,
+                    "end_point": {
+                      "id": 52,
+                      "name": "Disease Control Rate",
+                      "definition": "the proportion of patients who have achieved complete response, partial response, and stable disease",
+                      "unit_of_measure": "Percent"
+                    },
+                    "end_point_type": "SECONDARY",
+                    "value": "75.0",
+                    "confidence_interval_95": null,
+                    "numerator": "30",
+                    "denominator": "40",
+                    "derived_metrics": [
+                      {
+                        "relative_metric_id": 60,
+                        "comparator_statistic": null,
+                        "comparator_statistic_type": null,
+                        "confidence_interval95_cs": null,
+                        "p_value": "<0.0001"
+                      }
+                    ]
+                  },
+                  {
+                    "id": 43,
+                    "trial_analysis_group_id": 31,
+                    "end_point": {
+                      "id": 53,
+                      "name": "Objective/Overall Response Rate",
+                      "definition": "the proportion of patients with tumor size reduction of a predefined amount and for a minimum time period",
+                      "unit_of_measure": "Percent"
+                    },
+                    "end_point_type": "SECONDARY",
+                    "value": "50.0",
+                    "confidence_interval_95": "40.0-60.0",
+                    "numerator": "20",
+                    "denominator": "40",
+                    "derived_metrics": [
+                      {
+                        "relative_metric_id": 61,
+                        "comparator_statistic": null,
+                        "comparator_statistic_type": null,
+                        "confidence_interval95_cs": null,
+                        "p_value": "<0.0001"
+                      }
+                    ]
+                  }
+                ],
+                "notes": null
+              }
+            ],
+            "efficacy_evidence": [
+              {
+                "id": 70,
+                "approvalStatus": "Phase III",
+                "evidenceType": "Actionable",
+                "efficacyEvidence": "In a phase3 trial, treatment 1 seems better than treatment 2",
+                "molecularProfile": {
+                  "id": 3,
+                  "profileName": "EGFR positive"
+                },
+                "therapy": {
+                  "id": 1,
+                  "therapyName": "Treatment 1",
+                  "synonyms": null
+                },
+                "indication": {
+                  "id": 162,
+                  "name": "cancer",
+                  "source": "DOID"
+                },
+                "responseType": "sensitive",
+                "references": [
+                  {
+                    "id": 92,
+                    "pubMedId": 12345678,
+                    "title": "In a phase3 trial, treatment 1 seems better than treatment 2",
+                    "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
+                  }
+                ],
+                "ampCapAscoEvidenceLevel": "B",
+                "ampCapAscoInferredTier": "I",
+                "referencedMetrics": [
+                  {
+                    "id": 90,
+                    "trial_analysis_group_id": 31,
+                    "end_point": {
+                      "id": 91,
+                      "name": "Median Overall Survival",
+                      "definition": "the time from randomization until death from any cause",
+                      "unit_of_measure": "Months"
+                    },
+                    "end_point_type": "PRIMARY",
+                    "value": "4.3",
+                    "confidence_interval_95": "4.2-4.4",
+                    "numerator": null,
+                    "denominator": null,
+                    "derived_metrics": [
+                    ]
+                  }
+                ]
+              }
+            ],
+            "notes": null
+          }
+        ],
+        "reference": {
+          "id": 92,
+          "pubMedId": 12345678,
+          "title": "In a phase3 trial, treatment 1 seems better than treatment 2",
+          "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
+        }
+      }
+    ],
+    "other_trial_registration_numbers": null,
+    "masking": "None (Open Label)",
+    "allocation": "randomized",
+    "cancer_stage": "metastatic",
+    "disease_assessment": "Measurable",
+    "disease_assessment_criteria": "RECIST",
+    "therapeutic_setting": null
+  }
+]
