@@ -13,7 +13,9 @@ class CkbExtendedEvidenceJsonTest {
     @Test
     fun `Can read example extended efficacy database json file`() {
         val entries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(exampleJson)
-        assertThat(CkbExtendedEvidenceJson.fromJson(toJson(entries))).isEqualTo(entries)
+        val proper = CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase()
+
+        assertThat(entries).isEqualTo(proper)
     }
 
     @Test

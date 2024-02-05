@@ -260,7 +260,7 @@
                 "responseType": "sensitive",
                 "references": [
                   {
-                    "id": 80,
+                    "id": 92,
                     "pubMedId": 12345678,
                     "title": "In a phase3 trial, treatment 1 seems better than treatment 2",
                     "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
