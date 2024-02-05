@@ -13,7 +13,7 @@ class CkbExtendedEvidenceJsonTest {
     @Test
     fun `Can read example extended efficacy database json file`() {
         val entries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(exampleJson)
-        assertThat(entries).isNotNull
+        assertThat(CkbExtendedEvidenceJson.fromJson(toJson(entries))).isEqualTo(entries)
     }
 
     @Test
