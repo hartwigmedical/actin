@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.ckb.datamodel
 
+import com.google.gson.annotations.SerializedName
+
 data class CkbEndPoint(
     val id: Int,
     val name: String,
     val definition: String,
-    val unitOfMeasure: String
+    @SerializedName("unit_of_measure") val unitOfMeasure: String
 )

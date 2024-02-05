@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.ckb.datamodel
 
+import com.google.gson.annotations.SerializedName
+
 data class CkbExtendedEvidenceEntry(
     val nctId: String,
     val title: String,
@@ -15,12 +17,12 @@ data class CkbExtendedEvidenceEntry(
     val variantRequirementDetails: List<CkbVariantRequirementDetail>,
     val clinicalTrialLocations: List<CkbClinicalTrialLocation>,
     val coveredCountries: List<String>,
-    val trialReferences: List<CkbTrialReference>,
-    val otherTrialRegistrationNumbers: String?,
+    @SerializedName("trial_references") val trialReferences: List<CkbTrialReference>,
+    @SerializedName("other_trial_registration_numbers") val otherTrialRegistrationNumbers: String?,
     val masking: String,
     val allocation: String,
-    val cancerStage: String,
-    val diseaseAssessment: String,
-    val diseaseAssessmentCriteria: String,
-    val therapeuticSetting: String?
+    @SerializedName("cancer_stage") val cancerStage: String,
+    @SerializedName("disease_assessment") val diseaseAssessment: String,
+    @SerializedName("disease_assessment_criteria") val diseaseAssessmentCriteria: String,
+    @SerializedName("therapeutic_setting") val therapeuticSetting: String?
 )

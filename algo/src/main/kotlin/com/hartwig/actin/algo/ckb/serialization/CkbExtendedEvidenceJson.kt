@@ -21,6 +21,6 @@ object CkbExtendedEvidenceJson {
     }
 
     fun createGson(): Gson {
-        return GsonBuilder().serializeNulls().setFieldNamingStrategy(MixedFieldNamingStrategy()).create()
+        return GsonBuilder().serializeNulls().create()
     }
 }
