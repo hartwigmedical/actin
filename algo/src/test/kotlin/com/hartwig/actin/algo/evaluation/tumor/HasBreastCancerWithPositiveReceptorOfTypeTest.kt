@@ -4,24 +4,25 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.ReceptorType.HER2
-import com.hartwig.actin.clinical.datamodel.ReceptorType.PR
 import com.hartwig.actin.doid.TestDoidModelFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasBreastCancerWithPositiveReceptorOfTypeTest {
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val function = HasBreastCancerWithPositiveReceptorOfType(doidModel, PR)
+    val function = HasBreastCancerWithPositiveReceptorOfType(doidModel, ReceptorType.valueOf(TARGET_RECEPTOR))
 
     @Test
     fun `Should evaluate to undetermined when no tumor doids configured`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(
-                TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest("PR", "Positive")), emptySet()
-                )
+        val evaluation = function.evaluate(
+            TumorTestFactory.withPriorMolecularTestsAndDoids(
+                listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Positive")), emptySet()
             )
         )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No tumor doids configured")
     }
 
     @Test
@@ -29,7 +30,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest("PR", "Positive")),
+                    listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Positive")),
                     setOf(DoidConstants.COLORECTAL_CANCER_DOID)
                 )
             )
@@ -38,26 +39,45 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should evaluate to undetermined if no data is present for target receptor in doids or prior molecular tests`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(
-                TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest("some test", "Positive"), createPriorMolecularTest("other test", "Positive")),
-                    setOf(DoidConstants.BREAST_CANCER_DOID)
-                )
+        val evaluation = function.evaluate(
+            TumorTestFactory.withPriorMolecularTestsAndDoids(
+                listOf(createPriorMolecularTest("some test", "Positive"), createPriorMolecularTest("other test", "Positive")),
+                setOf(DoidConstants.BREAST_CANCER_DOID)
             )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("PR-status unknown")
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if no data is present for target receptor HER2 but ERBB2 amplification found`() {
+        val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            TumorTestFactory.withDoidsAndAmplificationAndPriorMolecularTest(
+                setOf(DoidConstants.BREAST_CANCER_DOID), "ERBB2", listOf(createPriorMolecularTest("wrong test", "positive"))
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(
+            evaluation.undeterminedGeneralMessages
+        ).containsExactly(
+            "HER2-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
         )
     }
 
     @Test
-    fun `Should evaluate to undetermined if prior molecular test data inconsistent`() {
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(
-                TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest("PR", "Negative"), createPriorMolecularTest("PR", "Positive")),
-                    setOf(DoidConstants.BREAST_CANCER_DOID)
-                )
+    fun `Should evaluate to undetermined with specific message if prior molecular test data inconsistent`() {
+        val evaluation = function.evaluate(
+            TumorTestFactory.withPriorMolecularTestsAndDoids(
+                listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Negative"), createPriorMolecularTest(TARGET_RECEPTOR, "Positive")),
+                setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(
+            evaluation.undeterminedGeneralMessages
+        ).containsExactly(
+            "Undetermined PR-status - DOID and/or IHC data inconsistent"
+            )
     }
 
     @Test
@@ -80,7 +100,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest("PR", "Negative")),
+                    listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Negative")),
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
                 )
             )
@@ -104,7 +124,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest("PR", "Positive")),
+                    listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Positive")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -117,6 +137,57 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest(item = "HER2", scoreValue = 3.0, scoreValueUnit = "+")),
+                    setOf(DoidConstants.BREAST_CANCER_DOID)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn if HER2 negative based on doids but ERBB2 amp present`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+                TumorTestFactory.withDoidsAndAmplification(
+                    setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID), "ERBB2"
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn if HER2 negative based on IHC but ERBB2 amp present`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+                TumorTestFactory.withDoidsAndAmplificationAndPriorMolecularTest(
+                    setOf(DoidConstants.BREAST_CANCER_DOID), "ERBB2", listOf(
+                        createPriorMolecularTest("HER2", "Negative")
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn if target receptor is HER2 and unclear (not positive or negative) based on IHC and doids but ERBB2 amp present`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+                TumorTestFactory.withDoidsAndAmplificationAndPriorMolecularTest(
+                    setOf(DoidConstants.BREAST_CANCER_DOID),
+                    "ERBB2",
+                    listOf(createPriorMolecularTest("HER2", scoreValue = 1.0, scoreValueUnit = "+"))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail if target molecular test present but no clear determination possible on present data`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                TumorTestFactory.withPriorMolecularTestsAndDoids(
+                    listOf(
+                        (createPriorMolecularTest(TARGET_RECEPTOR, "Medium"))
+                    ),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -140,7 +211,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest("PR", "Negative")),
+                    listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Negative")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -152,7 +223,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
-                    listOf(createPriorMolecularTest("PR", scoreValue = 0.0, scoreValueUnit = "%")),
+                    listOf(createPriorMolecularTest(TARGET_RECEPTOR, scoreValue = 0.0, scoreValueUnit = "%")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -166,7 +237,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(
                         createPriorMolecularTest("HER2", scoreValue = 0.0, scoreValueUnit = "%"),
-                        createPriorMolecularTest("PR", scoreValue = 80.0, scoreValueUnit = "%")
+                        createPriorMolecularTest(TARGET_RECEPTOR, scoreValue = 80.0, scoreValueUnit = "%")
                     ),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
@@ -194,5 +265,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
             )
         }
+
+        const val TARGET_RECEPTOR = "PR"
     }
 }

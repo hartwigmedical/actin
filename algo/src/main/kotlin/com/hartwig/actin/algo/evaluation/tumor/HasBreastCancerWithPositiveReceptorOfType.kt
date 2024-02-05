@@ -21,10 +21,8 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
         val targetReceptorNegativeInDoids = expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
 
-        val positiveArguments = targetPriorMolecularTest.any { it.scoreText == "Positive" }
-                || hasPositiveTest(targetPriorMolecularTest, receptorType) || targetReceptorPositiveInDoids
-        val negativeArguments = targetPriorMolecularTest.any { it.scoreText == "Negative" }
-                || negativeBasedOnScoreValue(targetPriorMolecularTest, receptorType) || targetReceptorNegativeInDoids
+        val positiveArguments = hasPositiveTest(targetPriorMolecularTest, receptorType) || targetReceptorPositiveInDoids
+        val negativeArguments = hasNegativeTest(targetPriorMolecularTest, receptorType) || targetReceptorNegativeInDoids
 
         val targetReceptorIsPositive = when {
             positiveArguments && !negativeArguments -> true
@@ -32,6 +30,7 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
             else -> null
         }
         val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments)
+        val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record)
 
         return when {
             tumorDoids.isNullOrEmpty() -> {
@@ -42,17 +41,24 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
 
             !isBreastCancer -> EvaluationFactory.fail("Patient does not have breast cancer", "Tumor type")
 
-            targetPriorMolecularTest.isEmpty() && !targetReceptorPositiveInDoids && !targetReceptorNegativeInDoids -> {
-                EvaluationFactory.undetermined(
-                    "${receptorType.display()} status unknown - data missing",
-                    "${receptorType.display()} status unknown"
-                )
+            targetPriorMolecularTest.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
+                return if (targetHer2AndErbb2Amplified) {
+                    EvaluationFactory.undetermined(
+                        "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present",
+                        "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
+                    )
+                } else {
+                    EvaluationFactory.undetermined(
+                        "${receptorType.display()}-status unknown - data missing",
+                        "${receptorType.display()}-status unknown"
+                    )
+                }
             }
 
-            (targetReceptorIsPositive == null && !specificArgumentsForStatusDeterminationMissing) -> {
+            targetReceptorIsPositive == null && !specificArgumentsForStatusDeterminationMissing -> {
                 EvaluationFactory.undetermined(
-                    "${receptorType.display()}-status undetermined since DOID and IHC data inconsistent",
-                    "Undetermined ${receptorType.display()}-status - DOID and IHC data inconsistent"
+                    "${receptorType.display()}-status undetermined since DOID and/or IHC data inconsistent",
+                    "Undetermined ${receptorType.display()}-status - DOID and/or IHC data inconsistent"
                 )
             }
 
@@ -63,11 +69,11 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
                 )
             }
 
-            receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record) -> {
+            targetReceptorIsPositive != true && targetHer2AndErbb2Amplified -> {
                 EvaluationFactory.warn(
-                    "Patient has ${receptorType.display()}-positive breast cancer based on DOIDS and/or prior molecular tests " +
+                    "Patient has ${receptorType.display()}-negative breast cancer based on DOIDS and/or prior molecular tests " +
                             "but undetermined if true since ERBB2 gene amp present",
-                    "Undetermined if ${receptorType.display()}-positive breast cancer since DOID/IHC data inconsistent with ERBB2 gene amp"
+                    "Undetermined if ${receptorType.display()}-negative breast cancer since DOID/IHC data inconsistent with ERBB2 gene amp"
                 )
             }
 
@@ -92,7 +98,7 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
             ReceptorType.HER2 to DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID
         )
 
-        fun negativeBasedOnScoreValue(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
+        fun hasNegativeTest(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
             val (scoreValue, scoreValueUnit) = when (receptorType) {
                 ReceptorType.PR, ReceptorType.ER -> {
                     Pair(0, "%")
