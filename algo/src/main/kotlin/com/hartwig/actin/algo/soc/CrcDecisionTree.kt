@@ -30,7 +30,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
                         + EligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR)
             ),
             trueBranch = DecisionTreeLeaf(treatmentCandidatesForRasWtBrafWtAndLeftSidedTumor),
-            falseBranch = DecisionTreeLeaf(listOf())
+            falseBranch = DecisionTreeLeaf(emptyList())
         )
     )
 

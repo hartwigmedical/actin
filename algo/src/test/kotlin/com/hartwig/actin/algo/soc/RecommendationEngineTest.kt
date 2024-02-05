@@ -3,28 +3,29 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.TreatmentDatabaseFactory
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
+import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Ignore
 import org.junit.Test
-import java.io.File
 import java.time.LocalDate
 
-@Ignore
 class RecommendationEngineTest {
 
     @Test
@@ -308,15 +309,26 @@ class RecommendationEngineTest {
     }
 
     companion object {
-        private val ACTIN_RESOURCE_PATH = listOf(
-            System.getProperty("user.home"),
-            "hmf",
-            "repos",
-            "actin-resources-private"
-        ).joinToString(File.separator)
+        private val TREATMENT_DATABASE = mockk<TreatmentDatabase> {
+            every { findTreatmentByName(any()) } answers {
 
-        private val TREATMENT_JSON_PATH = ACTIN_RESOURCE_PATH + File.separator + "treatment_db"
-        private val TREATMENT_DATABASE = TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH)
+                val treatmentName = firstArg<String>()
+                val drugs = treatmentName.split("+").flatMap { subTreatmentName ->
+                    when (subTreatmentName) {
+                        CAPIRI -> listOf("CAPECITABINE", "IRINOTECAN")
+                        CAPOX -> listOf("CAPECITABINE", "OXALIPLATIN")
+                        FOLFIRI -> listOf("FLUOROURACIL", "IRINOTECAN")
+                        FOLFOX -> listOf("FLUOROURACIL", "OXALIPLATIN")
+                        FOLFOXIRI -> listOf("FLUOROURACIL", "OXALIPLATIN", "IRINOTECAN")
+                        LONSURF -> listOf("TRIFLURIDINE", "TIPRACIL")
+                        else -> listOf(subTreatmentName)
+                    }
+                }
+                DrugTreatment(treatmentName, drugs.map(::drug).toSet())
+            }
+            every { findDrugByName(any()) } answers { drug(firstArg()) }
+        }
+
         private val TREATMENT_CANDIDATE_DATABASE = TreatmentCandidateDatabase(TREATMENT_DATABASE)
         private val ALWAYS_AVAILABLE_TREATMENTS = CrcDecisionTree.commonChemotherapies.map {
             TREATMENT_DATABASE.findTreatmentByName(it)!!
@@ -327,7 +339,7 @@ class RecommendationEngineTest {
         
         private val RECOMMENDATION_ENGINE = RecommendationEngine.create(
             TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer"),
-            AtcTree.createFromFile(listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)),
+            AtcTestFactory.createProperAtcTree(),
             TREATMENT_CANDIDATE_DATABASE,
             ReferenceDateProviderTestFactory.createCurrentDateProvider()
         )
@@ -358,6 +370,15 @@ class RecommendationEngineTest {
         private val TYPICAL_TREATMENT_RESULTS: List<TreatmentCandidate> = resultsForPatientWithHistory(emptyList())
 
         private val HISTORICAL_YEAR = LocalDate.now().minusYears(3).year
+
+        private fun drug(name: String): Drug {
+            val category = if (name == "TARGETED_THERAPY" || name.endsWith("B")) {
+                TreatmentCategory.TARGETED_THERAPY
+            } else {
+                TreatmentCategory.CHEMOTHERAPY
+            }
+            return Drug(name, emptySet(), category)
+        }
 
         private fun resultsForPatient(patientRecord: PatientRecord): List<TreatmentCandidate> {
             return RECOMMENDATION_ENGINE.determineAvailableTreatments(patientRecord).map(EvaluatedTreatment::treatmentCandidate)
