@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.feed.questionnaire
 
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireVersion.Companion.version
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion.Companion.version
 import org.junit.Assert
 import org.junit.Test
 

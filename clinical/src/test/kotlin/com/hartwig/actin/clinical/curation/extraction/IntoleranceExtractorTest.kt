@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
-import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
+import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

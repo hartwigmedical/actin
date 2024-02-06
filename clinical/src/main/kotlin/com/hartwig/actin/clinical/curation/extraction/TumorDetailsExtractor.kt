@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import org.apache.logging.log4j.LogManager
 
 class TumorDetailsExtractor(
@@ -22,7 +22,7 @@ class TumorDetailsExtractor(
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<TumorDetails> {
         if (questionnaire == null) {
-            return ExtractionResult(TumorDetails(), ExtractionEvaluation())
+            return ExtractionResult(TumorDetails(), CurationExtractionEvaluation())
         }
         val lesionsToCheck = ((questionnaire.otherLesions ?: emptyList()) + listOfNotNull(questionnaire.biopsyLocation)).flatMap {
             lesionLocationCuration.find(it).mapNotNull(LesionLocationConfig::category)
@@ -62,9 +62,9 @@ class TumorDetailsExtractor(
         patientId: String,
         inputTumorLocation: String?,
         inputTumorType: String?
-    ): Pair<TumorDetails, ExtractionEvaluation> {
+    ): Pair<TumorDetails, CurationExtractionEvaluation> {
         val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType)?.lowercase()
-            ?: return Pair(TumorDetails(), ExtractionEvaluation())
+            ?: return Pair(TumorDetails(), CurationExtractionEvaluation())
             
         val primaryTumorCuration = CurationResponse.createFromConfigs(
             primaryTumorCuration.find(inputPrimaryTumor),
@@ -96,7 +96,7 @@ class TumorDetailsExtractor(
 
     fun curateOtherLesions(patientId: String, otherLesions: List<String>?): ExtractionResult<List<String>?> {
         if (otherLesions == null) {
-            return ExtractionResult(null, ExtractionEvaluation())
+            return ExtractionResult(null, CurationExtractionEvaluation())
         }
         val (configs, extractionResult) = otherLesions.asSequence()
             .map(CurationUtil::fullTrim)

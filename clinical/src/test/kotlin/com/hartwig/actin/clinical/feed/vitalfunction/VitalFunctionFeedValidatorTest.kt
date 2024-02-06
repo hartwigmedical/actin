@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.feed.vitalfunction
 
+import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
+import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionFeedValidator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDateTime

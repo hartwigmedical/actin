@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.feed
 
 import com.google.common.io.Resources
-import com.hartwig.actin.clinical.feed.FeedModel.Companion.fromFeedDirectory
+import com.hartwig.actin.clinical.feed.emc.FeedModel.Companion.fromFeedDirectory
 import org.junit.Assert
 import org.junit.Test
 import java.io.IOException

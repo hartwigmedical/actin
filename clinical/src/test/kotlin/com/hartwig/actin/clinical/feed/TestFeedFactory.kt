@@ -3,16 +3,18 @@ package com.hartwig.actin.clinical.feed
 import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.datamodel.Gender
-import com.hartwig.actin.clinical.feed.bodyweight.BodyWeightEntry
-import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
-import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
-import com.hartwig.actin.clinical.feed.lab.LabEntry
-import com.hartwig.actin.clinical.feed.medication.MedicationEntry
-import com.hartwig.actin.clinical.feed.patient.PatientEntry
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
+import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeed
+import com.hartwig.actin.clinical.feed.emc.FeedModel
+import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
+import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
+import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
+import com.hartwig.actin.clinical.feed.emc.lab.LabEntry
+import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
+import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
+import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
+import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory
-import com.hartwig.actin.clinical.feed.surgery.SurgeryEntry
-import com.hartwig.actin.clinical.feed.vitalfunction.VitalFunctionEntry
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -24,8 +26,8 @@ object TestFeedFactory {
         return FeedModel(createTestClinicalFeed())
     }
 
-    fun createTestClinicalFeed(): ClinicalFeed {
-        return ClinicalFeed(
+    fun createTestClinicalFeed(): EmcClinicalFeed {
+        return EmcClinicalFeed(
             patientEntries = createTestPatientEntries(),
             questionnaireEntries = createTestQuestionnaireEntries(),
             digitalFileEntries = createTestDigitalFileEntries(),

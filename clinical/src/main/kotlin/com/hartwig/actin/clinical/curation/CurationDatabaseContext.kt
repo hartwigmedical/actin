@@ -34,7 +34,7 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory
-import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
@@ -68,7 +68,7 @@ data class CurationDatabaseContext(
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
 ) {
-    fun allUnusedConfig(extractionEvaluations: List<ExtractionEvaluation>): Set<UnusedCurationConfig> =
+    fun allUnusedConfig(extractionEvaluations: List<CurationExtractionEvaluation>): Set<UnusedCurationConfig> =
         setOf(
             primaryTumorCuration,
             treatmentHistoryEntryCuration,

@@ -20,7 +20,7 @@ import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
-import com.hartwig.actin.clinical.feed.medication.MedicationEntry
+import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
 import org.apache.logging.log4j.LogManager
 
 class MedicationExtractor(
@@ -65,10 +65,10 @@ class MedicationExtractor(
                 )
 
                 val evaluation = listOf(nameCuration, administrationRouteCuration, dosage)
-                    .fold(ExtractionEvaluation()) { acc, result -> acc + result.evaluation }
+                    .fold(CurationExtractionEvaluation()) { acc, result -> acc + result.evaluation }
                 ExtractionResult(listOf(medication), evaluation)
             }
-        }.fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { acc, result ->
+        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
             ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
     }
@@ -76,7 +76,7 @@ class MedicationExtractor(
     private fun curateName(entry: MedicationEntry, patientId: String): ExtractionResult<String?> {
         val atcName = CurationUtil.capitalizeFirstLetterOnly(entry.code5ATCDisplay)
         return if (atcName.isNotEmpty()) {
-            ExtractionResult(atcName, ExtractionEvaluation())
+            ExtractionResult(atcName, CurationExtractionEvaluation())
         } else {
             val input = fullTrim(entry.codeText)
             val curation = CurationResponse.createFromConfigs(
@@ -140,7 +140,7 @@ class MedicationExtractor(
 
     fun curatePeriodBetweenUnit(patientId: String, input: String?): ExtractionResult<String?> {
         return if (input.isNullOrEmpty()) {
-            ExtractionResult(null, ExtractionEvaluation())
+            ExtractionResult(null, CurationExtractionEvaluation())
         } else {
             val curation = CurationResponse.createFromConfigs(
                 periodBetweenUnitCuration.find(input),
@@ -217,7 +217,7 @@ class MedicationExtractor(
         translationType: String
     ): ExtractionResult<String?> {
         return if (input.isNullOrEmpty()) {
-            ExtractionResult(null, ExtractionEvaluation())
+            ExtractionResult(null, CurationExtractionEvaluation())
         } else {
             val curationResponse = CurationResponse.createFromTranslation(
                 translate.invoke(input), patientId, curationCategory, input, translationType

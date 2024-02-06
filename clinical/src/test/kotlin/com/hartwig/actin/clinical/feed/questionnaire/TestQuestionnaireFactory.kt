@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.feed.questionnaire
 
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import java.time.LocalDate
 
 object TestQuestionnaireFactory {

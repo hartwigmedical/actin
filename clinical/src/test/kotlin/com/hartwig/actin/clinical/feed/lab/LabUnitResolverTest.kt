@@ -1,7 +1,8 @@
 package com.hartwig.actin.clinical.feed.lab
 
 import com.hartwig.actin.clinical.datamodel.LabUnit
-import com.hartwig.actin.clinical.feed.lab.LabUnitResolver.resolve
+import com.hartwig.actin.clinical.feed.emc.lab.LabUnitResolver
+import com.hartwig.actin.clinical.feed.emc.lab.LabUnitResolver.resolve
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

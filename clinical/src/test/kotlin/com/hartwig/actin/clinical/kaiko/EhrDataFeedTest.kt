@@ -6,6 +6,22 @@ import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.feed.external.EhrBloodTransfusionExtractor
+import com.hartwig.actin.clinical.feed.external.EhrBodyWeightExtractor
+import com.hartwig.actin.clinical.feed.external.EhrClinicalStatusExtractor
+import com.hartwig.actin.clinical.feed.external.EhrComplicationExtractor
+import com.hartwig.actin.clinical.feed.external.EhrDataFeed
+import com.hartwig.actin.clinical.feed.external.EhrIntolerancesExtractor
+import com.hartwig.actin.clinical.feed.external.EhrLabValuesExtractor
+import com.hartwig.actin.clinical.feed.external.EhrMedicationExtractor
+import com.hartwig.actin.clinical.feed.external.EhrPatientDetailsExtractor
+import com.hartwig.actin.clinical.feed.external.EhrPriorOtherConditionsExtractor
+import com.hartwig.actin.clinical.feed.external.EhrSecondPrimariesExtractor
+import com.hartwig.actin.clinical.feed.external.EhrSurgeryExtractor
+import com.hartwig.actin.clinical.feed.external.EhrToxicityExtractor
+import com.hartwig.actin.clinical.feed.external.EhrTreatmentHistoryExtractor
+import com.hartwig.actin.clinical.feed.external.EhrTumorDetailsExtractor
+import com.hartwig.actin.clinical.feed.external.EhrVitalFunctionsExtractor
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 
