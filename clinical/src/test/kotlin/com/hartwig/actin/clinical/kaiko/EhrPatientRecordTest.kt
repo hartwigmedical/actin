@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema
 import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchemaGenerator
-import com.hartwig.actin.clinical.feed.external.EhrPatientRecord
+import com.hartwig.actin.clinical.feed.standard.EhrPatientRecord
 import org.junit.Test
 
 

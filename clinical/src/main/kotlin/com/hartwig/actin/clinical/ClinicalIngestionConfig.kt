@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 enum class FeedFormat {
-    DEFAULT_EXTERNAL_JSON,
+    STANDARD_JSON,
     EMC_TSV
 }
 

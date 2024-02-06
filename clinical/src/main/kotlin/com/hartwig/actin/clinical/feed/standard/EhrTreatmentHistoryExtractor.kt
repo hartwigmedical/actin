@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.external
+package com.hartwig.actin.clinical.feed.standard
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hartwig.actin.TreatmentDatabase

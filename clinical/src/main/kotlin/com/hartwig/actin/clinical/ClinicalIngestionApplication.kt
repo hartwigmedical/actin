@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FeedModel
-import com.hartwig.actin.clinical.feed.external.EhrDataFeed
+import com.hartwig.actin.clinical.feed.standard.EhrDataFeed
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
