@@ -8,23 +8,34 @@ import java.io.File
 import java.nio.file.Files
 
 interface AtcModel {
-    fun resolveByCode(rawAtcCode: String): AtcClassification?
+    fun resolveByCode(rawAtcCode: String, rawAtcLevelName: String): AtcClassification?
     fun resolveByName(name: String): Set<String>
 }
 
 private const val ATC_LENGTH_4_LEVELS = 5
 
-class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
+class WhoAtcModel(private val atcMap: Map<String, String>, private val oldNew: Map<Pair<String, String>, String>) : AtcModel {
 
-    override fun resolveByCode(rawAtcCode: String): AtcClassification? {
+    override fun resolveByCode(rawAtcCode: String, rawAtcLevelName: String): AtcClassification? {
         return if (rawAtcCode.trim().isNotEmpty() && rawAtcCode[0].lowercaseChar() in 'a'..'z') {
             return if (rawAtcCode.length >= ATC_LENGTH_4_LEVELS) {
+                var correctedRawAtcCode = rawAtcCode
+                if (!oldNew[Pair(rawAtcCode, rawAtcLevelName)].isNullOrEmpty()) {
+                    correctedRawAtcCode = oldNew[Pair(rawAtcCode, rawAtcLevelName)]
+                        ?: throw IllegalArgumentException("ATC code [$rawAtcCode] not found in tree")
+                }
+
                 AtcClassification(
-                    anatomicalMainGroup = atcLevel(rawAtcCode.substring(0, 1)),
-                    therapeuticSubGroup = atcLevel(rawAtcCode.substring(0, 3)),
-                    pharmacologicalSubGroup = atcLevel(rawAtcCode.substring(0, 4)),
-                    chemicalSubGroup = atcLevel(rawAtcCode.substring(0, 5)),
-                    chemicalSubstance = maybeAtcLevel(if (rawAtcCode.length > ATC_LENGTH_4_LEVELS) rawAtcCode.substring(0, 7) else null)
+                    anatomicalMainGroup = atcLevel(correctedRawAtcCode.substring(0, 1)),
+                    therapeuticSubGroup = atcLevel(correctedRawAtcCode.substring(0, 3)),
+                    pharmacologicalSubGroup = atcLevel(correctedRawAtcCode.substring(0, 4)),
+                    chemicalSubGroup = atcLevel(correctedRawAtcCode.substring(0, 5)),
+                    chemicalSubstance = maybeAtcLevel(
+                        if (correctedRawAtcCode.length > ATC_LENGTH_4_LEVELS) correctedRawAtcCode.substring(
+                            0,
+                            7
+                        ) else null
+                    )
                 )
             } else {
                 LOGGER.warn("ATC code $rawAtcCode did not contain at least 4 levels of classification. Ignoring ATC code for this medication")
@@ -48,13 +59,25 @@ class WhoAtcModel(private val atcMap: Map<String, String>) : AtcModel {
 
     companion object {
         private val LOGGER = LogManager.getLogger(WhoAtcModel::class.java)
-        
-        fun createFromFile(tsvPath: String): WhoAtcModel {
-            val lines = Files.readAllLines(File(tsvPath).toPath())
-            val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }
-                .toTypedArray())
-            return WhoAtcModel(lines.map { it.split(TabularFile.DELIMITER).toTypedArray() }
-                .associate { line -> line[fields["ATC code"]!!] to line[fields["ATC level name"]!!] })
+
+        fun createFromFiles(atcTreeTsvPath: String, atcPreviousNewTsvPath: String): WhoAtcModel {
+            val (linesAtcTree, fieldsAtcTree) = readTsv(atcTreeTsvPath)
+            val (linesPreviousNew, fieldsPreviousNew) = readTsv(atcPreviousNewTsvPath)
+            return WhoAtcModel(
+                linesAtcTree.map { it.split(TabularFile.DELIMITER).toTypedArray() }
+                    .associate { line -> line[fieldsAtcTree["ATC code"]!!] to line[fieldsAtcTree["ATC level name"]!!] },
+                linesPreviousNew.map { it.split(TabularFile.DELIMITER).toTypedArray() }.associate { line ->
+                    Pair(
+                        line[fieldsPreviousNew["Previous ATC code"]!!],
+                        line[fieldsPreviousNew["Previous ATC level name"]!!]
+                    ) to line[fieldsPreviousNew["New ATC code"]!!]
+                })
+        }
+
+        private fun readTsv(tsv: String): Pair<List<String>, Map<String, Int>> {
+            val lines = Files.readAllLines(File(tsv).toPath())
+            val fields = TabularFile.createFields(lines[0].split(TabularFile.DELIMITER).dropLastWhile { it.isEmpty() }.toTypedArray())
+            return Pair(lines, fields)
         }
     }
 }
