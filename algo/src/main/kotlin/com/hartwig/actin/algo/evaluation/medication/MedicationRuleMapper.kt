@@ -31,6 +31,7 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP to getsBCRPInhibitingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to getsBCRPSubstrateMedicationCreator(),
             EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to getsStableDosingAnticoagulantMedicationCreator(),
+            EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION to getsHerbalMedicationCreator(),
         )
     }
 
@@ -129,6 +130,10 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 mapOf(categoryNameInput to categories.resolve(categoryNameInput))
             )
         }
+    }
+
+    private fun getsHerbalMedicationCreator(): FunctionCreator {
+        return FunctionCreator { CurrentlyGetsHerbalMedication(selector) }
     }
 
     companion object {
