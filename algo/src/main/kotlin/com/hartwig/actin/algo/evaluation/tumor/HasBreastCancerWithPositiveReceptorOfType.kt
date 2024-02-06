@@ -71,10 +71,27 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
 
             targetReceptorIsPositive != true && targetHer2AndErbb2Amplified -> {
                 EvaluationFactory.warn(
-                    "Patient has ${receptorType.display()}-negative breast cancer based on DOIDS and/or prior molecular tests " +
-                            "but undetermined if true since ERBB2 gene amp present",
-                    "Undetermined if ${receptorType.display()}-negative breast cancer since DOID/IHC data inconsistent with ERBB2 gene amp"
+                    "Patient does not have ${receptorType.display()}-positive breast cancer based on DOIDS and/or prior molecular tests " +
+                            "but status is undetermined since ERBB2 gene amp present",
+                    "Undetermined if ${receptorType.display()}-positive breast cancer since DOID/IHC data inconsistent with ERBB2 gene amp"
                 )
+            }
+
+            hasBorderlineOrLowPositiveTest(targetPriorMolecularTest, receptorType) -> {
+                if (receptorType == ReceptorType.HER2) {
+                    return EvaluationFactory.undetermined(
+                        "Patient does not have ${receptorType.display()}-positive breast cancer but ${receptorType.display()}-score is " +
+                                "2+ hence additional FISH may be useful",
+                        "No ${receptorType.display()}-positive breast cancer - ${receptorType.display()}-FISH may be beneficial (score 2+)"
+                    )
+                } else {
+                    return EvaluationFactory.warn(
+                        "Patient has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
+                                "(${receptorType.display()}-score in range 1-10 percent)",
+                        "Has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
+                                "since ${receptorType.display()}-score under 10%"
+                    )
+                }
             }
 
             else -> {
@@ -101,30 +118,45 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         fun hasNegativeTest(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
             val (scoreValue, scoreValueUnit) = when (receptorType) {
                 ReceptorType.PR, ReceptorType.ER -> {
-                    Pair(0, "%")
+                    Pair(0 until 1, "%")
                 }
 
                 ReceptorType.HER2 -> {
-                    Pair(0, "+")
+                    Pair(0..1, "+")
                 }
             }
             return targetPriorMolecularTest.any {
-                it.scoreText?.lowercase() == "negative" || it.scoreValue?.toInt() == scoreValue && it.scoreValueUnit == scoreValueUnit
+                it.scoreText?.lowercase() == "negative" || (it.scoreValue?.toInt() in scoreValue && it.scoreValueUnit == scoreValueUnit)
             }
         }
 
         fun hasPositiveTest(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
             val (scoreValue, scoreValueUnit) = when (receptorType) {
                 ReceptorType.PR, ReceptorType.ER -> {
-                    Pair(100, "%")
+                    Pair(10..100, "%")
                 }
 
                 ReceptorType.HER2 -> {
-                    Pair(3, "+")
+                    Pair(3..3, "+")
                 }
             }
             return targetPriorMolecularTest.any {
-                it.scoreText?.lowercase() == "positive" || it.scoreValue?.toInt() == scoreValue && it.scoreValueUnit == scoreValueUnit
+                it.scoreText?.lowercase() == "positive" || (it.scoreValue?.toInt() in scoreValue && it.scoreValueUnit == scoreValueUnit)
+            }
+        }
+
+        fun hasBorderlineOrLowPositiveTest(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
+            val (scoreValue, scoreValueUnit) = when (receptorType) {
+                ReceptorType.PR, ReceptorType.ER -> {
+                    Pair(1 until 10, "%")
+                }
+
+                ReceptorType.HER2 -> {
+                    Pair(2..2, "+")
+                }
+            }
+            return targetPriorMolecularTest.any {
+                it.scoreValue?.toInt() in scoreValue && it.scoreValueUnit == scoreValueUnit
             }
         }
     }
