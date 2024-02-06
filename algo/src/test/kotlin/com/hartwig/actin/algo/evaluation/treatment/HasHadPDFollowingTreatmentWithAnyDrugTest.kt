@@ -66,8 +66,14 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
     }
 
     @Test
-    fun `Should return undetermined with trial treatment entry in history`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+    fun `Should fail with trial treatment entry with different category in history`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.TARGETED_THERAPY)), isTrial = true)
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun `Should return undetermined with uncategorized trial treatment entry in history`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(DrugTreatment("test", emptySet())), isTrial = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 

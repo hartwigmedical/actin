@@ -39,16 +39,9 @@ class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : Evaluation
     }
 
     companion object {
-        private val LEFT_SUB_LOCATIONS = setOf("rectum", "descending colon", "colon sigmoid", "colon descendens", "rectosigmoid")
+        private val LEFT_SUB_LOCATIONS = setOf("rectum", "descending", "sigmoid", "descendens", "rectosigmoid")
         private val RIGHT_SUB_LOCATIONS = setOf(
-            "ascending colon",
-            "colon ascendens",
-            "caecum",
-            "cecum",
-            "transverse colon",
-            "colon transversum",
-            "flexura hepatica",
-            "hepatic flexure"
+            "ascending", "ascendens", "caecum", "cecum", "transverse", "transversum", "flexura hepatica", "hepatic flexure"
         )
     }
 }

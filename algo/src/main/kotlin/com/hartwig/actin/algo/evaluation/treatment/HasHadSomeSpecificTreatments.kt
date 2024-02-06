@@ -15,7 +15,7 @@ class HasHadSomeSpecificTreatments(private val treatments: List<Treatment>, priv
         val matchTreatments = record.clinical.oncologicalHistory
             .filter { it.allTreatments().any { treatment -> treatment.name.lowercase() in namesToMatch } }
         val allowTrialMatches = treatments.any {
-            it.categories().isEmpty() || it.categories().any(TreatmentSummaryForCategory::categoryAllowsTrialMatches)
+            it.categories().isEmpty() || it.categories().any(TrialFunctions::categoryAllowsTrialMatches)
         }
         val trialMatchCount = if (allowTrialMatches) record.clinical.oncologicalHistory.count(TreatmentHistoryEntry::isTrial) else 0
 

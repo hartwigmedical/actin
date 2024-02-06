@@ -30,7 +30,7 @@ class RecommendationEngine private constructor(
 
     private fun determineRequiredTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
         return treatmentCandidates().asSequence()
-            .filterNot(TreatmentCandidate::isOptional)
+            .filterNot(TreatmentCandidate::optional)
             .map { evaluateTreatmentRequirementForPatient(it, patientRecord) }
             .filter(::treatmentHasNoFailedEvaluations)
             .toList()
@@ -70,7 +70,11 @@ class RecommendationEngine private constructor(
     }
 
     companion object {
-        private val EXCLUDED_TUMOR_DOIDS = setOf("5777", "169", "1800")
+        private val EXCLUDED_TUMOR_DOIDS = setOf(
+            DoidConstants.RECTUM_NEUROENDOCRINE_NEOPLASM_DOID,
+            DoidConstants.NEUROENDOCRINE_TUMOR_DOID,
+            DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID
+        )
 
         fun create(
             doidModel: DoidModel,

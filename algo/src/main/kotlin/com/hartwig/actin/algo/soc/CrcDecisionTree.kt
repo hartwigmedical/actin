@@ -9,7 +9,7 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : DecisionTreeNode {
 
-    private val treatmentCandidatesForRasWtBrafWtAndLeftSidedTumor = listOf(
+    private val treatmentCandidatesForRasWtBrafV600EWtAndLeftSidedTumor = listOf(
         CETUXIMAB,
         PANITUMUMAB,
         FOLFOX_CETUXIMAB,
@@ -20,16 +20,16 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
         IRINOTECAN_PANITUMUMAB
     ).map(treatmentCandidateDatabase::treatmentCandidate)
 
-    private val primaryDecisionTree = DecisionTree(
+    private val molecularDriverDecisionTree = DecisionTree(
         decision = EligibilityFunction(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y, listOf("BRAF", "V600E")),
         trueBranch = DecisionTreeLeaf(listOf(treatmentCandidateDatabase.treatmentCandidate(ENCORAFENIB_CETUXIMAB))),
         falseBranch = DecisionTree(
             decision = EligibilityFunction(
                 EligibilityRule.AND,
-                listOf("KRAS", "NRAS", "HRAS", "BRAF").map { EligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, listOf(it)) }
+                listOf("KRAS", "NRAS", "BRAF").map { EligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, listOf(it)) }
                         + EligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR)
             ),
-            trueBranch = DecisionTreeLeaf(treatmentCandidatesForRasWtBrafWtAndLeftSidedTumor),
+            trueBranch = DecisionTreeLeaf(treatmentCandidatesForRasWtBrafV600EWtAndLeftSidedTumor),
             falseBranch = DecisionTreeLeaf(emptyList())
         )
     )
@@ -47,7 +47,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
     ).flatten()
 
     override fun treatmentCandidates(): List<TreatmentCandidate> {
-        return listOf(primaryDecisionTree, msiDecisionTree).flatMap(DecisionTreeNode::treatmentCandidates) +
+        return listOf(molecularDriverDecisionTree, msiDecisionTree).flatMap(DecisionTreeNode::treatmentCandidates) +
                 generallyAvailableTreatmentCandidates
     }
 

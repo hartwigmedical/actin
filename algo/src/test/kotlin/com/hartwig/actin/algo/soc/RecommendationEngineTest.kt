@@ -70,6 +70,34 @@ class RecommendationEngineTest {
     }
 
     @Test
+    fun `Should not recommend FOLFOX after FOLFOXIRI`() {
+        assertThat(resultsForPatientWithHistory(listOf(FOLFOXIRI))).noneMatch {
+            it.treatment.name.equals(FOLFOX, ignoreCase = true)
+        }
+    }
+
+    @Test
+    fun `Should not recommend FOLFIRI after CAPIRI`() {
+        assertThat(resultsForPatientWithHistory(listOf(CAPIRI))).noneMatch {
+            it.treatment.name.equals(FOLFIRI, ignoreCase = true)
+        }
+    }
+
+    @Test
+    fun `Should not recommend CAPIRI after FOLFIRI`() {
+        assertThat(resultsForPatientWithHistory(listOf(FOLFIRI))).noneMatch {
+            it.treatment.name.equals(CAPIRI, ignoreCase = true)
+        }
+    }
+
+    @Test
+    fun `Should not recommend FOLFIRI after FOLFIRI + bevacizumab`() {
+        assertThat(resultsForPatientWithHistory(listOf("FOLFIRI+BEVACIZUMAB"))).noneMatch {
+            it.treatment.name.equals(FOLFIRI, ignoreCase = true)
+        }
+    }
+    
+    @Test
     fun `Should recommend Irinotecan monotherapy in second line after first-line Oxaliplatin treatment`() {
         assertSpecificTreatmentNotRecommended(IRINOTECAN)
         assertThat(resultsForPatientWithHistory(listOf(CAPOX)))
@@ -189,7 +217,7 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should recommend expected treatments for patients with RAS wildtype and BRAF wildtype and left-sided tumors in first line`() {
+    fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in first line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), MINIMAL_PATIENT_RECORD.molecular, "rectum")
         val firstLineEgfrTherapies = listOf(
             FOLFOX_CETUXIMAB, FOLFOX_PANITUMUMAB, FOLFIRI_CETUXIMAB, FOLFIRI_PANITUMUMAB, IRINOTECAN_CETUXIMAB, IRINOTECAN_PANITUMUMAB
@@ -200,7 +228,7 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should recommend expected treatments for patients with RAS wildtype and BRAF wildtype and left-sided tumors in second line`() {
+    fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in second line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY"), MINIMAL_PATIENT_RECORD.molecular, "rectum"
         )
@@ -213,7 +241,7 @@ class RecommendationEngineTest {
     }
     
     @Test
-    fun `Should recommend expected treatments for patients with RAS wildtype and BRAF wildtype and left-sided tumors in third line`() {
+    fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in third line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MINIMAL_PATIENT_RECORD.molecular, "rectum"
         )
@@ -249,7 +277,7 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should recommend expected treatments for BRAF wildtype patients who don't qualify for EGFR therapy in first line`() {
+    fun `Should recommend expected treatments for BRAF V600E wildtype patients who don't qualify for EGFR therapy in first line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), MINIMAL_PATIENT_RECORD.molecular, "ascending colon")
 
         assertThat(patientResults.map(TreatmentCandidate::treatment))
@@ -257,7 +285,7 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should recommend expected treatments for BRAF wildtype patients who don't qualify for EGFR therapy in second line`() {
+    fun `Should recommend expected treatments for BRAF V600E wildtype patients who don't qualify for EGFR therapy in second line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY"), MINIMAL_PATIENT_RECORD.molecular, "ascending colon"
         )
@@ -266,7 +294,7 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should recommend expected treatments for BRAF wildtype patients who don't qualify for EGFR therapy in third line`() {
+    fun `Should recommend expected treatments for BRAF V600E wildtype patients who don't qualify for EGFR therapy in third line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MINIMAL_PATIENT_RECORD.molecular, "ascending colon"
         )

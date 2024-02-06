@@ -54,7 +54,7 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
             }
 
             LONSURF -> {
-                createTreatmentCandidate(treatmentName, setOf(3))
+                createTreatmentCandidate(treatmentName, setOf(3), optional = true)
             }
 
             else -> {
@@ -64,16 +64,18 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
     }
 
     fun treatmentCandidateWithBevacizumab(treatmentName: String): TreatmentCandidate {
-        return createTreatmentCandidate("$treatmentName+$BEVACIZUMAB", setOf(1))
+        return createTreatmentCandidate("$treatmentName+$BEVACIZUMAB", setOf(1), optional = true)
     }
 
-    private fun createTreatmentCandidate(treatmentName: String, treatmentLines: Set<Int> = emptySet()): TreatmentCandidate {
+    private fun createTreatmentCandidate(
+        treatmentName: String, treatmentLines: Set<Int> = emptySet(), optional: Boolean = false
+    ): TreatmentCandidate {
         val treatment = treatmentDatabase.findTreatmentByName(treatmentName)
             ?: throw IllegalArgumentException("Unknown treatment name: $treatmentName")
         val treatmentLineFunctions = if (treatmentLines.isEmpty()) emptySet() else setOf(eligibleForTreatmentLines(treatmentLines))
         return TreatmentCandidate(
             treatment = treatment,
-            isOptional = false,
+            optional = optional,
             eligibilityFunctions = treatmentLineFunctions + drugBasedExclusionsForTreatment(treatment)
         )
     }

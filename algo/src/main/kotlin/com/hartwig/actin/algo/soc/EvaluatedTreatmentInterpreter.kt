@@ -21,7 +21,7 @@ class EvaluatedTreatmentInterpreter(private val recommendedTreatments: List<Eval
             }.joinToString()
             listOf(
                 evaluatedTreatment.treatmentCandidate.treatment.name,
-                evaluatedTreatment.treatmentCandidate.isOptional,
+                evaluatedTreatment.treatmentCandidate.optional,
                 warningSummary
             ).joinToString(",")
         }
