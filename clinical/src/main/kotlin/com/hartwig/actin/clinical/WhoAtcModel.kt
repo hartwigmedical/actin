@@ -21,8 +21,7 @@ class WhoAtcModel(private val atcMap: Map<String, String>, private val oldNew: M
             return if (rawAtcCode.length >= ATC_LENGTH_4_LEVELS) {
                 var correctedRawAtcCode = rawAtcCode
                 if (!oldNew[Pair(rawAtcCode, rawAtcLevelName)].isNullOrEmpty()) {
-                    correctedRawAtcCode = oldNew[Pair(rawAtcCode, rawAtcLevelName)]
-                        ?: throw IllegalArgumentException("ATC code [$rawAtcCode] not found in tree")
+                    correctedRawAtcCode = oldNew[Pair(rawAtcCode, rawAtcLevelName)]!!
                 }
 
                 AtcClassification(
