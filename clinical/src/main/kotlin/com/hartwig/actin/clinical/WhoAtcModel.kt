@@ -69,7 +69,7 @@ class WhoAtcModel(private val atcMap: Map<String, String>, private val oldNew: M
                 linesPreviousNew.map { it.split(TabularFile.DELIMITER).toTypedArray() }.associate { line ->
                     Pair(
                         line[fieldsPreviousNew["Previous ATC code"]!!],
-                        line[fieldsPreviousNew["Previous ATC level name"]!!]
+                        line[fieldsPreviousNew["ATC level name"]!!]
                     ) to line[fieldsPreviousNew["New ATC code"]!!]
                 })
         }
