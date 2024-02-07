@@ -10,7 +10,7 @@ class HasCancerWithSmallCellComponentTest {
 
     val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(
         "matching doid",
-        HasCancerWithSmallCellComponent.SMALL_CELL_TERMS.iterator().next()
+        HasCancerWithSmallCellComponent.SMALL_CELL_DOID_TERMS.iterator().next()
     )
     val function = HasCancerWithSmallCellComponent(doidModel)
 

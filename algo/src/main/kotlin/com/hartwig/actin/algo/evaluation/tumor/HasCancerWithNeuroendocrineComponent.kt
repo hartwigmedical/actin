@@ -31,7 +31,7 @@ class HasCancerWithNeuroendocrineComponent (private val doidModel: DoidModel) : 
         )
         val hasSmallCellDoidTerm = DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(
             doidModel, tumorDoids,
-            HasCancerWithSmallCellComponent.SMALL_CELL_TERMS
+            HasCancerWithSmallCellComponent.SMALL_CELL_DOID_TERMS
         )
         val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(
             record.clinical.tumor,

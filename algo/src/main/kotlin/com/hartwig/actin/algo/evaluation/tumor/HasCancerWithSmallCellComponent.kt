@@ -24,15 +24,15 @@ class HasCancerWithSmallCellComponent (private val doidModel: DoidModel) : Evalu
         }
         val hasSmallCellComponent =
             isOfAtLeastOneDoidType(doidModel, tumorDoids, SMALL_CELL_DOIDS)
-                    || isOfAtLeastOneDoidTerm(doidModel, tumorDoids, SMALL_CELL_TERMS)
-                    || hasTumorWithType(record.clinical.tumor, SMALL_CELL_TERMS)
+                    || isOfAtLeastOneDoidTerm(doidModel, tumorDoids, SMALL_CELL_DOID_TERMS)
+                    || hasTumorWithType(record.clinical.tumor, SMALL_CELL_TUMOR_TYPE_TERMS)
                     || hasTumorWithDetails(record.clinical.tumor, SMALL_CELL_EXTRA_DETAILS)
 
         return when {
             (hasSmallCellComponent) -> {
                 EvaluationFactory.pass(
                     "Patient has cancer with small cell component",
-                    "Presence of small cell component"
+                    "Has cancer with small cell component"
                 )
             }
 
@@ -54,7 +54,8 @@ class HasCancerWithSmallCellComponent (private val doidModel: DoidModel) : Evalu
 
     companion object {
         val SMALL_CELL_DOIDS = setOf(DoidConstants.SMALL_CELL_CARCINOMA_DOID)
-        val SMALL_CELL_TERMS = setOf("small cell")
+        val SMALL_CELL_DOID_TERMS = setOf("small cell")
+        val SMALL_CELL_TUMOR_TYPE_TERMS = setOf("small cell", "SCNEC")
         val SMALL_CELL_EXTRA_DETAILS = setOf("small cell", "SCNEC")
         val WARN_DOIDS_SET = setOf(DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID, DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
     }
