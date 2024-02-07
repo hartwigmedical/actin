@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.chord.ImmutableChordRecord
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
@@ -128,7 +127,7 @@ class CharacteristicsExtractorTest {
         }
 
         private fun createTestExtractor(): CharacteristicsExtractor {
-            return CharacteristicsExtractor(TestEvidenceDatabaseFactory.createEmptyDatabase())
+            return CharacteristicsExtractor()
         }
 
         private fun withPurpleCharacteristics(characteristics: PurpleCharacteristics): OrangeRecord {

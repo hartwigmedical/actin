@@ -4,7 +4,6 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.hmftools.datamodel.virus.ImmutableVirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
@@ -34,7 +33,7 @@ class VirusExtractorTest {
             .driverLikelihood(VirusLikelihoodType.LOW)
             .build()
         val virusInterpreter = ImmutableVirusInterpreterData.builder().addAllViruses(virusEntry1, virusEntry2).build()
-        val virusExtractor = VirusExtractor(TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val virusExtractor = VirusExtractor()
 
         val viruses = virusExtractor.extract(virusInterpreter)
         assertThat(viruses.size.toLong()).isEqualTo(2)

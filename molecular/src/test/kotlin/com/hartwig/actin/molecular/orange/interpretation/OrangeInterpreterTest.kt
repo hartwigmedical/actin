@@ -8,7 +8,6 @@ import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
@@ -165,7 +164,7 @@ class OrangeInterpreterTest {
         }
 
         private fun createTestInterpreter(): OrangeInterpreter {
-            return OrangeInterpreter(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase())
+            return OrangeInterpreter(TestGeneFilterFactory.createAlwaysValid())
         }
     }
 }

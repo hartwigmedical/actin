@@ -2,12 +2,13 @@ package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
@@ -20,7 +21,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import org.apache.logging.log4j.LogManager
 
-internal class VariantExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+internal class VariantExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(purple: PurpleRecord): Set<Variant> {
         val drivers = relevantPurpleDrivers(purple)
@@ -41,24 +42,29 @@ internal class VariantExtractor(private val geneFilter: GeneFilter, private val 
                 val event = DriverEventFactory.variantEvent(variant)
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
-                val evidence = if (driverLikelihood == DriverLikelihood.HIGH) {
-                    ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant))
-                } else {
-                    ActionableEvidenceFactory.createNoEvidence()
-                }
+//                val evidence = if (driverLikelihood == DriverLikelihood.HIGH) {
+//                    ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant))
+//                } else {
+//                    ActionableEvidenceFactory.createNoEvidence()
+//                }
+                val evidence = ActionableEvidenceFactory.createNoEvidence()
 
-                val alteration = GeneAlterationFactory.convertAlteration(
-                    variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)
-                )
+//                val alteration = GeneAlterationFactory.convertAlteration(
+//                    variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)
+//                )
                 Variant(
-                    gene = alteration.gene,
-                    geneRole = alteration.geneRole,
-                    proteinEffect = alteration.proteinEffect,
-                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+//                    gene = alteration.gene,
+//                    geneRole = alteration.geneRole,
+//                    proteinEffect = alteration.proteinEffect,
+//                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                    gene = variant.gene(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
                     isReportable = variant.reported(),
                     event = event,
                     driverLikelihood = driverLikelihood,
-                    evidence = evidence!!,
+                    evidence = evidence,
                     type = determineVariantType(variant),
                     variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
                     totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),

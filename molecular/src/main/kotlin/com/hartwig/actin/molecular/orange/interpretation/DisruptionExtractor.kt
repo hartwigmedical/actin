@@ -4,9 +4,10 @@ import com.hartwig.actin.molecular.datamodel.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.DisruptionType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.RegionType
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
@@ -17,7 +18,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxSvAnnotation
 
-internal class DisruptionExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+internal class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
     fun extractDisruptions(linx: LinxRecord, lostGenes: Set<String>, drivers: List<LinxDriver>): MutableSet<Disruption> {
         return linx.allSomaticBreakends().filter { breakend ->
@@ -31,18 +32,23 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter, private v
             geneIncluded && include(breakend, lostGenes)
         }
             .map { breakend ->
-                val alteration = GeneAlterationFactory.convertAlteration(
-                    breakend.gene(), evidenceDatabase.geneAlterationForBreakend(breakend)
-                )
+//                val alteration = GeneAlterationFactory.convertAlteration(
+//                    breakend.gene(), evidenceDatabase.geneAlterationForBreakend(breakend)
+//                )
                 Disruption(
-                    gene = alteration.gene,
-                    geneRole = alteration.geneRole,
-                    proteinEffect = alteration.proteinEffect,
-                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+//                    gene = alteration.gene,
+//                    geneRole = alteration.geneRole,
+//                    proteinEffect = alteration.proteinEffect,
+//                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                    gene = breakend.gene(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
                     isReportable = breakend.reported(),
                     event = DriverEventFactory.disruptionEvent(breakend),
                     driverLikelihood = DriverLikelihood.LOW,
-                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend))!!,
+//                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend))!!,
+                    evidence = ActionableEvidenceFactory.createNoEvidence(),
                     type = determineDisruptionType(breakend.type()),
                     junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
                     undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)),

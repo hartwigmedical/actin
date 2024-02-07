@@ -37,7 +37,7 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
 
         LOGGER.info("Interpreting ORANGE record")
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
-        val molecular = OrangeInterpreter(geneFilter, evidenceDatabase).interpret(orange)
+        val molecular = OrangeInterpreter(geneFilter).interpret(orange)
 
         MolecularPrinter.printRecord(molecular)
         MolecularRecordJson.write(molecular, config.outputDirectory)

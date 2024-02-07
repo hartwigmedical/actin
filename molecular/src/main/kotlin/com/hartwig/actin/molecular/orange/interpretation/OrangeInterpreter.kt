@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.ExperimentType
@@ -11,12 +10,17 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 
-class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+class OrangeInterpreter(private val geneFilter: GeneFilter) {
 
     fun interpret(record: OrangeRecord): MolecularRecord {
+        val molecularRecord = convert(record)
+        return annotate(molecularRecord)
+    }
+
+    private fun convert(record: OrangeRecord): MolecularRecord {
         validateOrangeRecord(record)
-        val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter, evidenceDatabase)
-        val characteristicsExtractor = CharacteristicsExtractor(evidenceDatabase)
+        val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter)
+        val characteristicsExtractor = CharacteristicsExtractor()
 
         return MolecularRecord(
             patientId = toPatientId(record.sampleId()),
@@ -33,6 +37,14 @@ class OrangeInterpreter(private val geneFilter: GeneFilter, private val evidence
             drivers = driverExtractor.extract(record),
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record)
+        )
+    }
+
+    private fun annotate(record: MolecularRecord): MolecularRecord {
+        // TODO magic
+        return record.copy(
+//            characteristics = CharacteristicsAnnotator.annotate(record.characteristics),
+//            drivers = DriverAnnotator.annotate(record.drivers),
         )
     }
 
