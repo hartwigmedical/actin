@@ -18,7 +18,7 @@ class RecommendationEngine private constructor(
 ) {
 
     fun determineAvailableTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
-        require(standardOfCareCanBeEvaluatedForPatient(patientRecord, doidModel)) {
+        require(standardOfCareCanBeEvaluatedForPatient(patientRecord)) {
             "SOC recommendation only supported for colorectal carcinoma"
         }
 
@@ -26,6 +26,11 @@ class RecommendationEngine private constructor(
             .map { evaluateTreatmentEligibilityForPatient(it, patientRecord) }
             .filter { treatmentHasNoFailedEvaluations(it) }
             .toList()
+    }
+
+    fun standardOfCareCanBeEvaluatedForPatient(patientRecord: PatientRecord): Boolean {
+        val tumorDoids = expandedTumorDoids(patientRecord, doidModel)
+        return DoidConstants.COLORECTAL_CANCER_DOID in tumorDoids && (EXCLUDED_TUMOR_DOIDS intersect tumorDoids).isEmpty()
     }
 
     private fun determineRequiredTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
@@ -90,11 +95,6 @@ class RecommendationEngine private constructor(
                     atcTree
                 )
             )
-        }
-
-        fun standardOfCareCanBeEvaluatedForPatient(patientRecord: PatientRecord, doidModel: DoidModel): Boolean {
-            val tumorDoids = expandedTumorDoids(patientRecord, doidModel)
-            return DoidConstants.COLORECTAL_CANCER_DOID in tumorDoids && (EXCLUDED_TUMOR_DOIDS intersect tumorDoids).isEmpty()
         }
 
         private fun expandedTumorDoids(patientRecord: PatientRecord, doidModel: DoidModel): Set<String> {

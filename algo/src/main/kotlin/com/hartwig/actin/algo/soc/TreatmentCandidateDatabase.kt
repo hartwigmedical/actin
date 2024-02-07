@@ -14,6 +14,7 @@ const val CAPIRI = "CAPIRI"
 const val CAPOX = "CAPOX"
 const val CETUXIMAB = "CETUXIMAB"
 const val ENCORAFENIB_CETUXIMAB = "CETUXIMAB+ENCORAFENIB"
+const val ENTRECTINIB = "ENTRECTINIB"
 const val FOLFIRI = "FOLFIRI"
 const val FOLFIRI_CETUXIMAB = "FOLFIRI+CETUXIMAB"
 const val FOLFIRI_PANITUMUMAB = "FOLFIRI+PANITUMUMAB"
@@ -26,6 +27,7 @@ const val FLUOROURACIL = "FLUOROURACIL"
 const val IRINOTECAN = "IRINOTECAN"
 const val IRINOTECAN_CETUXIMAB = "IRINOTECAN+CETUXIMAB"
 const val IRINOTECAN_PANITUMUMAB = "IRINOTECAN+PANITUMUMAB"
+const val LAROTRECTINIB = "LAROTRECTINIB"
 const val LONSURF = "LONSURF"
 const val NIVOLUMAB = "NIVOLUMAB"
 const val OXALIPLATIN = "OXALIPLATIN"
@@ -55,6 +57,10 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
 
             LONSURF -> {
                 createTreatmentCandidate(treatmentName, setOf(3), optional = true)
+            }
+
+            ENTRECTINIB, LAROTRECTINIB -> {
+                createTreatmentCandidate(treatmentName, optional = true)
             }
 
             else -> {

@@ -44,18 +44,10 @@ import org.apache.logging.log4j.Logger
 import java.util.*
 
 class FunctionInputResolver(
-    doidModel: DoidModel, molecularInputChecker: MolecularInputChecker,
-    treatmentDatabase: TreatmentDatabase
+    private val doidModel: DoidModel,
+    private val molecularInputChecker: MolecularInputChecker,
+    val treatmentDatabase: TreatmentDatabase
 ) {
-    private val doidModel: DoidModel
-    private val molecularInputChecker: MolecularInputChecker
-    private val treatmentDatabase: TreatmentDatabase
-
-    init {
-        this.doidModel = doidModel
-        this.molecularInputChecker = molecularInputChecker
-        this.treatmentDatabase = treatmentDatabase
-    }
 
     fun hasValidInputs(function: EligibilityFunction): Boolean? {
         return if (CompositeRules.isComposite(function.rule)) hasValidCompositeInputs(function) else hasValidSingleInputs(function)

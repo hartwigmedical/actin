@@ -19,6 +19,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
+import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -105,34 +107,29 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should require Oxaliplatin or Irinotecan for SOC exhaustion`() {
+    fun `Should require Oxaliplatin, Irinotecan, 5-FU, and Capecitabine for SOC exhaustion`() {
+        val chemotherapies = listOf(CAPOX, FOLFOX, IRINOTECAN, FLUOROURACIL, CAPECITABINE)
         val pastTreatmentNames = listOf(
             PEMBROLIZUMAB,
-            "$CAPECITABINE+$BEVACIZUMAB",
             CETUXIMAB,
             LONSURF
         )
         val patientRecord = patientRecordWithTreatmentHistory(pastTreatmentNames)
-        assertThat(resultsForPatient(patientRecord).map { it.treatment.name }.toSet()).contains(
-            CAPOX,
-            IRINOTECAN,
-            FOLFOX
-        )
-        assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientRecord)).isFalse
-    }
+        assertThat(resultsForPatient(patientRecord).map { it.treatment.name }.toSet()).containsAll(chemotherapies)
 
-    @Test
-    fun `Should require 5-FU or Capecitabine for SOC exhaustion`() {
-        val pastTreatmentNames = listOf(
-            PEMBROLIZUMAB,
-            CETUXIMAB,
-            LONSURF
-        )
-        val patientRecord = patientRecordWithTreatmentHistory(pastTreatmentNames)
-        assertThat(resultsForPatient(patientRecord).map { it.treatment.name }.toSet()).contains(
-            CAPECITABINE, FLUOROURACIL, FOLFOXIRI
-        )
-        assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientRecord)).isFalse
+        chemotherapies.forEach { chemotherapy ->
+            assertThat(
+                RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(
+                    patientRecordWithTreatmentHistory(pastTreatmentNames + chemotherapy)
+                )
+            ).isFalse
+        }
+
+        assertThat(
+            RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(
+                patientRecordWithTreatmentHistory(pastTreatmentNames + chemotherapies)
+            )
+        ).isTrue
     }
 
     @Test
@@ -218,7 +215,7 @@ class RecommendationEngineTest {
 
     @Test
     fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in first line`() {
-        val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), MINIMAL_PATIENT_RECORD.molecular, "rectum")
+        val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), MOLECULAR_RECORD_WITH_OTHER_BRAF_MUTATION, "rectum")
         val firstLineEgfrTherapies = listOf(
             FOLFOX_CETUXIMAB, FOLFOX_PANITUMUMAB, FOLFIRI_CETUXIMAB, FOLFIRI_PANITUMUMAB, IRINOTECAN_CETUXIMAB, IRINOTECAN_PANITUMUMAB
         ).map(TREATMENT_DATABASE::findTreatmentByName)
@@ -230,7 +227,7 @@ class RecommendationEngineTest {
     @Test
     fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in second line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
-            listOf("CHEMOTHERAPY"), MINIMAL_PATIENT_RECORD.molecular, "rectum"
+            listOf("CHEMOTHERAPY"), MOLECULAR_RECORD_WITH_OTHER_BRAF_MUTATION, "rectum"
         )
         val expectedAdditionalTherapies = listOf(
             FOLFIRI_CETUXIMAB, FOLFIRI_PANITUMUMAB, IRINOTECAN_CETUXIMAB, IRINOTECAN_PANITUMUMAB, CETUXIMAB, PANITUMUMAB, IRINOTECAN
@@ -243,7 +240,7 @@ class RecommendationEngineTest {
     @Test
     fun `Should recommend expected treatments for patients with RAS wildtype and BRAF V600E wildtype and left-sided tumors in third line`() {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
-            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MINIMAL_PATIENT_RECORD.molecular, "rectum"
+            listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MOLECULAR_RECORD_WITH_OTHER_BRAF_MUTATION, "rectum"
         )
         val expectedAdditionalTherapies = listOf(CETUXIMAB, PANITUMUMAB, IRINOTECAN, LONSURF).map(TREATMENT_DATABASE::findTreatmentByName)
 
@@ -393,6 +390,16 @@ class RecommendationEngineTest {
         private val MOLECULAR_RECORD_WITH_BRAF_V600E = TestMolecularFactory.createProperTestMolecularRecord()
         private val MSI_MOLECULAR_RECORD = MINIMAL_PATIENT_RECORD.molecular.copy(
             characteristics = MINIMAL_PATIENT_RECORD.molecular.characteristics.copy(isMicrosatelliteUnstable = true)
+        )
+        private val MOLECULAR_RECORD_WITH_OTHER_BRAF_MUTATION = MINIMAL_PATIENT_RECORD.molecular.copy(
+            drivers = MINIMAL_PATIENT_RECORD.molecular.drivers.copy(
+                variants = setOf(
+                    TestVariantFactory.createMinimal().copy(
+                        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = "p.D594A"),
+                        isReportable = true
+                    )
+                )
+            )
         )
 
         private val TYPICAL_TREATMENT_RESULTS: List<TreatmentCandidate> = resultsForPatientWithHistory(emptyList())

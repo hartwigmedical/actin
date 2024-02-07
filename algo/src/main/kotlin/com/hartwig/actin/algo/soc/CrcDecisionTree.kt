@@ -26,7 +26,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
         falseBranch = DecisionTree(
             decision = EligibilityFunction(
                 EligibilityRule.AND,
-                listOf("KRAS", "NRAS", "BRAF").map { EligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, listOf(it)) }
+                listOf("KRAS", "NRAS").map { EligibilityFunction(EligibilityRule.WILDTYPE_OF_GENE_X, listOf(it)) }
                         + EligibilityFunction(EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR)
             ),
             trueBranch = DecisionTreeLeaf(treatmentCandidatesForRasWtBrafV600EWtAndLeftSidedTumor),
@@ -40,6 +40,19 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
         falseBranch = DecisionTreeLeaf(emptyList())
     )
 
+    private val socExhaustedTree = DecisionTree(
+        decision = EligibilityFunction(
+            EligibilityRule.AND, listOf(
+                EligibilityFunction(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, emptyList()),
+                EligibilityFunction(EligibilityRule.OR, listOf("NTRK1", "NTRK2", "NTRK3").map {
+                    EligibilityFunction(EligibilityRule.FUSION_IN_GENE_X, listOf(it))
+                })
+            )
+        ),
+        trueBranch = DecisionTreeLeaf(listOf(ENTRECTINIB, LAROTRECTINIB).map(treatmentCandidateDatabase::treatmentCandidate)),
+        falseBranch = DecisionTreeLeaf(emptyList())
+    )
+
     private val generallyAvailableTreatmentCandidates = listOf(
         commonChemotherapies.map(treatmentCandidateDatabase::treatmentCandidate),
         commonChemotherapies.map(treatmentCandidateDatabase::treatmentCandidateWithBevacizumab),
@@ -47,7 +60,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
     ).flatten()
 
     override fun treatmentCandidates(): List<TreatmentCandidate> {
-        return listOf(molecularDriverDecisionTree, msiDecisionTree).flatMap(DecisionTreeNode::treatmentCandidates) +
+        return listOf(molecularDriverDecisionTree, msiDecisionTree, socExhaustedTree).flatMap(DecisionTreeNode::treatmentCandidates) +
                 generallyAvailableTreatmentCandidates
     }
 
