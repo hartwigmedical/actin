@@ -17,12 +17,13 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         val tumorDoids = record.clinical.tumor.doids
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
         val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
-        val targetPriorMolecularTest = record.clinical.priorMolecularTests.filter { it.item == receptorType.display() }
+        val targetPriorMolecularTests = record.clinical.priorMolecularTests.filter { it.item == receptorType.display() }
         val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
         val targetReceptorNegativeInDoids = expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
 
-        val positiveArguments = hasPositiveTest(targetPriorMolecularTest, receptorType) || targetReceptorPositiveInDoids
-        val negativeArguments = hasNegativeTest(targetPriorMolecularTest, receptorType) || targetReceptorNegativeInDoids
+        val testSummary = summarizeTests(targetPriorMolecularTests)
+        val positiveArguments = TestResult.POSITIVE in testSummary || targetReceptorPositiveInDoids
+        val negativeArguments = TestResult.NEGATIVE in testSummary || targetReceptorNegativeInDoids
 
         val targetReceptorIsPositive = when {
             positiveArguments && !negativeArguments -> true
@@ -41,7 +42,7 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
 
             !isBreastCancer -> EvaluationFactory.fail("Patient does not have breast cancer", "Tumor type")
 
-            targetPriorMolecularTest.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
+            targetPriorMolecularTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
                 return if (targetHer2AndErbb2Amplified) {
                     EvaluationFactory.undetermined(
                         "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present",
@@ -77,7 +78,7 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
                 )
             }
 
-            hasBorderlineOrLowPositiveTest(targetPriorMolecularTest, receptorType) -> {
+            targetReceptorIsPositive != false && TestResult.BORDERLINE in testSummary -> {
                 if (receptorType == ReceptorType.HER2) {
                     return EvaluationFactory.undetermined(
                         "Patient does not have ${receptorType.display()}-positive breast cancer but ${receptorType.display()}-score is " +
@@ -103,6 +104,51 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         }
     }
 
+    private enum class TestResult {
+        POSITIVE,
+        NEGATIVE,
+        BORDERLINE,
+        UNKNOWN
+    }
+
+    private fun classifyPrOrErTest(test: PriorMolecularTest): TestResult {
+        return classifyTest(test, "%", 1, 10, 100)
+    }
+
+    private fun classifyHer2Test(test: PriorMolecularTest): TestResult {
+        return classifyTest(test, "+", 2, 3, 3)
+    }
+
+    private fun classifyTest(
+        test: PriorMolecularTest, unit: String, negativeUpperBound: Int, positiveLowerBound: Int, positiveUpperBound: Int
+    ): TestResult {
+        val scoreValue = test.scoreValue?.toInt()
+        return when {
+            test.scoreText?.lowercase() == "negative" || (scoreValue in 0 until negativeUpperBound && test.scoreValueUnit == unit) -> {
+                TestResult.NEGATIVE
+            }
+
+            test.scoreText?.lowercase() == "positive" ||
+                    (scoreValue in positiveLowerBound..positiveUpperBound && test.scoreValueUnit == unit) -> {
+                TestResult.POSITIVE
+            }
+
+            scoreValue in negativeUpperBound until positiveLowerBound && test.scoreValueUnit == unit -> {
+                TestResult.BORDERLINE
+            }
+
+            else -> TestResult.UNKNOWN
+        }
+    }
+
+    private fun summarizeTests(targetPriorMolecularTests: List<PriorMolecularTest>): Set<TestResult> {
+        val classifier = when (receptorType) {
+            ReceptorType.ER, ReceptorType.PR -> ::classifyPrOrErTest
+            ReceptorType.HER2 -> ::classifyHer2Test
+        }
+        return targetPriorMolecularTests.map(classifier).toSet()
+    }
+
     companion object {
         private val POSITIVE_DOID_MOLECULAR_COMBINATION = mapOf(
             ReceptorType.ER to DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID,
@@ -114,50 +160,5 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
             ReceptorType.PR to DoidConstants.PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID,
             ReceptorType.HER2 to DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID
         )
-
-        fun hasNegativeTest(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
-            val (scoreValue, scoreValueUnit) = when (receptorType) {
-                ReceptorType.PR, ReceptorType.ER -> {
-                    Pair(0 until 1, "%")
-                }
-
-                ReceptorType.HER2 -> {
-                    Pair(0..1, "+")
-                }
-            }
-            return targetPriorMolecularTest.any {
-                it.scoreText?.lowercase() == "negative" || (it.scoreValue?.toInt() in scoreValue && it.scoreValueUnit == scoreValueUnit)
-            }
-        }
-
-        fun hasPositiveTest(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
-            val (scoreValue, scoreValueUnit) = when (receptorType) {
-                ReceptorType.PR, ReceptorType.ER -> {
-                    Pair(10..100, "%")
-                }
-
-                ReceptorType.HER2 -> {
-                    Pair(3..3, "+")
-                }
-            }
-            return targetPriorMolecularTest.any {
-                it.scoreText?.lowercase() == "positive" || (it.scoreValue?.toInt() in scoreValue && it.scoreValueUnit == scoreValueUnit)
-            }
-        }
-
-        fun hasBorderlineOrLowPositiveTest(targetPriorMolecularTest: List<PriorMolecularTest>, receptorType: ReceptorType): Boolean {
-            val (scoreValue, scoreValueUnit) = when (receptorType) {
-                ReceptorType.PR, ReceptorType.ER -> {
-                    Pair(1 until 10, "%")
-                }
-
-                ReceptorType.HER2 -> {
-                    Pair(2..2, "+")
-                }
-            }
-            return targetPriorMolecularTest.any {
-                it.scoreValue?.toInt() in scoreValue && it.scoreValueUnit == scoreValueUnit
-            }
-        }
     }
 }
