@@ -30,7 +30,7 @@ private const val CANNOT_CURATE = "Cannot curate"
 class IntoleranceExtractorTest {
     private val atcModel = WhoAtcModel.createFromFiles(
         Resources.getResource("atc_config/atc_tree.tsv").path,
-        Resources.getResource("atc_config/atc_previous_new.tsv").path
+        Resources.getResource("atc_config/atc_overrides.tsv").path
     )
     private val extractor = IntoleranceExtractor(
         TestCurationFactory.curationDatabase(

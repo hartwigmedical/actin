@@ -79,6 +79,6 @@ class AtcModelTest {
 
     private fun createAtcModel() = WhoAtcModel.createFromFiles(
         Resources.getResource("atc_config/atc_tree.tsv").path,
-        Resources.getResource("atc_config/atc_previous_new.tsv").path
+        Resources.getResource("atc_config/atc_overrides.tsv").path
     )
 }

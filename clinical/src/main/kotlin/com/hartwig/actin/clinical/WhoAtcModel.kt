@@ -14,15 +14,12 @@ interface AtcModel {
 
 private const val ATC_LENGTH_4_LEVELS = 5
 
-class WhoAtcModel(private val atcMap: Map<String, String>, private val oldNew: Map<Pair<String, String>, String>) : AtcModel {
+class WhoAtcModel(private val atcMap: Map<String, String>, private val atcOverrides: Map<Pair<String, String>, String>) : AtcModel {
 
     override fun resolveByCode(rawAtcCode: String, rawAtcLevelName: String): AtcClassification? {
         return if (rawAtcCode.trim().isNotEmpty() && rawAtcCode[0].lowercaseChar() in 'a'..'z') {
             return if (rawAtcCode.length >= ATC_LENGTH_4_LEVELS) {
-                var correctedRawAtcCode = rawAtcCode
-                if (!oldNew[Pair(rawAtcCode, rawAtcLevelName)].isNullOrEmpty()) {
-                    correctedRawAtcCode = oldNew[Pair(rawAtcCode, rawAtcLevelName)]!!
-                }
+                val correctedRawAtcCode = atcOverrides[Pair(rawAtcCode, rawAtcLevelName)] ?: rawAtcCode
 
                 AtcClassification(
                     anatomicalMainGroup = atcLevel(correctedRawAtcCode.substring(0, 1)),
@@ -59,17 +56,17 @@ class WhoAtcModel(private val atcMap: Map<String, String>, private val oldNew: M
     companion object {
         private val LOGGER = LogManager.getLogger(WhoAtcModel::class.java)
 
-        fun createFromFiles(atcTreeTsvPath: String, atcPreviousNewTsvPath: String): WhoAtcModel {
+        fun createFromFiles(atcTreeTsvPath: String, atcOverridesTsvPath: String): WhoAtcModel {
             val (linesAtcTree, fieldsAtcTree) = readTsv(atcTreeTsvPath)
-            val (linesPreviousNew, fieldsPreviousNew) = readTsv(atcPreviousNewTsvPath)
+            val (linesAtcOverrides, fieldsAtcOverrides) = readTsv(atcOverridesTsvPath)
             return WhoAtcModel(
                 linesAtcTree.map { it.split(TabularFile.DELIMITER).toTypedArray() }
                     .associate { line -> line[fieldsAtcTree["ATC code"]!!] to line[fieldsAtcTree["ATC level name"]!!] },
-                linesPreviousNew.map { it.split(TabularFile.DELIMITER).toTypedArray() }.associate { line ->
+                linesAtcOverrides.map { it.split(TabularFile.DELIMITER).toTypedArray() }.associate { line ->
                     Pair(
-                        line[fieldsPreviousNew["Previous ATC code"]!!],
-                        line[fieldsPreviousNew["ATC level name"]!!]
-                    ) to line[fieldsPreviousNew["New ATC code"]!!]
+                        line[fieldsAtcOverrides["Previous ATC code"]!!],
+                        line[fieldsAtcOverrides["ATC level name"]!!]
+                    ) to line[fieldsAtcOverrides["New ATC code"]!!]
                 })
         }
 

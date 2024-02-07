@@ -32,7 +32,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
-        val atcModel = WhoAtcModel.createFromFiles(config.atcTsv, config.atcMappingTsv)
+        val atcModel = WhoAtcModel.createFromFiles(config.atcTsv, config.atcOverridesTsv)
 
         LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
         val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory)

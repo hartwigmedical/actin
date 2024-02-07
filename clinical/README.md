@@ -13,7 +13,7 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
    -treatment_directory /path/to/treatment_db_dir \
    -doid_json /path/to/full_doid_tree_json_file \
    -atc_tsv /path/to/atc_tsv \
-   -atc_mapping_tsv /path/to/atc_previous_new_tsv \
+   -atc_overrides_tsv /path/to/atc_overrides_tsv \
    -output_directory /path/to/where/clinical_json_files/are/written
 ```
 
