@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
+import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 
 class EvaluatedTreatmentInterpreter(private val recommendedTreatments: List<EvaluatedTreatment>) {
 

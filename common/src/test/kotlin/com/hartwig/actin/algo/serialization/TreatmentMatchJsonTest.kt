@@ -54,7 +54,7 @@ class TreatmentMatchJsonTest {
                 + "{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],"
                 + "\"passSpecificMessages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"passGeneralMessages\":[],"
                 + "\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],"
-                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[]}]],\"cohorts\":[]}]}")
+                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[]}]],\"cohorts\":[]}],\"standardOfCareMatches\":null}")
         assertThat(toJson(match)).isEqualTo(expectedJson)
     }
 

@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.soc
 
+import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.soc.datamodel.DecisionTree
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeLeaf
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeNode
-import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 

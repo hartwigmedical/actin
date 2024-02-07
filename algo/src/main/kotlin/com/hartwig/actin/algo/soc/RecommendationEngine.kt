@@ -1,30 +1,25 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
-import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
-import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 
-class RecommendationEngine private constructor(
+class RecommendationEngine(
     private val doidModel: DoidModel,
     private val treatmentCandidateDatabase: TreatmentCandidateDatabase,
     private val evaluationFunctionFactory: EvaluationFunctionFactory
 ) {
 
-    fun determineAvailableTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
+    fun standardOfCareEvaluatedTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
         require(standardOfCareCanBeEvaluatedForPatient(patientRecord)) {
             "SOC recommendation only supported for colorectal carcinoma"
         }
-
-        return treatmentCandidates().asSequence()
-            .map { evaluateTreatmentEligibilityForPatient(it, patientRecord) }
-            .filter { treatmentHasNoFailedEvaluations(it) }
-            .toList()
+        return treatmentCandidates().map { evaluateTreatmentEligibilityForPatient(it, patientRecord) }
     }
 
     fun standardOfCareCanBeEvaluatedForPatient(patientRecord: PatientRecord): Boolean {
@@ -61,7 +56,7 @@ class RecommendationEngine private constructor(
         treatmentCandidate: TreatmentCandidate,
         patientRecord: PatientRecord
     ): EvaluatedTreatment {
-        return evaluateTreatmentCandidate(treatmentCandidate.eligibilityFunctionsForRequirement(), patientRecord, treatmentCandidate)
+        return evaluateTreatmentCandidate(treatmentCandidate.eligibilityFunctions, patientRecord, treatmentCandidate)
     }
 
     private fun evaluateTreatmentCandidate(
@@ -73,6 +68,10 @@ class RecommendationEngine private constructor(
         return EvaluatedTreatment(treatmentCandidate, evaluations)
     }
 
+    private fun determineAvailableTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
+        return standardOfCareEvaluatedTreatments(patientRecord).filter(::treatmentHasNoFailedEvaluations)
+    }
+
     companion object {
         private val EXCLUDED_TUMOR_DOIDS = setOf(
             DoidConstants.RECTUM_NEUROENDOCRINE_NEOPLASM_DOID,
@@ -80,19 +79,11 @@ class RecommendationEngine private constructor(
             DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID
         )
 
-        fun create(resources: RuleMappingResources): RecommendationEngine {
-            return RecommendationEngine(
-                resources.doidModel,
-                TreatmentCandidateDatabase(resources.treatmentDatabase),
-                EvaluationFunctionFactory.create(resources)
-            )
-        }
-
         private fun expandedTumorDoids(patientRecord: PatientRecord, doidModel: DoidModel): Set<String> {
             return patientRecord.clinical.tumor.doids?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
         }
 
-        private fun treatmentHasNoFailedEvaluations(evaluatedTreatment: EvaluatedTreatment): Boolean {
+        fun treatmentHasNoFailedEvaluations(evaluatedTreatment: EvaluatedTreatment): Boolean {
             return evaluatedTreatment.evaluations.none { it.result == EvaluationResult.FAIL }
         }
     }

@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.soc.datamodel
 
+import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule

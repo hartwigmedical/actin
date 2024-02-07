@@ -56,7 +56,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
         val functionInputResolver = FunctionInputResolver(doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase)
         val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
-        val recommendationEngine = RecommendationEngine.create(resources)
+        val recommendationEngine = RecommendationEngineFactory(resources).create()
 
         LOGGER.info(recommendationEngine.provideRecommendations(patient))
         val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)

@@ -4,10 +4,10 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
+import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
-import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
-import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
@@ -361,12 +361,12 @@ class RecommendationEngineTest {
             TREATMENT_CANDIDATE_DATABASE.treatmentCandidateWithBevacizumab(it).treatment
         }
 
-        private val RECOMMENDATION_ENGINE = RecommendationEngine.create(
+        private val RECOMMENDATION_ENGINE = RecommendationEngineFactory(
             RuleMappingResourcesTestFactory.create(
                 doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer"),
                 treatmentDatabase = TREATMENT_DATABASE
             )
-        )
+        ).create()
 
         private val CHEMO_TREATMENT_NAMES = listOf(
             "5-FU",
@@ -413,7 +413,9 @@ class RecommendationEngineTest {
         }
 
         private fun resultsForPatient(patientRecord: PatientRecord): List<TreatmentCandidate> {
-            return RECOMMENDATION_ENGINE.determineAvailableTreatments(patientRecord).map(EvaluatedTreatment::treatmentCandidate)
+            return RECOMMENDATION_ENGINE.standardOfCareEvaluatedTreatments(patientRecord)
+                .filter(EvaluatedTreatment::eligible)
+                .map(EvaluatedTreatment::treatmentCandidate)
         }
 
         private fun resultsForPatientWithHistory(pastTreatmentNames: List<String>): List<TreatmentCandidate> {

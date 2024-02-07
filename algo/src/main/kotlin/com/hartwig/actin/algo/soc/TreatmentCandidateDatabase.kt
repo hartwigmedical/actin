@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
+import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
