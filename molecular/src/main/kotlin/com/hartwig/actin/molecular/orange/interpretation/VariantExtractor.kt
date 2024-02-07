@@ -42,21 +42,8 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val event = DriverEventFactory.variantEvent(variant)
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
-//                val evidence = if (driverLikelihood == DriverLikelihood.HIGH) {
-//                    ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant))
-//                } else {
-//                    ActionableEvidenceFactory.createNoEvidence()
-//                }
                 val evidence = ActionableEvidenceFactory.createNoEvidence()
-
-//                val alteration = GeneAlterationFactory.convertAlteration(
-//                    variant.gene(), evidenceDatabase.geneAlterationForVariant(variant)
-//                )
                 Variant(
-//                    gene = alteration.gene,
-//                    geneRole = alteration.geneRole,
-//                    proteinEffect = alteration.proteinEffect,
-//                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
                     gene = variant.gene(),
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
@@ -73,7 +60,11 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     phaseGroups = variant.localPhaseSets()?.toSet(),
                     canonicalImpact = extractCanonicalImpact(variant),
-                    otherImpacts = extractOtherImpacts(variant)
+                    otherImpacts = extractOtherImpacts(variant),
+                    chromosome = variant.chromosome(),
+                    position = variant.position(),
+                    ref = variant.ref(),
+                    alt = variant.alt()
                 )
             }
             .toSortedSet(VariantComparator())

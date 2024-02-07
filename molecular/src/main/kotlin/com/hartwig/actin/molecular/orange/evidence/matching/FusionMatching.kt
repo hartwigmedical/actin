@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.orange.evidence.matching
 
-import com.hartwig.hmftools.datamodel.linx.LinxFusion
+import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.serve.datamodel.fusion.FusionPair
 
 object FusionMatching {
 
-    fun isGeneMatch(fusionPair: FusionPair, fusion: LinxFusion): Boolean {
-        return fusionPair.geneUp() == fusion.geneStart() && fusionPair.geneDown() == fusion.geneEnd()
+    fun isGeneMatch(fusionPair: FusionPair, fusion: Fusion): Boolean {
+        return fusionPair.geneUp() == fusion.geneStart && fusionPair.geneDown() == fusion.geneEnd
     }
 
-    fun isExonMatch(fusionPair: FusionPair, fusion: LinxFusion): Boolean {
+    fun isExonMatch(fusionPair: FusionPair, fusion: Fusion): Boolean {
         val minExonUp = fusionPair.minExonUp()
         val maxExonUp = fusionPair.maxExonUp()
         val meetsExonUp = minExonUp == null || maxExonUp == null || explicitlyMatchesExonUp(fusionPair, fusion)
@@ -21,23 +21,23 @@ object FusionMatching {
         return meetsExonUp && meetsExonDown
     }
 
-    fun explicitlyMatchesExonUp(fusionPair: FusionPair, fusion: LinxFusion): Boolean {
+    fun explicitlyMatchesExonUp(fusionPair: FusionPair, fusion: Fusion): Boolean {
         val minExonUp = fusionPair.minExonUp()
         val maxExonUp = fusionPair.maxExonUp()
         return if (minExonUp == null || maxExonUp == null) {
             false
         } else {
-            fusion.fusedExonUp() >= minExonUp && fusion.fusedExonUp() <= maxExonUp
+            fusion.fusedExonUp >= minExonUp && fusion.fusedExonUp <= maxExonUp
         }
     }
 
-    fun explicitlyMatchesExonDown(fusionPair: FusionPair, fusion: LinxFusion): Boolean {
+    fun explicitlyMatchesExonDown(fusionPair: FusionPair, fusion: Fusion): Boolean {
         val minExonDown = fusionPair.minExonDown()
         val maxExonDown = fusionPair.maxExonDown()
         return if (minExonDown == null || maxExonDown == null) {
             false
         } else {
-            fusion.fusedExonDown() >= minExonDown && fusion.fusedExonDown() <= maxExonDown
+            fusion.fusedExonDown >= minExonDown && fusion.fusedExonDown <= maxExonDown
         }
     }
 }

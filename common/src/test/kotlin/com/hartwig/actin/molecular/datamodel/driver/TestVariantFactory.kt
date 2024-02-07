@@ -22,7 +22,11 @@ object TestVariantFactory {
             canonicalImpact = TestTranscriptImpactFactory.createMinimal(),
             isAssociatedWithDrugResistance = null,
             phaseGroups = null,
-            otherImpacts = emptySet()
+            otherImpacts = emptySet(),
+            chromosome = "",
+            position = 0,
+            ref = "",
+            alt = "",
         )
     }
 }

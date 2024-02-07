@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
-import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
+import com.hartwig.actin.molecular.datamodel.driver.Virus
+import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
@@ -9,18 +9,20 @@ import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
 internal class VirusEvidence private constructor(
     private val hpvCharacteristics: List<ActionableEvent>,
     private val ebvCharacteristics: List<ActionableEvent>
-) : EvidenceMatcher<VirusInterpreterEntry> {
+) : EvidenceMatcher<Virus> {
 
-    override fun findMatches(event: VirusInterpreterEntry): List<ActionableEvent> {
-        return if (!event.reported()) {
+    override fun findMatches(event: Virus): List<ActionableEvent> {
+        return if (!event.isReportable) {
             emptyList()
-        } else when (event.interpretation()) {
-            VirusInterpretation.HPV -> {
+        } else when (event.type) {
+            VirusType.HUMAN_PAPILLOMA_VIRUS -> {
                 hpvCharacteristics
             }
-            VirusInterpretation.EBV -> {
+
+            VirusType.EPSTEIN_BARR_VIRUS -> {
                 ebvCharacteristics
             }
+
             else -> {
                 emptyList()
             }

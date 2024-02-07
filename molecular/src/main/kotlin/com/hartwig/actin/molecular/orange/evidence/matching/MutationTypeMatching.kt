@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.evidence.matching
 
-import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
-import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
+import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.serve.datamodel.MutationType
 import org.apache.logging.log4j.LogManager
 
@@ -10,19 +10,19 @@ object MutationTypeMatching {
 
     private val LOGGER = LogManager.getLogger(MutationTypeMatching::class.java)
 
-    fun matches(typeToMatch: MutationType, variant: PurpleVariant): Boolean {
-        val effect = variant.canonicalImpact().codingEffect()
+    fun matches(typeToMatch: MutationType, variant: Variant): Boolean {
+        val effect = variant.canonicalImpact.codingEffect
 
         return when (typeToMatch) {
-            MutationType.NONSENSE_OR_FRAMESHIFT -> effect == PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT
-            MutationType.SPLICE -> effect == PurpleCodingEffect.SPLICE
-            MutationType.INFRAME -> effect == PurpleCodingEffect.MISSENSE && variant.type() == PurpleVariantType.INDEL
-            MutationType.INFRAME_DELETION -> effect == PurpleCodingEffect.MISSENSE && isDelete(variant)
-            MutationType.INFRAME_INSERTION -> effect == PurpleCodingEffect.MISSENSE && isInsert(variant)
-            MutationType.MISSENSE -> effect == PurpleCodingEffect.MISSENSE
-            MutationType.ANY -> effect == PurpleCodingEffect.MISSENSE ||
-                    effect == PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT ||
-                    effect == PurpleCodingEffect.SPLICE
+            MutationType.NONSENSE_OR_FRAMESHIFT -> effect == CodingEffect.NONSENSE_OR_FRAMESHIFT
+            MutationType.SPLICE -> effect == CodingEffect.SPLICE
+            MutationType.INFRAME -> effect == CodingEffect.MISSENSE && isIndel(variant)
+            MutationType.INFRAME_DELETION -> effect == CodingEffect.MISSENSE && variant.type == VariantType.DELETE
+            MutationType.INFRAME_INSERTION -> effect == CodingEffect.MISSENSE && variant.type == VariantType.INSERT
+            MutationType.MISSENSE -> effect == CodingEffect.MISSENSE
+            MutationType.ANY -> effect == CodingEffect.MISSENSE ||
+                    effect == CodingEffect.NONSENSE_OR_FRAMESHIFT ||
+                    effect == CodingEffect.SPLICE
 
             else -> {
                 LOGGER.warn("Unrecognized mutation type to match: '{}'", typeToMatch)
@@ -31,11 +31,7 @@ object MutationTypeMatching {
         }
     }
 
-    private fun isInsert(variant: PurpleVariant): Boolean {
-        return variant.type() == PurpleVariantType.INDEL && variant.alt().length > variant.ref().length
-    }
-
-    private fun isDelete(variant: PurpleVariant): Boolean {
-        return variant.type() == PurpleVariantType.INDEL && variant.alt().length < variant.ref().length
+    private fun isIndel(variant: Variant): Boolean {
+        return variant.type == VariantType.INSERT || variant.type == VariantType.DELETE
     }
 }

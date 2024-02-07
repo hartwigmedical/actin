@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
 import com.google.common.collect.Lists
-import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
@@ -11,15 +11,15 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 internal class CopyNumberEvidence private constructor(
     private val actionableAmplifications: List<ActionableGene>,
     private val actionableLosses: List<ActionableGene>
-) : EvidenceMatcher<PurpleGainLoss> {
+) : EvidenceMatcher<CopyNumber> {
 
-    override fun findMatches(event: PurpleGainLoss): List<ActionableEvent> {
-        return when (event.interpretation()) {
-            CopyNumberInterpretation.FULL_GAIN, CopyNumberInterpretation.PARTIAL_GAIN -> {
+    override fun findMatches(event: CopyNumber): List<ActionableEvent> {
+        return when (event.type) {
+            CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> {
                 findMatches(event, actionableAmplifications)
             }
 
-            CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
+            CopyNumberType.LOSS -> {
                 findMatches(event, actionableLosses)
             }
 
@@ -43,8 +43,8 @@ internal class CopyNumberEvidence private constructor(
             return CopyNumberEvidence(actionableAmplifications, actionableLosses)
         }
 
-        private fun findMatches(gainLoss: PurpleGainLoss, actionableEvents: List<ActionableGene>): List<ActionableEvent> {
-            return actionableEvents.filter { it.gene() == gainLoss.gene() }
+        private fun findMatches(copyNumber: CopyNumber, actionableEvents: List<ActionableGene>): List<ActionableEvent> {
+            return actionableEvents.filter { it.gene() == copyNumber.gene }
         }
     }
 }

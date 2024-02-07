@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
-import com.hartwig.hmftools.datamodel.linx.LinxBreakend
-import com.hartwig.hmftools.datamodel.linx.LinxFusion
-import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
-import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.driver.Fusion
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.driver.Virus
 
 class ActionableEventMatcher internal constructor(
     private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
@@ -31,27 +31,27 @@ class ActionableEventMatcher internal constructor(
         return personalizedActionabilityFactory.create(signatureEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad))
     }
 
-    fun matchForVariant(variant: PurpleVariant): ActionabilityMatch {
+    fun matchForVariant(variant: Variant): ActionabilityMatch {
         return personalizedActionabilityFactory.create(variantEvidence.findMatches(variant))
     }
 
-    fun matchForCopyNumber(gainLoss: PurpleGainLoss): ActionabilityMatch {
-        return personalizedActionabilityFactory.create(copyNumberEvidence.findMatches(gainLoss))
+    fun matchForCopyNumber(copyNumber: CopyNumber): ActionabilityMatch {
+        return personalizedActionabilityFactory.create(copyNumberEvidence.findMatches(copyNumber))
     }
 
-    fun matchForHomozygousDisruption(linxHomozygousDisruption: LinxHomozygousDisruption): ActionabilityMatch {
-        return personalizedActionabilityFactory.create(homozygousDisruptionEvidence.findMatches(linxHomozygousDisruption))
+    fun matchForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ActionabilityMatch {
+        return personalizedActionabilityFactory.create(homozygousDisruptionEvidence.findMatches(homozygousDisruption))
     }
 
-    fun matchForBreakend(breakend: LinxBreakend): ActionabilityMatch {
-        return personalizedActionabilityFactory.create(breakendEvidence.findMatches(breakend))
+    fun matchForBreakend(disruption: Disruption): ActionabilityMatch {
+        return personalizedActionabilityFactory.create(breakendEvidence.findMatches(disruption))
     }
 
-    fun matchForFusion(fusion: LinxFusion): ActionabilityMatch {
+    fun matchForFusion(fusion: Fusion): ActionabilityMatch {
         return personalizedActionabilityFactory.create(fusionEvidence.findMatches(fusion))
     }
 
-    fun matchForVirus(virus: VirusInterpreterEntry): ActionabilityMatch {
+    fun matchForVirus(virus: Virus): ActionabilityMatch {
         return personalizedActionabilityFactory.create(virusEvidence.findMatches(virus))
     }
 }

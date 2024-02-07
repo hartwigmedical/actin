@@ -1,14 +1,14 @@
 package com.hartwig.actin.molecular.orange.evidence
 
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.driver.Fusion
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionableEventMatcher
 import com.hartwig.actin.molecular.orange.evidence.known.KnownEventResolver
-import com.hartwig.hmftools.datamodel.linx.LinxBreakend
-import com.hartwig.hmftools.datamodel.linx.LinxFusion
-import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
-import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 
@@ -49,47 +49,47 @@ class EvidenceDatabase internal constructor(
         }
     }
 
-    fun geneAlterationForVariant(variant: PurpleVariant): GeneAlteration? {
+    fun geneAlterationForVariant(variant: Variant): GeneAlteration? {
         return knownEventResolver.resolveForVariant(variant)
     }
 
-    fun evidenceForVariant(variant: PurpleVariant): ActionabilityMatch {
+    fun evidenceForVariant(variant: Variant): ActionabilityMatch {
         return actionableEventMatcher.matchForVariant(variant)
     }
 
-    fun geneAlterationForCopyNumber(gainLoss: PurpleGainLoss): GeneAlteration? {
-        return knownEventResolver.resolveForCopyNumber(gainLoss)
+    fun geneAlterationForCopyNumber(copyNumber: CopyNumber): GeneAlteration? {
+        return knownEventResolver.resolveForCopyNumber(copyNumber)
     }
 
-    fun evidenceForCopyNumber(gainLoss: PurpleGainLoss): ActionabilityMatch {
-        return actionableEventMatcher.matchForCopyNumber(gainLoss)
+    fun evidenceForCopyNumber(copyNumber: CopyNumber): ActionabilityMatch {
+        return actionableEventMatcher.matchForCopyNumber(copyNumber)
     }
 
-    fun geneAlterationForHomozygousDisruption(linxHomozygousDisruption: LinxHomozygousDisruption): GeneAlteration? {
-        return knownEventResolver.resolveForHomozygousDisruption(linxHomozygousDisruption)
+    fun geneAlterationForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): GeneAlteration? {
+        return knownEventResolver.resolveForHomozygousDisruption(homozygousDisruption)
     }
 
-    fun evidenceForHomozygousDisruption(linxHomozygousDisruption: LinxHomozygousDisruption): ActionabilityMatch {
-        return actionableEventMatcher.matchForHomozygousDisruption(linxHomozygousDisruption)
+    fun evidenceForHomozygousDisruption(homozygousDisruption: HomozygousDisruption): ActionabilityMatch {
+        return actionableEventMatcher.matchForHomozygousDisruption(homozygousDisruption)
     }
 
-    fun geneAlterationForBreakend(breakend: LinxBreakend): GeneAlteration? {
-        return knownEventResolver.resolveForBreakend(breakend)
+    fun geneAlterationForBreakend(disruption: Disruption): GeneAlteration? {
+        return knownEventResolver.resolveForBreakend(disruption)
     }
 
-    fun evidenceForBreakend(breakend: LinxBreakend): ActionabilityMatch {
-        return actionableEventMatcher.matchForBreakend(breakend)
+    fun evidenceForBreakend(disruption: Disruption): ActionabilityMatch {
+        return actionableEventMatcher.matchForBreakend(disruption)
     }
 
-    fun lookupKnownFusion(fusion: LinxFusion): KnownFusion? {
+    fun lookupKnownFusion(fusion: Fusion): KnownFusion? {
         return knownEventResolver.resolveForFusion(fusion)
     }
 
-    fun evidenceForFusion(fusion: LinxFusion): ActionabilityMatch {
+    fun evidenceForFusion(fusion: Fusion): ActionabilityMatch {
         return actionableEventMatcher.matchForFusion(fusion)
     }
 
-    fun evidenceForVirus(virus: VirusInterpreterEntry): ActionabilityMatch {
+    fun evidenceForVirus(virus: Virus): ActionabilityMatch {
         return actionableEventMatcher.matchForVirus(virus)
     }
 }

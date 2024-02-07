@@ -13,11 +13,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 class OrangeInterpreter(private val geneFilter: GeneFilter) {
 
     fun interpret(record: OrangeRecord): MolecularRecord {
-        val molecularRecord = convert(record)
-        return annotate(molecularRecord)
-    }
-
-    private fun convert(record: OrangeRecord): MolecularRecord {
         validateOrangeRecord(record)
         val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter)
         val characteristicsExtractor = CharacteristicsExtractor()
@@ -37,14 +32,6 @@ class OrangeInterpreter(private val geneFilter: GeneFilter) {
             drivers = driverExtractor.extract(record),
             immunology = ImmunologyExtraction.extract(record),
             pharmaco = PharmacoExtraction.extract(record)
-        )
-    }
-
-    private fun annotate(record: MolecularRecord): MolecularRecord {
-        // TODO magic
-        return record.copy(
-//            characteristics = CharacteristicsAnnotator.annotate(record.characteristics),
-//            drivers = DriverAnnotator.annotate(record.drivers),
         )
     }
 

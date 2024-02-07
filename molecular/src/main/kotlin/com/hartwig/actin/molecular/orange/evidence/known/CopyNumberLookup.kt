@@ -1,17 +1,17 @@
 package com.hartwig.actin.molecular.orange.evidence.known
 
-import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
-import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber
 
 internal object CopyNumberLookup {
 
-    fun findForCopyNumber(knownCopyNumbers: Iterable<KnownCopyNumber>, gainLoss: PurpleGainLoss): KnownCopyNumber? {
+    fun findForCopyNumber(knownCopyNumbers: Iterable<KnownCopyNumber>, copyNumber: CopyNumber): KnownCopyNumber? {
         for (knownCopyNumber in knownCopyNumbers) {
-            val geneMatches = knownCopyNumber.gene() == gainLoss.gene()
-            val interpretationMatches = interpretationMatchesEvent(gainLoss.interpretation(), knownCopyNumber.event())
+            val geneMatches = knownCopyNumber.gene() == copyNumber.gene
+            val interpretationMatches = interpretationMatchesEvent(copyNumber.type, knownCopyNumber.event())
             if (geneMatches && interpretationMatches) {
                 return knownCopyNumber
             }
@@ -19,13 +19,13 @@ internal object CopyNumberLookup {
         return null
     }
 
-    private fun interpretationMatchesEvent(interpretation: CopyNumberInterpretation, event: GeneEvent): Boolean {
-        return when (interpretation) {
-            CopyNumberInterpretation.FULL_GAIN, CopyNumberInterpretation.PARTIAL_GAIN -> {
+    private fun interpretationMatchesEvent(copyNumberType: CopyNumberType, event: GeneEvent): Boolean {
+        return when (copyNumberType) {
+            CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> {
                 event == GeneEvent.AMPLIFICATION
             }
 
-            CopyNumberInterpretation.FULL_LOSS, CopyNumberInterpretation.PARTIAL_LOSS -> {
+            CopyNumberType.LOSS -> {
                 event == GeneEvent.DELETION
             }
 
@@ -37,10 +37,10 @@ internal object CopyNumberLookup {
 
     fun findForHomozygousDisruption(
         knownCopyNumbers: Iterable<KnownCopyNumber>,
-        linxHomozygousDisruption: LinxHomozygousDisruption
+        homozygousDisruption: HomozygousDisruption
     ): KnownCopyNumber? {
         for (knownCopyNumber in knownCopyNumbers) {
-            if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene() == linxHomozygousDisruption.gene()) {
+            if (knownCopyNumber.event() == GeneEvent.DELETION && knownCopyNumber.gene() == homozygousDisruption.gene) {
                 return knownCopyNumber
             }
         }

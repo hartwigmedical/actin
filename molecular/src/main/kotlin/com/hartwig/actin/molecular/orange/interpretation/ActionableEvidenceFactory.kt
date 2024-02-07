@@ -15,6 +15,7 @@ object ActionableEvidenceFactory {
     }
 
     fun create(actionabilityMatch: ActionabilityMatch?): ActionableEvidence? {
+        // TODO try removing the optionals in the param/return and fixup breakage
         if (actionabilityMatch == null) {
             return null
         }
@@ -138,6 +139,7 @@ object ActionableEvidenceFactory {
                     ActionableEvidence(suspectResistantTreatments = setOf(treatment))
                 }
             }
+
             else -> {
                 ActionableEvidence(suspectResistantTreatments = setOf(treatment))
             }

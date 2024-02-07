@@ -5,6 +5,7 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabaseFactory
+import com.hartwig.actin.molecular.orange.evidence.MolecularAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
@@ -37,8 +38,7 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
 
         LOGGER.info("Interpreting ORANGE record")
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
-        val molecular = OrangeInterpreter(geneFilter).interpret(orange)
-
+        val molecular = MolecularAnnotator(evidenceDatabase).annotate(OrangeInterpreter(geneFilter).interpret(orange))
         MolecularPrinter.printRecord(molecular)
         MolecularRecordJson.write(molecular, config.outputDirectory)
 

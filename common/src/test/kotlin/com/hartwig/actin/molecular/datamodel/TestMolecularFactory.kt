@@ -166,7 +166,12 @@ object TestMolecularFactory {
                         affectedExon = null
                     ),
                     otherImpacts = emptySet(),
-                    phaseGroups = null
+                    phaseGroups = null,
+                    // TODO these were auto-filled, are they sane? can probably check BRAF
+                    chromosome = "7",
+                    position = 140753336,
+                    ref = "T",
+                    alt = "A"
                 )
             ),
             copyNumbers = setOf(
