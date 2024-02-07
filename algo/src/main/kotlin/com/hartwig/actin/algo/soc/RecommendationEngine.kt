@@ -1,11 +1,10 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
+import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.doid.DoidModel
@@ -81,19 +80,11 @@ class RecommendationEngine private constructor(
             DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID
         )
 
-        fun create(
-            doidModel: DoidModel,
-            atcTree: AtcTree,
-            treatmentCandidateDatabase: TreatmentCandidateDatabase,
-            referenceDateProvider: ReferenceDateProvider
-        ): RecommendationEngine {
+        fun create(resources: RuleMappingResources): RecommendationEngine {
             return RecommendationEngine(
-                doidModel, treatmentCandidateDatabase, EvaluationFunctionFactory.create(
-                    doidModel,
-                    referenceDateProvider,
-                    treatmentCandidateDatabase.treatmentDatabase,
-                    atcTree
-                )
+                resources.doidModel,
+                TreatmentCandidateDatabase(resources.treatmentDatabase),
+                EvaluationFunctionFactory.create(resources)
             )
         }
 

@@ -4,9 +4,8 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
+import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
 import com.hartwig.actin.algo.soc.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.soc.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
@@ -361,12 +360,12 @@ class RecommendationEngineTest {
         private val COMMON_FIRST_LINE_CHEMOTHERAPIES = CrcDecisionTree.commonChemotherapies.map {
             TREATMENT_CANDIDATE_DATABASE.treatmentCandidateWithBevacizumab(it).treatment
         }
-        
+
         private val RECOMMENDATION_ENGINE = RecommendationEngine.create(
-            TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer"),
-            AtcTestFactory.createProperAtcTree(),
-            TREATMENT_CANDIDATE_DATABASE,
-            ReferenceDateProviderTestFactory.createCurrentDateProvider()
+            RuleMappingResourcesTestFactory.create(
+                doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer"),
+                treatmentDatabase = TREATMENT_DATABASE
+            )
         )
 
         private val CHEMO_TREATMENT_NAMES = listOf(
@@ -401,8 +400,6 @@ class RecommendationEngineTest {
                 )
             )
         )
-
-        private val TYPICAL_TREATMENT_RESULTS: List<TreatmentCandidate> = resultsForPatientWithHistory(emptyList())
 
         private val HISTORICAL_YEAR = LocalDate.now().minusYears(3).year
 
@@ -448,7 +445,7 @@ class RecommendationEngineTest {
         }
 
         private fun assertSpecificTreatmentNotRecommended(name: String) {
-            assertThat(TYPICAL_TREATMENT_RESULTS).noneMatch { treatmentCandidateMatchesName(it, name) }
+            assertThat(resultsForPatientWithHistory(emptyList())).noneMatch { treatmentCandidateMatchesName(it, name) }
         }
 
         private fun treatmentCandidateMatchesName(treatmentCandidate: TreatmentCandidate, name: String): Boolean {

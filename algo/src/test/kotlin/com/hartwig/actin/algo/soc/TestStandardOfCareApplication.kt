@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.doid.DoidModel
@@ -32,15 +32,13 @@ class TestStandardOfCareApplication {
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        val database = TreatmentCandidateDatabase(TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH))
+        val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH)
 
-        val recommendationEngine =
-            RecommendationEngine.create(
-                doidModel,
-                AtcTree.createFromFile(ATC_TREE_PATH),
-                database,
-                ReferenceDateProviderTestFactory.createCurrentDateProvider()
+        val recommendationEngine = RecommendationEngine.create(
+            RuleMappingResourcesTestFactory.create(
+                doidModel, AtcTree.createFromFile(ATC_TREE_PATH), treatmentDatabase
             )
+        )
 
         LOGGER.info(recommendationEngine.provideRecommendations(patient))
         val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)

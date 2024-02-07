@@ -46,7 +46,7 @@ import java.util.*
 class FunctionInputResolver(
     private val doidModel: DoidModel,
     private val molecularInputChecker: MolecularInputChecker,
-    val treatmentDatabase: TreatmentDatabase
+    private val treatmentDatabase: TreatmentDatabase
 ) {
 
     fun hasValidInputs(function: EligibilityFunction): Boolean? {

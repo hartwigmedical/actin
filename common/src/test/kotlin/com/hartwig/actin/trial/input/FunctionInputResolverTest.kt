@@ -7,8 +7,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory
-import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory.createTestResolver
+import com.hartwig.actin.trial.datamodel.TestFunctionInputResolverFactory
+import com.hartwig.actin.trial.datamodel.TestFunctionInputResolverFactory.createTestResolver
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.FunctionInput
@@ -440,7 +440,7 @@ class FunctionInputResolverTest {
     
     @Test
     fun `Should resolve functions with one gene input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE)
         val valid = create(rule, listOf("gene"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -455,7 +455,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene one integer input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_ONE_INTEGER)
         val valid = create(rule, listOf("gene", "1"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -472,7 +472,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene one integer one variant type input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE)
         val valid = create(rule, listOf("gene", "1", "SNV"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -489,7 +489,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene two integers input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_TWO_INTEGERS)
         val valid = create(rule, listOf("gene", "1", "2"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -505,7 +505,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene many codons input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_MANY_CODONS)
         val valid = create(rule, listOf("gene", "V600;V601"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -521,7 +521,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene many protein impacts input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS)
         val valid = create(rule, listOf("gene", "V600E;V601K"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -536,7 +536,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with many genes input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.MANY_GENES)
         val valid = create(rule, listOf("gene;gene"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -551,7 +551,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one doid term input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithDoidAndTerm("doid 1", "term 1")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithDoidAndTerm("doid 1", "term 1")
         val rule = firstOfType(FunctionInput.ONE_DOID_TERM)
         val valid = create(rule, listOf("term 1"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue

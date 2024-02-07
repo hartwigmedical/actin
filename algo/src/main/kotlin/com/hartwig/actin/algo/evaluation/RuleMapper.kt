@@ -6,7 +6,7 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.FunctionInputResolver
 
-abstract class RuleMapper(private val resources: RuleMappingResources) {
+abstract class RuleMapper(val resources: RuleMappingResources) {
 
     protected fun referenceDateProvider(): ReferenceDateProvider {
         return resources.referenceDateProvider

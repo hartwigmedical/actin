@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 
-object TestFunctionInputResolveFactory {
+object TestFunctionInputResolverFactory {
     fun createTestResolver(): FunctionInputResolver {
         return createResolverWithDoidModel(TestDoidModelFactory.createMinimalTestDoidModel())
     }
@@ -26,10 +26,10 @@ object TestFunctionInputResolveFactory {
     }
 
     fun createResolverWithDoidModel(doidModel: DoidModel): FunctionInputResolver {
-        return FunctionInputResolver(
-            doidModel,
-            MolecularInputChecker.createAnyGeneValid(),
-            TestTreatmentDatabaseFactory.createProper()
-        )
+        return createResolverWithDoidModelAndTreatmentDatabase(doidModel, TestTreatmentDatabaseFactory.createProper())
+    }
+
+    fun createResolverWithDoidModelAndTreatmentDatabase(doidModel: DoidModel, treatmentDatabase: TreatmentDatabase): FunctionInputResolver {
+        return FunctionInputResolver(doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase)
     }
 }
