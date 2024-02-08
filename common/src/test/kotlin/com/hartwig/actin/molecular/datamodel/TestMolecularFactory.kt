@@ -167,9 +167,8 @@ object TestMolecularFactory {
                     ),
                     otherImpacts = emptySet(),
                     phaseGroups = null,
-                    // TODO these were auto-filled, are they sane? can probably check BRAF
                     chromosome = "7",
-                    position = 140753336,
+                    position = 140453136,
                     ref = "T",
                     alt = "A"
                 )
