@@ -1,10 +1,10 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.algo.ckb.json
 
 object CkbExtendedEvidenceTestFactory {
 
-    fun createMinimalTestExtendedEvidenceDatabase(): List<CkbExtendedEvidenceEntry> {
+    fun createMinimalTestExtendedEvidenceDatabase(): List<JsonCkbExtendedEvidenceEntry> {
         return listOf(
-            CkbExtendedEvidenceEntry(
+            JsonCkbExtendedEvidenceEntry(
                 nctId = "",
                 title = "",
                 phase = "",
@@ -31,9 +31,9 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    fun createProperTestExtendedEvidenceDatabase(): List<CkbExtendedEvidenceEntry> {
+    fun createProperTestExtendedEvidenceDatabase(): List<JsonCkbExtendedEvidenceEntry> {
         return listOf(
-            CkbExtendedEvidenceEntry(
+            JsonCkbExtendedEvidenceEntry(
                 nctId = "NCT01",
                 title = "Study of treatment 1 instead of treatment 2",
                 phase = "Phase III",
@@ -44,7 +44,7 @@ object CkbExtendedEvidenceTestFactory {
                 variantRequirements = "Yes",
                 sponsors = "Hartwig Medical Foundation",
                 updateDate = "12/05/2023",
-                indications = listOf(CkbIndication(id = 162, name = "cancer", source = "DOID")),
+                indications = listOf(JsonCkbIndication(id = 162, name = "cancer", source = "DOID")),
                 variantRequirementDetails = createProperVariantRequirementDetails(),
                 clinicalTrialLocations = createProperClinicalTrialLocations(),
                 coveredCountries = listOf(),
@@ -60,14 +60,14 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createProperTestTherapies(): List<CkbTherapy> {
+    private fun createProperTestTherapies(): List<JsonCkbTherapy> {
         return listOf(
-            CkbTherapy(
+            JsonCkbTherapy(
                 id = 1,
                 therapyName = "Treatment 1",
                 synonyms = null
             ),
-            CkbTherapy(
+            JsonCkbTherapy(
                 id = 2,
                 therapyName = "Treatment 2",
                 synonyms = null
@@ -75,18 +75,18 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createProperVariantRequirementDetails(): List<CkbVariantRequirementDetail> {
+    private fun createProperVariantRequirementDetails(): List<JsonCkbVariantRequirementDetail> {
         return listOf(
-            CkbVariantRequirementDetail(
-                molecularProfile = CkbMolecularProfile(id = 3, profileName = "EGFR positive"),
+            JsonCkbVariantRequirementDetail(
+                molecularProfile = JsonCkbMolecularProfile(id = 3, profileName = "EGFR positive"),
                 requirementType = "required"
             )
         )
     }
 
-    private fun createProperClinicalTrialLocations(): List<CkbClinicalTrialLocation> {
+    private fun createProperClinicalTrialLocations(): List<JsonCkbClinicalTrialLocation> {
         return listOf(
-            CkbClinicalTrialLocation(
+            JsonCkbClinicalTrialLocation(
                 nctId = "NCT01",
                 facility = "HMF Sequencing Lab",
                 city = "Amsterdam",
@@ -99,9 +99,9 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createProperTrialReferences(): List<CkbTrialReference> {
+    private fun createProperTrialReferences(): List<JsonCkbTrialReference> {
         return listOf(
-            CkbTrialReference(
+            JsonCkbTrialReference(
                 id = 10,
                 patientPopulations = createPatientPopulations(),
                 reference = createReference()
@@ -109,15 +109,15 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createPatientPopulations(): List<CkbPatientPopulation> {
+    private fun createPatientPopulations(): List<JsonCkbPatientPopulation> {
         return listOf(
             createPatientPopulation1(),
             createPatientPopulation2()
         )
     }
 
-    private fun createPatientPopulation1(): CkbPatientPopulation {
-        return CkbPatientPopulation(
+    private fun createPatientPopulation1(): JsonCkbPatientPopulation {
+        return JsonCkbPatientPopulation(
             id = 20,
             isControl = true,
             groupName = "Treatment 1",
@@ -158,18 +158,18 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createAnalysisGroupsForPopulation1(): List<CkbAnalysisGroup> {
+    private fun createAnalysisGroupsForPopulation1(): List<JsonCkbAnalysisGroup> {
         return listOf(
-            CkbAnalysisGroup(
+            JsonCkbAnalysisGroup(
                 id = 30,
                 name = "Treatment 1",
                 outcome = "N/A",
                 nPatients = "40",
                 endPointMetrics = listOf(
-                    CkbEndPointMetric(
+                    JsonCkbEndPointMetric(
                         id = 40,
                         trialAnalysisGroupId = 30,
-                        endPoint = CkbEndPoint(
+                        endPoint = JsonCkbEndPoint(
                             id = 50,
                             name = "Disease Control Rate",
                             definition = "the proportion of patients who have achieved complete response, partial response, and stable disease",
@@ -182,10 +182,10 @@ object CkbExtendedEvidenceTestFactory {
                         denominator = "40",
                         derivedMetrics = listOf()
                     ),
-                    CkbEndPointMetric(
+                    JsonCkbEndPointMetric(
                         id = 41,
                         trialAnalysisGroupId = 30,
-                        endPoint = CkbEndPoint(
+                        endPoint = JsonCkbEndPoint(
                             id = 51,
                             name = "Objective/Overall Response Rate",
                             definition = "the proportion of patients with tumor size reduction of a predefined amount and for a minimum time period",
@@ -204,8 +204,8 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createPatientPopulation2(): CkbPatientPopulation {
-        return CkbPatientPopulation(
+    private fun createPatientPopulation2(): JsonCkbPatientPopulation {
+        return JsonCkbPatientPopulation(
             id = 21,
             isControl = false,
             groupName = "Treatment 2",
@@ -246,18 +246,18 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createAnalysisGroupsForPopulation2(): List<CkbAnalysisGroup> {
+    private fun createAnalysisGroupsForPopulation2(): List<JsonCkbAnalysisGroup> {
         return listOf(
-            CkbAnalysisGroup(
+            JsonCkbAnalysisGroup(
                 id = 31,
                 name = "Treatment 2",
                 outcome = "Positive",
                 nPatients = "40",
                 endPointMetrics = listOf(
-                    CkbEndPointMetric(
+                    JsonCkbEndPointMetric(
                         id = 42,
                         trialAnalysisGroupId = 31,
-                        endPoint = CkbEndPoint(
+                        endPoint = JsonCkbEndPoint(
                             id = 52,
                             name = "Disease Control Rate",
                             definition = "the proportion of patients who have achieved complete response, partial response, and stable disease",
@@ -269,7 +269,7 @@ object CkbExtendedEvidenceTestFactory {
                         numerator = "30",
                         denominator = "40",
                         derivedMetrics = listOf(
-                            CkbDerivedMetric(
+                            JsonCkbDerivedMetric(
                                 relativeMetricId = 60,
                                 comparatorStatistic = null,
                                 comparatorStatisticType = null,
@@ -278,10 +278,10 @@ object CkbExtendedEvidenceTestFactory {
                             )
                         )
                     ),
-                    CkbEndPointMetric(
+                    JsonCkbEndPointMetric(
                         id = 43,
                         trialAnalysisGroupId = 31,
-                        endPoint = CkbEndPoint(
+                        endPoint = JsonCkbEndPoint(
                             id = 53,
                             name = "Objective/Overall Response Rate",
                             definition = "the proportion of patients with tumor size reduction of a predefined amount and for a minimum time period",
@@ -293,7 +293,7 @@ object CkbExtendedEvidenceTestFactory {
                         numerator = "20",
                         denominator = "40",
                         derivedMetrics = listOf(
-                            CkbDerivedMetric(
+                            JsonCkbDerivedMetric(
                                 relativeMetricId = 61,
                                 comparatorStatistic = null,
                                 comparatorStatisticType = null,
@@ -308,25 +308,25 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createEfficacyEvidenceForPopulation2(): List<CkbEfficacyEvidence> {
+    private fun createEfficacyEvidenceForPopulation2(): List<JsonCkbEfficacyEvidence> {
         return listOf(
-            CkbEfficacyEvidence(
+            JsonCkbEfficacyEvidence(
                 id = 70,
                 approvalStatus = "Phase III",
                 evidenceType = "Actionable",
                 efficacyEvidence = "In a phase3 trial, treatment 1 seems better than treatment 2",
-                molecularProfile = CkbMolecularProfile(id = 3, profileName = "EGFR positive"),
-                therapy = CkbTherapy(id = 1, therapyName = "Treatment 1", synonyms = null),
-                indication = CkbIndication(id = 162, name = "cancer", source = "DOID"),
+                molecularProfile = JsonCkbMolecularProfile(id = 3, profileName = "EGFR positive"),
+                therapy = JsonCkbTherapy(id = 1, therapyName = "Treatment 1", synonyms = null),
+                indication = JsonCkbIndication(id = 162, name = "cancer", source = "DOID"),
                 responseType = "sensitive",
                 references = listOf(createReference()),
                 ampCapAscoEvidenceLevel = "B",
                 ampCapAscoInferredTier = "I",
                 referencedMetrics = listOf(
-                    CkbEndPointMetric(
+                    JsonCkbEndPointMetric(
                         id = 90,
                         trialAnalysisGroupId = 31,
-                        endPoint = CkbEndPoint(
+                        endPoint = JsonCkbEndPoint(
                             id = 91,
                             name = "Median Overall Survival",
                             definition = "the time from randomization until death from any cause",
@@ -344,8 +344,8 @@ object CkbExtendedEvidenceTestFactory {
         )
     }
 
-    private fun createReference(): CkbReference {
-        return CkbReference(
+    private fun createReference(): JsonCkbReference {
+        return JsonCkbReference(
             id = 92,
             pubMedId = 12345678,
             title = "In a phase3 trial, treatment 1 seems better than treatment 2",

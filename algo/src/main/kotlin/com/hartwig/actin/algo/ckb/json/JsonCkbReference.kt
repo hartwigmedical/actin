@@ -1,6 +1,6 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.algo.ckb.json
 
-data class CkbReference(
+data class JsonCkbReference(
     val id: Int,
     val pubMedId: Int,
     val title: String,

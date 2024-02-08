@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.ckb.datamodel
 
-data class CkbIndication(
-    val id: Int,
+data class VariantRequirement(
     val name: String,
-    val source: String
+    val requirementType: String
 )

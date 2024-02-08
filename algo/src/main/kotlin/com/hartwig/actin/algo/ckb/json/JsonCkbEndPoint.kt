@@ -1,8 +1,8 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.algo.ckb.json
 
 import com.google.gson.annotations.SerializedName
 
-data class CkbEndPoint(
+data class JsonCkbEndPoint(
     val id: Int,
     val name: String,
     val definition: String,

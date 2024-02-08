@@ -1,8 +1,8 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.algo.ckb.json
 
 import com.google.gson.annotations.SerializedName
 
-data class CkbDerivedMetric(
+data class JsonCkbDerivedMetric(
     @SerializedName("relative_metric_id") val relativeMetricId: Int,
     @SerializedName("comparator_statistic") val comparatorStatistic: String?,
     @SerializedName("comparator_statistic_type") val comparatorStatisticType: String?,

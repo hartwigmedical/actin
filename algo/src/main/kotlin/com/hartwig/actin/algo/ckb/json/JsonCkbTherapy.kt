@@ -1,6 +1,6 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.algo.ckb.json
 
-data class CkbTherapy(
+data class JsonCkbTherapy(
     val id: Int,
     val therapyName: String,
     val synonyms: String?

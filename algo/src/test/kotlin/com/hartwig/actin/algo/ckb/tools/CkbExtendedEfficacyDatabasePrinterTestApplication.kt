@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.ckb.tools
 
-import com.hartwig.actin.algo.ckb.datamodel.CkbExtendedEvidenceEntry
+import com.hartwig.actin.algo.ckb.json.JsonCkbExtendedEvidenceEntry
 import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
 import java.io.File
 
 class CkbExtendedEfficacyDatabasePrinterTestApplication {
 
     fun run() {
-        val entries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(EXTENDED_EFFICACY_JSON_PATH)
+        val entries: List<JsonCkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(EXTENDED_EFFICACY_JSON_PATH)
 
         entries.forEach(::println)
     }
