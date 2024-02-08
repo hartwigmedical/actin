@@ -1,6 +1,6 @@
 {
-  "patientId": "irrelevant",
-  "sampleId": "irrelevant",
+  "patientId": "N/A",
+  "sampleId": "N/A",
   "type": "WHOLE_GENOME",
   "refGenomeVersion": "V37",
   "date": null,
