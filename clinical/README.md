@@ -10,7 +10,10 @@ This application requires Java 11+ and can be run as follows:
 java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
    -feed_directory /path/to/feed_file_dir \
    -curation_directory /path/to/curation_file_dir \
+   -treatment_directory /path/to/treatment_db_dir \
    -doid_json /path/to/full_doid_tree_json_file \
+   -atc_tsv /path/to/atc_tsv \
+   -atc_overrides_tsv /path/to/atc_overrides_tsv \
    -output_directory /path/to/where/clinical_json_files/are/written
 ```
 
