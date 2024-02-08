@@ -1,11 +1,9 @@
 package com.hartwig.actin.molecular.orange.evidence.matching
 
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalTestVariant
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect.MISSENSE
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect.NONE
 import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalTranscriptImpact
-import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalVariant
 import com.hartwig.serve.datamodel.gene.GeneAnnotation
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import org.junit.Assert.assertFalse
@@ -18,26 +16,17 @@ class GeneMatchingTest {
     fun canMatchGenes() {
         val annotation = createAnnotation("gene 1")
 
-//        val match = createVariant("gene 1", PurpleCodingEffect.MISSENSE)
-        val match = minimalTestVariant().copy(gene = "gene 1", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
+        val match = minimalVariant().copy(gene = "gene 1", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = MISSENSE))
         assertTrue(GeneMatching.isMatch(annotation, match))
 
-//        val wrongGene = createVariant("gene 2", PurpleCodingEffect.MISSENSE)
-        val wrongGene = minimalTestVariant().copy(gene = "gene 2", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
+        val wrongGene = minimalVariant().copy(gene = "gene 2", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = MISSENSE))
         assertFalse(GeneMatching.isMatch(annotation, wrongGene))
 
-//        val nonCoding = createVariant("gene 1", PurpleCodingEffect.NONE)
-        val nonCoding = minimalTestVariant().copy(gene = "gene 1", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.NONE))
+        val nonCoding = minimalVariant().copy(gene = "gene 1", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = NONE))
         assertFalse(GeneMatching.isMatch(annotation, nonCoding))
     }
 
     companion object {
-        private fun createVariant(gene: String, codingEffect: PurpleCodingEffect): PurpleVariant {
-            return TestPurpleFactory.variantBuilder()
-                .gene(gene)
-                .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(codingEffect).build())
-                .build()
-        }
 
         private fun createAnnotation(gene: String): GeneAnnotation {
             return object : GeneAnnotation {

@@ -15,50 +15,14 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.RegionType
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
 object TestMolecularFactory {
-    fun completeTestVariant(): Variant {
 
-        return Variant(
-            isReportable = true,
-            event = "BRAF V600E",
-            driverLikelihood = DriverLikelihood.HIGH,
-            evidence = ActionableEvidence(approvedTreatments = setOf("Vemurafenib")),
-            gene = "BRAF",
-            geneRole = GeneRole.ONCO,
-            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-            isAssociatedWithDrugResistance = true,
-            type = VariantType.SNV,
-            variantCopyNumber = 4.1,
-            totalCopyNumber = 6.0,
-            isBiallelic = false,
-            isHotspot = true,
-            clonalLikelihood = 1.0,
-            canonicalImpact = TranscriptImpact(
-                transcriptId = "ENST00000288602",
-                hgvsCodingImpact = "c.1799T>A",
-                hgvsProteinImpact = "p.V600E",
-                affectedCodon = 600,
-                isSpliceRegion = false,
-                effects = setOf(VariantEffect.MISSENSE),
-                codingEffect = CodingEffect.MISSENSE,
-                affectedExon = null
-            ),
-            otherImpacts = emptySet(),
-            phaseGroups = null,
-            chromosome = "7",
-            position = 140453136,
-            ref = "T",
-            alt = "A"
-        )
-    }
-
-    fun minimalTestVariant(): Variant {
+    fun minimalVariant(): Variant {
         return Variant(
             isReportable = true,
             type = VariantType.SNV,
@@ -98,7 +62,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalTestFusion(): Fusion {
+    fun minimalFusion(): Fusion {
         return Fusion(
             geneStart = "",
             geneTranscriptStart = "",
@@ -116,7 +80,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalTestDisruption(): Disruption {
+    fun minimalDisruption(): Disruption {
         return Disruption(
             type = DisruptionType.INS,
             junctionCopyNumber = 0.0,
@@ -135,7 +99,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalTestCopyNumber(): CopyNumber {
+    fun minimalCopyNumber(): CopyNumber {
         return CopyNumber(
             type = CopyNumberType.NONE,
             minCopies = 0,
@@ -151,7 +115,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalTestHomozygousDisruption(): HomozygousDisruption {
+    fun minimalHomozygousDisruption(): HomozygousDisruption {
         return HomozygousDisruption(
             isReportable = false,
             event = "",
@@ -164,7 +128,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun minimalTestVirus(): Virus {
+    fun minimalVirus(): Virus {
         return Virus(
             name = "",
             type = VirusType.OTHER,

@@ -2,6 +2,11 @@ package com.hartwig.actin.molecular.orange.evidence
 
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalCopyNumber
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalDisruption
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalFusion
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalVariant
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -32,34 +37,28 @@ class EvidenceDatabaseTest {
     fun canMatchEvidenceForDrivers() {
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
 
-        // Assume default ORANGE objects match with default SERVE objects
-//        val variant: PurpleVariant = TestPurpleFactory.variantBuilder().reported(true).build()
-        val variant = TestMolecularFactory.minimalTestVariant()
+        // Assume default objects match with default SERVE objects
+        val variant = minimalVariant()
         assertNotNull(database.geneAlterationForVariant(variant))
         assertEquals(1, evidenceCount(database.evidenceForVariant(variant)).toLong())
 
-//        val gainLoss: PurpleGainLoss = TestPurpleFactory.gainLossBuilder().build()
-        val gainLoss = TestMolecularFactory.minimalTestCopyNumber().copy(type = CopyNumberType.LOSS)
+        val gainLoss = minimalCopyNumber().copy(type = CopyNumberType.LOSS)
         assertNotNull(database.geneAlterationForCopyNumber(gainLoss))
         assertEquals(1, evidenceCount(database.evidenceForCopyNumber(gainLoss)).toLong())
 
-//        val homozygousDisruption: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().build()
-        val homozygousDisruption = TestMolecularFactory.minimalTestHomozygousDisruption()
+        val homozygousDisruption = TestMolecularFactory.minimalHomozygousDisruption()
         assertNotNull(database.geneAlterationForHomozygousDisruption(homozygousDisruption))
         assertEquals(2, evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption)).toLong())
 
-//        val breakend: LinxBreakend = TestLinxFactory.breakendBuilder().reported(true).build()
-        val disruption = TestMolecularFactory.minimalTestDisruption().copy(isReportable = true)
+        val disruption = minimalDisruption().copy(isReportable = true)
         assertNotNull(database.geneAlterationForBreakend(disruption))
         assertEquals(1, evidenceCount(database.evidenceForBreakend(disruption)).toLong())
 
-//        val fusion: LinxFusion = TestLinxFactory.fusionBuilder().reported(true).build()
-        val fusion = TestMolecularFactory.minimalTestFusion().copy(isReportable = true)
+        val fusion = minimalFusion().copy(isReportable = true)
         assertNotNull(database.lookupKnownFusion(fusion))
         assertEquals(2, evidenceCount(database.evidenceForFusion(fusion)).toLong())
 
-//        val virus: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().reported(true).interpretation(VirusInterpretation.HPV).build()
-        val virus = TestMolecularFactory.minimalTestVirus().copy(isReportable = true, type = VirusType.HUMAN_PAPILLOMA_VIRUS)
+        val virus = minimalVirus().copy(isReportable = true, type = VirusType.HUMAN_PAPILLOMA_VIRUS)
         assertEquals(1, evidenceCount(database.evidenceForVirus(virus)).toLong())
     }
 

@@ -1,10 +1,8 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory
-import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalTranscriptImpact
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalVariant
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.MutationType
@@ -29,23 +27,17 @@ class VariantEvidenceTest {
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addAllHotspots(listOf(hotspot1, hotspot2, hotspot3)).build()
         val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
 
-//        val variantGene1: PurpleVariant =
-//            TestPurpleFactory.variantBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("G").reported(true).build()
-        val variantGene1 = TestMolecularFactory.minimalTestVariant().copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
+        val variantGene1 = minimalVariant().copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
         assertEquals(1, matchesVariant1.size.toLong())
         assertTrue(matchesVariant1.contains(hotspot1))
 
-//        val variantGene2: PurpleVariant =
-//            TestPurpleFactory.variantBuilder().gene("gene 2").chromosome("X").position(2).ref("A").alt("G").reported(true).build()
-        val variantGene2 = TestMolecularFactory.minimalTestVariant().copy(gene = "gene 2", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
+        val variantGene2 = minimalVariant().copy(gene = "gene 2", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         val matchesVariant2 = variantEvidence.findMatches(variantGene2)
         assertEquals(1, matchesVariant2.size.toLong())
         assertTrue(matchesVariant2.contains(hotspot2))
 
-//        val otherVariantGene1: PurpleVariant =
-//            TestPurpleFactory.variantBuilder().gene("gene 1").chromosome("X").position(2).ref("A").alt("T").reported(true).build()
-        val otherVariantGene1 = TestMolecularFactory.minimalTestVariant().copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "T", isReportable = true)
+        val otherVariantGene1 = minimalVariant().copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "T", isReportable = true)
         assertTrue(variantEvidence.findMatches(otherVariantGene1).isEmpty())
     }
 
@@ -62,37 +54,23 @@ class VariantEvidenceTest {
     private fun assertEvidenceDeterminedForRange(actionable: ActionableEvents) {
         val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
 
-//        val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder()
-//            .gene("gene 1")
-//            .chromosome("X")
-//            .position(6)
-//            .reported(true)
-//            .canonicalImpact(create(PurpleCodingEffect.MISSENSE))
-//            .build()
-        val variantGene1 = TestMolecularFactory.minimalTestVariant().copy(
+        val variantGene1 = minimalVariant().copy(
             gene = "gene 1",
             chromosome = "X",
             position = 6,
             isReportable = true,
-            canonicalImpact = TestMolecularFactory.minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+            canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
         )
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
         assertEquals(1, matchesVariant1.size.toLong())
         assertTrue(matchesVariant1.contains(ACTIONABLE_RANGE))
 
-//        val otherVariantGene1: PurpleVariant = TestPurpleFactory.variantBuilder()
-//            .gene("gene 1")
-//            .chromosome("X")
-//            .position(2)
-//            .canonicalImpact(create(PurpleCodingEffect.MISSENSE))
-//            .reported(true)
-//            .build()
-        val otherVariantGene1 = TestMolecularFactory.minimalTestVariant().copy(
+        val otherVariantGene1 = minimalVariant().copy(
             gene = "gene 1",
             chromosome = "X",
             position = 2,
             isReportable = true,
-            canonicalImpact = TestMolecularFactory.minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
+            canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE)
         )
         assertTrue(variantEvidence.findMatches(otherVariantGene1).isEmpty())
     }
@@ -105,28 +83,18 @@ class VariantEvidenceTest {
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addGenes(gene1, gene2, gene3).build()
         val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
 
-//        val variantGene1: PurpleVariant = TestPurpleFactory.variantBuilder()
-//            .gene("gene 1")
-//            .canonicalImpact(create(PurpleCodingEffect.MISSENSE))
-//            .reported(true)
-//            .build()
-        val variantGene1 = TestMolecularFactory.minimalTestVariant().copy(
+        val variantGene1 = minimalVariant().copy(
             gene = "gene 1",
-            canonicalImpact = TestMolecularFactory.minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
+            canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
             isReportable = true
         )
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
         assertEquals(1, matchesVariant1.size.toLong())
         assertTrue(matchesVariant1.contains(gene1))
 
-//        val variantGene2: PurpleVariant = TestPurpleFactory.variantBuilder()
-//            .gene("gene 2")
-//            .canonicalImpact(create(PurpleCodingEffect.MISSENSE))
-//            .reported(true)
-//            .build()
-        val variantGene2 = TestMolecularFactory.minimalTestVariant().copy(
+        val variantGene2 = minimalVariant().copy(
             gene = "gene 2",
-            canonicalImpact = TestMolecularFactory.minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
+            canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
             isReportable = true
         )
         val matchesVariant2 = variantEvidence.findMatches(variantGene2)
@@ -142,9 +110,5 @@ class VariantEvidenceTest {
             .end(8)
             .applicableMutationType(MutationType.ANY)
             .build()
-
-        private fun create(codingEffect: PurpleCodingEffect): PurpleTranscriptImpact {
-            return TestPurpleFactory.transcriptImpactBuilder().codingEffect(codingEffect).build()
-        }
     }
 }
