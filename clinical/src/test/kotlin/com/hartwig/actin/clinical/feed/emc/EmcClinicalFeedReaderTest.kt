@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed
+package com.hartwig.actin.clinical.feed.emc
 
 import com.google.common.io.Resources
 import com.hartwig.actin.clinical.datamodel.Gender
@@ -37,7 +37,7 @@ class EmcClinicalFeedReaderTest {
     }
 
     companion object {
-        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").path
+        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed.emc").path
         private const val EPSILON = 1.0E-10
 
         private fun assertPatients(entries: List<PatientEntry>) {

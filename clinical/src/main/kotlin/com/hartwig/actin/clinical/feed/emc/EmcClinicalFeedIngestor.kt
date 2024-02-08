@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.feed.emc
 
 import com.hartwig.actin.clinical.AtcModel
-import com.hartwig.actin.clinical.ClinicalFeedAdapter
+import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
@@ -206,7 +206,7 @@ class EmcClinicalFeedIngestor(
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(ClinicalFeedAdapter::class.java)
+        private val LOGGER = LogManager.getLogger(ClinicalIngestionFeedAdapter::class.java)
 
         fun create(
             feedModel: FeedModel,

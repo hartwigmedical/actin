@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.vitalfunction
+package com.hartwig.actin.clinical.feed.emc.vitalfunction
 
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction.determineCategory

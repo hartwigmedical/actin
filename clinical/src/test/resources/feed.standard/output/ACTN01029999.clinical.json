@@ -1,0 +1,617 @@
+{
+  "patientId": "123456789",
+  "patient": {
+    "gender": "FEMALE",
+    "birthYear": 5,
+    "registrationDate": {
+      "year": 2020,
+      "month": 1,
+      "day": 1
+    },
+    "questionnaireDate": null,
+    "otherMolecularPatientId": null
+  },
+  "tumor": {
+    "primaryTumorLocation": null,
+    "primaryTumorSubLocation": null,
+    "primaryTumorType": null,
+    "primaryTumorSubType": null,
+    "primaryTumorExtraDetails": null,
+    "doids": [],
+    "stage": null,
+    "hasMeasurableDisease": null,
+    "hasBrainLesions": true,
+    "hasActiveBrainLesions": null,
+    "hasCnsLesions": false,
+    "hasActiveCnsLesions": null,
+    "hasBoneLesions": false,
+    "hasLiverLesions": false,
+    "hasLungLesions": false,
+    "hasLymphNodeLesions": false,
+    "otherLesions": [],
+    "biopsyLocation": null
+  },
+  "clinicalStatus": {
+    "who": 0,
+    "infectionStatus": null,
+    "ecg": null,
+    "lvef": null,
+    "hasComplications": true
+  },
+  "oncologicalHistory": [
+    {
+      "treatments": [
+        {
+          "name": "RADIOTHERAPY",
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": false,
+          "radioType": null,
+          "isInternal": null,
+          "treatmentClass": "RADIOTHERAPY"
+        }
+      ],
+      "startYear": 2020,
+      "startMonth": 1,
+      "intents": null,
+      "isTrial": true,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": 1,
+        "ongoingAsOf": null,
+        "cycles": 5,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": null,
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    },
+    {
+      "treatments": [
+        {
+          "name": "RADIOTHERAPY",
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": false,
+          "radioType": null,
+          "isInternal": null,
+          "treatmentClass": "RADIOTHERAPY"
+        }
+      ],
+      "startYear": 2020,
+      "startMonth": 1,
+      "intents": null,
+      "isTrial": true,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": 1,
+        "ongoingAsOf": null,
+        "cycles": 5,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": null,
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    },
+    {
+      "treatments": [
+        {
+          "name": "RADIOTHERAPY",
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": false,
+          "radioType": null,
+          "isInternal": null,
+          "treatmentClass": "RADIOTHERAPY"
+        }
+      ],
+      "startYear": 2020,
+      "startMonth": 1,
+      "intents": null,
+      "isTrial": true,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": 1,
+        "ongoingAsOf": null,
+        "cycles": 5,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": null,
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    },
+    {
+      "treatments": [
+        {
+          "name": "RADIOTHERAPY",
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": false,
+          "radioType": null,
+          "isInternal": null,
+          "treatmentClass": "RADIOTHERAPY"
+        }
+      ],
+      "startYear": 2020,
+      "startMonth": 1,
+      "intents": null,
+      "isTrial": true,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": 1,
+        "ongoingAsOf": null,
+        "cycles": 5,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": [
+          {
+            "treatment": {
+              "name": "RADIOTHERAPY",
+              "synonyms": [],
+              "displayOverride": null,
+              "isSystemic": false,
+              "radioType": null,
+              "isInternal": null,
+              "treatmentClass": "RADIOTHERAPY"
+            },
+            "cycles": 0,
+            "startYear": 2020,
+            "startMonth": 1
+          }
+        ],
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    },
+    {
+      "treatments": [
+        {
+          "name": "RADIOTHERAPY",
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": false,
+          "radioType": null,
+          "isInternal": null,
+          "treatmentClass": "RADIOTHERAPY"
+        }
+      ],
+      "startYear": 2020,
+      "startMonth": 1,
+      "intents": null,
+      "isTrial": true,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": 1,
+        "ongoingAsOf": null,
+        "cycles": 5,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": null,
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    }
+  ],
+  "priorSecondPrimaries": [],
+  "priorOtherConditions": [],
+  "priorMolecularTests": [],
+  "complications": [],
+  "labValues": [],
+  "toxicities": [],
+  "intolerances": [
+    {
+      "name": "MORFINE",
+      "doids": [],
+      "category": "Medication",
+      "subcategories": [],
+      "type": "unspecified",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Unknown"
+    },
+    {
+      "name": "Nikkel",
+      "doids": [],
+      "category": "Other",
+      "subcategories": [],
+      "type": "unspecified",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Unknown"
+    },
+    {
+      "name": "Jodiumhoudend contrastmiddel",
+      "doids": [],
+      "category": "Other",
+      "subcategories": [],
+      "type": "unspecified",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Low"
+    },
+    {
+      "name": "Pollen-allergie",
+      "doids": [],
+      "category": "Other",
+      "subcategories": [],
+      "type": "unspecified",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Unknown"
+    },
+    {
+      "name": "OPIOIDEN",
+      "doids": [],
+      "category": "Medication",
+      "subcategories": [],
+      "type": "unspecified",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Unknown"
+    }
+  ],
+  "surgeries": [
+    {
+      "endDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "status": "FINISHED"
+    },
+    {
+      "endDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "status": "CANCELLED"
+    }
+  ],
+  "bodyWeights": [
+    {
+      "date": "2020-01-01T00:00:00",
+      "value": 3.5,
+      "unit": "KG",
+      "valid": true
+    },
+    {
+      "date": "2020-01-01T00:00:00",
+      "value": 3.5,
+      "unit": "KG",
+      "valid": true
+    }
+  ],
+  "vitalFunctions": [
+    {
+      "date": "2020-01-01T00:00:00",
+      "category": "NON_INVASIVE_BLOOD_PRESSURE",
+      "subcategory": "systolic blood pressure",
+      "value": 3.5,
+      "unit": "mmHg",
+      "valid": true
+    },
+    {
+      "date": "2020-01-01T00:00:00",
+      "category": "NON_INVASIVE_BLOOD_PRESSURE",
+      "subcategory": "diastolic blood pressure",
+      "value": 3.5,
+      "unit": "mmHg",
+      "valid": true
+    },
+    {
+      "date": "2020-01-01T00:00:00",
+      "category": "HEART_RATE",
+      "subcategory": "NA",
+      "value": 3.5,
+      "unit": "Bpm",
+      "valid": true
+    },
+    {
+      "date": "2020-01-01T00:00:00",
+      "category": "NON_INVASIVE_BLOOD_PRESSURE",
+      "subcategory": "systolic blood pressure",
+      "value": 3.5,
+      "unit": "mmHg",
+      "valid": true
+    },
+    {
+      "date": "2020-01-01T00:00:00",
+      "category": "NON_INVASIVE_BLOOD_PRESSURE",
+      "subcategory": "diastolic blood pressure",
+      "value": 3.5,
+      "unit": "mmHg",
+      "valid": true
+    }
+  ],
+  "bloodTransfusions": [
+    {
+      "date": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "product": "Erytrocytes Filtered"
+    }
+  ],
+  "medications": [
+    {
+      "name": "METOCLOPRAMIDE TABLET 10MG",
+      "status": null,
+      "administrationRoute": "oraal",
+      "dosage": {
+        "dosageMin": 3.5,
+        "dosageMax": 3.5,
+        "dosageUnit": "piece",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "startDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "stopDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "cypInteractions": [],
+      "qtProlongatingRisk": "UNKNOWN",
+      "atc": {
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
+      },
+      "isSelfCare": false,
+      "isTrialMedication": false
+    },
+    {
+      "name": "LORAZEPAM TABLET 1MG",
+      "status": null,
+      "administrationRoute": "oraal",
+      "dosage": {
+        "dosageMin": 3.5,
+        "dosageMax": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "startDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "stopDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "cypInteractions": [],
+      "qtProlongatingRisk": "UNKNOWN",
+      "atc": {
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
+      },
+      "isSelfCare": false,
+      "isTrialMedication": false
+    },
+    {
+      "name": "PACLITAXEL INFOPL CONC 6MG/ML FL 25ML",
+      "status": null,
+      "administrationRoute": "iv",
+      "dosage": {
+        "dosageMin": 3.5,
+        "dosageMax": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "startDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "stopDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "cypInteractions": [],
+      "qtProlongatingRisk": "UNKNOWN",
+      "atc": {
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
+      },
+      "isSelfCare": false,
+      "isTrialMedication": false
+    },
+    {
+      "name": "LORAZEPAM TABLET 1MG",
+      "status": null,
+      "administrationRoute": "oraal",
+      "dosage": {
+        "dosageMin": 3.5,
+        "dosageMax": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": null,
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "startDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "stopDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "cypInteractions": [],
+      "qtProlongatingRisk": "UNKNOWN",
+      "atc": {
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
+      },
+      "isSelfCare": false,
+      "isTrialMedication": false
+    },
+    {
+      "name": "DEXAMETHASON INJVLST  4MG/ML (BASE) AMP 1ML",
+      "status": null,
+      "administrationRoute": "iv",
+      "dosage": {
+        "dosageMin": 3.5,
+        "dosageMax": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "startDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "stopDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "cypInteractions": [],
+      "qtProlongatingRisk": "UNKNOWN",
+      "atc": {
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
+      },
+      "isSelfCare": false,
+      "isTrialMedication": false
+    }
+  ]
+}

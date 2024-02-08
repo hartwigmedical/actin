@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed
+package com.hartwig.actin.clinical.feed.emc
 
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedValidation.validate
 import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry

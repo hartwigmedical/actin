@@ -1,9 +1,7 @@
-package com.hartwig.actin.clinical.feed.questionnaire
+package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireKey
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireMapping
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireMapping.mapping
-import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory.entryWithText
+import com.hartwig.actin.clinical.feed.emc.questionnaire.TestQuestionnaireFactory.entryWithText
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.Test

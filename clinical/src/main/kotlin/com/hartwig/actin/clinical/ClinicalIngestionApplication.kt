@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FeedModel
-import com.hartwig.actin.clinical.feed.standard.EhrDataFeed
+import com.hartwig.actin.clinical.feed.standard.StandardEhrIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -62,13 +62,13 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         }
 
         val clinicalIngestion =
-            ClinicalFeedAdapter(
+            ClinicalIngestionFeedAdapter(
                 if (config.feedFormat == FeedFormat.EMC_TSV)
                     EmcClinicalFeedIngestor.create(
                         feedModel,
                         curationDatabaseContext,
                         atcModel
-                    ) else EhrDataFeed.create(config.feedDirectory, curationDatabaseContext, atcModel, treatmentDatabase),
+                    ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel, treatmentDatabase),
                 curationDatabaseContext
             )
 

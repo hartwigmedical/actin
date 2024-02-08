@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
 
-class ClinicalFeedAdapter(
+class ClinicalIngestionFeedAdapter(
     private val clinicalDataFeed: ClinicalFeedIngestion,
     private val curationDatabaseContext: CurationDatabaseContext
 ) {

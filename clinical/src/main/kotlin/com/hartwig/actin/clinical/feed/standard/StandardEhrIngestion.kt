@@ -17,7 +17,7 @@ import java.nio.file.Paths
 import java.util.stream.Collectors
 
 
-class EhrDataFeed(
+class StandardEhrIngestion(
     private val directory: String,
     private val medicationExtractor: EhrMedicationExtractor,
     private val surgeryExtractor: EhrSurgeryExtractor,
@@ -123,7 +123,7 @@ class EhrDataFeed(
             curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel,
             treatmentDatabase: TreatmentDatabase
-        ) = EhrDataFeed(
+        ) = StandardEhrIngestion(
             directory,
             EhrMedicationExtractor(
                 atcModel,

@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.questionnaire
+package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toECG
@@ -7,7 +7,6 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.t
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toSecondaryPrimaries
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toStage
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCuration.toWHO
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
 import org.junit.Test

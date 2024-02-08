@@ -1,6 +1,5 @@
-package com.hartwig.actin.clinical.feed.questionnaire
+package com.hartwig.actin.clinical.feed.emc.questionnaire
 
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireReader
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireReader.read
 import org.apache.logging.log4j.util.Strings
 import org.junit.Assert

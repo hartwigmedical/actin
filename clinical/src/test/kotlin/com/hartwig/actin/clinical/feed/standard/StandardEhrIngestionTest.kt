@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.kaiko
+package com.hartwig.actin.clinical.feed.standard
 
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
@@ -6,32 +6,15 @@ import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
-import com.hartwig.actin.clinical.feed.standard.EhrBloodTransfusionExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrBodyWeightExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrClinicalStatusExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrComplicationExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrDataFeed
-import com.hartwig.actin.clinical.feed.standard.EhrIntolerancesExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrLabValuesExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrMedicationExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrPatientDetailsExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrPriorOtherConditionsExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrSecondPrimariesExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrSurgeryExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrToxicityExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrTreatmentHistoryExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrTumorDetailsExtractor
-import com.hartwig.actin.clinical.feed.standard.EhrVitalFunctionsExtractor
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
-
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 @Suppress("UnstableApiUsage")
-val INPUT_JSON: String = Resources.getResource("kaiko").path
+val INPUT_JSON: String = Resources.getResource("feed.standard/input").path
 
-class EhrDataFeedTest {
+class StandardEhrIngestionTest {
 
     @Test
     fun `Should load EHR data from json and convert to clinical record`() {
@@ -44,7 +27,7 @@ class EhrDataFeedTest {
             ),
             TestTreatmentDatabaseFactory.createProper()
         )
-        val feed = EhrDataFeed(
+        val feed = StandardEhrIngestion(
             directory = INPUT_JSON,
             medicationExtractor = EhrMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
@@ -67,6 +50,9 @@ class EhrDataFeedTest {
             bodyWeightExtractor = EhrBodyWeightExtractor(),
             bloodTransfusionExtractor = EhrBloodTransfusionExtractor()
         )
-        assertThat(feed.ingest()).isNotNull
+        ClinicalRecordJson.write(
+            listOf( feed.ingest()[0].first.clinicalRecord),
+            "/Users/pwolfe/Code/actin/clinical/src/test/resources/feed.standard/output"
+        )
     }
 }

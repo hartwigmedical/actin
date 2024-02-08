@@ -8,9 +8,9 @@ import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
-import com.hartwig.actin.clinical.feed.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
+import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.emc.FeedModel
 import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
@@ -25,7 +25,7 @@ import org.junit.Test
 val EXPECTED_CLINICAL_RECORD: String =
     "${Resources.getResource("clinical_record").path}/ACTN01029999.clinical.json"
 
-class ClinicalFeedAdapterTest {
+class ClinicalIngestionFeedAdapterTest {
 
     @Test
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
@@ -49,7 +49,7 @@ class ClinicalFeedAdapterTest {
             TestTreatmentDatabaseFactory.createProper()
         )
         val clinicalFeed = ClinicalFeedReader.read(FEED_DIRECTORY)
-        val ingestion = ClinicalFeedAdapter(
+        val ingestion = ClinicalIngestionFeedAdapter(
             EmcClinicalFeedIngestor.create(
                 FeedModel(
                     clinicalFeed.copy(

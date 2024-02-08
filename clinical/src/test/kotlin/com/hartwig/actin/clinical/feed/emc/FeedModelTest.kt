@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed
+package com.hartwig.actin.clinical.feed.emc
 
 import com.google.common.io.Resources
 import com.hartwig.actin.clinical.feed.emc.FeedModel.Companion.fromFeedDirectory
@@ -91,6 +91,6 @@ class FeedModelTest {
     }
 
     companion object {
-        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed").path
+        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed.emc").path
     }
 }
