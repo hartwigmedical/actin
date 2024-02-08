@@ -17,7 +17,6 @@ internal class VirusExtractor() {
                 isReportable = virus.reported(),
                 event = DriverEventFactory.virusEvent(virus),
                 driverLikelihood = determineDriverLikelihood(virus.driverLikelihood()),
-//                evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))!!,
                 evidence = ActionableEvidenceFactory.createNoEvidence(),
                 name = virus.name(),
                 isReliable = virus.qcStatus() == QC_PASS_STATUS,

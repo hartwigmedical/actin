@@ -27,26 +27,14 @@ internal class CharacteristicsExtractor() {
             ploidy = purple.fit().ploidy(),
             predictedTumorOrigin = predictedTumorOrigin,
             isMicrosatelliteUnstable = isMicrosatelliteUnstable,
-//            microsatelliteEvidence = ActionableEvidenceFactory.create(
-//                evidenceDatabase.evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable)
-//            ),
             microsatelliteEvidence = null,
             isHomologousRepairDeficient = isHomologousRepairDeficient,
-//            homologousRepairEvidence = ActionableEvidenceFactory.create(
-//                evidenceDatabase.evidenceForHomologousRepairStatus(isHomologousRepairDeficient)
-//            ),
             homologousRepairEvidence = null,
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
             hasHighTumorMutationalBurden = hasHighTumorMutationalBurden,
-//            tumorMutationalBurdenEvidence = ActionableEvidenceFactory.create(
-//                evidenceDatabase.evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden)
-//            ),
             tumorMutationalBurdenEvidence = null,
             tumorMutationalLoad = purple.characteristics().tumorMutationalLoad(),
             hasHighTumorMutationalLoad = hasHighTumorMutationalLoad,
-//            tumorMutationalLoadEvidence = ActionableEvidenceFactory.create(
-//                evidenceDatabase.evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad)
-//            ),
             tumorMutationalLoadEvidence = null,
             homologousRepairScore = homologousRepairScore
         )

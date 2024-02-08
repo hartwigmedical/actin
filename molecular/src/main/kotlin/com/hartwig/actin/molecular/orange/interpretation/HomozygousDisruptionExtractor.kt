@@ -22,14 +22,7 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter)
             }
 
         return relevantHomozygousDisruptions.map { homozygousDisruption ->
-//            val alteration = GeneAlterationFactory.convertAlteration(
-//                homozygousDisruption.gene(), evidenceDatabase.geneAlterationForHomozygousDisruption(homozygousDisruption)
-//            )
             HomozygousDisruption(
-//                gene = alteration.gene,
-//                geneRole = alteration.geneRole,
-//                proteinEffect = alteration.proteinEffect,
-//                isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
                 gene = homozygousDisruption.gene(),
                 geneRole = GeneRole.UNKNOWN,
                 proteinEffect = ProteinEffect.UNKNOWN,
@@ -37,7 +30,6 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter)
                 isReportable = true,
                 event = DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption),
                 driverLikelihood = DriverLikelihood.HIGH,
-//                evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption))!!
                 evidence = ActionableEvidenceFactory.createNoEvidence(),
             )
         }
