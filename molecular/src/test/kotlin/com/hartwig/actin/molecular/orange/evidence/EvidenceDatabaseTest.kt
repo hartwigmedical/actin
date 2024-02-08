@@ -1,16 +1,8 @@
 package com.hartwig.actin.molecular.orange.evidence
 
-import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
-import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityMatch
-import com.hartwig.hmftools.datamodel.linx.LinxBreakend
-import com.hartwig.hmftools.datamodel.linx.LinxFusion
-import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
-import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
-import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -41,27 +33,33 @@ class EvidenceDatabaseTest {
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
 
         // Assume default ORANGE objects match with default SERVE objects
-        val variant: PurpleVariant = TestPurpleFactory.variantBuilder().reported(true).build()
+//        val variant: PurpleVariant = TestPurpleFactory.variantBuilder().reported(true).build()
+        val variant = TestMolecularFactory.minimalTestVariant()
         assertNotNull(database.geneAlterationForVariant(variant))
         assertEquals(1, evidenceCount(database.evidenceForVariant(variant)).toLong())
 
-        val gainLoss: PurpleGainLoss = TestPurpleFactory.gainLossBuilder().build()
+//        val gainLoss: PurpleGainLoss = TestPurpleFactory.gainLossBuilder().build()
+        val gainLoss = TestMolecularFactory.minimalTestCopyNumber().copy(type = CopyNumberType.LOSS)
         assertNotNull(database.geneAlterationForCopyNumber(gainLoss))
         assertEquals(1, evidenceCount(database.evidenceForCopyNumber(gainLoss)).toLong())
 
-        val homozygousDisruption: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().build()
+//        val homozygousDisruption: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().build()
+        val homozygousDisruption = TestMolecularFactory.minimalTestHomozygousDisruption()
         assertNotNull(database.geneAlterationForHomozygousDisruption(homozygousDisruption))
         assertEquals(2, evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption)).toLong())
 
-        val breakend: LinxBreakend = TestLinxFactory.breakendBuilder().reported(true).build()
-        assertNotNull(database.geneAlterationForBreakend(breakend))
-        assertEquals(1, evidenceCount(database.evidenceForBreakend(breakend)).toLong())
+//        val breakend: LinxBreakend = TestLinxFactory.breakendBuilder().reported(true).build()
+        val disruption = TestMolecularFactory.minimalTestDisruption().copy(isReportable = true)
+        assertNotNull(database.geneAlterationForBreakend(disruption))
+        assertEquals(1, evidenceCount(database.evidenceForBreakend(disruption)).toLong())
 
-        val fusion: LinxFusion = TestLinxFactory.fusionBuilder().reported(true).build()
+//        val fusion: LinxFusion = TestLinxFactory.fusionBuilder().reported(true).build()
+        val fusion = TestMolecularFactory.minimalTestFusion().copy(isReportable = true)
         assertNotNull(database.lookupKnownFusion(fusion))
         assertEquals(2, evidenceCount(database.evidenceForFusion(fusion)).toLong())
 
-        val virus: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().reported(true).interpretation(VirusInterpretation.HPV).build()
+//        val virus: VirusInterpreterEntry = TestVirusInterpreterFactory.builder().reported(true).interpretation(VirusInterpretation.HPV).build()
+        val virus = TestMolecularFactory.minimalTestVirus().copy(isReportable = true, type = VirusType.HUMAN_PAPILLOMA_VIRUS)
         assertEquals(1, evidenceCount(database.evidenceForVirus(virus)).toLong())
     }
 

@@ -1,9 +1,8 @@
 package com.hartwig.actin.molecular.orange.evidence.actionability
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
-import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
@@ -22,20 +21,23 @@ class CopyNumberEvidenceTest {
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
         val copyNumberEvidence: CopyNumberEvidence = CopyNumberEvidence.create(actionable)
 
-        val ampGene1: PurpleGainLoss =
-            TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.FULL_GAIN).build()
+//        val ampGene1: PurpleGainLoss =
+//            TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.FULL_GAIN).build()
+        val ampGene1 = TestMolecularFactory.minimalTestCopyNumber().copy(gene = "gene 1", type = CopyNumberType.FULL_GAIN)
         val ampMatches = copyNumberEvidence.findMatches(ampGene1)
         assertEquals(1, ampMatches.size.toLong())
         assertTrue(ampMatches.contains(gene1))
 
-        val lossGene2: PurpleGainLoss =
-            TestPurpleFactory.gainLossBuilder().gene("gene 2").interpretation(CopyNumberInterpretation.FULL_LOSS).build()
+//        val lossGene2: PurpleGainLoss =
+//            TestPurpleFactory.gainLossBuilder().gene("gene 2").interpretation(CopyNumberInterpretation.FULL_LOSS).build()
+        val lossGene2 = TestMolecularFactory.minimalTestCopyNumber().copy(gene = "gene 2", type = CopyNumberType.LOSS)
         val delMatches = copyNumberEvidence.findMatches(lossGene2)
         assertEquals(1, delMatches.size.toLong())
         assertTrue(delMatches.contains(gene2))
 
-        val lossGene1: PurpleGainLoss =
-            TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.FULL_LOSS).build()
+//        val lossGene1: PurpleGainLoss =
+//            TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.FULL_LOSS).build()
+        val lossGene1 = TestMolecularFactory.minimalTestCopyNumber().copy(gene = "gene 1", type = CopyNumberType.LOSS)
         assertTrue(copyNumberEvidence.findMatches(lossGene1).isEmpty())
     }
 }

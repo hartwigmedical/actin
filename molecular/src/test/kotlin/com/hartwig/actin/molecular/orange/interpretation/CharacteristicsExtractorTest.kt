@@ -38,21 +38,23 @@ class CharacteristicsExtractorTest {
         assertThat(cupPrediction.featureClassifier).isEqualTo(0.972, Offset.offset(EPSILON))
 
         assertThat(characteristics.isMicrosatelliteUnstable).isFalse()
-        assertThat(characteristics.microsatelliteEvidence).isNotNull()
+        // TODO add test to further add evidence annotations? or was this supposed to be an empty actionable evidence?
+        //   also for other evidence types below
+        assertThat(characteristics.microsatelliteEvidence).isNull()
         val hrScore = characteristics.homologousRepairScore
         assertThat(hrScore).isNotNull()
         assertThat(hrScore!!).isEqualTo(0.45, Offset.offset(EPSILON))
         assertThat(characteristics.isHomologousRepairDeficient).isFalse()
-        assertThat(characteristics.homologousRepairEvidence).isNotNull()
+        assertThat(characteristics.homologousRepairEvidence).isNull()
 
         val tmb = characteristics.tumorMutationalBurden
         assertThat(tmb).isNotNull()
         assertThat(tmb!!).isEqualTo(13.0, Offset.offset(EPSILON))
         assertThat(characteristics.hasHighTumorMutationalBurden).isTrue()
-        assertThat(characteristics.tumorMutationalBurdenEvidence).isNotNull()
+        assertThat(characteristics.tumorMutationalBurdenEvidence).isNull()
         assertThat(characteristics.tumorMutationalLoad).isEqualTo(189)
         assertThat(characteristics.hasHighTumorMutationalLoad).isTrue()
-        assertThat(characteristics.tumorMutationalLoadEvidence).isNotNull()
+        assertThat(characteristics.tumorMutationalLoadEvidence).isNull()
     }
 
     @Test

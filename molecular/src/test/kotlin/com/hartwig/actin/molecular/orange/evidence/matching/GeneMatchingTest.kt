@@ -1,6 +1,9 @@
 package com.hartwig.actin.molecular.orange.evidence.matching
 
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalTestVariant
+import com.hartwig.actin.molecular.orange.evidence.TestMolecularFactory.minimalTranscriptImpact
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.serve.datamodel.gene.GeneAnnotation
@@ -15,13 +18,16 @@ class GeneMatchingTest {
     fun canMatchGenes() {
         val annotation = createAnnotation("gene 1")
 
-        val match = createVariant("gene 1", PurpleCodingEffect.MISSENSE)
+//        val match = createVariant("gene 1", PurpleCodingEffect.MISSENSE)
+        val match = minimalTestVariant().copy(gene = "gene 1", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
         assertTrue(GeneMatching.isMatch(annotation, match))
 
-        val wrongGene = createVariant("gene 2", PurpleCodingEffect.MISSENSE)
+//        val wrongGene = createVariant("gene 2", PurpleCodingEffect.MISSENSE)
+        val wrongGene = minimalTestVariant().copy(gene = "gene 2", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
         assertFalse(GeneMatching.isMatch(annotation, wrongGene))
 
-        val nonCoding = createVariant("gene 1", PurpleCodingEffect.NONE)
+//        val nonCoding = createVariant("gene 1", PurpleCodingEffect.NONE)
+        val nonCoding = minimalTestVariant().copy(gene = "gene 1", canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.NONE))
         assertFalse(GeneMatching.isMatch(annotation, nonCoding))
     }
 
