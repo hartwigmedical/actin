@@ -61,18 +61,19 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             exitProcess(1)
         }
 
-        val clinicalIngestion =
+        val clinicalIngestion = if (config.feedFormat == FeedFormat.EMC_TSV)
+            EmcClinicalFeedIngestor.create(
+                feedModel,
+                curationDatabaseContext,
+                atcModel
+            ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel, treatmentDatabase)
+        val clinicalIngestionAdapter =
             ClinicalIngestionFeedAdapter(
-                if (config.feedFormat == FeedFormat.EMC_TSV)
-                    EmcClinicalFeedIngestor.create(
-                        feedModel,
-                        curationDatabaseContext,
-                        atcModel
-                    ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel, treatmentDatabase),
+                clinicalIngestion,
                 curationDatabaseContext
             )
 
-        val ingestionResult = clinicalIngestion.run()
+        val ingestionResult = clinicalIngestionAdapter.run()
         LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
         ClinicalRecordJson.write(ingestionResult.patientResults.map { it.clinicalRecord }, outputDirectory)
         LOGGER.info("Done!")

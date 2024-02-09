@@ -44,7 +44,11 @@ data class ClinicalIngestionConfig(
             options.addOption(TREATMENT_DIRECTORY, true, "Directory containing the treatment data")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
-            options.addOption(FEED_FORMAT, true, "The [${FeedFormat.values().joinToString()}]")
+            options.addOption(
+                FEED_FORMAT,
+                true,
+                "The format of the feed. Accepted values [${FeedFormat.values().joinToString()}]. Default is EMC_TSV"
+            )
             return options
         }
 
@@ -61,7 +65,7 @@ data class ClinicalIngestionConfig(
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
-                feedFormat = ApplicationConfig.nonOptionalValue(cmd, FEED_FORMAT).let { FeedFormat.valueOf(it) }
+                feedFormat = ApplicationConfig.optionalValue(cmd, FEED_FORMAT)?.let { FeedFormat.valueOf(it) } ?: FeedFormat.EMC_TSV
             )
         }
     }
