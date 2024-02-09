@@ -285,6 +285,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to FunctionInput.NONE,
         EligibilityRule.IS_IN_DIALYSIS to FunctionInput.NONE,
         EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to FunctionInput.ONE_STRING,
+        EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to FunctionInput.NONE,
 
         EligibilityRule.HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_ECG_ABERRATION to FunctionInput.NONE,

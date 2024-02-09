@@ -47,6 +47,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_MRI_SCAN_DOCUMENTING_STABLE_DISEASE to hasMRIScanDocumentingStableDiseaseCreator(),
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
             EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to hasChildPughClassCreator(),
+            EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
         )
     }
 
@@ -171,6 +172,10 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasChildPughClassCreator(): FunctionCreator {
         return FunctionCreator { HasChildPughClass(doidModel()) }
+    }
+
+    private fun hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(): FunctionCreator {
+        return FunctionCreator { HasPotentialContraIndicationForStereotacticRadiosurgery() }
     }
 
     companion object {
