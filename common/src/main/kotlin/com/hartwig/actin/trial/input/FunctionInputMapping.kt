@@ -28,7 +28,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to FunctionInput.NONE,
         EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to FunctionInput.NONE,
         EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to FunctionInput.NONE,
-        EligibilityRule.HAS_BREAST_CANCER_HORMONE_POSITIVE_AND_HER2_NEGATIVE to FunctionInput.NONE,
+        EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to FunctionInput.ONE_RECEPTOR_TYPE,
         EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to FunctionInput.NONE,
         EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to FunctionInput.NONE,
         EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR to FunctionInput.NONE,
@@ -321,6 +321,7 @@ object FunctionInputMapping {
         EligibilityRule.CURRENTLY_GETS_MEDICATION_INHIBITING_OR_INDUCING_BCRP to FunctionInput.NONE,
         EligibilityRule.CURRENTLY_GETS_MEDICATION_SUBSTRATE_OF_BCRP to FunctionInput.NONE,
         EligibilityRule.HAS_STABLE_ANTICOAGULANT_MEDICATION_DOSING to FunctionInput.NONE,
+        EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION to FunctionInput.NONE,
 
         EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS to FunctionInput.MANY_STRINGS_ONE_INTEGER,
         EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS_Z_HALF_LIVES to FunctionInput.MANY_STRINGS_TWO_INTEGERS,

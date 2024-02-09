@@ -17,7 +17,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to hasCancerWithNeuroendocrineComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to hasCancerWithSmallCellComponentCreator(),
             EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNSCLCCreator(),
-            EligibilityRule.HAS_BREAST_CANCER_HORMONE_POSITIVE_AND_HER2_NEGATIVE to hasBreastCancerHormonePositiveHER2NegativeCreator(),
+            EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
             EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to hasOvarianCancerWithMucinousComponentCreator(),
             EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to hasOvarianBorderlineTumorCreator(),
             EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR to hasStomachUndifferentiatedTumorCreator(),
@@ -97,8 +97,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         }
     }
 
-    private fun hasBreastCancerHormonePositiveHER2NegativeCreator(): FunctionCreator {
-        return FunctionCreator { HasBreastCancerHormonePositiveHER2Negative(doidModel()) }
+    private fun hasBreastCancerWithPositiveReceptorOfTypeCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val receptorType = functionInputResolver().createOneReceptorTypeInput(function)
+            HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType)
+        }
     }
 
     private fun hasCancerWithNeuroendocrineComponentCreator(): FunctionCreator {

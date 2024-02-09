@@ -12,7 +12,7 @@ const val FULL_ATC_CODE = "N02BE01"
 object TestAtcFactory {
 
     fun createMinimalAtcModel(): WhoAtcModel {
-        return WhoAtcModel(emptyMap())
+        return WhoAtcModel(emptyMap(), emptyMap())
     }
 
     fun createProperAtcModel(): WhoAtcModel {
@@ -23,6 +23,9 @@ object TestAtcFactory {
                 "N02B" to PHARMACOLOGICAL,
                 "N02BE" to CHEMICAL,
                 FULL_ATC_CODE to CHEMICAL_SUBSTANCE
+            ),
+            mapOf(
+                Pair("N03XZ91", CHEMICAL_SUBSTANCE) to FULL_ATC_CODE
             )
         )
     }
