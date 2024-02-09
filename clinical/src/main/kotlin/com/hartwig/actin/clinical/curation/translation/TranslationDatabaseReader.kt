@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.curation.translation
 
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
-import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 
 class TranslationDatabaseReader {
 
@@ -18,7 +18,7 @@ class TranslationDatabaseReader {
             tsv: String,
             factory: TranslationFactory<Translation<T>>,
             category: CurationCategory,
-            evaluatedInputFunction: (ExtractionEvaluation) -> Set<Translation<T>>
+            evaluatedInputFunction: (CurationExtractionEvaluation) -> Set<Translation<T>>
         ) = TranslationDatabase(readTranslations(basePath, tsv, factory).associateBy { it.input }, category, evaluatedInputFunction)
 
         private fun <T> readTranslations(basePath: String, tsv: String, translationFactory: TranslationFactory<T>): List<T> {

@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
-import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 
 class PriorSecondPrimaryExtractor(
     private val secondPrimaryCuration: CurationDatabase<SecondPrimaryConfig>,
@@ -19,7 +19,7 @@ class PriorSecondPrimaryExtractor(
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorSecondPrimary>> {
         if (questionnaire == null) {
-            return ExtractionResult(emptyList(), ExtractionEvaluation())
+            return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
         val curation = listOfNotNull(
             questionnaire.otherOncologicalHistory,

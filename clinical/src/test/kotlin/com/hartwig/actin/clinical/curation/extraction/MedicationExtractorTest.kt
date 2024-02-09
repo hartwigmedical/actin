@@ -24,7 +24,7 @@ import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
-import com.hartwig.actin.clinical.feed.TestFeedFactory
+import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

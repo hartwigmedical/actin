@@ -11,8 +11,8 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
-import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
+import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 
 class ToxicityExtractor(
     private val toxicityCuration: CurationDatabase<ToxicityConfig>,
@@ -47,7 +47,7 @@ class ToxicityExtractor(
             }
         }
             .map { rawToxicity ->
-                if (rawToxicity.name.isEmpty()) ExtractionResult(listOf(rawToxicity), ExtractionEvaluation()) else {
+                if (rawToxicity.name.isEmpty()) ExtractionResult(listOf(rawToxicity), CurationExtractionEvaluation()) else {
                     val translationResponse = CurationResponse.createFromTranslation(
                         toxicityTranslation.find(rawToxicity.name),
                         patientId,
@@ -61,7 +61,7 @@ class ToxicityExtractor(
                     )
                 }
             }
-            .fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { (toxicities, aggregatedEval), (toxicity, eval) ->
+            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (toxicities, aggregatedEval), (toxicity, eval) ->
                 ExtractionResult(toxicities + toxicity, aggregatedEval + eval)
             }
     }
@@ -83,10 +83,10 @@ class ToxicityExtractor(
             }
             ExtractionResult(toxicities, curationResponse.extractionEvaluation)
         }
-            ?.fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { (toxicities, aggregatedEval), (toxicity, eval) ->
+            ?.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (toxicities, aggregatedEval), (toxicity, eval) ->
                 ExtractionResult(toxicities + toxicity, aggregatedEval + eval)
             }
-            ?: ExtractionResult(emptyList(), ExtractionEvaluation())
+            ?: ExtractionResult(emptyList(), CurationExtractionEvaluation())
     }
 
     private fun extractGrade(entry: DigitalFileEntry): Int? {

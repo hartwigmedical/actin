@@ -8,13 +8,13 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.ComplicationConfig
 import com.hartwig.actin.clinical.datamodel.Complication
-import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 
 class ComplicationsExtractor(private val complicationCuration: CurationDatabase<ComplicationConfig>) {
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<Complication>?> {
         if (questionnaire?.complications.isNullOrEmpty()) {
-            return ExtractionResult(null, ExtractionEvaluation())
+            return ExtractionResult(null, CurationExtractionEvaluation())
         }
         val (curation, validInputCount, unknownStateCount) = questionnaire!!.complications!!
             .map { CurationUtil.fullTrim(it) }

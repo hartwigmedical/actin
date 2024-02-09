@@ -6,7 +6,8 @@ enum class VitalFunctionCategory(private val display: String) : Displayable {
     NON_INVASIVE_BLOOD_PRESSURE("Non-invasive blood pressure"),
     ARTERIAL_BLOOD_PRESSURE("Arterial blood pressure"),
     HEART_RATE("Heart rate"),
-    SPO2("SpO2");
+    SPO2("SpO2"),
+    OTHER("Other");
 
     override fun display(): String {
         return display
