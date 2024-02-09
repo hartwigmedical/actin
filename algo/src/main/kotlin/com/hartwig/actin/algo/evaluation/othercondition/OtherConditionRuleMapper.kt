@@ -23,6 +23,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.INTERSTITIAL_LUNG_DISEASE_DOID),
             EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.LIVER_DISEASE_DOID),
             EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.LUNG_DISEASE_DOID),
+            EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE to hasPotentialRespiratoryCompromiseCreator(),
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT to hasPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasHistoryOfPneumonitisCreator(),
@@ -67,6 +68,10 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasPriorConditionWithDoidCreator(doidToFind: String): FunctionCreator {
         return FunctionCreator { HasHadPriorConditionWithDoid(doidModel(), doidToFind) }
+    }
+
+    private fun hasPotentialRespiratoryCompromiseCreator(): FunctionCreator {
+        return FunctionCreator { HasPotentialRespiratoryCompromise() }
     }
 
     private fun hasInheritedPredispositionToBleedingOrThrombosisCreator(): FunctionCreator {

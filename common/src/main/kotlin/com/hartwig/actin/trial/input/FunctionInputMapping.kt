@@ -262,6 +262,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HISTORY_OF_INTERSTITIAL_LUNG_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_LIVER_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE to FunctionInput.NONE,
+        EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to FunctionInput.NONE,
