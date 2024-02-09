@@ -22,7 +22,7 @@ class EhrMedicationExtractor(
 
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Medication>> {
         return ehrPatientRecord.medications.map {
-            val atcClassification = atcModel.resolveByCode(it.atcCode)
+            val atcClassification = atcModel.resolveByCode(it.atcCode, "")
             val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
             val curatedQT = CurationResponse.createFromConfigs(
                 qtPrologatingRiskCuration.find(atcNameOrInput),
