@@ -20,6 +20,7 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
+import com.hartwig.actin.trial.input.single.OneDoidTermOneInteger
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -224,6 +225,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_DOID_TERM -> {
                     createOneDoidTermInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
+                    createOneDoidTermOneIntegerInput(function)
                     return true
                 }
 
@@ -512,6 +518,20 @@ class FunctionInputResolver(
             throw IllegalStateException("Not a valid DOID term: $param")
         }
         return param
+    }
+
+    fun createOneDoidTermOneIntegerInput(function: EligibilityFunction): OneDoidTermOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_DOID_TERM_ONE_INTEGER, 2)
+
+        val doidString = parameterAsString(function, 0)
+        if (doidModel.resolveDoidForTerm(doidString) == null) {
+            throw IllegalStateException("Not a valid DOID term: $doidString")
+        }
+
+        return OneDoidTermOneInteger(
+            doidTerm = doidString,
+            integer = parameterAsString(function, 1).toInt()
+        )
     }
 
     fun createManyIntentsInput(function: EligibilityFunction): ManyIntents {

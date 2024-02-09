@@ -131,6 +131,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
             FunctionInput.ONE_DOID_TERM -> {
                 listOf(doidTermToUse)
             }
+
+            FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
+                listOf(doidTermToUse, "1")
+            }
             FunctionInput.MANY_INTENTS_ONE_INTEGER -> {
                 listOf(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display(), "1")
             }
