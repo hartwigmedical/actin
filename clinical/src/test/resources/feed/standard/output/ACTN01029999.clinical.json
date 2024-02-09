@@ -1,0 +1,446 @@
+{
+  "patientId": "aGFzaF9vZl9wYXRpZW50X2lk",
+  "patient": {
+    "gender": "FEMALE",
+    "birthYear": 5,
+    "registrationDate": {
+      "year": 2020,
+      "month": 1,
+      "day": 1
+    },
+    "questionnaireDate": null,
+    "otherMolecularPatientId": null
+  },
+  "tumor": {
+    "primaryTumorLocation": "Lung",
+    "primaryTumorSubLocation": null,
+    "primaryTumorType": "Adenocarcinoma",
+    "primaryTumorSubType": null,
+    "primaryTumorExtraDetails": null,
+    "doids": [
+      "3908"
+    ],
+    "stage": "IV",
+    "hasMeasurableDisease": true,
+    "hasBrainLesions": true,
+    "hasActiveBrainLesions": null,
+    "hasCnsLesions": false,
+    "hasActiveCnsLesions": null,
+    "hasBoneLesions": false,
+    "hasLiverLesions": false,
+    "hasLungLesions": false,
+    "hasLymphNodeLesions": false,
+    "otherLesions": [],
+    "biopsyLocation": null
+  },
+  "clinicalStatus": {
+    "who": 1,
+    "infectionStatus": null,
+    "ecg": null,
+    "lvef": null,
+    "hasComplications": true
+  },
+  "oncologicalHistory": [
+    {
+      "treatments": [
+        {
+          "name": "RADIOTHERAPY",
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": false,
+          "radioType": null,
+          "isInternal": null,
+          "treatmentClass": "RADIOTHERAPY"
+        }
+      ],
+      "startYear": 2020,
+      "startMonth": 1,
+      "intents": null,
+      "isTrial": true,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": 1,
+        "ongoingAsOf": null,
+        "cycles": 5,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": null,
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    },
+    {
+      "treatments": [
+        {
+          "name": "RADIOTHERAPY",
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": false,
+          "radioType": null,
+          "isInternal": null,
+          "treatmentClass": "RADIOTHERAPY"
+        }
+      ],
+      "startYear": 2020,
+      "startMonth": 1,
+      "intents": null,
+      "isTrial": true,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": 2020,
+        "stopMonth": 1,
+        "ongoingAsOf": null,
+        "cycles": 5,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": [
+          {
+            "treatment": {
+              "name": "RADIOTHERAPY",
+              "synonyms": [],
+              "displayOverride": null,
+              "isSystemic": false,
+              "radioType": null,
+              "isInternal": null,
+              "treatmentClass": "RADIOTHERAPY"
+            },
+            "cycles": 0,
+            "startYear": 2020,
+            "startMonth": 1
+          }
+        ],
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    }
+  ],
+  "priorSecondPrimaries": [],
+  "priorOtherConditions": [
+    {
+      "name": "Pain",
+      "year": 2020,
+      "month": 1,
+      "doids": [],
+      "category": "Other",
+      "isContraindicationForTherapy": true
+    }
+  ],
+  "priorMolecularTests": [],
+  "complications": [
+    {
+      "name": "Other",
+      "categories": [],
+      "year": 2020,
+      "month": 1
+    }
+  ],
+  "labValues": [
+    {
+      "date": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "code": "dc_NeutrGran",
+      "name": "Neutrof. granulocyten",
+      "comparator": "",
+      "value": 3.7,
+      "unit": "BILLIONS_PER_LITER",
+      "refLimitLow": null,
+      "refLimitUp": null,
+      "isOutsideRef": null
+    },
+    {
+      "date": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "code": "bg_O2Sgem",
+      "name": "O2-Saturatie gemeten",
+      "comparator": "",
+      "value": 88.0,
+      "unit": "PERCENTAGE",
+      "refLimitLow": null,
+      "refLimitUp": null,
+      "isOutsideRef": null
+    },
+    {
+      "date": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "code": "Plt",
+      "name": "Trombocyten",
+      "comparator": "",
+      "value": 252.0,
+      "unit": "BILLIONS_PER_LITER",
+      "refLimitLow": null,
+      "refLimitUp": null,
+      "isOutsideRef": null
+    },
+    {
+      "date": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "code": "dc_Lymfo",
+      "name": "Lymfocyten",
+      "comparator": "",
+      "value": 0.6,
+      "unit": "BILLIONS_PER_LITER",
+      "refLimitLow": null,
+      "refLimitUp": null,
+      "isOutsideRef": null
+    },
+    {
+      "date": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "code": "Hb",
+      "name": "Hemoglobine",
+      "comparator": "",
+      "value": 7.7,
+      "unit": "MILLIMOLES_PER_LITER",
+      "refLimitLow": null,
+      "refLimitUp": null,
+      "isOutsideRef": null
+    }
+  ],
+  "toxicities": [
+    {
+      "name": "Dysphagia",
+      "categories": [
+        "Neuro"
+      ],
+      "evaluatedDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "source": "EHR",
+      "grade": 5
+    }
+  ],
+  "intolerances": [
+    {
+      "name": "MORFINE",
+      "doids": [],
+      "category": "Medication",
+      "subcategories": [],
+      "type": "unspecified",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Unknown"
+    },
+    {
+      "name": "Nikkel",
+      "doids": [],
+      "category": "Other",
+      "subcategories": [],
+      "type": "unspecified",
+      "clinicalStatus": "Active",
+      "verificationStatus": "Confirmed",
+      "criticality": "Unknown"
+    }
+  ],
+  "surgeries": [
+    {
+      "endDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "status": "FINISHED"
+    },
+    {
+      "endDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "status": "CANCELLED"
+    }
+  ],
+  "bodyWeights": [
+    {
+      "date": "2020-01-01T00:00:00",
+      "value": 3.5,
+      "unit": "KG",
+      "valid": true
+    }
+  ],
+  "vitalFunctions": [
+    {
+      "date": "2020-01-01T00:00:00",
+      "category": "NON_INVASIVE_BLOOD_PRESSURE",
+      "subcategory": "systolic blood pressure",
+      "value": 3.5,
+      "unit": "mmHg",
+      "valid": true
+    },
+    {
+      "date": "2020-01-01T00:00:00",
+      "category": "NON_INVASIVE_BLOOD_PRESSURE",
+      "subcategory": "diastolic blood pressure",
+      "value": 3.5,
+      "unit": "mmHg",
+      "valid": true
+    },
+    {
+      "date": "2020-01-01T00:00:00",
+      "category": "HEART_RATE",
+      "subcategory": "NA",
+      "value": 3.5,
+      "unit": "Bpm",
+      "valid": true
+    }
+  ],
+  "bloodTransfusions": [
+    {
+      "date": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "product": "Erytrocytes Filtered"
+    }
+  ],
+  "medications": [
+    {
+      "name": "paracetamol",
+      "status": null,
+      "administrationRoute": "oraal",
+      "dosage": {
+        "dosageMin": 3.5,
+        "dosageMax": 3.5,
+        "dosageUnit": "piece",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "startDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "stopDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "cypInteractions": [
+        {
+          "type": "INHIBITOR",
+          "strength": "MODERATE",
+          "cyp": "2D6"
+        },
+        {
+          "type": "SUBSTRATE",
+          "strength": "MODERATE_SENSITIVE",
+          "cyp": "3A4"
+        }
+      ],
+      "qtProlongatingRisk": "KNOWN",
+      "atc": {
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
+      },
+      "isSelfCare": false,
+      "isTrialMedication": false
+    },
+    {
+      "name": "paracetamol",
+      "status": null,
+      "administrationRoute": "oraal",
+      "dosage": {
+        "dosageMin": 3.5,
+        "dosageMax": 3.5,
+        "dosageUnit": "mg",
+        "frequency": 3.5,
+        "frequencyUnit": "day",
+        "periodBetweenValue": 3.5,
+        "periodBetweenUnit": null,
+        "ifNeeded": true
+      },
+      "startDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "stopDate": {
+        "year": 2020,
+        "month": 1,
+        "day": 1
+      },
+      "cypInteractions": [
+        {
+          "type": "INHIBITOR",
+          "strength": "MODERATE",
+          "cyp": "2D6"
+        },
+        {
+          "type": "SUBSTRATE",
+          "strength": "MODERATE_SENSITIVE",
+          "cyp": "3A4"
+        }
+      ],
+      "qtProlongatingRisk": "KNOWN",
+      "atc": {
+        "anatomicalMainGroup": {
+          "code": "N",
+          "name": "NERVOUS SYSTEM"
+        },
+        "therapeuticSubGroup": {
+          "code": "N02",
+          "name": "ANALGESICS"
+        },
+        "pharmacologicalSubGroup": {
+          "code": "N02B",
+          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
+        },
+        "chemicalSubGroup": {
+          "code": "N02BE",
+          "name": "Anilides"
+        },
+        "chemicalSubstance": {
+          "code": "N02BE01",
+          "name": "paracetamol"
+        }
+      },
+      "isSelfCare": false,
+      "isTrialMedication": false
+    }
+  ]
+}

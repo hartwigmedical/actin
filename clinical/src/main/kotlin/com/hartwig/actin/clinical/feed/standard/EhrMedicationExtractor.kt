@@ -23,17 +23,18 @@ class EhrMedicationExtractor(
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Medication>> {
         return ehrPatientRecord.medications.map {
             val atcClassification = atcModel.resolveByCode(it.atcCode)
+            val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
             val curatedQT = CurationResponse.createFromConfigs(
-                qtPrologatingRiskCuration.find(it.name),
-                ehrPatientRecord.patientDetails.patientId,
+                qtPrologatingRiskCuration.find(atcNameOrInput),
+                ehrPatientRecord.patientDetails.hashedIdBase64(),
                 CurationCategory.QT_PROLONGATING,
                 it.name,
                 "qt prolongating risk",
                 true
             )
             val curatedCyp = CurationResponse.createFromConfigs(
-                cypInteractionCuration.find(it.name),
-                ehrPatientRecord.patientDetails.patientId,
+                cypInteractionCuration.find(atcNameOrInput),
+                ehrPatientRecord.patientDetails.hashedIdBase64(),
                 CurationCategory.CYP_INTERACTIONS,
                 it.name,
                 "cyp interaction",
@@ -41,14 +42,14 @@ class EhrMedicationExtractor(
             )
             val curatedDosage = CurationResponse.createFromConfigs(
                 dosageCuration.find(it.name),
-                ehrPatientRecord.patientDetails.patientId,
+                ehrPatientRecord.patientDetails.hashedIdBase64(),
                 CurationCategory.MEDICATION_DOSAGE,
                 it.name,
                 "dosage",
                 true
             )
             val medication = Medication(
-                name = it.name,
+                name = atcNameOrInput,
                 administrationRoute = it.administrationRoute,
                 dosage = curatedDosage.config()?.curated ?: Dosage(
                     dosageMin = it.dosage, dosageMax = it.dosage,

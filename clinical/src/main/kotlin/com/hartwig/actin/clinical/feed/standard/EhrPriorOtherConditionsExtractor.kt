@@ -14,7 +14,7 @@ class EhrPriorOtherConditionsExtractor(private val priorOtherConditionsCuration:
         return ehrPatientRecord.priorOtherConditions.map {
             val curatedPriorOtherCondition = CurationResponse.createFromConfigs(
                 priorOtherConditionsCuration.find(it.name),
-                ehrPatientRecord.patientDetails.patientId,
+                ehrPatientRecord.patientDetails.hashedIdBase64(),
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 it.name,
                 "non-oncological history"

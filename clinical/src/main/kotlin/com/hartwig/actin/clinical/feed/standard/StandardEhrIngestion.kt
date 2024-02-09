@@ -83,7 +83,7 @@ class StandardEhrIngestion(
             Pair(
                 patientEvaluation,
                 ClinicalRecord(
-                    patientId = ehrPatientRecord.patientDetails.patientId,
+                    patientId = ehrPatientRecord.patientDetails.hashedId.toBase64(),
                     patient = patientDetails.extracted,
                     tumor = tumorDetails.extracted,
                     clinicalStatus = clinicalStatus.extracted,
@@ -107,7 +107,7 @@ class StandardEhrIngestion(
             Pair(
                 PatientIngestionResult(
                     it.second.patientId,
-                    PatientIngestionStatus.PASS,
+                    if (it.first.warnings.isEmpty()) PatientIngestionStatus.PASS else PatientIngestionStatus.WARN_CURATION_REQUIRED,
                     it.second,
                     PatientIngestionResult.curationResults(it.first.warnings.toList()),
                     emptySet(),

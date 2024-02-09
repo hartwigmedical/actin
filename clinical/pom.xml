@@ -91,11 +91,6 @@
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-serialization</artifactId>
-                <version>${kotlin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <executions>
                     <execution>
@@ -118,7 +113,6 @@
                     <jvmTarget>${kotlin.jvm.target}</jvmTarget>
                     <compilerPlugins>
                         <plugin>no-arg</plugin>
-                        <plugin>kotlinx-serialization</plugin>
                     </compilerPlugins>
 
                     <pluginOptions>

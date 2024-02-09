@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 
 @JacksonSerializable
 data class EhrPatientRecord(
@@ -116,14 +117,21 @@ data class EhrMedication(
     val isSelfCare: Boolean
 )
 
+fun String.toBase64(): String {
+    return Base64.getEncoder().encodeToString(this.toByteArray(Charsets.UTF_8))
+}
+
 @JacksonSerializable
 data class EhrPatientDetail(
     val birthYear: Int,
     val gender: String,
     val registrationDate: LocalDate,
-    val patientId: String,
     val hashedId: String
-)
+) {
+    fun hashedIdBase64(): String {
+        return hashedId.toBase64()
+    }
+}
 
 enum class EhrGender {
     MALE, FEMALE, OTHER
@@ -357,7 +365,7 @@ enum class EhrLabUnit(vararg val externalFormats: String) {
 
     companion object {
         fun fromString(input: String): EhrLabUnit {
-            return values().firstOrNull { it.externalFormats.contains(input) } ?: OTHER
+            return values().firstOrNull { it.externalFormats.map { f -> f.lowercase() }.contains(input.lowercase()) } ?: OTHER
         }
     }
 }

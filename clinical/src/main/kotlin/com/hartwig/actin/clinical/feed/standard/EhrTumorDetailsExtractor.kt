@@ -15,7 +15,7 @@ class EhrTumorDetailsExtractor(private val curationDatabase: CurationDatabase<Pr
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
         val curatedTumorResponse = CurationResponse.createFromConfigs(
             curationDatabase.find(input),
-            ehrPatientRecord.patientDetails.patientId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
+            ehrPatientRecord.patientDetails.hashedIdBase64(), CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord)
         return curatedTumorResponse.config()?.let {
@@ -45,6 +45,7 @@ class EhrTumorDetailsExtractor(private val curationDatabase: CurationDatabase<Pr
         hasCnsLesions = hasLesions(ehrPatientRecord.tumorDetails.lesions, EhrLesionLocation.CNS),
         otherLesions = ehrPatientRecord.tumorDetails.lesions.filter { lesion -> enumeratedInput<EhrLesionLocation>(lesion.location) == EhrLesionLocation.OTHER }
             .map { lesion -> lesion.location },
+        hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
         doids = emptySet()
     )
 

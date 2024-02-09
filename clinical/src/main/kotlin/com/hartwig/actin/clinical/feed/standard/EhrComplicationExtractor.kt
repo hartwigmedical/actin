@@ -13,12 +13,19 @@ class EhrComplicationExtractor(private val complicationCuration: CurationDatabas
         return ehrPatientRecord.complications.map {
             val curatedComplication = CurationResponse.createFromConfigs(
                 complicationCuration.find(it.name),
-                ehrPatientRecord.patientDetails.patientId,
+                ehrPatientRecord.patientDetails.hashedIdBase64(),
                 CurationCategory.COMPLICATION,
                 it.name,
                 "complication"
             )
-            ExtractionResult(listOfNotNull(curatedComplication.config()?.curated), curatedComplication.extractionEvaluation)
+            ExtractionResult(
+                listOfNotNull(
+                    curatedComplication.config()?.curated?.copy(
+                        year = it.startDate.year,
+                        month = it.startDate.monthValue
+                    )
+                ), curatedComplication.extractionEvaluation
+            )
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
         }

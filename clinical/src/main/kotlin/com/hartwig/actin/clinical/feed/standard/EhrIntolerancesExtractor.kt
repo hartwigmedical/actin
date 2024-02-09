@@ -27,7 +27,7 @@ class EhrIntolerancesExtractor(private val atcModel: AtcModel, private val intol
             .map {
                 val curationResponse = CurationResponse.createFromConfigs(
                     intoleranceCuration.find(it.name),
-                    ehrPatientRecord.patientDetails.patientId,
+                    ehrPatientRecord.patientDetails.hashedIdBase64(),
                     CurationCategory.INTOLERANCE,
                     it.name,
                     "intolerance",
