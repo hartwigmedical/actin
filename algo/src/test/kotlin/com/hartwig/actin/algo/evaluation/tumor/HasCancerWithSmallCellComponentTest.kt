@@ -9,8 +9,8 @@ import org.junit.Test
 class HasCancerWithSmallCellComponentTest {
 
     val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(
-        "matching doid",
-        HasCancerWithSmallCellComponent.SMALL_CELL_DOID_TERMS.iterator().next()
+        MATCHING_DOID,
+        DoidConstants.SMALL_CELL_DOID_SET.iterator().next()
     )
     val function = HasCancerWithSmallCellComponent(doidModel)
 
@@ -27,21 +27,27 @@ class HasCancerWithSmallCellComponentTest {
     }
 
     @Test
-    fun `Should pass if tumor is of small cell doid term`() {
-        val tumorDetails = TumorTestFactory.withDoids(setOf("matching doid"))
+    fun `Should pass if small cell term in tumor type`() {
+        val tumorDetails = TumorTestFactory.withDoidAndType(SOME_OTHER_DOID, "small cell lung cancer")
         assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
     }
 
     @Test
-    fun `Should pass if small cell term in tumor type`() {
-        val tumorDetails = TumorTestFactory.withDoidAndType("some doid", "small cell lung cancer")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
+    fun `Should fail if non-small cell term in tumor type`() {
+        val tumorDetails = TumorTestFactory.withDoidAndType(SOME_OTHER_DOID, "non-small cell lung cancer")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
     }
 
     @Test
     fun `Should pass if small cell term in tumor extra details`() {
-        val tumorDetails = TumorTestFactory.withDoidAndDetails("some doid", "small cell")
+        val tumorDetails = TumorTestFactory.withDoidAndDetails(SOME_OTHER_DOID, "small cell")
         assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
+    }
+
+    @Test
+    fun `Should fail if non-small cell term in tumor extra details`() {
+        val tumorDetails = TumorTestFactory.withDoidAndType(SOME_OTHER_DOID, "non-small cell")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
     }
 
     @Test
@@ -54,5 +60,10 @@ class HasCancerWithSmallCellComponentTest {
     fun `Should fail if tumor is of other type than small cell`() {
         val tumorDetails = TumorTestFactory.withDoidAndType("wrong doid", "wrong type")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
+    }
+
+    companion object {
+        const val MATCHING_DOID = "matching doid"
+        const val SOME_OTHER_DOID = "some doid"
     }
 }

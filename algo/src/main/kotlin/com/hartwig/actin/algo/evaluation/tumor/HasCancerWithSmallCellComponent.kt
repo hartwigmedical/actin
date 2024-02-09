@@ -3,9 +3,9 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.doid.DoidConstants.SMALL_CELL_DOID_SET
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidTerm
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfDoidType
 import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions.hasTumorWithDetails
@@ -23,10 +23,15 @@ class HasCancerWithSmallCellComponent (private val doidModel: DoidModel) : Evalu
             )
         }
         val hasSmallCellComponent =
-            isOfAtLeastOneDoidType(doidModel, tumorDoids, SMALL_CELL_DOIDS)
-                    || isOfAtLeastOneDoidTerm(doidModel, tumorDoids, SMALL_CELL_DOID_TERMS)
-                    || hasTumorWithType(record.clinical.tumor, SMALL_CELL_TUMOR_TYPE_TERMS)
-                    || hasTumorWithDetails(record.clinical.tumor, SMALL_CELL_EXTRA_DETAILS)
+            isOfAtLeastOneDoidType(doidModel, tumorDoids, SMALL_CELL_DOID_SET)
+                    || (hasTumorWithType(record.clinical.tumor, SMALL_CELL_TUMOR_TYPE_TERMS) && !hasTumorWithType(
+                record.clinical.tumor,
+                setOf("non-small")
+            ))
+                    || hasTumorWithDetails(record.clinical.tumor, SMALL_CELL_EXTRA_DETAILS) && !hasTumorWithDetails(
+                record.clinical.tumor,
+                setOf("non-small")
+            )
 
         return when {
             (hasSmallCellComponent) -> {
@@ -53,8 +58,6 @@ class HasCancerWithSmallCellComponent (private val doidModel: DoidModel) : Evalu
     }
 
     companion object {
-        val SMALL_CELL_DOIDS = setOf(DoidConstants.SMALL_CELL_CARCINOMA_DOID)
-        val SMALL_CELL_DOID_TERMS = setOf("small cell")
         val SMALL_CELL_TUMOR_TYPE_TERMS = setOf("small cell", "SCNEC")
         val SMALL_CELL_EXTRA_DETAILS = setOf("small cell", "SCNEC")
         val WARN_DOIDS_SET = setOf(DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID, DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
