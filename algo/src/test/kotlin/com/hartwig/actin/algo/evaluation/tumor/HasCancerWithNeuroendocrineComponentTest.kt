@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -29,7 +30,7 @@ class HasCancerWithNeuroendocrineComponentTest {
         // Can't be sure when tumor has a small cell component.
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withDoids(HasCancerWithSmallCellComponent.SMALL_CELL_DOIDS.iterator().next()))
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.SMALL_CELL_DOID_SET.iterator().next()))
         )
 
         // Can't be sure if tumor has a neuroendocrine profile

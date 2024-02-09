@@ -27,17 +27,13 @@ class HasCancerWithNeuroendocrineComponent (private val doidModel: DoidModel) : 
         }
         val hasSmallCellDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
             doidModel, tumorDoids,
-            HasCancerWithSmallCellComponent.SMALL_CELL_DOIDS
-        )
-        val hasSmallCellDoidTerm = DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(
-            doidModel, tumorDoids,
-            HasCancerWithSmallCellComponent.SMALL_CELL_TERMS
+            DoidConstants.SMALL_CELL_DOID_SET
         )
         val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(
             record.clinical.tumor,
             HasCancerWithSmallCellComponent.SMALL_CELL_EXTRA_DETAILS
         )
-        if (hasSmallCellDoid || hasSmallCellDoidTerm || hasSmallCellDetails) {
+        if (hasSmallCellDoid || hasSmallCellDetails) {
             return EvaluationFactory.undetermined(
                 "Patient has cancer with small cell component, " +
                         "undetermined if neuroendocrine component could be present as well", "Undetermined neuroendocrine component"

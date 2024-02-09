@@ -76,6 +76,10 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(doids = setOf(doid), primaryTumorExtraDetails = extraDetails))
     }
 
+    fun withDoidAndTypeAndDetails(doid: String, type: String, extraDetails: String): PatientRecord {
+        return withTumorDetails(TumorDetails(doids = setOf(doid), primaryTumorType = type, primaryTumorExtraDetails = extraDetails))
+    }
+
     fun withDoids(doids: Set<String>?): PatientRecord {
         return withTumorDetails(TumorDetails(doids = doids))
     }
