@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
@@ -230,6 +231,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
                     createOneDoidTermOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_RECEPTOR_TYPE -> {
+                    createOneReceptorTypeInput(function)
                     return true
                 }
 
@@ -532,6 +538,11 @@ class FunctionInputResolver(
             doidTerm = doidString,
             integer = parameterAsString(function, 1).toInt()
         )
+    }
+
+    fun createOneReceptorTypeInput(function: EligibilityFunction): ReceptorType {
+        assertParamConfig(function, FunctionInput.ONE_RECEPTOR_TYPE, 1)
+        return ReceptorType.valueOf(parameterAsString(function, 0))
     }
 
     fun createManyIntentsInput(function: EligibilityFunction): ManyIntents {
