@@ -58,7 +58,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to hasLimitedCumulativeAnthracyclineExposureCreator(),
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL to hasPreviouslyParticipatedInCurrentTrialCreator(),
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to hasPreviouslyParticipatedInTrialCreator(),
-            EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to isNotParticipatingInAnotherTrialCreator()
+            EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to isNotParticipatingInAnotherTrialCreator(),
+            EligibilityRule.HAS_RECEIVED_POTENTIAL_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to hasReceivedPotentialSystemicTherapyforBrainMetastasesCreator(),
         )
     }
 
@@ -401,5 +402,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun isNotParticipatingInAnotherTrialCreator(): FunctionCreator {
         return FunctionCreator { IsNotParticipatingInAnotherTrial() }
+    }
+
+    private fun hasReceivedPotentialSystemicTherapyforBrainMetastasesCreator(): FunctionCreator {
+        return FunctionCreator { HasReceivedPotentialSystemicTherapyForBrainMetastases() }
     }
 }
