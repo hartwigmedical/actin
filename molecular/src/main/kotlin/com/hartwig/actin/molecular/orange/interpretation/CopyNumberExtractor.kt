@@ -9,9 +9,60 @@ import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
+import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
+import java.util.*
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+
+    fun extractCopyNumbers(purple: PurpleRecord): SortedSet<CopyNumber> {
+        val drivers = VariantExtractor.relevantPurpleDrivers(purple)
+        return purple.allSomaticGeneCopyNumbers()
+            .map { geneCopyNumber ->
+                Pair(geneCopyNumber, findCopyNumberDriver(drivers, geneCopyNumber.gene()))
+            }
+            .filter{ (geneCopyNumber) ->
+                val geneIncluded = geneFilter.include(geneCopyNumber.gene())
+                geneIncluded}
+            .map { (geneCopyNumber, driver) ->
+                if (driver != null) {
+                    println("DRIVER FOUND, should use PurpleGainLoss")
+                    val gainLoss = findGainLoss(purple.allSomaticGainsLosses(), geneCopyNumber.gene())
+                    val event = DriverEventFactory.gainLossEvent(gainLoss)
+                    val alteration = GeneAlterationFactory.convertAlteration(gainLoss.gene(), evidenceDatabase.geneAlterationForCopyNumber(gainLoss))
+                    CopyNumber(
+                        gene = alteration.gene,
+                        geneRole = alteration.geneRole,
+                        proteinEffect = alteration.proteinEffect,
+                        isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                        isReportable = true,
+                        event = event,
+                        driverLikelihood = DriverLikelihood.HIGH,
+                        evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss))!!,
+                        type = determineType(gainLoss.interpretation()),
+                        minCopies = Math.round(gainLoss.minCopies()).toInt(),
+                        maxCopies = Math.round(gainLoss.maxCopies()).toInt()
+                    )
+                } else {
+                    println("No driver found, should use PurpleGeneCopyNumber")
+                    val alteration = GeneAlterationFactory.convertAlteration(geneCopyNumber.gene(), null)
+                    val gene = alteration.gene
+                    CopyNumber(
+                        gene = alteration.gene,
+                        geneRole = alteration.geneRole,
+                        proteinEffect = alteration.proteinEffect,
+                        isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                        isReportable = false,
+                        event = "$gene copy number",
+                        driverLikelihood = null,
+                        evidence = ActionableEvidenceFactory.createNoEvidence(),
+                        type = CopyNumberType.NONE,
+                        minCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt(),
+                        maxCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt() //TODO: maxCopies should be retrievable from ORANGE datamodel.
+                    )
+                }
+            }.toSortedSet(CopyNumberComparator())
+    }
 
     fun extractGainsLosses(purple: PurpleRecord): Set<CopyNumber> {
         val drivers = VariantExtractor.relevantPurpleDrivers(purple)
@@ -79,6 +130,20 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
                 (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) && driver.gene() == geneToFind
             }
         }
+
+        private fun findGainLoss(gainsLosses: MutableList<PurpleGainLoss>, geneToFind: String): PurpleGainLoss {
+            val gainLoss = gainsLosses.find { gainLoss ->
+                (gainLoss.gene() == geneToFind)
+            }
+            if (gainLoss != null) {
+                return gainLoss
+            } else {
+                throw IllegalStateException(
+                    "Copy number driver found but could not find corresponding PurpleGainLoss for gene : '$geneToFind'."
+                )
+            }
+
+        }
     }
 
     fun extractGeneCopyNumbers(purple: PurpleRecord, reportableCopyNumbers: Set<CopyNumber>): Set<CopyNumber> {
@@ -101,8 +166,8 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
                     proteinEffect = alteration.proteinEffect,
                     isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
                     isReportable = false,
-                    event = "copy number event",
-                    driverLikelihood = if (driver != null) DriverLikelihood.HIGH else null,
+                    event = "copy number",
+                    driverLikelihood = null,
                     evidence = ActionableEvidenceFactory.createNoEvidence(),
                     type = CopyNumberType.NONE,
                     minCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt(),
