@@ -18,7 +18,6 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to hasCancerWithSmallCellComponentCreator(),
             EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNSCLCCreator(),
             EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
-            EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT to hasProstateCancerWithSmallCellComponentCreator(),
             EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to hasOvarianCancerWithMucinousComponentCreator(),
             EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to hasOvarianBorderlineTumorCreator(),
             EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR to hasStomachUndifferentiatedTumorCreator(),
@@ -115,10 +114,6 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasNonSquamousNSCLCCreator(): FunctionCreator {
         return FunctionCreator { HasNonSquamousNSCLC(doidModel()) }
-    }
-
-    private fun hasProstateCancerWithSmallCellComponentCreator(): FunctionCreator {
-        return FunctionCreator { HasProstateCancerWithSmallCellComponent(doidModel()) }
     }
 
     private fun hasOvarianCancerWithMucinousComponentCreator(): FunctionCreator {
