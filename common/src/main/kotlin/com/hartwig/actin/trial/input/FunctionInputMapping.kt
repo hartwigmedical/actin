@@ -135,6 +135,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to FunctionInput.NONE,
         EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to FunctionInput.NONE,
         EligibilityRule.HAS_RECEIVED_POTENTIAL_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to FunctionInput.NONE,
+        EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to FunctionInput.NONE,
 
         EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY to FunctionInput.NONE,
