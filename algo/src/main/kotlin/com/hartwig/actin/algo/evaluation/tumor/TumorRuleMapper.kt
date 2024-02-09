@@ -17,8 +17,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to hasCancerWithNeuroendocrineComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to hasCancerWithSmallCellComponentCreator(),
             EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNSCLCCreator(),
-            EligibilityRule.HAS_BREAST_CANCER_HORMONE_POSITIVE_AND_HER2_NEGATIVE to hasBreastCancerHormonePositiveHER2NegativeCreator(),
-            EligibilityRule.HAS_PROSTATE_CANCER_WITH_SMALL_CELL_COMPONENT to hasProstateCancerWithSmallCellComponentCreator(),
+            EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
             EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to hasOvarianCancerWithMucinousComponentCreator(),
             EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to hasOvarianBorderlineTumorCreator(),
             EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR to hasStomachUndifferentiatedTumorCreator(),
@@ -49,6 +48,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(),
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
+            EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to hasIrradiationAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
             EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideSampleForFurtherAnalysisCreator(),
@@ -97,8 +97,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         }
     }
 
-    private fun hasBreastCancerHormonePositiveHER2NegativeCreator(): FunctionCreator {
-        return FunctionCreator { HasBreastCancerHormonePositiveHER2Negative(doidModel()) }
+    private fun hasBreastCancerWithPositiveReceptorOfTypeCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val receptorType = functionInputResolver().createOneReceptorTypeInput(function)
+            HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType)
+        }
     }
 
     private fun hasCancerWithNeuroendocrineComponentCreator(): FunctionCreator {
@@ -111,10 +114,6 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasNonSquamousNSCLCCreator(): FunctionCreator {
         return FunctionCreator { HasNonSquamousNSCLC(doidModel()) }
-    }
-
-    private fun hasProstateCancerWithSmallCellComponentCreator(): FunctionCreator {
-        return FunctionCreator { HasProstateCancerWithSmallCellComponent(doidModel()) }
     }
 
     private fun hasOvarianCancerWithMucinousComponentCreator(): FunctionCreator {
@@ -254,6 +253,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasBiopsyAmenableLesionCreator(): FunctionCreator {
         return FunctionCreator { HasBiopsyAmenableLesion() }
+    }
+
+    private fun hasIrradiationAmenableLesionCreator(): FunctionCreator {
+        return FunctionCreator { HasIrradiationAmenableLesion(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasMinimumSitesWithLesionsCreator(): FunctionCreator {

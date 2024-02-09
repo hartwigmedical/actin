@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
-import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import io.mockk.Called
 import io.mockk.every
@@ -85,7 +85,7 @@ class CurationDatabaseContextTest {
             bloodTransfusionTranslation,
             translationDatabaseWithUnusedConfig(expectedUnusedConfig[18])
         )
-        assertThat(context.allUnusedConfig(listOf(ExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
+        assertThat(context.allUnusedConfig(listOf(CurationExtractionEvaluation()))).containsExactlyInAnyOrderElementsOf(expectedUnusedConfig)
         verify { cypInteractionCuration wasNot Called }
         verify { qtProlongingCuration wasNot Called }
         verify { bloodTransfusionTranslation wasNot Called }

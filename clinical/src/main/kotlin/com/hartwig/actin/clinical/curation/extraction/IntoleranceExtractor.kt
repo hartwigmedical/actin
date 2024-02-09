@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.datamodel.Intolerance
-import com.hartwig.actin.clinical.feed.intolerance.IntoleranceEntry
+import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 
 class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<IntoleranceConfig>, private val atcModel: AtcModel) {
 
@@ -38,7 +38,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                 } ?: it
                 ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
             }
-            .fold(ExtractionResult(emptyList(), ExtractionEvaluation())) { (intolerances, aggregatedEval), (intolerance, eval) ->
+            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (intolerances, aggregatedEval), (intolerance, eval) ->
                 ExtractionResult(intolerances + intolerance, aggregatedEval + eval)
             }
     }

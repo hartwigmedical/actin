@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFactory
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
-import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -36,7 +36,7 @@ class CurationDatabaseReader {
             tsv: String,
             factory: CurationConfigFactory<T>,
             category: CurationCategory,
-            evaluatedInputFunction: (ExtractionEvaluation) -> Set<String>
+            evaluatedInputFunction: (CurationExtractionEvaluation) -> Set<String>
         ): CurationDatabase<T> {
             LOGGER.info("Reading clinical curation config from {}", clinicalCurationDirectory)
             val basePath = Paths.forceTrailingFileSeparator(clinicalCurationDirectory)

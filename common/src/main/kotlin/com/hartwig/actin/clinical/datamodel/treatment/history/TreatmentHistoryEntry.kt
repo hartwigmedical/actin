@@ -6,12 +6,12 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 
 data class TreatmentHistoryEntry(
     val treatments: Set<Treatment>,
-    val startYear: Int?,
-    val startMonth: Int?,
-    val intents: Set<Intent>?,
+    val startYear: Int? = null,
+    val startMonth: Int? = null,
+    val intents: Set<Intent>? = null,
     val isTrial: Boolean = false,
-    val trialAcronym: String?,
-    val treatmentHistoryDetails: TreatmentHistoryDetails?
+    val trialAcronym: String? = null,
+    val treatmentHistoryDetails: TreatmentHistoryDetails? = null
 ) {
     fun allTreatments(): Set<Treatment> {
         val switchToTreatments = treatmentHistoryDetails?.switchToTreatments?.map(TreatmentStage::treatment)?.toSet() ?: emptySet()

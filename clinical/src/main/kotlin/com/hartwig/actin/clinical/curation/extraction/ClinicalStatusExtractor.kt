@@ -12,7 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.ECGMeasure
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
-import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 
 class ClinicalStatusExtractor(
     private val ecgCuration: CurationDatabase<ECGConfig>,
@@ -22,7 +22,7 @@ class ClinicalStatusExtractor(
 
     fun extract(patientId: String, questionnaire: Questionnaire?, hasComplications: Boolean?): ExtractionResult<ClinicalStatus> {
         if (questionnaire == null) {
-            return ExtractionResult(ClinicalStatus(), ExtractionEvaluation())
+            return ExtractionResult(ClinicalStatus(), CurationExtractionEvaluation())
         }
         val ecgCuration = curateECG(patientId, questionnaire.ecg)
         val infectionCuration = curateInfection(patientId, questionnaire.infectionStatus)
@@ -66,7 +66,7 @@ class ClinicalStatusExtractor(
                 null
             }
         }
-        return ExtractionResult(ecg, curationResponse?.extractionEvaluation ?: ExtractionEvaluation())
+        return ExtractionResult(ecg, curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation())
     }
 
     private fun curateInfection(patientId: String, rawInfectionStatus: InfectionStatus?): ExtractionResult<InfectionStatus?> {
@@ -87,7 +87,7 @@ class ClinicalStatusExtractor(
                 null
             }
         }
-        return ExtractionResult(infectionStatus, curationResponse?.extractionEvaluation ?: ExtractionEvaluation())
+        return ExtractionResult(infectionStatus, curationResponse?.extractionEvaluation ?: CurationExtractionEvaluation())
     }
 
     private fun maybeECGMeasure(value: Int?, unit: String?): ECGMeasure? {

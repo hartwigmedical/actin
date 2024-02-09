@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 
 class OncologicalHistoryExtractor(
     private val treatmentHistoryCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
@@ -19,7 +19,7 @@ class OncologicalHistoryExtractor(
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<TreatmentHistoryEntry>> {
         if (questionnaire == null) {
-            return ExtractionResult(emptyList(), ExtractionEvaluation())
+            return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
         val treatmentHistoryCuration = listOfNotNull(
             questionnaire.treatmentHistoryCurrentTumor,

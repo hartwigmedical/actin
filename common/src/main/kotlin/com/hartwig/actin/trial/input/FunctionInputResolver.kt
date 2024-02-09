@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
@@ -41,7 +42,7 @@ import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.util.*
+import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
@@ -189,6 +190,10 @@ class FunctionInputResolver(
                 }
                 FunctionInput.ONE_DOID_TERM -> {
                     createOneDoidTermInput(function)
+                    return true
+                }
+                FunctionInput.ONE_RECEPTOR_TYPE -> {
+                    createOneReceptorTypeInput(function)
                     return true
                 }
                 FunctionInput.MANY_INTENTS_ONE_INTEGER -> {
@@ -479,6 +484,11 @@ class FunctionInputResolver(
             throw IllegalStateException("Not a valid DOID term: $param")
         }
         return param
+    }
+
+    fun createOneReceptorTypeInput(function: EligibilityFunction): ReceptorType {
+        assertParamConfig(function, FunctionInput.ONE_RECEPTOR_TYPE, 1)
+        return ReceptorType.valueOf(parameterAsString(function, 0))
     }
 
     fun createManyIntentsInput(function: EligibilityFunction): ManyIntents {
