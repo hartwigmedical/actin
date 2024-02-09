@@ -52,30 +52,35 @@ class CopyNumberExtractorTest {
             .minMinorAlleleCopyNumber(0.0)
             .build()
         val geneCopyNumber2: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder()
-            .gene("gene 5")
+            .gene("gene 2")
             .minCopyNumber(4.2)
             .minMinorAlleleCopyNumber(1.8)
             .build()
         val geneCopyNumber3: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder()
-            .gene("gene 6")
+            .gene("gene 3")
             .minCopyNumber(5.1)
             .minMinorAlleleCopyNumber(2.2)
             .build()
         val geneCopyNumber4: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder()
-            .gene("gene 7")
+            .gene("gene 4")
             .minCopyNumber(1.0)
+            .minMinorAlleleCopyNumber(2.0)
+            .build()
+        val geneCopyNumber5: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder()
+            .gene("gene 5")
+            .minCopyNumber(14.0)
             .minMinorAlleleCopyNumber(2.0)
             .build()
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addSomaticDrivers(driver1)
             .addAllSomaticGainsLosses(gainLoss1, gainLoss2, gainLoss3, gainLoss4)
-            .addAllSomaticGeneCopyNumbers(geneCopyNumber1, geneCopyNumber2, geneCopyNumber3, geneCopyNumber4)
+            .addAllSomaticGeneCopyNumbers(geneCopyNumber1, geneCopyNumber2, geneCopyNumber3, geneCopyNumber4, geneCopyNumber5)
             .build()
-        val geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene(), geneCopyNumber2.gene(), geneCopyNumber3.gene(), geneCopyNumber4.gene())
+        val geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene(), geneCopyNumber5.gene())
         val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
-        val copyNumbers = copyNumberExtractor.extractGainsLosses(purple)
-        assertThat(copyNumbers).hasSize(3)
+        val copyNumbers = copyNumberExtractor.extractCopyNumbers(purple)
+        assertThat(copyNumbers).hasSize(4)
 
         val gene1 = findByGene(copyNumbers, "gene 1")
         assertThat(gene1.isReportable).isTrue
@@ -87,55 +92,24 @@ class CopyNumberExtractorTest {
         val gene2 = findByGene(copyNumbers, "gene 2")
         assertThat(gene2.isReportable).isFalse
         assertThat(gene2.driverLikelihood).isNull()
-        assertThat(gene2.type).isEqualTo(CopyNumberType.FULL_GAIN)
-        assertThat(gene2.minCopies).isEqualTo(20)
-        assertThat(gene2.maxCopies).isEqualTo(21)
+        assertThat(gene2.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(gene2.minCopies).isEqualTo(4)
+        assertThat(gene2.maxCopies).isEqualTo(4)
 
         val gene4 = findByGene(copyNumbers, "gene 4")
-        assertThat(gene4.minCopies).isEqualTo(20)
-        assertThat(gene4.maxCopies).isEqualTo(20)
+        assertThat(gene4.isReportable).isFalse
+        assertThat(gene4.driverLikelihood).isNull()
+        assertThat(gene4.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(gene4.minCopies).isEqualTo(1)
+        assertThat(gene4.maxCopies).isEqualTo(1)
 
-        val geneCopyNumbers = copyNumberExtractor.extractGeneCopyNumbers(purple, copyNumbers)
+        val gene5 = findByGene(copyNumbers, "gene 5")
+        assertThat(gene5.isReportable).isFalse
+        assertThat(gene5.driverLikelihood).isNull()
+        assertThat(gene5.type).isEqualTo(CopyNumberType.NONE)
+        assertThat(gene5.minCopies).isEqualTo(14)
+        assertThat(gene5.maxCopies).isEqualTo(14)
 
-        assertThat(geneCopyNumbers).hasSize(3)
-
-        val cn2 = findByGene(geneCopyNumbers, "gene 5")
-        assertThat(cn2.isReportable).isFalse
-        assertThat(cn2.driverLikelihood).isNull()
-        assertThat(cn2.type).isEqualTo(CopyNumberType.NONE)
-        assertThat(cn2.minCopies).isEqualTo(4)
-        assertThat(cn2.maxCopies).isEqualTo(4)
-
-        val cn3 = findByGene(geneCopyNumbers, "gene 6")
-        assertThat(cn3.isReportable).isFalse
-        assertThat(cn3.driverLikelihood).isNull()
-        assertThat(cn3.type).isEqualTo(CopyNumberType.NONE)
-        assertThat(cn3.minCopies).isEqualTo(5)
-        assertThat(cn3.maxCopies).isEqualTo(5)
-
-        val cn4 = findByGene(geneCopyNumbers, "gene 7")
-        assertThat(cn4.isReportable).isFalse
-        assertThat(cn4.driverLikelihood).isNull()
-        assertThat(cn4.type).isEqualTo(CopyNumberType.NONE)
-        assertThat(cn4.minCopies).isEqualTo(1)
-        assertThat(cn4.maxCopies).isEqualTo(1)
-
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun shouldThrowExceptionWhenFilteringReportedCopyNumber() {
-        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build()
-        val gainLoss: PurpleGainLoss =
-            TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
-        val purple: PurpleRecord = ImmutablePurpleRecord.builder()
-            .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
-            .addSomaticDrivers(driver)
-            .addAllSomaticGainsLosses(gainLoss)
-            .build()
-
-        val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
-        val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
-        copyNumberExtractor.extractGainsLosses(purple)
     }
 
     @Test
