@@ -16,7 +16,7 @@ import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-val FEED_DIRECTORY: String = Resources.getResource("feed.emc").path + "/"
+val FEED_DIRECTORY: String = Resources.getResource("feed/emc").path + "/"
 
 object TestFeedFactory {
     const val TEST_SUBJECT = "ACTN-01-02-9999"

@@ -37,7 +37,7 @@ class EmcClinicalFeedReaderTest {
     }
 
     companion object {
-        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed.emc").path
+        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed/emc").path
         private const val EPSILON = 1.0E-10
 
         private fun assertPatients(entries: List<PatientEntry>) {

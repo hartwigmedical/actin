@@ -39,6 +39,7 @@ class ClinicalIngestionFeedAdapterTest {
                         mapOf(
                             "2513" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "5082" to CurationDoidValidator.DISEASE_DOID,
                             "11335" to CurationDoidValidator.DISEASE_DOID,
                             "0060500" to CurationDoidValidator.DISEASE_DOID
@@ -84,6 +85,10 @@ class ClinicalIngestionFeedAdapterTest {
         )
 
         assertThat(ingestionResult.unusedConfigs).containsExactly(
+            UnusedCurationConfig(categoryName = "Primary Tumor", input = "long | metastase adenocarcinoom"),
+            UnusedCurationConfig(categoryName = "Non Oncological History", input = "pijn bij maligne neoplasma van longen"),
+            UnusedCurationConfig(categoryName = "Complication", input = "overige"),
+            UnusedCurationConfig(categoryName = "Toxicity", input = "dysphagia"),
             UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "ihc erbb2 3+"),
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk")

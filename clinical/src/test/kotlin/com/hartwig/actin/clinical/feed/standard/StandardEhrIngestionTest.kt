@@ -31,7 +31,11 @@ class StandardEhrIngestionTest {
                         emptySet(),
                         emptySet(),
                         mapOf(
-                            "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID
+                            "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "5082" to CurationDoidValidator.DISEASE_DOID,
+                            "11335" to CurationDoidValidator.DISEASE_DOID,
+                            "0060500" to CurationDoidValidator.DISEASE_DOID
                         )
                     )
                 )
@@ -63,6 +67,9 @@ class StandardEhrIngestionTest {
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
+
+        assertThat(curationDatabase.validate()).isEmpty()
+
         assertThat(result.size).isEqualTo(1)
         val patientResult = result[0]
         assertThat(patientResult.first.clinicalRecord).isEqualTo(expected)

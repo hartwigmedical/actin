@@ -91,6 +91,6 @@ class FeedModelTest {
     }
 
     companion object {
-        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed.emc").path
+        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed/emc").path
     }
 }
