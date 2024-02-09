@@ -152,6 +152,16 @@ object TestOrangeFactory {
                 .minCopyNumber(3.2)
                 .minMinorAlleleCopyNumber(0.0)
                 .build())
+            .addAllSomaticGeneCopyNumbers(TestPurpleFactory.geneCopyNumberBuilder()
+                .gene("PTEN")
+                .minCopyNumber(0.1)
+                .minMinorAlleleCopyNumber(0.0)
+                .build())
+            .addAllSomaticGeneCopyNumbers(TestPurpleFactory.geneCopyNumberBuilder()
+                .gene("MYC")
+                .minCopyNumber(38.0)
+                .minMinorAlleleCopyNumber(19.0)
+                .build())
             .build()
     }
 
