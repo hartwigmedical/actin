@@ -34,6 +34,7 @@ enum class FunctionInput {
     ONE_DOID_TERM,
     ONE_TUMOR_STAGE,
     ONE_HAPLOTYPE,
+    ONE_RECEPTOR_TYPE,
     MANY_INTENTS,
     MANY_INTENTS_ONE_INTEGER,
 }

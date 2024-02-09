@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.molecular.datamodel.ExperimentType
@@ -20,6 +21,30 @@ internal object TumorTestFactory {
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
             clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids)),
+            molecular = base.molecular.copy(
+                characteristics = base.molecular.characteristics.copy(ploidy = 2.0),
+                drivers = base.molecular.drivers.copy(
+                    copyNumbers = setOf(
+                        TestCopyNumberFactory.createMinimal().copy(
+                            isReportable = true,
+                            gene = amplifiedGene,
+                            geneRole = GeneRole.ONCO,
+                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                            type = CopyNumberType.FULL_GAIN,
+                            minCopies = 20,
+                            maxCopies = 20
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    fun withDoidsAndAmplificationAndPriorMolecularTest(
+        doids: Set<String>, amplifiedGene: String, priorMolecularTests: List<PriorMolecularTest>
+    ): PatientRecord {
+        return base.copy(
+            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests),
             molecular = base.molecular.copy(
                 characteristics = base.molecular.characteristics.copy(ploidy = 2.0),
                 drivers = base.molecular.drivers.copy(
@@ -136,5 +161,13 @@ internal object TumorTestFactory {
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
         return base.copy(molecular = base.molecular.copy(type = type))
+    }
+
+    fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<PriorMolecularTest>, doids: Set<String>?): PatientRecord {
+        return base.copy(
+            clinical = base.clinical.copy(
+                tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests
+            )
+        )
     }
 }
