@@ -175,6 +175,7 @@ object FunctionInputMapping {
         EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to FunctionInput.ONE_INTEGER,
         EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to FunctionInput.ONE_INTEGER,
         EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
+        EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to FunctionInput.NONE,
         EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to FunctionInput.NONE,
         EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to FunctionInput.NONE,
