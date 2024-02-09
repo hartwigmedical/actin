@@ -100,6 +100,10 @@
         "isBiallelic": false,
         "isHotspot": true,
         "clonalLikelihood": 1.0,
+        "chromosome": 7,
+        "position": 140453136,
+        "ref": "T",
+        "alt": "A",
         "phaseGroups": [
           2
         ],
