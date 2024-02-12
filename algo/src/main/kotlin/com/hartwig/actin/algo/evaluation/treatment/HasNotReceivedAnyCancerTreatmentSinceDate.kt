@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import java.time.LocalDate
 
 class HasNotReceivedAnyCancerTreatmentSinceDate(
-    private val minDate: LocalDate?,
+    private val minDate: LocalDate,
     private val monthsAgo: Int
 ) : EvaluationFunction {
 
@@ -24,11 +24,8 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
                 )
             }
 
-            priorCancerTreatment.none { treatmentSinceMinDate(it, false) } && priorCancerTreatment.any {
-                treatmentSinceMinDate(
-                    it,
-                    true
-                )
+            priorCancerTreatment.none { treatmentSinceMinDate(it, minDate, false) } && priorCancerTreatment.any {
+                treatmentSinceMinDate(it, minDate, true)
             } -> {
                 EvaluationFactory.undetermined(
                     "Patient has had anti-cancer therapy (${priorCancerTreatment.joinToString(", ")}) but " +
@@ -38,14 +35,14 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
                 )
             }
 
-            priorCancerTreatment.none { treatmentSinceMinDate(it, false) } -> {
+            priorCancerTreatment.none { treatmentSinceMinDate(it, minDate, false) } -> {
                 EvaluationFactory.pass(
                     "Patient has not received anti-cancer therapy within $monthsAgo months",
                     "Has not received anti-cancer therapy within $monthsAgo months"
                 )
             }
 
-            priorCancerTreatment.none { treatmentSinceMinDatePlusOneMonth(it) } -> {
+            priorCancerTreatment.none { treatmentSinceMinDate(it, minDate.plusMonths(1), false) } -> {
                 EvaluationFactory.warn(
                     "Patient has received anti-cancer therapy within $monthsAgo months (therapy ${monthsAgo.minus(1)} months ago)",
                     "Has received anti-cancer therapy within $monthsAgo months (therapy ${monthsAgo.minus(1)} months ago)"
@@ -61,24 +58,13 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
         }
     }
 
-    private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, includeUnknown: Boolean): Boolean {
+    private fun treatmentSinceMinDate(treatment: TreatmentHistoryEntry, minDate: LocalDate, includeUnknown: Boolean): Boolean {
         return DateComparison.isAfterDate(
-            minDate!!,
+            minDate,
             treatment.treatmentHistoryDetails?.stopYear,
             treatment.treatmentHistoryDetails?.stopMonth
         )
             ?: DateComparison.isAfterDate(minDate, treatment.startYear, treatment.startMonth)
             ?: includeUnknown
-    }
-
-    private fun treatmentSinceMinDatePlusOneMonth(treatment: TreatmentHistoryEntry): Boolean {
-        val minDatePlusOneMonth = minDate!!.plusMonths(1)
-        return DateComparison.isAfterDate(
-            minDatePlusOneMonth,
-            treatment.treatmentHistoryDetails?.stopYear,
-            treatment.treatmentHistoryDetails?.stopMonth
-        )
-            ?: DateComparison.isAfterDate(minDatePlusOneMonth, treatment.startYear, treatment.startMonth)
-            ?: false
     }
 }
