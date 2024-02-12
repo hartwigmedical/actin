@@ -38,8 +38,6 @@ class CharacteristicsExtractorTest {
         assertThat(cupPrediction.featureClassifier).isEqualTo(0.972, Offset.offset(EPSILON))
 
         assertThat(characteristics.isMicrosatelliteUnstable).isFalse()
-        // TODO add test to further add evidence annotations? or was this supposed to be an empty actionable evidence?
-        //   also for other evidence types below
         assertThat(characteristics.microsatelliteEvidence).isNull()
         val hrScore = characteristics.homologousRepairScore
         assertThat(hrScore).isNotNull()

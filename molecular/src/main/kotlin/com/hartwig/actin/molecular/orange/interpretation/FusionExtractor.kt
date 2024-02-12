@@ -25,12 +25,10 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
             included
         }
             .map { fusion ->
-//                val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
                 Fusion(
                     isReportable = fusion.reported(),
                     event = DriverEventFactory.fusionEvent(fusion),
                     driverLikelihood = determineDriverLikelihood(fusion),
-//                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(fusion))!!,
                     evidence = ActionableEvidenceFactory.createNoEvidence(),
                     geneStart = fusion.geneStart(),
                     geneTranscriptStart = fusion.geneTranscriptStart(),
@@ -38,10 +36,6 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                     geneEnd = fusion.geneEnd(),
                     geneTranscriptEnd = fusion.geneTranscriptEnd(),
                     fusedExonDown = fusion.fusedExonDown(),
-//                    proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
-//                        GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
-//                    },
-//                    isAssociatedWithDrugResistance = knownFusion?.associatedWithDrugResistance(),
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
                     driverType = determineDriverType(fusion)

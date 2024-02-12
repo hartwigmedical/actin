@@ -32,14 +32,7 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter) {
             geneIncluded && include(breakend, lostGenes)
         }
             .map { breakend ->
-//                val alteration = GeneAlterationFactory.convertAlteration(
-//                    breakend.gene(), evidenceDatabase.geneAlterationForBreakend(breakend)
-//                )
                 Disruption(
-//                    gene = alteration.gene,
-//                    geneRole = alteration.geneRole,
-//                    proteinEffect = alteration.proteinEffect,
-//                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
                     gene = breakend.gene(),
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
@@ -47,7 +40,6 @@ internal class DisruptionExtractor(private val geneFilter: GeneFilter) {
                     isReportable = breakend.reported(),
                     event = DriverEventFactory.disruptionEvent(breakend),
                     driverLikelihood = DriverLikelihood.LOW,
-//                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(breakend))!!,
                     evidence = ActionableEvidenceFactory.createNoEvidence(),
                     type = determineDisruptionType(breakend.type()),
                     junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
