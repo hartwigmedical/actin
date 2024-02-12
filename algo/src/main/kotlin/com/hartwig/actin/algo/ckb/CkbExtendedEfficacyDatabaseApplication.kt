@@ -9,10 +9,7 @@ class CkbExtendedEfficacyDatabaseApplication {
 
     fun run() {
         val jsonEntries: List<JsonCkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(EXTENDED_EFFICACY_JSON_PATH)
-        jsonEntries.forEach(::println)
         val entries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceEntryFactory().extractCkbExtendedEvidence(jsonEntries)
-        entries.forEach(::println)
-
     }
 
     companion object {

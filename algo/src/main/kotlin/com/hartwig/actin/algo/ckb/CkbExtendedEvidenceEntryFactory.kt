@@ -50,7 +50,7 @@ class CkbExtendedEvidenceEntryFactory {
         )
     }
 
-    private fun convertVariantRequirements(jsonVariantRequirements: List<JsonCkbVariantRequirementDetail>): List<VariantRequirement> {
+    fun convertVariantRequirements(jsonVariantRequirements: List<JsonCkbVariantRequirementDetail>): List<VariantRequirement> {
         val variantRequirements = mutableListOf<VariantRequirement>()
         for (variantRequirement in jsonVariantRequirements) {
             variantRequirements.add(
@@ -95,12 +95,12 @@ class CkbExtendedEvidenceEntryFactory {
                     who3 = patientPopulation.nEcog3?.toInt(),
                     who4 = patientPopulation.nEcog4?.toInt(),
                     primaryTumorLocation = convertPrimaryTumorLocation(patientPopulation.nLocalizationPrimaryTumor),
-                    mutations = patientPopulation.otherMutations, // TO DO: convert to map once CKB has made notation consistent
+                    mutations = patientPopulation.otherMutations, //TODO: convert to map once CKB has made notation consistent
                     primaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),
                     primaryTumorRemovedPartial = patientPopulation.nPrimaryTumorRemovedPartial?.toInt(),
                     primaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
                     metastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
-                    priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, // TO DO: convert to number or percentage
+                    priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
                     highMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
                     medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival?.toDouble(),
                     medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival?.toDouble(),
@@ -111,7 +111,7 @@ class CkbExtendedEvidenceEntryFactory {
         return patientPopulations
     }
 
-    private fun convertGender(numberOfGender: String?, numberOfOtherGender: String?, numberOfPatients: String): Int? {
+    fun convertGender(numberOfGender: String?, numberOfOtherGender: String?, numberOfPatients: String): Int? {
         return numberOfGender?.toInt()
             ?: if (numberOfOtherGender != null) {
                 numberOfPatients.toInt() - numberOfOtherGender.toInt()
@@ -120,24 +120,37 @@ class CkbExtendedEvidenceEntryFactory {
             }
     }
 
-    private fun convertPrimaryTumorLocation(jsonPrimaryTumorLocations: String?): Map<String, Int>? {
+    fun convertPrimaryTumorLocation(jsonPrimaryTumorLocations: String?): Map<String, Int>? {
         val returnType: Map<String, Int> = HashMap()
         return if (jsonPrimaryTumorLocations == null) {
             null
         } else Gson().fromJson(jsonPrimaryTumorLocations, returnType.javaClass)
     }
 
-    private fun convertMetastaticSites(jsonMetastaticSites: String): Map<String, ValuePercentage> {
+    fun convertMetastaticSites(jsonMetastaticSites: String): Map<String, ValuePercentage> {
         val metastaticSites = mutableMapOf<String, ValuePercentage>()
         val list = jsonMetastaticSites.split(", ")
         for (item in list) {
-            // TO DO: use regex
+            //TODO: use regex
             val itemStripped = item.replace("(", "").replace(")", "").replace("%", "")
             val tumorTypeSplit = itemStripped.split(":")
             val values = tumorTypeSplit[1].split(" ")
             metastaticSites[tumorTypeSplit[0]] = ValuePercentage(value = values[1].toInt(), percentage = values[2].toDouble())
         }
         return metastaticSites
+    }
+
+    private fun convertAnalysisGroup(jsonAnalysisGroups: List<JsonCkbAnalysisGroup>): List<AnalysisGroup> {
+        val analysisGroups = mutableListOf<AnalysisGroup>()
+        for (jsonAnalysisGroup in jsonAnalysisGroups) {
+            analysisGroups.add(
+                AnalysisGroup(
+                    id = jsonAnalysisGroup.id,
+                    primaryEndPoints = convertPrimaryEndPoints(jsonAnalysisGroup.endPointMetrics),
+                )
+            )
+        }
+        return analysisGroups
     }
 
     private fun convertPrimaryEndPoints(jsonPrimaryEndPoints: List<JsonCkbEndPointMetric>): Set<PrimaryEndPoint> {
@@ -172,7 +185,7 @@ class CkbExtendedEvidenceEntryFactory {
         return primaryEndPoints
     }
 
-    private fun convertPrimaryEndPointValue(value: String, unit: String): Double? {
+    fun convertPrimaryEndPointValue(value: String, unit: String): Double? {
         return if (unit == "Y/N") {
             when (value) {
                 "Y" -> {
@@ -194,7 +207,7 @@ class CkbExtendedEvidenceEntryFactory {
         }
     }
 
-    private fun convertDerivedMetric(jsonDerivedMetrics: List<JsonCkbDerivedMetric>): List<DerivedMetric> {
+    fun convertDerivedMetric(jsonDerivedMetrics: List<JsonCkbDerivedMetric>): List<DerivedMetric> {
         val derivedMetrics = mutableListOf<DerivedMetric>()
         for (derivedMetric in jsonDerivedMetrics) {
             derivedMetrics.add(
@@ -213,24 +226,11 @@ class CkbExtendedEvidenceEntryFactory {
         return derivedMetrics
     }
 
-    private fun convertConfidenceInterval(confidenceInterval: String): List<String> {
+    fun convertConfidenceInterval(confidenceInterval: String): List<String> {
         if (confidenceInterval.contains("-")) {
             return confidenceInterval.split("-")
         } else {
             throw IllegalStateException("Incorrect confidence interval found: $confidenceInterval")
         }
-    }
-
-    private fun convertAnalysisGroup(jsonAnalysisGroups: List<JsonCkbAnalysisGroup>): List<AnalysisGroup> {
-        val analysisGroups = mutableListOf<AnalysisGroup>()
-        for (jsonAnalysisGroup in jsonAnalysisGroups) {
-            analysisGroups.add(
-                AnalysisGroup(
-                    id = jsonAnalysisGroup.id,
-                    primaryEndPoints = convertPrimaryEndPoints(jsonAnalysisGroup.endPointMetrics),
-                )
-            )
-        }
-        return analysisGroups
     }
 }
