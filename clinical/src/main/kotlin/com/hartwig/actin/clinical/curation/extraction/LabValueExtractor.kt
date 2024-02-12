@@ -22,16 +22,16 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<L
                     feedInput = input.code,
                     message = "Could not find laboratory translation for lab value with code '${input.code}' and name '$trimmedName'"
                 )
-                ExtractionResult(emptyList(), ExtractionEvaluation(warnings = setOf(warning)))
+                ExtractionResult(emptyList(), CurationExtractionEvaluation(warnings = setOf(warning)))
             } else {
                 val newLabValue = input.copy(
                     code = translation.translated.code,
                     name = translation.translated.name
                 )
-                ExtractionResult(listOf(newLabValue), ExtractionEvaluation(laboratoryEvaluatedInputs = setOf(translation)))
+                ExtractionResult(listOf(newLabValue), CurationExtractionEvaluation(laboratoryEvaluatedInputs = setOf(translation)))
             }
         }
-            .fold(ExtractionResult(emptyList<LabValue>(), ExtractionEvaluation())) { acc, result ->
+            .fold(ExtractionResult(emptyList<LabValue>(), CurationExtractionEvaluation())) { acc, result ->
                 ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
             }
 

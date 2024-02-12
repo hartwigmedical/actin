@@ -51,6 +51,8 @@
         <junit.version>4.13.2</junit.version>
         <assertj-core.version>3.24.2</assertj-core.version>
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
+        <jackson.version>2.16.1</jackson.version>
+        <kotlinx-serialization-json.version>1.6.2</kotlinx-serialization-json.version>
     </properties>
 
     <distributionManagement>
@@ -193,6 +195,11 @@
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-serialization-json</artifactId>
+                <version>${kotlinx-serialization-json.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <version>${commons.cli.version}</version>
@@ -236,6 +243,23 @@
                 <groupId>com.itextpdf</groupId>
                 <artifactId>io</artifactId>
                 <version>${itext.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-csv</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.immutables</groupId>
+                <artifactId>value</artifactId>
+                <version>${immutables.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>

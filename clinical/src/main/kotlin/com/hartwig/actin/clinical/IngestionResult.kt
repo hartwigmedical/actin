@@ -3,9 +3,9 @@ package com.hartwig.actin.clinical
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.feed.FeedValidationWarning
-import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireCurationError
+import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
+import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
 
 data class IngestionResult(
     val configValidationErrors: Set<CurationConfigValidationError> = emptySet(),
@@ -39,15 +39,19 @@ data class PatientIngestionResult(
                 record.patientId,
                 status(questionnaire, warnings),
                 record,
-                warnings.groupBy { it.category.categoryName }.map { (categoryName, warnings) ->
-                    CurationResult(
-                        categoryName,
-                        warnings.map { CurationRequirement(it.feedInput, it.message) }
-                    )
-                }.toSet(),
+                curationResults(warnings),
                 questionnaireCurationErrors,
                 feedValidationWarnings
             )
+        }
+
+        fun curationResults(warnings: List<CurationWarning>): Set<CurationResult> {
+            return warnings.groupBy { it.category.categoryName }.map { (categoryName, warnings) ->
+                CurationResult(
+                    categoryName,
+                    warnings.map { CurationRequirement(it.feedInput, it.message) }
+                )
+            }.toSet()
         }
 
         private fun status(questionnaire: Questionnaire?, warnings: List<CurationWarning>): PatientIngestionStatus {

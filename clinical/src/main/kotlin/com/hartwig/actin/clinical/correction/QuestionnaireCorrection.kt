@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.correction
 
-import com.hartwig.actin.clinical.feed.questionnaire.QuestionnaireEntry
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 

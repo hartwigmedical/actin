@@ -1,11 +1,11 @@
 package com.hartwig.actin.clinical.curation
 
 import com.hartwig.actin.clinical.curation.config.CurationConfig
-import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
 
 data class CurationResponse<T>(
-    val configs: Set<T> = emptySet(), val extractionEvaluation: ExtractionEvaluation = ExtractionEvaluation()
+    val configs: Set<T> = emptySet(), val extractionEvaluation: CurationExtractionEvaluation = CurationExtractionEvaluation()
 ) {
 
     fun config(): T? {
@@ -68,12 +68,12 @@ data class CurationResponse<T>(
 
             val evaluation = when (curationCategory) {
                 CurationCategory.ADMINISTRATION_ROUTE_TRANSLATION -> {
-                    ExtractionEvaluation(administrationRouteEvaluatedInputs = foundTranslations)
+                    CurationExtractionEvaluation(administrationRouteEvaluatedInputs = foundTranslations)
                 }
 
-                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION -> ExtractionEvaluation()
-                CurationCategory.TOXICITY_TRANSLATION -> ExtractionEvaluation(toxicityTranslationEvaluatedInputs = foundTranslations)
-                CurationCategory.DOSAGE_UNIT_TRANSLATION -> ExtractionEvaluation(dosageUnitEvaluatedInputs = foundTranslations)
+                CurationCategory.BLOOD_TRANSFUSION_TRANSLATION -> CurationExtractionEvaluation()
+                CurationCategory.TOXICITY_TRANSLATION -> CurationExtractionEvaluation(toxicityTranslationEvaluatedInputs = foundTranslations)
+                CurationCategory.DOSAGE_UNIT_TRANSLATION -> CurationExtractionEvaluation(dosageUnitEvaluatedInputs = foundTranslations)
                 else -> throw IllegalStateException("Unsupported curation category for translation lookup: $curationCategory")
             }
             return CurationResponse(foundTranslations, evaluation.copy(warnings = warnings))
@@ -87,26 +87,26 @@ data class CurationResponse<T>(
         ): CurationResponse<T> {
             val evaluatedInputs = setOf(inputText)
             val evaluation = when (curationCategory) {
-                CurationCategory.PRIMARY_TUMOR -> ExtractionEvaluation(primaryTumorEvaluatedInputs = evaluatedInputs)
-                CurationCategory.ONCOLOGICAL_HISTORY -> ExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = evaluatedInputs)
-                CurationCategory.SECOND_PRIMARY -> ExtractionEvaluation(secondPrimaryEvaluatedInputs = evaluatedInputs)
-                CurationCategory.LESION_LOCATION -> ExtractionEvaluation(lesionLocationEvaluatedInputs = evaluatedInputs)
-                CurationCategory.NON_ONCOLOGICAL_HISTORY -> ExtractionEvaluation(nonOncologicalHistoryEvaluatedInputs = evaluatedInputs)
-                CurationCategory.ECG -> ExtractionEvaluation(ecgEvaluatedInputs = evaluatedInputs)
-                CurationCategory.INFECTION -> ExtractionEvaluation(infectionEvaluatedInputs = evaluatedInputs)
-                CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION -> ExtractionEvaluation(
+                CurationCategory.PRIMARY_TUMOR -> CurationExtractionEvaluation(primaryTumorEvaluatedInputs = evaluatedInputs)
+                CurationCategory.ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = evaluatedInputs)
+                CurationCategory.SECOND_PRIMARY -> CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = evaluatedInputs)
+                CurationCategory.LESION_LOCATION -> CurationExtractionEvaluation(lesionLocationEvaluatedInputs = evaluatedInputs)
+                CurationCategory.NON_ONCOLOGICAL_HISTORY -> CurationExtractionEvaluation(nonOncologicalHistoryEvaluatedInputs = evaluatedInputs)
+                CurationCategory.ECG -> CurationExtractionEvaluation(ecgEvaluatedInputs = evaluatedInputs)
+                CurationCategory.INFECTION -> CurationExtractionEvaluation(infectionEvaluatedInputs = evaluatedInputs)
+                CurationCategory.PERIOD_BETWEEN_UNIT_INTERPRETATION -> CurationExtractionEvaluation(
                     periodBetweenUnitEvaluatedInputs = evaluatedInputs
                 )
 
-                CurationCategory.COMPLICATION -> ExtractionEvaluation(complicationEvaluatedInputs = evaluatedInputs)
-                CurationCategory.TOXICITY -> ExtractionEvaluation(toxicityEvaluatedInputs = evaluatedInputs)
-                CurationCategory.MOLECULAR_TEST_IHC -> ExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
-                CurationCategory.MOLECULAR_TEST_PDL1 -> ExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
-                CurationCategory.MEDICATION_NAME -> ExtractionEvaluation(medicationNameEvaluatedInputs = evaluatedInputs)
-                CurationCategory.MEDICATION_DOSAGE -> ExtractionEvaluation(medicationDosageEvaluatedInputs = evaluatedInputs)
-                CurationCategory.INTOLERANCE -> ExtractionEvaluation(intoleranceEvaluatedInputs = evaluatedInputs)
-                CurationCategory.CYP_INTERACTIONS -> ExtractionEvaluation()
-                CurationCategory.QT_PROLONGATING -> ExtractionEvaluation()
+                CurationCategory.COMPLICATION -> CurationExtractionEvaluation(complicationEvaluatedInputs = evaluatedInputs)
+                CurationCategory.TOXICITY -> CurationExtractionEvaluation(toxicityEvaluatedInputs = evaluatedInputs)
+                CurationCategory.MOLECULAR_TEST_IHC -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
+                CurationCategory.MOLECULAR_TEST_PDL1 -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
+                CurationCategory.MEDICATION_NAME -> CurationExtractionEvaluation(medicationNameEvaluatedInputs = evaluatedInputs)
+                CurationCategory.MEDICATION_DOSAGE -> CurationExtractionEvaluation(medicationDosageEvaluatedInputs = evaluatedInputs)
+                CurationCategory.INTOLERANCE -> CurationExtractionEvaluation(intoleranceEvaluatedInputs = evaluatedInputs)
+                CurationCategory.CYP_INTERACTIONS -> CurationExtractionEvaluation()
+                CurationCategory.QT_PROLONGATING -> CurationExtractionEvaluation()
                 else -> throw IllegalStateException("Unsupported curation category for config lookup: $curationCategory")
             }
             return CurationResponse(

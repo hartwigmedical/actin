@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.correction
 
 import com.google.common.io.Resources
-import com.hartwig.actin.clinical.feed.questionnaire.TestQuestionnaireFactory
+import com.hartwig.actin.clinical.feed.emc.questionnaire.TestQuestionnaireFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
