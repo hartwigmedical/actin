@@ -41,15 +41,15 @@ class DecisionTreeNodeTest {
         val brafV600EMut = EligibilityFunction(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y, listOf("BRAF", "V600E"))
         val krasMut = EligibilityFunction(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, listOf("KRAS"))
         val brafV600ECandidates = listOf(treatmentCandidate("treatment1"), treatmentCandidate("treatment2"))
-        val brafWtKrasMutCandidates = listOf(treatmentCandidate("treatment3"), treatmentCandidate("treatment4"))
-        val brafWtKrasWtCandidates = listOf(treatmentCandidate("treatment5"), treatmentCandidate("treatment6"))
+        val brafV600EWtKrasMutCandidates = listOf(treatmentCandidate("treatment3"), treatmentCandidate("treatment4"))
+        val brafV600EWtKrasWtCandidates = listOf(treatmentCandidate("treatment5"), treatmentCandidate("treatment6"))
         val tree: DecisionTreeNode = DecisionTree(
             brafV600EMut,
             DecisionTreeLeaf(brafV600ECandidates),
             DecisionTree(
                 krasMut,
-                DecisionTreeLeaf(brafWtKrasMutCandidates),
-                DecisionTreeLeaf(brafWtKrasWtCandidates)
+                DecisionTreeLeaf(brafV600EWtKrasMutCandidates),
+                DecisionTreeLeaf(brafV600EWtKrasWtCandidates)
             )
         )
 
