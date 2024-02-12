@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.feed.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import org.apache.logging.log4j.LogManager
 
 class PriorMolecularTestsExtractor(
@@ -20,12 +20,12 @@ class PriorMolecularTestsExtractor(
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorMolecularTest>> {
         if (questionnaire == null) {
-            return ExtractionResult(emptyList(), ExtractionEvaluation())
+            return ExtractionResult(emptyList(), CurationExtractionEvaluation())
         }
 
         val curation = listOf(
-            curate(patientId, "IHC", questionnaire.ihcTestResults, molecularTestIhcCuration),
-            curate(patientId, "PD-L1", questionnaire.pdl1TestResults, molecularTestPdl1Curation)
+            curate(patientId, CurationCategory.MOLECULAR_TEST_IHC, questionnaire.ihcTestResults, molecularTestIhcCuration),
+            curate(patientId, CurationCategory.MOLECULAR_TEST_PDL1, questionnaire.pdl1TestResults, molecularTestPdl1Curation)
         )
             .flatten().fold(CurationResponse<MolecularTestConfig>()) { acc, cur -> acc + cur }
 
@@ -36,15 +36,15 @@ class PriorMolecularTestsExtractor(
         fun create(curationDatabaseContext: CurationDatabaseContext) =
             PriorMolecularTestsExtractor(curationDatabaseContext.molecularTestIhcCuration, curationDatabaseContext.molecularTestPdl1Curation)
 
-        private fun curate(patientId: String, testType: String, testResults: List<String>?, curationDatabase: CurationDatabase<MolecularTestConfig>) =
+        private fun curate(patientId: String, curationCategory: CurationCategory, testResults: List<String>?, curationDatabase: CurationDatabase<MolecularTestConfig>) =
             testResults?.map {
                 val input = CurationUtil.fullTrim(it)
                 CurationResponse.createFromConfigs(
                     curationDatabase.find(input),
                     patientId,
-                    CurationCategory.MOLECULAR_TEST,
+                    curationCategory,
                     input,
-                    "$testType molecular test"
+                    curationCategory.categoryName
                 )
             } ?: emptyList()
     }

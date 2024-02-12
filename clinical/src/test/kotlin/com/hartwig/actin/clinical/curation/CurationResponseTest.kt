@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.LesionLocationConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
-import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.Translation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -21,7 +21,7 @@ class CurationResponseTest {
         assertThat(response).isEqualTo(
             CurationResponse(
                 configs,
-                ExtractionEvaluation(medicationNameEvaluatedInputs = setOf("input"))
+                CurationExtractionEvaluation(medicationNameEvaluatedInputs = setOf("input"))
             )
         )
     }
@@ -35,7 +35,7 @@ class CurationResponseTest {
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.MEDICATION_NAME, "input", "medication name", true
         )
-        val expectedEvaluation = ExtractionEvaluation(
+        val expectedEvaluation = CurationExtractionEvaluation(
             medicationNameEvaluatedInputs = setOf("input"),
             warnings = setOf(
                 CurationWarning(
@@ -61,7 +61,7 @@ class CurationResponseTest {
         assertThat(response).isEqualTo(
             CurationResponse(
                 configs,
-                ExtractionEvaluation(lesionLocationEvaluatedInputs = setOf("input"))
+                CurationExtractionEvaluation(lesionLocationEvaluatedInputs = setOf("input"))
             )
         )
     }
@@ -72,7 +72,7 @@ class CurationResponseTest {
         val response = CurationResponse.createFromConfigs(
             configs, PATIENT_ID, CurationCategory.LESION_LOCATION, "input", "lesion location"
         )
-        val expectedEvaluation = ExtractionEvaluation(
+        val expectedEvaluation = CurationExtractionEvaluation(
             lesionLocationEvaluatedInputs = setOf("input"),
             warnings = setOf(
                 CurationWarning(
@@ -93,7 +93,7 @@ class CurationResponseTest {
             translation, PATIENT_ID, CurationCategory.DOSAGE_UNIT_TRANSLATION, "input", "dosage unit"
         )
         assertThat(response).isEqualTo(
-            CurationResponse(setOf(translation), ExtractionEvaluation(dosageUnitEvaluatedInputs = setOf(translation)))
+            CurationResponse(setOf(translation), CurationExtractionEvaluation(dosageUnitEvaluatedInputs = setOf(translation)))
         )
     }
 
@@ -102,7 +102,7 @@ class CurationResponseTest {
         val response = CurationResponse.createFromTranslation(
             null, PATIENT_ID, CurationCategory.DOSAGE_UNIT_TRANSLATION, "input", "dosage unit"
         )
-        val expectedEvaluation = ExtractionEvaluation(
+        val expectedEvaluation = CurationExtractionEvaluation(
             warnings = setOf(
                 CurationWarning(
                     PATIENT_ID, CurationCategory.DOSAGE_UNIT_TRANSLATION, "input", "No translation found for dosage unit: 'input'"

@@ -34,7 +34,7 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.config.ToxicityConfigFactory
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfigFactory
-import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.curation.translation.AdministrationRouteTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.BloodTransfusionTranslationFactory
 import com.hartwig.actin.clinical.curation.translation.DosageUnitTranslationFactory
@@ -68,7 +68,7 @@ data class CurationDatabaseContext(
     val bloodTransfusionTranslation: TranslationDatabase<String>,
     val dosageUnitTranslation: TranslationDatabase<String>,
 ) {
-    fun allUnusedConfig(extractionEvaluations: List<ExtractionEvaluation>): Set<UnusedCurationConfig> =
+    fun allUnusedConfig(extractionEvaluations: List<CurationExtractionEvaluation>): Set<UnusedCurationConfig> =
         setOf(
             primaryTumorCuration,
             treatmentHistoryEntryCuration,
@@ -159,14 +159,14 @@ data class CurationDatabaseContext(
             molecularTestIhcCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MOLECULAR_TEST_IHC_TSV,
-                MolecularTestConfigFactory(),
-                CurationCategory.MOLECULAR_TEST
+                MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_IHC),
+                CurationCategory.MOLECULAR_TEST_IHC
             ) { it.molecularTestEvaluatedInputs },
             molecularTestPdl1Curation = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.MOLECULAR_TEST_PDL1_TSV,
-                MolecularTestConfigFactory(),
-                CurationCategory.MOLECULAR_TEST
+                MolecularTestConfigFactory(CurationCategory.MOLECULAR_TEST_PDL1),
+                CurationCategory.MOLECULAR_TEST_PDL1
             ) { it.molecularTestEvaluatedInputs },
             toxicityCuration = CurationDatabaseReader.read(
                 curationDir,
@@ -190,13 +190,13 @@ data class CurationDatabaseContext(
                 curationDir,
                 CurationDatabaseReader.QT_PROLONGATING_TSV,
                 QTProlongatingConfigFactory(),
-                CurationCategory.QT_PROLONGATION
+                CurationCategory.QT_PROLONGATING
             ) { emptySet() },
             cypInteractionCuration = CurationDatabaseReader.read(
                 curationDir,
                 CurationDatabaseReader.CYP_INTERACTIONS_TSV,
                 CypInteractionConfigFactory(),
-                CurationCategory.CYP_INTERACTION
+                CurationCategory.CYP_INTERACTIONS
             ) { emptySet() },
             medicationNameCuration = CurationDatabaseReader.read(
                 curationDir,

@@ -54,15 +54,15 @@ class PriorMolecularTestsExtractorTest {
         assertThat(evaluation.warnings).containsExactly(
             CurationWarning(
                 PATIENT_ID,
-                CurationCategory.MOLECULAR_TEST,
+                CurationCategory.MOLECULAR_TEST_IHC,
                 CANNOT_CURATE,
-                "Could not find IHC molecular test config for input '$CANNOT_CURATE'"
+                "Could not find Molecular Test IHC config for input '$CANNOT_CURATE'"
             ),
             CurationWarning(
                 PATIENT_ID,
-                CurationCategory.MOLECULAR_TEST,
+                CurationCategory.MOLECULAR_TEST_PDL1,
                 CANNOT_CURATE,
-                "Could not find PD-L1 molecular test config for input '$CANNOT_CURATE'"
+                "Could not find Molecular Test PDL1 config for input '$CANNOT_CURATE'"
             )
         )
         assertThat(evaluation.molecularTestEvaluatedInputs).isEqualTo((ihcInputs + pdl1Inputs).map(String::lowercase).toSet())

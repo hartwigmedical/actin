@@ -29,6 +29,10 @@ object ApplicationConfig {
         return cmd.getOptionValue(param) ?: throw ParseException("Parameter must be provided: $param")
     }
 
+    fun optionalValue(cmd: CommandLine, param: String): String? {
+        return cmd.getOptionValue(param)
+    }
+
     private fun pathExists(path: String): Boolean {
         return Files.exists(File(path).toPath())
     }

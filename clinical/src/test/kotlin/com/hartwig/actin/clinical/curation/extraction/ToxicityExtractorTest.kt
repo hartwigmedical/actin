@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.curation.config.ToxicityConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import com.hartwig.actin.clinical.feed.digitalfile.DigitalFileEntry
+import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

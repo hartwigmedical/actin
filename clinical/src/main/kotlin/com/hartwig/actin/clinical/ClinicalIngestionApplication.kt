@@ -5,8 +5,10 @@ import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.feed.ClinicalFeedReader
-import com.hartwig.actin.clinical.feed.FeedModel
+import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
+import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
+import com.hartwig.actin.clinical.feed.emc.FeedModel
+import com.hartwig.actin.clinical.feed.standard.StandardEhrIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -32,7 +34,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
-        val atcModel = WhoAtcModel.createFromFile(config.atcTsv)
+        val atcModel = WhoAtcModel.createFromFiles(config.atcTsv, config.atcOverridesTsv)
 
         LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
         val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory)
@@ -59,14 +61,19 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             exitProcess(1)
         }
 
-        val clinicalIngestion =
-            ClinicalIngestion.create(
+        val clinicalIngestion = if (config.feedFormat == FeedFormat.EMC_TSV)
+            EmcClinicalFeedIngestor.create(
                 feedModel,
                 curationDatabaseContext,
                 atcModel
+            ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel, treatmentDatabase)
+        val clinicalIngestionAdapter =
+            ClinicalIngestionFeedAdapter(
+                clinicalIngestion,
+                curationDatabaseContext
             )
 
-        val ingestionResult = clinicalIngestion.run()
+        val ingestionResult = clinicalIngestionAdapter.run()
         LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
         ClinicalRecordJson.write(ingestionResult.patientResults.map { it.clinicalRecord }, outputDirectory)
         LOGGER.info("Done!")
