@@ -8,9 +8,10 @@ import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import org.junit.Test
+import kotlin.math.E
 
 class GeneIsAmplifiedMinCopiesTest {
-    private val function = GeneIsAmplifiedMinCopies("gene A", 5)
+    private val functionAmp = GeneIsAmplifiedMinCopies("gene A", 5)
 
     private val passingAmp = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene A",
@@ -21,45 +22,60 @@ class GeneIsAmplifiedMinCopiesTest {
         minCopies = 40,
         maxCopies = 40
     )
+
+    private val functionHighCopyNumber = GeneIsAmplifiedMinCopies("gene B", 10)
+
+    private val highGeneCopyNumber = TestCopyNumberFactory.createMinimal().copy(
+        gene = "gene B",
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isReportable = false,
+        type = CopyNumberType.NONE,
+        minCopies = 12,
+        maxCopies = 12
+    )
     
     @Test
     fun canEvaluate() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, functionAmp.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, functionHighCopyNumber.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
 
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp)))
+        assertMolecularEvaluation(EvaluationResult.FAIL, functionAmp.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp)))
+        assertMolecularEvaluation(EvaluationResult.FAIL, functionHighCopyNumber.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(null, highGeneCopyNumber)))
 
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp)))
+        assertMolecularEvaluation(EvaluationResult.PASS, functionAmp.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp)))
+        assertMolecularEvaluation(EvaluationResult.PASS, functionHighCopyNumber.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, highGeneCopyNumber)))
 
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(geneRole = GeneRole.TSG)))
+            functionAmp.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(geneRole = GeneRole.TSG)))
         )
         
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(
+            functionAmp.evaluate(
                 MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
             )
         )
         
         assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(isReportable = false)))
+            EvaluationResult.PASS,
+            functionAmp.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(isReportable = false)))
         )
 
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 8, maxCopies = 8)))
+            functionAmp.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 8, maxCopies = 8)))
         )
 
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 4, maxCopies = 4)))
+            functionAmp.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 4, maxCopies = 4)))
         )
 
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 3)))
+            functionAmp.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 3)))
         )
     }
 }
