@@ -29,18 +29,18 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasHistoryOfPneumonitisCreator(),
             EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
             EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.STROKE_DOID),
-            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasRecentPriorConditionWithMultipleDoidsCreator(
-                DoidConstants.THROMBO_EMBOLIC_EVENT_DOID_SET,
+            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidsFromSetCreator(
+                DoidConstants.THROMBOEMBOLIC_EVENT_DOID_SET,
                 "Thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to hasPriorConditionWithMultipleDoidsCreator(
-                DoidConstants.THROMBO_EMBOLIC_EVENT_DOID_SET,
+            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
+                DoidConstants.THROMBOEMBOLIC_EVENT_DOID_SET,
                 "Thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasPriorConditionWithMultipleDoidsCreator(
+            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
                 setOf(DoidConstants.MYOCARDIAL_INFARCT_DOID, DoidConstants.STROKE_DOID), "Arterial thrombo-embolic event"
             ),
-            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasPriorConditionWithMultipleDoidsCreator(
+            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
                 setOf(DoidConstants.THROMBOSIS_DOID, DoidConstants.PULMONARY_EMBOLISM_DOID), "Venous thrombo-embolic event"
             ),
             EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.VASCULAR_DISEASE_DOID),
@@ -103,20 +103,20 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         }
     }
 
-    private fun hasRecentPriorConditionWithMultipleDoidsCreator(
+    private fun hasPriorConditionWithDoidsFromSetCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            HasHadPriorConditionWithDoidsFromSet(doidModel(), doidsToFind, priorOtherConditionTerm)
+        }
+    }
+
+    private fun hasRecentPriorConditionWithDoidsFromSetCreator(
         doidsToFind: Set<String>,
         priorOtherConditionTerm: String
     ): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithMultipleDoidTermsRecently(doidModel(), doidsToFind, priorOtherConditionTerm, minDate)
-        }
-    }
-
-    private fun hasPriorConditionWithMultipleDoidsCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
-            HasHadPriorConditionWithMultipleDoidTerms(doidModel(), doidsToFind, priorOtherConditionTerm)
+            HasHadPriorConditionWithDoidsFromSetRecently(doidModel(), doidsToFind, priorOtherConditionTerm, minDate)
         }
     }
 

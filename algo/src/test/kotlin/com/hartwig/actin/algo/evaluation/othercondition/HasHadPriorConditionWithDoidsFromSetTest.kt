@@ -6,11 +6,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
-class HasHadPriorConditionWithMultipleDoidTermsTest {
+class HasHadPriorConditionWithDoidsFromSetTest {
 
-    val doidsToFind = DoidConstants.THROMBO_EMBOLIC_EVENT_DOID_SET
+    val doidsToFind = DoidConstants.THROMBOEMBOLIC_EVENT_DOID_SET
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val function = HasHadPriorConditionWithMultipleDoidTerms(doidModel, doidsToFind, "thrombo-embolic event")
+    val function = HasHadPriorConditionWithDoidsFromSet(doidModel, doidsToFind, "thrombo-embolic event")
 
 
     @Test
@@ -26,6 +26,11 @@ class HasHadPriorConditionWithMultipleDoidTermsTest {
             doids = setOf(DoidConstants.LUNG_DISEASE_DOID)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(conditions)))
+    }
+
+    @Test
+    fun `Should fail if no conditions present in history`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(emptyList())))
     }
 
 }

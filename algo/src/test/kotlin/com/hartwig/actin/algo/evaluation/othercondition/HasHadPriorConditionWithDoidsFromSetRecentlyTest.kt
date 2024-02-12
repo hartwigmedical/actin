@@ -7,11 +7,11 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 import java.time.LocalDate
 
-class HasHadPriorConditionWithMultipleDoidTermsRecentlyTest {
+class HasHadPriorConditionWithDoidsFromSetRecentlyTest {
 
     private val minDate: LocalDate = LocalDate.of(2021, 8, 2)
-    private val doidsToFind = DoidConstants.THROMBO_EMBOLIC_EVENT_DOID_SET
-    private val function = HasHadPriorConditionWithMultipleDoidTermsRecently(
+    private val doidsToFind = DoidConstants.THROMBOEMBOLIC_EVENT_DOID_SET
+    private val function = HasHadPriorConditionWithDoidsFromSetRecently(
         TestDoidModelFactory.createMinimalTestDoidModel(),
         doidsToFind,
         "thrombo-embolic event",
@@ -25,7 +25,7 @@ class HasHadPriorConditionWithMultipleDoidTermsRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        doids = doidsToFind, year = 2021, month = 9
+                        doids = doidsToFind, year = minDate.year, month = minDate.plusMonths(1).monthValue
                     )
                 )
             )
@@ -39,7 +39,7 @@ class HasHadPriorConditionWithMultipleDoidTermsRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        doids = doidsToFind, year = 2022, month = 1
+                        doids = doidsToFind, year = minDate.plusYears(1).year, month = 1
                     )
                 )
             )
@@ -74,5 +74,28 @@ class HasHadPriorConditionWithMultipleDoidTermsRecentlyTest {
         )
     }
 
+    @Test
+    fun `Should fail when no conditions present in history`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherConditions(emptyList())
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail when other condition with correct DOID present in history, but outside of evaluated timeframe`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(
+                        doids = doidsToFind, year = minDate.minusYears(1).year, month = 1
+                    )
+                )
+            )
+        )
+    }
 
 }
