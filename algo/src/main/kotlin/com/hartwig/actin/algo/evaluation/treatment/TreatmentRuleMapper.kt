@@ -20,6 +20,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES to hasHadLimitedSystemicTreatmentsCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT to hasHadAnyCancerTreatmentCreator(),
+            EligibilityRule.HAS_NOT_RECEIVED_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
@@ -111,6 +112,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadAnyCancerTreatmentCreator(): FunctionCreator {
         return FunctionCreator { HasHadAnyCancerTreatment() }
+    }
+
+    private fun hasHadAnyCancerTreatmentWithinMonthsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val monthsAgo = functionInputResolver().createOneIntegerInput(function)
+            val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
+            HasNotReceivedAnyCancerTreatmentSinceDate(minDate, monthsAgo)
+        }
     }
 
     private fun hasHadSpecificTreatmentCreator(): FunctionCreator {
