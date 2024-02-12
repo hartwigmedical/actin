@@ -9,6 +9,11 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
+enum class FeedFormat {
+    STANDARD_JSON,
+    EMC_TSV
+}
+
 data class ClinicalIngestionConfig(
     val feedDirectory: String,
     val curationDirectory: String,
@@ -16,7 +21,8 @@ data class ClinicalIngestionConfig(
     val atcTsv: String,
     val atcOverridesTsv: String,
     val treatmentDirectory: String,
-    val outputDirectory: String
+    val outputDirectory: String,
+    val feedFormat: FeedFormat
 ) {
 
     companion object {
@@ -29,6 +35,7 @@ data class ClinicalIngestionConfig(
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val LOG_DEBUG = "log_debug"
+        private const val FEED_FORMAT = "feed_format"
 
         fun createOptions(): Options {
             val options = Options()
@@ -40,6 +47,11 @@ data class ClinicalIngestionConfig(
             options.addOption(TREATMENT_DIRECTORY, true, "Directory containing the treatment data")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where clinical data output will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
+            options.addOption(
+                FEED_FORMAT,
+                true,
+                "The format of the feed. Accepted values [${FeedFormat.values().joinToString()}]. Default is EMC_TSV"
+            )
             return options
         }
 
@@ -56,7 +68,8 @@ data class ClinicalIngestionConfig(
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 atcOverridesTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_OVERRIDES_TSV),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                feedFormat = ApplicationConfig.optionalValue(cmd, FEED_FORMAT)?.let { FeedFormat.valueOf(it) } ?: FeedFormat.EMC_TSV
             )
         }
     }

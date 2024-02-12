@@ -88,6 +88,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X to FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE,
+        EligibilityRule.HAS_NOT_RECEIVED_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_TREATMENT_NAME_X to FunctionInput.ONE_SPECIFIC_TREATMENT,
         EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER,
         EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to FunctionInput.MANY_DRUGS,
