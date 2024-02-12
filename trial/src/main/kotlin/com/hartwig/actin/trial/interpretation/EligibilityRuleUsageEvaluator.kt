@@ -85,7 +85,12 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME,
         EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION,
         EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X,
-        EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION
+        EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION,
+        EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X,
+        EligibilityRule.NSCLC_DRIVER_GENE_STATUSES_MUST_BE_AVAILABLE,
+        EligibilityRule.HAS_RECEIVED_POTENTIAL_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES,
+        EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE,
+        EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X,
     )
 
     fun evaluate(trials: List<Trial>) {
