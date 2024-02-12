@@ -8,11 +8,11 @@ import org.junit.Test
 
 class HasReceivedPotentialSystemicTherapyForBrainMetastasesTest {
 
-    val function = HasReceivedPotentialSystemicTherapyForBrainMetastases()
-    val systemicTherapy = TreatmentTestFactory.treatment("Systemic treatment", isSystemic = true)
-    val systemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(listOf(systemicTherapy))
-    val nonSystemicTherapy = TreatmentTestFactory.treatment("Local treatment", isSystemic = false)
-    val nonSystemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(listOf(nonSystemicTherapy))
+    private val function = HasReceivedPotentialSystemicTherapyForBrainMetastases()
+    private val systemicTherapy = TreatmentTestFactory.treatment("Systemic treatment", isSystemic = true)
+    private val systemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(listOf(systemicTherapy))
+    private val nonSystemicTherapy = TreatmentTestFactory.treatment("Local treatment", isSystemic = false)
+    private val nonSystemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(listOf(nonSystemicTherapy))
 
     @Test
     fun `Should warn if brain metastases present and received any systemic anti-cancer therapy`() {

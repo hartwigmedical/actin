@@ -18,7 +18,8 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?)
         return if (treatmentHistory.isEmpty()) {
             EvaluationFactory.fail("Patient has not had any prior cancer treatments", "Has not had any cancer treatment")
         } else {
-            val treatmentDisplay = "(treatment(s): ${treatmentHistory.joinToString(", ") { it.treatmentDisplay() }})"
+            val categoryDisplay = categoryToIgnore?.let { "other than ${categoryToIgnore.display()} " } ?: ""
+            val treatmentDisplay = "${categoryDisplay}(treatment(s): ${treatmentHistory.joinToString(", ") { it.treatmentDisplay() }})"
             if (categoryToIgnore == null) {
                 EvaluationFactory.pass(
                     "Patient has had prior cancer treatment $treatmentDisplay",
@@ -26,8 +27,8 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?)
                 )
             } else {
                 EvaluationFactory.pass(
-                    "Patient has had prior cancer treatment other than ${categoryToIgnore.display()} $treatmentDisplay",
-                    "Had had any cancer treatment other than ${categoryToIgnore.display()} $treatmentDisplay"
+                    "Patient has had prior cancer treatment $treatmentDisplay",
+                    "Had had any cancer treatment $treatmentDisplay"
                 )
             }
         }
