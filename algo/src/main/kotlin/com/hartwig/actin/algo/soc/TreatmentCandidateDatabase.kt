@@ -52,11 +52,11 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
             }
 
             CETUXIMAB, ENCORAFENIB_CETUXIMAB, NIVOLUMAB, PANITUMUMAB, IRINOTECAN -> {
-                createTreatmentCandidate(treatmentName, setOf(2, 3))
+                createTreatmentCandidate(treatmentName, setOf(2, 3, 4, 5))
             }
 
             LONSURF -> {
-                createTreatmentCandidate(treatmentName, setOf(3), optional = true)
+                createTreatmentCandidate(treatmentName, setOf(3, 4, 5), optional = true)
             }
 
             ENTRECTINIB, LAROTRECTINIB -> {
