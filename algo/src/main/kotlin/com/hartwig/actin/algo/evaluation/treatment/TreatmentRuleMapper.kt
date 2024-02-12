@@ -84,7 +84,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun isEligibleForTreatmentLinesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val lines = functionInputResolver().createManyIntegersInput(function)
-            IsEligibleForTreatmentLines(doidModel(), lines)
+            IsEligibleForTreatmentLines(lines)
         }
     }
 

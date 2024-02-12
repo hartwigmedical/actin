@@ -87,13 +87,24 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
     }
 
     private fun drugBasedExclusionsForTreatment(treatment: Treatment): EligibilityFunction {
+        val mutuallyExclusiveMonotherapies = setOf(CAPECITABINE, FLUOROURACIL)
+        if (treatment.name in mutuallyExclusiveMonotherapies) {
+            return EligibilityFunction(EligibilityRule.AND, mutuallyExclusiveMonotherapies.map(::eligibleIfTreatmentNotInHistory))
+        }
+        
         val treatmentDrugs = (treatment as DrugTreatment).drugs.map(Drug::name).toSet()
         val additionalDrugsToExclude = if (treatmentDrugs.intersect(antiEgfrDrugs).isEmpty()) emptyList() else antiEgfrDrugs
         val drugExclusionRule = eligibleIfDrugsNotInHistory(treatmentDrugs - drugExclusionExceptions + additionalDrugsToExclude)
+
         return if (treatmentDrugs.intersect(drugExclusionExceptions).isEmpty()) drugExclusionRule else {
-            eligibilityFunction(EligibilityRule.AND, drugExclusionRule, eligibleIfTreatmentNotInHistory(treatment))
+            appendSpecificTreatmentExclusion(drugExclusionRule, treatment)
         }
     }
+
+    private fun appendSpecificTreatmentExclusion(
+        drugExclusionRule: EligibilityFunction,
+        treatment: Treatment
+    ) = eligibilityFunction(EligibilityRule.AND, drugExclusionRule, eligibleIfTreatmentNotInHistory(treatment.name))
 
     companion object {
         private val drugExclusionExceptions = setOf(FLUOROURACIL, CAPECITABINE, FOLINIC_ACID)
@@ -113,15 +124,15 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
             )
         }
 
-        private fun eligibleIfTreatmentNotInHistory(treatment: Treatment): EligibilityFunction {
+        private fun eligibleIfTreatmentNotInHistory(treatmentName: String): EligibilityFunction {
             return eligibilityFunction(
                 EligibilityRule.NOT,
                 eligibilityFunction(
                     EligibilityRule.OR,
                     eligibilityFunction(
-                        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, treatment.name, RECENT_TREATMENT_THRESHOLD_WEEKS
+                        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, treatmentName, RECENT_TREATMENT_THRESHOLD_WEEKS
                     ),
-                    eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatment.name)
+                    eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatmentName)
                 )
             )
         }

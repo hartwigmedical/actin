@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
@@ -18,6 +19,9 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import io.mockk.every
@@ -97,6 +101,20 @@ class RecommendationEngineTest {
             it.treatment.name.equals(FOLFIRI, ignoreCase = true)
         }
     }
+
+    @Test
+    fun `Should not recommend 5-FU after Capecitabine`() {
+        assertThat(resultsForPatientWithHistory(listOf(CAPECITABINE))).noneMatch {
+            it.treatment.name.equals(FLUOROURACIL, ignoreCase = true)
+        }
+    }
+
+    @Test
+    fun `Should not recommend Capecitabine after 5-FU`() {
+        assertThat(resultsForPatientWithHistory(listOf(FLUOROURACIL))).noneMatch {
+            it.treatment.name.equals(CAPECITABINE, ignoreCase = true)
+        }
+    }
     
     @Test
     fun `Should recommend Irinotecan monotherapy in second line after first-line Oxaliplatin treatment`() {
@@ -110,8 +128,7 @@ class RecommendationEngineTest {
         val chemotherapies = listOf(CAPOX, FOLFOX, IRINOTECAN, FLUOROURACIL, CAPECITABINE)
         val pastTreatmentNames = listOf(
             PEMBROLIZUMAB,
-            CETUXIMAB,
-            LONSURF
+            CETUXIMAB
         )
         val patientRecord = patientRecordWithTreatmentHistory(pastTreatmentNames)
         assertThat(resultsForPatient(patientRecord).map { it.treatment.name }.toSet()).containsAll(chemotherapies)
@@ -316,6 +333,32 @@ class RecommendationEngineTest {
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MSI_MOLECULAR_RECORD
         )
         assertThat(thirdLinePatientResults.map(TreatmentCandidate::treatment)).containsAll(expectedAdditionalTreatments)
+    }
+
+    @Test
+    fun `Should recommend Entrectinib and Larotrectinib for patients with NTRK fusion only after SOC exhaustion`() {
+        val ntrkFusionTreatments = listOf(ENTRECTINIB, LAROTRECTINIB).map(TREATMENT_DATABASE::findTreatmentByName)
+        val patientWithNtrkFusion = MolecularTestFactory.withFusion(
+            TestFusionFactory.createMinimal().copy(
+                geneStart = "NTRK1",
+                geneEnd = "NTRK1",
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.HIGH,
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+            )
+        ).copy(clinical = MINIMAL_CRC_PATIENT_RECORD.clinical)
+
+        assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientWithNtrkFusion)).isFalse
+        assertThat(resultsForPatient(patientWithNtrkFusion).map(TreatmentCandidate::treatment))
+            .doesNotContainAnyElementsOf(ntrkFusionTreatments)
+
+        val pastTreatmentNames = listOf(FOLFOX, IRINOTECAN, FLUOROURACIL, CAPECITABINE, CETUXIMAB, "TARGETED_THERAPY")
+        val patientWithNtrkFusionAndSocExhaustion = patientWithNtrkFusion.copy(
+            clinical = patientWithNtrkFusion.clinical.copy(oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames))
+        )
+        assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientWithNtrkFusionAndSocExhaustion)).isTrue
+        assertThat(resultsForPatient(patientWithNtrkFusionAndSocExhaustion).map(TreatmentCandidate::treatment))
+            .containsAll(ntrkFusionTreatments)
     }
 
     @Test
