@@ -26,7 +26,12 @@ class WhoAtcModel(private val atcMap: Map<String, String>, private val atcOverri
                     therapeuticSubGroup = atcLevel(correctedRawAtcCode.substring(0, 3)),
                     pharmacologicalSubGroup = atcLevel(correctedRawAtcCode.substring(0, 4)),
                     chemicalSubGroup = atcLevel(correctedRawAtcCode.substring(0, 5)),
-                    chemicalSubstance = maybeAtcLevel(if (correctedRawAtcCode.length > ATC_LENGTH_4_LEVELS) correctedRawAtcCode.substring(0, 7) else null)
+                    chemicalSubstance = maybeAtcLevel(
+                        if (correctedRawAtcCode.length > ATC_LENGTH_4_LEVELS) correctedRawAtcCode.substring(
+                            0,
+                            7
+                        ) else null
+                    )
                 )
             } else {
                 LOGGER.warn("ATC code $rawAtcCode did not contain at least 4 levels of classification. Ignoring ATC code for this medication")

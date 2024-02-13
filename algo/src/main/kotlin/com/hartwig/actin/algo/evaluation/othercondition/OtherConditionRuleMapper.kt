@@ -109,10 +109,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         }
     }
 
-    private fun hasRecentPriorConditionWithDoidsFromSetCreator(
-        doidsToFind: Set<String>,
-        priorOtherConditionTerm: String
-    ): FunctionCreator {
+    private fun hasRecentPriorConditionWithDoidsFromSetCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())

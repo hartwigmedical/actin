@@ -11,10 +11,6 @@ const val FULL_ATC_CODE = "N02BE01"
 
 object TestAtcFactory {
 
-    fun createMinimalAtcModel(): WhoAtcModel {
-        return WhoAtcModel(emptyMap(), emptyMap())
-    }
-
     fun createProperAtcModel(): WhoAtcModel {
         return WhoAtcModel(
             mapOf(

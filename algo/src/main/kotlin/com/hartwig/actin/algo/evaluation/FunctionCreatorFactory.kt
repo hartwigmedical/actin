@@ -1,13 +1,11 @@
 package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.BloodTransfusionRuleMapper
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionRuleMapper
 import com.hartwig.actin.algo.evaluation.complication.ComplicationRuleMapper
 import com.hartwig.actin.algo.evaluation.general.GeneralRuleMapper
 import com.hartwig.actin.algo.evaluation.infection.InfectionRuleMapper
 import com.hartwig.actin.algo.evaluation.laboratory.LaboratoryRuleMapper
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.evaluation.medication.MedicationRuleMapper
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleMapper
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionRuleMapper
@@ -19,21 +17,11 @@ import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapper
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapper
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper
 import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapper
-import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.input.FunctionInputResolver
 
 object FunctionCreatorFactory {
 
-    fun create(
-        referenceDateProvider: ReferenceDateProvider,
-        doidModel: DoidModel, functionInputResolver: FunctionInputResolver, atcTree: AtcTree
-    ): Map<EligibilityRule, FunctionCreator> {
-        val resources = RuleMappingResources(
-            referenceDateProvider = referenceDateProvider, doidModel = doidModel,
-            functionInputResolver = functionInputResolver, atcTree = atcTree
-        )
-
+    fun create(resources: RuleMappingResources): Map<EligibilityRule, FunctionCreator> {
         return listOf(
             BloodTransfusionRuleMapper(resources),
             CardiacFunctionRuleMapper(resources),
@@ -53,6 +41,6 @@ object FunctionCreatorFactory {
             VitalFunctionRuleMapper(resources),
             WashoutRuleMapper(resources)
         )
-            .map { it.createMappings() }.reduce { acc, map -> acc + map }
+            .fold(emptyMap()) { acc, mapper -> acc + mapper.createMappings() }
     }
 }

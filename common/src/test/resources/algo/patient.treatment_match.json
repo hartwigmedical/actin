@@ -141,5 +141,60 @@
         }
       ]
     }
+  ],
+  "standardOfCareMatches": [
+    {
+      "treatmentCandidate": {
+        "treatment": {
+          "name": "CAPOX",
+          "synonyms": [
+            "CAPECITABINE+OXALIPLATIN",
+            "OXALIPLATIN+CAPECITABINE"
+          ],
+          "isSystemic": true,
+          "drugs": [
+            {
+              "name": "CAPECITABINE",
+              "drugTypes": [
+                "ANTIMETABOLITE",
+                "FLUOROPYRIMIDINE"
+              ],
+              "category": "CHEMOTHERAPY"
+            },
+            {
+              "name": "OXALIPLATIN",
+              "drugTypes": [
+                "PLATINUM_COMPOUND"
+              ],
+              "category": "CHEMOTHERAPY"
+            }
+          ],
+          "maxCycles": null,
+          "treatmentClass": "DRUG_TREATMENT",
+          "displayOverride": "CAPOX"
+        },
+        "optional": false,
+        "eligibilityFunctions": [
+          {
+            "rule": "IS_ELIGIBLE_FOR_TREATMENT_LINES_X",
+            "parameters": [
+              "1;2;3"
+            ]
+          }
+        ]
+      },
+      "evaluations": [
+        {
+          "result": "FAIL",
+          "recoverable": false,
+          "failSpecificMessages": [
+            "Patient is eligible for line 4 treatment"
+          ],
+          "failGeneralMessages": [
+            "Patient is eligible for line 4 treatment"
+          ]
+        }
+      ]
+    }
   ]
 }
