@@ -11,6 +11,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to anyGeneHasDriverEventWithApprovedTherapyCreator(),
+            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to hasMolecularEventWithTargetedTherapyForNSCLCAvailableCreator(),
+            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_GENE_X to hasMolecularEventExcludingSomeGeneWithTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X to geneHasActivatingMutationCreator(),
@@ -57,6 +59,17 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun anyGeneHasDriverEventWithApprovedTherapyCreator(): FunctionCreator {
         return FunctionCreator { AnyGeneHasDriverEventWithApprovedTherapy() }
+    }
+
+    private fun hasMolecularEventWithTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
+        return FunctionCreator { HasMolecularEventWithTargetedTherapyForNSCLCAvailable(null) }
+    }
+
+    private fun hasMolecularEventExcludingSomeGeneWithTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val gene = functionInputResolver().createOneGeneInput(function)
+            HasMolecularEventWithTargetedTherapyForNSCLCAvailable(gene.geneName)
+        }
     }
 
     private fun geneIsActivatedOrAmplifiedCreator(): FunctionCreator {
