@@ -46,8 +46,8 @@ class HasHadPriorConditionWithDoidsFromSetRecently(
             matchingConditionSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
                     "Patient has had ${matchingConditionSummary[EvaluationResult.WARN]?.joinToString(",")} " +
-                            "(belonging to $priorOtherConditionTerm) within specified time frame",
-                    "Recent $priorOtherConditionTerm"
+                            "(belonging to $priorOtherConditionTerm) near start of specified time frame",
+                    "Borderline recent $priorOtherConditionTerm"
                 )
             }
 
