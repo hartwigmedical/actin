@@ -50,6 +50,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfTypesAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to hasHadAdjuvantTreatmentWithCategoryCreator(),
+            EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITHIN_X_MONTHS to hasHadSystemicTherapyWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_MONTHS to hasHadSystemicTherapyWithIntentsWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_NAME_X_TREATMENT to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
@@ -310,6 +311,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val monthsAgo = input.integer
             val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
             HasHadSystemicTherapyWithAnyIntent(input.intents, minDate, monthsAgo)
+        }
+    }
+
+    private fun hasHadSystemicTherapyWithinMonthsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createManyIntentsOneIntegerInput(function)
+            val monthsAgo = input.integer
+            val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
+            HasHadSystemicTherapyWithAnyIntent(null, minDate, monthsAgo)
         }
     }
 

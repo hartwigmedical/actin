@@ -12,17 +12,22 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import java.time.LocalDate
 
 class HasHadSystemicTherapyWithAnyIntent(
-    private val intents: Set<Intent>,
+    private val intents: Set<Intent>?,
     private val minDate: LocalDate?,
     private val monthsAgo: Int?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingTreatments = record.clinical.oncologicalHistory
-            .filter { it.allTreatments().any(Treatment::isSystemic) }
-            .groupBy { it.intents?.any { intent -> intent in intents } }
 
-        val intentsLowercase = concatItemsWithOr(intents).lowercase()
+        val matchingTreatments = intents?.let { intents ->
+            record.clinical.oncologicalHistory
+                .filter { it.allTreatments().any(Treatment::isSystemic) }
+                .groupBy { it.intents?.any { intent -> intent in intents } }
+        } ?: record.clinical.oncologicalHistory
+            .filter { it.allTreatments().any(Treatment::isSystemic) }
+            .groupBy { true }
+
+        val intentsLowercase = intents?.let { concatItemsWithOr(it).lowercase() }
 
         return when {
             (monthsAgo == null) && matchingTreatments.containsKey(true) -> {

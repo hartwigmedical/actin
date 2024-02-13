@@ -15,15 +15,17 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     private val olderDate = LocalDate.now().minusMonths(14)
     private val functionWithDate = HasHadSystemicTherapyWithAnyIntent(setOf(Intent.NEOADJUVANT, Intent.ADJUVANT), minDate, 6)
     private val functionWithoutDate = HasHadSystemicTherapyWithAnyIntent(setOf(Intent.NEOADJUVANT, Intent.ADJUVANT), null, null)
+    private val functionWithoutIntents = HasHadSystemicTherapyWithAnyIntent(null, minDate, 6)
 
     @Test
     fun `Should fail with no treatment history`() {
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(withTreatmentHistory(emptyList())))
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(withTreatmentHistory(emptyList())))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutIntents.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun `Should fail with systemic treatment with wrong intent (and correct date)`() {
+    fun `Should fail with systemic treatment with wrong intent (and correct date) only if intent is evaluated`() {
         val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
         val patientRecord = withTreatmentHistory(
             listOf(
@@ -37,7 +39,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(patientRecord))
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(patientRecord))
-
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntents.evaluate(patientRecord))
     }
 
     @Test
@@ -55,24 +57,26 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(patientRecord))
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutIntents.evaluate(patientRecord))
     }
 
     @Test
     fun `Should fail with systemic treatment with correct intent but too long ago`() {
         val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    stopYear = olderDate.year,
+                    stopMonth = olderDate.monthValue,
+                    intents = setOf(Intent.ADJUVANT)
+                )
+            )
+        )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             functionWithDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            stopYear = olderDate.year,
-                            stopMonth = olderDate.monthValue,
-                            intents = setOf(Intent.ADJUVANT)
-                        )
-                    )
-                )
+                patientRecord
             )
         )
     }
@@ -92,6 +96,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithDate.evaluate(patientRecord))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutDate.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntents.evaluate(patientRecord))
     }
 
     @Test
@@ -148,37 +153,31 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     @Test
     fun `Should be undetermined with systemic treatment with correct intent but without (stop)date`() {
         val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionWithDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            intents = setOf(Intent.ADJUVANT)
-                        )
-                    )
+        val therapyWithoutDate = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    intents = setOf(Intent.ADJUVANT)
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionWithDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            intents = setOf(Intent.ADJUVANT),
-                            startYear = 2023
-                        )
-                    )
+        val therapyWithoutStopDate = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    intents = setOf(Intent.ADJUVANT),
+                    startYear = 2023
                 )
             )
         )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(therapyWithoutDate))
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(therapyWithoutStopDate))
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithoutIntents.evaluate(therapyWithoutDate))
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithoutIntents.evaluate(therapyWithoutStopDate))
     }
 
     @Test
-    fun `Should be undetermined with treatment with missing intent`() {
+    fun `Should be undetermined with treatment with missing intent, if intent is evaluated`() {
         val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
         val patientRecord = withTreatmentHistory(
             listOf(
@@ -192,33 +191,29 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(patientRecord))
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithoutDate.evaluate(patientRecord))
-
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntents.evaluate(patientRecord))
     }
 
     @Test
     fun `Should be undetermined with one too-old systemic treatment with correct intent and one recent systemic treatment with unknown intent`() {
         val treatment = TreatmentTestFactory.treatment("systemic treatment", true)
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionWithDate.evaluate(
-                withTreatmentHistory(
-                    listOf(
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            stopYear = olderDate.year,
-                            stopMonth = olderDate.monthValue,
-                            intents = setOf(Intent.ADJUVANT)
-                        ),
-                        TreatmentTestFactory.treatmentHistoryEntry(
-                            setOf(treatment),
-                            stopYear = recentDate.year,
-                            stopMonth = recentDate.monthValue,
-                            intents = null
-                        )
-                    )
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    stopYear = olderDate.year,
+                    stopMonth = olderDate.monthValue,
+                    intents = setOf(Intent.ADJUVANT)
+                ),
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(treatment),
+                    stopYear = recentDate.year,
+                    stopMonth = recentDate.monthValue,
+                    intents = null
                 )
             )
         )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(patientRecord))
     }
 
     @Test
