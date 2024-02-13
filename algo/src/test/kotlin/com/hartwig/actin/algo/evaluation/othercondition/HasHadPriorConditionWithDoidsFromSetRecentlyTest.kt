@@ -25,7 +25,7 @@ class HasHadPriorConditionWithDoidsFromSetRecentlyTest {
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
                     OtherConditionTestFactory.priorOtherCondition(
-                        doids = doidsToFind, year = minDate.year, month = minDate.plusMonths(1).monthValue
+                        doids = doidsToFind, year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue
                     )
                 )
             )
@@ -44,6 +44,21 @@ class HasHadPriorConditionWithDoidsFromSetRecentlyTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should pass if both pass and warn conditions are met - two conditions with correct DOID in time-frame of which one in first 2 months`() {
+        val conditions = OtherConditionTestFactory.withPriorOtherConditions(
+            listOf(
+                OtherConditionTestFactory.priorOtherCondition(
+                    doids = doidsToFind, year = minDate.plusYears(1).year, month = 1
+                ),
+                OtherConditionTestFactory.priorOtherCondition(
+                    doids = doidsToFind, year = minDate.plusMonths(1).year, month = minDate.plusMonths(1).monthValue
+                )
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(conditions))
     }
 
     @Test

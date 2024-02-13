@@ -35,17 +35,17 @@ class HasHadPriorConditionWithDoidsFromSetRecently(
             }
 
         return when {
-            matchingConditionSummary.containsKey(EvaluationResult.WARN) -> {
-                EvaluationFactory.warn(
-                    "Patient has had ${matchingConditionSummary[EvaluationResult.WARN]?.joinToString(",")} " +
+            matchingConditionSummary.containsKey(EvaluationResult.PASS) -> {
+                EvaluationFactory.pass(
+                    "Patient has had ${matchingConditionSummary[EvaluationResult.PASS]?.joinToString(",")} " +
                             "(belonging to $priorOtherConditionTerm) within specified time frame",
                     "Recent $priorOtherConditionTerm"
                 )
             }
 
-            matchingConditionSummary.containsKey(EvaluationResult.PASS) -> {
-                EvaluationFactory.pass(
-                    "Patient has had ${matchingConditionSummary[EvaluationResult.PASS]?.joinToString(",")} " +
+            matchingConditionSummary.containsKey(EvaluationResult.WARN) -> {
+                EvaluationFactory.warn(
+                    "Patient has had ${matchingConditionSummary[EvaluationResult.WARN]?.joinToString(",")} " +
                             "(belonging to $priorOtherConditionTerm) within specified time frame",
                     "Recent $priorOtherConditionTerm"
                 )
