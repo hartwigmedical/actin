@@ -13,31 +13,48 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 import org.junit.Test
 
 class GeneHasActivatingMutationTest {
-    private val function = GeneHasActivatingMutation(GENE)
+    private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
+    private val functionWithCodonsToIgnore = GeneHasActivatingMutation(GENE, CODONS_TO_IGNORE)
 
     @Test
     fun `Should fail for minimal patient`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            functionNotIgnoringCodons.evaluate(TestDataFactory.createMinimalTestPatientRecord())
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            functionWithCodonsToIgnore.evaluate(TestDataFactory.createMinimalTestPatientRecord())
+        )
     }
 
     @Test
     fun `Should pass with activating mutation for gene`() {
         assertResultForVariant(EvaluationResult.PASS, ACTIVATING_VARIANT)
+        assertResultForVariantIgnoringCodons(EvaluationResult.PASS, ACTIVATING_VARIANT)
     }
 
     @Test
     fun `Should fail with activating mutation for other gene`() {
         assertResultForVariant(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"))
+        assertResultForVariantIgnoringCodons(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"))
+    }
+
+    @Test
+    fun `Should fail with activating mutation for correct gene but codon to ignore`() {
+        assertResultForVariantIgnoringCodons(EvaluationResult.FAIL, ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE)
     }
 
     @Test
     fun `Should warn with activating mutation for TSG`() {
         assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG))
+        assertResultForVariantIgnoringCodons(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG))
     }
 
     @Test
     fun `Should warn with activating mutation with drug resistance for gene`() {
         assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(isAssociatedWithDrugResistance = true))
+        assertResultForVariantIgnoringCodons(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(isAssociatedWithDrugResistance = true))
     }
 
     @Test
@@ -139,16 +156,37 @@ class GeneHasActivatingMutationTest {
 
         // Repeat with high TML since unknown TML always results in a warning for reportable variants:
         assertResultForVariantWithTML(expectedResult, variant, true)
+
+        if (expectedResult == EvaluationResult.WARN) {
+            assertResultForVariantIgnoringCodons(expectedResult, variant)
+        }
+    }
+
+    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: Variant) {
+        assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, null)
+        assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, true)
     }
 
     private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
         assertMolecularEvaluation(
-            expectedResult, function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
+            expectedResult,
+            functionNotIgnoringCodons.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
+        )
+        if (expectedResult == EvaluationResult.WARN) {
+            assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, hasHighTML)
+        }
+    }
+
+    private fun assertResultForVariantWithTMLIgnoringCodons(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
+        assertMolecularEvaluation(
+            expectedResult,
+            functionWithCodonsToIgnore.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
         )
     }
 
     companion object {
         private const val GENE = "gene A"
+        private val CODONS_TO_IGNORE = setOf("A100X", "A200X")
         private val ACTIVATING_VARIANT: Variant = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
@@ -157,7 +195,22 @@ class GeneHasActivatingMutationTest {
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
             isHotspot = true,
             isAssociatedWithDrugResistance = false,
-            clonalLikelihood = 0.8
+            clonalLikelihood = 0.8,
+            canonicalImpact = impactWithCodon(300)
         )
+
+        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE: Variant = TestVariantFactory.createMinimal().copy(
+            gene = GENE,
+            isReportable = true,
+            driverLikelihood = DriverLikelihood.HIGH,
+            geneRole = GeneRole.ONCO,
+            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+            isHotspot = true,
+            isAssociatedWithDrugResistance = false,
+            clonalLikelihood = 0.8,
+            canonicalImpact = impactWithCodon(100)
+        )
+
+        private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
     }
 }

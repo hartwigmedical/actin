@@ -14,6 +14,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X to geneHasActivatingMutationCreator(),
+            EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y to geneHasVariantWithAnyProteinImpactsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_ANY_CODONS_Y to geneHasVariantInAnyCodonsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y to geneHasVariantInExonCreator(),
@@ -61,7 +62,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneIsActivatedOrAmplifiedCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            Or(listOf(GeneHasActivatingMutation(gene.geneName), GeneIsAmplified(gene.geneName)))
+            Or(listOf(GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null), GeneIsAmplified(gene.geneName)))
         }
     }
 
@@ -75,7 +76,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneHasActivatingMutationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            GeneHasActivatingMutation(gene.geneName)
+            GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null)
+        }
+    }
+
+    private fun geneHasActivatingMutationIgnoringSomeCodonsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val gene = functionInputResolver().createOneGeneInput(function)
+            GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null)
         }
     }
 
