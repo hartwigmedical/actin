@@ -193,6 +193,7 @@ object FunctionInputMapping {
         EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.NSCLC_DRIVER_GENE_STATUSES_MUST_BE_AVAILABLE to FunctionInput.NONE,
+        EligibilityRule.HAS_EGFR_PACC_MUTATION to FunctionInput.NONE,
 
         EligibilityRule.HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_LEUKOCYTES_ABS_LLN_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,

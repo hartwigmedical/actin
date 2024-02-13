@@ -54,6 +54,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
             EligibilityRule.NSCLC_DRIVER_GENE_STATUSES_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
+            EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
         )
     }
 
@@ -328,4 +329,22 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             MolecularResultsAreAvailableForPromoterOfGene(gene.geneName)
         }
     }
+
+    private fun hasEgfrPaccMutationCreator(): FunctionCreator {
+        return FunctionCreator { GeneHasVariantInCodon("EGFR", EGFR_PACC_CODON_LIST) }
+    }
+
+    private val EGFR_PACC_CODON_LIST =
+        listOf(
+            "G719",
+            "S768",
+            "L747",
+            "V769",
+            "E709",
+            "C797",
+            "L792",
+            "G724",
+            "L718",
+            "T854",
+        )
 }
