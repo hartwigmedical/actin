@@ -105,7 +105,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
 
         private fun findGainLoss(gainsLosses: MutableList<PurpleGainLoss>, geneToFind: String): PurpleGainLoss {
             val gainLoss = gainsLosses.find { gainLoss ->
-                (gainLoss.gene() == geneToFind)
+                (gainLoss.gene() == geneToFind && gainLoss.isCanonical)
             }
             if (gainLoss != null) {
                 return gainLoss
