@@ -66,6 +66,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
+            EligibilityRule.HAS_POTENTIAL_ACQUIRED_RESISTANCE_TO_OSIMERTINIB to FunctionCreator {
+                HasPotentialAcquiredResistanceToSomeTreatment(
+                    "Osimertinib"
+                )
+            },
         )
     }
 

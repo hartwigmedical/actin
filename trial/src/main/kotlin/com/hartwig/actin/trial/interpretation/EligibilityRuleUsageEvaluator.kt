@@ -104,6 +104,7 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_POTENTIAL_ACQUIRED_RESISTANCE_TO_OSIMERTINIB,
         EligibilityRule.HAS_EGFR_PACC_MUTATION,
         EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITHIN_X_MONTHS,
+        EligibilityRule.HAS_POTENTIAL_ACQUIRED_RESISTANCE_TO_OSIMERTINIB,
     )
 
     fun evaluate(trials: List<Trial>) {
