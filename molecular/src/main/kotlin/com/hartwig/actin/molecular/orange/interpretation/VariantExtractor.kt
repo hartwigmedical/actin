@@ -44,6 +44,10 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val driverLikelihood = determineDriverLikelihood(driver)
                 val evidence = ActionableEvidenceFactory.createNoEvidence()
                 Variant(
+                    chromosome = variant.chromosome(),
+                    position = variant.position(),
+                    ref = variant.ref(),
+                    alt = variant.alt(),
                     gene = variant.gene(),
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
@@ -60,11 +64,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     phaseGroups = variant.localPhaseSets()?.toSet(),
                     canonicalImpact = extractCanonicalImpact(variant),
-                    otherImpacts = extractOtherImpacts(variant),
-                    chromosome = variant.chromosome(),
-                    position = variant.position(),
-                    ref = variant.ref(),
-                    alt = variant.alt()
+                    otherImpacts = extractOtherImpacts(variant)
                 )
             }
             .toSortedSet(VariantComparator())
