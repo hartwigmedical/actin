@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory.createNoEvidence
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
@@ -27,15 +28,15 @@ internal class CharacteristicsExtractor() {
             ploidy = purple.fit().ploidy(),
             predictedTumorOrigin = predictedTumorOrigin,
             isMicrosatelliteUnstable = isMicrosatelliteUnstable,
-            microsatelliteEvidence = null,
+            microsatelliteEvidence = createNoEvidence(),
             isHomologousRepairDeficient = isHomologousRepairDeficient,
-            homologousRepairEvidence = null,
+            homologousRepairEvidence = createNoEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
             hasHighTumorMutationalBurden = hasHighTumorMutationalBurden,
-            tumorMutationalBurdenEvidence = null,
+            tumorMutationalBurdenEvidence = createNoEvidence(),
             tumorMutationalLoad = purple.characteristics().tumorMutationalLoad(),
             hasHighTumorMutationalLoad = hasHighTumorMutationalLoad,
-            tumorMutationalLoadEvidence = null,
+            tumorMutationalLoadEvidence = createNoEvidence(),
             homologousRepairScore = homologousRepairScore
         )
     }

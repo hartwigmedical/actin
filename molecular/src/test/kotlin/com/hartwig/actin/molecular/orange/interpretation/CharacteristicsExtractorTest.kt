@@ -38,21 +38,21 @@ class CharacteristicsExtractorTest {
         assertThat(cupPrediction.featureClassifier).isEqualTo(0.972, Offset.offset(EPSILON))
 
         assertThat(characteristics.isMicrosatelliteUnstable).isFalse()
-        assertThat(characteristics.microsatelliteEvidence).isNull()
+        assertThat(characteristics.microsatelliteEvidence).isNotNull()
         val hrScore = characteristics.homologousRepairScore
         assertThat(hrScore).isNotNull()
         assertThat(hrScore!!).isEqualTo(0.45, Offset.offset(EPSILON))
         assertThat(characteristics.isHomologousRepairDeficient).isFalse()
-        assertThat(characteristics.homologousRepairEvidence).isNull()
+        assertThat(characteristics.homologousRepairEvidence).isNotNull()
 
         val tmb = characteristics.tumorMutationalBurden
         assertThat(tmb).isNotNull()
         assertThat(tmb!!).isEqualTo(13.0, Offset.offset(EPSILON))
         assertThat(characteristics.hasHighTumorMutationalBurden).isTrue()
-        assertThat(characteristics.tumorMutationalBurdenEvidence).isNull()
+        assertThat(characteristics.tumorMutationalBurdenEvidence).isNotNull()
         assertThat(characteristics.tumorMutationalLoad).isEqualTo(189)
         assertThat(characteristics.hasHighTumorMutationalLoad).isTrue()
-        assertThat(characteristics.tumorMutationalLoadEvidence).isNull()
+        assertThat(characteristics.tumorMutationalLoadEvidence).isNotNull()
     }
 
     @Test
