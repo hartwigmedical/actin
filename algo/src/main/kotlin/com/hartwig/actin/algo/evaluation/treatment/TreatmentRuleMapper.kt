@@ -3,6 +3,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
@@ -30,6 +32,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to hasHadCombinedTreatmentNamesWithCyclesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT to hasHadTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadTreatmentCategoryOfTypesCreator(),
+            EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET to hasHadCombinedTreatmentsOfCategoryAndTypeCreator(
+                TreatmentCategory.CHEMOTHERAPY,
+                DrugType.PLATINUM_COMPOUND,
+                TreatmentCategory.CHEMOTHERAPY,
+                null,
+                "platinum based doublet"
+            ),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadFirstLineTreatmentCategoryOfTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS to hasHadTreatmentCategoryOfTypesWithinWeeksCreator(),
@@ -187,6 +196,17 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
             HasHadSomeTreatmentsWithCategoryOfTypes(input.category, input.types, 1)
+        }
+    }
+
+    private fun hasHadCombinedTreatmentsOfCategoryAndTypeCreator(
+        firstTreatmentCategory: TreatmentCategory, firstTreatmentType: DrugType?,
+        secondTreatmentCategory: TreatmentCategory, secondTreatmentType: DrugType?, displayOverrule: String?
+    ): FunctionCreator {
+        return FunctionCreator {
+            HasHadCombinedTreatmentsOfCategoryAndType(
+                firstTreatmentCategory, firstTreatmentType, secondTreatmentCategory, secondTreatmentType, displayOverrule
+            )
         }
     }
 
