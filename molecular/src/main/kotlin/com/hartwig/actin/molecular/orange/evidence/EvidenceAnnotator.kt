@@ -14,7 +14,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 
-class MolecularAnnotator(private val evidenceDatabase: EvidenceDatabase) {
+class EvidenceAnnotator(private val evidenceDatabase: EvidenceDatabase) {
     fun annotate(record: MolecularRecord): MolecularRecord {
         return record.copy(
             characteristics = annotateCharacteristics(record.characteristics),
