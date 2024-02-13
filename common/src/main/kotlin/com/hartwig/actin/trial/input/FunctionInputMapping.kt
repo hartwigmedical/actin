@@ -27,6 +27,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X to FunctionInput.ONE_TUMOR_TYPE,
         EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to FunctionInput.NONE,
         EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to FunctionInput.NONE,
+        EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION to FunctionInput.NONE,
         EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to FunctionInput.NONE,
         EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to FunctionInput.ONE_RECEPTOR_TYPE,
         EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to FunctionInput.NONE,

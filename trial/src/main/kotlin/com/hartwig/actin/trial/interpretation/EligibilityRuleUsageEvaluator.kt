@@ -96,6 +96,7 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y,
         EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC,
         EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_GENE_X,
+        EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION,
     )
 
     fun evaluate(trials: List<Trial>) {
