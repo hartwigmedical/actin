@@ -94,6 +94,8 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X,
         EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_CONTAINING_SUBSTRINGS_X,
         EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y,
+        EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC,
+        EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_GENE_X,
     )
 
     fun evaluate(trials: List<Trial>) {
