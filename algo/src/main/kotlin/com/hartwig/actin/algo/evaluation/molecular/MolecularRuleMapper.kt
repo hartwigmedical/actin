@@ -95,8 +95,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneHasActivatingMutationIgnoringSomeCodonsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null)
+            val input = functionInputResolver().createOneGeneManyCodonsInput(function)
+            GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons)
         }
     }
 

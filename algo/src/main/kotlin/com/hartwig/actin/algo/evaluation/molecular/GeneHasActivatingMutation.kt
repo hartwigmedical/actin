@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 
-class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: Set<String>?) :
+class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

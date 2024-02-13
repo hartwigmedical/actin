@@ -146,6 +146,8 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS to FunctionInput.ONE_INTEGER,
 
         EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to FunctionInput.MANY_GENES,
+        EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to FunctionInput.NONE,
+        EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.INACTIVATION_OF_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X to FunctionInput.ONE_GENE,
