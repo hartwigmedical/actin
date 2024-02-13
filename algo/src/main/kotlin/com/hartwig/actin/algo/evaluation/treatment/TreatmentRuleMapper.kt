@@ -25,6 +25,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
+            EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_CONTAINING_SUBSTRINGS_X to hasHadTreatmentWithDrugConsistingOfSubStringCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS to hasHadCombinedTreatmentNamesWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to hasHadCombinedTreatmentNamesWithCyclesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT to hasHadTreatmentWithCategoryCreator(),
@@ -149,7 +150,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentWithDrugsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            HasHadTreatmentWithDrug(functionInputResolver().createManyDrugsInput(function))
+            HasHadTreatmentWithDrug(functionInputResolver().createManyDrugsInput(function), checkSubString = false)
+        }
+    }
+
+    private fun hasHadTreatmentWithDrugConsistingOfSubStringCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            HasHadTreatmentWithDrug(functionInputResolver().createManyDrugsInput(function), checkSubString = true)
         }
     }
 
