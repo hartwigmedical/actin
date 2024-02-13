@@ -9,8 +9,8 @@ class HasPotentialRespiratoryCompromise : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Currently not evaluated if a patient has a possible respiratory compromise - assuming there are none",
-            "Possible respiratory compromise currently not evaluated - assuming none"
+            "Cannot determine if patient has potential respiratory compromise - assuming there are none",
+            "Possible respiratory compromise cannot be determined - assuming none"
         )
     }
 }
