@@ -316,8 +316,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSystemicTherapyWithinMonthsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyIntentsOneIntegerInput(function)
-            val monthsAgo = input.integer
+            val monthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
             HasHadSystemicTherapyWithAnyIntent(null, minDate, monthsAgo)
         }
