@@ -134,6 +134,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
             FunctionInput.ONE_DOID_TERM -> {
                 listOf(doidTermToUse)
             }
+
+            FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
+                listOf(doidTermToUse, "1")
+            }
             FunctionInput.ONE_RECEPTOR_TYPE -> {
                 listOf("ER")
             }
