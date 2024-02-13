@@ -245,6 +245,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to FunctionInput.NONE,
 
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X to FunctionInput.ONE_DOID_TERM,
+        EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS to FunctionInput.ONE_DOID_TERM_ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME to FunctionInput.ONE_STRING,
         EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to FunctionInput.NONE,
@@ -261,7 +262,9 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_STROKE to FunctionInput.NONE,
+        EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to FunctionInput.NONE,
+        EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to FunctionInput.NONE,

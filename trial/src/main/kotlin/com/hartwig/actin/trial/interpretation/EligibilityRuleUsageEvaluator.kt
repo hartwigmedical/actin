@@ -85,7 +85,9 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME,
         EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION,
         EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X,
-        EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION
+        EligibilityRule.CURRENTLY_GETS_HERBAL_MEDICATION,
+        EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS,
+        EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS
     )
 
     fun evaluate(trials: List<Trial>) {
