@@ -6,6 +6,10 @@ object TestVariantFactory {
 
     fun createMinimal(): Variant {
         return Variant(
+            chromosome = "",
+            position = 0,
+            ref = "",
+            alt = "",
             isReportable = false,
             event = "",
             driverLikelihood = null,
@@ -23,10 +27,6 @@ object TestVariantFactory {
             isAssociatedWithDrugResistance = null,
             phaseGroups = null,
             otherImpacts = emptySet(),
-            chromosome = "",
-            position = 0,
-            ref = "",
-            alt = "",
         )
     }
 }

@@ -4,6 +4,10 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 
 data class Variant(
+    val chromosome: String,
+    val position: Int,
+    val ref: String,
+    val alt: String,
     val type: VariantType,
     val variantCopyNumber: Double,
     val totalCopyNumber: Double,
@@ -13,10 +17,6 @@ data class Variant(
     val phaseGroups: Set<Int>?,
     val canonicalImpact: TranscriptImpact,
     val otherImpacts: Set<TranscriptImpact>,
-    val chromosome: String,
-    val position: Int,
-    val ref: String,
-    val alt: String,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,

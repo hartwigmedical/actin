@@ -24,13 +24,13 @@ object TestMolecularFactory {
 
     fun minimalVariant(): Variant {
         return Variant(
-            isReportable = true,
-            type = VariantType.SNV,
-            gene = "",
             chromosome = "",
             position = 0,
             ref = "",
             alt = "",
+            isReportable = true,
+            type = VariantType.SNV,
+            gene = "",
             variantCopyNumber = 0.0,
             totalCopyNumber = 0.0,
             isHotspot = false,
@@ -45,7 +45,6 @@ object TestMolecularFactory {
             isAssociatedWithDrugResistance = false,
             otherImpacts = emptySet(),
             phaseGroups = null
-
         )
     }
 
