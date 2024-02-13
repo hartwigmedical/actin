@@ -46,7 +46,7 @@ class EvidenceDatabaseTest {
         assertEquals(1, evidenceCount(database.evidenceForVariant(variant)).toLong())
 
         val gainLoss: PurpleGainLoss = TestPurpleFactory.gainLossBuilder().build()
-        assertNotNull(database.geneAlterationForCopyNumber(gainLoss))
+        assertNotNull(database.geneAlterationForGainLoss(gainLoss))
         assertEquals(1, evidenceCount(database.evidenceForCopyNumber(gainLoss)).toLong())
 
         val homozygousDisruption: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().build()

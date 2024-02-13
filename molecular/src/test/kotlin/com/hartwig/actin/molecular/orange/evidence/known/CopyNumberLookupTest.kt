@@ -21,16 +21,16 @@ class CopyNumberLookupTest {
         val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
 
         val ampOnGene1 = create("gene 1", CopyNumberInterpretation.FULL_GAIN)
-        assertEquals(amp, CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene1))
+        assertEquals(amp, CopyNumberLookup.findForGainLoss(knownCopyNumbers, ampOnGene1))
 
         val ampOnGene2 = create("gene 2", CopyNumberInterpretation.FULL_GAIN)
-        assertNull(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene2))
+        assertNull(CopyNumberLookup.findForGainLoss(knownCopyNumbers, ampOnGene2))
 
         val delOnGene1 = create("gene 1", CopyNumberInterpretation.FULL_LOSS)
-        assertNull(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene1))
+        assertNull(CopyNumberLookup.findForGainLoss(knownCopyNumbers, delOnGene1))
 
         val delOnGene2 = create("gene 2", CopyNumberInterpretation.FULL_LOSS)
-        assertEquals(del, CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene2))
+        assertEquals(del, CopyNumberLookup.findForGainLoss(knownCopyNumbers, delOnGene2))
     }
 
     @Test

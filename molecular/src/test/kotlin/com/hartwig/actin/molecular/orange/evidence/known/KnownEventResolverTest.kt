@@ -83,13 +83,13 @@ class KnownEventResolverTest {
         val resolver = KnownEventResolver(known, known.genes())
 
         val ampGene1 = amp("gene 1")
-        assertEquals(knownAmp, resolver.resolveForCopyNumber(ampGene1))
+        assertEquals(knownAmp, resolver.resolveForGainLoss(ampGene1))
 
         val ampGene2 = amp("gene 2")
-        assertNotNull(resolver.resolveForCopyNumber(ampGene2))
+        assertNotNull(resolver.resolveForGainLoss(ampGene2))
 
         val ampGene3 = amp("gene 3")
-        assertNull(resolver.resolveForCopyNumber(ampGene3))
+        assertNull(resolver.resolveForGainLoss(ampGene3))
 
         val homDisruptionGene1: LinxHomozygousDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
         assertEquals(knownDel, resolver.resolveForHomozygousDisruption(homDisruptionGene1))

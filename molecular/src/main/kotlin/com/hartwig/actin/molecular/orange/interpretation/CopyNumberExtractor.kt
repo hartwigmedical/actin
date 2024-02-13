@@ -30,7 +30,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
                     val gainLoss = findGainLoss(purple.allSomaticGainsLosses(), geneCopyNumber.gene())
                     val event = DriverEventFactory.gainLossEvent(gainLoss)
                     val alteration =
-                        GeneAlterationFactory.convertAlteration(gainLoss.gene(), evidenceDatabase.geneAlterationForCopyNumber(gainLoss))
+                        GeneAlterationFactory.convertAlteration(gainLoss.gene(), evidenceDatabase.geneAlterationForGainLoss(gainLoss))
                     CopyNumber(
                         gene = alteration.gene,
                         geneRole = alteration.geneRole,
@@ -45,7 +45,9 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
                         maxCopies = Math.round(gainLoss.maxCopies()).toInt()
                     )
                 } else {
-                    val alteration = GeneAlterationFactory.convertAlteration(geneCopyNumber.gene(), null)
+                    val alteration =
+                        GeneAlterationFactory.convertAlteration(geneCopyNumber.gene(),
+                            evidenceDatabase.geneAlterationForGeneCopyNumber(geneCopyNumber))
                     val gene = alteration.gene
                     CopyNumber(
                         gene = alteration.gene,

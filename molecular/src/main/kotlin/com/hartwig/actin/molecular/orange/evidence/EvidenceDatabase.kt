@@ -7,6 +7,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.PurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import com.hartwig.serve.datamodel.common.GeneAlteration
@@ -57,8 +58,12 @@ class EvidenceDatabase internal constructor(
         return actionableEventMatcher.matchForVariant(variant)
     }
 
-    fun geneAlterationForCopyNumber(gainLoss: PurpleGainLoss): GeneAlteration? {
-        return knownEventResolver.resolveForCopyNumber(gainLoss)
+    fun geneAlterationForGainLoss(gainLoss: PurpleGainLoss): GeneAlteration? {
+        return knownEventResolver.resolveForGainLoss(gainLoss)
+    }
+
+    fun geneAlterationForGeneCopyNumber(geneCopyNumber: PurpleGeneCopyNumber): GeneAlteration? {
+        return knownEventResolver.resolveForGeneCopyNumber(geneCopyNumber)
     }
 
     fun evidenceForCopyNumber(gainLoss: PurpleGainLoss): ActionabilityMatch {

@@ -3,13 +3,12 @@ package com.hartwig.actin.molecular.orange.evidence.known
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
-import com.hartwig.hmftools.datamodel.purple.PurpleGeneCopyNumber
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber
 
 internal object CopyNumberLookup {
 
-    fun findForCopyNumber(knownCopyNumbers: Iterable<KnownCopyNumber>, gainLoss: PurpleGainLoss): KnownCopyNumber? {
+    fun findForGainLoss(knownCopyNumbers: Iterable<KnownCopyNumber>, gainLoss: PurpleGainLoss): KnownCopyNumber? {
         for (knownCopyNumber in knownCopyNumbers) {
             val geneMatches = knownCopyNumber.gene() == gainLoss.gene()
             val interpretationMatches = interpretationMatchesEvent(gainLoss.interpretation(), knownCopyNumber.event())

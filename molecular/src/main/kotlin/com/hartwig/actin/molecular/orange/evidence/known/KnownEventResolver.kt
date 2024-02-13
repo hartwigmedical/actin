@@ -25,9 +25,13 @@ class KnownEventResolver(private val knownEvents: KnownEvents, private val aggre
             ?: GeneLookup.find(aggregatedKnownGenes, variant.gene())
     }
 
-    fun resolveForCopyNumber(gainLoss: PurpleGainLoss): GeneAlteration? {
-        return CopyNumberLookup.findForCopyNumber(knownEvents.copyNumbers(), gainLoss)
+    fun resolveForGainLoss(gainLoss: PurpleGainLoss): GeneAlteration? {
+        return CopyNumberLookup.findForGainLoss(knownEvents.copyNumbers(), gainLoss)
             ?: GeneLookup.find(aggregatedKnownGenes, gainLoss.gene())
+    }
+
+    fun resolveForGeneCopyNumber(geneCopyNumber: PurpleGeneCopyNumber): GeneAlteration? {
+        return GeneLookup.find(aggregatedKnownGenes, geneCopyNumber.gene())
     }
 
     fun resolveForHomozygousDisruption(linxHomozygousDisruption: LinxHomozygousDisruption): GeneAlteration? {
