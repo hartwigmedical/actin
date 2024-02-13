@@ -49,6 +49,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.IS_IN_DIALYSIS to isInDialysisCreator(),
             EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to hasChildPughClassCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
+            EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA to hasPotentialSymptomaticHypercalcemiaCreator(),
         )
     }
 
@@ -181,6 +182,10 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
 
     private fun hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(): FunctionCreator {
         return FunctionCreator { HasPotentialContraIndicationForStereotacticRadiosurgery() }
+    }
+
+    private fun hasPotentialSymptomaticHypercalcemiaCreator(): FunctionCreator {
+        return FunctionCreator { HasPotentialSymptomaticHypercalcemia() }
     }
 
     companion object {

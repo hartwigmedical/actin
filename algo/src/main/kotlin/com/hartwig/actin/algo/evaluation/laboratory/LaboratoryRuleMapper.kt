@@ -82,7 +82,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.CALCIUM
             ),
-            EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA to undeterminedLabValueCreator("symptomatic hypercalcemia"),
             EligibilityRule.HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.CORRECTED_CALCIUM
             ),

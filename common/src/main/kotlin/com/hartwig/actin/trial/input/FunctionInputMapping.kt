@@ -235,7 +235,6 @@ object FunctionInputMapping {
         EligibilityRule.HAS_IONIZED_CALCIUM_MMOL_PER_L_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_CORRECTED_CALCIUM_ULN_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.HAS_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to FunctionInput.NONE,
-        EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA to FunctionInput.NONE,
         EligibilityRule.HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to FunctionInput.NONE,
         EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to FunctionInput.NONE,
         EligibilityRule.HAS_CORRECTED_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to FunctionInput.NONE,
@@ -302,6 +301,7 @@ object FunctionInputMapping {
         EligibilityRule.IS_IN_DIALYSIS to FunctionInput.NONE,
         EligibilityRule.HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE to FunctionInput.ONE_STRING,
         EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to FunctionInput.NONE,
+        EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA to FunctionInput.NONE,
 
         EligibilityRule.HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_ECG_ABERRATION to FunctionInput.NONE,
