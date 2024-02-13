@@ -91,6 +91,8 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_RECEIVED_POTENTIAL_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES,
         EligibilityRule.HAS_POTENTIAL_RESPIRATORY_COMPROMISE,
         EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X,
+        EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X,
+        EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_CONTAINING_SUBSTRINGS_X,
     )
 
     fun evaluate(trials: List<Trial>) {
