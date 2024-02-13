@@ -31,24 +31,30 @@ interface ValidationError<T> {
     }
 }
 
-interface TrialValidationError<T : TrialConfig> : ValidationError<T>
+abstract class TrialValidationError<T : TrialConfig> : ValidationError<T>, Comparable<TrialValidationError<T>> {
+    private val comparator = Comparator.comparing<TrialValidationError<T>, String>({ it.config.trialId }, String::compareTo)
+        .thenComparing(TrialValidationError<T>::message)
 
-data class CTCDatabaseValidationError(override val config: CTCDatabaseEntry, override val message: String) :
-    ValidationError<CTCDatabaseEntry> {
+    override fun compareTo(other: TrialValidationError<T>): Int {
+        return comparator.compare(this, other)
+    }
+}
+
+data class CTCDatabaseValidationError(
+    override val config: CTCDatabaseEntry, override val message: String
+) : ValidationError<CTCDatabaseEntry> {
     override fun configFormat(config: CTCDatabaseEntry): String {
         return "METC=${config.studyMETC} cohort=${config.cohortName}"
     }
 }
 
-data class CTCIgnoreValidationError(override val config: String, override val message: String) :
-    ValidationError<String> {
+data class CTCIgnoreValidationError(override val config: String, override val message: String) : ValidationError<String> {
     override fun configFormat(config: String): String {
         return "METC=${config}"
     }
 }
 
-data class CTCUnmappedValidationError(override val config: Int, override val message: String) :
-    ValidationError<Int> {
+data class CTCUnmappedValidationError(override val config: Int, override val message: String) : ValidationError<Int> {
     override fun configFormat(config: Int): String {
         return "cohort id=${config}"
     }
@@ -80,7 +86,7 @@ data class CtcDatabaseValidation(
 data class InclusionCriteriaValidationError(
     override val config: InclusionCriteriaConfig,
     override val message: String
-) : TrialValidationError<InclusionCriteriaConfig> {
+) : TrialValidationError<InclusionCriteriaConfig>() {
     override fun configFormat(config: InclusionCriteriaConfig): String {
         return "trial id=${config.trialId} cohorts=${config.appliesToCohorts}"
     }
@@ -89,7 +95,7 @@ data class InclusionCriteriaValidationError(
 data class InclusionReferenceValidationError(
     override val config: InclusionCriteriaReferenceConfig,
     override val message: String
-) : TrialValidationError<InclusionCriteriaReferenceConfig> {
+) : TrialValidationError<InclusionCriteriaReferenceConfig>() {
     override fun configFormat(config: InclusionCriteriaReferenceConfig): String {
         return "trial id=${config.trialId} reference id=${config.referenceId}"
     }
@@ -98,7 +104,7 @@ data class InclusionReferenceValidationError(
 data class CohortDefinitionValidationError(
     override val config: CohortDefinitionConfig,
     override val message: String
-) : TrialValidationError<CohortDefinitionConfig> {
+) : TrialValidationError<CohortDefinitionConfig>() {
     override fun configFormat(config: CohortDefinitionConfig): String {
         return "trial id=${config.trialId} cohort id=${config.cohortId}"
     }
@@ -107,7 +113,7 @@ data class CohortDefinitionValidationError(
 data class TrialDefinitionValidationError(
     override val config: TrialDefinitionConfig,
     override val message: String
-) : TrialValidationError<TrialDefinitionConfig> {
+) : TrialValidationError<TrialDefinitionConfig>() {
     override fun configFormat(config: TrialDefinitionConfig): String {
         return "trial id=${config.trialId}"
     }
