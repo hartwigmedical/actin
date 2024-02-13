@@ -81,7 +81,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
             MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth),
-            EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
+            EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, null, contentWidth(), "Other"),
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()),
             if (dutchTrials.isNotEmpty()) {

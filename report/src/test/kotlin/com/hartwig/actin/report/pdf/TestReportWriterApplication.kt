@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
-import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
+import com.hartwig.actin.report.pdf.ReportWriterCRCFactory.createProductionReportWriter
 import org.apache.logging.log4j.LogManager
 import java.io.File
 

@@ -13,7 +13,8 @@ data class ReporterConfig(
     val molecularJson: String,
     val treatmentMatchJson: String,
     val outputDirectory: String,
-    val enableExtendedMode: Boolean
+    val enableExtendedMode: Boolean,
+    val mode: String
 ) {
 
     companion object {
@@ -24,6 +25,7 @@ data class ReporterConfig(
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
+            options.addOption(MODE, true, "SOC or Phase I")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
         }
@@ -43,7 +45,8 @@ data class ReporterConfig(
                 molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
-                enableExtendedMode = enableExtendedMode
+                enableExtendedMode = enableExtendedMode,
+                mode = ApplicationConfig.nonOptionalValue(cmd, MODE)
             )
         }
 
@@ -54,5 +57,6 @@ data class ReporterConfig(
         const val OUTPUT_DIRECTORY = "output_directory"
         const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
         const val LOG_DEBUG = "log_debug"
+        const val MODE = "mode"
     }
 }
