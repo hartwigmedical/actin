@@ -98,6 +98,7 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC,
         EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_GENE_X,
         EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION,
+        EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE,
     )
 
     fun evaluate(trials: List<Trial>) {

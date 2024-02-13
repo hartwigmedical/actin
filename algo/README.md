@@ -426,6 +426,7 @@ _Other_
 |----------------------------------------------------|-----------------------------------------------|------|
 | HAS_GLUCOSE_FASTING_PLASMA_MMOL_PER_L_OF_AT_MOST_X | (T.B.D.) Currently resolves to `UNDETERMINED` |      |
 | HAS_THYROXINE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS   | Free T4 (FT4) LLN<X<ULN (isOutsideRef=0)      |      |
+| HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE           | Resolves to `UNDETERMINED`                    |      |
 
 ULN = Upper Limit of Normal, LLN = Lower Limit of Normal; implemented as refLimitUp and refLimitLow, respectively.
 
