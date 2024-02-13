@@ -21,8 +21,14 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
             .map { geneCopyNumber ->
                 Pair(geneCopyNumber, findCopyNumberDriver(drivers, geneCopyNumber.gene()))
             }
-            .filter { (geneCopyNumber) ->
+            .filter { (geneCopyNumber, driver) ->
                 val geneIncluded = geneFilter.include(geneCopyNumber.gene())
+                if (!geneIncluded && driver != null) {
+                    throw IllegalStateException(
+                        "Filtered a reported copy number through gene filtering: ${driver}."
+                                + " Please make sure ${geneCopyNumber.gene()} is configured as a known gene."
+                    )
+                }
                 geneIncluded
             }
             .map { (geneCopyNumber, driver) ->

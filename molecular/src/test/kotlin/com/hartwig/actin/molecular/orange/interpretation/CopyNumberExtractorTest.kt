@@ -112,6 +112,24 @@ class CopyNumberExtractorTest {
 
     }
 
+    @Test(expected = IllegalStateException::class)
+    fun shouldThrowExceptionWhenFilteringReportedCopyNumber() {
+        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build()
+        val gainLoss: PurpleGainLoss =
+            TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
+        val geneCopyNumber: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder().gene("gene 1").minCopyNumber(4.0).build()
+        val purple: PurpleRecord = ImmutablePurpleRecord.builder()
+            .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
+            .addSomaticDrivers(driver)
+            .addAllSomaticGainsLosses(gainLoss)
+            .addAllSomaticGeneCopyNumbers(geneCopyNumber)
+            .build()
+
+        val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
+        val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        copyNumberExtractor.extractCopyNumbers(purple)
+    }
+
     @Test
     fun `Should determine type for all interpretations`() {
         for (interpretation in CopyNumberInterpretation.values()) {
