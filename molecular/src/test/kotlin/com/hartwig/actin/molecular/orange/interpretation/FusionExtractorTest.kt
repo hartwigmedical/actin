@@ -5,7 +5,6 @@ import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
@@ -34,7 +33,7 @@ class FusionExtractorTest {
             .addAllSomaticFusions(linxFusion)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("gene end")
-        val fusionExtractor = FusionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val fusionExtractor = FusionExtractor(geneFilter)
 
         val fusions = fusionExtractor.extract(linx)
         assertThat(fusions.size.toLong()).isEqualTo(1)
@@ -59,7 +58,7 @@ class FusionExtractorTest {
             .addAllSomaticFusions(linxFusion)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
-        val fusionExtractor = FusionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val fusionExtractor = FusionExtractor(geneFilter)
         fusionExtractor.extract(linx)
     }
 

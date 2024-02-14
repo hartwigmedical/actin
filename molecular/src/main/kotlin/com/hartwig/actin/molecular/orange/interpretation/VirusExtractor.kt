@@ -3,14 +3,13 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.VirusComparator
 import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 
-internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
+internal class VirusExtractor() {
 
     fun extract(virusInterpreter: VirusInterpreterData): Set<Virus> {
         return virusInterpreter.allViruses().map { virus ->
@@ -18,7 +17,7 @@ internal class VirusExtractor(private val evidenceDatabase: EvidenceDatabase) {
                 isReportable = virus.reported(),
                 event = DriverEventFactory.virusEvent(virus),
                 driverLikelihood = determineDriverLikelihood(virus.driverLikelihood()),
-                evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))!!,
+                evidence = ActionableEvidenceFactory.createNoEvidence(),
                 name = virus.name(),
                 isReliable = virus.qcStatus() == QC_PASS_STATUS,
                 type = determineType(virus.interpretation()),

@@ -6,7 +6,6 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
@@ -51,7 +50,7 @@ class CopyNumberExtractorTest {
             .addAllSomaticGainsLosses(gainLoss1, gainLoss2, gainLoss3, gainLoss4)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene())
-        val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val copyNumberExtractor = CopyNumberExtractor(geneFilter)
 
         val copyNumbers = copyNumberExtractor.extract(purple)
         assertThat(copyNumbers).hasSize(3)
@@ -87,7 +86,7 @@ class CopyNumberExtractorTest {
             .build()
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
-        val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val copyNumberExtractor = CopyNumberExtractor(geneFilter)
         copyNumberExtractor.extract(purple)
     }
 
