@@ -2,10 +2,9 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.molecular.orange.evidence.EvidenceAnnotator
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
@@ -38,7 +37,7 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
 
         LOGGER.info("Interpreting ORANGE record")
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
-        val molecular = EvidenceAnnotator(evidenceDatabase).annotate(OrangeInterpreter(geneFilter).interpret(orange))
+        val molecular = com.hartwig.actin.molecular.evidence.EvidenceAnnotator(evidenceDatabase).annotate(OrangeInterpreter(geneFilter).interpret(orange))
         MolecularPrinter.printRecord(molecular)
         MolecularRecordJson.write(molecular, config.outputDirectory)
 

@@ -2,8 +2,8 @@ package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
