@@ -25,11 +25,24 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_LUNG_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.LUNG_DISEASE_DOID),
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT to hasPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
+            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredDOIDTermCreator(),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasHistoryOfPneumonitisCreator(),
             EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
-            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to hasHistoryOfThromboembolicEventCreator(),
-            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasHistoryOfThromboembolicEventCreator(),
-            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasHistoryOfThromboembolicEventCreator(),
+            EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.STROKE_DOID),
+            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidsFromSetCreator(
+                DoidConstants.THROMBOEMBOLIC_EVENT_DOID_SET,
+                "Thrombo-embolic event"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
+                DoidConstants.THROMBOEMBOLIC_EVENT_DOID_SET,
+                "Thrombo-embolic event"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
+                setOf(DoidConstants.MYOCARDIAL_INFARCT_DOID, DoidConstants.STROKE_DOID), "Arterial thrombo-embolic event"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasPriorConditionWithDoidsFromSetCreator(
+                setOf(DoidConstants.THROMBOSIS_DOID, DoidConstants.PULMONARY_EMBOLISM_DOID), "Venous thrombo-embolic event"
+            ),
             EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasPriorConditionWithDoidCreator(DoidConstants.VASCULAR_DISEASE_DOID),
             EligibilityRule.HAS_SEVERE_CONCOMITANT_CONDITION to hasSevereConcomitantIllnessCreator(),
             EligibilityRule.HAS_HAD_ORGAN_TRANSPLANT to hasHadOrganTransplantCreator(),
@@ -80,6 +93,30 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         }
     }
 
+    private fun hasRecentPriorConditionWithConfiguredDOIDTermCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneDoidTermOneIntegerInput(function)
+            val doidTermToFind = input.doidTerm
+            val maxMonthsAgo = input.integer
+            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
+            HasHadPriorConditionWithDoidRecently(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!, minDate)
+        }
+    }
+
+    private fun hasPriorConditionWithDoidsFromSetCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            HasHadPriorConditionWithDoidsFromSet(doidModel(), doidsToFind, priorOtherConditionTerm)
+        }
+    }
+
+    private fun hasRecentPriorConditionWithDoidsFromSetCreator(doidsToFind: Set<String>, priorOtherConditionTerm: String): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
+            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
+            HasHadPriorConditionWithDoidsFromSetRecently(doidModel(), doidsToFind, priorOtherConditionTerm, minDate)
+        }
+    }
+
     private fun hasPriorConditionWithNameCreator(nameToFind: String): FunctionCreator {
         return FunctionCreator { HasHadPriorConditionWithName(nameToFind) }
     }
@@ -123,10 +160,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
                 CEREBROVASCULAR_ACCIDENT_COMPLICATION_AND_TOXICITY_CATEGORY
             )
         }
-    }
-
-    private fun hasHistoryOfThromboembolicEventCreator(): FunctionCreator {
-        return FunctionCreator { HasHistoryOfThromboembolicEvent() }
     }
 
     private fun hasSevereConcomitantIllnessCreator(): FunctionCreator {

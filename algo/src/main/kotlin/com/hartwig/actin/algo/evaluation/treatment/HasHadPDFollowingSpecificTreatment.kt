@@ -16,10 +16,10 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
 
         return if (treatmentEvaluation.matchingTreatmentsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Has received ${Format.concatItems(treatmentEvaluation.matchingTreatmentsWithPD)} treatment with PD"
+                "Has had PD after receiving ${Format.concatItems(treatmentEvaluation.matchingTreatmentsWithPD)} treatment"
             )
         } else if (treatmentEvaluation.includesTrial) {
-            EvaluationFactory.undetermined("Undetermined if received specific ${Format.concatItems(treatments)} treatment")
+            EvaluationFactory.undetermined("Undetermined if received ${Format.concatItems(treatments)} treatment in trial")
         } else if (treatmentEvaluation.matchesWithUnclearPD) {
             EvaluationFactory.undetermined(
                 "Has received ${Format.concatItems(treatmentEvaluation.matchingTreatments)} treatment but undetermined if PD"

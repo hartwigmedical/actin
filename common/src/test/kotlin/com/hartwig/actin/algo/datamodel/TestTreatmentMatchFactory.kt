@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.datamodel
 
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
@@ -23,7 +24,7 @@ object TestTreatmentMatchFactory {
     }
 
     fun createProperTreatmentMatch(): TreatmentMatch {
-        return createMinimalTreatmentMatch().copy(trialMatches = createTestTrialMatches())
+        return createMinimalTreatmentMatch().copy(trialMatches = createTestTrialMatches(), standardOfCareMatches = createSocMatches())
     }
 
     private fun createTestTrialMatches(): List<TrialMatch> {
@@ -49,6 +50,26 @@ object TestTreatmentMatchFactory {
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),
                 cohorts = createTestCohortsTrial2()
+            )
+        )
+    }
+
+    private fun createSocMatches(): List<EvaluatedTreatment> {
+        return listOf(
+            EvaluatedTreatment(
+                treatmentCandidate = TreatmentCandidate(
+                    TreatmentTestFactory.treatment("Vemurafenib", true),
+                    true,
+                    setOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, parameters = emptyList()))
+                ),
+                evaluations = listOf(
+                    Evaluation(
+                        result = EvaluationResult.PASS,
+                        recoverable = false,
+                        passSpecificMessages = setOf("Patient has active CNS metastases"),
+                        passGeneralMessages = setOf("Active CNS metastases")
+                    )
+                )
             )
         )
     }
@@ -92,13 +113,13 @@ object TestTreatmentMatchFactory {
         )
     }
 
-    private fun createTestMetadata(cohortId: String, open: Boolean, slotsAvailable: Boolean, blacklist: Boolean): CohortMetadata {
+    private fun createTestMetadata(cohortId: String, open: Boolean, slotsAvailable: Boolean): CohortMetadata {
         return CohortMetadata(
             cohortId = cohortId,
             evaluable = true,
             open = open,
             slotsAvailable = slotsAvailable,
-            blacklist = blacklist,
+            blacklist = false,
             description = "Cohort $cohortId"
         )
     }
@@ -106,17 +127,17 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortsTrial1(): List<CohortMatch> {
         return listOf(
             CohortMatch(
-                metadata = createTestMetadata("A", true, false, false),
+                metadata = createTestMetadata("A", true, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial1CohortA()
             ),
             CohortMatch(
-                metadata = createTestMetadata("B", true, true, false),
+                metadata = createTestMetadata("B", true, true),
                 isPotentiallyEligible = true,
                 evaluations = emptyMap()
             ),
             CohortMatch(
-                metadata = createTestMetadata("C", false, false, false),
+                metadata = createTestMetadata("C", false, false),
                 isPotentiallyEligible = false,
                 evaluations = createTestCohortEvaluationsTrial1CohortC()
             )
@@ -161,12 +182,12 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortsTrial2(): List<CohortMatch> {
         return listOf(
             CohortMatch(
-                metadata = createTestMetadata("A", true, false, false),
+                metadata = createTestMetadata("A", true, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial2CohortA(),
             ),
             CohortMatch(
-                metadata = createTestMetadata("B", true, true, false),
+                metadata = createTestMetadata("B", true, true),
                 isPotentiallyEligible = false,
                 evaluations = createTestCohortEvaluationsTrial2CohortB(),
             )

@@ -34,12 +34,11 @@ class TreatmentMatchJsonTest {
             trialMatches = listOf(
                 trialMatch.copy(
                     evaluations = mapOf(
-                        key to
-                                Evaluation(
-                                    result = EvaluationResult.PASS,
-                                    recoverable = false,
-                                    passSpecificMessages = setOf("msg 2", "msg 1", "msg 3"),
-                                )
+                        key to Evaluation(
+                            result = EvaluationResult.PASS,
+                            recoverable = false,
+                            passSpecificMessages = setOf("msg 2", "msg 1", "msg 3"),
+                        )
                     ),
                     cohorts = emptyList()
                 )
@@ -54,7 +53,15 @@ class TreatmentMatchJsonTest {
                 + "{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],\"exclusionMolecularEvents\":[],"
                 + "\"passSpecificMessages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"passGeneralMessages\":[],"
                 + "\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],"
-                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[]}]],\"cohorts\":[]}]}")
+                + "\"failSpecificMessages\":[],\"failGeneralMessages\":[]}]],\"cohorts\":[]}],"
+                + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"Vemurafenib\",\"isSystemic\":true,"
+                + "\"synonyms\":[],\"displayOverride\":null,\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"},"
+                + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}]},"
+                + "\"evaluations\":[{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],"
+                + "\"exclusionMolecularEvents\":[],\"passSpecificMessages\":[\"Patient has active CNS metastases\"],"
+                + "\"passGeneralMessages\":[\"Active CNS metastases\"],\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],"
+                + "\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],\"failSpecificMessages\":[],"
+                + "\"failGeneralMessages\":[]}]}]}")
         assertThat(toJson(match)).isEqualTo(expectedJson)
     }
 

@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.UnusedCurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigValidationError
 import com.hartwig.actin.clinical.curation.config.ValidatedCurationConfig
-import com.hartwig.actin.clinical.curation.extraction.ExtractionEvaluation
+import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 
 typealias InputText = String
 
@@ -12,11 +12,11 @@ class CurationDatabase<T : CurationConfig>(
     private val configs: Map<InputText, Set<T>>,
     val validationErrors: List<CurationConfigValidationError>,
     private val category: CurationCategory,
-    private val evaluatedInputFunction: (ExtractionEvaluation) -> Set<String>
+    private val evaluatedInputFunction: (CurationExtractionEvaluation) -> Set<String>
 ) {
     fun find(input: InputText) = configs[input.lowercase()] ?: emptySet()
 
-    fun reportUnusedConfig(evaluations: List<ExtractionEvaluation>): List<UnusedCurationConfig> {
+    fun reportUnusedConfig(evaluations: List<CurationExtractionEvaluation>): List<UnusedCurationConfig> {
         val evaluatedInputs = evaluations.flatMap(evaluatedInputFunction)
         return configs.keys
             .filter { !evaluatedInputs.contains(it) }
@@ -28,7 +28,7 @@ class CurationDatabase<T : CurationConfig>(
     companion object {
         fun <T : CurationConfig> create(
             category: CurationCategory,
-            evaluationTarget: (ExtractionEvaluation) -> Set<String>,
+            evaluationTarget: (CurationExtractionEvaluation) -> Set<String>,
             configs: List<ValidatedCurationConfig<T>>
         ): CurationDatabase<T> {
             return CurationDatabase(asInputMap(configs), configs.flatMap { it.errors }, category, evaluationTarget)

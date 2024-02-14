@@ -4,7 +4,7 @@ import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.ParseException
 import java.io.File
 import java.nio.file.Files
-import java.util.*
+import java.util.Locale
 
 object ApplicationConfig {
     val LOCALE: Locale = Locale.ENGLISH
@@ -27,6 +27,10 @@ object ApplicationConfig {
 
     fun nonOptionalValue(cmd: CommandLine, param: String): String {
         return cmd.getOptionValue(param) ?: throw ParseException("Parameter must be provided: $param")
+    }
+
+    fun optionalValue(cmd: CommandLine, param: String): String? {
+        return cmd.getOptionValue(param)
     }
 
     private fun pathExists(path: String): Boolean {

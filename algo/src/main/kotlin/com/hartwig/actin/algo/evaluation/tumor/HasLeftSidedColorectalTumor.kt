@@ -9,12 +9,7 @@ import com.hartwig.actin.doid.DoidModel
 
 private const val TUMOR_SUB_LOCATION_SIDE_TEMPLATE = "Tumor sub-location %s is on %s side"
 
-class HasLeftSidedColorectalTumor (doidModel: DoidModel) : EvaluationFunction {
-    private val doidModel: DoidModel
-
-    init {
-        this.doidModel = doidModel
-    }
+class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.clinical.tumor.doids
@@ -44,16 +39,9 @@ class HasLeftSidedColorectalTumor (doidModel: DoidModel) : EvaluationFunction {
     }
 
     companion object {
-        private val LEFT_SUB_LOCATIONS = setOf("rectum", "descending colon", "colon sigmoid", "colon descendens", "rectosigmoid")
+        private val LEFT_SUB_LOCATIONS = setOf("rectum", "descending", "sigmoid", "descendens", "rectosigmoid")
         private val RIGHT_SUB_LOCATIONS = setOf(
-            "ascending colon",
-            "colon ascendens",
-            "caecum",
-            "cecum",
-            "transverse colon",
-            "colon transversum",
-            "flexura hepatica",
-            "hepatic flexure"
+            "ascending", "ascendens", "caecum", "cecum", "transverse", "transversum", "flexura hepatica", "hepatic flexure"
         )
     }
 }

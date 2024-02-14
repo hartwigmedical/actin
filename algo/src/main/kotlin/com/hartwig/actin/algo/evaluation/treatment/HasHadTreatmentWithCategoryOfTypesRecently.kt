@@ -23,7 +23,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
-                hasHadTrialAfterMinDate = TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
+                hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
                         && startedPastMinDate == true
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }

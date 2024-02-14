@@ -1,19 +1,23 @@
 package com.hartwig.actin.trial.input
 
+import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory
-import com.hartwig.actin.trial.datamodel.TestFunctionInputResolveFactory.createTestResolver
+import com.hartwig.actin.trial.datamodel.TestFunctionInputResolverFactory
+import com.hartwig.actin.trial.datamodel.TestFunctionInputResolverFactory.createTestResolver
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import com.hartwig.actin.trial.input.single.FunctionInput
+import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
 import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
+import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -24,6 +28,8 @@ import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
+import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
+import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
@@ -202,6 +208,109 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with one specific treatment input`() {
+        val rule = firstOfType(FunctionInput.ONE_SPECIFIC_TREATMENT)
+        val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
+        val valid = create(rule, listOf(treatmentName))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = TestTreatmentDatabaseFactory.createProper().findTreatmentByName(treatmentName)!!
+        assertThat(resolver.createOneSpecificTreatmentInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentName, treatmentName)))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one specific treatment one integer input`() {
+        val rule = firstOfType(FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER)
+        val treatmentName = TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN
+        val valid = create(rule, listOf(treatmentName, "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = TestTreatmentDatabaseFactory.createProper().findTreatmentByName(treatmentName)!!
+        assertThat(resolver.createOneSpecificTreatmentOneIntegerInput(valid))
+            .isEqualTo(OneSpecificTreatmentOneInteger(treatment = expected, integer = 1))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentName, treatmentName)))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many specific treatment two integers input`() {
+        val rule = firstOfType(FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS)
+        val treatmentNames = listOf(TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN, TestTreatmentDatabaseFactory.RADIOTHERAPY)
+        val valid = create(rule, listOf(treatmentNames.joinToString(";"), "1", "2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val expected = ManySpecificTreatmentsTwoIntegers(
+            treatments = treatmentNames.map { treatmentDatabase.findTreatmentByName(it)!! }, integer1 = 1, integer2 = 2
+        )
+        assertThat(resolver.createManySpecificTreatmentsTwoIntegerInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(treatmentNames, treatmentNames)))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one treatment category many drugs input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_DRUGS)
+        val category = TreatmentCategory.CHEMOTHERAPY
+        val drugNames = listOf("CAPECITABINE", "OXALIPLATIN")
+        val valid = create(rule, listOf(category.display(), drugNames.joinToString(";")))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val expected = OneTreatmentCategoryManyDrugs(
+            category = category,
+            drugs = drugNames.map { treatmentDatabase.findDrugByName(it)!! }.toSet()
+        )
+        assertThat(resolver.createOneTreatmentCategoryManyDrugsInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment category", "CAPECITABINE;OXALIPLATIN")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category, "CAPECITABINE;OXALIPLATIN", "1")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many drugs input`() {
+        val rule = firstOfType(FunctionInput.MANY_DRUGS)
+        val drugNames = listOf("CAPECITABINE", "OXALIPLATIN")
+        val valid = create(rule, listOf(drugNames.joinToString(";")))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val expected = drugNames.map { treatmentDatabase.findDrugByName(it)!! }.toSet()
+        assertThat(resolver.createManyDrugsInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;notADrug")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;OXALIPLATIN", "1")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many drugs one integer input`() {
+        val rule = firstOfType(FunctionInput.MANY_DRUGS_ONE_INTEGER)
+        val drugNames = listOf("CAPECITABINE", "OXALIPLATIN")
+        val valid = create(rule, listOf(drugNames.joinToString(";"), "1"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val expected = ManyDrugsOneInteger(
+            drugs = drugNames.map { treatmentDatabase.findDrugByName(it)!! }.toSet(), integer = 1
+        )
+        assertThat(resolver.createManyDrugsOneIntegerInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;notADrug", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;OXALIPLATIN")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one tumor type input`() {
         val rule = firstOfType(FunctionInput.ONE_TUMOR_TYPE)
         val category = TumorTypeInput.CARCINOMA.display()
@@ -332,7 +441,7 @@ class FunctionInputResolverTest {
     
     @Test
     fun `Should resolve functions with one gene input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE)
         val valid = create(rule, listOf("gene"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -347,7 +456,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene one integer input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_ONE_INTEGER)
         val valid = create(rule, listOf("gene", "1"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -364,7 +473,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene one integer one variant type input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_ONE_INTEGER_ONE_VARIANT_TYPE)
         val valid = create(rule, listOf("gene", "1", "SNV"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -381,7 +490,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene two integers input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_TWO_INTEGERS)
         val valid = create(rule, listOf("gene", "1", "2"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -397,7 +506,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene many codons input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_MANY_CODONS)
         val valid = create(rule, listOf("gene", "V600;V601"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -413,7 +522,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one gene many protein impacts input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS)
         val valid = create(rule, listOf("gene", "V600E;V601K"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -428,7 +537,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with many genes input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithOneValidGene("gene")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.MANY_GENES)
         val valid = create(rule, listOf("gene;gene"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -443,7 +552,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should resolve functions with one doid term input`() {
-        val resolver = TestFunctionInputResolveFactory.createResolverWithDoidAndTerm("doid 1", "term 1")
+        val resolver = TestFunctionInputResolverFactory.createResolverWithDoidAndTerm("doid 1", "term 1")
         val rule = firstOfType(FunctionInput.ONE_DOID_TERM)
         val valid = create(rule, listOf("term 1"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
@@ -453,6 +562,17 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("doid 1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("term 2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("term 1", "term 2")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one receptor type input`() {
+        val rule = firstOfType(FunctionInput.ONE_RECEPTOR_TYPE)
+        val valid = create(rule, listOf("ER"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createOneReceptorTypeInput(valid)).isEqualTo(ReceptorType.ER)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("ER", "something else")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a receptor")))!!).isFalse
     }
 
     @Test
