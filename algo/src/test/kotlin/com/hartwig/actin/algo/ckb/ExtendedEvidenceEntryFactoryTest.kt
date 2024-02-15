@@ -1,6 +1,9 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.algo.ckb
 
-import com.hartwig.actin.algo.ckb.ExtendedEvidenceEntryFactory
+import com.hartwig.actin.algo.ckb.datamodel.ConfidenceInterval
+import com.hartwig.actin.algo.ckb.datamodel.DerivedMetric
+import com.hartwig.actin.algo.ckb.datamodel.ValuePercentage
+import com.hartwig.actin.algo.ckb.datamodel.VariantRequirement
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbMolecularProfile
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
