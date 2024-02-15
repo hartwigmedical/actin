@@ -6,7 +6,6 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
@@ -78,7 +77,7 @@ class CopyNumberExtractorTest {
             .addAllSomaticGeneCopyNumbers(geneCopyNumber1, geneCopyNumber2, geneCopyNumber3, geneCopyNumber4, geneCopyNumber5)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(gainLoss1.gene(), gainLoss2.gene(), gainLoss4.gene(), geneCopyNumber5.gene())
-        val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val copyNumberExtractor = CopyNumberExtractor(geneFilter)
         val copyNumbers = copyNumberExtractor.extractCopyNumbers(purple)
         assertThat(copyNumbers).hasSize(4)
 
@@ -126,7 +125,7 @@ class CopyNumberExtractorTest {
             .build()
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
-        val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val copyNumberExtractor = CopyNumberExtractor(geneFilter)
         copyNumberExtractor.extractCopyNumbers(purple)
     }
 
@@ -154,7 +153,7 @@ class CopyNumberExtractorTest {
             .addAllSomaticGeneCopyNumbers(geneCopyNumber)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("gene 1")
-        val copyNumberExtractor = CopyNumberExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val copyNumberExtractor = CopyNumberExtractor(geneFilter)
         val copyNumbers = copyNumberExtractor.extractCopyNumbers(purple)
         assertThat(copyNumbers).hasSize(1)
         assertThat(copyNumbers.first().minCopies).isEqualTo(4)

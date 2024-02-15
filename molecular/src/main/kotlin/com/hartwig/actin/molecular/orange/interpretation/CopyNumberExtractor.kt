@@ -3,17 +3,18 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
-import java.util.*
+import java.util.SortedSet
 
-internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
     fun extractCopyNumbers(purple: PurpleRecord): SortedSet<CopyNumber> {
         val drivers = VariantExtractor.relevantPurpleDrivers(purple)
@@ -35,39 +36,34 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
                 if (driver != null) {
                     val gainLoss = findGainLoss(purple.allSomaticGainsLosses(), geneCopyNumber.gene())
                     val event = DriverEventFactory.gainLossEvent(gainLoss)
-                    val alteration =
-                        GeneAlterationFactory.convertAlteration(gainLoss.gene(), evidenceDatabase.geneAlterationForGainLoss(gainLoss))
                     CopyNumber(
-                        gene = alteration.gene,
-                        geneRole = alteration.geneRole,
-                        proteinEffect = alteration.proteinEffect,
-                        isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                        gene = gainLoss.gene(),
+                        geneRole = GeneRole.UNKNOWN,
+                        proteinEffect = ProteinEffect.UNKNOWN,
+                        isAssociatedWithDrugResistance = null,
                         isReportable = true,
                         event = event,
                         driverLikelihood = DriverLikelihood.HIGH,
-                        evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss))!!,
+                        evidence = ActionableEvidenceFactory.createNoEvidence(),
                         type = determineType(gainLoss.interpretation()),
                         minCopies = Math.round(gainLoss.minCopies()).toInt(),
                         maxCopies = Math.round(gainLoss.maxCopies()).toInt()
                     )
                 } else {
-                    val alteration =
-                        GeneAlterationFactory.convertAlteration(geneCopyNumber.gene(),
-                            evidenceDatabase.geneAlterationForGeneCopyNumber(geneCopyNumber))
-                    val gene = alteration.gene
+                    val gene = geneCopyNumber.gene()
                     CopyNumber(
-                        gene = alteration.gene,
-                        geneRole = alteration.geneRole,
-                        proteinEffect = alteration.proteinEffect,
-                        isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                        gene = gene,
+                        geneRole = GeneRole.UNKNOWN,
+                        proteinEffect = ProteinEffect.UNKNOWN,
+                        isAssociatedWithDrugResistance = null,
                         isReportable = false,
                         event = "$gene copy number",
                         driverLikelihood = null,
                         evidence = ActionableEvidenceFactory.createNoEvidence(),
                         type = CopyNumberType.NONE,
                         minCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt(),
-                        maxCopies = Math.round(geneCopyNumber.minCopyNumber())
-                            .toInt() //TODO: maxCopies should be retrievable from ORANGE datamodel.
+                        // TODO (DvB): maxCopies should be retrievable from ORANGE datamodel.
+                        maxCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt()
                     )
                 }
             }.toSortedSet(CopyNumberComparator())
@@ -114,8 +110,6 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
                     "Copy number driver found but could not find corresponding PurpleGainLoss for gene : '$geneToFind'."
                 )
             }
-
         }
     }
-
 }
