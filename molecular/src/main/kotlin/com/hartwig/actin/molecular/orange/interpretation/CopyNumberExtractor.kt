@@ -12,7 +12,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
-import java.util.SortedSet
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
@@ -26,7 +25,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                 val geneIncluded = geneFilter.include(geneCopyNumber.gene())
                 if (!geneIncluded && driver != null) {
                     throw IllegalStateException(
-                        "Filtered a reported copy number through gene filtering: ${driver}."
+                        "Filtered a reported copy number through gene filtering: ${driver.gene()}."
                                 + " Please make sure ${geneCopyNumber.gene()} is configured as a known gene."
                     )
                 }
