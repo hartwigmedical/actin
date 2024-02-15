@@ -20,7 +20,7 @@ class CopyNumberExtractorTest {
 
     @Test
     fun `Should extract copy numbers`() {
-        val driver1: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build()
+        val driver1: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
         val gainLoss1: PurpleGainLoss = TestPurpleFactory.gainLossBuilder()
             .gene("gene 1")
             .minCopies(0.0)
@@ -114,7 +114,7 @@ class CopyNumberExtractorTest {
 
     @Test(expected = IllegalStateException::class)
     fun `should throw exception when filtering reported copy number`() {
-        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build()
+        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
         val gainLoss: PurpleGainLoss =
             TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
         val geneCopyNumber: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder().gene("gene 1").build()
@@ -139,7 +139,7 @@ class CopyNumberExtractorTest {
 
     @Test
     fun `Should only return canonical GainLoss`() {
-        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).build()
+        val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
         val gainLossCanonical: PurpleGainLoss =
             TestPurpleFactory.gainLossBuilder()
                 .gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).isCanonical(true).minCopies(4.0).build()

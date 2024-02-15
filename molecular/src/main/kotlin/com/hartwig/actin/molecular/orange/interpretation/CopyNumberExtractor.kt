@@ -16,7 +16,7 @@ import java.util.SortedSet
 
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
-    fun extractCopyNumbers(purple: PurpleRecord): SortedSet<CopyNumber> {
+    fun extractCopyNumbers(purple: PurpleRecord): Set<CopyNumber> {
         val drivers = VariantExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGeneCopyNumbers()
             .map { geneCopyNumber ->
@@ -95,7 +95,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
         private fun findCopyNumberDriver(drivers: Set<PurpleDriver>, geneToFind: String): PurpleDriver? {
             return drivers.find { driver ->
-                (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) && driver.gene() == geneToFind
+                (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) && driver.gene() == geneToFind && driver.isCanonical
             }
         }
 
