@@ -331,20 +331,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasEgfrPaccMutationCreator(): FunctionCreator {
-        return FunctionCreator { GeneHasVariantInCodon("EGFR", EGFR_PACC_CODON_LIST) }
+        return FunctionCreator { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANT_LIST) }
     }
 
-    private val EGFR_PACC_CODON_LIST =
+    private val EGFR_PACC_VARIANT_LIST =
         listOf(
-            "G719",
-            "S768",
-            "L747",
-            "V769",
-            "E709",
-            "C797",
-            "L792",
-            "G724",
-            "L718",
-            "T854",
+            "G719X",
+            "S768I",
+            "L747P",
+            "L747S",
+            "V769L",
+            "E709_T710 delinsD",
+            "C797S",
+            "L792H",
+            "G724S",
+            "L718X",
+            "T854I",
         )
 }
