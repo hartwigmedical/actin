@@ -22,17 +22,10 @@ class EfficacyEvidenceGenerator(
         table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
         treatments.forEach { treatment: Treatment ->
             table.addCell(Cells.createContentBold(treatment.name))
+            val literatures = listOf("TRIBE2", "FIRE-3")
             val subtable = Tables.createSingleColWithWidth(width / 2)
-            val subsubtables: MutableList<Table> = mutableListOf()
-            subsubtables.add(createFirstPart())
-            subsubtables.add(createSecondPart(width))
-            subsubtables.add(createThirdPart())
-            for (i in subsubtables.indices) {
-                val subsubtable = subsubtables[i]
-                subtable.addCell(Cells.create(subsubtable))
-                if (i < subsubtables.size - 1) {
-                    subtable.addCell(Cells.createEmpty())
-                }
+            for (literature in literatures) {
+                subtable.addCell(Cells.create(createOneLiteraturePart(width, literature)))
             }
             table.addCell(Cells.createContent(subtable))
 
@@ -42,9 +35,25 @@ class EfficacyEvidenceGenerator(
     }
 
     companion object {
-        private fun createFirstPart(): Table {
+        private fun createOneLiteraturePart(width: Float, title: String): Table {
+            val subtable = Tables.createSingleColWithWidth(width / 2)
+            val subsubtables: MutableList<Table> = mutableListOf()
+            subsubtables.add(createFirstPart(title))
+            subsubtables.add(createSecondPart(width))
+            subsubtables.add(createThirdPart())
+            for (i in subsubtables.indices) {
+                val subsubtable = subsubtables[i]
+                subtable.addCell(Cells.create(subsubtable))
+                if (i < subsubtables.size - 1) {
+                    subtable.addCell(Cells.createEmpty())
+                }
+            }
+            return subtable
+        }
+
+        private fun createFirstPart(title: String): Table {
             val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
-            table.addCell(Cells.createSubTitle("TRIBE2 (339 patients)"))
+            table.addCell(Cells.createSubTitle("$title (339 patients)"))
             table.addCell(Cells.createValue(""))
             table.addCell(Cells.createValue("Patient characteristics: "))
             table.addCell(Cells.createKey(""))
@@ -78,6 +87,8 @@ class EfficacyEvidenceGenerator(
             table.addCell(Cells.createKey("12 months (95% CI: 11.1-12.9)"))
             table.addCell(Cells.createValue("Median OS: "))
             table.addCell(Cells.createKey("27.4 months (95% CI: 23.7-30.0)"))
+            table.addCell(Cells.createEmpty())
+            table.addCell(Cells.createEmpty())
             return table
         }
     }

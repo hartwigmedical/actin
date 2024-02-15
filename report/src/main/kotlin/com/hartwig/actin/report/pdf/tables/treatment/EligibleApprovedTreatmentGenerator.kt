@@ -42,7 +42,19 @@ class EligibleApprovedTreatmentGenerator(
                 table.addHeaderCell(Cells.createHeader("Personalized PFS"))
                 treatments?.forEach { treatment: Treatment ->
                     table.addCell(Cells.createContentBold(treatment.name))
-                    table.addCell(Cells.createContent("PFS: 12 months (95% CI: 11.1-12.9) \n OS: 27.4 months (95% CI: 23.7-30.0) \n (TRIBE2)"))
+                    val literatures = listOf("TRIBE2", "FIRE-3")
+                    val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
+                    for (literature in literatures) {
+                        subtable.addCell(Cells.createValue("PFS: "))
+                        subtable.addCell(Cells.createKey("12 months (95% CI: 11.1-12.9)"))
+                        subtable.addCell(Cells.createValue("OS: "))
+                        subtable.addCell(Cells.createKey("27.4 months (95% CI: 23.7-30.0)"))
+                        subtable.addCell(Cells.createValue("($literature)"))
+                        subtable.addCell(Cells.createEmpty())
+                        subtable.addCell(Cells.createValue(" "))
+                        subtable.addCell(Cells.createValue(" "))
+                    }
+                    table.addCell(Cells.createContent(subtable))
                     table.addCell(Cells.createContent("Not evaluated yet"))
                 }
                 return makeWrapping(table)
