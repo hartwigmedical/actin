@@ -45,7 +45,7 @@ class HasHadSystemicTherapyWithAnyIntent(
                 )
             }
 
-            ((monthsAgo == null) && matchingTreatments.containsKey(key = null)) || matchingTreatments[null]?.any {
+            (monthsAgo == null && matchingTreatments.containsKey(key = null)) || matchingTreatments[null]?.any {
                 treatmentSinceMinDate(
                     it,
                     true
