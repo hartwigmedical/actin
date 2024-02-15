@@ -10,8 +10,8 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Currently undetermined if the patient has had objective clinical benefit following therapy with {$treatment.name}",
-            "Undetermined clinical benefit following {$treatment.name} therapy"
+            "Currently undetermined if the patient has had objective clinical benefit following therapy with ${treatment.name}",
+            "Undetermined clinical benefit following ${treatment.name} therapy"
         )
     }
 }

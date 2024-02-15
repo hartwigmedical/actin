@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasHadBrainRadiationTherapy : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated(
-            "Currently not evaluated if patient received prior brain radiation therapy",
-            "Currently not evaluated if patient received prior brain radiation therapy"
+        return EvaluationFactory.undetermined(
+            "Undetermined if patient received prior brain radiation therapy",
+            "Undetermined prior brain radiation therapy"
         )
     }
 
