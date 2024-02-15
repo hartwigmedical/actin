@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.ckb.serialization
 
 import com.google.common.io.Resources
-import com.hartwig.actin.algo.ckb.json.JsonCkbExtendedEvidenceEntry
+import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,7 +12,7 @@ class CkbExtendedEvidenceJsonTest {
 
     @Test
     fun `Can read example extended efficacy database json file`() {
-        val entries: List<JsonCkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(exampleJson)
+        val entries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(exampleJson)
         val proper = CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase()
 
         assertThat(entries).isEqualTo(proper)
@@ -31,7 +31,7 @@ class CkbExtendedEvidenceJsonTest {
     }
 
     companion object {
-        private fun toJson(entries: List<JsonCkbExtendedEvidenceEntry>): String {
+        private fun toJson(entries: List<CkbExtendedEvidenceEntry>): String {
             return CkbExtendedEvidenceJson.createGson().toJson(entries)
         }
     }

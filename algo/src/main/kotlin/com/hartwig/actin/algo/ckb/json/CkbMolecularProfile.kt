@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.ckb.json
 
-data class JsonCkbMolecularProfile(
+data class CkbMolecularProfile(
     val id: Int,
     val profileName: String
 )

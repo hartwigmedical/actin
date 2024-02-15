@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.ckb
 
 import com.google.gson.Gson
 import com.hartwig.actin.algo.ckb.datamodel.AnalysisGroup
-import com.hartwig.actin.algo.ckb.datamodel.CkbExtendedEvidenceEntry
+import com.hartwig.actin.algo.ckb.datamodel.ExtendedEvidenceEntry
 import com.hartwig.actin.algo.ckb.datamodel.ConfidenceInterval
 import com.hartwig.actin.algo.ckb.datamodel.DerivedMetric
 import com.hartwig.actin.algo.ckb.datamodel.PatientPopulation
@@ -12,29 +12,29 @@ import com.hartwig.actin.algo.ckb.datamodel.PrimaryEndPointUnit
 import com.hartwig.actin.algo.ckb.datamodel.TrialReference
 import com.hartwig.actin.algo.ckb.datamodel.ValuePercentage
 import com.hartwig.actin.algo.ckb.datamodel.VariantRequirement
-import com.hartwig.actin.algo.ckb.json.JsonCkbAnalysisGroup
-import com.hartwig.actin.algo.ckb.json.JsonCkbDerivedMetric
-import com.hartwig.actin.algo.ckb.json.JsonCkbEndPointMetric
-import com.hartwig.actin.algo.ckb.json.JsonCkbExtendedEvidenceEntry
-import com.hartwig.actin.algo.ckb.json.JsonCkbPatientPopulation
-import com.hartwig.actin.algo.ckb.json.JsonCkbTrialReference
-import com.hartwig.actin.algo.ckb.json.JsonCkbVariantRequirementDetail
+import com.hartwig.actin.algo.ckb.json.CkbAnalysisGroup
+import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
+import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
+import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
+import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
+import com.hartwig.actin.algo.ckb.json.CkbTrialReference
+import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import java.util.*
 import kotlin.collections.HashMap
 
-class CkbExtendedEvidenceEntryFactory {
+object ExtendedEvidenceEntryFactory {
 
-    fun extractCkbExtendedEvidence(jsonCkbExtendedEvidenceEntries: List<JsonCkbExtendedEvidenceEntry>): List<CkbExtendedEvidenceEntry> {
-        val ckbExtendedEvidenceEntries = mutableListOf<CkbExtendedEvidenceEntry>()
+    fun extractCkbExtendedEvidence(jsonCkbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
+        val ckbExtendedEvidenceEntries = mutableListOf<ExtendedEvidenceEntry>()
         for (jsonCkbExtendedEvidenceEntry in jsonCkbExtendedEvidenceEntries) {
             ckbExtendedEvidenceEntries.add(resolveCkbExtendedEvidence(jsonCkbExtendedEvidenceEntry))
         }
         return ckbExtendedEvidenceEntries
     }
 
-    private fun resolveCkbExtendedEvidence(jsonCkbExtendedEvidenceEntry: JsonCkbExtendedEvidenceEntry): CkbExtendedEvidenceEntry {
-        return CkbExtendedEvidenceEntry(
+    private fun resolveCkbExtendedEvidence(jsonCkbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): ExtendedEvidenceEntry {
+        return ExtendedEvidenceEntry(
             acronym = jsonCkbExtendedEvidenceEntry.title,
             phase = jsonCkbExtendedEvidenceEntry.phase,
             therapeuticSetting = jsonCkbExtendedEvidenceEntry.therapeuticSetting?.uppercase(Locale.getDefault())
@@ -50,7 +50,7 @@ class CkbExtendedEvidenceEntryFactory {
         )
     }
 
-    fun convertVariantRequirements(jsonVariantRequirements: List<JsonCkbVariantRequirementDetail>): List<VariantRequirement> {
+    fun convertVariantRequirements(jsonVariantRequirements: List<CkbVariantRequirementDetail>): List<VariantRequirement> {
         val variantRequirements = mutableListOf<VariantRequirement>()
         for (variantRequirement in jsonVariantRequirements) {
             variantRequirements.add(
@@ -63,7 +63,7 @@ class CkbExtendedEvidenceEntryFactory {
         return variantRequirements
     }
 
-    private fun convertTrialReferences(jsonTrialReferences: List<JsonCkbTrialReference>): List<TrialReference> {
+    private fun convertTrialReferences(jsonTrialReferences: List<CkbTrialReference>): List<TrialReference> {
         val trialReferences = mutableListOf<TrialReference>()
         for (jsonTrialReference in jsonTrialReferences) {
             trialReferences.add(
@@ -76,7 +76,7 @@ class CkbExtendedEvidenceEntryFactory {
         return trialReferences
     }
 
-    private fun convertPatientPopulations(jsonPatientPopulations: List<JsonCkbPatientPopulation>): Set<PatientPopulation> {
+    private fun convertPatientPopulations(jsonPatientPopulations: List<CkbPatientPopulation>): Set<PatientPopulation> {
         val patientPopulations = mutableSetOf<PatientPopulation>()
         for (patientPopulation in jsonPatientPopulations) {
             patientPopulations.add(
@@ -89,22 +89,22 @@ class CkbExtendedEvidenceEntryFactory {
                     numberOfPatients = patientPopulation.nPatients.toInt(),
                     numberOfMale = convertGender(patientPopulation.nMale, patientPopulation.nFemale, patientPopulation.nPatients),
                     numberOfFemale = convertGender(patientPopulation.nFemale, patientPopulation.nMale, patientPopulation.nPatients),
-                    who0 = patientPopulation.nEcog0?.toInt(),
-                    who1 = patientPopulation.nEcog1?.toInt(),
-                    who2 = patientPopulation.nEcog2?.toInt(),
-                    who3 = patientPopulation.nEcog3?.toInt(),
-                    who4 = patientPopulation.nEcog4?.toInt(),
+                    patientsWithWho0 = patientPopulation.nEcog0?.toInt(),
+                    patientsWithWho1 = patientPopulation.nEcog1?.toInt(),
+                    patientsWithWho2 = patientPopulation.nEcog2?.toInt(),
+                    patientsWithWho3 = patientPopulation.nEcog3?.toInt(),
+                    patientsWithWho4 = patientPopulation.nEcog4?.toInt(),
                     primaryTumorLocation = convertPrimaryTumorLocation(patientPopulation.nLocalizationPrimaryTumor),
                     mutations = patientPopulation.otherMutations, //TODO: convert to map once CKB has made notation consistent
-                    primaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),
-                    primaryTumorRemovedPartial = patientPopulation.nPrimaryTumorRemovedPartial?.toInt(),
-                    primaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
+                    patientsWithPrimaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),
+                    patientsWithPrimaryTumorRemovedPartial = patientPopulation.nPrimaryTumorRemovedPartial?.toInt(),
+                    patientsWithPrimaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
                     metastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
                     priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
-                    highMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
+                    patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
                     medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival?.toDouble(),
                     medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival?.toDouble(),
-                    analysisGroup = convertAnalysisGroup(patientPopulation.analysisGroups)
+                    analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups)
                 )
             )
         }
@@ -140,7 +140,7 @@ class CkbExtendedEvidenceEntryFactory {
         return metastaticSites
     }
 
-    private fun convertAnalysisGroup(jsonAnalysisGroups: List<JsonCkbAnalysisGroup>): List<AnalysisGroup> {
+    private fun convertAnalysisGroup(jsonAnalysisGroups: List<CkbAnalysisGroup>): List<AnalysisGroup> {
         val analysisGroups = mutableListOf<AnalysisGroup>()
         for (jsonAnalysisGroup in jsonAnalysisGroups) {
             analysisGroups.add(
@@ -153,7 +153,7 @@ class CkbExtendedEvidenceEntryFactory {
         return analysisGroups
     }
 
-    private fun convertPrimaryEndPoints(jsonPrimaryEndPoints: List<JsonCkbEndPointMetric>): Set<PrimaryEndPoint> {
+    private fun convertPrimaryEndPoints(jsonPrimaryEndPoints: List<CkbEndPointMetric>): Set<PrimaryEndPoint> {
         val primaryEndPoints = mutableSetOf<PrimaryEndPoint>()
         for (primaryEndPoint in jsonPrimaryEndPoints) {
             primaryEndPoints.add(
@@ -207,7 +207,7 @@ class CkbExtendedEvidenceEntryFactory {
         }
     }
 
-    fun convertDerivedMetric(jsonDerivedMetrics: List<JsonCkbDerivedMetric>): List<DerivedMetric> {
+    fun convertDerivedMetric(jsonDerivedMetrics: List<CkbDerivedMetric>): List<DerivedMetric> {
         val derivedMetrics = mutableListOf<DerivedMetric>()
         for (derivedMetric in jsonDerivedMetrics) {
             derivedMetrics.add(

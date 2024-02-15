@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.ckb.json
 
 import com.google.gson.annotations.SerializedName
 
-data class JsonCkbPatientPopulation(
+data class CkbPatientPopulation(
     val id: Int,
     @SerializedName("is_control") val isControl: Boolean,
     @SerializedName("group_name") val groupName: String,
@@ -37,7 +37,7 @@ data class JsonCkbPatientPopulation(
     @SerializedName("median_follow_up_for_progression_free_survival") val medianFollowUpForProgressionFreeSurvival: String?,
     @SerializedName("median_follow_up_for_randomization_to_data_cut_off") val medianFollowUpForRandomizationToDataCutOff: String?,
     @SerializedName("metastatic_sites") val metastaticSites: String?,
-    @SerializedName("analysis_groups") val analysisGroups: List<JsonCkbAnalysisGroup>,
-    @SerializedName("efficacy_evidence") val efficacyEvidence: List<JsonCkbEfficacyEvidence>,
+    @SerializedName("analysis_groups") val analysisGroups: List<CkbAnalysisGroup>,
+    @SerializedName("efficacy_evidence") val efficacyEvidence: List<CkbEfficacyEvidence>,
     val notes: String?
 )

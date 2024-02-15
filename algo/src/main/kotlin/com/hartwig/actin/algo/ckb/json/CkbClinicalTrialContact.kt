@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.ckb.json
 
-data class JsonCkbClinicalTrialContact(
+data class CkbClinicalTrialContact(
     val name: String,
     val email: String,
     val phone: String,
