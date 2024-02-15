@@ -196,11 +196,11 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadCombinedTreatmentsOfCategoryAndTypeCreator(
         firstTreatmentCategory: TreatmentCategory, firstTreatmentType: DrugType?,
-        secondTreatmentCategory: TreatmentCategory, secondTreatmentType: DrugType?, displayOverrule: String?
+        secondTreatmentCategory: TreatmentCategory, secondTreatmentType: DrugType?, displayOverride: String?
     ): FunctionCreator {
         return FunctionCreator {
             HasHadCombinedTreatmentsOfCategoryAndType(
-                firstTreatmentCategory, firstTreatmentType, secondTreatmentCategory, secondTreatmentType, displayOverrule
+                firstTreatmentCategory, firstTreatmentType, secondTreatmentCategory, secondTreatmentType, displayOverride
             )
         }
     }

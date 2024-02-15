@@ -10,11 +10,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadCombinedTreatmentsOfCategoryAndType(
     firstTreatmentCategory: TreatmentCategory, firstTreatmentType: DrugType?,
     secondTreatmentCategory: TreatmentCategory, secondTreatmentType: DrugType?,
-    displayOverrule: String?
+    displayOverride: String?
 ) : EvaluationFunction {
 
-    private val treatmentDisplay = if (displayOverrule != null) {
-        displayOverrule
+    private val treatmentDisplay = if (displayOverride != null) {
+        displayOverride
     } else {
         val firstDrugDisplay = firstTreatmentType?.display() ?: firstTreatmentCategory.display()
         val secondDrugDisplay = secondTreatmentType?.display() ?: secondTreatmentCategory.display()
@@ -27,5 +27,4 @@ class HasHadCombinedTreatmentsOfCategoryAndType(
             "Undetermined prior $treatmentDisplay "
         )
     }
-
 }
