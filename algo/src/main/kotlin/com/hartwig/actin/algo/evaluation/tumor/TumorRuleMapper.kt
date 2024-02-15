@@ -16,6 +16,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X to hasCancerOfUnknownPrimaryCreator(),
             EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to hasCancerWithNeuroendocrineComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to hasCancerWithSmallCellComponentCreator(),
+            EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION to hasKnownSCLCTransformationCreator(),
             EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNSCLCCreator(),
             EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
             EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to hasOvarianCancerWithMucinousComponentCreator(),
@@ -65,6 +66,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
+            EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_DRUG_X to hasAcquiredResistanceToSomeTreatmentCreator(),
         )
     }
 
@@ -110,6 +112,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasCancerWithSmallCellComponentCreator(): FunctionCreator {
         return FunctionCreator { HasCancerWithSmallCellComponent(doidModel()) }
+    }
+
+    private fun hasKnownSCLCTransformationCreator(): FunctionCreator {
+        return FunctionCreator { HasKnownSCLCTransformation() }
     }
 
     private fun hasNonSquamousNSCLCCreator(): FunctionCreator {
@@ -323,6 +329,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasLeftSidedColorectalTumorCreator(): FunctionCreator {
         return FunctionCreator { HasLeftSidedColorectalTumor(doidModel()) }
+    }
+
+    private fun hasAcquiredResistanceToSomeTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            HasAcquiredResistanceToSomeTreatment(functionInputResolver().createOneSpecificTreatmentInput(function))
+        }
     }
 
     private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {

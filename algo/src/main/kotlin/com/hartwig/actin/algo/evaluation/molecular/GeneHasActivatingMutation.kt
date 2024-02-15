@@ -11,7 +11,8 @@ import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 
-class GeneHasActivatingMutation internal constructor(private val gene: String) : EvaluationFunction {
+class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val activatingVariants: MutableSet<String> = mutableSetOf()
@@ -27,7 +28,12 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
         val evidenceSource = record.molecular.evidenceSource
 
         for (variant in record.molecular.drivers.variants) {
-            if (variant.gene == gene) {
+            if (variant.gene == gene && (codonsToIgnore == null || codonsToIgnore.none {
+                    isCodonMatch(
+                        variant.canonicalImpact.affectedCodon,
+                        it
+                    )
+                })) {
                 val isGainOfFunction =
                     (variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION ||
                             variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
@@ -164,6 +170,14 @@ class GeneHasActivatingMutation internal constructor(private val gene: String) :
 
         private fun isMissenseOrHotspot(variant: Variant): Boolean {
             return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isHotspot
+        }
+
+        private fun isCodonMatch(affectedCodon: Int?, codonsToMatch: String): Boolean {
+            if (affectedCodon == null) {
+                return false
+            }
+            val codonIndexToMatch = codonsToMatch.substring(1).takeWhile { it.isDigit() }.toInt()
+            return codonIndexToMatch == affectedCodon
         }
     }
 }

@@ -86,6 +86,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     MONOCLONAL_ANTIBODY_IMMUNOTHERAPY(TreatmentCategory.IMMUNOTHERAPY, "monoclonal antibody - immunotherapies"),
     MONOCLONAL_ANTIBODY_SUPPORTIVE_TREATMENT(TreatmentCategory.SUPPORTIVE_TREATMENT, "monoclonal antibody - supportive treatments"),
     MONOCLONAL_ANTIBODY_TARGETED_THERAPY(TreatmentCategory.TARGETED_THERAPY, "monoclonal antibody - targeted therapies"),
+    MONOCLONAL_ANTIBODY_MMAE_CONJUGATE(TreatmentCategory.TARGETED_THERAPY, "monoclonal antibody - MMAE conjugate"),
     MTORC1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MTORC1 inhibitor"),
     MUC16_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MUC16 inhibitor"),
     MULTI_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY),

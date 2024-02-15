@@ -5,6 +5,7 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
@@ -125,6 +126,19 @@ internal object TumorTestFactory {
 
     fun withBrainLesionStatus(hasBrainLesions: Boolean?, hasActiveBrainLesions: Boolean?): PatientRecord {
         return withTumorDetails(TumorDetails(hasBrainLesions = hasBrainLesions, hasActiveBrainLesions = hasActiveBrainLesions))
+    }
+
+    fun withCnsOrBrainLesionsAndOncologicalHistory(
+        hasCnsLesions: Boolean?,
+        hasBrainLesions: Boolean?,
+        oncologicalHistoryEntry: TreatmentHistoryEntry
+    ): PatientRecord {
+        return base.copy(
+            clinical = base.clinical.copy(
+                oncologicalHistory = listOf(oncologicalHistoryEntry),
+                tumor = TumorDetails(hasCnsLesions = hasCnsLesions, hasBrainLesions = hasBrainLesions)
+            )
+        )
     }
 
     fun withCnsLesions(hasCnsLesions: Boolean?): PatientRecord {
