@@ -113,7 +113,7 @@ class CopyNumberExtractorTest {
     }
 
     @Test(expected = IllegalStateException::class)
-    fun `should throw exception when filtering reported copy number`() {
+    fun `Should throw exception when filtering reported copy number`() {
         val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
         val gainLoss: PurpleGainLoss =
             TestPurpleFactory.gainLossBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).build()
@@ -140,20 +140,20 @@ class CopyNumberExtractorTest {
     @Test
     fun `Should only return canonical GainLoss`() {
         val driver: PurpleDriver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
-        val gainLossCanonical: PurpleGainLoss =
+        val gainLossGene1Canonical: PurpleGainLoss =
             TestPurpleFactory.gainLossBuilder()
                 .gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).isCanonical(true).minCopies(4.0).build()
-        val gainLossNotCanonical: PurpleGainLoss =
+        val gainLossGene1NotCanonical: PurpleGainLoss =
             TestPurpleFactory.gainLossBuilder()
                 .gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_LOSS).isCanonical(false).minCopies(5.0).build()
-        val gainLossGene2: PurpleGainLoss =
+        val gainLossGene2Canonical: PurpleGainLoss =
             TestPurpleFactory.gainLossBuilder()
                 .gene("gene 2").interpretation(CopyNumberInterpretation.FULL_GAIN).isCanonical(true).minCopies(10.0).build()
         val geneCopyNumber: PurpleGeneCopyNumber = TestPurpleFactory.geneCopyNumberBuilder().gene("gene 1").build()
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
             .addSomaticDrivers(driver)
-            .addAllSomaticGainsLosses(gainLossNotCanonical, gainLossGene2, gainLossCanonical)
+            .addAllSomaticGainsLosses(gainLossGene1NotCanonical, gainLossGene2Canonical, gainLossGene1Canonical)
             .addAllSomaticGeneCopyNumbers(geneCopyNumber)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("gene 1")
