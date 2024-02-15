@@ -46,6 +46,28 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
+    fun `Should pass with one variant to ignore and one variant not to ignore`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS, functionWithCodonsToIgnore.evaluate(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                    true,
+                    ACTIVATING_VARIANT,
+                    ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE
+                )
+            )
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.PASS, functionWithCodonsToIgnore.evaluate(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                    false,
+                    ACTIVATING_VARIANT,
+                    ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should warn with activating mutation for TSG`() {
         assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG))
         assertResultForVariantIgnoringCodons(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG))
