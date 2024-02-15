@@ -19,18 +19,15 @@ class HasHadSystemicTherapyWithAnyIntent(
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
+        val systemicTreatments = record.clinical.oncologicalHistory.filter { it.allTreatments().any(Treatment::isSystemic) }
         val matchingTreatments = intents?.let { intents ->
-            record.clinical.oncologicalHistory
-                .filter { it.allTreatments().any(Treatment::isSystemic) }
-                .groupBy { it.intents?.any { intent -> intent in intents } }
-        } ?: record.clinical.oncologicalHistory
-            .filter { it.allTreatments().any(Treatment::isSystemic) }
-            .groupBy { true }
+            systemicTreatments.groupBy { it.intents?.any { intent -> intent in intents } }
+        } ?: systemicTreatments.groupBy { true }
 
         val intentsLowercase = intents?.let { concatItemsWithOr(it).lowercase() }
 
         return when {
-            (monthsAgo == null) && matchingTreatments.containsKey(true) -> {
+            monthsAgo == null && matchingTreatments.containsKey(true) -> {
                 EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
             }
 
@@ -48,7 +45,7 @@ class HasHadSystemicTherapyWithAnyIntent(
                 )
             }
 
-            ((monthsAgo == null) && matchingTreatments.containsKey(null)) || matchingTreatments[null]?.any {
+            ((monthsAgo == null) && matchingTreatments.containsKey(key = null)) || matchingTreatments[null]?.any {
                 treatmentSinceMinDate(
                     it,
                     true
