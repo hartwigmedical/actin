@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
-class HasReceivedPotentialSystemicTherapyForBrainMetastases : EvaluationFunction {
+class HasReceivedSystemicTherapyForBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val cnsOrBrainMetastases = record.clinical.tumor.hasCnsLesions == true || record.clinical.tumor.hasBrainLesions == true

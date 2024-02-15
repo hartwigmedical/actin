@@ -6,9 +6,9 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withCnsOrBrainLe
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import org.junit.Test
 
-class HasReceivedPotentialSystemicTherapyForBrainMetastasesTest {
+class HasReceivedSystemicTherapyForBrainMetastasesTest {
 
-    private val function = HasReceivedPotentialSystemicTherapyForBrainMetastases()
+    private val function = HasReceivedSystemicTherapyForBrainMetastases()
     private val systemicTherapy = TreatmentTestFactory.treatment("Systemic treatment", isSystemic = true)
     private val systemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(listOf(systemicTherapy))
     private val nonSystemicTherapy = TreatmentTestFactory.treatment("Local treatment", isSystemic = false)
