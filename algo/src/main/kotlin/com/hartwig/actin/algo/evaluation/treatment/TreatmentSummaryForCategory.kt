@@ -26,24 +26,12 @@ data class TreatmentSummaryForCategory(
     }
 
     companion object {
-        private val CATEGORIES_NOT_MATCHING_TRIALS = setOf(
-            TreatmentCategory.TRANSPLANTATION,
-            TreatmentCategory.CAR_T,
-            TreatmentCategory.TCR_T,
-            TreatmentCategory.GENE_THERAPY,
-            TreatmentCategory.PROPHYLACTIC_TREATMENT,
-            TreatmentCategory.RADIOTHERAPY,
-            TreatmentCategory.ANTIVIRAL_THERAPY,
-            TreatmentCategory.SUPPORTIVE_TREATMENT,
-            TreatmentCategory.SURGERY
-        )
-
         fun createForTreatmentHistory(
             treatmentHistory: List<TreatmentHistoryEntry>,
             category: TreatmentCategory,
             classifier: (TreatmentHistoryEntry) -> Boolean? = { true }
         ): TreatmentSummaryForCategory {
-            val trialMatchesAllowed = categoryAllowsTrialMatches(category)
+            val trialMatchesAllowed = TrialFunctions.categoryAllowsTrialMatches(category)
             return treatmentHistory.map { treatmentHistoryEntry ->
                 val matchesCategory = treatmentHistoryEntry.categories().contains(category)
                 val classification = classifier(treatmentHistoryEntry)
@@ -53,14 +41,6 @@ data class TreatmentSummaryForCategory(
                     if (trialMatchesAllowed && treatmentHistoryEntry.isTrial && (!matchesCategory || classification == false)) 1 else 0
                 )
             }.fold(TreatmentSummaryForCategory()) { acc, element -> acc + element }
-        }
-
-        fun treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry: TreatmentHistoryEntry, category: TreatmentCategory): Boolean {
-            return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial
-        }
-
-        fun categoryAllowsTrialMatches(category: TreatmentCategory): Boolean {
-            return !CATEGORIES_NOT_MATCHING_TRIALS.contains(category)
         }
     }
 }

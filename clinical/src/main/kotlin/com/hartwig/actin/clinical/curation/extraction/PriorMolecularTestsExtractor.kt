@@ -9,14 +9,11 @@ import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.config.MolecularTestConfig
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
-import org.apache.logging.log4j.LogManager
 
 class PriorMolecularTestsExtractor(
     private val molecularTestIhcCuration: CurationDatabase<MolecularTestConfig>,
     private val molecularTestPdl1Curation: CurationDatabase<MolecularTestConfig>,
 ) {
-
-    private val logger = LogManager.getLogger(PriorMolecularTestsExtractor::class.java)
 
     fun extract(patientId: String, questionnaire: Questionnaire?): ExtractionResult<List<PriorMolecularTest>> {
         if (questionnaire == null) {

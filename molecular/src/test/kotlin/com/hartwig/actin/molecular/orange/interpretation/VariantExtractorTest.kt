@@ -9,7 +9,6 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
@@ -93,7 +92,7 @@ class VariantExtractorTest {
             .build()
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant1.gene(), purpleVariant2.gene())
-        val variantExtractor = VariantExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val variantExtractor = VariantExtractor(geneFilter)
 
         val variants = variantExtractor.extract(purple)
         assertThat(variants).hasSize(1)
@@ -146,7 +145,7 @@ class VariantExtractorTest {
             .addAllSomaticVariants(purpleVariant)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant.gene())
-        val variantExtractor = VariantExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val variantExtractor = VariantExtractor(geneFilter)
 
         val variants = variantExtractor.extract(purple)
         assertThat(variants).hasSize(1)
@@ -170,7 +169,7 @@ class VariantExtractorTest {
             .build()
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
-        val variantExtractor = VariantExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val variantExtractor = VariantExtractor(geneFilter)
         variantExtractor.extract(purple)
     }
 

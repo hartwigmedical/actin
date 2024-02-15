@@ -18,7 +18,7 @@ class EhrPatientRecordTest {
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
             registerModule(JavaTimeModule())
-            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         }
         val schemaGen = JsonSchemaGenerator(mapper)
         val schema: JsonSchema = schemaGen.generateSchema(EhrPatientRecord::class.java)

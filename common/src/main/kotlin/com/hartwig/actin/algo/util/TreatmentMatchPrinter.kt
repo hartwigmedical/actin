@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.util
 
 import com.hartwig.actin.algo.datamodel.CohortMatch
+import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer
@@ -22,19 +23,30 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
         printer.print("Eligible cohorts: " + cohortString(matchSummary.eligibleTrialMap))
         printer.print("Eligible and recruiting cohorts: " + recruitingCohortString(matchSummary.eligibleTrialMap))
 
-        val evaluationSummary = EvaluationSummarizer.summarize(treatmentMatch.trialMatches.flatMap { trialMatch ->
+        val allTrialEvaluations = treatmentMatch.trialMatches.flatMap { trialMatch ->
             trialMatch.cohorts.map(CohortMatch::evaluations) + trialMatch.evaluations
         }
             .flatMap(Map<Eligibility, Evaluation>::values)
-        )
 
-        printer.print("# Rules evaluated: " + evaluationSummary.count)
-        printer.print("# Rules with PASS evaluation: " + evaluationSummary.passedCount)
-        printer.print("# Rules with WARN evaluation: " + evaluationSummary.warningCount)
-        printer.print("# Rules with FAIL evaluation: " + evaluationSummary.failedCount)
-        printer.print("# Rules with UNDETERMINED evaluation: " + evaluationSummary.undeterminedCount)
-        printer.print("# Rules which have not been evaluated: " + evaluationSummary.notEvaluatedCount)
-        printer.print("# Rules which have not been implemented: " + evaluationSummary.nonImplementedCount)
+        printEvaluationSummary(allTrialEvaluations, "Rules")
+
+        printer.print("Standard-of-care treatments evaluated: ${treatmentMatch.standardOfCareMatches?.count() ?: 0}")
+        if (treatmentMatch.standardOfCareMatches != null) {
+            printer.print("Eligible SOC treatments: ${treatmentMatch.standardOfCareMatches.count(EvaluatedTreatment::eligible)}")
+            printEvaluationSummary(treatmentMatch.standardOfCareMatches.flatMap(EvaluatedTreatment::evaluations), "SOC rules")
+        }
+    }
+
+    private fun printEvaluationSummary(allTrialEvaluations: List<Evaluation>, typeOfRules: String) {
+        val evaluationSummary = EvaluationSummarizer.summarize(allTrialEvaluations)
+
+        printer.print("# $typeOfRules evaluated: " + evaluationSummary.count)
+        printer.print("# $typeOfRules with PASS evaluation: " + evaluationSummary.passedCount)
+        printer.print("# $typeOfRules with WARN evaluation: " + evaluationSummary.warningCount)
+        printer.print("# $typeOfRules with FAIL evaluation: " + evaluationSummary.failedCount)
+        printer.print("# $typeOfRules with UNDETERMINED evaluation: " + evaluationSummary.undeterminedCount)
+        printer.print("# $typeOfRules which have not been evaluated: " + evaluationSummary.notEvaluatedCount)
+        printer.print("# $typeOfRules which have not been implemented: " + evaluationSummary.nonImplementedCount)
     }
 
     private fun cohortString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {

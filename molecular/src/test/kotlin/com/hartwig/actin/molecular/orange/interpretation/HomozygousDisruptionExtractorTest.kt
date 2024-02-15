@@ -4,7 +4,6 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -19,7 +18,7 @@ class HomozygousDisruptionExtractorTest {
             .addSomaticHomozygousDisruptions(linxHomDisruption)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(linxHomDisruption.gene())
-        val homDisruptionExtractor = HomozygousDisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val homDisruptionExtractor = HomozygousDisruptionExtractor(geneFilter)
 
         val homDisruptions = homDisruptionExtractor.extractHomozygousDisruptions(linx)
         assertThat(homDisruptions).hasSize(1)
@@ -38,7 +37,7 @@ class HomozygousDisruptionExtractorTest {
             .addSomaticHomozygousDisruptions(linxHomDisruption)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("other gene")
-        val homDisruptionExtractor = HomozygousDisruptionExtractor(geneFilter, TestEvidenceDatabaseFactory.createEmptyDatabase())
+        val homDisruptionExtractor = HomozygousDisruptionExtractor(geneFilter)
         homDisruptionExtractor.extractHomozygousDisruptions(linx)
     }
 }

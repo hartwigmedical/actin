@@ -3,14 +3,14 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory.createNoEvidence
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 
-internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDatabase) {
+internal class CharacteristicsExtractor() {
 
     fun extract(record: OrangeRecord): MolecularCharacteristics {
         val predictedTumorOrigin = record.cuppa()?.let {
@@ -28,23 +28,15 @@ internal class CharacteristicsExtractor(private val evidenceDatabase: EvidenceDa
             ploidy = purple.fit().ploidy(),
             predictedTumorOrigin = predictedTumorOrigin,
             isMicrosatelliteUnstable = isMicrosatelliteUnstable,
-            microsatelliteEvidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable)
-            ),
+            microsatelliteEvidence = createNoEvidence(),
             isHomologousRepairDeficient = isHomologousRepairDeficient,
-            homologousRepairEvidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForHomologousRepairStatus(isHomologousRepairDeficient)
-            ),
+            homologousRepairEvidence = createNoEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
             hasHighTumorMutationalBurden = hasHighTumorMutationalBurden,
-            tumorMutationalBurdenEvidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden)
-            ),
+            tumorMutationalBurdenEvidence = createNoEvidence(),
             tumorMutationalLoad = purple.characteristics().tumorMutationalLoad(),
             hasHighTumorMutationalLoad = hasHighTumorMutationalLoad,
-            tumorMutationalLoadEvidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad)
-            ),
+            tumorMutationalLoadEvidence = createNoEvidence(),
             homologousRepairScore = homologousRepairScore
         )
     }

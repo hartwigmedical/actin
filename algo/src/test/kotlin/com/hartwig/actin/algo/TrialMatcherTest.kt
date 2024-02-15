@@ -1,16 +1,13 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory.createCurrentDateProvider
 import com.hartwig.actin.algo.datamodel.CohortMatch
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
-import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
-import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
@@ -41,12 +38,7 @@ class TrialMatcherTest {
 
     companion object {
         private fun createTestEvaluationFunctionFactory(): EvaluationFunctionFactory {
-            return EvaluationFunctionFactory.create(
-                TestDoidModelFactory.createMinimalTestDoidModel(),
-                createCurrentDateProvider(),
-                TreatmentDatabase(emptyMap(), emptyMap()),
-                AtcTestFactory.createProperAtcTree()
-            )
+            return EvaluationFunctionFactory.create(RuleMappingResourcesTestFactory.create())
         }
 
         private fun assertTrialMatch(trialMatch: TrialMatch) {

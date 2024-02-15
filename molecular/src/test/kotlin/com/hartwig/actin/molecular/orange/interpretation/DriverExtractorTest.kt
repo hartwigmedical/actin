@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -65,7 +64,7 @@ class DriverExtractorTest {
 
     companion object {
         private fun createTestExtractor(): DriverExtractor {
-            return DriverExtractor.create(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase())
+            return DriverExtractor.create(TestGeneFilterFactory.createAlwaysValid())
         }
     }
 }

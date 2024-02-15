@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.serialization
 
 import com.google.gson.GsonBuilder
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.serialization.TreatmentAdapter
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.util.Paths
@@ -42,6 +44,7 @@ object TreatmentMatchJson {
             .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
             .registerTypeAdapter(CriterionReference::class.java, CriterionReferenceDeserializer())
             .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
+            .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
             .create()
         return gson.fromJson(json, TreatmentMatch::class.java)
     }

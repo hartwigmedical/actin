@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Base64
 
 @JacksonSerializable
 data class EhrPatientRecord(
