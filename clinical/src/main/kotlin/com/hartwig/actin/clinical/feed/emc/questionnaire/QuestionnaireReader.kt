@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 import com.google.common.collect.Lists
 import org.apache.logging.log4j.util.Strings
-import java.util.*
+import java.util.StringJoiner
 
 internal object QuestionnaireReader {
     val TERMS_TO_CLEAN = setOf("{", "}", "\\tab", "\\li0", "\\ri0", "\\sa0", "\\sb0", "\\u000ci0", "\\ql", "\\par", "\\u000c2", "\\ltrch")

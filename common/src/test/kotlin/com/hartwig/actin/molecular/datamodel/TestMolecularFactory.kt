@@ -141,6 +141,10 @@ object TestMolecularFactory {
         return createMinimalMolecularDrivers().copy(
             variants = setOf(
                 Variant(
+                    chromosome = "7",
+                    position = 140453136,
+                    ref = "T",
+                    alt = "A",
                     isReportable = true,
                     event = "BRAF V600E",
                     driverLikelihood = DriverLikelihood.HIGH,

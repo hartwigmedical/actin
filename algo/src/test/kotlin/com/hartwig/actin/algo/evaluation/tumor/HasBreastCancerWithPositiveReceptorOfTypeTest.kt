@@ -77,7 +77,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             evaluation.undeterminedGeneralMessages
         ).containsExactly(
             "Undetermined $TARGET_RECEPTOR-status - DOID and/or IHC data inconsistent"
-            )
+        )
     }
 
     @Test

@@ -9,7 +9,6 @@ import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory.createMini
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory.breakendBuilder
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory.structuralVariantBuilder
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory.createEmptyDatabase
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
@@ -43,7 +42,7 @@ class DisruptionExtractorTest {
             .addAllSomaticBreakends(linxBreakend)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene())
-        val disruptionExtractor = DisruptionExtractor(geneFilter, createEmptyDatabase())
+        val disruptionExtractor = DisruptionExtractor(geneFilter)
 
         val disruptions = disruptionExtractor.extractDisruptions(linx, emptySet(), listOf())
         assertThat(disruptions).hasSize(1)
@@ -67,14 +66,14 @@ class DisruptionExtractorTest {
             .addAllSomaticBreakends(linxBreakend)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
-        val disruptionExtractor = DisruptionExtractor(geneFilter, createEmptyDatabase())
+        val disruptionExtractor = DisruptionExtractor(geneFilter)
         disruptionExtractor.extractDisruptions(linx, emptySet(), emptyList())
     }
 
     @Test
     fun `Should filter breakend with losses`() {
         val gene = "gene"
-        val disruptionExtractor = DisruptionExtractor(TestGeneFilterFactory.createAlwaysValid(), createEmptyDatabase())
+        val disruptionExtractor = DisruptionExtractor(TestGeneFilterFactory.createAlwaysValid())
 
         val breakend1 = breakendBuilder().gene(gene).type(LinxBreakendType.DEL).build()
         assertThat(disruptionExtractor.extractDisruptions(withBreakend(breakend1), setOf(gene), listOf())).hasSize(0)
@@ -128,7 +127,7 @@ class DisruptionExtractorTest {
             .build()
         val driver = TestLinxFactory.driverBuilder().gene("gene").type(LinxDriverType.HOM_DUP_DISRUPTION).build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(linxBreakend.gene())
-        val disruptionExtractor = DisruptionExtractor(geneFilter, createEmptyDatabase())
+        val disruptionExtractor = DisruptionExtractor(geneFilter)
 
         val disruptions = disruptionExtractor.extractDisruptions(linx, emptySet(), listOf(driver))
         val disruption = disruptions.first()
