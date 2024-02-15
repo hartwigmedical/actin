@@ -73,7 +73,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL to hasPreviouslyParticipatedInCurrentTrialCreator(),
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to hasPreviouslyParticipatedInTrialCreator(),
             EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to isNotParticipatingInAnotherTrialCreator(),
-            EligibilityRule.HAS_RECEIVED_POTENTIAL_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to hasReceivedPotentialSystemicTherapyforBrainMetastasesCreator(),
+            EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to hasReceivedSystemicTherapyforBrainMetastasesCreator(),
             EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to hasHadBrainRadiationTherapyCreator(),
         )
     }
@@ -466,8 +466,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { IsNotParticipatingInAnotherTrial() }
     }
 
-    private fun hasReceivedPotentialSystemicTherapyforBrainMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasReceivedPotentialSystemicTherapyForBrainMetastases() }
+    private fun hasReceivedSystemicTherapyforBrainMetastasesCreator(): FunctionCreator {
+        return FunctionCreator { HasReceivedSystemicTherapyForBrainMetastases() }
     }
 
     private fun hasHadBrainRadiationTherapyCreator(): FunctionCreator {
