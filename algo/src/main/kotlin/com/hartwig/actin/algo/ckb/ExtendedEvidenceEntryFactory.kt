@@ -20,169 +20,139 @@ import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import java.util.*
+import java.util.Locale.getDefault
 import kotlin.collections.HashMap
 
 object ExtendedEvidenceEntryFactory {
 
     fun extractCkbExtendedEvidence(jsonCkbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
-        val ckbExtendedEvidenceEntries = mutableListOf<ExtendedEvidenceEntry>()
-        for (jsonCkbExtendedEvidenceEntry in jsonCkbExtendedEvidenceEntries) {
-            ckbExtendedEvidenceEntries.add(resolveCkbExtendedEvidence(jsonCkbExtendedEvidenceEntry))
-        }
-        return ckbExtendedEvidenceEntries
+        return jsonCkbExtendedEvidenceEntries.map(::resolveCkbExtendedEvidence)
     }
 
     private fun resolveCkbExtendedEvidence(jsonCkbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): ExtendedEvidenceEntry {
         return ExtendedEvidenceEntry(
             acronym = jsonCkbExtendedEvidenceEntry.title,
             phase = jsonCkbExtendedEvidenceEntry.phase,
-            therapeuticSetting = jsonCkbExtendedEvidenceEntry.therapeuticSetting?.uppercase(Locale.getDefault())
-                ?.let {
-                    try {
-                        Intent.valueOf(it)
-                    } catch (e: Exception) {
-                        throw IllegalStateException("Unknown therapeutic setting: $jsonCkbExtendedEvidenceEntry.therapeuticSetting ")
-                    }
-                },
+            therapeuticSetting = jsonCkbExtendedEvidenceEntry.therapeuticSetting?.let(::extractTherapeuticSettingFromString),
             variantRequirements = convertVariantRequirements(jsonCkbExtendedEvidenceEntry.variantRequirementDetails),
             trialReferences = convertTrialReferences(jsonCkbExtendedEvidenceEntry.trialReferences),
         )
     }
 
+    fun extractTherapeuticSettingFromString(therapeuticSetting: String): Intent {
+        return therapeuticSetting.uppercase(getDefault()).let {
+            try {
+                Intent.valueOf(it)
+            } catch (e: Exception) {
+                throw IllegalStateException("Unknown therapeutic setting: $therapeuticSetting ")
+            }
+        }
+    }
+
     fun convertVariantRequirements(jsonVariantRequirements: List<CkbVariantRequirementDetail>): List<VariantRequirement> {
-        val variantRequirements = mutableListOf<VariantRequirement>()
-        for (variantRequirement in jsonVariantRequirements) {
-            variantRequirements.add(
-                VariantRequirement(
-                    name = variantRequirement.molecularProfile.profileName,
-                    requirementType = variantRequirement.requirementType
-                )
+        return jsonVariantRequirements.map { variantRequirement ->
+            VariantRequirement(
+                name = variantRequirement.molecularProfile.profileName,
+                requirementType = variantRequirement.requirementType
             )
         }
-        return variantRequirements
     }
 
     private fun convertTrialReferences(jsonTrialReferences: List<CkbTrialReference>): List<TrialReference> {
-        val trialReferences = mutableListOf<TrialReference>()
-        for (jsonTrialReference in jsonTrialReferences) {
-            trialReferences.add(
-                TrialReference(
-                    url = jsonTrialReference.reference.url,
-                    patientPopulations = convertPatientPopulations(jsonTrialReference.patientPopulations)
-                )
+        return jsonTrialReferences.map { jsonTrialReference ->
+            TrialReference(
+                url = jsonTrialReference.reference.url,
+                patientPopulations = convertPatientPopulations(jsonTrialReference.patientPopulations)
             )
         }
-        return trialReferences
     }
 
-    private fun convertPatientPopulations(jsonPatientPopulations: List<CkbPatientPopulation>): Set<PatientPopulation> {
-        val patientPopulations = mutableSetOf<PatientPopulation>()
-        for (patientPopulation in jsonPatientPopulations) {
-            patientPopulations.add(
-                PatientPopulation(
-                    name = patientPopulation.groupName,
-                    isControl = patientPopulation.isControl,
-                    ageMin = patientPopulation.ageMin.toInt(),
-                    ageMax = patientPopulation.ageMax.toInt(),
-                    ageMedian = patientPopulation.medianAge.toDouble(),
-                    numberOfPatients = patientPopulation.nPatients.toInt(),
-                    numberOfMale = convertGender(patientPopulation.nMale, patientPopulation.nFemale, patientPopulation.nPatients),
-                    numberOfFemale = convertGender(patientPopulation.nFemale, patientPopulation.nMale, patientPopulation.nPatients),
-                    patientsWithWho0 = patientPopulation.nEcog0?.toInt(),
-                    patientsWithWho1 = patientPopulation.nEcog1?.toInt(),
-                    patientsWithWho2 = patientPopulation.nEcog2?.toInt(),
-                    patientsWithWho3 = patientPopulation.nEcog3?.toInt(),
-                    patientsWithWho4 = patientPopulation.nEcog4?.toInt(),
-                    primaryTumorLocation = convertPrimaryTumorLocation(patientPopulation.nLocalizationPrimaryTumor),
-                    mutations = patientPopulation.otherMutations, //TODO: convert to map once CKB has made notation consistent
-                    patientsWithPrimaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),
-                    patientsWithPrimaryTumorRemovedPartial = patientPopulation.nPrimaryTumorRemovedPartial?.toInt(),
-                    patientsWithPrimaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
-                    metastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
-                    priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
-                    patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
-                    medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival?.toDouble(),
-                    medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival?.toDouble(),
-                    analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups)
-                )
+    private fun convertPatientPopulations(jsonPatientPopulations: List<CkbPatientPopulation>): List<PatientPopulation> {
+        return jsonPatientPopulations.map { patientPopulation ->
+            PatientPopulation(
+                name = patientPopulation.groupName,
+                isControl = patientPopulation.isControl,
+                ageMin = patientPopulation.ageMin.toInt(),
+                ageMax = patientPopulation.ageMax.toInt(),
+                ageMedian = patientPopulation.medianAge.toDouble(),
+                numberOfPatients = patientPopulation.nPatients.toInt(),
+                numberOfMale = convertGender(patientPopulation.nMale, patientPopulation.nFemale, patientPopulation.nPatients),
+                numberOfFemale = convertGender(patientPopulation.nFemale, patientPopulation.nMale, patientPopulation.nPatients),
+                patientsWithWho0 = patientPopulation.nEcog0?.toInt(),
+                patientsWithWho1 = patientPopulation.nEcog1?.toInt(),
+                patientsWithWho2 = patientPopulation.nEcog2?.toInt(),
+                patientsWithWho3 = patientPopulation.nEcog3?.toInt(),
+                patientsWithWho4 = patientPopulation.nEcog4?.toInt(),
+                patientsPerPrimaryTumorLocation = convertPrimaryTumorLocation(patientPopulation.nLocalizationPrimaryTumor),
+                mutations = patientPopulation.otherMutations, //TODO: convert to map once CKB has made notation consistent
+                patientsWithPrimaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),
+                patientsWithPrimaryTumorRemovedPartial = patientPopulation.nPrimaryTumorRemovedPartial?.toInt(),
+                patientsWithPrimaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
+                patientsPerMetastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
+                priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
+                patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
+                medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival?.toDouble(),
+                medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival?.toDouble(),
+                analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups)
             )
         }
-        return patientPopulations
     }
 
     fun convertGender(numberOfGender: String?, numberOfOtherGender: String?, numberOfPatients: String): Int? {
-        return numberOfGender?.toInt()
-            ?: if (numberOfOtherGender != null) {
-                numberOfPatients.toInt() - numberOfOtherGender.toInt()
-            } else {
-                null
-            }
+        return numberOfGender?.toInt() ?: numberOfOtherGender?.let { numberOfPatients.toInt() - numberOfOtherGender.toInt() }
     }
 
     fun convertPrimaryTumorLocation(jsonPrimaryTumorLocations: String?): Map<String, Int>? {
         val returnType: Map<String, Int> = HashMap()
-        return if (jsonPrimaryTumorLocations == null) {
-            null
-        } else Gson().fromJson(jsonPrimaryTumorLocations, returnType.javaClass)
+        return jsonPrimaryTumorLocations?.let { Gson().fromJson(it, returnType::class.java) }
     }
 
     fun convertMetastaticSites(jsonMetastaticSites: String): Map<String, ValuePercentage> {
-        val metastaticSites = mutableMapOf<String, ValuePercentage>()
-        val list = jsonMetastaticSites.split(", ")
-        for (item in list) {
+        return jsonMetastaticSites.split(", ").associate { item ->
             //TODO: use regex
             val itemStripped = item.replace("(", "").replace(")", "").replace("%", "")
             val tumorTypeSplit = itemStripped.split(":")
             val values = tumorTypeSplit[1].split(" ")
-            metastaticSites[tumorTypeSplit[0]] = ValuePercentage(value = values[1].toInt(), percentage = values[2].toDouble())
+            tumorTypeSplit[0] to ValuePercentage(
+                value = values[1].toIntOrNull() ?: throw IllegalStateException("Incorrect metastatic site formatting $jsonMetastaticSites"),
+                percentage = values[2].toDoubleOrNull()
+                    ?: throw IllegalStateException("Incorrect metastatic site formatting $jsonMetastaticSites")
+            )
         }
-        return metastaticSites
     }
 
     private fun convertAnalysisGroup(jsonAnalysisGroups: List<CkbAnalysisGroup>): List<AnalysisGroup> {
-        val analysisGroups = mutableListOf<AnalysisGroup>()
-        for (jsonAnalysisGroup in jsonAnalysisGroups) {
-            analysisGroups.add(
-                AnalysisGroup(
-                    id = jsonAnalysisGroup.id,
-                    primaryEndPoints = convertPrimaryEndPoints(jsonAnalysisGroup.endPointMetrics),
-                )
+        return jsonAnalysisGroups.map { jsonAnalysisGroup ->
+            AnalysisGroup(
+                id = jsonAnalysisGroup.id,
+                primaryEndPoints = convertPrimaryEndPoints(jsonAnalysisGroup.endPointMetrics),
             )
         }
-        return analysisGroups
     }
 
-    private fun convertPrimaryEndPoints(jsonPrimaryEndPoints: List<CkbEndPointMetric>): Set<PrimaryEndPoint> {
-        val primaryEndPoints = mutableSetOf<PrimaryEndPoint>()
-        for (primaryEndPoint in jsonPrimaryEndPoints) {
-            primaryEndPoints.add(
-                PrimaryEndPoint(
-                    id = primaryEndPoint.id,
-                    name = primaryEndPoint.endPoint.name,
-                    value = convertPrimaryEndPointValue(
-                        primaryEndPoint.value,
-                        primaryEndPoint.endPoint.unitOfMeasure
-                    ),
-                    unitOfMeasure = if (primaryEndPoint.endPoint.unitOfMeasure == "Y/N") {
-                        PrimaryEndPointUnit.YES_OR_NO
-                    } else {
-                        try {
-                            PrimaryEndPointUnit.valueOf(primaryEndPoint.endPoint.unitOfMeasure.uppercase())
-                        } catch (e: Exception) {
-                            throw IllegalStateException("Unknown primary end point unit measure: $primaryEndPoint.endPoint.unitOfMeasure")
-                        }
-                    },
-                    confidenceInterval = ConfidenceInterval(
-                        lowerLimit = primaryEndPoint.confidenceInterval95?.let { convertConfidenceInterval(it)[0].toDoubleOrNull() },
-                        upperLimit = primaryEndPoint.confidenceInterval95?.let { convertConfidenceInterval(it)[1].toDoubleOrNull() }
-                    ),
-                    type = PrimaryEndPointType.valueOf(primaryEndPoint.endPointType.uppercase()),
-                    derivedMetrics = convertDerivedMetric(primaryEndPoint.derivedMetrics)
-                )
+    private fun convertPrimaryEndPoints(jsonPrimaryEndPoints: List<CkbEndPointMetric>): List<PrimaryEndPoint> {
+        return jsonPrimaryEndPoints.map { primaryEndPoint ->
+            PrimaryEndPoint(
+                id = primaryEndPoint.id,
+                name = primaryEndPoint.endPoint.name,
+                value = convertPrimaryEndPointValue(
+                    primaryEndPoint.value,
+                    primaryEndPoint.endPoint.unitOfMeasure
+                ),
+                unitOfMeasure = if (primaryEndPoint.endPoint.unitOfMeasure == "Y/N") {
+                    PrimaryEndPointUnit.YES_OR_NO
+                } else {
+                    try {
+                        PrimaryEndPointUnit.valueOf(primaryEndPoint.endPoint.unitOfMeasure.uppercase())
+                    } catch (e: Exception) {
+                        throw IllegalStateException("Unknown primary end point unit measure: $primaryEndPoint.endPoint.unitOfMeasure")
+                    }
+                },
+                confidenceInterval = primaryEndPoint.confidenceInterval95?.let(::convertConfidenceInterval),
+                type = PrimaryEndPointType.valueOf(primaryEndPoint.endPointType.uppercase()),
+                derivedMetrics = convertDerivedMetric(primaryEndPoint.derivedMetrics)
             )
         }
-        return primaryEndPoints
     }
 
     fun convertPrimaryEndPointValue(value: String, unit: String): Double? {
@@ -202,33 +172,30 @@ object ExtendedEvidenceEntryFactory {
             if (value == "NR") {
                 null
             } else {
-                value.toDouble()
+                value.toDoubleOrNull() ?: throw IllegalStateException("Incorrect primary end point value found: $value")
             }
         }
     }
 
     fun convertDerivedMetric(jsonDerivedMetrics: List<CkbDerivedMetric>): List<DerivedMetric> {
-        val derivedMetrics = mutableListOf<DerivedMetric>()
-        for (derivedMetric in jsonDerivedMetrics) {
-            derivedMetrics.add(
-                DerivedMetric(
-                    relativeMetricId = derivedMetric.relativeMetricId,
-                    value = derivedMetric.comparatorStatistic?.toDouble(),
-                    type = derivedMetric.comparatorStatisticType,
-                    confidenceInterval = ConfidenceInterval(
-                        lowerLimit = derivedMetric.confidenceInterval95Cs?.let { convertConfidenceInterval(it)[0].toDoubleOrNull() },
-                        upperLimit = derivedMetric.confidenceInterval95Cs?.let { convertConfidenceInterval(it)[1].toDoubleOrNull() }
-                    ),
-                    pValue = derivedMetric.pValue
-                )
+        return jsonDerivedMetrics.map { jsonDerivedMetric ->
+            DerivedMetric(
+                relativeMetricId = jsonDerivedMetric.relativeMetricId,
+                value = jsonDerivedMetric.comparatorStatistic?.toDouble(),
+                type = jsonDerivedMetric.comparatorStatisticType,
+                confidenceInterval = jsonDerivedMetric.confidenceInterval95Cs?.let(::convertConfidenceInterval),
+                pValue = jsonDerivedMetric.pValue
             )
         }
-        return derivedMetrics
     }
 
-    fun convertConfidenceInterval(confidenceInterval: String): List<String> {
+    fun convertConfidenceInterval(confidenceInterval: String): ConfidenceInterval {
         if (confidenceInterval.contains("-")) {
-            return confidenceInterval.split("-")
+            val confidenceIntervalSplit = confidenceInterval.split("-")
+            return ConfidenceInterval(
+                lowerLimit = confidenceIntervalSplit[0].toDoubleOrNull(),
+                upperLimit = confidenceIntervalSplit[1].toDoubleOrNull()
+            )
         } else {
             throw IllegalStateException("Incorrect confidence interval found: $confidenceInterval")
         }

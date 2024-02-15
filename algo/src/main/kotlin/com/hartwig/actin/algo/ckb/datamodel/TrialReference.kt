@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.ckb.datamodel
 
 data class TrialReference(
-    val patientPopulations: Set<PatientPopulation>,
+    val patientPopulations: List<PatientPopulation>,
     val url: String
 )
