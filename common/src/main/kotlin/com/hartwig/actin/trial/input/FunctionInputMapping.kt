@@ -77,7 +77,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_BCLC_STAGE_X to FunctionInput.ONE_STRING,
         EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT to FunctionInput.NONE,
         EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to FunctionInput.NONE,
-        EligibilityRule.HAS_POTENTIAL_ACQUIRED_RESISTANCE_TO_OSIMERTINIB to FunctionInput.NONE,
+        EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_DRUG_X to FunctionInput.NONE,
 
         EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to FunctionInput.NONE,
         EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to FunctionInput.ONE_STRING,

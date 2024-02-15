@@ -100,10 +100,10 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE,
         EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET,
         EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X,
-        EligibilityRule.HAS_POTENTIAL_ACQUIRED_RESISTANCE_TO_OSIMERTINIB,
+        EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_DRUG_X,
         EligibilityRule.HAS_EGFR_PACC_MUTATION,
         EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITHIN_X_MONTHS,
-        EligibilityRule.HAS_POTENTIAL_ACQUIRED_RESISTANCE_TO_OSIMERTINIB,
+        EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_DRUG_X,
     )
 
     fun evaluate(trials: List<Trial>) {
