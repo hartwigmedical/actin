@@ -77,7 +77,7 @@ class ExtendedEvidenceEntryFactoryTest {
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception if incorrect metastatic sites formatting`() {
-        ExtendedEvidenceEntryFactory.convertMetastaticSites("Liver only: five (two%), Lung only: 10 (6%)")
+        ExtendedEvidenceEntryFactory.convertMetastaticSites("Liver only: 58-32%, Lung only: 10-6%")
     }
 
     @Test

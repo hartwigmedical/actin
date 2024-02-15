@@ -20,8 +20,6 @@ import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import java.util.Locale.getDefault
-import kotlin.collections.HashMap
 
 object ExtendedEvidenceEntryFactory {
 
@@ -40,12 +38,10 @@ object ExtendedEvidenceEntryFactory {
     }
 
     fun extractTherapeuticSettingFromString(therapeuticSetting: String): Intent {
-        return therapeuticSetting.uppercase(getDefault()).let {
-            try {
-                Intent.valueOf(it)
-            } catch (e: Exception) {
-                throw IllegalStateException("Unknown therapeutic setting: $therapeuticSetting ")
-            }
+        try {
+            return Intent.valueOf(therapeuticSetting.uppercase())
+        } catch (e: Exception) {
+            throw IllegalStateException("Unknown therapeutic setting: $therapeuticSetting ")
         }
     }
 
@@ -103,21 +99,16 @@ object ExtendedEvidenceEntryFactory {
     }
 
     fun convertPrimaryTumorLocation(jsonPrimaryTumorLocations: String?): Map<String, Int>? {
-        val returnType: Map<String, Int> = HashMap()
-        return jsonPrimaryTumorLocations?.let { Gson().fromJson(it, returnType::class.java) }
+        return jsonPrimaryTumorLocations?.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
     }
 
     fun convertMetastaticSites(jsonMetastaticSites: String): Map<String, ValuePercentage> {
+        val regex = """^(.*): (\d+) \((\d+(?:\.\d+)?)%\)?$""".toRegex()
         return jsonMetastaticSites.split(", ").associate { item ->
-            //TODO: use regex
-            val itemStripped = item.replace("(", "").replace(")", "").replace("%", "")
-            val tumorTypeSplit = itemStripped.split(":")
-            val values = tumorTypeSplit[1].split(" ")
-            tumorTypeSplit[0] to ValuePercentage(
-                value = values[1].toIntOrNull() ?: throw IllegalStateException("Incorrect metastatic site formatting $jsonMetastaticSites"),
-                percentage = values[2].toDoubleOrNull()
-                    ?: throw IllegalStateException("Incorrect metastatic site formatting $jsonMetastaticSites")
-            )
+            regex.find(item)?.let {
+                val (label, value, percentage) = it.destructured
+                label.trim() to ValuePercentage(value.toInt(), percentage.toDouble())
+            } ?: throw IllegalStateException("Incorrect metastatic site formatting $jsonMetastaticSites")
         }
     }
 
