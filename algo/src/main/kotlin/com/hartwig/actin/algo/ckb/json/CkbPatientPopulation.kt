@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.algo.ckb.json
 
 import com.google.gson.annotations.SerializedName
 
@@ -8,8 +8,8 @@ data class CkbPatientPopulation(
     @SerializedName("group_name") val groupName: String,
     @SerializedName("n_patients_enrolled") val nPatientsEnrolled: String?,
     @SerializedName("n_patients") val nPatients: String,
-    @SerializedName("n_female") val nFemale: String,
-    @SerializedName("n_male") val nMale: String,
+    @SerializedName("n_female") val nFemale: String?,
+    @SerializedName("n_male") val nMale: String?,
     @SerializedName("age_min") val ageMin: String,
     @SerializedName("age_max") val ageMax: String,
     @SerializedName("median_age") val medianAge: String,
@@ -36,7 +36,7 @@ data class CkbPatientPopulation(
     @SerializedName("median_follow_up_for_survival") val medianFollowUpForSurvival: String?,
     @SerializedName("median_follow_up_for_progression_free_survival") val medianFollowUpForProgressionFreeSurvival: String?,
     @SerializedName("median_follow_up_for_randomization_to_data_cut_off") val medianFollowUpForRandomizationToDataCutOff: String?,
-    @SerializedName("metastatic_sites") val metastaticSites: String,
+    @SerializedName("metastatic_sites") val metastaticSites: String?,
     @SerializedName("analysis_groups") val analysisGroups: List<CkbAnalysisGroup>,
     @SerializedName("efficacy_evidence") val efficacyEvidence: List<CkbEfficacyEvidence>,
     val notes: String?

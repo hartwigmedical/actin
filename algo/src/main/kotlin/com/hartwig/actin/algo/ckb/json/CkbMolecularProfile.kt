@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.algo.ckb.json
 
 data class CkbMolecularProfile(
     val id: Int,

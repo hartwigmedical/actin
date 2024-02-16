@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.ckb.serialization
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.hartwig.actin.algo.ckb.datamodel.CkbExtendedEvidenceEntry
+import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
 import java.io.File
 import java.lang.reflect.Type
 import java.nio.file.Files
