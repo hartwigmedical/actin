@@ -23,17 +23,17 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 
 object ExtendedEvidenceEntryFactory {
 
-    fun extractCkbExtendedEvidence(jsonCkbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
-        return jsonCkbExtendedEvidenceEntries.map(::resolveCkbExtendedEvidence)
+    fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
+        return ckbExtendedEvidenceEntries.map(::resolveCkbExtendedEvidence)
     }
 
-    private fun resolveCkbExtendedEvidence(jsonCkbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): ExtendedEvidenceEntry {
+    private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): ExtendedEvidenceEntry {
         return ExtendedEvidenceEntry(
-            acronym = jsonCkbExtendedEvidenceEntry.title,
-            phase = jsonCkbExtendedEvidenceEntry.phase,
-            therapeuticSetting = jsonCkbExtendedEvidenceEntry.therapeuticSetting?.let(::extractTherapeuticSettingFromString),
-            variantRequirements = convertVariantRequirements(jsonCkbExtendedEvidenceEntry.variantRequirementDetails),
-            trialReferences = convertTrialReferences(jsonCkbExtendedEvidenceEntry.trialReferences),
+            acronym = ckbExtendedEvidenceEntry.title,
+            phase = ckbExtendedEvidenceEntry.phase,
+            therapeuticSetting = ckbExtendedEvidenceEntry.therapeuticSetting?.let(::extractTherapeuticSettingFromString),
+            variantRequirements = convertVariantRequirements(ckbExtendedEvidenceEntry.variantRequirementDetails),
+            trialReferences = convertTrialReferences(ckbExtendedEvidenceEntry.trialReferences),
         )
     }
 
@@ -45,8 +45,8 @@ object ExtendedEvidenceEntryFactory {
         }
     }
 
-    fun convertVariantRequirements(jsonVariantRequirements: List<CkbVariantRequirementDetail>): List<VariantRequirement> {
-        return jsonVariantRequirements.map { variantRequirement ->
+    fun convertVariantRequirements(variantRequirements: List<CkbVariantRequirementDetail>): List<VariantRequirement> {
+        return variantRequirements.map { variantRequirement ->
             VariantRequirement(
                 name = variantRequirement.molecularProfile.profileName,
                 requirementType = variantRequirement.requirementType
@@ -54,17 +54,17 @@ object ExtendedEvidenceEntryFactory {
         }
     }
 
-    private fun convertTrialReferences(jsonTrialReferences: List<CkbTrialReference>): List<TrialReference> {
-        return jsonTrialReferences.map { jsonTrialReference ->
+    private fun convertTrialReferences(trialReferences: List<CkbTrialReference>): List<TrialReference> {
+        return trialReferences.map { trialReference ->
             TrialReference(
-                url = jsonTrialReference.reference.url,
-                patientPopulations = convertPatientPopulations(jsonTrialReference.patientPopulations)
+                url = trialReference.reference.url,
+                patientPopulations = convertPatientPopulations(trialReference.patientPopulations)
             )
         }
     }
 
-    private fun convertPatientPopulations(jsonPatientPopulations: List<CkbPatientPopulation>): List<PatientPopulation> {
-        return jsonPatientPopulations.map { patientPopulation ->
+    private fun convertPatientPopulations(patientPopulations: List<CkbPatientPopulation>): List<PatientPopulation> {
+        return patientPopulations.map { patientPopulation ->
             PatientPopulation(
                 name = patientPopulation.groupName,
                 isControl = patientPopulation.isControl,
@@ -98,31 +98,31 @@ object ExtendedEvidenceEntryFactory {
         return numberOfGender?.toInt() ?: numberOfOtherGender?.let { numberOfPatients.toInt() - numberOfOtherGender.toInt() }
     }
 
-    fun convertPrimaryTumorLocation(jsonPrimaryTumorLocations: String?): Map<String, Int>? {
-        return jsonPrimaryTumorLocations?.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
+    fun convertPrimaryTumorLocation(primaryTumorLocations: String?): Map<String, Int>? {
+        return primaryTumorLocations?.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
     }
 
-    fun convertMetastaticSites(jsonMetastaticSites: String): Map<String, ValuePercentage> {
+    fun convertMetastaticSites(metastaticSites: String): Map<String, ValuePercentage> {
         val regex = """^(.*): (\d+) \((\d+(?:\.\d+)?)%\)?$""".toRegex()
-        return jsonMetastaticSites.split(", ").associate { item ->
+        return metastaticSites.split(", ").associate { item ->
             regex.find(item)?.let {
                 val (label, value, percentage) = it.destructured
                 label.trim() to ValuePercentage(value.toInt(), percentage.toDouble())
-            } ?: throw IllegalStateException("Incorrect metastatic site formatting $jsonMetastaticSites")
+            } ?: throw IllegalStateException("Incorrect metastatic site formatting: $metastaticSites")
         }
     }
 
-    private fun convertAnalysisGroup(jsonAnalysisGroups: List<CkbAnalysisGroup>): List<AnalysisGroup> {
-        return jsonAnalysisGroups.map { jsonAnalysisGroup ->
+    private fun convertAnalysisGroup(analysisGroups: List<CkbAnalysisGroup>): List<AnalysisGroup> {
+        return analysisGroups.map { analysisGroup ->
             AnalysisGroup(
-                id = jsonAnalysisGroup.id,
-                primaryEndPoints = convertPrimaryEndPoints(jsonAnalysisGroup.endPointMetrics),
+                id = analysisGroup.id,
+                primaryEndPoints = convertPrimaryEndPoints(analysisGroup.endPointMetrics),
             )
         }
     }
 
-    private fun convertPrimaryEndPoints(jsonPrimaryEndPoints: List<CkbEndPointMetric>): List<PrimaryEndPoint> {
-        return jsonPrimaryEndPoints.map { primaryEndPoint ->
+    private fun convertPrimaryEndPoints(primaryEndPoints: List<CkbEndPointMetric>): List<PrimaryEndPoint> {
+        return primaryEndPoints.map { primaryEndPoint ->
             PrimaryEndPoint(
                 id = primaryEndPoint.id,
                 name = primaryEndPoint.endPoint.name,
@@ -168,14 +168,14 @@ object ExtendedEvidenceEntryFactory {
         }
     }
 
-    fun convertDerivedMetric(jsonDerivedMetrics: List<CkbDerivedMetric>): List<DerivedMetric> {
-        return jsonDerivedMetrics.map { jsonDerivedMetric ->
+    fun convertDerivedMetric(derivedMetrics: List<CkbDerivedMetric>): List<DerivedMetric> {
+        return derivedMetrics.map { derivedMetric ->
             DerivedMetric(
-                relativeMetricId = jsonDerivedMetric.relativeMetricId,
-                value = jsonDerivedMetric.comparatorStatistic?.toDouble(),
-                type = jsonDerivedMetric.comparatorStatisticType,
-                confidenceInterval = jsonDerivedMetric.confidenceInterval95Cs?.let(::convertConfidenceInterval),
-                pValue = jsonDerivedMetric.pValue
+                relativeMetricId = derivedMetric.relativeMetricId,
+                value = derivedMetric.comparatorStatistic?.toDouble(),
+                type = derivedMetric.comparatorStatisticType,
+                confidenceInterval = derivedMetric.confidenceInterval95Cs?.let(::convertConfidenceInterval),
+                pValue = derivedMetric.pValue
             )
         }
     }

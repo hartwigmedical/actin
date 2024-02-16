@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.ckb.datamodel.DerivedMetric
 import com.hartwig.actin.algo.ckb.datamodel.ValuePercentage
 import com.hartwig.actin.algo.ckb.datamodel.VariantRequirement
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
+import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.ckb.json.CkbMolecularProfile
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
@@ -12,6 +13,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ExtendedEvidenceEntryFactoryTest {
+
+    @Test
+    fun `Should convert minimal test extended evidence database`() {
+        ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createMinimalTestExtendedEvidenceDatabase())
+    }
+
+    @Test
+    fun `Should convert proper test extended evidence database`() {
+        ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+    }
 
     @Test
     fun `Should convert therapeutic setting to Intent`() {
