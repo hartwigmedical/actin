@@ -111,6 +111,9 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_WITHIN_Y_WEEKS,
         EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X,
         EligibilityRule.HAS_HISTORY_OF_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS,
+        EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY,
+        EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY,
+        EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA,
     )
 
     fun evaluate(trials: List<Trial>) {
