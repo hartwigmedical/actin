@@ -50,13 +50,14 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                     )
                 } else {
                     val gene = geneCopyNumber.gene()
+                    val event = DriverEventFactory.geneCopyNumberEvent(geneCopyNumber)
                     CopyNumber(
                         gene = gene,
                         geneRole = GeneRole.UNKNOWN,
                         proteinEffect = ProteinEffect.UNKNOWN,
                         isAssociatedWithDrugResistance = null,
                         isReportable = false,
-                        event = "$gene copy number",
+                        event = event,
                         driverLikelihood = null,
                         evidence = ActionableEvidenceFactory.createNoEvidence(),
                         type = CopyNumberType.NONE,

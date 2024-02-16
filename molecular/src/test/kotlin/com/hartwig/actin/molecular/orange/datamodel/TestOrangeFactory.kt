@@ -160,7 +160,7 @@ object TestOrangeFactory {
             .addAllSomaticGeneCopyNumbers(TestPurpleFactory.geneCopyNumberBuilder()
                 .gene("MYC")
                 .minCopyNumber(38.0)
-                .minMinorAlleleCopyNumber(19.0)
+                .minMinorAlleleCopyNumber(2.0)
                 .build())
             .build()
     }
