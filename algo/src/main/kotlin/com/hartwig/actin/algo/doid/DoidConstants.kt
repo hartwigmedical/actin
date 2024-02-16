@@ -61,7 +61,7 @@ object DoidConstants {
     const val KIDNEY_DISEASE_DOID = "557"
     const val GASTROINTESTINAL_SYSTEM_DISEASE_DOID = "77"
     const val LONG_QT_SYNDROME_DOID = "2843"
-    const val PNEUMONITIS_DOID = "552"
+    const val PNEUMONITIS_DOID = "2797"
     const val DRUG_ALLERGY_DOID = "0060500"
     const val HEPATITIS_A_DOID = "12549"
     const val HEPATITIS_B_DOID = "2043"
