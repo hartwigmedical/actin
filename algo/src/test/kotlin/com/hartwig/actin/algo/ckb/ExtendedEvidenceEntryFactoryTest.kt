@@ -16,12 +16,16 @@ class ExtendedEvidenceEntryFactoryTest {
 
     @Test
     fun `Should convert minimal test extended evidence database`() {
-        ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createMinimalTestExtendedEvidenceDatabase())
+        val result =
+            ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createMinimalTestExtendedEvidenceDatabase())
+        assertThat(result).isNotNull
     }
 
     @Test
     fun `Should convert proper test extended evidence database`() {
-        ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+        val result =
+            ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+        assertThat(result).isNotNull
     }
 
     @Test
