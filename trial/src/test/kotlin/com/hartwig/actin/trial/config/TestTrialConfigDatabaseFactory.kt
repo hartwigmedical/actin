@@ -38,7 +38,7 @@ object TestTrialConfigDatabaseFactory {
 
     private fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
         return listOf(
-            CohortDefinitionConfig(
+            EmcCohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "A",
                 ctcCohortIds = setOf("1", "2"),
@@ -48,7 +48,7 @@ object TestTrialConfigDatabaseFactory {
                 blacklist = false,
                 description = "Cohort A"
             ),
-            CohortDefinitionConfig(
+            EmcCohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "B",
                 ctcCohortIds = setOf("NA"),
@@ -58,7 +58,7 @@ object TestTrialConfigDatabaseFactory {
                 blacklist = true,
                 description = "Cohort B"
             ),
-            CohortDefinitionConfig(
+            EmcCohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "C",
                 ctcCohortIds = setOf("wont_be_mapped_because_closed"),

@@ -10,7 +10,7 @@ import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
-import com.hartwig.actin.trial.ctc.CTCModel
+import com.hartwig.actin.trial.ctc.CtcModel
 import com.hartwig.actin.trial.datamodel.Cohort
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
@@ -23,7 +23,7 @@ import com.hartwig.actin.trial.sort.EligibilityComparator
 
 class TrialIngestion(
     private val trialConfigModel: TrialConfigModel,
-    private val ctcModel: CTCModel,
+    private val ctcModel: CtcModel,
     private val eligibilityFactory: EligibilityFactory
 ) {
 
@@ -97,7 +97,7 @@ class TrialIngestion(
 
         fun create(
             trialConfigDirectory: String,
-            ctcModel: CTCModel,
+            ctcModel: CtcModel,
             doidModel: DoidModel,
             geneFilter: GeneFilter,
             treatmentDatabase: TreatmentDatabase
