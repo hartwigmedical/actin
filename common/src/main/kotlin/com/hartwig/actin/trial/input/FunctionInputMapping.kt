@@ -93,6 +93,8 @@ object FunctionInputMapping {
         EligibilityRule.HAS_NOT_RECEIVED_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_TREATMENT_NAME_X to FunctionInput.ONE_SPECIFIC_TREATMENT,
         EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER,
+        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to
+                FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_TREATMENT_CATEGORY_MANY_TYPES,
         EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to FunctionInput.MANY_DRUGS,
         EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS to FunctionInput.MANY_STRINGS_ONE_INTEGER,
         EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to
@@ -144,6 +146,7 @@ object FunctionInputMapping {
         EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to FunctionInput.NONE,
         EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to FunctionInput.NONE,
+
 
         EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY to FunctionInput.NONE,
