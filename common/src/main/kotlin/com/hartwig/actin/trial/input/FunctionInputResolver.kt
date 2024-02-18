@@ -118,6 +118,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
+                    createOneSpecificTreatmentOneTreatmentCategoryManyTypesInput(function)
+                    return true
+                }
+
                 FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS -> {
                     createManySpecificTreatmentsTwoIntegerInput(function)
                     return true
