@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.efficacyevidence
 
 data class ConfidenceInterval(
     val lowerLimit: Double?,

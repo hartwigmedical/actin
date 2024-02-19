@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.efficacyevidence
 
 enum class TimeOfMetastases {
     SYNCHRONOUS,

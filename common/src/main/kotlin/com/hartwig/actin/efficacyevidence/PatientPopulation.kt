@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.ckb.datamodel
+package com.hartwig.actin.efficacyevidence
 
 data class PatientPopulation(
     val name: String,
@@ -23,13 +23,13 @@ data class PatientPopulation(
     val patientsWithPrimaryTumorRemoved: Int?,
     val patientsPerMetastaticSites: Map<String, ValuePercentage>?,
     val timeOfMetastases: TimeOfMetastases?,
-    val therapy: String,
+    val therapy: String?,
     val priorSystemicTherapy: String?,
     val patientsWithMSI: Int?,
-    val medianFollowUpForSurvival: Double?,
-    val medianFollowUpPFS: Double?,
+    val medianFollowUpForSurvival: String?,
+    val medianFollowUpPFS: String?,
     val analysisGroups: List<AnalysisGroup>, // a patient population could have multiple different analysis groups
-    val priorTherapies: String,
+    val priorTherapies: String?,
     val patientsPerRace: Map<String, Int>?,
     val patientsPerRegion: Map<String, Int>?,
 )
