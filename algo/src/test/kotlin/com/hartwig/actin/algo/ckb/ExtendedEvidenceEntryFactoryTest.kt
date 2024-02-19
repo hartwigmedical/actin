@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.ckb
 
 import com.hartwig.actin.algo.ckb.datamodel.ConfidenceInterval
 import com.hartwig.actin.algo.ckb.datamodel.DerivedMetric
+import com.hartwig.actin.algo.ckb.datamodel.TimeOfMetastases
 import com.hartwig.actin.algo.ckb.datamodel.ValuePercentage
 import com.hartwig.actin.algo.ckb.datamodel.VariantRequirement
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
@@ -96,6 +97,42 @@ class ExtendedEvidenceEntryFactoryTest {
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception if incorrect metastatic sites formatting`() {
         ExtendedEvidenceEntryFactory.convertMetastaticSites("Liver only: 58-32%, Lung only: 10-6%")
+    }
+
+    @Test
+    fun `Should convert time of metastases`() {
+        val actual = ExtendedEvidenceEntryFactory.convertTimeOfMetastases("Metachronous")
+        val expected = TimeOfMetastases.METACHRONOUS
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception if unknown time of metastases`() {
+        ExtendedEvidenceEntryFactory.convertMetastaticSites("Two months after primary diagnosis")
+    }
+
+    @Test
+    fun `Should convert region`() {
+        val actual = ExtendedEvidenceEntryFactory.convertRaceOrRegion("North America/Western Europe/Australia: 154, Rest of world: 354")
+        val expected = mapOf("North America/Western Europe/Australia" to 154, "Rest of world" to 354)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception region formatting is incorrect`() {
+        ExtendedEvidenceEntryFactory.convertRaceOrRegion("North America/Western Europe/Australia, Rest of world: 354")
+    }
+
+    @Test
+    fun `Should convert race`() {
+        val actual = ExtendedEvidenceEntryFactory.convertRaceOrRegion("\nBlack: 2,\nWhite: 26")
+        val expected = mapOf("Black" to 2, "White" to 26)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun `Should throw exception if race formatting is incorrect`() {
+        ExtendedEvidenceEntryFactory.convertRaceOrRegion("Black, White: 26")
     }
 
     @Test

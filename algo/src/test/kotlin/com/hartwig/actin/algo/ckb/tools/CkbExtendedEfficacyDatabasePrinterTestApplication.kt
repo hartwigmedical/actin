@@ -22,7 +22,7 @@ class CkbExtendedEfficacyDatabasePrinterTestApplication {
             "repos",
             "actin-resources-private",
             "ckb_extended_efficacy",
-            "extended_ee_output.json"
+            "extended_efficacy_evidence_output.json"
         ).joinToString(File.separator)
     }
 }

@@ -14,15 +14,22 @@ data class PatientPopulation(
     val patientsWithWho2: Int?,
     val patientsWithWho3: Int?,
     val patientsWithWho4: Int?,
+    val patientsWithWho0to1: Int?,
+    val patientsWithWho1to2: Int?,
     val patientsPerPrimaryTumorLocation: Map<String, Int>?,
     val mutations: String?,
     val patientsWithPrimaryTumorRemovedComplete: Int?,
     val patientsWithPrimaryTumorRemovedPartial: Int?,
     val patientsWithPrimaryTumorRemoved: Int?,
     val patientsPerMetastaticSites: Map<String, ValuePercentage>?,
+    val timeOfMetastases: TimeOfMetastases?,
+    val therapy: String,
     val priorSystemicTherapy: String?,
     val patientsWithMSI: Int?,
     val medianFollowUpForSurvival: Double?,
     val medianFollowUpPFS: Double?,
-    val analysisGroups: List<AnalysisGroup> // a patient population could have multiple different analysis groups
+    val analysisGroups: List<AnalysisGroup>, // a patient population could have multiple different analysis groups
+    val priorTherapies: String,
+    val patientsPerRace: Map<String, Int>?,
+    val patientsPerRegion: Map<String, Int>?,
 )

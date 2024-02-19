@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.ckb.datamodel.PatientPopulation
 import com.hartwig.actin.algo.ckb.datamodel.PrimaryEndPoint
 import com.hartwig.actin.algo.ckb.datamodel.PrimaryEndPointType
 import com.hartwig.actin.algo.ckb.datamodel.PrimaryEndPointUnit
+import com.hartwig.actin.algo.ckb.datamodel.TimeOfMetastases
 import com.hartwig.actin.algo.ckb.datamodel.TrialReference
 import com.hartwig.actin.algo.ckb.datamodel.ValuePercentage
 import com.hartwig.actin.algo.ckb.datamodel.VariantRequirement
@@ -79,18 +80,33 @@ object ExtendedEvidenceEntryFactory {
                 patientsWithWho2 = patientPopulation.nEcog2?.toInt(),
                 patientsWithWho3 = patientPopulation.nEcog3?.toInt(),
                 patientsWithWho4 = patientPopulation.nEcog4?.toInt(),
+                patientsWithWho0to1 = patientPopulation.nEcog0to1?.toInt(),
+                patientsWithWho1to2 = patientPopulation.nEcog1to2?.toInt(),
                 patientsPerPrimaryTumorLocation = convertPrimaryTumorLocation(patientPopulation.nLocalizationPrimaryTumor),
                 mutations = patientPopulation.otherMutations, //TODO: convert to map once CKB has made notation consistent
                 patientsWithPrimaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),
                 patientsWithPrimaryTumorRemovedPartial = patientPopulation.nPrimaryTumorRemovedPartial?.toInt(),
                 patientsWithPrimaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
                 patientsPerMetastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
+                timeOfMetastases = patientPopulation.timeOfMetastases?.let { convertTimeOfMetastases(it) },
+                therapy = patientPopulation.therapy.therapyName,
                 priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
                 patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
                 medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival?.toDouble(),
                 medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival?.toDouble(),
-                analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups)
+                analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups),
+                priorTherapies = patientPopulation.priorTherapies,
+                patientsPerRace = if (patientPopulation.race == "") null else convertRaceOrRegion(patientPopulation.race),
+                patientsPerRegion = if (patientPopulation.region == "") null else convertRaceOrRegion(patientPopulation.region),
             )
+        }
+    }
+
+    fun convertTimeOfMetastases(timeOfMetastases: String): TimeOfMetastases {
+        try {
+            return TimeOfMetastases.valueOf(timeOfMetastases.uppercase())
+        } catch (e: Exception) {
+            throw IllegalStateException("Unknown time of metastases: $timeOfMetastases")
         }
     }
 
@@ -104,11 +120,21 @@ object ExtendedEvidenceEntryFactory {
 
     fun convertMetastaticSites(metastaticSites: String): Map<String, ValuePercentage> {
         val regex = """^(.*): (\d+) \((\d+(?:\.\d+)?)%\)?$""".toRegex()
-        return metastaticSites.split(", ").associate { item ->
+        return metastaticSites.split(",").associate { item ->
             regex.find(item)?.let {
                 val (label, value, percentage) = it.destructured
                 label.trim() to ValuePercentage(value.toInt(), percentage.toDouble())
             } ?: throw IllegalStateException("Incorrect metastatic site formatting: $metastaticSites")
+        }
+    }
+
+    fun convertRaceOrRegion(raceOrRegion: String): Map<String, Int> {
+        val regex = """^(.*?):\s*(\d+)$""".toRegex()
+        return raceOrRegion.replace("\n", "").split(",").associate { item ->
+            regex.find(item)?.let {
+                val (label, value) = it.destructured
+                label.trim() to value.toInt()
+            } ?: throw IllegalStateException("Incorrect race or region formatting: $raceOrRegion")
         }
     }
 

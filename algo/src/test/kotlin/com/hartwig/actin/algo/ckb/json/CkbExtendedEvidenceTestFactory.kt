@@ -121,7 +121,6 @@ object CkbExtendedEvidenceTestFactory {
             id = 20,
             isControl = true,
             groupName = "Treatment 1",
-            nPatientsEnrolled = null,
             nPatients = "40",
             nFemale = "30",
             nMale = "10",
@@ -134,6 +133,8 @@ object CkbExtendedEvidenceTestFactory {
             nEcog2 = "10",
             nEcog3 = null,
             nEcog4 = null,
+            nEcog0to1 = null,
+            nEcog1to2 = null,
             highestEcogScore = 2,
             nLocalizationPrimaryTumor = null,
             otherMutations = "EGFR Staining None: 0 (0%), Weak 1+: 40 (100.0%)",
@@ -152,9 +153,31 @@ object CkbExtendedEvidenceTestFactory {
             medianFollowUpForProgressionFreeSurvival = null,
             medianFollowUpForRandomizationToDataCutOff = null,
             metastaticSites = "Liver: 20 (50.0%), Lung: 10 (25.0%)",
+            timeOfMetastases = "Both",
+            therapy = createTherapyForPopulation1(),
             analysisGroups = createAnalysisGroupsForPopulation1(),
             efficacyEvidence = listOf(),
+            therapyDetails = null,
+            priorTherapies = "Chemo, radiation",
+            race = "Asian: 16,\nWhite: 24",
+            region = "",
             notes = null
+        )
+    }
+
+    private fun createTherapyForPopulation1(): CkbTherapyOfPopulation {
+        return CkbTherapyOfPopulation(
+            id = 1,
+            therapyName = "Treatment 1",
+            synonyms = null,
+            therapyDescriptions = listOf(
+                CkbTherapyDescription(
+                    description = "Description of treatment 1",
+                    references = listOf(createReference())
+                )
+            ),
+            createDate = "01/01/2001",
+            updateDate = "02/02/2002"
         )
     }
 
@@ -209,7 +232,6 @@ object CkbExtendedEvidenceTestFactory {
             id = 21,
             isControl = false,
             groupName = "Treatment 2",
-            nPatientsEnrolled = null,
             nPatients = "40",
             nFemale = "21",
             nMale = "19",
@@ -222,6 +244,8 @@ object CkbExtendedEvidenceTestFactory {
             nEcog2 = "3",
             nEcog3 = null,
             nEcog4 = null,
+            nEcog0to1 = null,
+            nEcog1to2 = null,
             highestEcogScore = 2,
             nLocalizationPrimaryTumor = null,
             otherMutations = "EGFR Staining None: 2 (5.0%), Weak 1+: 38 (95.0%)",
@@ -240,9 +264,31 @@ object CkbExtendedEvidenceTestFactory {
             medianFollowUpForProgressionFreeSurvival = null,
             medianFollowUpForRandomizationToDataCutOff = null,
             metastaticSites = "Liver: 30 (75.0%), Lung: 10 (25.0%)",
+            timeOfMetastases = null,
+            therapy = createTherapyForPopulation2(),
             analysisGroups = createAnalysisGroupsForPopulation2(),
             efficacyEvidence = createEfficacyEvidenceForPopulation2(),
+            therapyDetails = null,
+            priorTherapies = "Chemo",
+            race = "Asian: 10,\nWhite: 30",
+            region = "",
             notes = null
+        )
+    }
+
+    private fun createTherapyForPopulation2(): CkbTherapyOfPopulation {
+        return CkbTherapyOfPopulation(
+            id = 2,
+            therapyName = "Treatment 2",
+            synonyms = null,
+            therapyDescriptions = listOf(
+                CkbTherapyDescription(
+                    description = "Description of treatment 2",
+                    references = listOf(createReference())
+                )
+            ),
+            createDate = "01/01/2001",
+            updateDate = "02/02/2002"
         )
     }
 
