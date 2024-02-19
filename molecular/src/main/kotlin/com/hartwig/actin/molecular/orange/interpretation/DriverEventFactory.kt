@@ -6,6 +6,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.PurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
@@ -47,6 +48,10 @@ object DriverEventFactory {
                 gainLoss.gene() + " del"
             }
         }
+    }
+
+    fun geneCopyNumberEvent(geneCopyNumber: PurpleGeneCopyNumber): String {
+        return geneCopyNumber.gene() + " copy number"
     }
 
     fun homozygousDisruptionEvent(linxHomozygousDisruption: LinxHomozygousDisruption): String {

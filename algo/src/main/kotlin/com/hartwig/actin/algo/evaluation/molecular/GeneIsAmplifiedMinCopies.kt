@@ -58,11 +58,17 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
                 inclusionEvents = reportableFullAmps
             )
         }
+        if (ampsThatAreUnreportable.isNotEmpty()) {
+            return EvaluationFactory.pass(
+                "Gene $gene has a copy number that exceeds the threshold of $requestedMinCopyNumber copies but is considered not reportable",
+                "$gene has a copy number >$requestedMinCopyNumber copies",
+                inclusionEvents = ampsThatAreUnreportable
+            )
+        }
         val potentialWarnEvaluation = evaluatePotentialWarns(
             reportablePartialAmps,
             ampsWithLossOfFunction,
             ampsOnNonOncogenes,
-            ampsThatAreUnreportable,
             ampsThatAreNearCutoff,
             nonAmpsWithSufficientCopyNumber,
             evidenceSource
@@ -75,8 +81,8 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
 
     private fun evaluatePotentialWarns(
         reportablePartialAmps: Set<String>, ampsWithLossOfFunction: Set<String>,
-        ampsOnNonOncogenes: Set<String>, ampsThatAreUnreportable: Set<String>,
-        ampsThatAreNearCutoff: Set<String>, nonAmpsWithSufficientCopyNumber: Set<String>, evidenceSource: String
+        ampsOnNonOncogenes: Set<String>, ampsThatAreNearCutoff: Set<String>,
+        nonAmpsWithSufficientCopyNumber: Set<String>, evidenceSource: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOf(
@@ -94,11 +100,6 @@ class GeneIsAmplifiedMinCopies(private val gene: String, private val requestedMi
                     ampsOnNonOncogenes,
                     "Gene $gene is amplified but gene $gene is known as TSG in $evidenceSource",
                     "$gene amplification but $gene known as TSG in $evidenceSource"
-                ),
-                EventsWithMessages(
-                    ampsThatAreUnreportable,
-                    "Gene $gene is amplified but not considered reportable",
-                    "$gene amplification but considered not reportable"
                 ),
                 EventsWithMessages(
                     ampsThatAreNearCutoff,
