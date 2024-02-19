@@ -32,11 +32,6 @@ class GeneIsAmplifiedMinCopiesTest {
         )
 
         assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp))
-        )
-
-        assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(geneRole = GeneRole.TSG)))
         )
@@ -51,6 +46,11 @@ class GeneIsAmplifiedMinCopiesTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(isReportable = false)))
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp))
         )
 
         assertMolecularEvaluation(
