@@ -64,7 +64,7 @@ class IsEligibleForTreatmentLinesTest {
             listOf(
                 treatmentHistoryEntry("FOLFOX", true),
                 treatmentHistoryEntry("CETUXIMAB", true),
-                treatmentHistoryEntry("LONSURF", true)
+                treatmentHistoryEntry("TRIFLURIDINE+TIPIRACIL", true)
             )
         )
         assertEvaluation(EvaluationResult.FAIL, functionForLine2Or3.evaluate(patientWithThreeLines))
