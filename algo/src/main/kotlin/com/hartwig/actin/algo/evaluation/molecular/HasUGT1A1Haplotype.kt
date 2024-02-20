@@ -4,11 +4,18 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
 class HasUGT1A1Haplotype(private val haplotypeToFind: String) : EvaluationFunction {
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val pharmaco = record.molecular.pharmaco
+        return (record.molecular?.let { evaluate(it) })
+            ?: MolecularEventUtil.noMolecularEvaluation()
+    }
+
+    private fun evaluate(molecular: MolecularRecord): Evaluation {
+        val pharmaco = molecular.pharmaco
 
         if (pharmaco.none { it.gene == "UGT1A1" }) {
             return EvaluationFactory.recoverableUndetermined("UGT1A1 haplotype undetermined", "UGT1A1 haplotype undetermined")

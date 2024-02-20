@@ -4,11 +4,17 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 
 class HasSpecificHLAType(private val hlaAlleleToFind: String) : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val immunology = record.molecular.immunology
+        return (record.molecular?.let { evaluate(it) })
+            ?: MolecularEventUtil.noMolecularEvaluation()
+    }
+
+    private fun evaluate(molecular: MolecularRecord): Evaluation {
+        val immunology = molecular.immunology
         if (!immunology.isReliable) {
             return EvaluationFactory.recoverableUndetermined("HLA typing has not been performed reliably", "HLA typing unreliable")
         }

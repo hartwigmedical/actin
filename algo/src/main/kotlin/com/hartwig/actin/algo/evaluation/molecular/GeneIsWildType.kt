@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
@@ -15,12 +16,17 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 class GeneIsWildType internal constructor(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        return (record.molecular?.let { evaluate(it) })
+            ?: MolecularEventUtil.noMolecularEvaluation()
+    }
+
+    private fun evaluate(molecular: MolecularRecord): Evaluation {
         val reportableEventsWithEffect: MutableSet<String> = mutableSetOf()
         val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = mutableSetOf()
         val reportableEventsWithNoEffect: MutableSet<String> = mutableSetOf()
-        val evidenceSource = record.molecular.evidenceSource
+        val evidenceSource = molecular.evidenceSource
 
-        val drivers = record.molecular.drivers
+        val drivers = molecular.drivers
         sequenceOf(
             drivers.variants.asSequence(),
             drivers.copyNumbers.asSequence(),

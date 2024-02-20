@@ -5,16 +5,22 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        return (record.molecular?.let { evaluate(it) })
+            ?: MolecularEventUtil.noMolecularEvaluation()
+    }
+
+    private fun evaluate(molecular: MolecularRecord): Evaluation {
         val msiGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()
         val msiGenesWithNonBiallelicDriver: MutableSet<String> = mutableSetOf()
         for (gene in MolecularConstants.MSI_GENES) {
-            for (variant in record.molecular.drivers.variants) {
+            for (variant in molecular.drivers.variants) {
                 if (variant.gene == gene && variant.isReportable) {
                     if (variant.isBiallelic) {
                         msiGenesWithBiallelicDriver.add(gene)
@@ -23,23 +29,23 @@ class IsMicrosatelliteUnstable internal constructor() : EvaluationFunction {
                     }
                 }
             }
-            for (copyNumber in record.molecular.drivers.copyNumbers) {
+            for (copyNumber in molecular.drivers.copyNumbers) {
                 if (copyNumber.type == CopyNumberType.LOSS && copyNumber.gene == gene) {
                     msiGenesWithBiallelicDriver.add(gene)
                 }
             }
-            for (homozygousDisruption in record.molecular.drivers.homozygousDisruptions) {
+            for (homozygousDisruption in molecular.drivers.homozygousDisruptions) {
                 if (homozygousDisruption.gene == gene) {
                     msiGenesWithBiallelicDriver.add(gene)
                 }
             }
-            for (disruption in record.molecular.drivers.disruptions) {
+            for (disruption in molecular.drivers.disruptions) {
                 if (disruption.gene == gene && disruption.isReportable) {
                     msiGenesWithNonBiallelicDriver.add(gene)
                 }
             }
         }
-        val isMicrosatelliteUnstable = record.molecular.characteristics.isMicrosatelliteUnstable
+        val isMicrosatelliteUnstable = molecular.characteristics.isMicrosatelliteUnstable
         if (isMicrosatelliteUnstable == null) {
             return if (msiGenesWithBiallelicDriver.isNotEmpty()) {
                 EvaluationFactory.undetermined(

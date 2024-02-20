@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
@@ -54,9 +55,10 @@ class HasCancerWithNeuroendocrineComponentTest {
 
     private fun createWithNeuroendocrineProfile(): PatientRecord {
         val base = TestDataFactory.createMinimalTestPatientRecord()
+        val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
-            molecular = base.molecular.copy(
-                drivers = base.molecular.drivers.copy(
+            molecular = baseMolecular.copy(
+                drivers = baseMolecular.drivers.copy(
                     copyNumbers = setOf(
                         TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, isReportable = true, gene = "TP53")
                     ),

@@ -30,7 +30,7 @@ class TreatmentMatcherTest {
     private val treatmentMatcher = TreatmentMatcher(trialMatcher, recommendationEngine, trials, CurrentDateProvider())
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
-        sampleId = patient.molecular.sampleId,
+        sampleId = patient.molecular?.sampleId ?: "N/A",
         referenceDate = LocalDate.now(),
         referenceDateIsLive = true,
         trialMatches = trialMatches,
