@@ -8,7 +8,7 @@ object TestExtendedEvidenceEntryFactory {
         return ExtendedEvidenceEntry(
             acronym = "Study of treatment 1 instead of treatment 2",
             phase = "Phase III",
-            therapies = listOf("CAPECITABINE+OXALIPLATIN"),
+            therapies = listOf("VEMURAFENIB"),
             therapeuticSetting = Intent.ADJUVANT,
             variantRequirements = listOf(VariantRequirement(name = "EGFR positive", requirementType = "required")),
             trialReferences = listOf(createReference())
@@ -21,7 +21,7 @@ object TestExtendedEvidenceEntryFactory {
 
     fun createPatientPopulation(): PatientPopulation {
         return PatientPopulation(
-            name = "CAPIRI",
+            name = "VEMURAFENIB",
             isControl = true,
             ageMin = 55,
             ageMax = 65,
@@ -43,7 +43,7 @@ object TestExtendedEvidenceEntryFactory {
             patientsWithPrimaryTumorRemoved = 25,
             patientsPerMetastaticSites = mapOf("Lung" to ValuePercentage(100, 100.0)),
             timeOfMetastases = TimeOfMetastases.BOTH,
-            therapy = "CAPECITABINE+OXALIPLATIN",
+            therapy = "VEMURAFENIB",
             priorSystemicTherapy = "Chemo",
             patientsWithMSI = 33,
             medianFollowUpForSurvival = "30",
