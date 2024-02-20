@@ -1,8 +1,12 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.CurrentDateProvider
+import com.hartwig.actin.algo.ckb.ExtendedEvidenceEntryFactory
+import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
+import com.hartwig.actin.algo.datamodel.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
@@ -36,11 +40,14 @@ class TreatmentMatcherTest {
         trialMatches = trialMatches,
         standardOfCareMatches = null
     )
+    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+    private val entries =
+        ExtendedEvidenceEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
 
     @Test
     fun `Should produce match for patient when SOC evaluation unavailable`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient) } returns false
-        assertThat(treatmentMatcher.evaluateMatchesForPatient(patient)).isEqualTo(expectedTreatmentMatch)
+        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient, entries)).isEqualTo(expectedTreatmentMatch)
     }
 
     @Test
@@ -54,7 +61,13 @@ class TreatmentMatcherTest {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient) } returns true
         every { recommendationEngine.standardOfCareEvaluatedTreatments(patient) } returns expectedSocTreatments
 
-        assertThat(treatmentMatcher.evaluateMatchesForPatient(patient))
-            .isEqualTo(expectedTreatmentMatch.copy(standardOfCareMatches = expectedSocTreatments))
+        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient, entries))
+            .isEqualTo(
+                expectedTreatmentMatch.copy(
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator(entries).annotate(
+                        expectedSocTreatments
+                    )
+                )
+            )
     }
 }
