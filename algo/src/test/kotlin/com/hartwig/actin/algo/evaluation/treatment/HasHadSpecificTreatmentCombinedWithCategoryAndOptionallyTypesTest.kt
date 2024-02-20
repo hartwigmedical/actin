@@ -11,14 +11,14 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Ignore
 import org.junit.Test
 
-class HasHadSpecificTreatmentCombinedWithCategoryAndTypesTest {
+class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     @Test
-    fun shouldFailIfNoTreatments() {
+    fun `Should fail if treatment history contains no treatments`() {
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldFailIfNoTreatmentInCategory() {
+    fun `Should fail if treatment history contains no treatment in category`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
@@ -30,25 +30,25 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndTypesTest {
     }
 
     @Test
-    fun shouldFailIfNoTypesProvided() {
-        val function = HasHadSpecificTreatmentCombinedWithCategoryAndTypes(
+    fun `Should match only on treatment name and category if no types are provided`() {
+        val function = HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
             treatment(MATCHING_TREATMENT_NAME, true), MATCHING_CATEGORY,
             emptySet()
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(HISTORY))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(HISTORY))
     }
 
     @Test
     @Ignore
-    fun shouldFailIfTypesProvidedButNoneMatchTreatmentHistory() {
-        val function = HasHadSpecificTreatmentCombinedWithCategoryAndTypes(
+    fun `Should fail if types provided but none match treatment history`() {
+        val function = HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
             treatment(MATCHING_TREATMENT_NAME, true), MATCHING_CATEGORY, DIFFERENT_TYPES
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(HISTORY))
     }
 
     @Test
-    fun shouldReturnUndeterminedIfTreatmentIsInDifferentSetFromCategoryAndTypes() {
+    fun `Should return undetermined if treatment is in different set from category and types`() {
         val history = TreatmentTestFactory.withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
@@ -73,8 +73,8 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndTypesTest {
 
     @Test
     @Ignore
-    fun shouldPassIfTreatmentOccurredConcurrentlyWithCategoryAndSingleType() {
-        val function = HasHadSpecificTreatmentCombinedWithCategoryAndTypes(
+    fun `Should pass if treatment occurred concurrently with category and single type`() {
+        val function = HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
             treatment(MATCHING_TREATMENT_NAME, true), MATCHING_CATEGORY,
             setOf(DrugType.HER2_ANTIBODY)
         )
@@ -83,7 +83,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndTypesTest {
 
     @Test
     @Ignore
-    fun shouldPassIfTreatmentOccurredConcurrentlyWithCategoryAndMultipleTypes() {
+    fun `Should pass if treatment occurred concurrently with category and multiple types`() {
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(HISTORY))
     }
 
@@ -118,7 +118,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndTypesTest {
         )
 
         private val FUNCTION =
-            HasHadSpecificTreatmentCombinedWithCategoryAndTypes(
+            HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
                 treatment(MATCHING_TREATMENT_NAME, true), MATCHING_CATEGORY, MATCHING_TYPES
             )
     }

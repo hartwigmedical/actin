@@ -158,7 +158,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadSpecificTreatmentCombinedWithCategoryAndTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneSpecificTreatmentOneTreatmentCategoryManyTypesInput(function)
-            HasHadSpecificTreatmentCombinedWithCategoryAndTypes(input.treatment, input.category, input.types)
+            HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(input.treatment, input.category, input.types)
         }
     }
 

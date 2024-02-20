@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 
-class HasHadSpecificTreatmentCombinedWithCategoryAndTypes(
+class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
     private val treatment: Treatment,
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>?
