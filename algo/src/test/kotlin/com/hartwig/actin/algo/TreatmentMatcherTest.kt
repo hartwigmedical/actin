@@ -30,8 +30,9 @@ class TreatmentMatcherTest {
     private val trialMatcher = mockk<TrialMatcher> {
         every { determineEligibility(patient, trials) } returns trialMatches
     }
+    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val recommendationEngine = mockk<RecommendationEngine>()
-    private val treatmentMatcher = TreatmentMatcher(trialMatcher, recommendationEngine, trials, CurrentDateProvider())
+    private val treatmentMatcher = TreatmentMatcher(trialMatcher, recommendationEngine, trials, CurrentDateProvider(), treatmentDatabase)
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
         sampleId = patient.molecular.sampleId,
@@ -40,9 +41,8 @@ class TreatmentMatcherTest {
         trialMatches = trialMatches,
         standardOfCareMatches = null
     )
-    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val entries =
-        ExtendedEvidenceEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+        ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
 
     @Test
     fun `Should produce match for patient when SOC evaluation unavailable`() {
@@ -64,7 +64,7 @@ class TreatmentMatcherTest {
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient, entries))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator(entries).annotate(
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator(entries, treatmentDatabase).annotate(
                         expectedSocTreatments
                     )
                 )

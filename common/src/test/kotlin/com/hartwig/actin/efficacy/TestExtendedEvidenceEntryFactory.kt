@@ -8,7 +8,7 @@ object TestExtendedEvidenceEntryFactory {
         return ExtendedEvidenceEntry(
             acronym = "Study of treatment 1 instead of treatment 2",
             phase = "Phase III",
-            therapies = listOf("VEMURAFENIB"),
+            therapies = listOf(Therapy(therapyName = "Vemurafenib", synonyms = null)),
             therapeuticSetting = Intent.ADJUVANT,
             variantRequirements = listOf(VariantRequirement(name = "EGFR positive", requirementType = "required")),
             trialReferences = listOf(createReference())
@@ -43,7 +43,7 @@ object TestExtendedEvidenceEntryFactory {
             patientsWithPrimaryTumorRemoved = 25,
             patientsPerMetastaticSites = mapOf("Lung" to ValuePercentage(100, 100.0)),
             timeOfMetastases = TimeOfMetastases.BOTH,
-            therapy = "VEMURAFENIB",
+            therapy = "Vemurafenib",
             priorSystemicTherapy = "Chemo",
             patientsWithMSI = 33,
             medianFollowUpForSurvival = "30",

@@ -4,7 +4,6 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.ckb.json.CkbMolecularProfile
-import com.hartwig.actin.algo.ckb.json.CkbTherapy
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.efficacy.ConfidenceInterval
@@ -18,7 +17,7 @@ import org.junit.Test
 class ExtendedEvidenceEntryFactoryTest {
 
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-    private val extendedEvidenceEntryFactory = ExtendedEvidenceEntryFactory(treatmentDatabase)
+    private val extendedEvidenceEntryFactory = ExtendedEvidenceEntryFactory
 
     @Test
     fun `Should convert minimal test extended evidence database`() {
@@ -32,21 +31,6 @@ class ExtendedEvidenceEntryFactoryTest {
         val result =
             extendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
         assertThat(result).isNotNull
-    }
-
-    @Test
-    fun `Should convert therapies`() {
-        val actual = ExtendedEvidenceEntryFactory(treatmentDatabase).convertTherapies(
-            listOf(
-                CkbTherapy(
-                    id = 1,
-                    therapyName = "CAPECITABINE+OXALIPLATIN",
-                    synonyms = null
-                )
-            )
-        )
-        val expected = listOf("CAPECITABINE+OXALIPLATIN")
-        assertThat(actual).isEqualTo(expected)
     }
 
     @Test

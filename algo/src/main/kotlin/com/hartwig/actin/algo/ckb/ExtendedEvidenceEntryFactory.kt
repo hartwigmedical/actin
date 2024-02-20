@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.ckb
 
 import com.google.gson.Gson
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.json.CkbAnalysisGroup
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
@@ -23,8 +22,9 @@ import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.efficacy.ValuePercentage
 import com.hartwig.actin.efficacy.VariantRequirement
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
+import com.hartwig.actin.efficacy.Therapy
 
-class ExtendedEvidenceEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
+object ExtendedEvidenceEntryFactory {
 
     fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
         return ckbExtendedEvidenceEntries.map { resolveCkbExtendedEvidence(it) }
@@ -41,12 +41,9 @@ class ExtendedEvidenceEntryFactory(private val treatmentDatabase: TreatmentDatab
         )
     }
 
-    fun convertTherapies(therapies: List<CkbTherapy>): List<String?> {
-        //return therapies.map { therapy -> therapy.synonyms ?: therapy.therapyName }
-        //mappen naar hoe ze in treatment.json staan
-        return therapies.map { therapy -> treatmentDatabase.findTreatmentByName(therapy.therapyName.uppercase())?.name }
+    fun convertTherapies(therapies: List<CkbTherapy>): List<Therapy> {
+        return therapies.map { therapy -> Therapy(therapyName = therapy.therapyName, synonyms = therapy.synonyms) }
     }
-
 
     fun extractTherapeuticSettingFromString(therapeuticSetting: String): Intent {
         try {
