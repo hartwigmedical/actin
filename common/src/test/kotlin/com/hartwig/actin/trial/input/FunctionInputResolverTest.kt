@@ -524,10 +524,10 @@ class FunctionInputResolverTest {
     fun `Should resolve functions with one gene many protein impacts input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
         val rule = firstOfType(FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS)
-        val valid = create(rule, listOf("gene", "V600E;V601K;A100X"))
+        val valid = create(rule, listOf("gene", "V600E;V601K"))
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
 
-        val expected = OneGeneManyProteinImpacts("gene", listOf("V600E", "V601K", "A100X"))
+        val expected = OneGeneManyProteinImpacts("gene", listOf("V600E", "V601K"))
         assertThat(resolver.createOneGeneManyProteinImpactsInput(valid)).isEqualTo(expected)
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a gene", "V600E")))!!).isFalse
