@@ -54,9 +54,9 @@ object TestTreatmentMatchFactory {
         )
     }
 
-    private fun createSocMatches(): List<EvaluatedTreatment> {
+    private fun createSocMatches(): List<StandardOfCareMatch> {
         return listOf(
-            EvaluatedTreatment(
+            StandardOfCareMatch(
                 treatmentCandidate = TreatmentCandidate(
                     TreatmentTestFactory.treatment("Vemurafenib", true),
                     true,
@@ -69,7 +69,8 @@ object TestTreatmentMatchFactory {
                         passSpecificMessages = setOf("Patient has active CNS metastases"),
                         passGeneralMessages = setOf("Active CNS metastases")
                     )
-                )
+                ),
+                annotations = null
             )
         )
     }

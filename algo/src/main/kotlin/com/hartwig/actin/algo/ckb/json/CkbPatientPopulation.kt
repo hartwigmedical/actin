@@ -39,7 +39,7 @@ data class CkbPatientPopulation(
     @SerializedName("median_follow_up_for_randomization_to_data_cut_off") val medianFollowUpForRandomizationToDataCutOff: String?,
     @SerializedName("metastatic_sites") val metastaticSites: String?,
     @SerializedName("time_of_metastases") val timeOfMetastases: String?,
-    val therapy: CkbTherapyOfPopulation,
+    val therapy: CkbTherapyOfPopulation?,
     @SerializedName("analysis_groups") val analysisGroups: List<CkbAnalysisGroup>,
     @SerializedName("efficacy_evidence") val efficacyEvidence: List<CkbEfficacyEvidence>,
     @SerializedName("therapy_details") val therapyDetails: String?,

@@ -61,7 +61,7 @@ class TreatmentMatchJsonTest {
                 + "\"exclusionMolecularEvents\":[],\"passSpecificMessages\":[\"Patient has active CNS metastases\"],"
                 + "\"passGeneralMessages\":[\"Active CNS metastases\"],\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],"
                 + "\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],\"failSpecificMessages\":[],"
-                + "\"failGeneralMessages\":[]}]}]}")
+                + "\"failGeneralMessages\":[]}],\"annotations\":null}]}")
         assertThat(toJson(match)).isEqualTo(expectedJson)
     }
 
