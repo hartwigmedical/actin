@@ -1,4 +1,4 @@
-package com.hartwig.actin.efficacyevidence
+package com.hartwig.actin.efficacy
 
 data class DerivedMetric(
     val relativeMetricId: Int,

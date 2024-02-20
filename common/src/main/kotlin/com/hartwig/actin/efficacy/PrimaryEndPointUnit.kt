@@ -1,4 +1,4 @@
-package com.hartwig.actin.efficacyevidence
+package com.hartwig.actin.efficacy
 
 import com.hartwig.actin.Displayable
 
