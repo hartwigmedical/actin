@@ -31,8 +31,12 @@ class TreatmentMatcherTest {
         every { determineEligibility(patient, trials) } returns trialMatches
     }
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+    private val entries =
+        ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
     private val recommendationEngine = mockk<RecommendationEngine>()
-    private val treatmentMatcher = TreatmentMatcher(trialMatcher, recommendationEngine, trials, CurrentDateProvider(), treatmentDatabase)
+    private val treatmentMatcher = TreatmentMatcher(
+        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), treatmentDatabase, entries
+    )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
         sampleId = patient.molecular.sampleId,
@@ -41,13 +45,11 @@ class TreatmentMatcherTest {
         trialMatches = trialMatches,
         standardOfCareMatches = null
     )
-    private val entries =
-        ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
 
     @Test
-    fun `Should produce match for patient when SOC evaluation unavailable`() {
+    fun `Should produce match for patient when SOC evaluation unavailable and annotate with efficacy evidence`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient) } returns false
-        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient, entries)).isEqualTo(expectedTreatmentMatch)
+        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient)).isEqualTo(expectedTreatmentMatch)
     }
 
     @Test
@@ -61,7 +63,7 @@ class TreatmentMatcherTest {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient) } returns true
         every { recommendationEngine.standardOfCareEvaluatedTreatments(patient) } returns expectedSocTreatments
 
-        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient, entries))
+        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
                     standardOfCareMatches = EvaluatedTreatmentAnnotator(entries, treatmentDatabase).annotate(

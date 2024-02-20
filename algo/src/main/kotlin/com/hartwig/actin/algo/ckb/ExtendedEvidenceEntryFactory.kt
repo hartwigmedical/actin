@@ -103,8 +103,8 @@ object ExtendedEvidenceEntryFactory {
                 medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival,
                 analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups),
                 priorTherapies = patientPopulation.priorTherapies,
-                patientsPerRace = if (patientPopulation.race == "") null else convertRaceOrRegion(patientPopulation.race),
-                patientsPerRegion = if (patientPopulation.region == "") null else convertRaceOrRegion(patientPopulation.region),
+                patientsPerRace = if (patientPopulation.race.isNotEmpty()) convertRaceOrRegion(patientPopulation.race) else null,
+                patientsPerRegion = if (patientPopulation.region.isNotEmpty()) convertRaceOrRegion(patientPopulation.region) else null,
             )
         }
     }

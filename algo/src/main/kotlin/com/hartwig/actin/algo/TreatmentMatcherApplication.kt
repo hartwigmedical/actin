@@ -75,7 +75,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val jsonEntries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(EXTENDED_EFFICACY_JSON_PATH)
         val entries: List<ExtendedEvidenceEntry> = ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(jsonEntries)
 
-        val match = TreatmentMatcher.create(resources, trials).evaluateAndAnnotateMatchesForPatient(patient, entries)
+        val match = TreatmentMatcher.create(resources, trials, entries).evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)

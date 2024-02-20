@@ -20,10 +20,17 @@ class EvaluatedTreatmentAnnotator(
     }
 
     private fun lookUp(treatment: EvaluatedTreatment): List<ExtendedEvidenceEntry> {
-        return efficacyEvidence.filter { entry -> convertTherapies(entry.therapies).any { therapy -> therapy == treatment.treatmentCandidate.treatment.name } }
+        return efficacyEvidence.filter { entry ->
+            convertTherapies(entry.therapies).any { therapy ->
+                therapy.equals(
+                    treatment.treatmentCandidate.treatment.name,
+                    true
+                )
+            }
+        }
     }
 
-    fun convertTherapies(therapies: List<Therapy>): List<String?> {
+    private fun convertTherapies(therapies: List<Therapy>): List<String?> {
         return therapies.map { therapy -> findTreatment(therapy.synonyms ?: therapy.therapyName) }
     }
 
@@ -39,7 +46,7 @@ class EvaluatedTreatmentAnnotator(
         } else if (finalOutput.isEmpty()) {
             null
         } else {
-            throw IllegalStateException("Multiple matches found for therapy: $therapy")
+            throw IllegalStateException("Multiple matches found in treatment.json for therapy: $therapy")
         }
     }
 

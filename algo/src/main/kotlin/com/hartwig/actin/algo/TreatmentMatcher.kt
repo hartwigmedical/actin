@@ -16,17 +16,17 @@ class TreatmentMatcher(
     private val recommendationEngine: RecommendationEngine,
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
-    private val treatmentDatabase: TreatmentDatabase
+    private val treatmentDatabase: TreatmentDatabase,
+    private val efficacyEvidence: List<ExtendedEvidenceEntry>
 ) {
 
-    fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord, efficacyEvidence: List<ExtendedEvidenceEntry>): TreatmentMatch {
+    fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
         val standardOfCareMatches = if (!recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) null else {
             recommendationEngine.standardOfCareEvaluatedTreatments(patient)
         }
-        val annotatedStandardOfCareMatches = if (standardOfCareMatches == null) null else {
-            EvaluatedTreatmentAnnotator(efficacyEvidence, treatmentDatabase).annotate(standardOfCareMatches)
-        }
+        val annotatedStandardOfCareMatches =
+            standardOfCareMatches?.let { EvaluatedTreatmentAnnotator(efficacyEvidence, treatmentDatabase).annotate(standardOfCareMatches) }
 
         return TreatmentMatch(
             patientId = patient.patientId,
@@ -39,13 +39,14 @@ class TreatmentMatcher(
     }
 
     companion object {
-        fun create(resources: RuleMappingResources, trials: List<Trial>): TreatmentMatcher {
+        fun create(resources: RuleMappingResources, trials: List<Trial>, efficacyEvidence: List<ExtendedEvidenceEntry>): TreatmentMatcher {
             return TreatmentMatcher(
                 TrialMatcher.create(resources),
                 RecommendationEngineFactory(resources).create(),
                 trials,
                 resources.referenceDateProvider,
-                resources.treatmentDatabase
+                resources.treatmentDatabase,
+                efficacyEvidence
             )
         }
     }
