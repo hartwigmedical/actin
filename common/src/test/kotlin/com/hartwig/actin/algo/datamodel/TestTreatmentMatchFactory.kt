@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.datamodel
 
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
@@ -70,7 +71,7 @@ object TestTreatmentMatchFactory {
                         passGeneralMessages = setOf("Active CNS metastases")
                     )
                 ),
-                annotations = null
+                annotations = listOf(TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntry())
             )
         )
     }
@@ -230,9 +231,11 @@ object TestTreatmentMatchFactory {
             EvaluationResult.NOT_EVALUATED -> {
                 base.copy(passSpecificMessages = setOf(specificMessage), passGeneralMessages = setOfNotNull(generalMessage))
             }
+
             EvaluationResult.WARN -> {
                 base.copy(warnSpecificMessages = setOf(specificMessage), warnGeneralMessages = setOfNotNull(generalMessage))
             }
+
             EvaluationResult.UNDETERMINED -> {
                 base.copy(
                     undeterminedSpecificMessages = setOf(specificMessage), undeterminedGeneralMessages = setOfNotNull(generalMessage)
