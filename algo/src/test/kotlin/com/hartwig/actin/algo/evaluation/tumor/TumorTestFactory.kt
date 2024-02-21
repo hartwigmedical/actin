@@ -14,8 +14,8 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 
 internal object TumorTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val base = TestDataFactory.createMinimalTestPatientRecord().copy(molecular = baseMolecular)
 
     fun withDoids(vararg doids: String): PatientRecord {
         return withDoids(setOf(*doids))

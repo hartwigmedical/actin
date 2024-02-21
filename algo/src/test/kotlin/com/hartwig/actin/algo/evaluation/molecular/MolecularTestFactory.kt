@@ -18,8 +18,8 @@ import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val base = TestDataFactory.createMinimalTestPatientRecord().copy(molecular = baseMolecular)
 
     fun priorMolecularTest(
         test: String = "",
