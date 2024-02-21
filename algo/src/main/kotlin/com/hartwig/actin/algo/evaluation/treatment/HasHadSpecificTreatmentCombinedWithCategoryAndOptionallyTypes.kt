@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
 class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
     private val treatment: Treatment,
@@ -23,19 +24,11 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
         }
         if (relevantHistory.isEmpty()) return EvaluationFactory.fail("Patient has not received ${treatment.name}")
 
-        if (relevantHistory.any { history ->
-                history.allTreatments().any { pastTreatment ->
-                    treatmentContainsMatch(pastTreatment)
-                }
-            }) {
+        if (historyMatchesCategoryAndTypes(relevantHistory)) {
             return EvaluationFactory.pass("Patient has received $treatmentDesc")
         }
 
-        if (record.clinical.oncologicalHistory.any { history ->
-                history.allTreatments().any { pastTreatment ->
-                    treatmentContainsMatch(pastTreatment)
-                }
-            }) {
+        if (historyMatchesCategoryAndTypes(record.clinical.oncologicalHistory)) {
             return EvaluationFactory.undetermined(
                 "Patient may have received $treatmentDesc during past trial participation",
                 "Can't determine whether patient has received $treatmentDesc"
@@ -44,8 +37,13 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
         return EvaluationFactory.fail("Patient has not received $treatmentDesc")
     }
 
-    private fun treatmentContainsMatch(candidate: Treatment): Boolean {
+    private fun historyMatchesCategoryAndTypes(treatmentHistory: List<TreatmentHistoryEntry>): Boolean {
         val lookForTypes = if (types.isNullOrEmpty()) emptySet() else types
-        return candidate.name != treatment.name && candidate.categories().contains(category) && candidate.types().containsAll(lookForTypes)
+        return treatmentHistory.any { treatmentHistoryEntry ->
+            treatmentHistoryEntry.allTreatments().any { pastTreatment ->
+                pastTreatment.name != treatment.name && pastTreatment.categories().contains(category) && pastTreatment.types()
+                    .containsAll(lookForTypes)
+            }
+        }
     }
 }
