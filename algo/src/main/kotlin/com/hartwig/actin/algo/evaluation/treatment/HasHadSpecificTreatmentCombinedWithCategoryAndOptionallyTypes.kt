@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.Format.concatItems
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
@@ -15,33 +15,37 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
     private val types: Set<TreatmentType>?
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (types.isNullOrEmpty()) return EvaluationFactory.fail("Types not provided")
+        val treatmentDesc =
+            "combined therapy with ${treatment.name} and ${types?.let { " ${concatItemsWithAnd(types)}" } ?: ""} ${category.display()}"
 
-        if (!record.clinical.oncologicalHistory.any { history ->
-                history.allTreatments().any { pastTreatment -> pastTreatment.name.lowercase() == treatment.name.lowercase() }
-            }) return EvaluationFactory.fail("Has not received ${treatment}")
-
-        val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical.oncologicalHistory, category) {
-                it.matchesTypeFromSet(types)
-            }
-
-        val treatmentLine = "${concatItems(types)} ${category.display()}"
-        return when {
-            treatmentSummary.numSpecificMatches() > 0 -> {
-                EvaluationFactory.pass("Has received ${treatmentLine}")
-            }
-
-            treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches > 0 -> {
-                EvaluationFactory.undetermined(
-                    "Patient may have received ${treatmentLine} during past trial participation",
-                    "Can't determine whether patient has received ${treatmentLine}"
-                )
-            }
-
-            else -> {
-                EvaluationFactory.fail("Has not received ${treatmentLine}")
-            }
+        val relevantHistory = record.clinical.oncologicalHistory.filter { history ->
+            history.allTreatments().any { pastTreatment -> pastTreatment.name.lowercase() == treatment.name.lowercase() }
         }
+        if (relevantHistory.isEmpty()) return EvaluationFactory.fail("Patient has not received ${treatment.name}")
+
+        if (relevantHistory.any { history ->
+                history.allTreatments().any { pastTreatment ->
+                    treatmentContainsMatch(pastTreatment)
+                }
+            }) {
+            return EvaluationFactory.pass("Patient has received $treatmentDesc")
+        }
+
+        if (record.clinical.oncologicalHistory.any { history ->
+                history.allTreatments().any { pastTreatment ->
+                    treatmentContainsMatch(pastTreatment)
+                }
+            }) {
+            return EvaluationFactory.undetermined(
+                "Patient may have received $treatmentDesc during past trial participation",
+                "Can't determine whether patient has received $treatmentDesc"
+            )
+        }
+        return EvaluationFactory.fail("Patient has not received $treatmentDesc")
+    }
+
+    private fun treatmentContainsMatch(candidate: Treatment): Boolean {
+        val lookForTypes = if (types.isNullOrEmpty()) emptySet() else types
+        return candidate.name != treatment.name && candidate.categories().contains(category) && candidate.types().containsAll(lookForTypes)
     }
 }
