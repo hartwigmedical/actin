@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.CurrentDateProvider
 import com.hartwig.actin.algo.ckb.ExtendedEvidenceEntryFactory
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
@@ -30,12 +29,11 @@ class TreatmentMatcherTest {
     private val trialMatcher = mockk<TrialMatcher> {
         every { determineEligibility(patient, trials) } returns trialMatches
     }
-    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val entries =
         ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val treatmentMatcher = TreatmentMatcher(
-        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), treatmentDatabase, entries
+        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), entries
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
@@ -66,7 +64,7 @@ class TreatmentMatcherTest {
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator(entries, treatmentDatabase).annotate(
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator(entries).annotate(
                         expectedSocTreatments
                     )
                 )

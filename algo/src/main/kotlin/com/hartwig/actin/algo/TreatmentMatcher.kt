@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
@@ -16,7 +15,6 @@ class TreatmentMatcher(
     private val recommendationEngine: RecommendationEngine,
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
-    private val treatmentDatabase: TreatmentDatabase,
     private val efficacyEvidence: List<ExtendedEvidenceEntry>
 ) {
 
@@ -26,7 +24,7 @@ class TreatmentMatcher(
             recommendationEngine.standardOfCareEvaluatedTreatments(patient)
         }
         val annotatedStandardOfCareMatches =
-            standardOfCareMatches?.let { EvaluatedTreatmentAnnotator(efficacyEvidence, treatmentDatabase).annotate(standardOfCareMatches) }
+            standardOfCareMatches?.let { EvaluatedTreatmentAnnotator(efficacyEvidence).annotate(standardOfCareMatches) }
 
         return TreatmentMatch(
             patientId = patient.patientId,
@@ -45,7 +43,6 @@ class TreatmentMatcher(
                 RecommendationEngineFactory(resources).create(),
                 trials,
                 resources.referenceDateProvider,
-                resources.treatmentDatabase,
                 efficacyEvidence
             )
         }

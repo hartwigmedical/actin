@@ -1,12 +1,10 @@
 package com.hartwig.actin.algo.datamodel
 
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.efficacy.ExtendedEvidenceEntry
 import com.hartwig.actin.efficacy.Therapy
 
 class EvaluatedTreatmentAnnotator(
-    private val efficacyEvidence: List<ExtendedEvidenceEntry>,
-    private val treatmentDatabase: TreatmentDatabase
+    private val efficacyEvidence: List<ExtendedEvidenceEntry>
 ) {
 
     fun annotate(evaluatedTreatments: List<EvaluatedTreatment>): List<StandardOfCareMatch> {
@@ -31,23 +29,7 @@ class EvaluatedTreatmentAnnotator(
     }
 
     private fun convertTherapies(therapies: List<Therapy>): List<String?> {
-        return therapies.map { therapy -> findTreatment(therapy.synonyms ?: therapy.therapyName) }
-    }
-
-    private fun findTreatment(therapy: String): String? {
-        val options = generateOptions(therapy)
-        val finalOutput = mutableSetOf<String>()
-        for (option in options) {
-            treatmentDatabase.findTreatmentByName(option)?.let { finalOutput.add(it.name) }
-        }
-
-        return if (finalOutput.count() == 1) {
-            finalOutput.joinToString("")
-        } else if (finalOutput.isEmpty()) {
-            null
-        } else {
-            throw IllegalStateException("Multiple matches found in treatment.json for therapy: $therapy")
-        }
+        return therapies.flatMap { generateOptions(it.synonyms ?: it.therapyName) }
     }
 
     private fun generateOptions(therapy: String): List<String> {

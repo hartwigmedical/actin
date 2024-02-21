@@ -27,7 +27,7 @@ import com.hartwig.actin.efficacy.Therapy
 object ExtendedEvidenceEntryFactory {
 
     fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
-        return ckbExtendedEvidenceEntries.map { resolveCkbExtendedEvidence(it) }
+        return ckbExtendedEvidenceEntries.map(::resolveCkbExtendedEvidence)
     }
 
     private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): ExtendedEvidenceEntry {
