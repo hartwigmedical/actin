@@ -9,9 +9,7 @@ object TrialFunctions {
         TreatmentCategory.CAR_T,
         TreatmentCategory.TCR_T,
         TreatmentCategory.GENE_THERAPY,
-        TreatmentCategory.PROPHYLACTIC_TREATMENT,
         TreatmentCategory.RADIOTHERAPY,
-        TreatmentCategory.ANTIVIRAL_THERAPY,
         TreatmentCategory.SUPPORTIVE_TREATMENT,
         TreatmentCategory.SURGERY
     )
