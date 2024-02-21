@@ -47,7 +47,7 @@ data class TrialCreatorConfig(
             }
 
             return TrialCreatorConfig(
-                ctcConfigDirectory = ApplicationConfig.optionalValue(cmd, CTC_CONFIG_DIRECTORY),
+                ctcConfigDirectory = ApplicationConfig.optionalDir(cmd, CTC_CONFIG_DIRECTORY),
                 trialConfigDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_CONFIG_DIRECTORY),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
