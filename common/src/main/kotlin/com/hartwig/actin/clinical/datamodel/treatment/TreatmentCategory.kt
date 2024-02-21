@@ -13,8 +13,6 @@ enum class TreatmentCategory : Displayable {
     SURGERY,
     TRANSPLANTATION,
     TRIAL,
-    CAR_T,
-    TCR_T,
     GENE_THERAPY,
     ABLATION;
 
@@ -24,6 +22,6 @@ enum class TreatmentCategory : Displayable {
 
     companion object {
         val CANCER_TREATMENT_CATEGORIES: Set<TreatmentCategory> =
-            setOf(CHEMOTHERAPY, TARGETED_THERAPY, IMMUNOTHERAPY, HORMONE_THERAPY, TRIAL, CAR_T, TCR_T, GENE_THERAPY)
+            setOf(CHEMOTHERAPY, TARGETED_THERAPY, IMMUNOTHERAPY, HORMONE_THERAPY, TRIAL, GENE_THERAPY)
     }
 }
