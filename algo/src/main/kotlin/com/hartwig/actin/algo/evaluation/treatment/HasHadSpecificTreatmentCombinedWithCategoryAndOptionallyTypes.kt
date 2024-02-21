@@ -38,9 +38,9 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
     }
 
     private fun historyMatchesCategoryAndTypes(treatmentHistory: List<TreatmentHistoryEntry>): Boolean {
-        val lookForTypes = if (types.isNullOrEmpty()) emptySet() else types
-        return treatmentHistory.any { treatmentHistoryEntry ->
-            treatmentHistoryEntry.allTreatments().any { pastTreatment ->
+        val lookForTypes = types ?: emptySet()
+        return treatmentHistory.any { treatmentLine ->
+            treatmentLine.allTreatments().any { pastTreatment ->
                 pastTreatment.name != treatment.name && pastTreatment.categories().contains(category) && pastTreatment.types()
                     .containsAll(lookForTypes)
             }

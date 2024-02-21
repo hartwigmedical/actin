@@ -18,7 +18,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-    fun `Should fail if treatment history contains no drug with given name`() {
+    fun `Should fail if treatment history contains no treatment with given name`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
                 drugTreatment(MATCHING_TREATMENT_NAME + "asdf", MATCHING_CATEGORY, emptySet())
@@ -50,8 +50,12 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-    fun `Should match only on treatment name and category if treatment history contains no types`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(HISTORY))
+    fun `Should match only on treatment name and category if function contains no types`() {
+        val function =
+            HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
+                drugTreatment(MATCHING_TREATMENT_NAME, DIFFERENT_CATEGORY), MATCHING_CATEGORY, emptySet()
+            )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(HISTORY))
     }
 
     @Test
@@ -94,7 +98,6 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-//    @Ignore
     fun `Should pass if single type is provided and patient record contains treatment with multiple including the provided one`() {
         val function = HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
             treatment(MATCHING_TREATMENT_NAME, true), MATCHING_CATEGORY,
@@ -104,7 +107,6 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-//    @Ignore
     fun `Should pass if multiple types provided and patient record contains treatment with multiple types`() {
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(HISTORY))
     }
