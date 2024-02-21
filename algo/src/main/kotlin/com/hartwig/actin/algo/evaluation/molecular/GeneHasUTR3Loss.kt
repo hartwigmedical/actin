@@ -1,9 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext
@@ -11,14 +9,9 @@ import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.RegionType
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 
-class GeneHasUTR3Loss(private val gene: String) : EvaluationFunction {
+class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        return (record.molecular?.let { evaluate(it) })
-            ?: MolecularEventUtil.noMolecularEvaluation()
-    }
-
-    private fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
 
         val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = molecular.drivers.variants.filter { variant ->
             variant.gene == gene && variant.canonicalImpact.effects.contains(VariantEffect.THREE_PRIME_UTR)

@@ -1,9 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
@@ -13,14 +11,9 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
-class GeneIsInactivated(private val gene: String) : EvaluationFunction {
+class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        return (record.molecular?.let { evaluate(it) })
-            ?: MolecularEventUtil.noMolecularEvaluation()
-    }
-
-    private fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()

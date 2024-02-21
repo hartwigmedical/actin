@@ -1,10 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.google.common.annotations.VisibleForTesting
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
@@ -12,14 +10,9 @@ import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import org.apache.logging.log4j.LogManager
 
-class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) : EvaluationFunction {
+class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        return (record.molecular?.let { evaluate(it) })
-            ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
-    }
-
-    private fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalUnreportableVariantMatches: MutableSet<String> = mutableSetOf()

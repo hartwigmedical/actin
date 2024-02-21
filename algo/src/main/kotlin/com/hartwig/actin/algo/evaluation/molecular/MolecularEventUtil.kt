@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.evaluation.EvaluationFactory
 
 data class EventsWithMessages(val events: Set<String>, val specificMessage: String, val generalMessage: String)
 
@@ -29,9 +28,5 @@ object MolecularEventUtil {
                 inclusionMolecularEvents = warnEvents
             )
         } else null
-    }
-
-    fun noMolecularEvaluation(): Evaluation {
-        return EvaluationFactory.undetermined("No molecular data", "No molecular data")
     }
 }

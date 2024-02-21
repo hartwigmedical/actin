@@ -1,9 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
@@ -13,14 +11,8 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 
 class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
-    EvaluationFunction {
-
-    override fun evaluate(record: PatientRecord): Evaluation {
-        return (record.molecular?.let { evaluate(it) })
-            ?: MolecularEventUtil.noMolecularEvaluation()
-    }
-
-    private fun evaluate(molecular: MolecularRecord): Evaluation {
+    MolecularEvaluationFunction {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val activatingVariants: MutableSet<String> = mutableSetOf()
         val activatingVariantsAssociatedWithResistance: MutableSet<String> = mutableSetOf()
         val activatingVariantsNoHotspotAndNoGainOfFunction: MutableSet<String> = mutableSetOf()

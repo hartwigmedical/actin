@@ -1,20 +1,13 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
-class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double) : EvaluationFunction {
+class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        return (record.molecular?.let { evaluate(it) })
-            ?: MolecularEventUtil.noMolecularEvaluation()
-    }
-
-    private fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
             ?: return EvaluationFactory.fail("Unknown tumor mutational burden (TMB)", "Unknown TMB")
 

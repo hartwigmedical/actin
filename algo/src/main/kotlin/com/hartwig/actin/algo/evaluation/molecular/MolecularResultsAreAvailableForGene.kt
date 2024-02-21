@@ -13,7 +13,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return (record.molecular?.let { evaluate(it, record.clinical) })
-            ?: MolecularEventUtil.noMolecularEvaluation()
+            ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
     }
 
     private fun evaluate(molecular: MolecularRecord, clinical: ClinicalRecord): Evaluation {

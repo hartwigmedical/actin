@@ -173,6 +173,14 @@ class GeneHasActivatingMutationTest {
         )
     }
 
+    @Test
+    fun `Should evaluate to undetermined when no molecular input`() {
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionNotIgnoringCodons.evaluate(TestDataFactory.createMinimalTestPatientRecord().copy(molecular = null))
+        )
+    }
+
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
