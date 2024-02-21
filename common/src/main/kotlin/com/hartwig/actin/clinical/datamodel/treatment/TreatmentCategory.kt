@@ -13,7 +13,6 @@ enum class TreatmentCategory : Displayable {
     SURGERY,
     TRANSPLANTATION,
     TRIAL,
-    GENE_THERAPY,
     ABLATION;
 
     override fun display(): String {
@@ -22,6 +21,6 @@ enum class TreatmentCategory : Displayable {
 
     companion object {
         val CANCER_TREATMENT_CATEGORIES: Set<TreatmentCategory> =
-            setOf(CHEMOTHERAPY, TARGETED_THERAPY, IMMUNOTHERAPY, HORMONE_THERAPY, TRIAL, GENE_THERAPY)
+            setOf(CHEMOTHERAPY, TARGETED_THERAPY, IMMUNOTHERAPY, HORMONE_THERAPY, TRIAL)
     }
 }
