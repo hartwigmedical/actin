@@ -118,7 +118,7 @@ class TrialConfigDatabaseValidatorTest {
                     )
                 ),
                 inclusionCriteriaConfigs = listOf(INCLUSION_CRITERIA_1, INCLUSION_CRITERIA_2, INCLUSION_CRITERIA_3),
-                inclusionCriteriaReferenceConfigs = listOf(INCLUSION_REFERENCE_CONFIG_1, INCLUSION_REFERENCE_CONFIG_2)
+                inclusionCriteriaReferenceConfigs = listOf(INCLUSION_REFERENCE_CONFIG_1, INCLUSION_REFERENCE_CONFIG_2),
             )
         }
 

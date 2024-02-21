@@ -64,7 +64,8 @@ data class TrialDatabaseValidation(
     val inclusionCriteriaValidationErrors: Set<InclusionCriteriaValidationError>,
     val inclusionReferenceValidationErrors: Set<InclusionReferenceValidationError>,
     val cohortDefinitionValidationErrors: Set<CohortDefinitionValidationError>,
-    val trialDefinitionValidationErrors: Set<TrialDefinitionValidationError>
+    val trialDefinitionValidationErrors: Set<TrialDefinitionValidationError>,
+    val unusedRulesToKeepErrors: Set<UnusedRuleToKeepError>
 ) {
     fun hasErrors(): Boolean {
         return (inclusionCriteriaValidationErrors +

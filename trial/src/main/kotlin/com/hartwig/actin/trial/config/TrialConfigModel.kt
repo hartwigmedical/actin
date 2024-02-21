@@ -13,7 +13,7 @@ class TrialConfigModel(
 ) {
 
     fun validation(): TrialDatabaseValidation {
-        return trialDatabaseValidation;
+        return trialDatabaseValidation
     }
 
     fun trials(): List<TrialDefinitionConfig> {

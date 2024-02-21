@@ -23,7 +23,8 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
                 trialIds, database.inclusionCriteriaReferenceConfigs
             ).toSet(),
             cohortDefinitionValidationErrors = validateCohorts(trialIds, database.cohortDefinitionConfigs).toSet(),
-            trialDefinitionValidationErrors = validateTrials(database.trialDefinitionConfigs).toSet()
+            trialDefinitionValidationErrors = validateTrials(database.trialDefinitionConfigs).toSet(),
+            
         )
     }
 

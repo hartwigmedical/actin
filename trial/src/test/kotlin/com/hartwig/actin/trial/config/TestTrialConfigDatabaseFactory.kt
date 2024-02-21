@@ -15,7 +15,7 @@ object TestTrialConfigDatabaseFactory {
             trialDefinitionConfigs = createTestTrialDefinitionConfigs(),
             cohortDefinitionConfigs = createTestCohortDefinitionConfigs(),
             inclusionCriteriaConfigs = createTestInclusionCriteriaConfigs(),
-            inclusionCriteriaReferenceConfigs = createTestInclusionCriteriaReferenceConfigs()
+            inclusionCriteriaReferenceConfigs = createTestInclusionCriteriaReferenceConfigs(),
         )
     }
 
