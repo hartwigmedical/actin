@@ -59,21 +59,48 @@ class HasHadClinicalBenefitFollowingSomeTreatmentTest {
 
     @Test
     fun `Should warn if treatment history contains target therapy with best response mixed response `() {
-
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TARGET_TREATMENT),
+                bestResponse = TreatmentResponse.MIXED
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)))
     }
 
     @Test
     fun `Should warn if treatment history contains target therapy with best response stable disease `() {
-
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TARGET_TREATMENT),
+                bestResponse = TreatmentResponse.STABLE_DISEASE
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)))
     }
 
     @Test
     fun `Should evaluate to undetermined if treatment history contains target therapy but no response specified`() {
-
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TARGET_TREATMENT),
+                bestResponse = null
+            )
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
     }
 
     @Test
     fun `Should fail if treatment history contains target therapy but best response progressive disease`() {
-
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TARGET_TREATMENT),
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)))
     }
 }
