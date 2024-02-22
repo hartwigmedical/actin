@@ -36,16 +36,6 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info("Creating ATC model from file {}", config.atcTsv)
         val atcModel = WhoAtcModel.createFromFiles(config.atcTsv, config.atcOverridesTsv)
 
-        LOGGER.info("Creating clinical feed model from directory {}", config.feedDirectory)
-        val clinicalFeed = ClinicalFeedReader.read(config.feedDirectory)
-        val feedModel = FeedModel(
-            clinicalFeed.copy(
-                questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                    clinicalFeed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(config.curationDirectory)
-                )
-            )
-        )
-
         LOGGER.info("Creating clinical curation database from directory {}", config.curationDirectory)
         val curationDoidValidator = CurationDoidValidator(DoidModelFactory.createFromDoidEntry(doidEntry))
         val outputDirectory: String = config.outputDirectory
@@ -61,9 +51,17 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             exitProcess(1)
         }
 
+        LOGGER.info("Creating clinical feed model from directory {} of format {}", config.feedDirectory, config.feedFormat)
         val clinicalIngestion = if (config.feedFormat == FeedFormat.EMC_TSV)
             EmcClinicalFeedIngestor.create(
-                feedModel,
+                FeedModel(
+                    ClinicalFeedReader.read(config.feedDirectory).copy(
+                        questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                            ClinicalFeedReader.read(config.feedDirectory).questionnaireEntries,
+                            QuestionnaireRawEntryMapper.createFromCurationDirectory(config.curationDirectory)
+                        )
+                    )
+                ),
                 curationDatabaseContext,
                 atcModel
             ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel, treatmentDatabase)
