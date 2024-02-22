@@ -7,15 +7,15 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 
 internal object TumorTestFactory {
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
-    private val base = TestDataFactory.createMinimalTestPatientRecord().copy(molecular = baseMolecular)
+    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val baseMolecular = base.molecular as MolecularRecord
 
     fun withDoids(vararg doids: String): PatientRecord {
         return withDoids(setOf(*doids))

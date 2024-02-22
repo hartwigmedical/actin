@@ -5,7 +5,6 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
@@ -18,8 +17,8 @@ import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
-    private val base = TestDataFactory.createMinimalTestPatientRecord().copy(molecular = baseMolecular)
+    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val baseMolecular = base.molecular as MolecularRecord
 
     fun priorMolecularTest(
         test: String = "",
@@ -58,7 +57,7 @@ internal object MolecularTestFactory {
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
                 drivers = baseMolecular.drivers.copy(variants = setOf(*variants))
-            ) ?: null
+            )
         )
     }
 
