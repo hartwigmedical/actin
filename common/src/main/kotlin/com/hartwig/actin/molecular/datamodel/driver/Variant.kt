@@ -4,6 +4,10 @@ import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 
 data class Variant(
+    val chromosome: String,
+    val position: Int,
+    val ref: String,
+    val alt: String,
     val type: VariantType,
     val variantCopyNumber: Double,
     val totalCopyNumber: Double,

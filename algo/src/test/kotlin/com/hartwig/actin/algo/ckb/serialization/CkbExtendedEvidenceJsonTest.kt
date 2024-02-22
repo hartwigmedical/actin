@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.ckb.serialization
 
 import com.google.common.io.Resources
-import com.hartwig.actin.algo.ckb.datamodel.CkbExtendedEvidenceEntry
-import com.hartwig.actin.algo.ckb.datamodel.CkbExtendedEvidenceTestFactory
+import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
+import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -1,14 +1,9 @@
 package com.hartwig.actin.algo.evaluation
 
-import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.composite.WarnIf
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
-import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.FunctionInputResolver
@@ -52,19 +47,8 @@ class EvaluationFunctionFactory(
     }
 
     companion object {
-        fun create(
-            doidModel: DoidModel,
-            referenceDateProvider: ReferenceDateProvider,
-            treatmentDatabase: TreatmentDatabase,
-            atcTree: AtcTree
-        ): EvaluationFunctionFactory {
-            // We assume we never check validity of a gene inside algo.
-            val molecularInputChecker: MolecularInputChecker = MolecularInputChecker.createAnyGeneValid()
-            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
-            return EvaluationFunctionFactory(
-                FunctionCreatorFactory.create(referenceDateProvider, doidModel, functionInputResolver, atcTree),
-                functionInputResolver
-            )
+        fun create(resources: RuleMappingResources): EvaluationFunctionFactory {
+            return EvaluationFunctionFactory(FunctionCreatorFactory.create(resources), resources.functionInputResolver)
         }
     }
 }

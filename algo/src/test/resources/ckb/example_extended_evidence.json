@@ -63,7 +63,6 @@
             "id": 20,
             "is_control": true,
             "group_name": "Treatment 1",
-            "n_patients_enrolled": null,
             "n_patients": "40",
             "n_female": "30",
             "n_male": "10",
@@ -76,6 +75,8 @@
             "n_ecog_2": "10",
             "n_ecog_3": null,
             "n_ecog_4": null,
+            "n_ecog_0_to_1": null,
+            "n_ecog_1_to_2": null,
             "highest_ecog_score": 2,
             "n_localization_primary_tumor": null,
             "other_mutations": "EGFR Staining None: 0 (0%), Weak 1+: 40 (100.0%)",
@@ -94,6 +95,27 @@
             "median_follow_up_for_progression_free_survival": null,
             "median_follow_up_randomization_to_data_cut_off": null,
             "metastatic_sites": "Liver: 20 (50.0%), Lung: 10 (25.0%)",
+            "time_of_metastases": "Both",
+            "therapy": {
+              "id": 1,
+              "therapyName": "Treatment 1",
+              "synonyms": null,
+              "therapyDescriptions": [
+                {
+                  "description": "Description of treatment 1",
+                  "references": [
+                    {
+                      "id": 92,
+                      "pubMedId": 12345678,
+                      "title": "In a phase3 trial, treatment 1 seems better than treatment 2",
+                      "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
+                    }
+                  ]
+                }
+              ],
+              "createDate": "01/01/2001",
+              "updateDate": "02/02/2002"
+            },
             "analysis_groups": [
               {
                 "id": 30,
@@ -141,13 +163,16 @@
             ],
             "efficacy_evidence": [
             ],
+            "therapy_details": null,
+            "prior_therapies": "Chemo, radiation",
+            "race": "Asian: 16,\nWhite: 24",
+            "region": "",
             "notes": null
           },
           {
             "id": 21,
             "is_control": false,
             "group_name": "Treatment 2",
-            "n_patients_enrolled": null,
             "n_patients": "40",
             "n_female": "21",
             "n_male": "19",
@@ -160,6 +185,8 @@
             "n_ecog_2": "3",
             "n_ecog_3": null,
             "n_ecog_4": null,
+            "n_ecog_0_to_1": null,
+            "n_ecog_1_to_2": null,
             "highest_ecog_score": 2,
             "n_localization_primary_tumor": null,
             "other_mutations": "EGFR Staining None: 2 (5.0%), Weak 1+: 38 (95.0%)",
@@ -178,6 +205,27 @@
             "median_follow_up_for_progression_free_survival": null,
             "median_follow_up_randomization_to_data_cut_off": null,
             "metastatic_sites": "Liver: 30 (75.0%), Lung: 10 (25.0%)",
+            "time_of_metastases": null,
+            "therapy": {
+              "id": 2,
+              "therapyName": "Treatment 2",
+              "synonyms": null,
+              "therapyDescriptions": [
+                {
+                  "description": "Description of treatment 2",
+                  "references": [
+                    {
+                      "id": 92,
+                      "pubMedId": 12345678,
+                      "title": "In a phase3 trial, treatment 1 seems better than treatment 2",
+                      "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
+                    }
+                  ]
+                }
+              ],
+              "createDate": "01/01/2001",
+              "updateDate": "02/02/2002"
+            },
             "analysis_groups": [
               {
                 "id": 31,
@@ -289,6 +337,10 @@
                 ]
               }
             ],
+            "therapy_details": null,
+            "prior_therapies": "Chemo",
+            "race": "Asian: 10,\nWhite: 30",
+            "region": "",
             "notes": null
           }
         ],

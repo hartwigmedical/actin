@@ -11,9 +11,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to anyGeneHasDriverEventWithApprovedTherapyCreator(),
+            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to hasMolecularEventWithTargetedTherapyForNSCLCAvailableCreator(),
+            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_GENE_X to hasMolecularEventExcludingSomeGeneWithTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X to geneHasActivatingMutationCreator(),
+            EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y to geneHasVariantWithAnyProteinImpactsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_ANY_CODONS_Y to geneHasVariantInAnyCodonsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y to geneHasVariantInExonCreator(),
@@ -43,11 +46,15 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByCPSByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByCPSByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByTPSByIHCCreator(),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByTPSByIHCCreator(),
+            EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByICByIHCCreator(),
             EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to hasAvailablePDL1StatusCreator(),
             EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to hasPSMAPositivePETScanCreator(),
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
-            EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator()
+            EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
+            EligibilityRule.NSCLC_DRIVER_GENE_STATUSES_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
+            EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
         )
     }
 
@@ -55,10 +62,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { AnyGeneHasDriverEventWithApprovedTherapy() }
     }
 
+    private fun hasMolecularEventWithTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
+        return FunctionCreator { HasMolecularEventWithTargetedTherapyForNSCLCAvailable(null) }
+    }
+
+    private fun hasMolecularEventExcludingSomeGeneWithTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val gene = functionInputResolver().createOneGeneInput(function)
+            HasMolecularEventWithTargetedTherapyForNSCLCAvailable(gene.geneName)
+        }
+    }
+
     private fun geneIsActivatedOrAmplifiedCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            Or(listOf(GeneHasActivatingMutation(gene.geneName), GeneIsAmplified(gene.geneName)))
+            Or(listOf(GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null), GeneIsAmplified(gene.geneName)))
         }
     }
 
@@ -72,7 +90,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneHasActivatingMutationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            GeneHasActivatingMutation(gene.geneName)
+            GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null)
+        }
+    }
+
+    private fun geneHasActivatingMutationIgnoringSomeCodonsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneGeneManyCodonsInput(function)
+            GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons)
         }
     }
 
@@ -265,6 +290,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasSufficientPDL1ByTPSByIHCCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
+            HasSufficientPDL1ByIHC("TPS", minPDL1Percentage)
+        }
+    }
+
+    private fun hasSufficientPDL1ByICByIHCCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
+            HasSufficientPDL1ByIHC("IC", minPDL1Percentage)
+        }
+    }
+
     private fun hasAvailablePDL1StatusCreator(): FunctionCreator {
         return FunctionCreator { HasAvailablePDL1Status() }
     }
@@ -290,4 +329,23 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             MolecularResultsAreAvailableForPromoterOfGene(gene.geneName)
         }
     }
+
+    private fun hasEgfrPaccMutationCreator(): FunctionCreator {
+        return FunctionCreator { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANT_LIST) }
+    }
+
+    private val EGFR_PACC_VARIANT_LIST =
+        listOf(
+            "G719X",
+            "S768I",
+            "L747P",
+            "L747S",
+            "V769L",
+            "E709_T710 delinsD",
+            "C797S",
+            "L792H",
+            "G724S",
+            "L718X",
+            "T854I",
+        )
 }

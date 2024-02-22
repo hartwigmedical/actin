@@ -3,15 +3,16 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.driver.GeneRole
+import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 
-internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private val evidenceDatabase: EvidenceDatabase) {
+internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(purple: PurpleRecord): Set<CopyNumber> {
         val drivers = VariantExtractor.relevantPurpleDrivers(purple)
@@ -30,18 +31,15 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter, private v
                 geneIncluded
             }
             .map { (gainLoss, driver, event) ->
-                val alteration = GeneAlterationFactory.convertAlteration(
-                    gainLoss.gene(), evidenceDatabase.geneAlterationForCopyNumber(gainLoss)
-                )
                 CopyNumber(
-                    gene = alteration.gene,
-                    geneRole = alteration.geneRole,
-                    proteinEffect = alteration.proteinEffect,
-                    isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance,
+                    gene = gainLoss.gene(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
                     isReportable = driver != null,
                     event = event,
                     driverLikelihood = if (driver != null) DriverLikelihood.HIGH else null,
-                    evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(gainLoss))!!,
+                    evidence = ActionableEvidenceFactory.createNoEvidence(),
                     type = determineType(gainLoss.interpretation()),
                     minCopies = Math.round(gainLoss.minCopies()).toInt(),
                     maxCopies = Math.round(gainLoss.maxCopies()).toInt()

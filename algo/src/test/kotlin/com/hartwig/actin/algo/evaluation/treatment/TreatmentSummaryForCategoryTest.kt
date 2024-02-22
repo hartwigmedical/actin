@@ -122,36 +122,6 @@ class TreatmentSummaryForCategoryTest {
             .isEqualTo(TreatmentSummaryForCategory(emptyList(), 0, 0))
     }
 
-    @Test
-    fun shouldIndicatePossibleTrialMatchForTrialTreatmentAndAllowedCategory() {
-        assertThat(
-            TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(
-                treatmentWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true),
-                TreatmentCategory.CHEMOTHERAPY
-            )
-        ).isTrue
-    }
-
-    @Test
-    fun shouldNotIndicatePossibleTrialMatchForNonTrialTreatmentAndAllowedCategory() {
-        assertThat(
-            TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(
-                treatmentWithCategory(TreatmentCategory.TARGETED_THERAPY),
-                TreatmentCategory.CHEMOTHERAPY
-            )
-        ).isFalse
-    }
-
-    @Test
-    fun shouldNotIndicatePossibleTrialMatchForTrialTreatmentAndUnlikelyTrialCategory() {
-        assertThat(
-            TreatmentSummaryForCategory.treatmentMayMatchCategoryAsTrial(
-                treatmentWithCategory(TreatmentCategory.TARGETED_THERAPY, isTrial = true),
-                TreatmentCategory.SURGERY
-            )
-        ).isFalse
-    }
-
     companion object {
         private val CATEGORY_TO_MATCH = TreatmentCategory.CHEMOTHERAPY
         private val TREATMENT_HISTORY_ENTRY_MATCHING_CATEGORY = treatmentWithCategory(CATEGORY_TO_MATCH)

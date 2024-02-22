@@ -7,5 +7,6 @@ data class TreatmentMatch(
     val sampleId: String,
     val referenceDate: LocalDate,
     val referenceDateIsLive: Boolean,
-    val trialMatches: List<TrialMatch>
+    val trialMatches: List<TrialMatch>,
+    val standardOfCareMatches: List<StandardOfCareMatch>? = null
 )
