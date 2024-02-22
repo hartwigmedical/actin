@@ -68,10 +68,13 @@ data class TrialDatabaseValidation(
     val unusedRulesToKeepErrors: Set<UnusedRuleToKeepError>
 ) {
     fun hasErrors(): Boolean {
-        return (inclusionCriteriaValidationErrors +
-                inclusionReferenceValidationErrors +
-                cohortDefinitionValidationErrors +
-                trialDefinitionValidationErrors).isNotEmpty()
+        return listOf(
+            inclusionCriteriaValidationErrors,
+            inclusionReferenceValidationErrors,
+            cohortDefinitionValidationErrors,
+            trialDefinitionValidationErrors,
+            unusedRulesToKeepErrors
+        ).any { it.isNotEmpty() }
     }
 }
 
@@ -120,6 +123,15 @@ data class TrialDefinitionValidationError(
     }
 }
 
+data class UnusedRuleToKeepError(
+    override val config: String
+) : ValidationError<String> {
+    override val message = config
+
+    override fun configFormat(config: String): String {
+        return "Unrecognized rule to keep"
+    }
+}
 
 data class TrialIngestionResult(
     val ingestionStatus: TrialIngestionStatus,

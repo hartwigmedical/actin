@@ -6,7 +6,6 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.trial.ctc.CTCConfigInterpreter
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
-import com.hartwig.actin.trial.interpretation.EligibilityRuleUsageEvaluator
 import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -47,9 +46,6 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info("Creating trial database")
         val result = trialIngestion.ingestTrials()
 
-        LOGGER.info("Evaluating usage of eligibility rules")
-        EligibilityRuleUsageEvaluator.evaluate(result.trials)
-
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} trials to {}", result.trials.size, outputDirectory)
         TrialJson.write(result.trials, outputDirectory)
@@ -77,6 +73,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             printValidationErrors(result.trialValidationResult.trialDefinitionValidationErrors)
             printValidationErrors(result.trialValidationResult.inclusionReferenceValidationErrors)
             printValidationErrors(result.trialValidationResult.inclusionCriteriaValidationErrors)
+            printValidationErrors(result.trialValidationResult.unusedRulesToKeepErrors)
         }
     }
 

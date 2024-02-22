@@ -7,7 +7,7 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 object TestTrialConfigDatabaseFactory {
 
     fun createMinimalTestTrialConfigDatabase(): TrialConfigDatabase {
-        return TrialConfigDatabase(emptyList(), emptyList(), emptyList(), emptyList())
+        return TrialConfigDatabase(emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
     }
 
     fun createProperTestTrialConfigDatabase(): TrialConfigDatabase {
@@ -16,6 +16,7 @@ object TestTrialConfigDatabaseFactory {
             cohortDefinitionConfigs = createTestCohortDefinitionConfigs(),
             inclusionCriteriaConfigs = createTestInclusionCriteriaConfigs(),
             inclusionCriteriaReferenceConfigs = createTestInclusionCriteriaReferenceConfigs(),
+            unusedRulesToKeep = EligibilityRule.values().map(EligibilityRule::toString)
         )
     }
 
