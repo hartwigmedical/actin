@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class TrialCreatorConfig(
-    val ctcConfigDirectory: String,
+    val ctcConfigDirectory: String?,
     val trialConfigDirectory: String,
     val treatmentDirectory: String,
     val doidJson: String,
@@ -47,7 +47,7 @@ data class TrialCreatorConfig(
             }
 
             return TrialCreatorConfig(
-                ctcConfigDirectory = ApplicationConfig.nonOptionalDir(cmd, CTC_CONFIG_DIRECTORY),
+                ctcConfigDirectory = ApplicationConfig.optionalDir(cmd, CTC_CONFIG_DIRECTORY),
                 trialConfigDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_CONFIG_DIRECTORY),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
