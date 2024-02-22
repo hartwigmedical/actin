@@ -114,6 +114,7 @@ object EligibilityRuleUsageEvaluator {
         EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY,
         EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY,
         EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA,
+        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z,
     )
 
     fun evaluate(trials: List<Trial>) {
