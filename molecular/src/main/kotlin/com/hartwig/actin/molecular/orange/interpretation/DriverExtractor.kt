@@ -4,7 +4,6 @@ import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Driver
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.evidence.EvidenceDatabase
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import org.apache.logging.log4j.LogManager
 
@@ -53,14 +52,14 @@ internal class DriverExtractor private constructor(
     companion object {
         private val LOGGER = LogManager.getLogger(DriverExtractor::class.java)
 
-        fun create(geneFilter: GeneFilter, evidenceDatabase: EvidenceDatabase): DriverExtractor {
+        fun create(geneFilter: GeneFilter): DriverExtractor {
             return DriverExtractor(
-                VariantExtractor(geneFilter, evidenceDatabase),
-                CopyNumberExtractor(geneFilter, evidenceDatabase),
-                HomozygousDisruptionExtractor(geneFilter, evidenceDatabase),
-                DisruptionExtractor(geneFilter, evidenceDatabase),
-                FusionExtractor(geneFilter, evidenceDatabase),
-                VirusExtractor(evidenceDatabase)
+                VariantExtractor(geneFilter),
+                CopyNumberExtractor(geneFilter),
+                HomozygousDisruptionExtractor(geneFilter),
+                DisruptionExtractor(geneFilter),
+                FusionExtractor(geneFilter),
+                VirusExtractor()
             )
         }
 

@@ -3,13 +3,12 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
-import com.hartwig.actin.molecular.orange.evidence.actionability.ActionabilityConstants
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
@@ -48,7 +47,7 @@ class OrangeInterpreterTest {
 
         val drivers = record.drivers
         assertThat(drivers.variants).hasSize(1)
-        assertThat(drivers.copyNumbers).hasSize(2)
+        assertThat(drivers.copyNumbers).hasSize(3)
         assertThat(drivers.homozygousDisruptions).hasSize(1)
         assertThat(drivers.disruptions).hasSize(1)
         assertThat(drivers.fusions).hasSize(1)
@@ -165,7 +164,7 @@ class OrangeInterpreterTest {
         }
 
         private fun createTestInterpreter(): OrangeInterpreter {
-            return OrangeInterpreter(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase())
+            return OrangeInterpreter(TestGeneFilterFactory.createAlwaysValid())
         }
     }
 }

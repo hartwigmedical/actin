@@ -35,7 +35,7 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
             if (string == "?") {
                 return true
             }
-            if (string.length < 3) {
+            if (string.length < 3 || string.endsWith('X')) {
                 return false
             }
             val first = string[0]

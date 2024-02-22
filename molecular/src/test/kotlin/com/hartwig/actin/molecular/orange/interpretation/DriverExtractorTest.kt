@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
-import com.hartwig.actin.molecular.orange.evidence.TestEvidenceDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -32,7 +31,7 @@ class DriverExtractorTest {
 
         val drivers = driverExtractor.extract(TestOrangeFactory.createProperTestOrangeRecord())
         assertThat(drivers.variants).hasSize(1)
-        assertThat(drivers.copyNumbers).hasSize(2)
+        assertThat(drivers.copyNumbers).hasSize(3)
         assertThat(drivers.homozygousDisruptions).hasSize(1)
         assertThat(drivers.disruptions).hasSize(1)
         assertThat(drivers.fusions).hasSize(1)
@@ -65,7 +64,7 @@ class DriverExtractorTest {
 
     companion object {
         private fun createTestExtractor(): DriverExtractor {
-            return DriverExtractor.create(TestGeneFilterFactory.createAlwaysValid(), TestEvidenceDatabaseFactory.createEmptyDatabase())
+            return DriverExtractor.create(TestGeneFilterFactory.createAlwaysValid())
         }
     }
 }

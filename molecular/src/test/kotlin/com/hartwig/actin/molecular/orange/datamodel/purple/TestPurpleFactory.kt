@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple
 
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleAllelicDepth
@@ -7,6 +8,7 @@ import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleCharacteristics
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleDriver
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGainLoss
+import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleGeneCopyNumber
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleQC
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleTranscriptImpact
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleVariant
@@ -98,6 +100,15 @@ object TestPurpleFactory {
             .chromosomeBand(Strings.EMPTY)
             .transcript(Strings.EMPTY)
             .isCanonical(true)
+    }
+
+    fun geneCopyNumberBuilder(): ImmutablePurpleGeneCopyNumber.Builder {
+        return ImmutablePurpleGeneCopyNumber.builder()
+            .gene(Strings.EMPTY)
+            .chromosome(Strings.EMPTY)
+            .chromosomeBand(Strings.EMPTY)
+            .minCopyNumber(0.0)
+            .minMinorAlleleCopyNumber(0.0)
     }
 
     fun purpleQCBuilder(): ImmutablePurpleQC.Builder {
