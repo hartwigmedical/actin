@@ -1,11 +1,11 @@
-package com.hartwig.actin.trial.ctc;
+package com.hartwig.actin.trial.interpretation
 
 import com.hartwig.actin.trial.CtcDatabaseValidation
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
-import com.hartwig.actin.trial.config.TrialDefinitionConfig;
+import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 
-interface CtcModel {
+interface ConfigInterpreter {
     fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean?
     fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>)
     fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>)
@@ -14,8 +14,8 @@ interface CtcModel {
     fun validation(): CtcDatabaseValidation
 }
 
-class NoOpCtcModel() : CtcModel {
-    override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
+class SimpleConfigInterpreter : ConfigInterpreter {
+    override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean {
         return trialConfig.open ?: false
     }
 

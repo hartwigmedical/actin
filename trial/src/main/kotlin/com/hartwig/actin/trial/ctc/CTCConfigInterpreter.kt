@@ -9,9 +9,10 @@ import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.trial.interpretation.ConfigInterpreter
 import org.apache.logging.log4j.LogManager
 
-class EmcCtcModel(private val ctcDatabase: CTCDatabase) : CtcModel {
+class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpreter {
 
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
     private val ctcDatabaseValidationErrors = mutableListOf<CTCDatabaseValidationError>()
@@ -114,7 +115,7 @@ class EmcCtcModel(private val ctcDatabase: CTCDatabase) : CtcModel {
         val configuredTrialIds = cohortConfigs.map { it.trialId }.toSet()
 
         val configuredCohortIds =
-            cohortConfigs.flatMap(CohortDefinitionConfig::ctcCohortIds).mapNotNull(String::toIntOrNull)
+            cohortConfigs.flatMap(CohortDefinitionConfig::externalCohortIds).mapNotNull(String::toIntOrNull)
 
         val childrenPerParent =
             ctcDatabase.entries.filter { it.cohortParentId != null }
@@ -140,12 +141,12 @@ class EmcCtcModel(private val ctcDatabase: CTCDatabase) : CtcModel {
             )
             InterpretedCohortStatus(open = false, slotsAvailable = false)
         } else {
-            InterpretedCohortStatus(open = cohortConfig.open() ?: false, slotsAvailable = cohortConfig.slotsAvailable() ?: false)
+            InterpretedCohortStatus(open = cohortConfig.open, slotsAvailable = cohortConfig.slotsAvailable)
         }
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(EmcCtcModel::class.java)
+        private val LOGGER = LogManager.getLogger(CTCConfigInterpreter::class.java)
         const val CTC_TRIAL_PREFIX = "MEC"
 
         fun constructTrialId(entry: CTCDatabaseEntry): String {

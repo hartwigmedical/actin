@@ -4,23 +4,22 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.trial.ctc.EmcCtcModel
-import com.hartwig.actin.trial.ctc.NoOpCtcModel
+import com.hartwig.actin.trial.ctc.CTCConfigInterpreter
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.trial.interpretation.EligibilityRuleUsageEvaluator
+import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
@@ -38,12 +37,12 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-        val ctcModel = if (config.ctcConfigDirectory == null) {
-            NoOpCtcModel()
+        val configInterpreter = if (config.ctcConfigDirectory == null) {
+            SimpleConfigInterpreter()
         } else {
-            EmcCtcModel(CTCDatabaseReader.read(config.ctcConfigDirectory))
+            CTCConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory))
         }
-        var trialIngestion = TrialIngestion.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
+        val trialIngestion = TrialIngestion.create(config.trialConfigDirectory, configInterpreter, doidModel, geneFilter, treatmentDatabase)
 
         LOGGER.info("Creating trial database")
         val result = trialIngestion.ingestTrials()
@@ -93,7 +92,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 }
 
 fun main(args: Array<String>) {
-    val options: Options = TrialCreatorConfig.createOptions()
+    val options = TrialCreatorConfig.createOptions()
     val config: TrialCreatorConfig
     try {
         config = TrialCreatorConfig.createConfig(DefaultParser().parse(options, args))

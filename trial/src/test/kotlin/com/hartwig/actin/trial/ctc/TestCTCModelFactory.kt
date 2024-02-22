@@ -4,11 +4,11 @@ import com.hartwig.actin.trial.ctc.config.TestCTCDatabaseFactory
 
 object TestCTCModelFactory {
 
-    fun createWithMinimalTestCTCDatabase(): EmcCtcModel {
-        return EmcCtcModel(TestCTCDatabaseFactory.createMinimalTestCTCDatabase())
+    fun createWithMinimalTestCTCDatabase(): CTCConfigInterpreter {
+        return CTCConfigInterpreter(TestCTCDatabaseFactory.createMinimalTestCTCDatabase())
     }
 
-    fun createWithProperTestCTCDatabase(): EmcCtcModel {
-        return EmcCtcModel(TestCTCDatabaseFactory.createProperTestCTCDatabase())
+    fun createWithProperTestCTCDatabase(): CTCConfigInterpreter {
+        return CTCConfigInterpreter(TestCTCDatabaseFactory.createProperTestCTCDatabase())
     }
 }
