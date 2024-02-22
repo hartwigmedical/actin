@@ -11,6 +11,12 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetTreatments = record.clinical.oncologicalHistory.filter { it.treatments.contains(treatment) }
+        val treatmentsSimilarToTargetTreatment = record.clinical.oncologicalHistory.filter {
+            (!it.hasTypeConfigured() || it.matchesTypeFromSet(treatment.types()) == true) &&
+                    it.treatments.any { treatmentEntry ->
+                        treatmentEntry.categories().any { category -> category in treatment.categories() }
+                    }
+        }
         val treatmentWithResponse = targetTreatments.any { it.treatmentHistoryDetails?.bestResponse in OBJECTIVE_RESPONSE_SET }
         val stableDisease = targetTreatments.any { it.treatmentHistoryDetails?.bestResponse == TreatmentResponse.STABLE_DISEASE }
         val mixedResponse = targetTreatments.any { it.treatmentHistoryDetails?.bestResponse == TreatmentResponse.MIXED }
@@ -20,10 +26,22 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
         val bestResponse = if (stableDisease) "best response: stable disease" else "best response: mixed"
         return when {
             targetTreatments.isEmpty() -> {
-                EvaluationFactory.fail(
-                    "Patient has not received ${treatment.name} treatment",
-                    "Has not received ${treatment.name} treatment"
-                )
+                if (treatmentsSimilarToTargetTreatment.isNotEmpty() && treatmentsSimilarToTargetTreatment.none {
+                        it.treatmentHistoryDetails?.bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE
+                    }) {
+                    val similarDrugMessage = "did not receive exact treatment but received similar drugs (${
+                        treatmentsSimilarToTargetTreatment.joinToString(",") { it.treatmentDisplay() }
+                    }"
+                    EvaluationFactory.undetermined(
+                        "Undetermined clinical benefit from ${treatment.name} - patient $similarDrugMessage",
+                        "Undetermined clinical benefit from ${treatment.name} - $similarDrugMessage"
+                    )
+                } else {
+                    EvaluationFactory.fail(
+                        "Patient has not received ${treatment.name} treatment",
+                        "Has not received ${treatment.name} treatment"
+                    )
+                }
             }
 
             treatmentWithResponse -> {
@@ -33,7 +51,7 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
             stableDisease || mixedResponse -> {
                 EvaluationFactory.warn(
                     "Uncertain if patient has had $benefitMessage ($bestResponse)",
-                    "Uncertain $benefitMessage ($bestResponse"
+                    "Uncertain $benefitMessage ($bestResponse)"
                 )
             }
 
