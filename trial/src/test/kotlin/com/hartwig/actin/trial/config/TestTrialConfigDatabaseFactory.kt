@@ -41,7 +41,7 @@ object TestTrialConfigDatabaseFactory {
             CohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "A",
-                ctcCohortIds = setOf("1", "2"),
+                externalCohortIds = setOf("1", "2"),
                 evaluable = true,
                 open = null,
                 slotsAvailable = null,
@@ -51,7 +51,7 @@ object TestTrialConfigDatabaseFactory {
             CohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "B",
-                ctcCohortIds = setOf("NA"),
+                externalCohortIds = setOf("NA"),
                 evaluable = true,
                 open = true,
                 slotsAvailable = false,
@@ -61,7 +61,7 @@ object TestTrialConfigDatabaseFactory {
             CohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "C",
-                ctcCohortIds = setOf("wont_be_mapped_because_closed"),
+                externalCohortIds = setOf("wont_be_mapped_because_closed"),
                 evaluable = false,
                 open = false,
                 slotsAvailable = false,

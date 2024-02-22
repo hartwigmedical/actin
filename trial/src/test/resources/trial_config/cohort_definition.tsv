@@ -1,3 +1,3 @@
-trialId	cohortId	ctcCohortIds	evaluable	open	slotsAvailable	blacklist	description
+trialId	cohortId	externalCohortIds	evaluable	open	slotsAvailable	blacklist	description
 ACTN 2021	A	1;2	1			0	Dose escalation phase (monotherapy)
 ACTN 2021	B	wont_be_mapped_because_closed	0	0	0	1	Dose escalation phase (combination therapy)
