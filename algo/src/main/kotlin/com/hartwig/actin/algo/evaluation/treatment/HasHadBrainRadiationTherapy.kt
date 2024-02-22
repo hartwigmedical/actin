@@ -10,23 +10,25 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadBrainRadiationTherapy : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasBrainMetastases = record.clinical.tumor.hasBrainLesions == true || record.clinical.tumor.hasActiveBrainLesions == true
-        val priorRadiotherapy = record.clinical.oncologicalHistory
+        val tumorDetails = record.clinical.tumor
+        val hasPotentialBrainMetastases = tumorDetails.hasBrainLesions == true || tumorDetails.hasActiveBrainLesions == true
+                || (tumorDetails.hasCnsLesions == true && tumorDetails.hasBrainLesions == null)
+        val priorRadiotherapies = record.clinical.oncologicalHistory
             .filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
-        val brainRadiotherapy =
-            priorRadiotherapy.any { it.treatmentHistoryDetails?.bodyLocationCategories?.contains(BodyLocationCategory.BRAIN) ?: false }
+        val hasHadBrainRadiotherapy =
+            priorRadiotherapies.any { it.treatmentHistoryDetails?.bodyLocationCategories?.contains(BodyLocationCategory.BRAIN) ?: false }
 
         return when {
-            brainRadiotherapy -> {
+            hasHadBrainRadiotherapy -> {
                 EvaluationFactory.pass(
                     "Patient has had prior brain radiation therapy",
                     "Has had brain radiation therapy"
                 )
             }
 
-            hasBrainMetastases && priorRadiotherapy.isNotEmpty() -> {
+            hasPotentialBrainMetastases && priorRadiotherapies.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Patient has brain metastases and has received radiotherapy but undetermined if brain radiation therapy",
+                    "Patient has brain and/or CNS metastases and has received radiotherapy but undetermined if brain radiation therapy",
                     "Undetermined prior brain radiation therapy"
                 )
             }
