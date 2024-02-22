@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
+import kotlin.io.path.name
 
 
 class StandardEhrIngestion(
@@ -42,7 +43,7 @@ class StandardEhrIngestion(
     }
 
     override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
-        return Files.list(Paths.get(directory)).map {
+        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map {
             val ehrPatientRecord = mapper.readValue(Files.readString(it), EhrPatientRecord::class.java)
             val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
             val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
