@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
 
 class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
 
@@ -15,7 +14,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             return EvaluationFactory.undetermined("No molecular data", "No molecular data")
         }
 
-        val molecular = record.molecular as MolecularRecord
+        val molecular = record.molecular!!
         if (molecular.type == ExperimentType.WHOLE_GENOME && molecular.containsTumorCells) {
             return EvaluationFactory.pass(
                 "WGS has successfully been performed so molecular results are available for gene $gene", "WGS results available for $gene"
