@@ -1,13 +1,9 @@
 package com.hartwig.actin.clinical
 
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
-import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
-import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
-import com.hartwig.actin.clinical.feed.emc.FeedModel
 import com.hartwig.actin.clinical.feed.standard.StandardEhrIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
@@ -54,14 +50,8 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         LOGGER.info("Creating clinical feed model from directory {} of format {}", config.feedDirectory, config.feedFormat)
         val clinicalIngestion = if (config.feedFormat == FeedFormat.EMC_TSV)
             EmcClinicalFeedIngestor.create(
-                FeedModel(
-                    ClinicalFeedReader.read(config.feedDirectory).copy(
-                        questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                            ClinicalFeedReader.read(config.feedDirectory).questionnaireEntries,
-                            QuestionnaireRawEntryMapper.createFromCurationDirectory(config.curationDirectory)
-                        )
-                    )
-                ),
+                config.feedDirectory,
+                config.curationDirectory,
                 curationDatabaseContext,
                 atcModel
             ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel, treatmentDatabase)
