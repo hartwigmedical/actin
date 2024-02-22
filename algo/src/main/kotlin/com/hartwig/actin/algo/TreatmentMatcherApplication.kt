@@ -11,7 +11,6 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
@@ -35,7 +34,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         ClinicalPrinter.printRecord(clinical)
 
         LOGGER.info("Loading molecular record from {}", config.molecularJson)
-        val molecular: MolecularRecord = MolecularRecordJson.read(config.molecularJson)
+        val molecular = MolecularRecordJson.read(config.molecularJson)
         MolecularPrinter.printRecord(molecular)
         val patient = PatientRecordFactory.fromInputs(clinical, molecular)
 
