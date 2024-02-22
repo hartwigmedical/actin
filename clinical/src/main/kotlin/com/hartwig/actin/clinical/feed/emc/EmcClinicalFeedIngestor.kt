@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.feed.emc
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
 import com.hartwig.actin.clinical.PatientIngestionResult
+import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
@@ -209,11 +211,19 @@ class EmcClinicalFeedIngestor(
         private val LOGGER = LogManager.getLogger(ClinicalIngestionFeedAdapter::class.java)
 
         fun create(
-            feedModel: FeedModel,
+            feedDirectory: String,
+            curationDirectory: String,
             curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel
         ) = EmcClinicalFeedIngestor(
-            feed = feedModel,
+            feed = FeedModel(
+                ClinicalFeedReader.read(feedDirectory).copy(
+                    questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                        ClinicalFeedReader.read(feedDirectory).questionnaireEntries,
+                        QuestionnaireRawEntryMapper.createFromCurationDirectory(curationDirectory)
+                    )
+                )
+            ),
             tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext),
             complicationsExtractor = ComplicationsExtractor.create(curationDatabaseContext),
             clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),

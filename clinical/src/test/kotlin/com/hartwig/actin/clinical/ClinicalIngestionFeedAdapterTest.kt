@@ -2,16 +2,12 @@ package com.hartwig.actin.clinical
 
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
-import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
-import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
-import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
-import com.hartwig.actin.clinical.feed.emc.FeedModel
 import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -49,16 +45,10 @@ class ClinicalIngestionFeedAdapterTest {
             ),
             TestTreatmentDatabaseFactory.createProper()
         )
-        val clinicalFeed = ClinicalFeedReader.read(FEED_DIRECTORY)
         val ingestion = ClinicalIngestionFeedAdapter(
             EmcClinicalFeedIngestor.create(
-                FeedModel(
-                    clinicalFeed.copy(
-                        questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                            clinicalFeed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(CURATION_DIRECTORY)
-                        )
-                    )
-                ),
+                FEED_DIRECTORY,
+                CURATION_DIRECTORY,
                 curationDatabase,
                 TestAtcFactory.createProperAtcModel()
             ), curationDatabase
