@@ -31,19 +31,23 @@ class TrialIngestion(
         configInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
         val trialDatabaseValidation = trialConfigModel.validation()
         val ctcDatabaseValidation = configInterpreter.validation()
+        val trials = trialConfigModel.trials().map { trialConfig ->
+            val trialId = trialConfig.trialId
+            val referencesById = trialConfigModel.referencesForTrial(trialId)
+            Trial(
+                identification = toIdentification(trialConfig),
+                generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
+                cohorts = cohortsForTrial(trialId, referencesById)
+            )
+        }
+        EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep)
+
         return TrialIngestionResult(
             TrialIngestionStatus.from(ctcDatabaseValidation, trialDatabaseValidation),
             ctcDatabaseValidation,
             trialDatabaseValidation,
-            trialConfigModel.trials().map { trialConfig ->
-                val trialId = trialConfig.trialId
-                val referencesById = trialConfigModel.referencesForTrial(trialId)
-                Trial(
-                    identification = toIdentification(trialConfig),
-                    generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
-                    cohorts = cohortsForTrial(trialId, referencesById)
-                )
-            })
+            trials
+        )
     }
 
     private fun cohortsForTrial(trialId: String, referencesById: Map<String, InclusionCriteriaReferenceConfig>): List<Cohort> {
