@@ -49,21 +49,47 @@ class HasAcquiredResistanceToSomeTreatmentTest {
 
     @Test
     fun `Should evaluate to undetermined if target treatment in history with stop reason and best response null`() {
-
+        val history = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(TARGET_TREATMENT),
+            stopReason = null,
+            bestResponse = null
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined if target treatment in history with stop reason null and best response partial response`() {
-
+        val history = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(TARGET_TREATMENT),
+            stopReason = null,
+            bestResponse = TreatmentResponse.PARTIAL_RESPONSE
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+        )
     }
 
     @Test
     fun `Should fail if target treatment not in history`() {
-
+        val history = TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(WRONG_TREATMENT),
+            stopReason = StopReason.PROGRESSIVE_DISEASE
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+        )
     }
 
     @Test
     fun `Should fail if oncological history is empty`() {
-
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        )
     }
 }
