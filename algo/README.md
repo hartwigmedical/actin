@@ -559,7 +559,8 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 
 2] Medication category list:<br>
 Antibiotics: ATC level code equal to "A07A", "G01AA", "R02AB", "L01D", "J01", "J02" or "J04" <br>
-Anticoagulants: ATC level code equal "B01AA", "B01AB", "B01AE", "B01AF" or "B01AX" <br>
+Anticoagulants: ATC level code equal to "B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF" or "B01AX" <br>
+Platelet aggregation inhibitors: ATC level code equal to "B01AC" <br>
 Antiepileptics: ATC level code equal to "N03" <br>
 Azole medication: ATC level code equal to "A07AC", "D01AC", "G01AF", "G01BF", "G01AG", "J02AC" or "J02AB" <br>
 Bisphosphonates: ATC level code equal to "M05BA" or "M05BB" <br>
