@@ -10,7 +10,7 @@ class GsonSetAdapter<T> : JsonSerializer<Set<T>> {
 
     override fun serialize(set: Set<T>, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val jsonArray = JsonArray()
-        set.sortedWith(::compare).map { context.serialize(it) }.forEach(jsonArray::add)
+        set.sortedWith(Comparator.nullsLast(::compare)).map { context.serialize(it) }.forEach(jsonArray::add)
         return jsonArray
     }
 

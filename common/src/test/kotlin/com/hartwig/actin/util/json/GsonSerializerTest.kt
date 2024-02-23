@@ -1,6 +1,7 @@
 package com.hartwig.actin.util.json
 
 import com.google.gson.reflect.TypeToken
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
@@ -29,9 +30,16 @@ class GsonSerializerTest {
 
     @Test
     fun `Should sort non-comparable sets by converting elements to string`() {
-        val set = setOf(3, "2", Country.NETHERLANDS)
+        val set = setOf(3, "2", Country.NETHERLANDS, null)
         val deserialized = gson.fromJson<List<String>>(gson.toJson(set), object : TypeToken<List<String>>() {}.type)
-        assertThat(deserialized).isEqualTo(listOf("2", "3", Country.NETHERLANDS.toString()))
+        assertThat(deserialized).isEqualTo(listOf("2", "3", Country.NETHERLANDS.toString(), null))
+    }
+
+    @Test
+    fun `Should sort nulls last`() {
+        val set = setOf(Intent.PALLIATIVE, null, Intent.ADJUVANT)
+        val deserialized = gson.fromJson<List<Intent?>>(gson.toJson(set), object : TypeToken<List<Intent?>>() {}.type)
+        assertThat(deserialized).isEqualTo(listOf(Intent.ADJUVANT, Intent.PALLIATIVE, null))
     }
 
     private fun variant(
