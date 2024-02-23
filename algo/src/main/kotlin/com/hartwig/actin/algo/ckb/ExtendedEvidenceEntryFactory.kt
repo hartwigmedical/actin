@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
 import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTherapy
+import com.hartwig.actin.algo.ckb.json.CkbTherapyOfPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.efficacy.AnalysisGroup
@@ -96,7 +97,7 @@ object ExtendedEvidenceEntryFactory {
                 patientsWithPrimaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
                 patientsPerMetastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
                 timeOfMetastases = patientPopulation.timeOfMetastases?.let { convertTimeOfMetastases(it) },
-                therapy = patientPopulation.therapy?.therapyName,
+                therapy = patientPopulation.therapy?.let { convertTherapy(it) },
                 priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
                 patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
                 medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival,
@@ -107,6 +108,10 @@ object ExtendedEvidenceEntryFactory {
                 patientsPerRegion = if (patientPopulation.region.isNotEmpty()) convertRaceOrRegion(patientPopulation.region) else null,
             )
         }
+    }
+
+    private fun convertTherapy(therapy: CkbTherapyOfPopulation): Therapy {
+        return Therapy(therapyName = therapy.therapyName, synonyms = therapy.synonyms)
     }
 
     fun convertTimeOfMetastases(timeOfMetastases: String): TimeOfMetastases {

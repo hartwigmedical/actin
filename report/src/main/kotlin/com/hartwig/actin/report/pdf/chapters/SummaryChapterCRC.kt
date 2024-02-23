@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryCRCGenerator
@@ -46,10 +45,7 @@ class SummaryChapterCRC(private val report: Report) : ReportChapter {
             EligibleApprovedTreatmentGenerator(
                 report.clinical,
                 report.molecular,
-                listOf(
-                    OtherTreatment(name = "FOLFOXIRI + bevacizumab", isSystemic = false, categories = emptySet()),
-                    OtherTreatment(name = "FOLFIRI + bevacizumab", isSystemic = false, categories = emptySet())
-                ),
+                report.treatmentMatch.standardOfCareMatches,
                 contentWidth(),
                 "CRC"
             ),

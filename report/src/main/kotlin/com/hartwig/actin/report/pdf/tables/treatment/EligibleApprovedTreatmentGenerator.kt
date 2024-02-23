@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
+import com.hartwig.actin.algo.datamodel.StandardOfCareMatch
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -12,7 +12,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class EligibleApprovedTreatmentGenerator(
-    private val clinical: ClinicalRecord, private val molecular: MolecularRecord, private val treatments: List<Treatment>?,
+    private val clinical: ClinicalRecord, private val molecular: MolecularRecord, private val treatments: List<StandardOfCareMatch>?,
     private val width: Float, private val mode: String
 ) : TableGenerator {
 
@@ -40,19 +40,56 @@ class EligibleApprovedTreatmentGenerator(
                 table.addHeaderCell(Cells.createHeader("Treatment"))
                 table.addHeaderCell(Cells.createHeader("Literature based"))
                 table.addHeaderCell(Cells.createHeader("Personalized PFS"))
-                treatments?.forEach { treatment: Treatment ->
-                    table.addCell(Cells.createContentBold(treatment.name))
-                    val literatures = listOf("TRIBE2", "FIRE-3")
+                treatments?.forEach { treatment: StandardOfCareMatch ->
+                    table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                     val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
-                    for (literature in literatures) {
-                        subtable.addCell(Cells.createValue("PFS: "))
-                        subtable.addCell(Cells.createKey("12 months (95% CI: 11.1-12.9)"))
-                        subtable.addCell(Cells.createValue("OS: "))
-                        subtable.addCell(Cells.createKey("27.4 months (95% CI: 23.7-30.0)"))
-                        subtable.addCell(Cells.createValue("($literature)"))
-                        subtable.addCell(Cells.createEmpty())
+                    if (treatment.annotations.isNullOrEmpty()) {
                         subtable.addCell(Cells.createValue(" "))
-                        subtable.addCell(Cells.createValue(" "))
+                        subtable.addCell(Cells.createValue("No literature efficacy evidence available yet"))
+                    } else {
+                        for (annotation in treatment.annotations!!) {
+                            val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
+                            for (patientPopulation in paper.patientPopulations) {
+                                if (generateOptions(
+                                        patientPopulation.therapy!!.synonyms ?: patientPopulation.therapy!!.therapyName
+                                    ).any { therapy -> therapy == treatment.treatmentCandidate.treatment.name }
+                                ) {
+                                    val analysisGroup = patientPopulation.analysisGroups.iterator()
+                                        .next() // assume only 1 analysis group per patient population
+                                    subtable.addCell(Cells.createValue("PFS: "))
+                                    for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                                        if (primaryEndPoint.name == "Median Progression-Free Survival") {
+                                            subtable.addCell(
+                                                Cells.createKey(
+                                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                        ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                                )
+                                            )
+                                        } else {
+                                            subtable.addCell(Cells.createKey("NA"))
+                                        }
+                                    }
+
+                                    subtable.addCell(Cells.createValue("OS: "))
+                                    for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                                        if (primaryEndPoint.name == "Median Overall Survival") {
+                                            subtable.addCell(
+                                                Cells.createKey(
+                                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                        ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                                )
+                                            )
+                                        } else {
+                                            subtable.addCell(Cells.createKey("NA"))
+                                        }
+                                    }
+                                    subtable.addCell(Cells.createEmpty())
+                                    subtable.addCell(Cells.createValue("(${annotation.acronym})"))
+                                    subtable.addCell(Cells.createValue(" "))
+                                    subtable.addCell(Cells.createValue(" "))
+                                }
+                            }
+                        }
                     }
                     table.addCell(Cells.createContent(subtable))
                     table.addCell(Cells.createContent("Not evaluated yet"))
@@ -62,5 +99,20 @@ class EligibleApprovedTreatmentGenerator(
 
             else -> throw IllegalStateException("Unknown mode: $mode")
         }
+    }
+
+    private fun generateOptions(therapy: String): List<String> {
+        return therapy.split("|").flatMap { item ->
+            if (item.contains(" + ")) {
+                createPermutations(item)
+            } else {
+                listOf(item)
+            }
+        }
+    }
+
+    private fun createPermutations(treatment: String): List<String> {
+        val drugs = treatment.split(" + ")
+        return listOf(drugs.joinToString("+"), drugs.reversed().joinToString("+"))
     }
 }

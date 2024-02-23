@@ -8,5 +8,5 @@ data class ExtendedEvidenceEntry(
     val therapies: List<Therapy>,
     val therapeuticSetting: Intent?,
     val variantRequirements: List<VariantRequirement>,
-    val trialReferences: List<TrialReference> // you can have multiple papers per trials
+    val trialReferences: List<TrialReference> // you can have multiple papers per trial
 )

@@ -1,17 +1,18 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
+import com.hartwig.actin.efficacy.ExtendedEvidenceEntry
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
 class EfficacyEvidenceDetailsGenerator(
-    private val literature: String,
+    private val annotation: ExtendedEvidenceEntry,
     private val width: Float
 ) : TableGenerator {
 
     override fun title(): String {
-        return literature
+        return annotation.acronym
     }
 
     override fun contents(): Table {
@@ -35,13 +36,18 @@ class EfficacyEvidenceDetailsGenerator(
         return table
     }
 
-    companion object {
         private fun createFirstPart(): Table {
             val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
             table.addCell(Cells.createValue("Study: "))
-            table.addCell(Cells.createKey("TRIBE2, phase III, adjuvant"))
+            table.addCell(Cells.createKey(annotation.acronym + ", " + annotation.phase + ", " + annotation.therapeuticSetting))
             table.addCell(Cells.createValue("Molecular requirements: "))
-            table.addCell(Cells.createKey("None"))
+            if (annotation.variantRequirements.isNotEmpty()) {
+                val variantRequirements =
+                    annotation.variantRequirements.map { variantRequirement -> variantRequirement.name + ": " + variantRequirement.requirementType }
+                table.addCell(Cells.createKey(variantRequirements.joinToString { " and " }))
+            } else {
+                table.addCell(Cells.createKey("None"))
+            }
             table.addCell(Cells.createValue("Patient characteristics: "))
             table.addCell(Cells.createKey(""))
             return table
@@ -108,5 +114,4 @@ class EfficacyEvidenceDetailsGenerator(
             table.addCell(Cells.createSpanningSubNote("Median follow-up was 35.9 months", table))
             return table
         }
-    }
 }

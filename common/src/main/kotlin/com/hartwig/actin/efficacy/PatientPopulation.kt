@@ -23,7 +23,7 @@ data class PatientPopulation(
     val patientsWithPrimaryTumorRemoved: Int?,
     val patientsPerMetastaticSites: Map<String, ValuePercentage>?,
     val timeOfMetastases: TimeOfMetastases?,
-    val therapy: String?,
+    val therapy: Therapy?,
     val priorSystemicTherapy: String?,
     val patientsWithMSI: Int?,
     val medianFollowUpForSurvival: String?,

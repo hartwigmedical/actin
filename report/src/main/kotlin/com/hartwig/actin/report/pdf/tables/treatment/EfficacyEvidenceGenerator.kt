@@ -1,13 +1,15 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.algo.datamodel.StandardOfCareMatch
+import com.hartwig.actin.efficacy.ExtendedEvidenceEntry
+import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
 class EfficacyEvidenceGenerator(
-    private val treatments: List<Treatment>,
+    private val treatments: List<StandardOfCareMatch>?,
     private val width: Float
 ) : TableGenerator {
 
@@ -20,13 +22,15 @@ class EfficacyEvidenceGenerator(
         table.addHeaderCell(Cells.createHeader("Treatment"))
         table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
         table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
-        treatments.forEach { treatment: Treatment ->
-            table.addCell(Cells.createContentBold(treatment.name))
-            val literatures = listOf("TRIBE2", "FIRE-3")
+        treatments?.forEach { treatment: StandardOfCareMatch ->
+            table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
             val subtable = Tables.createSingleColWithWidth(width / 2)
-            for (literature in literatures) {
-                subtable.addCell(Cells.create(createOneLiteraturePart(width, literature)))
-            }
+            if (treatment.annotations != null) {
+                for (annotation in treatment.annotations!!) {
+                    subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, treatment)))
+                }
+            } else subtable.addCell(Cells.createContent("No literature evidence available yet"))
+
             table.addCell(Cells.createContent(subtable))
 
             table.addCell(Cells.createContent("Not evaluated yet"))
@@ -34,62 +38,131 @@ class EfficacyEvidenceGenerator(
         return table
     }
 
-    companion object {
-        private fun createOneLiteraturePart(width: Float, title: String): Table {
-            val subtable = Tables.createSingleColWithWidth(width / 2)
-            val subsubtables: MutableList<Table> = mutableListOf()
-            subsubtables.add(createFirstPart(title))
-            subsubtables.add(createSecondPart(width))
-            subsubtables.add(createThirdPart())
-            for (i in subsubtables.indices) {
-                val subsubtable = subsubtables[i]
-                subtable.addCell(Cells.create(subsubtable))
-                if (i < subsubtables.size - 1) {
-                    subtable.addCell(Cells.createEmpty())
+    private fun createOneLiteraturePart(width: Float, annotation: ExtendedEvidenceEntry, treatment: StandardOfCareMatch): Table {
+        val subtable = Tables.createSingleColWithWidth(width / 2)
+        val subsubtables: MutableList<Table> = mutableListOf()
+        subsubtables.add(createFirstPart(annotation))
+        subsubtables.add(createSecondPart(width, annotation, treatment))
+        subsubtables.add(createThirdPart(annotation, treatment))
+        for (i in subsubtables.indices) {
+            val subsubtable = subsubtables[i]
+            subtable.addCell(Cells.create(subsubtable))
+            if (i < subsubtables.size - 1) {
+                subtable.addCell(Cells.createEmpty())
+            }
+        }
+        return subtable
+    }
+
+    private fun createFirstPart(annotation: ExtendedEvidenceEntry): Table {
+        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
+        table.addCell(Cells.createSubTitle(annotation.acronym))
+        table.addCell(Cells.createValue(""))
+        table.addCell(Cells.createValue("Patient characteristics: "))
+        table.addCell(Cells.createKey(""))
+        return table
+    }
+
+    private fun createSecondPart(width: Float, annotation: ExtendedEvidenceEntry, treatment: StandardOfCareMatch): Table {
+        val table = Tables.createFixedWidthCols(20f, 40f).setWidth(width / 2)
+        for (patientPopulation in annotation.trialReferences.iterator().next().patientPopulations) {
+            if (generateOptions(
+                    patientPopulation.therapy!!.synonyms ?: patientPopulation.therapy!!.therapyName
+                ).any { therapy -> therapy == treatment.treatmentCandidate.treatment.name }
+            ) {
+                table.addCell(Cells.createContent("WHO/ECOG"))
+                table.addCell(Cells.createContent(createWhoString(patientPopulation)))
+                table.addCell(Cells.createContent("Primary tumor location"))
+                table.addCell(Cells.createContent(patientPopulation.patientsPerPrimaryTumorLocation?.entries?.joinToString(", ") { "${it.key}: ${it.value}" }
+                    ?: "No information"))
+                table.addCell(Cells.createContent("Mutations"))
+                table.addCell(Cells.createContent(patientPopulation.mutations ?: "NA"))
+                table.addCell(Cells.createContent("Metastatic sites"))
+                table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + "(" + it.value.value + "%)" }
+                    ?: "No information"))
+                table.addCell(Cells.createContent("Previous systemic chemotherapy"))
+                table.addCell(Cells.createContent(patientPopulation.priorSystemicTherapy.toString()))
+            }
+        }
+        table.addCell(
+            Cells.createSpanningSubNote(
+                "This patient matches all patient characteristics of the treatment group, except for age (68 years)",
+                table
+            )
+        )
+        return table
+    }
+
+    private fun createWhoString(patientPopulation: PatientPopulation): String {
+        val strings = mutableSetOf<String>()
+        with(patientPopulation) {
+            patientsWithWho0?.let { strings.add("0: $it") }
+            patientsWithWho0to1?.let { strings.add("0-1: $it") }
+            patientsWithWho1?.let { strings.add("1: $it") }
+            patientsWithWho1to2?.let { strings.add("1-2: $it") }
+            patientsWithWho2?.let { strings.add("2: $it") }
+            patientsWithWho3?.let { strings.add("3: $it") }
+            patientsWithWho4?.let { strings.add("4: $it") }
+        }
+        return strings.joinToString(", ")
+    }
+
+    private fun createThirdPart(annotation: ExtendedEvidenceEntry, treatment: StandardOfCareMatch): Table {
+        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
+        val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
+        for (patientPopulation in paper.patientPopulations) {
+            if (generateOptions(
+                    patientPopulation.therapy!!.synonyms ?: patientPopulation.therapy!!.therapyName
+                ).any { therapy -> therapy == treatment.treatmentCandidate.treatment.name }
+            ) {
+                val analysisGroup =
+                    patientPopulation.analysisGroups.iterator().next() // assume only 1 analysis group per patient population
+                table.addCell(Cells.createValue("Median PFS: "))
+                for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                    if (primaryEndPoint.name == "Median Progression-Free Survival") {
+                        table.addCell(
+                            Cells.createKey(
+                                primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                    ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                            )
+                        )
+                    } else {
+                        table.addCell(Cells.createKey("NA"))
+                    }
+                }
+
+                table.addCell(Cells.createValue("Median OS: "))
+                for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                    if (primaryEndPoint.name == "Median Overall Survival") {
+                        table.addCell(
+                            Cells.createKey(
+                                primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                    ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                            )
+                        )
+                    } else {
+                        table.addCell(Cells.createKey("NA"))
+                    }
                 }
             }
-            return subtable
         }
+        table.addCell(Cells.createEmpty())
+        table.addCell(Cells.createEmpty())
+        return table
+    }
 
-        private fun createFirstPart(title: String): Table {
-            val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
-            table.addCell(Cells.createSubTitle("$title (339 patients)"))
-            table.addCell(Cells.createValue(""))
-            table.addCell(Cells.createValue("Patient characteristics: "))
-            table.addCell(Cells.createKey(""))
-            return table
+    private fun generateOptions(therapy: String): List<String> {
+        return therapy.split("|").flatMap { item ->
+            if (item.contains(" + ")) {
+                createPermutations(item)
+            } else {
+                listOf(item)
+            }
         }
+    }
 
-        private fun createSecondPart(width: Float): Table {
-            val table = Tables.createFixedWidthCols(40f, 40f).setWidth(width / 2)
-            table.addCell(Cells.createContent("WHO/ECOG"))
-            table.addCell(Cells.createContent("0: 293, 1-2: 46"))
-            table.addCell(Cells.createContent("Primary tumor location"))
-            table.addCell(Cells.createContent("Right-sided: 130, Left-sided: 209"))
-            table.addCell(Cells.createContent("Mutations"))
-            table.addCell(Cells.createContent("RAS/BRAF wt: 74 (22%), RAS mut: 215 (63%), BRAF mut: 33 (10%), Unknown: 17 (5%)"))
-            table.addCell(Cells.createContent("Metastatic sites"))
-            table.addCell(Cells.createContent("No information"))
-            table.addCell(Cells.createContent("Previous adjuvant chemotherapy"))
-            table.addCell(Cells.createContent("7 patients"))
-            table.addCell(
-                Cells.createSpanningSubNote(
-                    "This patient matches all patient characteristics of the treatment group, except for age (68 years)",
-                    table
-                )
-            )
-            return table
-        }
-
-        private fun createThirdPart(): Table {
-            val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
-            table.addCell(Cells.createValue("Median PFS: "))
-            table.addCell(Cells.createKey("12 months (95% CI: 11.1-12.9)"))
-            table.addCell(Cells.createValue("Median OS: "))
-            table.addCell(Cells.createKey("27.4 months (95% CI: 23.7-30.0)"))
-            table.addCell(Cells.createEmpty())
-            table.addCell(Cells.createEmpty())
-            return table
-        }
+    private fun createPermutations(treatment: String): List<String> {
+        val drugs = treatment.split(" + ")
+        return listOf(drugs.joinToString("+"), drugs.reversed().joinToString("+"))
     }
 }

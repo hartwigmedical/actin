@@ -43,7 +43,7 @@ object TestExtendedEvidenceEntryFactory {
             patientsWithPrimaryTumorRemoved = 25,
             patientsPerMetastaticSites = mapOf("Lung" to ValuePercentage(100, 100.0)),
             timeOfMetastases = TimeOfMetastases.BOTH,
-            therapy = "Vemurafenib",
+            therapy = Therapy("Vemurafenib", null),
             priorSystemicTherapy = "Chemo",
             patientsWithMSI = 33,
             medianFollowUpForSurvival = "30",
@@ -60,7 +60,7 @@ object TestExtendedEvidenceEntryFactory {
             id = 1, primaryEndPoints = listOf(
                 PrimaryEndPoint(
                     id = 2,
-                    name = "PFS",
+                    name = "Median Progression-Free Survival",
                     value = 6.8,
                     unitOfMeasure = PrimaryEndPointUnit.MONTHS,
                     confidenceInterval = null,
