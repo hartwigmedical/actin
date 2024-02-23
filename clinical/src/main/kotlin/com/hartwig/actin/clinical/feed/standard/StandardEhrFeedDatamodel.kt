@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Base64
+import java.util.*
 
 @JacksonSerializable
 data class EhrPatientRecord(
@@ -251,7 +251,7 @@ enum class EhrLesionLocation {
 
 @JacksonSerializable
 data class EhrPriorPrimary(
-    val diagnosisDate: LocalDate,
+    val diagnosisDate: LocalDate?,
     val tumorLocation: String,
     val tumorType: String,
     val status: String,
