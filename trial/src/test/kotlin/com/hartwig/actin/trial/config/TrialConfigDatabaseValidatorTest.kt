@@ -104,7 +104,6 @@ class TrialConfigDatabaseValidatorTest {
             trialId = "does not exist", referenceId = "I-01", referenceText = "irrelevant"
         )
 
-
         private val INCLUSION_REFERENCE_CONFIG_2 = InclusionCriteriaReferenceConfig(
             trialId = TRIAL_ID_2,
             referenceId = "I-02",
