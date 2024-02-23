@@ -186,7 +186,7 @@ class FunctionInputResolverTest {
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(category)))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.ANTIVIRAL_THERAPY.display(), "test")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "test")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment category", "test")))!!).isFalse
     }
 
@@ -203,7 +203,7 @@ class FunctionInputResolverTest {
         assertThat(inputs.integer).isEqualTo(1)
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.ANTIVIRAL_THERAPY.display(), "test", "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(TreatmentCategory.TARGETED_THERAPY.display(), "test", "1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(category, "1", "hello1;hello2")))!!).isFalse
     }
 
