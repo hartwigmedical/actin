@@ -1,7 +1,10 @@
-package com.hartwig.actin.algo.datamodel
+package com.hartwig.actin.algo.interpretation
 
+import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
+import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.Therapy
+import java.util.Collections
 
 class EvaluatedTreatmentAnnotator(
     private val evidenceByTherapyName: Map<String, EfficacyEntry>
@@ -18,14 +21,6 @@ class EvaluatedTreatmentAnnotator(
     }
 
     private fun lookUp(treatment: EvaluatedTreatment): List<EfficacyEntry> {
-//        return efficacyEvidence.filter { entry ->
-//            namesForTherapies(entry.therapies).any { therapy ->
-//                therapy.equals(
-//                    treatment.treatmentCandidate.treatment.name,
-//                    true
-//                )
-//            }
-//        }
         val rawTreatment = treatment.treatmentCandidate.treatment
         return (rawTreatment.synonyms + rawTreatment.name).mapNotNull { evidenceByTherapyName[it.lowercase()] }.distinct()
     }
@@ -39,11 +34,11 @@ class EvaluatedTreatmentAnnotator(
         }
 
         private fun namesForTherapies(therapies: List<Therapy>): List<String> {
-            return therapies.flatMap { generateOptions(it.synonyms ?: it.therapyName) }
+            return therapies.flatMap { generateOptions((it.synonyms?.split("|") ?: emptyList()) + it.therapyName) }
         }
 
-        private fun generateOptions(therapy: String): List<String> {
-            return therapy.split("|").flatMap { item ->
+        private fun generateOptions(therapies: List<String>): List<String> {
+            return therapies.flatMap { item ->
                 if (item.contains(" + ")) {
                     createPermutations(item)
                 } else {
@@ -54,7 +49,21 @@ class EvaluatedTreatmentAnnotator(
 
         private fun createPermutations(treatment: String): List<String> {
             val drugs = treatment.split(" + ")
-            return listOf(drugs.joinToString("+"), drugs.reversed().joinToString("+"))
+            val permutations = mutableListOf<String>()
+            generatePermutations(drugs, permutations, 0, drugs.size - 1)
+            return permutations
+        }
+
+        private fun generatePermutations(drugs: List<String>, permutations: MutableList<String>, left: Int, right: Int) {
+            if (left == right) {
+                permutations.add(drugs.joinToString("+"))
+            } else {
+                for (i in left..right) {
+                    Collections.swap(drugs, left, i)
+                    generatePermutations(drugs, permutations, left + 1, right)
+                    Collections.swap(drugs, left, i)
+                }
+            }
         }
     }
 }

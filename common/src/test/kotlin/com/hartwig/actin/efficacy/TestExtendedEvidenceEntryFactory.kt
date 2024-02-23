@@ -6,11 +6,12 @@ object TestExtendedEvidenceEntryFactory {
 
     fun createProperTestExtendedEvidenceEntry(): EfficacyEntry {
         return EfficacyEntry(
-            acronym = "Study of treatment 1 instead of treatment 2",
+            acronym = "Study of Vemurafenib",
             phase = "Phase III",
             therapies = listOf(Therapy(therapyName = "Vemurafenib", synonyms = null)),
             therapeuticSetting = Intent.ADJUVANT,
-            variantRequirements = listOf(VariantRequirement(name = "EGFR positive", requirementType = "required")),
+
+            variantRequirements = listOf(VariantRequirement(name = "BRAF V600E", requirementType = "required")),
             trialReferences = listOf(createReference())
         )
     }
@@ -21,7 +22,7 @@ object TestExtendedEvidenceEntryFactory {
 
     fun createPatientPopulation(): PatientPopulation {
         return PatientPopulation(
-            name = "VEMURAFENIB",
+            name = "Vemurafenib",
             isControl = true,
             ageMin = 55,
             ageMax = 65,
@@ -60,7 +61,7 @@ object TestExtendedEvidenceEntryFactory {
             id = 1, primaryEndPoints = listOf(
                 PrimaryEndPoint(
                     id = 2,
-                    name = "PFS",
+                    name = "Median Progression-Free Survival",
                     value = 6.8,
                     unitOfMeasure = PrimaryEndPointUnit.MONTHS,
                     confidenceInterval = null,

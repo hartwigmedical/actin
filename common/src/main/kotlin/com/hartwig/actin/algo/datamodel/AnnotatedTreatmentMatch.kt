@@ -5,7 +5,7 @@ import com.hartwig.actin.efficacy.EfficacyEntry
 data class AnnotatedTreatmentMatch(
     val treatmentCandidate: TreatmentCandidate,
     val evaluations: List<Evaluation>,
-    val annotations: List<EfficacyEntry>?
+    val annotations: List<EfficacyEntry>
 ) {
 
     fun eligible() = evaluations.none { it.result == EvaluationResult.FAIL }
