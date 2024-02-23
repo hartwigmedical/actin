@@ -21,6 +21,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ANTI_CLDN6_CAR_T(TreatmentCategory.IMMUNOTHERAPY, "anti-CLDN6 CAR-T"),
     ANTI_ESTROGEN(TreatmentCategory.HORMONE_THERAPY, "anti-estrogen"),
     ANTI_KLK2(TreatmentCategory.TARGETED_THERAPY, "anti-KLK2"),
+    ANTI_LAG_3(TreatmentCategory.IMMUNOTHERAPY, "anti-LAG-3"),
     ANTI_OX40(TreatmentCategory.IMMUNOTHERAPY, "anti-OX40"),
     ANTI_PD_1_LAG_3(TreatmentCategory.IMMUNOTHERAPY, "anti-PD-1/LAG-3"),
     ANTI_PD_1_TIM_3(TreatmentCategory.IMMUNOTHERAPY, "anti-PD-1/TIM-3"),
