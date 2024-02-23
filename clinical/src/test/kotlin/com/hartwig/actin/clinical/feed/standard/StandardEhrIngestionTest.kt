@@ -46,7 +46,7 @@ class StandardEhrIngestionTest {
             directory = INPUT_JSON,
             medicationExtractor = EhrMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
-                qtPrologatingRiskCuration = curationDatabase.qtProlongingCuration,
+                qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
                 cypInteractionCuration = curationDatabase.cypInteractionCuration,
                 dosageCuration = curationDatabase.medicationDosageCuration
             ),
@@ -98,7 +98,8 @@ class StandardEhrIngestionTest {
                 requirements = listOf(CurationRequirement(feedInput = "Pain", message = "Could not find toxicity config for input 'Pain'"))
             ),
             CurationResult(
-                categoryName = "Laboratory Translation", requirements = listOf(
+                categoryName = "Laboratory Translation",
+                requirements = listOf(
                     CurationRequirement(
                         feedInput = "dc_NeutrGran",
                         message = "Could not find laboratory translation for lab value with code 'dc_NeutrGran' and name 'Neutrof. granulocyten'"
@@ -119,7 +120,7 @@ class StandardEhrIngestionTest {
                         feedInput = "Hb",
                         message = "Could not find laboratory translation for lab value with code 'Hb' and name 'Hemoglobine'"
                     )
-                )
+                ),
             ),
             CurationResult(
                 categoryName = "Intolerance",
@@ -128,6 +129,19 @@ class StandardEhrIngestionTest {
                         feedInput = "MORFINE",
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
+                )
+            ),
+            CurationResult(
+                categoryName = "Medication Dosage",
+                requirements = listOf(
+                    CurationRequirement(
+                        feedInput = "METOCLOPRAMIDE TABLET 10MG",
+                        message = "Could not find dosage config for input 'METOCLOPRAMIDE TABLET 10MG'"
+                    ),
+                    CurationRequirement(
+                        feedInput = "LORAZEPAM TABLET 1MG",
+                        message = "Could not find dosage config for input 'LORAZEPAM TABLET 1MG'"
+                    )
                 )
             )
         )
