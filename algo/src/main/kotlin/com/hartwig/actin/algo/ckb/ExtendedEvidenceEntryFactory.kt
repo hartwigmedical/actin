@@ -9,10 +9,11 @@ import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTherapy
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
+import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
 import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.ConfidenceInterval
 import com.hartwig.actin.efficacy.DerivedMetric
-import com.hartwig.actin.efficacy.ExtendedEvidenceEntry
+import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.efficacy.PrimaryEndPoint
 import com.hartwig.actin.efficacy.PrimaryEndPointType
@@ -26,12 +27,16 @@ import com.hartwig.actin.efficacy.Therapy
 
 object ExtendedEvidenceEntryFactory {
 
-    fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
+    fun readEvidenceFromFile(ckbExtendedEvidenceJson: String): List<CkbExtendedEvidenceEntry> {
+        return CkbExtendedEvidenceJson.read(ckbExtendedEvidenceJson)
+    }
+
+    fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<EfficacyEntry> {
         return ckbExtendedEvidenceEntries.map(::resolveCkbExtendedEvidence)
     }
 
-    private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): ExtendedEvidenceEntry {
-        return ExtendedEvidenceEntry(
+    private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): EfficacyEntry {
+        return EfficacyEntry(
             acronym = ckbExtendedEvidenceEntry.title,
             phase = ckbExtendedEvidenceEntry.phase,
             therapies = convertTherapies(ckbExtendedEvidenceEntry.therapies),

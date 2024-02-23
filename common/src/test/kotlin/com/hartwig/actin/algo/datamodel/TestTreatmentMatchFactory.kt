@@ -55,9 +55,9 @@ object TestTreatmentMatchFactory {
         )
     }
 
-    private fun createSocMatches(): List<StandardOfCareMatch> {
+    private fun createSocMatches(): List<AnnotatedTreatmentMatch> {
         return listOf(
-            StandardOfCareMatch(
+            AnnotatedTreatmentMatch(
                 treatmentCandidate = TreatmentCandidate(
                     TreatmentTestFactory.treatment("Vemurafenib", true),
                     true,

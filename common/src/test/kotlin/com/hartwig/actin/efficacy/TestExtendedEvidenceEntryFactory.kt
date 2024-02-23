@@ -4,8 +4,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 
 object TestExtendedEvidenceEntryFactory {
 
-    fun createProperTestExtendedEvidenceEntry(): ExtendedEvidenceEntry {
-        return ExtendedEvidenceEntry(
+    fun createProperTestExtendedEvidenceEntry(): EfficacyEntry {
+        return EfficacyEntry(
             acronym = "Study of treatment 1 instead of treatment 2",
             phase = "Phase III",
             therapies = listOf(Therapy(therapyName = "Vemurafenib", synonyms = null)),

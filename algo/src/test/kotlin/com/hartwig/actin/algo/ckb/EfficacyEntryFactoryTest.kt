@@ -15,7 +15,7 @@ import com.hartwig.actin.efficacy.VariantRequirement
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ExtendedEvidenceEntryFactoryTest {
+class EfficacyEntryFactoryTest {
 
     @Test
     fun `Should convert minimal test extended evidence database`() {

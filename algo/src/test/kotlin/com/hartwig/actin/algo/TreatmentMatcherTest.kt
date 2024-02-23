@@ -29,11 +29,11 @@ class TreatmentMatcherTest {
     private val trialMatcher = mockk<TrialMatcher> {
         every { determineEligibility(patient, trials) } returns trialMatches
     }
-    private val entries =
+    private val evidenceEntries =
         ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val treatmentMatcher = TreatmentMatcher(
-        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), entries
+        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), evidenceEntries
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
@@ -64,7 +64,7 @@ class TreatmentMatcherTest {
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator(entries).annotate(
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries).annotate(
                         expectedSocTreatments
                     )
                 )
