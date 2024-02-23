@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.ckb.tools
 
+import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
@@ -11,7 +12,8 @@ class CkbExtendedEfficacyDatabasePrinterTestApplication {
     fun run() {
         val jsonEntries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(EXTENDED_EFFICACY_JSON_PATH)
         jsonEntries.forEach(::println)
-        val entries: List<EfficacyEntry> = EfficacyEntryFactory.extractCkbExtendedEvidence(jsonEntries)
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val entries: List<EfficacyEntry> = EfficacyEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(jsonEntries)
         entries.forEach(::println)
     }
 

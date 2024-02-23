@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.CurrentDateProvider
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
@@ -29,8 +30,9 @@ class TreatmentMatcherTest {
     private val trialMatcher = mockk<TrialMatcher> {
         every { determineEligibility(patient, trials) } returns trialMatches
     }
+    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val evidenceEntries =
-        EfficacyEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+        EfficacyEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val treatmentMatcher = TreatmentMatcher(
         trialMatcher, recommendationEngine, trials, CurrentDateProvider(), evidenceEntries

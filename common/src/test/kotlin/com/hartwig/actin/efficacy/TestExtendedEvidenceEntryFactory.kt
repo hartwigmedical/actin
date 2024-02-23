@@ -8,7 +8,7 @@ object TestExtendedEvidenceEntryFactory {
         return EfficacyEntry(
             acronym = "Study of Vemurafenib",
             phase = "Phase III",
-            therapies = listOf(Therapy(therapyName = "Vemurafenib", synonyms = null)),
+            therapies = listOf("Vemurafenib"),
             therapeuticSetting = Intent.ADJUVANT,
 
             variantRequirements = listOf(VariantRequirement(name = "BRAF V600E", requirementType = "required")),

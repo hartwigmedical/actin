@@ -64,12 +64,12 @@ object CkbExtendedEvidenceTestFactory {
         return listOf(
             CkbTherapy(
                 id = 1,
-                therapyName = "Treatment 1",
+                therapyName = "CAPECITABINE+OXALIPLATIN",
                 synonyms = null
             ),
             CkbTherapy(
                 id = 2,
-                therapyName = "Treatment 2",
+                therapyName = "CAPECITABINE+OXALIPLATIN",
                 synonyms = null
             )
         )

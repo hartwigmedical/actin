@@ -7,12 +7,12 @@
     "therapies": [
       {
         "id": 1,
-        "therapyName": "Treatment 1",
+        "therapyName": "CAPECITABINE+OXALIPLATIN",
         "synonyms": null
       },
       {
         "id": 2,
-        "therapyName": "Treatment 2",
+        "therapyName": "CAPECITABINE+OXALIPLATIN",
         "synonyms": null
       }
     ],
