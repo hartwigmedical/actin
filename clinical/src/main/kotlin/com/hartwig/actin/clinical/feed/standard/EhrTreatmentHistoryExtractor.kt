@@ -1,12 +1,11 @@
 package com.hartwig.actin.clinical.feed.standard
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.ExtractionResult
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationResponse
+import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
-import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
@@ -14,56 +13,75 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
+private const val TREATMENT_HISTORY = "treatment history"
+
 class EhrTreatmentHistoryExtractor(
-    private val treatmentDatabase: TreatmentDatabase
+    private val treatmentCuration: CurationDatabase<TreatmentHistoryEntryConfig>
 ) : EhrExtractor<List<TreatmentHistoryEntry>> {
-    private val json = ObjectMapper()
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
-        val extracted = ehrPatientRecord.treatmentHistory.map {
+        return ehrPatientRecord.treatmentHistory.map {
 
-            val treatment = treatmentDatabase.findTreatmentByName(it.treatmentName) ?: throw missingTreatmentException(it.treatmentName)
-
-            val switchToTreatments = it.modifications?.map { modification ->
-                TreatmentStage(
-                    cycles = modification.administeredCycles,
-                    startYear = modification.date.year,
-                    startMonth = modification.date.monthValue,
-                    treatment = treatment
-                )
-            }
-            val historyDetails =
-                TreatmentHistoryDetails(
-                    stopYear = it.endDate?.year,
-                    stopMonth = it.endDate?.monthValue,
-                    stopReason = it.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
-                    bestResponse = it.response?.let { response -> TreatmentResponse.valueOf(response) },
-                    switchToTreatments = switchToTreatments,
-                    cycles = it.administeredCycles,
-                )
-            TreatmentHistoryEntry(
-                startYear = it.startDate.year,
-                startMonth = it.startDate.monthValue,
-                intents = it.intention?.let { intent -> setOf(Intent.valueOf(intent)) },
-                treatments = setOfNotNull(treatment),
-                treatmentHistoryDetails = historyDetails,
-                isTrial = it.administeredInStudy
+            val treatment = CurationResponse.createFromConfigs(
+                treatmentCuration.find(it.treatmentName),
+                ehrPatientRecord.patientDetails.hashedIdBase64(),
+                CurationCategory.ONCOLOGICAL_HISTORY,
+                it.treatmentName,
+                TREATMENT_HISTORY,
             )
+
+            treatment.config()?.let { curatedTreatment ->
+                val switchToTreatments = treatmentStages(it, ehrPatientRecord)
+                ExtractionResult(
+                    listOf(
+                        TreatmentHistoryEntry(
+                            startYear = it.startDate.year,
+                            startMonth = it.startDate.monthValue,
+                            intents = it.intention?.let { intent -> setOf(Intent.valueOf(intent)) },
+                            treatments = curatedTreatment.curated!!.treatments,
+                            treatmentHistoryDetails = TreatmentHistoryDetails(
+                                stopYear = it.endDate?.year,
+                                stopMonth = it.endDate?.monthValue,
+                                stopReason = it.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
+                                bestResponse = it.response?.let { response -> TreatmentResponse.valueOf(response) },
+                                switchToTreatments = switchToTreatments.extracted,
+                                cycles = it.administeredCycles,
+                            ),
+                            isTrial = it.administeredInStudy
+                        )
+                    ), switchToTreatments.evaluation
+                )
+            } ?: ExtractionResult(emptyList(), treatment.extractionEvaluation)
+        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
-        return ExtractionResult(extracted, CurationExtractionEvaluation())
     }
 
-    private fun missingTreatmentException(treatment: String): IllegalArgumentException {
-        return IllegalArgumentException(templates(treatment))
+    private fun treatmentStages(
+        it: EhrTreatmentHistory,
+        ehrPatientRecord: EhrPatientRecord
+    ): ExtractionResult<List<TreatmentStage>> {
+        return it.modifications?.map { modification ->
+            val modificationTreatment = CurationResponse.createFromConfigs(
+                treatmentCuration.find(modification.name),
+                ehrPatientRecord.patientDetails.hashedIdBase64(),
+                CurationCategory.ONCOLOGICAL_HISTORY,
+                modification.name,
+                TREATMENT_HISTORY,
+            )
+            modificationTreatment.config()?.let { curatedModificaton ->
+                ExtractionResult(
+                    listOf(
+                        TreatmentStage(
+                            cycles = modification.administeredCycles,
+                            startYear = modification.date.year,
+                            startMonth = modification.date.monthValue,
+                            treatment = curatedModificaton.curated!!.treatments.first(),
+                        )
+                    ), modificationTreatment.extractionEvaluation
+                )
+            } ?: ExtractionResult(emptyList(), modificationTreatment.extractionEvaluation)
+        }?.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+        } ?: ExtractionResult(emptyList(), CurationExtractionEvaluation())
     }
-
-    private fun templates(it: String) =
-        "Treatment with name $it does not exist in database. Please add with one of the following templates: " + listOf(
-            DrugTreatment(name = it, synonyms = emptySet(), isSystemic = false, drugs = emptySet()),
-            Radiotherapy(name = it, synonyms = emptySet(), isSystemic = false),
-            OtherTreatment(name = it, synonyms = emptySet(), isSystemic = false, categories = emptySet())
-        ).map { templates ->
-            json.writeValueAsString(templates).replace("isSystemic\":false", "isSystemic\":?")
-                .replace("\"displayOverride\":null,", "")
-                .replace("\"maxCycles\":null,", "")
-        }
 }
