@@ -135,7 +135,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
                 treatmentHistoryEntry(
                     listOf(
                         drugTreatment("completely different treatment", MATCHING_CATEGORY),
-                        drugTreatment("different drug", TreatmentCategory.TRIAL, DIFFERENT_TYPES)
+                        drugTreatment("different drug", TreatmentCategory.IMMUNOTHERAPY, DIFFERENT_TYPES)
                     )
                 )
             )

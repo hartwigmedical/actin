@@ -254,7 +254,7 @@ data class EhrPriorPrimary(
     val diagnosisDate: LocalDate,
     val tumorLocation: String,
     val tumorType: String,
-    val status: String,
+    val status: String? = null,
     val statusDate: LocalDate
 )
 

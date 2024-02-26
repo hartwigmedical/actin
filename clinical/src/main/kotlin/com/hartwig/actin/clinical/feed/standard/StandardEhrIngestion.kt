@@ -31,7 +31,7 @@ class StandardEhrIngestion(
     private val treatmentHistoryExtractor: EhrTreatmentHistoryExtractor,
     private val clinicalStatusExtractor: EhrClinicalStatusExtractor,
     private val tumorDetailsExtractor: EhrTumorDetailsExtractor,
-    private val secondPrimaryExtractor: EhrSecondPrimariesExtractor,
+    private val secondPrimaryExtractor: EhrPriorPrimariesExtractor,
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
     private val bodyWeightExtractor: EhrBodyWeightExtractor
 ) : ClinicalFeedIngestion {
@@ -141,7 +141,7 @@ class StandardEhrIngestion(
             EhrTreatmentHistoryExtractor(curationDatabaseContext.treatmentHistoryEntryCuration),
             EhrClinicalStatusExtractor(),
             EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration),
-            EhrSecondPrimariesExtractor(),
+            EhrPriorPrimariesExtractor(),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor()
         )
