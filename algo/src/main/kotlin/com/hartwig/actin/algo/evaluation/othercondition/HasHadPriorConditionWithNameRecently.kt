@@ -30,20 +30,21 @@ class HasHadPriorConditionWithNameRecently (private val nameToFind: String, priv
         if (matchingConditionAfterMinDate != null) {
             return if (matchingConditionIsWithinWarnDate) {
                 EvaluationFactory.warn(
-                    "Patient has history of $matchingConditionAfterMinDate (matched to condition name: $nameToFind) within specified time frame",
-                    "History of $nameToFind"
+                    "Patient has history of $matchingConditionAfterMinDate (matched to condition name: $nameToFind) near start of specified time frame",
+                    "Recent history of $nameToFind"
                 )
             } else {
                 EvaluationFactory.pass(
                     "Patient has history of $matchingConditionAfterMinDate (matched to condition name: $nameToFind) within specified time frame",
-                    "History of $nameToFind"
+                    "Recent history of $nameToFind"
                 )
             }
         }
         return if (matchingConditionUnclearDate != null) {
             EvaluationFactory.undetermined(
                 "Patient has history of $matchingConditionUnclearDate (matched to condition name: $nameToFind), " +
-                        "but undetermined whether that is within specified time frame", "History of $nameToFind"
+                        "but undetermined whether that is within specified time frame",
+                "History of $nameToFind"
             )
         } else
             EvaluationFactory.fail(
