@@ -114,7 +114,7 @@ class SecondPrimaryConfigFactoryTest {
                     "status",
                     "not a status",
                     "TumorStatus",
-                    "Accepted values are [ACTIVE, INACTIVE, EXPECTATIVE]"
+                    "Accepted values are [ACTIVE, INACTIVE, EXPECTATIVE, UNKNOWN]"
                 )
             )
     }
