@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.util.DateComparison
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import java.time.LocalDate
 
-class HasHadPriorConditionWithNameRecently internal constructor(private val nameToFind: String, private val minDate: LocalDate) : EvaluationFunction {
+class HasHadPriorConditionWithNameRecently (private val nameToFind: String, private val minDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         var matchingConditionAfterMinDate: String? = null
