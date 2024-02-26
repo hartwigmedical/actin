@@ -47,8 +47,7 @@ class StandardEhrIngestionTest {
             medicationExtractor = EhrMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
                 qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
-                cypInteractionCuration = curationDatabase.cypInteractionCuration,
-                dosageCuration = curationDatabase.medicationDosageCuration
+                cypInteractionCuration = curationDatabase.cypInteractionCuration
             ),
             surgeryExtractor = EhrSurgeryExtractor(),
             toxicityExtractor = EhrToxicityExtractor(curationDatabase.toxicityCuration),
@@ -56,8 +55,9 @@ class StandardEhrIngestionTest {
             priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(curationDatabase.nonOncologicalHistoryCuration),
             intolerancesExtractor = EhrIntolerancesExtractor(TestAtcFactory.createProperAtcModel(), curationDatabase.intoleranceCuration),
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
-            treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(TestTreatmentDatabaseFactory.createProper()),
-            secondPrimaryExtractor = EhrSecondPrimariesExtractor(),
+            treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(curationDatabase.treatmentHistoryEntryCuration),
+            secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
+
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(curationDatabase.primaryTumorCuration),
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
@@ -129,19 +129,6 @@ class StandardEhrIngestionTest {
                         feedInput = "MORFINE",
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
-                )
-            ),
-            CurationResult(
-                categoryName = "Medication Dosage",
-                requirements = listOf(
-                    CurationRequirement(
-                        feedInput = "METOCLOPRAMIDE TABLET 10MG",
-                        message = "Could not find dosage config for input 'METOCLOPRAMIDE TABLET 10MG'"
-                    ),
-                    CurationRequirement(
-                        feedInput = "LORAZEPAM TABLET 1MG",
-                        message = "Could not find dosage config for input 'LORAZEPAM TABLET 1MG'"
-                    )
                 )
             )
         )

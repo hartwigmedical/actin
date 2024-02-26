@@ -11,7 +11,7 @@ object QTProlongatingCurationUtil {
     ): QTProlongatingRisk {
         val riskConfigs = qtProlongatingCuration.find(medicationName)
         return if (riskConfigs.isEmpty()) {
-            QTProlongatingRisk.NONE
+            QTProlongatingRisk.UNKNOWN
         } else if (riskConfigs.size > 1) {
             throw IllegalStateException(
                 "Multiple risk configurations found for one medication name [$medicationName]. " +
