@@ -59,7 +59,7 @@ object TestTreatmentMatchFactory {
         return listOf(
             AnnotatedTreatmentMatch(
                 treatmentCandidate = TreatmentCandidate(
-                    TreatmentTestFactory.treatment("Vemurafenib", true),
+                    TreatmentTestFactory.treatment("Pembrolizumab", true),
                     true,
                     setOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, parameters = emptyList()))
                 ),
@@ -71,7 +71,7 @@ object TestTreatmentMatchFactory {
                         passGeneralMessages = setOf("Active CNS metastases")
                     )
                 ),
-                annotations = listOf(TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntry())
+                annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
             )
         )
     }
@@ -149,9 +149,9 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortEvaluationsTrial1CohortA(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                function = EligibilityFunction(rule = EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, parameters = listOf("BRAF")),
-                references = setOf(CriterionReference(id = "I-01", text = "BRAF Activation")),
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has BRAF activation", "BRAF Activation", "BRAF V600E")
+                function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
+                references = setOf(CriterionReference(id = "I-01", text = "MSI")),
+            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
         )
     }
 
@@ -199,9 +199,9 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortEvaluationsTrial2CohortA(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                function = EligibilityFunction(rule = EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, parameters = listOf("BRAF")),
-                references = setOf(CriterionReference(id = "I-01", text = "BRAF Activation")),
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has BRAF activation", "BRAF Activation", "BRAF V600E")
+                function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
+                references = setOf(CriterionReference(id = "I-01", text = "MSI")),
+            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
         )
     }
 
@@ -213,8 +213,8 @@ object TestTreatmentMatchFactory {
                         EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)
                     )
                 ),
-                references = setOf(CriterionReference(id = "I-03", text = "Patient should not have had Vemurafenib treatment"))
-            ) to unrecoverable(EvaluationResult.FAIL, "Patient has had Vemurafenib treatment", "Vemurafenib treatment", null)
+                references = setOf(CriterionReference(id = "I-03", text = "Patient should not have had pembrolizumab treatment"))
+            ) to unrecoverable(EvaluationResult.FAIL, "Patient has had pembrolizumab treatment", "Pembrolizumab treatment", null)
         )
     }
 

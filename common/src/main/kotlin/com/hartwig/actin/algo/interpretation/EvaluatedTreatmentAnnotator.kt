@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.efficacy.EfficacyEntry
 
-class EvaluatedTreatmentAnnotator(private val evidenceByTherapyName: Map<String, EfficacyEntry>) {
+class EvaluatedTreatmentAnnotator(private val evidenceByTherapyName: Map<String, List<EfficacyEntry>>) {
 
     fun annotate(evaluatedTreatments: List<EvaluatedTreatment>): List<AnnotatedTreatmentMatch> {
         return evaluatedTreatments.map { evaluatedTreatment ->
@@ -17,14 +17,16 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTherapyName: Map<String,
     }
 
     private fun lookUp(treatment: EvaluatedTreatment): List<EfficacyEntry> {
-        return treatment.treatmentCandidate.treatment.name.mapNotNull { evidenceByTherapyName[it.lowercase()] }.distinct()
+        return evidenceByTherapyName[treatment.treatmentCandidate.treatment.name]?.distinct() ?: emptyList()
     }
 
     companion object {
         fun create(efficacyEvidence: List<EfficacyEntry>): EvaluatedTreatmentAnnotator {
-            val evidenceByTherapyName = efficacyEvidence.flatMap { entry ->
-                entry.therapies.map { it.lowercase() to entry }
-            }.toMap()
+            val evidenceByTherapyName = efficacyEvidence
+                .flatMap { entry ->
+                    entry.therapies.map { it.lowercase() to entry }
+                }
+                .groupBy({ it.first }, { it.second })
             return EvaluatedTreatmentAnnotator(evidenceByTherapyName)
         }
     }

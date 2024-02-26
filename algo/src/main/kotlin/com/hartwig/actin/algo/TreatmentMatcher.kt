@@ -2,9 +2,9 @@ package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
-import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.efficacy.EfficacyEntry

@@ -36,17 +36,23 @@ class EfficacyEntryFactoryTest {
 
     @Test
     fun `Should convert therapies`() {
-        val name = "CAPECITABINE+OXALIPLATIN"
         val actual = extendedEvidenceEntryFactory.convertTherapies(
             listOf(
                 CkbTherapy(
                     id = 1,
-                    therapyName = name,
-                    synonyms = null
+                    therapyName = "CAPOX",
+                    synonyms = "Oxaliplatin + Capecitabine"
                 )
             )
         )
         val expected = listOf("CAPECITABINE+OXALIPLATIN")
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `Should generate all options`() {
+        val actual = extendedEvidenceEntryFactory.generateOptions(listOf("CAPOX", "Oxaliplatin + Capecitabine"))
+        val expected = listOf("CAPOX", "OXALIPLATIN+CAPECITABINE", "CAPECITABINE+OXALIPLATIN")
         assertThat(actual).isEqualTo(expected)
     }
 

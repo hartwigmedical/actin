@@ -11,6 +11,7 @@ import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.algo.ckb.json.CkbTherapy
+import com.hartwig.actin.algo.ckb.json.CkbTherapyOfPopulation
 import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
 import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.ConfidenceInterval
@@ -49,32 +50,25 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
     }
 
     fun convertTherapies(therapies: List<CkbTherapy>): List<String> {
-        return therapies.map { therapy -> findTreatment(namesForTherapies(therapy)) }
+        return therapies.map { therapy -> findTreatmentInDatabase(therapy.therapyName, therapy.synonyms) }
     }
 
-    private fun findTreatment(options: List<String>): String {
-        val finalOutput = mutableSetOf<String>()
-        for (option in options) {
-            treatmentDatabase.findTreatmentByName(option)?.let { finalOutput.add(it.name) }
-        }
+    private fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): String {
+        val options = generateOptions((therapySynonyms?.split("|") ?: emptyList()) + therapyName)
+        val treatments = options.mapNotNull { treatmentDatabase.findTreatmentByName(it)?.name }.toSet()
 
-        return if (finalOutput.count() == 1) {
-            finalOutput.joinToString("")
-        } else {
-            throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $options")
+        return when {
+            treatments.size == 1 -> treatments.first()
+            else -> throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $options")
         }
     }
 
-    private fun namesForTherapies(therapy: CkbTherapy): List<String> {
-        return generateOptions((therapy.synonyms?.split("|") ?: emptyList()) + therapy.therapyName)
-    }
-
-    private fun generateOptions(therapies: List<String>): List<String> {
-        return therapies.flatMap { item ->
-            if (item.contains(" + ")) {
-                permutations(item)
+    fun generateOptions(therapies: List<String>): List<String> {
+        return therapies.flatMap { therapy ->
+            if (therapy.contains(" + ")) {
+                permutations(therapy.uppercase())
             } else {
-                listOf(item)
+                listOf(therapy.uppercase())
             }
         }
     }
@@ -149,7 +143,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
                 patientsWithPrimaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
                 patientsPerMetastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
                 timeOfMetastases = patientPopulation.timeOfMetastases?.let { convertTimeOfMetastases(it) },
-                therapy = patientPopulation.therapy?.therapyName,
+                therapy = patientPopulation.therapy?.let { convertTherapy(it) },
                 priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
                 patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
                 medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival,
@@ -160,6 +154,10 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
                 patientsPerRegion = if (patientPopulation.region.isNotEmpty()) convertRaceOrRegion(patientPopulation.region) else null,
             )
         }
+    }
+
+    private fun convertTherapy(therapy: CkbTherapyOfPopulation): String {
+        return findTreatmentInDatabase(therapy.therapyName, therapy.synonyms)
     }
 
     fun convertTimeOfMetastases(timeOfMetastases: String): TimeOfMetastases {

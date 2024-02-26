@@ -6,11 +6,11 @@ import com.hartwig.actin.algo.calendar.CurrentDateProvider
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
-import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
