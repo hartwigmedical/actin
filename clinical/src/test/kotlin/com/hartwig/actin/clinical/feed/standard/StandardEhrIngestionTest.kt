@@ -57,7 +57,7 @@ class StandardEhrIngestionTest {
             intolerancesExtractor = EhrIntolerancesExtractor(TestAtcFactory.createProperAtcModel(), curationDatabase.intoleranceCuration),
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(TestTreatmentDatabaseFactory.createProper()),
-            secondPrimaryExtractor = EhrSecondPrimariesExtractor(),
+            secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(curationDatabase.primaryTumorCuration),
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
