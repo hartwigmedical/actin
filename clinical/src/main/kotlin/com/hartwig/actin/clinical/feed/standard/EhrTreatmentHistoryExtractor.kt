@@ -19,34 +19,34 @@ class EhrTreatmentHistoryExtractor(
     private val treatmentCuration: CurationDatabase<TreatmentHistoryEntryConfig>
 ) : EhrExtractor<List<TreatmentHistoryEntry>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
-        return ehrPatientRecord.treatmentHistory.map {
+        return ehrPatientRecord.treatmentHistory.map { ehrTreatmentHistory ->
 
             val treatment = CurationResponse.createFromConfigs(
-                treatmentCuration.find(it.treatmentName),
+                treatmentCuration.find(ehrTreatmentHistory.treatmentName),
                 ehrPatientRecord.patientDetails.hashedIdBase64(),
                 CurationCategory.ONCOLOGICAL_HISTORY,
-                it.treatmentName,
+                ehrTreatmentHistory.treatmentName,
                 TREATMENT_HISTORY,
             )
 
             treatment.config()?.let { curatedTreatment ->
-                val switchToTreatments = treatmentStages(it, ehrPatientRecord)
+                val switchToTreatments = treatmentStages(ehrTreatmentHistory, ehrPatientRecord)
                 ExtractionResult(
                     listOf(
                         TreatmentHistoryEntry(
-                            startYear = it.startDate.year,
-                            startMonth = it.startDate.monthValue,
-                            intents = it.intention?.let { intent -> setOf(Intent.valueOf(intent)) },
+                            startYear = ehrTreatmentHistory.startDate.year,
+                            startMonth = ehrTreatmentHistory.startDate.monthValue,
+                            intents = ehrTreatmentHistory.intention?.let { intent -> setOf(Intent.valueOf(intent)) },
                             treatments = curatedTreatment.curated!!.treatments,
                             treatmentHistoryDetails = TreatmentHistoryDetails(
-                                stopYear = it.endDate?.year,
-                                stopMonth = it.endDate?.monthValue,
-                                stopReason = it.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
-                                bestResponse = it.response?.let { response -> TreatmentResponse.valueOf(response) },
+                                stopYear = ehrTreatmentHistory.endDate?.year,
+                                stopMonth = ehrTreatmentHistory.endDate?.monthValue,
+                                stopReason = ehrTreatmentHistory.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
+                                bestResponse = ehrTreatmentHistory.response?.let { response -> TreatmentResponse.valueOf(response) },
                                 switchToTreatments = switchToTreatments.extracted,
-                                cycles = it.administeredCycles,
+                                cycles = ehrTreatmentHistory.administeredCycles,
                             ),
-                            isTrial = it.administeredInStudy
+                            isTrial = ehrTreatmentHistory.administeredInStudy
                         )
                     ), switchToTreatments.evaluation
                 )
@@ -57,10 +57,10 @@ class EhrTreatmentHistoryExtractor(
     }
 
     private fun treatmentStages(
-        it: EhrTreatmentHistory,
+        ehrTreatmentHistory: EhrTreatmentHistory,
         ehrPatientRecord: EhrPatientRecord
     ): ExtractionResult<List<TreatmentStage>> {
-        return it.modifications?.map { modification ->
+        return ehrTreatmentHistory.modifications?.map { modification ->
             val modificationTreatment = CurationResponse.createFromConfigs(
                 treatmentCuration.find(modification.name),
                 ehrPatientRecord.patientDetails.hashedIdBase64(),

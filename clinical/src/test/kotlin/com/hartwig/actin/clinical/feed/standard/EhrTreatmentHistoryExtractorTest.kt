@@ -21,16 +21,45 @@ private const val MODIFICATION_NAME = "modificationName"
 class EhrTreatmentHistoryExtractorTest {
 
     private val treatmentCurationDatabase = mockk<CurationDatabase<TreatmentHistoryEntryConfig>>()
-
     private val extractor = EhrTreatmentHistoryExtractor(treatmentCurationDatabase)
+    private val treatment = DrugTreatment("drug", drugs = emptySet())
+    private val treatmentHistoryEntryConfig = TreatmentHistoryEntryConfig(
+        TREATMENT_NAME,
+        false,
+        TreatmentHistoryEntry(treatments = setOf(treatment))
+    )
+    private val minimalTreatmentHistory = EhrTreatmentHistory(
+        treatmentName = TREATMENT_NAME,
+        administeredCycles = 1,
+        intendedCycles = 1,
+        startDate = LocalDate.of(2024, 2, 23),
+        administeredInStudy = false,
+    )
+    private val minimalEhrPatientRecord = EhrPatientRecord(
+        patientDetails = EhrPatientDetail(
+            hashedId = "hashedId",
+            birthYear = 2024,
+            gender = "FEMALE",
+            registrationDate = LocalDate.of(2024, 2, 23)
+        ),
+        tumorDetails = EhrTumorDetail(
+            diagnosisDate = LocalDate.of(2024, 2, 23),
+            tumorLocation = "tumorLocation",
+            tumorType = "tumorType",
+            lesions = emptyList(),
+            measurableDiseaseDate = LocalDate.of(2024, 2, 23),
+            measurableDisease = false,
+            tumorGradeDifferentiation = "tumorGradeDifferentiation",
+        )
+    )
 
     @Test
     fun `Should filter treatment history entry and warn when no curation for treatment name`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns emptySet()
         val result = extractor.extract(
-            minimalEhrPatientRecord().copy(
+            minimalEhrPatientRecord.copy(
                 treatmentHistory = listOf(
-                    minimalTreatmentHistory()
+                    minimalTreatmentHistory
                 )
             )
         )
@@ -46,14 +75,14 @@ class EhrTreatmentHistoryExtractorTest {
     }
 
     @Test
-    fun `Should filter treatment modification and warn when no curation for modification name`() {
-        val config = treatmentHistoryEntryConfig()
+    fun `Should extract treatment with modifications using curated treatment`() {
+        val config = treatmentHistoryEntryConfig
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(config)
         every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(config)
         val result = extractor.extract(
-            minimalEhrPatientRecord().copy(
+            minimalEhrPatientRecord.copy(
                 treatmentHistory = listOf(
-                    minimalTreatmentHistory().copy(
+                    minimalTreatmentHistory.copy(
                         modifications = listOf(
                             EhrTreatmentModification(
                                 name = MODIFICATION_NAME,
@@ -77,7 +106,7 @@ class EhrTreatmentHistoryExtractorTest {
                         stopMonth = null,
                         stopReason = null,
                         bestResponse = null,
-                        switchToTreatments = listOf(TreatmentStage(treatment = treatment(), cycles = 2, startYear = 2024, startMonth = 2)),
+                        switchToTreatments = listOf(TreatmentStage(treatment = treatment, cycles = 2, startYear = 2024, startMonth = 2)),
                         cycles = 1,
                     ),
                     isTrial = false
@@ -87,15 +116,15 @@ class EhrTreatmentHistoryExtractorTest {
     }
 
     @Test
-    fun `Should extract treatment with modifications using curated treatment`() {
+    fun `Should filter treatment modification and warn when no curation for modification name`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
-            treatmentHistoryEntryConfig()
+            treatmentHistoryEntryConfig
         )
         every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns emptySet()
         val result = extractor.extract(
-            minimalEhrPatientRecord().copy(
+            minimalEhrPatientRecord.copy(
                 treatmentHistory = listOf(
-                    minimalTreatmentHistory().copy(
+                    minimalTreatmentHistory.copy(
                         modifications = listOf(
                             EhrTreatmentModification(
                                 name = MODIFICATION_NAME,
@@ -116,39 +145,4 @@ class EhrTreatmentHistoryExtractorTest {
             )
         )
     }
-
-    private fun treatmentHistoryEntryConfig() = TreatmentHistoryEntryConfig(
-        TREATMENT_NAME,
-        false,
-        TreatmentHistoryEntry(treatments = setOf(treatment()))
-    )
-
-    private fun treatment() = DrugTreatment("drug", drugs = emptySet())
-
-
-    private fun minimalTreatmentHistory() = EhrTreatmentHistory(
-        treatmentName = TREATMENT_NAME,
-        administeredCycles = 1,
-        intendedCycles = 1,
-        startDate = LocalDate.of(2024, 2, 23),
-        administeredInStudy = false,
-    )
-
-    private fun minimalEhrPatientRecord() = EhrPatientRecord(
-        patientDetails = EhrPatientDetail(
-            hashedId = "hashedId",
-            birthYear = 2024,
-            gender = "FEMALE",
-            registrationDate = LocalDate.of(2024, 2, 23)
-        ),
-        tumorDetails = EhrTumorDetail(
-            diagnosisDate = LocalDate.of(2024, 2, 23),
-            tumorLocation = "tumorLocation",
-            tumorType = "tumorType",
-            lesions = emptyList(),
-            measurableDiseaseDate = LocalDate.of(2024, 2, 23),
-            measurableDisease = false,
-            tumorGradeDifferentiation = "tumorGradeDifferentiation",
-        )
-    )
 }
