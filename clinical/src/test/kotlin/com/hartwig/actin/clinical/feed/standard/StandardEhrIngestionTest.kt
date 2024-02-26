@@ -129,19 +129,6 @@ class StandardEhrIngestionTest {
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
                 )
-            ),
-            CurationResult(
-                categoryName = "Medication Dosage",
-                requirements = listOf(
-                    CurationRequirement(
-                        feedInput = "METOCLOPRAMIDE TABLET 10MG",
-                        message = "Could not find dosage config for input 'METOCLOPRAMIDE TABLET 10MG'"
-                    ),
-                    CurationRequirement(
-                        feedInput = "LORAZEPAM TABLET 1MG",
-                        message = "Could not find dosage config for input 'LORAZEPAM TABLET 1MG'"
-                    )
-                )
             )
         )
     }
