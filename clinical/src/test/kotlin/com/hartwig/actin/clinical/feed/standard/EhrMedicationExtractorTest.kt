@@ -103,10 +103,11 @@ class EhrMedicationExtractorTest {
     }
 
     private fun createEhrRecord(): EhrPatientRecord {
-        val ehrPatientRecord = mockk<EhrPatientRecord>()
-        every { ehrPatientRecord.medications } returns listOf(ehrMedication)
-        every { ehrPatientRecord.patientDetails } returns EhrPatientDetail(1980, "MALE", LocalDate.of(2024, 2, 26), "hashedId")
-        return ehrPatientRecord
+        return EhrPatientRecord(
+            patientDetails = EhrPatientDetail(1980, "MALE", LocalDate.of(2024, 2, 26), "hashedId"),
+            medications = listOf(ehrMedication),
+            tumorDetails = EhrTumorDetail()
+        )
     }
 
 }
