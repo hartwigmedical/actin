@@ -111,6 +111,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     MEK_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MEK inhibitor"),
     MEK1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MEK1 inhibitor"),
     MEK2_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MEK2 inhibitor"),
+    MET_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "MET antibody"),
     MET_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MET inhibitor"),
     MET_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "MET TKI"),
     MONOCLONAL_ANTIBODY_IMMUNOTHERAPY(TreatmentCategory.IMMUNOTHERAPY, "monoclonal antibody - immunotherapies"),
