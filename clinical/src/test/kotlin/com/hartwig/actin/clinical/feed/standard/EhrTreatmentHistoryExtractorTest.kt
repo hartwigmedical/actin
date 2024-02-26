@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
+import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -35,23 +36,7 @@ class EhrTreatmentHistoryExtractorTest {
         startDate = LocalDate.of(2024, 2, 23),
         administeredInStudy = false,
     )
-    private val minimalEhrPatientRecord = EhrPatientRecord(
-        patientDetails = EhrPatientDetail(
-            hashedId = "hashedId",
-            birthYear = 2024,
-            gender = "FEMALE",
-            registrationDate = LocalDate.of(2024, 2, 23)
-        ),
-        tumorDetails = EhrTumorDetail(
-            diagnosisDate = LocalDate.of(2024, 2, 23),
-            tumorLocation = "tumorLocation",
-            tumorType = "tumorType",
-            lesions = emptyList(),
-            measurableDiseaseDate = LocalDate.of(2024, 2, 23),
-            measurableDisease = false,
-            tumorGradeDifferentiation = "tumorGradeDifferentiation",
-        )
-    )
+    private val minimalEhrPatientRecord = createEhrPatientRecord()
 
     @Test
     fun `Should filter treatment history entry and warn when no curation for treatment name`() {
