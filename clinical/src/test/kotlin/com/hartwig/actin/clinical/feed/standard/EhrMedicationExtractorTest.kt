@@ -16,16 +16,18 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
+private const val MEDICATION_NAME = "medication_name"
+private const val ATC_NAME = "atc_name"
+
 class EhrMedicationExtractorTest {
 
     private val atcModel = mockk<AtcModel>()
     private val qtProlongatingRiskCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
     private val cypInteractionCuration = mockk<CurationDatabase<CypInteractionConfig>>()
-    private val ehrPatientRecord = createEhrRecord()
     private val atcClassification = atcClassification()
     private val extractor = EhrMedicationExtractor(atcModel, qtProlongatingRiskCuration, cypInteractionCuration)
     private val ehrMedication = EhrMedication(
-        name = "medication_name",
+        name = MEDICATION_NAME,
         atcCode = "atc",
         administrationRoute = "route",
         dosage = 1.0,
@@ -41,7 +43,7 @@ class EhrMedicationExtractorTest {
         isSelfCare = false
     )
     private val medication = Medication(
-        name = "atc_name",
+        name = ATC_NAME,
         administrationRoute = "route",
         dosage = Dosage(
             dosageMin = 1.0, dosageMax = 1.0,
@@ -52,25 +54,26 @@ class EhrMedicationExtractorTest {
         startDate = LocalDate.of(2024, 2, 26),
         stopDate = LocalDate.of(2024, 2, 26),
         atc = atcClassification,
-        qtProlongatingRisk = QTProlongatingRisk.KNOWN,
-        cypInteractions = listOf(CypInteraction(CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, "cyp_gene")),
         isTrialMedication = false,
-        isSelfCare = false
+        isSelfCare = false,
+        qtProlongatingRisk = QTProlongatingRisk.UNKNOWN,
+        cypInteractions = emptyList()
     )
+    private val ehrPatientRecord = createEhrRecord()
 
 
     @Test
     fun `Should curate QT and CYP and extract medication`() {
-        every { qtProlongatingRiskCuration.find("atc_name") } returns setOf(
+        every { qtProlongatingRiskCuration.find(ATC_NAME) } returns setOf(
             QTProlongatingConfig(
-                "atc_name",
+                ATC_NAME,
                 false,
                 QTProlongatingRisk.KNOWN
             )
         )
-        every { cypInteractionCuration.find("atc_name") } returns setOf(
+        every { cypInteractionCuration.find(ATC_NAME) } returns setOf(
             CypInteractionConfig(
-                "atc_name",
+                ATC_NAME,
                 false,
                 listOf(CypInteraction(CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, "cyp_gene"))
             )
@@ -78,26 +81,44 @@ class EhrMedicationExtractorTest {
 
         val result = extractor.extract(ehrPatientRecord)
         assertThat(result.evaluation.warnings).isEmpty()
-        assertThat(result.extracted).containsExactly(medication)
-    }
-
-    @Test
-    fun `Should default CYP and QT when no config found`() {
-        every { qtProlongatingRiskCuration.find("atc_name") } returns emptySet()
-        every { cypInteractionCuration.find("atc_name") } returns emptySet()
-        val result = extractor.extract(ehrPatientRecord)
-        assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).containsExactly(
             medication.copy(
-                qtProlongatingRisk = QTProlongatingRisk.UNKNOWN,
-                cypInteractions = emptyList()
+                qtProlongatingRisk = QTProlongatingRisk.KNOWN,
+                cypInteractions = listOf(CypInteraction(CypInteraction.Type.INDUCER, CypInteraction.Strength.STRONG, "cyp_gene")),
             )
         )
     }
 
+    @Test
+    fun `Should default CYP and QT when no config found`() {
+        every { qtProlongatingRiskCuration.find(ATC_NAME) } returns emptySet()
+        every { cypInteractionCuration.find(ATC_NAME) } returns emptySet()
+        val result = extractor.extract(ehrPatientRecord)
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.extracted).containsExactly(medication)
+    }
+
+    @Test
+    fun `Should not look up ATC code when medication is trial`() {
+        noAtcLookupTest(ehrMedication.copy(isTrial = true))
+    }
+
+    @Test
+    fun `Should not look up ATC code when medication is self care`() {
+        noAtcLookupTest(ehrMedication.copy(isSelfCare = true))
+    }
+
+    private fun noAtcLookupTest(modifiedMedication: EhrMedication) {
+        every { qtProlongatingRiskCuration.find(MEDICATION_NAME) } returns emptySet()
+        every { cypInteractionCuration.find(MEDICATION_NAME) } returns emptySet()
+        val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(modifiedMedication)))
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.extracted).containsExactly(medication.copy(name = MEDICATION_NAME, atc = null))
+    }
+
     private fun atcClassification(): AtcClassification {
         val atcClassification = mockk<AtcClassification>()
-        every { atcClassification.chemicalSubstance } returns AtcLevel("atc_code", "atc_name")
+        every { atcClassification.chemicalSubstance } returns AtcLevel("atc_code", ATC_NAME)
         every { atcModel.resolveByCode("atc", "") } returns atcClassification
         return atcClassification
     }
@@ -106,7 +127,15 @@ class EhrMedicationExtractorTest {
         return EhrPatientRecord(
             patientDetails = EhrPatientDetail(1980, "MALE", LocalDate.of(2024, 2, 26), "hashedId"),
             medications = listOf(ehrMedication),
-            tumorDetails = EhrTumorDetail()
+            tumorDetails = EhrTumorDetail(
+                diagnosisDate = LocalDate.of(2024, 2, 23),
+                tumorLocation = "tumorLocation",
+                tumorType = "tumorType",
+                lesions = emptyList(),
+                measurableDiseaseDate = LocalDate.of(2024, 2, 23),
+                measurableDisease = false,
+                tumorGradeDifferentiation = "tumorGradeDifferentiation",
+            )
         )
     }
 
