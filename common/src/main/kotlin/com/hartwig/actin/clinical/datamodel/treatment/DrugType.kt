@@ -97,6 +97,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     HER2_IMMUNOTHERAPY(TreatmentCategory.IMMUNOTHERAPY, "HER2 antibody"),
     HER2_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "HER2 TKI"),
     HER3_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "HER3 antibody"),
+    HIF_2A_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "HIF-2α inhibitor"),
     HORMONE_ANTINEOPLASTIC(TreatmentCategory.HORMONE_THERAPY),
     HPV_VACCINE(TreatmentCategory.IMMUNOTHERAPY, "HPV vaccine"),
     HPV16_VACCINE(TreatmentCategory.IMMUNOTHERAPY, "HPV-16 vaccine"),
