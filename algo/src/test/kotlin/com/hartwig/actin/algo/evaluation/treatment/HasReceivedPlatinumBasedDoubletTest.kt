@@ -6,7 +6,6 @@ import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import org.junit.Ignore
 import org.junit.Test
 
 class HasReceivedPlatinumBasedDoubletTest {
@@ -15,6 +14,8 @@ class HasReceivedPlatinumBasedDoubletTest {
         TreatmentTestFactory.drugTreatment("Carboplatin", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.PLATINUM_COMPOUND))
     private val otherChemoDrug =
         TreatmentTestFactory.drugTreatment("Pemetrexed", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTIMETABOLITE))
+    private val anotherChemoDrug =
+        TreatmentTestFactory.drugTreatment("Paclitaxel", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.TAXANE))
     private val otherCategoryDrug =
         TreatmentTestFactory.drugTreatment("Nivolumab", TreatmentCategory.IMMUNOTHERAPY)
 
@@ -28,7 +29,6 @@ class HasReceivedPlatinumBasedDoubletTest {
         )
     }
 
-    @Ignore
     @Test
     fun `Should pass if treatment history contains platinum doublet in combination with treatment of other category`() {
         val history =
@@ -48,7 +48,6 @@ class HasReceivedPlatinumBasedDoubletTest {
         )
     }
 
-    @Ignore
     @Test
     fun `Should warn if treatment history contains platinum triplet`() {
         val history =
@@ -57,7 +56,27 @@ class HasReceivedPlatinumBasedDoubletTest {
                     treatments = setOf(
                         platinumChemoDrug,
                         otherChemoDrug,
-                        otherChemoDrug
+                        anotherChemoDrug
+                    )
+                )
+            )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should warn if treatment history contains platinum triplet combined with other category drug`() {
+        val history =
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = setOf(
+                        platinumChemoDrug,
+                        otherChemoDrug,
+                        anotherChemoDrug,
+                        otherCategoryDrug
                     )
                 )
             )

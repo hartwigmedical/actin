@@ -11,17 +11,14 @@ class HasReceivedPlatinumBasedDoublet : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val receivedPlatinumDoublet = platinumCombinationEvaluation(record) == 1
-        val receivedPlatinumTripletOrMore = platinumCombinationEvaluation(record) >= 2
-
         val message = "received platinum based doublet chemotherapy"
 
         return when {
-            receivedPlatinumDoublet -> {
+            receivedPlatinumDoublet(record) -> {
                 EvaluationFactory.pass("Patient has $message", "Has $message ")
             }
 
-            receivedPlatinumTripletOrMore -> {
+            receivedPlatinumTripletOrAbove(record) -> {
                 EvaluationFactory.warn(
                     "Patient has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)",
                     "Has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)"
@@ -34,15 +31,28 @@ class HasReceivedPlatinumBasedDoublet : EvaluationFunction {
         }
     }
 
-    private fun platinumCombinationEvaluation(record: PatientRecord): Int {
+    private fun receivedPlatinumDoublet(record: PatientRecord): Boolean {
 
-        return record.clinical.oncologicalHistory.count { entry ->
+        return record.clinical.oncologicalHistory.any { entry ->
             val treatments = entry.allTreatments()
-            treatments.any { treatment ->
+
+            treatments.filter { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }.size == 2
+                    && treatments.any { treatment ->
                 treatment.types().contains(DrugType.PLATINUM_COMPOUND) &&
                         (treatments - treatment).any { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
             }
         }
     }
 
+    private fun receivedPlatinumTripletOrAbove(record: PatientRecord): Boolean {
+
+        return record.clinical.oncologicalHistory.any { entry ->
+            val treatments = entry.allTreatments()
+            treatments.filter { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }.size > 2
+                    && treatments.any { treatment ->
+                treatment.types().contains(DrugType.PLATINUM_COMPOUND) &&
+                        (treatments - treatment).any { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
+            }
+        }
+    }
 }
