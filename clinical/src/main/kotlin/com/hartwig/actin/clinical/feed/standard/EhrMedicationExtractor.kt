@@ -23,7 +23,7 @@ class EhrMedicationExtractor(
 
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Medication>> {
         return ehrPatientRecord.medications.map {
-            val atcClassification = atcModel.resolveByCode(it.atcCode, "")
+            val atcClassification = if (!it.isTrial && !it.isSelfCare) atcModel.resolveByCode(it.atcCode, "") else null
             val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
             val curatedQT = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingRiskCuration, atcNameOrInput)
             val curatedCyp = CypInteractionCurationUtil.curateMedicationCypInteractions(cypInteractionCuration, atcNameOrInput)
