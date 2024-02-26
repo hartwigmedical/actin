@@ -74,7 +74,8 @@ class ClinicalIngestionFeedAdapterTest {
             )
         )
 
-        assertThat(ingestionResult.unusedConfigs).containsExactly(
+        assertThat(ingestionResult.unusedConfigs).containsExactlyInAnyOrder(
+            UnusedCurationConfig(categoryName = "Oncological History", input = "capecitabine and oxi"),
             UnusedCurationConfig(categoryName = "Primary Tumor", input = "long | metastase adenocarcinoom"),
             UnusedCurationConfig(categoryName = "Non Oncological History", input = "pijn bij maligne neoplasma van longen"),
             UnusedCurationConfig(categoryName = "Complication", input = "overige"),

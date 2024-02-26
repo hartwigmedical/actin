@@ -54,7 +54,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 config.curationDirectory,
                 curationDatabaseContext,
                 atcModel
-            ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel, treatmentDatabase)
+            ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel)
         val clinicalIngestionAdapter =
             ClinicalIngestionFeedAdapter(
                 clinicalIngestion,

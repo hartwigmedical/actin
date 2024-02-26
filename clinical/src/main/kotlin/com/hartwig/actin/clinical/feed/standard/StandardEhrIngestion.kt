@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.PatientIngestionStatus
@@ -122,8 +121,7 @@ class StandardEhrIngestion(
         fun create(
             directory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel,
-            treatmentDatabase: TreatmentDatabase
+            atcModel: AtcModel
         ) = StandardEhrIngestion(
             directory,
             EhrMedicationExtractor(
@@ -140,7 +138,7 @@ class StandardEhrIngestion(
             EhrToxicityExtractor(curationDatabaseContext.toxicityCuration),
             EhrComplicationExtractor(curationDatabaseContext.complicationCuration),
             EhrPriorOtherConditionsExtractor(curationDatabaseContext.nonOncologicalHistoryCuration),
-            EhrTreatmentHistoryExtractor(treatmentDatabase),
+            EhrTreatmentHistoryExtractor(curationDatabaseContext.treatmentHistoryEntryCuration),
             EhrClinicalStatusExtractor(),
             EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration),
             EhrPriorPrimariesExtractor(),
