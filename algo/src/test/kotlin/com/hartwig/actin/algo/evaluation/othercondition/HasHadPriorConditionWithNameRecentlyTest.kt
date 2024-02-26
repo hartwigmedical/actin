@@ -7,48 +7,89 @@ import java.time.LocalDate
 
 class HasHadPriorConditionWithNameRecentlyTest {
 
+    private val nameToFind = "severe condition"
+    private val minDate = LocalDate.of(2021, 8, 2)
+    private val function = HasHadPriorConditionWithNameRecently(nameToFind, minDate)
+
     @Test
-    fun canEvaluate() {
-        val nameToFind = "severe condition"
-        val minDate = LocalDate.of(2021, 8, 2)
-        val function = HasHadPriorConditionWithNameRecently(nameToFind, minDate)
-
-        // Fail when no prior conditions
+    fun `Should fail when no prior conditions is an empty list`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(emptyList())))
-
-        // Fail when a matching prior condition was too long ago.
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(
-                OtherConditionTestFactory.priorOtherCondition(name = "severe condition", year = 2020))
+            EvaluationResult.FAIL,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherConditions(
+                    emptyList()
+                )
             )
         )
+    }
 
-        // Fail when a recent prior condition does not match the name.
+    @Test
+    fun `Should fail when a matching prior condition was too long ago`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(
-                OtherConditionTestFactory.priorOtherCondition(name = "benign condition", year = 2022))
+            EvaluationResult.FAIL,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(
+                        name = "severe condition", year = 2020
+                    )
+                )
             )
         )
+    }
 
-        // Can not correctly determine if the date is before or after
+    @Test
+    fun `Should fail when a recent prior condition does not match name`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(
-                OtherConditionTestFactory.priorOtherCondition(name = "severe condition", year = 2021))
+            EvaluationResult.FAIL,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(
+                        name = "benign condition", year = 2022
+                    )
+                )
             )
         )
+    }
 
-        // Pass when matching condition is after the minDate.
+    @Test
+    fun `Should evaluate to undetermined if the given date is in range`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(
-                OtherConditionTestFactory.priorOtherCondition(name = "severe condition", year = 2022))
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(
+                        name = "severe condition", year = 2021
+                    )
+                )
             )
         )
+    }
 
-        // Warn when matching condition is just after the minDate.
+    @Test
+    fun `Should pass when matching condition is after the minDate`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.WARN, function.evaluate(OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(name = "severe condition", year = 2021, month = 9))
+            EvaluationResult.PASS,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(
+                        name = "severe condition", year = 2022
+                    )
+                )
+            )
+        )
+    }
+
+
+    @Test
+    fun `Should warn when matching condition is just after the minDate`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherCondition(
+                    OtherConditionTestFactory.priorOtherCondition(
+                        name = "severe condition", year = 2021, month = 9
+                    )
+                )
             )
         )
     }
