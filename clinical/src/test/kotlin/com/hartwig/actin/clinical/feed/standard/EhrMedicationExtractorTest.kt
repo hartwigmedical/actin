@@ -59,7 +59,19 @@ class EhrMedicationExtractorTest {
         qtProlongatingRisk = QTProlongatingRisk.UNKNOWN,
         cypInteractions = emptyList()
     )
-    private val ehrPatientRecord = createEhrRecord()
+    private val ehrPatientRecord = EhrPatientRecord(
+        patientDetails = EhrPatientDetail(1980, "MALE", LocalDate.of(2024, 2, 26), "hashedId"),
+        medications = listOf(ehrMedication),
+        tumorDetails = EhrTumorDetail(
+            diagnosisDate = LocalDate.of(2024, 2, 23),
+            tumorLocation = "tumorLocation",
+            tumorType = "tumorType",
+            lesions = emptyList(),
+            measurableDiseaseDate = LocalDate.of(2024, 2, 23),
+            measurableDisease = false,
+            tumorGradeDifferentiation = "tumorGradeDifferentiation",
+        )
+    )
 
 
     @Test
@@ -121,22 +133,6 @@ class EhrMedicationExtractorTest {
         every { atcClassification.chemicalSubstance } returns AtcLevel("atc_code", ATC_NAME)
         every { atcModel.resolveByCode("atc", "") } returns atcClassification
         return atcClassification
-    }
-
-    private fun createEhrRecord(): EhrPatientRecord {
-        return EhrPatientRecord(
-            patientDetails = EhrPatientDetail(1980, "MALE", LocalDate.of(2024, 2, 26), "hashedId"),
-            medications = listOf(ehrMedication),
-            tumorDetails = EhrTumorDetail(
-                diagnosisDate = LocalDate.of(2024, 2, 23),
-                tumorLocation = "tumorLocation",
-                tumorType = "tumorType",
-                lesions = emptyList(),
-                measurableDiseaseDate = LocalDate.of(2024, 2, 23),
-                measurableDisease = false,
-                tumorGradeDifferentiation = "tumorGradeDifferentiation",
-            )
-        )
     }
 
 }
