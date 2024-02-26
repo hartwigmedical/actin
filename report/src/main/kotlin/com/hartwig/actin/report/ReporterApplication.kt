@@ -28,7 +28,7 @@ class ReporterApplication(private val config: ReporterConfig) {
 
         val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch)
         when (config.mode) {
-            "Other" -> {
+            "Trial" -> {
                 val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
                 writer.write(report, config.enableExtendedMode)
             }

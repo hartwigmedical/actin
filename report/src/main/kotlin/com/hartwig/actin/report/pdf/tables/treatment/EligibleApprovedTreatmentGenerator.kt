@@ -24,7 +24,7 @@ class EligibleApprovedTreatmentGenerator(
 
     override fun contents(): Table {
         when (mode) {
-            "Other" -> {
+            "Trial" -> {
                 val table = Tables.createSingleColWithWidth(width)
                 table.addHeaderCell(Cells.createHeader("Treatment"))
                 val isCUP = TumorDetailsInterpreter.isCUP(clinical.tumor)

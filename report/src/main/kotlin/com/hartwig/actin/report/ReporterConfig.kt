@@ -25,7 +25,7 @@ data class ReporterConfig(
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
-            options.addOption(MODE, true, "SOC or Phase I")
+            options.addOption(MODE, true, "CRC or Trial")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
         }
