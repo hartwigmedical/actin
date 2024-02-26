@@ -58,6 +58,7 @@ class StandardEhrIngestionTest {
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(curationDatabase.treatmentHistoryEntryCuration),
             secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
+
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(curationDatabase.primaryTumorCuration),
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
