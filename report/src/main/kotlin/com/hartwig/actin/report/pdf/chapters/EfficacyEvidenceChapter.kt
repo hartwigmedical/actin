@@ -31,7 +31,7 @@ class EfficacyEvidenceChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val efficacyEvidenceGenerator = EfficacyEvidenceGenerator(report.treatmentMatch.standardOfCareMatches, contentWidth())
         table.addCell(Cells.createTitle(efficacyEvidenceGenerator.title()))
-        table.addCell(Cells.createKey("As first line treatment, the following standard of care treatment(s) could be an option for this patient. Options are ranked by PFS. For further details per study see 'SOC literature details' section in extended report."))
+        table.addCell(Cells.createKey("The following standard of care treatment(s) could be an option for this patient. For further details per study see 'SOC literature details' section in extended report."))
         table.addCell(Cells.create(efficacyEvidenceGenerator.contents()))
         document.add(table)
     }

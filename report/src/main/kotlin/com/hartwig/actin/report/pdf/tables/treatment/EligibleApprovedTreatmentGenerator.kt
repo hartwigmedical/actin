@@ -1,18 +1,20 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
-import com.hartwig.actin.algo.datamodel.StandardOfCareMatch
+import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
+import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EligibleApprovedTreatmentGenerator(
-    private val clinical: ClinicalRecord, private val molecular: MolecularRecord, private val treatments: List<StandardOfCareMatch>?,
+    private val clinical: ClinicalRecord, private val molecular: MolecularRecord, private val treatments: List<AnnotatedTreatmentMatch>?,
     private val width: Float, private val mode: String
 ) : TableGenerator {
 
@@ -38,35 +40,38 @@ class EligibleApprovedTreatmentGenerator(
             "CRC" -> {
                 val table = Tables.createFixedWidthCols(1f, 1f, 1f).setWidth(width)
                 table.addHeaderCell(Cells.createHeader("Treatment"))
-                table.addHeaderCell(Cells.createHeader("Literature based"))
-                table.addHeaderCell(Cells.createHeader("Personalized PFS"))
-                treatments?.forEach { treatment: StandardOfCareMatch ->
+                table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
+                table.addHeaderCell(Cells.createHeader("Personalized PFS prediction"))
+                treatments?.forEach { treatment: AnnotatedTreatmentMatch ->
                     table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                     val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
-                    if (treatment.annotations.isNullOrEmpty()) {
+                    if (treatment.annotations.isEmpty()) {
                         subtable.addCell(Cells.createValue(" "))
                         subtable.addCell(Cells.createValue("No literature efficacy evidence available yet"))
                     } else {
-                        for (annotation in treatment.annotations!!) {
+                        for (annotation in treatment.annotations) {
                             val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
                             for (patientPopulation in paper.patientPopulations) {
-                                if (generateOptions(
-                                        patientPopulation.therapy!!.synonyms ?: patientPopulation.therapy!!.therapyName
-                                    ).any { therapy -> therapy == treatment.treatmentCandidate.treatment.name }
-                                ) {
+                                if (!patientPopulation.therapy.isNullOrEmpty() && patientPopulation.therapy == treatment.treatmentCandidate.treatment.name) {
                                     val analysisGroup = patientPopulation.analysisGroups.iterator()
                                         .next() // assume only 1 analysis group per patient population
+                                    subtable.addCell(Cells.createEmpty())
+                                    subtable.addCell(
+                                        Cells.createTitle(annotation.acronym)
+                                            .setAction(PdfAction.createURI(annotation.trialReferences.first().url))
+                                            .addStyle(Styles.urlStyle())
+                                    )
                                     subtable.addCell(Cells.createValue("PFS: "))
                                     for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
                                         if (primaryEndPoint.name == "Median Progression-Free Survival") {
                                             subtable.addCell(
                                                 Cells.createKey(
-                                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
                                                         ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
                                                 )
                                             )
                                         } else {
-                                            subtable.addCell(Cells.createKey("NA"))
+                                            subtable.addCell(Cells.createKey("NE"))
                                         }
                                     }
 
@@ -80,11 +85,9 @@ class EligibleApprovedTreatmentGenerator(
                                                 )
                                             )
                                         } else {
-                                            subtable.addCell(Cells.createKey("NA"))
+                                            subtable.addCell(Cells.createKey("NE"))
                                         }
                                     }
-                                    subtable.addCell(Cells.createEmpty())
-                                    subtable.addCell(Cells.createValue("(${annotation.acronym})"))
                                     subtable.addCell(Cells.createValue(" "))
                                     subtable.addCell(Cells.createValue(" "))
                                 }
@@ -99,20 +102,5 @@ class EligibleApprovedTreatmentGenerator(
 
             else -> throw IllegalStateException("Unknown mode: $mode")
         }
-    }
-
-    private fun generateOptions(therapy: String): List<String> {
-        return therapy.split("|").flatMap { item ->
-            if (item.contains(" + ")) {
-                createPermutations(item)
-            } else {
-                listOf(item)
-            }
-        }
-    }
-
-    private fun createPermutations(treatment: String): List<String> {
-        val drugs = treatment.split(" + ")
-        return listOf(drugs.joinToString("+"), drugs.reversed().joinToString("+"))
     }
 }

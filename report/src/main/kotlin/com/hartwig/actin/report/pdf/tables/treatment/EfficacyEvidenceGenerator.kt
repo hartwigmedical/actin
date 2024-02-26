@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
-import com.hartwig.actin.algo.datamodel.StandardOfCareMatch
-import com.hartwig.actin.efficacy.ExtendedEvidenceEntry
+import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
+import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -9,7 +9,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
 class EfficacyEvidenceGenerator(
-    private val treatments: List<StandardOfCareMatch>?,
+    private val treatments: List<AnnotatedTreatmentMatch>?,
     private val width: Float
 ) : TableGenerator {
 
@@ -22,11 +22,11 @@ class EfficacyEvidenceGenerator(
         table.addHeaderCell(Cells.createHeader("Treatment"))
         table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
         table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
-        treatments?.forEach { treatment: StandardOfCareMatch ->
+        treatments?.forEach { treatment: AnnotatedTreatmentMatch ->
             table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
             val subtable = Tables.createSingleColWithWidth(width / 2)
-            if (treatment.annotations != null) {
-                for (annotation in treatment.annotations!!) {
+            if (treatment.annotations.isNotEmpty()) {
+                for (annotation in treatment.annotations) {
                     subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, treatment)))
                 }
             } else subtable.addCell(Cells.createContent("No literature evidence available yet"))
@@ -38,12 +38,12 @@ class EfficacyEvidenceGenerator(
         return table
     }
 
-    private fun createOneLiteraturePart(width: Float, annotation: ExtendedEvidenceEntry, treatment: StandardOfCareMatch): Table {
+    private fun createOneLiteraturePart(width: Float, annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch): Table {
         val subtable = Tables.createSingleColWithWidth(width / 2)
         val subsubtables: MutableList<Table> = mutableListOf()
-        subsubtables.add(createFirstPart(annotation))
-        subsubtables.add(createSecondPart(width, annotation, treatment))
-        subsubtables.add(createThirdPart(annotation, treatment))
+        subsubtables.add(createTrialHeader(annotation))
+        subsubtables.add(createPatientCharacteristics(annotation, treatment))
+        subsubtables.add(createEndpoints(annotation, treatment))
         for (i in subsubtables.indices) {
             val subsubtable = subsubtables[i]
             subtable.addCell(Cells.create(subsubtable))
@@ -54,7 +54,7 @@ class EfficacyEvidenceGenerator(
         return subtable
     }
 
-    private fun createFirstPart(annotation: ExtendedEvidenceEntry): Table {
+    private fun createTrialHeader(annotation: EfficacyEntry): Table {
         val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
         table.addCell(Cells.createSubTitle(annotation.acronym))
         table.addCell(Cells.createValue(""))
@@ -63,13 +63,10 @@ class EfficacyEvidenceGenerator(
         return table
     }
 
-    private fun createSecondPart(width: Float, annotation: ExtendedEvidenceEntry, treatment: StandardOfCareMatch): Table {
-        val table = Tables.createFixedWidthCols(20f, 40f).setWidth(width / 2)
+    private fun createPatientCharacteristics(annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch): Table {
+        val table = Tables.createFixedWidthCols(150f, 150f).setWidth(500f)
         for (patientPopulation in annotation.trialReferences.iterator().next().patientPopulations) {
-            if (generateOptions(
-                    patientPopulation.therapy!!.synonyms ?: patientPopulation.therapy!!.therapyName
-                ).any { therapy -> therapy == treatment.treatmentCandidate.treatment.name }
-            ) {
+            if (!patientPopulation.therapy.isNullOrEmpty() && patientPopulation.therapy == treatment.treatmentCandidate.treatment.name) {
                 table.addCell(Cells.createContent("WHO/ECOG"))
                 table.addCell(Cells.createContent(createWhoString(patientPopulation)))
                 table.addCell(Cells.createContent("Primary tumor location"))
@@ -78,18 +75,18 @@ class EfficacyEvidenceGenerator(
                 table.addCell(Cells.createContent("Mutations"))
                 table.addCell(Cells.createContent(patientPopulation.mutations ?: "NA"))
                 table.addCell(Cells.createContent("Metastatic sites"))
-                table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + "(" + it.value.value + "%)" }
+                table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
                     ?: "No information"))
                 table.addCell(Cells.createContent("Previous systemic chemotherapy"))
                 table.addCell(Cells.createContent(patientPopulation.priorSystemicTherapy.toString()))
             }
         }
-        table.addCell(
-            Cells.createSpanningSubNote(
-                "This patient matches all patient characteristics of the treatment group, except for age (68 years)",
-                table
-            )
-        )
+//        table.addCell(
+//            Cells.createSpanningSubNote(
+//                "This patient matches all patient characteristics of the treatment group, except for age (68 years)",
+//                table
+//            )
+//        )
         return table
     }
 
@@ -104,17 +101,14 @@ class EfficacyEvidenceGenerator(
             patientsWithWho3?.let { strings.add("3: $it") }
             patientsWithWho4?.let { strings.add("4: $it") }
         }
-        return strings.joinToString(", ")
+        return strings.joinToString("\n")
     }
 
-    private fun createThirdPart(annotation: ExtendedEvidenceEntry, treatment: StandardOfCareMatch): Table {
+    private fun createEndpoints(annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
         val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
         for (patientPopulation in paper.patientPopulations) {
-            if (generateOptions(
-                    patientPopulation.therapy!!.synonyms ?: patientPopulation.therapy!!.therapyName
-                ).any { therapy -> therapy == treatment.treatmentCandidate.treatment.name }
-            ) {
+            if (!patientPopulation.therapy.isNullOrEmpty() && patientPopulation.therapy == treatment.treatmentCandidate.treatment.name) {
                 val analysisGroup =
                     patientPopulation.analysisGroups.iterator().next() // assume only 1 analysis group per patient population
                 table.addCell(Cells.createValue("Median PFS: "))
@@ -149,20 +143,5 @@ class EfficacyEvidenceGenerator(
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.createEmpty())
         return table
-    }
-
-    private fun generateOptions(therapy: String): List<String> {
-        return therapy.split("|").flatMap { item ->
-            if (item.contains(" + ")) {
-                createPermutations(item)
-            } else {
-                listOf(item)
-            }
-        }
-    }
-
-    private fun createPermutations(treatment: String): List<String> {
-        val drugs = treatment.split(" + ")
-        return listOf(drugs.joinToString("+"), drugs.reversed().joinToString("+"))
     }
 }
