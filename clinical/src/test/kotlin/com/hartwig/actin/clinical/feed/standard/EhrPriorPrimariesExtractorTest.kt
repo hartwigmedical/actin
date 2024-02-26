@@ -26,7 +26,7 @@ class EhrPriorPrimariesExtractorTest {
     }
 
     @Test
-    fun `Should default tumor status to UNKOWN when null`() {
+    fun `Should default tumor status to UNKNOWN when null`() {
         val extractor = EhrPriorPrimariesExtractor()
         val ehrPatientRecord = mockk<EhrPatientRecord>()
         every { ehrPatientRecord.priorPrimaries } returns listOf(
