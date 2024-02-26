@@ -1,19 +1,22 @@
 package com.hartwig.actin.algo.ckb
 
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.json.CkbAnalysisGroup
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
 import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
-import com.hartwig.actin.algo.ckb.json.CkbTherapy
-import com.hartwig.actin.algo.ckb.json.CkbTherapyOfPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
+import com.hartwig.actin.algo.ckb.json.CkbTherapy
+import com.hartwig.actin.algo.ckb.json.CkbTherapyOfPopulation
+import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
 import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.ConfidenceInterval
 import com.hartwig.actin.efficacy.DerivedMetric
-import com.hartwig.actin.efficacy.ExtendedEvidenceEntry
+import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.efficacy.PrimaryEndPoint
 import com.hartwig.actin.efficacy.PrimaryEndPointType
@@ -23,16 +26,20 @@ import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.efficacy.ValuePercentage
 import com.hartwig.actin.efficacy.VariantRequirement
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import com.hartwig.actin.efficacy.Therapy
+import java.util.Collections
 
-object ExtendedEvidenceEntryFactory {
+class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
-    fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
+    fun readEvidenceFromFile(ckbExtendedEvidenceJson: String): List<CkbExtendedEvidenceEntry> {
+        return CkbExtendedEvidenceJson.read(ckbExtendedEvidenceJson)
+    }
+
+    fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<EfficacyEntry> {
         return ckbExtendedEvidenceEntries.map(::resolveCkbExtendedEvidence)
     }
 
-    private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): ExtendedEvidenceEntry {
-        return ExtendedEvidenceEntry(
+    private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): EfficacyEntry {
+        return EfficacyEntry(
             acronym = ckbExtendedEvidenceEntry.title,
             phase = ckbExtendedEvidenceEntry.phase,
             therapies = convertTherapies(ckbExtendedEvidenceEntry.therapies),
@@ -42,8 +49,47 @@ object ExtendedEvidenceEntryFactory {
         )
     }
 
-    fun convertTherapies(therapies: List<CkbTherapy>): List<Therapy> {
-        return therapies.map { therapy -> Therapy(therapyName = therapy.therapyName, synonyms = therapy.synonyms) }
+    fun convertTherapies(therapies: List<CkbTherapy>): List<String> {
+        return therapies.map { therapy -> findTreatmentInDatabase(therapy.therapyName, therapy.synonyms) }
+    }
+
+    private fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): String {
+        val options = generateOptions((therapySynonyms?.split("|") ?: emptyList()) + therapyName)
+        val treatments = options.mapNotNull { treatmentDatabase.findTreatmentByName(it)?.name }.toSet()
+
+        return when {
+            treatments.size == 1 -> treatments.first()
+            else -> throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $options")
+        }
+    }
+
+    fun generateOptions(therapies: List<String>): List<String> {
+        return therapies.flatMap { therapy ->
+            if (therapy.contains(" + ")) {
+                permutations(therapy.uppercase())
+            } else {
+                listOf(therapy.uppercase())
+            }
+        }
+    }
+
+    private fun permutations(treatment: String): List<String> {
+        val drugs = treatment.split(" + ")
+        val permutations = mutableListOf<String>()
+        generatePermutations(drugs, permutations, 0, drugs.size - 1)
+        return permutations
+    }
+
+    private fun generatePermutations(drugs: List<String>, permutations: MutableList<String>, left: Int, right: Int) {
+        if (left == right) {
+            permutations.add(drugs.joinToString("+"))
+        } else {
+            for (i in left..right) {
+                Collections.swap(drugs, left, i)
+                generatePermutations(drugs, permutations, left + 1, right)
+                Collections.swap(drugs, left, i)
+            }
+        }
     }
 
     fun extractTherapeuticSettingFromString(therapeuticSetting: String): Intent {
@@ -110,8 +156,8 @@ object ExtendedEvidenceEntryFactory {
         }
     }
 
-    private fun convertTherapy(therapy: CkbTherapyOfPopulation): Therapy {
-        return Therapy(therapyName = therapy.therapyName, synonyms = therapy.synonyms)
+    private fun convertTherapy(therapy: CkbTherapyOfPopulation): String {
+        return findTreatmentInDatabase(therapy.therapyName, therapy.synonyms)
     }
 
     fun convertTimeOfMetastases(timeOfMetastases: String): TimeOfMetastases {
@@ -129,7 +175,7 @@ object ExtendedEvidenceEntryFactory {
     fun convertPrimaryTumorLocation(primaryTumorLocations: String): Map<String, Int> {
         return try {
             primaryTumorLocations.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
-        } catch (e: Exception) {
+        } catch (e: JsonSyntaxException) {
             val regex = """^(\w+): (\d+)(?: \(\d+(?:\.\d+)?%\))?$""".toRegex()
             primaryTumorLocations.split(", ").associate { item ->
                 regex.find(item)?.let {

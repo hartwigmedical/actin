@@ -3,10 +3,7 @@ package com.hartwig.actin.algo
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory.create
-import com.hartwig.actin.algo.ckb.ExtendedEvidenceEntryFactory
-import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
-import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
-import com.hartwig.actin.efficacy.ExtendedEvidenceEntry
+import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
@@ -26,7 +23,6 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.File
 import java.io.IOException
 import kotlin.system.exitProcess
 
@@ -63,19 +59,14 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
         val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
+        val evidenceEntries =
+            EfficacyEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(
+                EfficacyEntryFactory(treatmentDatabase).readEvidenceFromFile(
+                    config.extendedEfficacy
+                )
+            )
 
-        val EXTENDED_EFFICACY_JSON_PATH = listOf(
-            System.getProperty("user.home"),
-            "hmf",
-            "repos",
-            "actin-resources-private",
-            "ckb_extended_efficacy",
-            "extended_efficacy_evidence_output.json"
-        ).joinToString(File.separator)
-        val jsonEntries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(EXTENDED_EFFICACY_JSON_PATH)
-        val entries: List<ExtendedEvidenceEntry> = ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(jsonEntries)
-
-        val match = TreatmentMatcher.create(resources, trials, entries).evaluateAndAnnotateMatchesForPatient(patient)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries).evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)

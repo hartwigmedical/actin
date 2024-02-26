@@ -4,14 +4,17 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 
 object TestExtendedEvidenceEntryFactory {
 
-    fun createProperTestExtendedEvidenceEntry(): ExtendedEvidenceEntry {
-        return ExtendedEvidenceEntry(
-            acronym = "Study of treatment 1 instead of treatment 2",
-            phase = "Phase III",
-            therapies = listOf(Therapy(therapyName = "Vemurafenib", synonyms = null)),
-            therapeuticSetting = Intent.ADJUVANT,
-            variantRequirements = listOf(VariantRequirement(name = "EGFR positive", requirementType = "required")),
-            trialReferences = listOf(createReference())
+    fun createProperTestExtendedEvidenceEntries(): List<EfficacyEntry> {
+        return listOf(
+            EfficacyEntry(
+                acronym = "Study of Pembrolizumab",
+                phase = "Phase III",
+                therapies = listOf("PEMBROLIZUMAB"),
+                therapeuticSetting = Intent.ADJUVANT,
+
+                variantRequirements = listOf(VariantRequirement(name = "MSI high", requirementType = "required")),
+                trialReferences = listOf(createReference())
+            )
         )
     }
 
@@ -21,7 +24,7 @@ object TestExtendedEvidenceEntryFactory {
 
     fun createPatientPopulation(): PatientPopulation {
         return PatientPopulation(
-            name = "VEMURAFENIB",
+            name = "Pembrolizumab",
             isControl = true,
             ageMin = 55,
             ageMax = 65,
@@ -43,7 +46,7 @@ object TestExtendedEvidenceEntryFactory {
             patientsWithPrimaryTumorRemoved = 25,
             patientsPerMetastaticSites = mapOf("Lung" to ValuePercentage(100, 100.0)),
             timeOfMetastases = TimeOfMetastases.BOTH,
-            therapy = Therapy("Vemurafenib", null),
+            therapy = "PEMBROLIZUMAB",
             priorSystemicTherapy = "Chemo",
             patientsWithMSI = 33,
             medianFollowUpForSurvival = "30",

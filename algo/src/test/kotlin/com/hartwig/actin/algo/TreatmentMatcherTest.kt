@@ -1,15 +1,16 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.CurrentDateProvider
-import com.hartwig.actin.algo.ckb.ExtendedEvidenceEntryFactory
+import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
-import com.hartwig.actin.algo.datamodel.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -29,11 +30,12 @@ class TreatmentMatcherTest {
     private val trialMatcher = mockk<TrialMatcher> {
         every { determineEligibility(patient, trials) } returns trialMatches
     }
-    private val entries =
-        ExtendedEvidenceEntryFactory.extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+    private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+    private val evidenceEntries =
+        EfficacyEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val treatmentMatcher = TreatmentMatcher(
-        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), entries
+        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), evidenceEntries
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
@@ -64,7 +66,7 @@ class TreatmentMatcherTest {
         assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patient))
             .isEqualTo(
                 expectedTreatmentMatch.copy(
-                    standardOfCareMatches = EvaluatedTreatmentAnnotator(entries).annotate(
+                    standardOfCareMatches = EvaluatedTreatmentAnnotator.create(evidenceEntries).annotate(
                         expectedSocTreatments
                     )
                 )
