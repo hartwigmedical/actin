@@ -13,8 +13,8 @@ class EhrPriorPrimariesExtractor :
                 tumorLocation = it.tumorLocation,
                 tumorType = it.tumorType,
                 status = it.status?.let { status -> TumorStatus.valueOf(status) } ?: TumorStatus.UNKNOWN,
-                diagnosedYear = it.diagnosisDate.year,
-                diagnosedMonth = it.diagnosisDate.monthValue,
+                diagnosedYear = it.diagnosisDate?.year,
+                diagnosedMonth = it.diagnosisDate?.monthValue,
                 tumorSubLocation = "",
                 tumorSubType = "",
                 treatmentHistory = ""
