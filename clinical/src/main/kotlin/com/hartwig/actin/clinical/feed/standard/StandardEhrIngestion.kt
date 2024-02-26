@@ -129,8 +129,7 @@ class StandardEhrIngestion(
             EhrMedicationExtractor(
                 atcModel,
                 curationDatabaseContext.qtProlongingCuration,
-                curationDatabaseContext.cypInteractionCuration,
-                curationDatabaseContext.medicationDosageCuration
+                curationDatabaseContext.cypInteractionCuration
             ),
             EhrSurgeryExtractor(),
             EhrIntolerancesExtractor(atcModel, curationDatabaseContext.intoleranceCuration),

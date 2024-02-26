@@ -47,8 +47,7 @@ class StandardEhrIngestionTest {
             medicationExtractor = EhrMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
                 qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
-                cypInteractionCuration = curationDatabase.cypInteractionCuration,
-                dosageCuration = curationDatabase.medicationDosageCuration
+                cypInteractionCuration = curationDatabase.cypInteractionCuration
             ),
             surgeryExtractor = EhrSurgeryExtractor(),
             toxicityExtractor = EhrToxicityExtractor(curationDatabase.toxicityCuration),
