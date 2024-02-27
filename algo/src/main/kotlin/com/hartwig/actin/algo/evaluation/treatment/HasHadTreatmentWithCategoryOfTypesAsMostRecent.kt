@@ -8,22 +8,22 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 
 class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
-    private val category: TreatmentCategory, private val type: TreatmentType?
+    private val category: TreatmentCategory, private val types: Set<TreatmentType>?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorAntiCancerDrugs = record.clinical.oncologicalHistory
             .filter { it.categories().any { category -> TreatmentCategory.CANCER_TREATMENT_CATEGORIES.contains(category) } }
 
-        val treatmentMatch = if (type != null) {
+        val treatmentMatch = if (types != null) {
             priorAntiCancerDrugs
-                .filter { it.isOfType(type) == true }
+                .filter { it.matchesTypeFromSet(types) == true }
         } else {
             priorAntiCancerDrugs.filter { it.categories().contains(category) }
         }
 
         val mostRecentAntiCancerDrug = priorAntiCancerDrugs.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
-        val nullableTypeString = type?.let { " ${it.display()}" }.orEmpty()
+        val nullableTypeString = types?.let { " ${types.joinToString { it.display() }}"}.orEmpty()
 
         return when {
             priorAntiCancerDrugs.isEmpty() -> {
@@ -33,14 +33,14 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
                 )
             }
 
-            type != null && mostRecentAntiCancerDrug?.isOfType(type) == true -> {
+            types != null && mostRecentAntiCancerDrug?.matchesTypeFromSet(types) == true -> {
                 EvaluationFactory.pass(
-                    "Patient has received ${type.display()} ${category.display()} as the most recent treatment line",
-                    "Has received ${type.display()} ${category.display()} as most recent treatment line"
+                    "Patient has received$nullableTypeString ${category.display()} as the most recent treatment line",
+                    "Has received$nullableTypeString ${category.display()} as most recent treatment line"
                 )
             }
 
-            type == null && mostRecentAntiCancerDrug?.categories()?.contains(category) == true -> {
+            types == null && mostRecentAntiCancerDrug?.categories()?.contains(category) == true -> {
                 EvaluationFactory.pass(
                     "Patient has received ${category.display()} as the most recent treatment line",
                     "Has received ${category.display()} as most recent treatment line"
