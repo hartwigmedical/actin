@@ -2,54 +2,65 @@ package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import java.time.LocalDate
 
-class HasHadPriorConditionWithNameRecently (private val nameToFind: String, private val minDate: LocalDate) : EvaluationFunction {
+class HasHadPriorConditionWithNameRecently (
+    private val conditionNameToFind: String,
+    private val minDate: LocalDate
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        var matchingConditionAfterMinDate: String? = null
-        var matchingConditionUnclearDate: String? = null
-        var matchingConditionIsWithinWarnDate = false
+        val matchingConditionSummary = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+            .filter { it.name.lowercase().contains(conditionNameToFind.lowercase()) }
+            .groupBy {
+                val isAfterMinDate = DateComparison.isAfterDate(minDate, it.year, it.month)
+                when {
+                    isAfterMinDate == true && DateComparison.isBeforeDate(minDate.plusMonths(2), it.year, it.month) == true -> {
+                        EvaluationResult.WARN
+                    }
 
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
-            if (condition.name.lowercase().contains(nameToFind.lowercase())) {
-                val isAfterMinDate = DateComparison.isAfterDate(minDate, condition.year, condition.month)
-                if (isAfterMinDate == null) {
-                    matchingConditionUnclearDate = condition.name
-                } else if (isAfterMinDate) {
-                    matchingConditionAfterMinDate = condition.name
-                    val isBeforeWarnDate = DateComparison.isBeforeDate(minDate.plusMonths(2), condition.year, condition.month)
-                    matchingConditionIsWithinWarnDate = isBeforeWarnDate != null && isBeforeWarnDate
+                    isAfterMinDate == true -> EvaluationResult.PASS
+                    isAfterMinDate == null -> EvaluationResult.UNDETERMINED
+                    else -> EvaluationResult.FAIL
                 }
             }
-        }
-        if (matchingConditionAfterMinDate != null) {
-            return if (matchingConditionIsWithinWarnDate) {
-                EvaluationFactory.warn(
-                    "Patient has history of $matchingConditionAfterMinDate (matched to condition name: $nameToFind) near start of specified time frame",
-                    "Recent history of $nameToFind"
-                )
-            } else {
+
+        return when {
+            matchingConditionSummary.containsKey(EvaluationResult.PASS) -> {
                 EvaluationFactory.pass(
-                    "Patient has history of $matchingConditionAfterMinDate (matched to condition name: $nameToFind) within specified time frame",
-                    "Recent history of $nameToFind"
+                    "Patient has history of ${matchingConditionSummary[EvaluationResult.PASS]?.joinToString(",")} " +
+                            "(matched to condition name: $conditionNameToFind) within specified time frame",
+                    "Recent history of $conditionNameToFind"
+                )
+            }
+
+            matchingConditionSummary.containsKey(EvaluationResult.WARN) -> {
+                EvaluationFactory.warn(
+                    "Patient has history of ${matchingConditionSummary[EvaluationResult.WARN]?.joinToString(",")} " +
+                            "(matched to condition name: $conditionNameToFind) near start of specified time frame",
+                    "Recent history of $conditionNameToFind"
+                )
+            }
+
+            matchingConditionSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
+                EvaluationFactory.undetermined(
+                    "Patient has history of ${matchingConditionSummary[EvaluationResult.UNDETERMINED]?.joinToString(",")} " +
+                            "(matched to condition name: $conditionNameToFind), but undetermined whether that is within specified time frame",
+                    "History of $conditionNameToFind"
+                )
+            }
+
+            else -> {
+                EvaluationFactory.fail(
+                    "Patient has no recent history of $conditionNameToFind",
+                    "No recent history of $conditionNameToFind"
                 )
             }
         }
-        return if (matchingConditionUnclearDate != null) {
-            EvaluationFactory.undetermined(
-                "Patient has history of $matchingConditionUnclearDate (matched to condition name: $nameToFind), " +
-                        "but undetermined whether that is within specified time frame",
-                "History of $nameToFind"
-            )
-        } else
-            EvaluationFactory.fail(
-                "Patient has no recent history of $nameToFind",
-                "No history of $nameToFind"
-            )
     }
 }

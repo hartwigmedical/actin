@@ -79,6 +79,25 @@ class HasHadPriorConditionWithNameRecentlyTest {
         )
     }
 
+    @Test
+    fun `Should pass when warn and pass matching condition are given`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                OtherConditionTestFactory.withPriorOtherConditions(
+                    listOf(
+                        OtherConditionTestFactory.priorOtherCondition(
+                            name = "severe condition", year = 2022
+                        ),
+                        OtherConditionTestFactory.priorOtherCondition(
+                            name = "severe condition", year = 2023
+                        )
+                    )
+                )
+            )
+        )
+    }
+
 
     @Test
     fun `Should warn when matching condition is just after the minDate`() {
