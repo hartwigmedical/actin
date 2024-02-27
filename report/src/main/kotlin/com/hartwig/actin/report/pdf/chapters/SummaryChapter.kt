@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
-import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryTrialGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator
@@ -79,7 +79,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
 
         val generators = listOfNotNull(
-            PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
+            PatientClinicalHistoryTrialGenerator(report.clinical, keyWidth, valueWidth),
             MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth),
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, null, contentWidth(), "Trial"),
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),

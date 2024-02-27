@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 interface ReportWriter {
+
     val writeToDisk: Boolean
     val outputDirectory: String?
 
