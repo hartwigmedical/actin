@@ -5,7 +5,7 @@ import com.hartwig.actin.report.pdf.ReportWriterFactory.createInMemoryReportWrit
 import org.junit.Test
 import java.io.IOException
 
-class ReportWriterTest {
+class ReportWriterTrialTest {
 
     @Test
     @Throws(IOException::class)

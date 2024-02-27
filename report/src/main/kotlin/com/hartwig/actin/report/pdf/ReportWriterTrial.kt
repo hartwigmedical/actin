@@ -2,11 +2,11 @@ package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
-import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
-import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
-import com.hartwig.actin.report.pdf.chapters.SummaryChapterCRC
+import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
 import com.hartwig.actin.report.pdf.util.Constants
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.util.Paths
@@ -23,10 +23,12 @@ import org.apache.logging.log4j.LogManager
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
-class ReportWriterCRC(private val writeToDisk: Boolean, private val outputDirectory: String?) : ReportWriter {
+class ReportWriterTrial(private val writeToDisk: Boolean, private val outputDirectory: String?) : ReportWriter {
+
+
     @Throws(IOException::class)
     fun write(report: Report) {
-        write(report, true)
+        write(report, false)
     }
 
     @Synchronized
@@ -35,22 +37,22 @@ class ReportWriterCRC(private val writeToDisk: Boolean, private val outputDirect
         LOGGER.debug("Initializing output styles")
         Styles.initialize()
 
-        val efficacyEvidenceDetailsChapter = if (enableExtendedMode) {
-            LOGGER.info("Including SOC literature details")
-            EfficacyEvidenceDetailsChapter(report.treatmentMatch.standardOfCareMatches)
+        val detailsChapter = if (enableExtendedMode) {
+            LOGGER.info("Including trial matching details")
+            TrialMatchingDetailsChapter(report)
         } else null
 
         val chapters = listOfNotNull(
-            SummaryChapterCRC(report),
-            EfficacyEvidenceChapter(report),
+            SummaryChapter(report),
+            MolecularDetailsChapter(report),
             ClinicalDetailsChapter(report),
             TrialMatchingChapter(report, enableExtendedMode),
-            efficacyEvidenceDetailsChapter
+            detailsChapter
         )
         writePdfChapters(report.patientId, chapters, enableExtendedMode)
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(ReportWriterCRC::class.java)
+        private val LOGGER = LogManager.getLogger(ReportWriterTrial::class.java)
     }
 }

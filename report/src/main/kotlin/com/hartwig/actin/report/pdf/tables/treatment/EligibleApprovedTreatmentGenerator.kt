@@ -38,66 +38,71 @@ class EligibleApprovedTreatmentGenerator(
             }
 
             "CRC" -> {
-                val table = Tables.createFixedWidthCols(1f, 1f, 1f).setWidth(width)
-                table.addHeaderCell(Cells.createHeader("Treatment"))
-                table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
-                table.addHeaderCell(Cells.createHeader("Personalized PFS prediction"))
-                treatments?.forEach { treatment: AnnotatedTreatmentMatch ->
-                    table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
-                    val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
-                    if (treatment.annotations.isEmpty()) {
-                        subtable.addCell(Cells.createValue(" "))
-                        subtable.addCell(Cells.createValue("No literature efficacy evidence available yet"))
-                    } else {
-                        for (annotation in treatment.annotations) {
-                            val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
-                            for (patientPopulation in paper.patientPopulations) {
-                                if (!patientPopulation.therapy.isNullOrEmpty() && patientPopulation.therapy == treatment.treatmentCandidate.treatment.name) {
-                                    val analysisGroup = patientPopulation.analysisGroups.iterator()
-                                        .next() // assume only 1 analysis group per patient population
-                                    subtable.addCell(Cells.createEmpty())
-                                    subtable.addCell(
-                                        Cells.createTitle(annotation.acronym)
-                                            .setAction(PdfAction.createURI(annotation.trialReferences.first().url))
-                                            .addStyle(Styles.urlStyle())
-                                    )
-                                    subtable.addCell(Cells.createValue("PFS: "))
-                                    for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
-                                        if (primaryEndPoint.name == "Median Progression-Free Survival") {
-                                            subtable.addCell(
-                                                Cells.createKey(
-                                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                        ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                if (treatments.isNullOrEmpty()) {
+                    return Tables.createSingleColWithWidth(width)
+                        .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
+                } else {
+                    val table = Tables.createFixedWidthCols(1f, 1f, 1f).setWidth(width)
+                    table.addHeaderCell(Cells.createHeader("Treatment"))
+                    table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
+                    table.addHeaderCell(Cells.createHeader("Personalized PFS prediction"))
+                    treatments?.forEach { treatment: AnnotatedTreatmentMatch ->
+                        table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
+                        val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
+                        if (treatment.annotations.isEmpty()) {
+                            subtable.addCell(Cells.createValue(" "))
+                            subtable.addCell(Cells.createValue("No literature efficacy evidence available yet"))
+                        } else {
+                            for (annotation in treatment.annotations) {
+                                val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
+                                for (patientPopulation in paper.patientPopulations) {
+                                    if (!patientPopulation.therapy.isNullOrEmpty() && patientPopulation.therapy == treatment.treatmentCandidate.treatment.name) {
+                                        val analysisGroup = patientPopulation.analysisGroups.iterator()
+                                            .next() // assume only 1 analysis group per patient population
+                                        subtable.addCell(Cells.createEmpty())
+                                        subtable.addCell(
+                                            Cells.createTitle(annotation.acronym)
+                                                .setAction(PdfAction.createURI(annotation.trialReferences.first().url))
+                                                .addStyle(Styles.urlStyle())
+                                        )
+                                        subtable.addCell(Cells.createValue("PFS: "))
+                                        for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                                            if (primaryEndPoint.name == "Median Progression-Free Survival") {
+                                                subtable.addCell(
+                                                    Cells.createKey(
+                                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                                    )
                                                 )
-                                            )
-                                        } else {
-                                            subtable.addCell(Cells.createKey("NE"))
+                                            } else {
+                                                subtable.addCell(Cells.createKey("NE"))
+                                            }
                                         }
-                                    }
 
-                                    subtable.addCell(Cells.createValue("OS: "))
-                                    for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
-                                        if (primaryEndPoint.name == "Median Overall Survival") {
-                                            subtable.addCell(
-                                                Cells.createKey(
-                                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                        ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                        subtable.addCell(Cells.createValue("OS: "))
+                                        for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                                            if (primaryEndPoint.name == "Median Overall Survival") {
+                                                subtable.addCell(
+                                                    Cells.createKey(
+                                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                                    )
                                                 )
-                                            )
-                                        } else {
-                                            subtable.addCell(Cells.createKey("NE"))
+                                            } else {
+                                                subtable.addCell(Cells.createKey("NE"))
+                                            }
                                         }
+                                        subtable.addCell(Cells.createValue(" "))
+                                        subtable.addCell(Cells.createValue(" "))
                                     }
-                                    subtable.addCell(Cells.createValue(" "))
-                                    subtable.addCell(Cells.createValue(" "))
                                 }
                             }
                         }
+                        table.addCell(Cells.createContent(subtable))
+                        table.addCell(Cells.createContent("Not evaluated yet"))
                     }
-                    table.addCell(Cells.createContent(subtable))
-                    table.addCell(Cells.createContent("Not evaluated yet"))
+                    return makeWrapping(table)
                 }
-                return makeWrapping(table)
             }
 
             else -> throw IllegalStateException("Unknown mode: $mode")

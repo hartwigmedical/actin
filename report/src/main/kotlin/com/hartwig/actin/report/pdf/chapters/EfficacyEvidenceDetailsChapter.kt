@@ -31,20 +31,24 @@ class EfficacyEvidenceDetailsChapter(private val socMatches: List<AnnotatedTreat
     private fun addEfficacyEvidenceDetails(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generators: MutableList<TableGenerator> = mutableListOf()
-        val allAnnotations = socMatches!!.flatMap { it.annotations }
-        for (annotation in allAnnotations) {
-            val efficacyEvidenceGenerator = EfficacyEvidenceDetailsGenerator(annotation, contentWidth())
-            generators.add(efficacyEvidenceGenerator)
-        }
-
-        for (i in generators.indices) {
-            val generator = generators[i]
-            table.addCell(Cells.createSubTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
+        val allAnnotations = socMatches?.flatMap { it.annotations } ?: emptyList()
+        if (allAnnotations.isNotEmpty()) {
+            for (annotation in allAnnotations) {
+                val efficacyEvidenceGenerator = EfficacyEvidenceDetailsGenerator(annotation, contentWidth())
+                generators.add(efficacyEvidenceGenerator)
             }
+
+            for (i in generators.indices) {
+                val generator = generators[i]
+                table.addCell(Cells.createSubTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
+                if (i < generators.size - 1) {
+                    table.addCell(Cells.createEmpty())
+                }
+            }
+            document.add(table)
+        } else {
+            document.add(Paragraph("There are no standard of care treatment options for this patient").addStyle(Styles.tableContentStyle()))
         }
-        document.add(table)
     }
 }

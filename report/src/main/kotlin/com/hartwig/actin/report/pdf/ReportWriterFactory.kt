@@ -1,11 +1,11 @@
 package com.hartwig.actin.report.pdf
 
 object ReportWriterFactory {
-    fun createProductionReportWriter(outputDirectory: String): ReportWriter {
-        return ReportWriter(true, outputDirectory)
+    fun createProductionReportWriter(outputDirectory: String): ReportWriterTrial {
+        return ReportWriterTrial(true, outputDirectory)
     }
 
-    fun createInMemoryReportWriter(): ReportWriter {
-        return ReportWriter(false, null)
+    fun createInMemoryReportWriter(): ReportWriterTrial {
+        return ReportWriterTrial(false, null)
     }
 }

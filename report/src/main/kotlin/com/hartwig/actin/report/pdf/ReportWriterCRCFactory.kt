@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf
 
 object ReportWriterCRCFactory {
     fun createProductionReportWriter(outputDirectory: String): ReportWriterCRC {
-        return ReportWriterCRC(true, outputDirectory)
+        return ReportWriter(true, outputDirectory)
     }
 
     fun createInMemoryReportWriter(): ReportWriterCRC {

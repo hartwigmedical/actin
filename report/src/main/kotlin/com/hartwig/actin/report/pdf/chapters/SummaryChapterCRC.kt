@@ -56,7 +56,6 @@ class SummaryChapterCRC(private val report: Report) : ReportChapter {
         for (i in generators.indices) {
             val generator = generators[i]
             table.addCell(Cells.createTitle(generator.title()))
-            if (generator.title() == "Standard of care options considered potentially eligible") table.addCell(Cells.createKey("The following standard of care treatment(s) could be an option for this patient."))
             table.addCell(Cells.create(generator.contents()))
             if (i < generators.size - 1) {
                 table.addCell(Cells.createEmpty())

@@ -18,24 +18,29 @@ class EfficacyEvidenceGenerator(
     }
 
     override fun contents(): Table {
-        val table = Tables.createFixedWidthCols(100f, width - 250f, 150f).setWidth(width)
-        table.addHeaderCell(Cells.createHeader("Treatment"))
-        table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
-        table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
-        treatments?.forEach { treatment: AnnotatedTreatmentMatch ->
-            table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
-            val subtable = Tables.createSingleColWithWidth(width / 2)
-            if (treatment.annotations.isNotEmpty()) {
-                for (annotation in treatment.annotations) {
-                    subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, treatment)))
-                }
-            } else subtable.addCell(Cells.createContent("No literature evidence available yet"))
+        if (treatments.isNullOrEmpty()) {
+            return Tables.createSingleColWithWidth(width)
+                .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
+        } else {
+            val table = Tables.createFixedWidthCols(100f, width - 250f, 150f).setWidth(width)
+            table.addHeaderCell(Cells.createHeader("Treatment"))
+            table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
+            table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
+            treatments?.forEach { treatment: AnnotatedTreatmentMatch ->
+                table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
+                val subtable = Tables.createSingleColWithWidth(width / 2)
+                if (treatment.annotations.isNotEmpty()) {
+                    for (annotation in treatment.annotations) {
+                        subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, treatment)))
+                    }
+                } else subtable.addCell(Cells.createContent("No literature evidence available yet"))
 
-            table.addCell(Cells.createContent(subtable))
+                table.addCell(Cells.createContent(subtable))
 
-            table.addCell(Cells.createContent("Not evaluated yet"))
+                table.addCell(Cells.createContent("Not evaluated yet"))
+            }
+            return table
         }
-        return table
     }
 
     private fun createOneLiteraturePart(width: Float, annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch): Table {
