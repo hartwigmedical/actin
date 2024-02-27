@@ -229,7 +229,7 @@ class CohortStatusResolverTest {
     }
 
     private fun cohortDefinitionConfig(vararg ctcCohortIds: Int) =
-        TestCohortDefinitionConfigFactory.MINIMAL.copy(ctcCohortIds = ctcCohortIds.map { it.toString() }.toSet())
+        TestCohortDefinitionConfigFactory.MINIMAL.copy(externalCohortIds = ctcCohortIds.map(Int::toString).toSet())
 
     companion object {
         private const val PARENT_1_OPEN_WITH_SLOTS_COHORT_ID = 1

@@ -8,7 +8,7 @@ class CohortDefinitionConfigFactory : TrialConfigFactory<CohortDefinitionConfig>
         return CohortDefinitionConfig(
             trialId = parts[fields["trialId"]!!],
             cohortId = parts[fields["cohortId"]!!],
-            ctcCohortIds = toSet(parts[fields["ctcCohortIds"]!!]),
+            externalCohortIds = toSet(parts[fields["externalCohortIds"]!!]),
             evaluable = ResourceFile.bool(parts[fields["evaluable"]!!]),
             open = ResourceFile.optionalBool(parts[fields["open"]!!]),
             slotsAvailable = ResourceFile.optionalBool(parts[fields["slotsAvailable"]!!]),
@@ -17,13 +17,13 @@ class CohortDefinitionConfigFactory : TrialConfigFactory<CohortDefinitionConfig>
         )
     }
 
-    private fun toSet(ctcCohortIdString: String): Set<String> {
-        return if (ctcCohortIdString.isEmpty()) emptySet() else {
-            ctcCohortIdString.split(CTC_COHORT_DELIMITER).dropLastWhile { it.isEmpty() }.toSet()
+    private fun toSet(rawString: String): Set<String> {
+        return if (rawString.isEmpty()) emptySet() else {
+            rawString.split(DELIMITER).dropLastWhile { it.isEmpty() }.toSet()
         }
     }
 
     companion object {
-        private const val CTC_COHORT_DELIMITER = ";"
+        private const val DELIMITER = ";"
     }
 }
