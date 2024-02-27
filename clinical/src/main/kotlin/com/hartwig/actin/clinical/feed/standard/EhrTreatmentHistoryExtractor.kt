@@ -45,8 +45,13 @@ class EhrTreatmentHistoryExtractor(
                                 bestResponse = ehrTreatmentHistory.response?.let { response -> TreatmentResponse.valueOf(response) },
                                 switchToTreatments = switchToTreatments.extracted,
                                 cycles = ehrTreatmentHistory.administeredCycles,
+                                bodyLocations = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocations,
+                                bodyLocationCategories = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocationCategories,
+                                maintenanceTreatment = curatedTreatment.curated.treatmentHistoryDetails?.maintenanceTreatment,
                             ),
-                            isTrial = ehrTreatmentHistory.administeredInStudy
+                            isTrial = ehrTreatmentHistory.administeredInStudy,
+                            trialAcronym = curatedTreatment.curated.trialAcronym
+
                         )
                     ), switchToTreatments.evaluation
                 )
