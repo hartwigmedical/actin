@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.report.datamodel.ReportFactory
-import com.hartwig.actin.report.pdf.ReportWriterCRCFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -29,12 +28,12 @@ class ReporterApplication(private val config: ReporterConfig) {
         val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch)
         when (config.mode) {
             "Trial" -> {
-                val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
+                val writer = ReportWriterFactory.createProductionTrialReportWriter(config.outputDirectory)
                 writer.write(report, config.enableExtendedMode)
             }
 
             "CRC" -> {
-                val writer = ReportWriterCRCFactory.createProductionReportWriter(config.outputDirectory)
+                val writer = ReportWriterFactory.createProductionCRCReportWriter(config.outputDirectory)
                 writer.write(report, config.enableExtendedMode)
             }
 

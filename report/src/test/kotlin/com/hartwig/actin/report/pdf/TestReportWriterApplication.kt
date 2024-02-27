@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
-import com.hartwig.actin.report.pdf.ReportWriterCRCFactory.createProductionReportWriter
+import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionCRCReportWriter
 import org.apache.logging.log4j.LogManager
 import java.io.File
 
@@ -19,7 +19,7 @@ object TestReportWriterApplication {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val writer = createProductionReportWriter(WORK_DIRECTORY)
+        val writer = createProductionCRCReportWriter(WORK_DIRECTORY)
         val report = createTestReport()
         writer.write(report)
     }
