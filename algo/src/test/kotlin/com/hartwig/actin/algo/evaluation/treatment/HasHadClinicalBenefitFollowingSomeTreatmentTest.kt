@@ -61,13 +61,14 @@ class HasHadClinicalBenefitFollowingSomeTreatmentTest {
                 bestResponse = TreatmentResponse.COMPLETE_RESPONSE
             )
         )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(history1)))
+
         val history2 = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 TARGET_TREATMENT_WITH_SAME_CATEGORY_COMBINATION,
                 bestResponse = TreatmentResponse.COMPLETE_RESPONSE
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(history1)))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(history2)))
     }
 
