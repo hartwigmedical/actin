@@ -251,7 +251,7 @@ enum class EhrLesionLocation {
 
 @JacksonSerializable
 data class EhrPriorPrimary(
-    val diagnosisDate: LocalDate,
+    val diagnosisDate: LocalDate?,
     val tumorLocation: String,
     val tumorType: String,
     val status: String? = null,
