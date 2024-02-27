@@ -50,6 +50,7 @@ object TreatmentTestFactory {
         isTrial: Boolean = false,
         numCycles: Int? = null,
         bodyLocations: Set<String>? = null,
+        bodyLocationCategory: Set<BodyLocationCategory>? = null,
         switchToTreatments: List<TreatmentStage>? = null,
         maintenanceTreatment: TreatmentStage? = null,
         stopReasonDetail: String? = null,
@@ -62,6 +63,7 @@ object TreatmentTestFactory {
                 stopMonth,
                 numCycles,
                 bodyLocations,
+                bodyLocationCategory,
                 switchToTreatments,
                 maintenanceTreatment,
                 stopReasonDetail
@@ -74,6 +76,7 @@ object TreatmentTestFactory {
                 stopMonth = stopMonth,
                 cycles = numCycles,
                 bodyLocations = bodyLocations,
+                bodyLocationCategories = bodyLocationCategory,
                 switchToTreatments = switchToTreatments,
                 maintenanceTreatment = maintenanceTreatment,
                 stopReasonDetail = stopReasonDetail,

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.PatientIngestionStatus
@@ -15,6 +14,7 @@ import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
+import kotlin.io.path.name
 
 
 class StandardEhrIngestion(
@@ -31,7 +31,7 @@ class StandardEhrIngestion(
     private val treatmentHistoryExtractor: EhrTreatmentHistoryExtractor,
     private val clinicalStatusExtractor: EhrClinicalStatusExtractor,
     private val tumorDetailsExtractor: EhrTumorDetailsExtractor,
-    private val secondPrimaryExtractor: EhrSecondPrimariesExtractor,
+    private val secondPrimaryExtractor: EhrPriorPrimariesExtractor,
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
     private val bodyWeightExtractor: EhrBodyWeightExtractor
 ) : ClinicalFeedIngestion {
@@ -42,7 +42,7 @@ class StandardEhrIngestion(
     }
 
     override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
-        return Files.list(Paths.get(directory)).map {
+        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map {
             val ehrPatientRecord = mapper.readValue(Files.readString(it), EhrPatientRecord::class.java)
             val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
             val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
@@ -121,15 +121,13 @@ class StandardEhrIngestion(
         fun create(
             directory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel,
-            treatmentDatabase: TreatmentDatabase
+            atcModel: AtcModel
         ) = StandardEhrIngestion(
             directory,
             EhrMedicationExtractor(
                 atcModel,
                 curationDatabaseContext.qtProlongingCuration,
-                curationDatabaseContext.cypInteractionCuration,
-                curationDatabaseContext.medicationDosageCuration
+                curationDatabaseContext.cypInteractionCuration
             ),
             EhrSurgeryExtractor(),
             EhrIntolerancesExtractor(atcModel, curationDatabaseContext.intoleranceCuration),
@@ -139,10 +137,10 @@ class StandardEhrIngestion(
             EhrToxicityExtractor(curationDatabaseContext.toxicityCuration),
             EhrComplicationExtractor(curationDatabaseContext.complicationCuration),
             EhrPriorOtherConditionsExtractor(curationDatabaseContext.nonOncologicalHistoryCuration),
-            EhrTreatmentHistoryExtractor(treatmentDatabase),
+            EhrTreatmentHistoryExtractor(curationDatabaseContext.treatmentHistoryEntryCuration),
             EhrClinicalStatusExtractor(),
             EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration),
-            EhrSecondPrimariesExtractor(),
+            EhrPriorPrimariesExtractor(),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor()
         )

@@ -7,7 +7,7 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 object TestTrialConfigDatabaseFactory {
 
     fun createMinimalTestTrialConfigDatabase(): TrialConfigDatabase {
-        return TrialConfigDatabase(emptyList(), emptyList(), emptyList(), emptyList())
+        return TrialConfigDatabase(emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
     }
 
     fun createProperTestTrialConfigDatabase(): TrialConfigDatabase {
@@ -15,7 +15,8 @@ object TestTrialConfigDatabaseFactory {
             trialDefinitionConfigs = createTestTrialDefinitionConfigs(),
             cohortDefinitionConfigs = createTestCohortDefinitionConfigs(),
             inclusionCriteriaConfigs = createTestInclusionCriteriaConfigs(),
-            inclusionCriteriaReferenceConfigs = createTestInclusionCriteriaReferenceConfigs()
+            inclusionCriteriaReferenceConfigs = createTestInclusionCriteriaReferenceConfigs(),
+            unusedRulesToKeep = EligibilityRule.values().map(EligibilityRule::toString)
         )
     }
 
@@ -41,7 +42,7 @@ object TestTrialConfigDatabaseFactory {
             CohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "A",
-                ctcCohortIds = setOf("1", "2"),
+                externalCohortIds = setOf("1", "2"),
                 evaluable = true,
                 open = null,
                 slotsAvailable = null,
@@ -51,7 +52,7 @@ object TestTrialConfigDatabaseFactory {
             CohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "B",
-                ctcCohortIds = setOf("NA"),
+                externalCohortIds = setOf("NA"),
                 evaluable = true,
                 open = true,
                 slotsAvailable = false,
@@ -61,7 +62,7 @@ object TestTrialConfigDatabaseFactory {
             CohortDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_1,
                 cohortId = "C",
-                ctcCohortIds = setOf("wont_be_mapped_because_closed"),
+                externalCohortIds = setOf("wont_be_mapped_because_closed"),
                 evaluable = false,
                 open = false,
                 slotsAvailable = false,
