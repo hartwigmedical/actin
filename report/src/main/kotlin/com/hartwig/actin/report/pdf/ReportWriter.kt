@@ -12,6 +12,7 @@ import com.itextpdf.kernel.pdf.WriterProperties
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.properties.AreaBreakType
+import org.apache.logging.log4j.LogManager
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -45,16 +46,16 @@ interface ReportWriter {
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
             val outputFilePath =
-                (Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin" + (if (enableExtendedMode) ".extended" else "")
+                (Paths.forceTrailingFileSeparator(outputDirectory!!) + patientId + ".actin" + (if (enableExtendedMode) ".extended" else "")
                         + ".pdf")
-            ReportWriter.LOGGER.info("Writing PDF report to {}", outputFilePath)
+            LOGGER.info("Writing PDF report to {}", outputFilePath)
             val properties = WriterProperties().setFullCompressionMode(true)
                 .setCompressionLevel(CompressionConstants.BEST_COMPRESSION)
                 .useSmartMode()
             writer = PdfWriter(outputFilePath, properties)
             writer.compressionLevel = 9
         } else {
-            ReportWriter.LOGGER.info("Generating in-memory PDF report")
+            LOGGER.info("Generating in-memory PDF report")
             writer = PdfWriter(ByteArrayOutputStream())
         }
         val pdf = PdfDocument(writer)
@@ -69,5 +70,9 @@ interface ReportWriter {
             Constants.PAGE_MARGIN_LEFT
         )
         return document
+    }
+
+    companion object {
+        private val LOGGER = LogManager.getLogger(ReportWriter::class.java)
     }
 }
