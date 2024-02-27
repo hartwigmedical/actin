@@ -54,7 +54,7 @@ class TreatmentMatchJsonTest {
                 + "\"passSpecificMessages\":[\"msg 1\",\"msg 2\",\"msg 3\"],\"passGeneralMessages\":[],"
                 + "\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],"
                 + "\"failSpecificMessages\":[],\"failGeneralMessages\":[]}]],\"cohorts\":[]}],"
-                + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"Pembrolizumab\",\"isSystemic\":true,"
+                + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"PEMBROLIZUMAB\",\"isSystemic\":true,"
                 + "\"synonyms\":[],\"displayOverride\":null,\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"},"
                 + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}]},"
                 + "\"evaluations\":[{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],"

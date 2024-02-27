@@ -56,7 +56,7 @@ class EligibleApprovedTreatmentGenerator(
                             for (annotation in treatment.annotations) {
                                 val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
                                 for (patientPopulation in paper.patientPopulations) {
-                                    if (!patientPopulation.therapy.isNullOrEmpty() && patientPopulation.therapy == treatment.treatmentCandidate.treatment.name) {
+                                    if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment == treatment.treatmentCandidate.treatment) {
                                         val analysisGroup = patientPopulation.analysisGroups.iterator()
                                             .next() // assume only 1 analysis group per patient population
                                         subtable.addCell(Cells.createEmpty())

@@ -71,7 +71,7 @@ class EfficacyEvidenceGenerator(
     private fun createPatientCharacteristics(annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(150f, 150f).setWidth(500f)
         for (patientPopulation in annotation.trialReferences.iterator().next().patientPopulations) {
-            if (!patientPopulation.therapy.isNullOrEmpty() && patientPopulation.therapy == treatment.treatmentCandidate.treatment.name) {
+            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment == treatment.treatmentCandidate.treatment) {
                 table.addCell(Cells.createContent("WHO/ECOG"))
                 table.addCell(Cells.createContent(createWhoString(patientPopulation)))
                 table.addCell(Cells.createContent("Primary tumor location"))
@@ -113,11 +113,11 @@ class EfficacyEvidenceGenerator(
         val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
         val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
         for (patientPopulation in paper.patientPopulations) {
-            if (!patientPopulation.therapy.isNullOrEmpty() && patientPopulation.therapy == treatment.treatmentCandidate.treatment.name) {
+            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment == treatment.treatmentCandidate.treatment) {
                 val analysisGroup =
                     patientPopulation.analysisGroups.iterator().next() // assume only 1 analysis group per patient population
                 table.addCell(Cells.createValue("Median PFS: "))
-                for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                for (primaryEndPoint in analysisGroup.primaryEndPoints) {
                     if (primaryEndPoint.name == "Median Progression-Free Survival") {
                         table.addCell(
                             Cells.createKey(
