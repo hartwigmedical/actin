@@ -9,7 +9,7 @@ import java.time.LocalDate
 class EhrClinicalStatusExtractorTest {
 
     @Test
-    fun `Should extract clinical status with who status and has complications`() {
+    fun `Should extract clinical status with WHO status and has complications`() {
         val ehrPatientRecord = createEhrPatientRecord().copy(
             whoEvaluations = listOf(
                 EhrWhoEvaluation(
@@ -32,7 +32,7 @@ class EhrClinicalStatusExtractorTest {
     }
 
     @Test
-    fun `Should extract clinical status with who status as range and no complications`() {
+    fun `Should extract clinical status with WHO status as range and no complications`() {
         val ehrPatientRecord = createEhrPatientRecord().copy(
             whoEvaluations = listOf(
                 EhrWhoEvaluation(
