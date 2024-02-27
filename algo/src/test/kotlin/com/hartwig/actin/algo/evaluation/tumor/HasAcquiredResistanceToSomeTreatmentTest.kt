@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
@@ -33,6 +34,19 @@ class HasAcquiredResistanceToSomeTreatmentTest {
             bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)))
+    }
+
+    @Test
+    fun `Should pass for matching switch to treatment and stop reason PD`() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(WRONG_TREATMENT),
+            stopReason = StopReason.PROGRESSIVE_DISEASE,
+            switchToTreatments = listOf(TreatmentTestFactory.treatmentStage(TARGET_TREATMENT))
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
     }
 
     @Test
@@ -70,6 +84,15 @@ class HasAcquiredResistanceToSomeTreatmentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined with uncategorized trial treatment entry in history`() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(setOf(DrugTreatment("test", emptySet())), isTrial = true)
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
 
