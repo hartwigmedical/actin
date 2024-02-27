@@ -4,9 +4,12 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
+import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 import io.mockk.every
 import io.mockk.mockk
@@ -26,7 +29,15 @@ class EhrTreatmentHistoryExtractorTest {
     private val treatmentHistoryEntryConfig = TreatmentHistoryEntryConfig(
         TREATMENT_NAME,
         false,
-        TreatmentHistoryEntry(treatments = setOf(treatment))
+        TreatmentHistoryEntry(
+            treatments = setOf(treatment),
+            treatmentHistoryDetails = TreatmentHistoryDetails(
+                bodyLocations = setOf("bone"),
+                bodyLocationCategories = setOf(BodyLocationCategory.BONE),
+                maintenanceTreatment = TreatmentStage(treatment = treatment, cycles = 1, startYear = 2024, startMonth = 2),
+            ),
+            trialAcronym = "trialAcronym",
+        )
     )
     private val minimalTreatmentHistory = EhrTreatmentHistory(
         treatmentName = TREATMENT_NAME,
@@ -76,20 +87,20 @@ class EhrTreatmentHistoryExtractorTest {
 
     @Test
     fun `Should extract treatment with modifications using curated treatment`() {
-        val config = treatmentHistoryEntryConfig
-        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(config)
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(config)
+        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(treatmentHistoryEntryConfig)
+        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(treatmentHistoryEntryConfig)
         val result = extractor.extract(
             minimalEhrPatientRecord.copy(
                 treatmentHistory = listOf(
                     minimalTreatmentHistory.copy(
+                        stopReason = "TOXICITY",
+                        endDate = LocalDate.of(2024, 2, 27),
+                        response = "COMPLETE_RESPONSE",
                         modifications = listOf(
                             EhrTreatmentModification(
-                                name = MODIFICATION_NAME,
-                                administeredCycles = 2,
-                                date = LocalDate.of(2024, 2, 23)
+                                name = MODIFICATION_NAME, administeredCycles = 2, date = LocalDate.of(2024, 2, 23)
                             )
-                        )
+                        ),
                     )
                 )
             )
@@ -100,16 +111,20 @@ class EhrTreatmentHistoryExtractorTest {
                 TreatmentHistoryEntry(
                     startYear = 2024,
                     startMonth = 2,
-                    treatments = config.curated!!.treatments,
+                    treatments = treatmentHistoryEntryConfig.curated!!.treatments,
                     treatmentHistoryDetails = TreatmentHistoryDetails(
-                        stopYear = null,
-                        stopMonth = null,
-                        stopReason = null,
-                        bestResponse = null,
+                        stopYear = 2024,
+                        stopMonth = 2,
+                        stopReason = StopReason.TOXICITY,
+                        bestResponse = TreatmentResponse.COMPLETE_RESPONSE,
+                        bodyLocations = setOf("bone"),
+                        bodyLocationCategories = setOf(BodyLocationCategory.BONE),
                         switchToTreatments = listOf(TreatmentStage(treatment = treatment, cycles = 2, startYear = 2024, startMonth = 2)),
                         cycles = 1,
+                        maintenanceTreatment = TreatmentStage(treatment = treatment, cycles = 1, startYear = 2024, startMonth = 2),
                     ),
-                    isTrial = false
+                    isTrial = false,
+                    trialAcronym = "trialAcronym"
                 )
             )
         )
@@ -127,9 +142,7 @@ class EhrTreatmentHistoryExtractorTest {
                     minimalTreatmentHistory.copy(
                         modifications = listOf(
                             EhrTreatmentModification(
-                                name = MODIFICATION_NAME,
-                                administeredCycles = 1,
-                                date = LocalDate.of(2024, 2, 23)
+                                name = MODIFICATION_NAME, administeredCycles = 1, date = LocalDate.of(2024, 2, 23)
                             )
                         )
                     )
