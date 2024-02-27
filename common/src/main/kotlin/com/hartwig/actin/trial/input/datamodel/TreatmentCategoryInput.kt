@@ -23,7 +23,7 @@ class TreatmentCategoryInput(val mappedCategory: TreatmentCategory, val mappedTy
             try {
                 return TreatmentCategoryInput(TreatmentCategory.valueOf(query))
             } catch (e: IllegalArgumentException) {
-                LOGGER.warn("Treatment category not found for query string {}", query)
+                LOGGER.debug("Treatment category not found for query string {}", query)
             }
             val treatmentType: TreatmentType = resolveTreatmentType(query)
             return TreatmentCategoryInput(treatmentType.category, treatmentType)
@@ -38,7 +38,7 @@ class TreatmentCategoryInput(val mappedCategory: TreatmentCategory, val mappedTy
                 try {
                     return typeCreator.invoke(query)
                 } catch (e: IllegalArgumentException) {
-                    LOGGER.warn("Type not found for query string {}", query)
+                    LOGGER.debug("Type not found for query string {}", query)
                 }
             }
             throw IllegalArgumentException("Could not resolve string to a treatment category or type: $query")
