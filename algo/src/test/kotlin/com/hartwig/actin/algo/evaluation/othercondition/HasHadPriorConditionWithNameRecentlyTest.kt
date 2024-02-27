@@ -12,7 +12,7 @@ class HasHadPriorConditionWithNameRecentlyTest {
     private val function = HasHadPriorConditionWithNameRecently(nameToFind, minDate)
 
     @Test
-    fun `Should fail when no prior conditions is an empty list`() {
+    fun `Should fail when prior conditions is an empty list`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
