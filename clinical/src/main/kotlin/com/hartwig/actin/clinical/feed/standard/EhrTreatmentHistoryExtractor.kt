@@ -53,7 +53,7 @@ class EhrTreatmentHistoryExtractor(
                             trialAcronym = curatedTreatment.curated.trialAcronym
 
                         )
-                    ), switchToTreatments.evaluation
+                    ), switchToTreatments.evaluation + treatment.extractionEvaluation
                 )
             } ?: ExtractionResult(emptyList(), treatment.extractionEvaluation)
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
