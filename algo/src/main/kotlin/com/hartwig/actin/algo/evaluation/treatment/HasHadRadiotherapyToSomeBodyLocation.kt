@@ -14,9 +14,7 @@ class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String) : E
 
         val hadRadiotherapyToTargetLocation =
             priorRadiotherapies.any { radiotherapy ->
-                radiotherapy.treatmentHistoryDetails?.bodyLocations?.let { location ->
-                    location.any { it.lowercase().contains(bodyLocation.lowercase()) }
-                } == true
+                radiotherapy.treatmentHistoryDetails?.bodyLocations?.any { it.lowercase().contains(bodyLocation.lowercase()) } == true
             }
 
         val message = "prior radiotherapy to $bodyLocation"
