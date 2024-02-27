@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -39,6 +40,25 @@ class HasReceivedPlatinumBasedDoubletTest {
                         otherChemoDrug,
                         otherCategoryDrug
                     )
+                )
+            )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains platinum doublet and maintenance of another chemotherapy drug thereafter`() {
+        val history =
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = setOf(
+                        platinumChemoDrug,
+                        otherChemoDrug
+                    ),
+                    maintenanceTreatment = treatmentStage(anotherChemoDrug)
                 )
             )
 
@@ -92,6 +112,20 @@ class HasReceivedPlatinumBasedDoubletTest {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(otherChemoDrug, otherChemoDrug)),
             TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumChemoDrug, Radiotherapy("Radiotherapy")))
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should fail if treatment history contains platinum monotherapy and other chemotherapy monotherapy as maintenance`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(platinumChemoDrug),
+                maintenanceTreatment = treatmentStage(otherChemoDrug)
+            ),
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
