@@ -1,5 +1,9 @@
 package com.hartwig.actin.efficacy
 
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 
 object TestExtendedEvidenceEntryFactory {
@@ -9,7 +13,18 @@ object TestExtendedEvidenceEntryFactory {
             EfficacyEntry(
                 acronym = "Study of Pembrolizumab",
                 phase = "Phase III",
-                therapies = listOf("PEMBROLIZUMAB"),
+                treatments = listOf(
+                    DrugTreatment(
+                        "PEMBROLIZUMAB",
+                        setOf(
+                            Drug(
+                                name = "PEMBROLIZUMAB",
+                                drugTypes = setOf(DrugType.TOPO1_INHIBITOR),
+                                category = TreatmentCategory.CHEMOTHERAPY
+                            )
+                        )
+                    )
+                ),
                 therapeuticSetting = Intent.ADJUVANT,
 
                 variantRequirements = listOf(VariantRequirement(name = "MSI high", requirementType = "required")),
@@ -46,7 +61,10 @@ object TestExtendedEvidenceEntryFactory {
             patientsWithPrimaryTumorRemoved = 25,
             patientsPerMetastaticSites = mapOf("Lung" to ValuePercentage(100, 100.0)),
             timeOfMetastases = TimeOfMetastases.BOTH,
-            therapy = "PEMBROLIZUMAB",
+            treatment = DrugTreatment(
+                "PEMBROLIZUMAB",
+                setOf(Drug(name = "PEMBROLIZUMAB", drugTypes = setOf(DrugType.TOPO1_INHIBITOR), category = TreatmentCategory.CHEMOTHERAPY))
+            ),
             priorSystemicTherapy = "Chemo",
             patientsWithMSI = 33,
             medianFollowUpForSurvival = "30",

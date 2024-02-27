@@ -16,7 +16,7 @@ data class TreatmentMatcherConfig(
     val treatmentDirectory: String,
     val doidJson: String,
     val atcTsv: String,
-    val extendedEfficacy: String,
+    val extendedEfficacyJson: String,
     val outputDirectory: String,
     val runHistorically: Boolean,
 ) {
@@ -63,7 +63,7 @@ data class TreatmentMatcherConfig(
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
-                extendedEfficacy = ApplicationConfig.nonOptionalDir(cmd, EXTENDED_EFFICACY_JSON)
+                extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON)
             )
         }
 
@@ -74,7 +74,7 @@ data class TreatmentMatcherConfig(
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"
         private const val ATC_TSV = "atc_tsv"
-        private const val EXTENDED_EFFICACY_JSON = "extended_efficacy"
+        private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val RUN_HISTORICALLY = "run_historically"
         private const val LOG_DEBUG = "log_debug"

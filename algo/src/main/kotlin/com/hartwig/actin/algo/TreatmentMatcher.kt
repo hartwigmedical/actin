@@ -15,14 +15,14 @@ class TreatmentMatcher(
     private val recommendationEngine: RecommendationEngine,
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
-    private val efficacyEvidence: List<EfficacyEntry>
+    private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator
 ) {
 
     fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
         val standardOfCareMatches = if (!recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) null else {
-            EvaluatedTreatmentAnnotator.create(efficacyEvidence).annotate(recommendationEngine.standardOfCareEvaluatedTreatments(patient))
+            evaluatedTreatmentAnnotator.annotate(recommendationEngine.standardOfCareEvaluatedTreatments(patient))
         }
 
         return TreatmentMatch(
@@ -42,7 +42,7 @@ class TreatmentMatcher(
                 RecommendationEngineFactory(resources).create(),
                 trials,
                 resources.referenceDateProvider,
-                efficacyEvidence
+                EvaluatedTreatmentAnnotator.create(efficacyEvidence)
             )
         }
     }

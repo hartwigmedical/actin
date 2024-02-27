@@ -32,10 +32,10 @@ class TreatmentMatcherTest {
     }
     private val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     private val evidenceEntries =
-        EfficacyEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
+        EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase())
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val treatmentMatcher = TreatmentMatcher(
-        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), evidenceEntries
+        trialMatcher, recommendationEngine, trials, CurrentDateProvider(), EvaluatedTreatmentAnnotator.create(evidenceEntries)
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,

@@ -10,9 +10,8 @@ import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
 import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
-import com.hartwig.actin.algo.ckb.json.CkbTherapy
-import com.hartwig.actin.algo.ckb.json.CkbTherapyOfPopulation
 import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.ConfidenceInterval
 import com.hartwig.actin.efficacy.DerivedMetric
@@ -26,15 +25,14 @@ import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.efficacy.ValuePercentage
 import com.hartwig.actin.efficacy.VariantRequirement
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
-import java.util.Collections
 
 class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
-    fun readEvidenceFromFile(ckbExtendedEvidenceJson: String): List<CkbExtendedEvidenceEntry> {
-        return CkbExtendedEvidenceJson.read(ckbExtendedEvidenceJson)
+    fun extractEfficacyEvidenceFromCkbFile(ckbExtendedEvidenceJson: String): List<EfficacyEntry> {
+        return convertCkbExtendedEvidence(CkbExtendedEvidenceJson.read(ckbExtendedEvidenceJson))
     }
 
-    fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<EfficacyEntry> {
+    fun convertCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<EfficacyEntry> {
         return ckbExtendedEvidenceEntries.map(::resolveCkbExtendedEvidence)
     }
 
@@ -42,54 +40,42 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
         return EfficacyEntry(
             acronym = ckbExtendedEvidenceEntry.title,
             phase = ckbExtendedEvidenceEntry.phase,
-            therapies = convertTherapies(ckbExtendedEvidenceEntry.therapies),
+            treatments = ckbExtendedEvidenceEntry.therapies.map { findTreatmentInDatabase(it.therapyName, it.synonyms) },
             therapeuticSetting = ckbExtendedEvidenceEntry.therapeuticSetting?.let(::extractTherapeuticSettingFromString),
             variantRequirements = convertVariantRequirements(ckbExtendedEvidenceEntry.variantRequirementDetails),
             trialReferences = convertTrialReferences(ckbExtendedEvidenceEntry.trialReferences),
         )
     }
 
-    fun convertTherapies(therapies: List<CkbTherapy>): List<String> {
-        return therapies.map { therapy -> findTreatmentInDatabase(therapy.therapyName, therapy.synonyms) }
-    }
-
-    private fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): String {
+    fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): Treatment {
         val options = generateOptions((therapySynonyms?.split("|") ?: emptyList()) + therapyName)
-        val treatments = options.mapNotNull { treatmentDatabase.findTreatmentByName(it)?.name }.toSet()
+        val treatments = options.mapNotNull { treatmentDatabase.findTreatmentByName(it) }.toSet()
 
-        return when {
-            treatments.size == 1 -> treatments.first()
-            else -> throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $options")
-        }
+        return treatments.singleOrNull()
+            ?: throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $therapyName")
     }
 
     fun generateOptions(therapies: List<String>): List<String> {
         return therapies.flatMap { therapy ->
             if (therapy.contains(" + ")) {
-                permutations(therapy.uppercase())
+                val permutations = permutations(therapy.uppercase().split(" + "))
+                permutations.map { it.joinToString("+") }
             } else {
                 listOf(therapy.uppercase())
             }
         }
     }
 
-    private fun permutations(treatment: String): List<String> {
-        val drugs = treatment.split(" + ")
-        val permutations = mutableListOf<String>()
-        generatePermutations(drugs, permutations, 0, drugs.size - 1)
-        return permutations
-    }
+    private fun permutations(drugs: List<String>): Set<List<String>> {
+        if (drugs.isEmpty()) return setOf(emptyList())
 
-    private fun generatePermutations(drugs: List<String>, permutations: MutableList<String>, left: Int, right: Int) {
-        if (left == right) {
-            permutations.add(drugs.joinToString("+"))
-        } else {
-            for (i in left..right) {
-                Collections.swap(drugs, left, i)
-                generatePermutations(drugs, permutations, left + 1, right)
-                Collections.swap(drugs, left, i)
+        val result: MutableSet<List<String>> = mutableSetOf()
+        for (i in drugs.indices) {
+            permutations(drugs - drugs[i]).forEach { item ->
+                result.add(item + drugs[i])
             }
         }
+        return result
     }
 
     fun extractTherapeuticSettingFromString(therapeuticSetting: String): Intent {
@@ -143,7 +129,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
                 patientsWithPrimaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
                 patientsPerMetastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
                 timeOfMetastases = patientPopulation.timeOfMetastases?.let { convertTimeOfMetastases(it) },
-                therapy = patientPopulation.therapy?.let { convertTherapy(it) },
+                treatment = patientPopulation.therapy?.let { findTreatmentInDatabase(it.therapyName, it.synonyms) },
                 priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
                 patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
                 medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival,
@@ -154,10 +140,6 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
                 patientsPerRegion = if (patientPopulation.region.isNotEmpty()) convertRaceOrRegion(patientPopulation.region) else null,
             )
         }
-    }
-
-    private fun convertTherapy(therapy: CkbTherapyOfPopulation): String {
-        return findTreatmentInDatabase(therapy.therapyName, therapy.synonyms)
     }
 
     fun convertTimeOfMetastases(timeOfMetastases: String): TimeOfMetastases {

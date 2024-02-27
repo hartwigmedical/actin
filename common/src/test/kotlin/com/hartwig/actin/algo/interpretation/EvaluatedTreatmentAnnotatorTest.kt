@@ -15,19 +15,36 @@ import org.junit.Test
 
 class EvaluatedTreatmentAnnotatorTest {
 
+    private val efficacyEntries = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
+    private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries)
+    val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
+
     @Test
     fun `Should annotate SOC treatments with efficacy evidence`() {
-        val efficacyEntries = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
-        val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries)
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
         val treatmentCandidate = TreatmentCandidate(
             TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.CHEMOTHERAPY), false, setOf(eligibilityFunction)
         )
-        val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
         val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
 
         val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
         val expectedAnnotatedTreatmentMatches = listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, efficacyEntries))
+
+        assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
+    }
+
+    @Test
+    fun `Should return empty annotations list for SOC treatment without efficacy evidence`() {
+        val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
+        val treatmentCandidate = TreatmentCandidate(
+            TreatmentTestFactory.drugTreatment("capecitabine+oxaliplatin", TreatmentCategory.CHEMOTHERAPY),
+            false,
+            setOf(eligibilityFunction)
+        )
+        val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
+
+        val actualAnnotatedTreatmentMatches = annotator.annotate(socTreatments)
+        val expectedAnnotatedTreatmentMatches = listOf(AnnotatedTreatmentMatch(treatmentCandidate, evaluations, emptyList()))
 
         assertThat(actualAnnotatedTreatmentMatches).isEqualTo(expectedAnnotatedTreatmentMatches)
     }
