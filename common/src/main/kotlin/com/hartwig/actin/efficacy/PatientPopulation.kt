@@ -1,5 +1,7 @@
 package com.hartwig.actin.efficacy
 
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+
 data class PatientPopulation(
     val name: String,
     val isControl: Boolean,
@@ -23,7 +25,7 @@ data class PatientPopulation(
     val patientsWithPrimaryTumorRemoved: Int?,
     val patientsPerMetastaticSites: Map<String, ValuePercentage>?,
     val timeOfMetastases: TimeOfMetastases?,
-    val therapy: String?,
+    val treatment: Treatment?,
     val priorSystemicTherapy: String?,
     val patientsWithMSI: Int?,
     val medianFollowUpForSurvival: String?,

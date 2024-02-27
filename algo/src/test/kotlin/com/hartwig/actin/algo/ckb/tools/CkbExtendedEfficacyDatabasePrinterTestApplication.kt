@@ -13,7 +13,7 @@ class CkbExtendedEfficacyDatabasePrinterTestApplication {
         val jsonEntries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(EXTENDED_EFFICACY_JSON_PATH)
         jsonEntries.forEach(::println)
         val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-        val entries: List<EfficacyEntry> = EfficacyEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(jsonEntries)
+        val entries: List<EfficacyEntry> = EfficacyEntryFactory(treatmentDatabase).convertCkbExtendedEvidence(jsonEntries)
         entries.forEach(::println)
     }
 

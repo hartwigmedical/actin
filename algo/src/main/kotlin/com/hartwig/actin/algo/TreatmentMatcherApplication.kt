@@ -59,12 +59,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
         val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
-        val evidenceEntries =
-            EfficacyEntryFactory(treatmentDatabase).extractCkbExtendedEvidence(
-                EfficacyEntryFactory(treatmentDatabase).readEvidenceFromFile(
-                    config.extendedEfficacy
-                )
-            )
+        val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
         val match = TreatmentMatcher.create(resources, trials, evidenceEntries).evaluateAndAnnotateMatchesForPatient(patient)
 
