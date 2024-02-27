@@ -11,38 +11,53 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
 
     private val radiotherapy = setOf(treatment("Radiotherapy", isSystemic = false, categories = setOf(TreatmentCategory.RADIOTHERAPY)))
     private val TARGET_BODY_LOCATION = setOf("Spleen")
+    private val TARGET_BODY_LOCATION_IN_LARGER_STRING = setOf("Lower spleen")
     private val WRONG_BODY_LOCATION = setOf("Bladder")
     private val function = HasHadRadiotherapyToSomeBodyLocation(TARGET_BODY_LOCATION.iterator().next())
 
     @Test
     fun `Should pass if radiotherapy with target body location in oncological history`() {
-        val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = radiotherapy, bodyLocations = TARGET_BODY_LOCATION
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = TARGET_BODY_LOCATION),
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = WRONG_BODY_LOCATION)
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should pass if substring of radiotherapy location matches to target body location`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = TARGET_BODY_LOCATION_IN_LARGER_STRING),
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = WRONG_BODY_LOCATION)
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
     @Test
     fun `Should evaluate to undetermined if radiotherapy in oncological history but body location not defined`() {
-        val history = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = radiotherapy, bodyLocations = null
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = null),
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = WRONG_BODY_LOCATION)
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }
 
     @Test
-    fun `Should evaluate to undetermined if radiotherapy in oncological history but wrong body location`() {
+    fun `Should fail if radiotherapy in oncological history but wrong body location`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
             treatments = radiotherapy, bodyLocations = WRONG_BODY_LOCATION
         )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
         )
     }

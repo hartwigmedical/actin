@@ -4,34 +4,31 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorRadiotherapy = record.clinical.oncologicalHistory
+        val priorRadiotherapies = record.clinical.oncologicalHistory
             .filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
-        val radiotherapyToTargetLocation =
-            priorRadiotherapy.any {
-                it.treatmentHistoryDetails?.bodyLocations?.let { location ->
-                    stringCaseInsensitivelyMatchesQueryCollection(
-                        bodyLocation,
-                        location
-                    )
+
+        val hadRadiotherapyToTargetLocation =
+            priorRadiotherapies.any { radiotherapy ->
+                radiotherapy.treatmentHistoryDetails?.bodyLocations?.let { location ->
+                    location.any { it.lowercase().contains(bodyLocation.lowercase()) }
                 } == true
             }
 
         val message = "prior radiotherapy to $bodyLocation"
 
         return when {
-            radiotherapyToTargetLocation -> {
+            hadRadiotherapyToTargetLocation -> {
                 EvaluationFactory.pass(
                     "Patient has had $message", "Has had $message"
                 )
             }
 
-            priorRadiotherapy.isNotEmpty() -> {
+            priorRadiotherapies.any { it.treatmentHistoryDetails?.bodyLocations == null } -> {
                 EvaluationFactory.undetermined(
                     "Patient has received radiotherapy but undetermined if target location was $bodyLocation",
                     "Undetermined prior $bodyLocation radiation therapy"
