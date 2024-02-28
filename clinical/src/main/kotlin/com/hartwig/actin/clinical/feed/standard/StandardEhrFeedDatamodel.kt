@@ -231,8 +231,8 @@ data class EhrTumorDetail(
     val tumorGradeDifferentiation: String,
     val tumorStage: String? = null,
     val tumorStageDate: LocalDate? = null,
-    val measurableDisease: Boolean,
-    val measurableDiseaseDate: LocalDate,
+    val measurableDisease: Boolean? = null,
+    val measurableDiseaseDate: LocalDate? = null,
     val lesions: List<EhrLesion>
 )
 
