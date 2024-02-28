@@ -19,7 +19,6 @@ private const val LAB_CODE = "HGB"
 private val LAB_IDENTIFIERS = LaboratoryIdentifiers(LAB_CODE, "Hemoglobie")
 private const val HEMOGLOBIN_TRANSLATED = "Hemoglobin"
 
-private val LAB_IDENTIFIERS_TRANSLATED = LaboratoryIdentifiers(LAB_CODE, HEMOGLOBIN_TRANSLATED)
 private val EHR_LAB_VALUE = EhrLabValue(
     evaluationTime = LocalDateTime.of(2024, 2, 28, 0, 0),
     measure = "Hemoglobie",
@@ -95,7 +94,7 @@ class EhrLabValuesExtractorTest {
             CurationWarning(
                 patientId = "aGFzaGVkSWQ=",
                 category = CurationCategory.LABORATORY_TRANSLATION,
-                feedInput = "HGB",
+                feedInput = LAB_CODE,
                 message = "Could not find laboratory translation for lab value with code 'HGB' and name 'Hemoglobie'"
             )
         )
@@ -106,7 +105,7 @@ class EhrLabValuesExtractorTest {
             labTranslationDatabase.find(
                 LAB_IDENTIFIERS
             )
-        } returns Translation(LAB_IDENTIFIERS, LAB_IDENTIFIERS_TRANSLATED)
+        } returns Translation(LAB_IDENTIFIERS, LaboratoryIdentifiers(LAB_CODE, HEMOGLOBIN_TRANSLATED))
     }
 
 }

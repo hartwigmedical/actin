@@ -369,8 +369,7 @@ enum class EhrLabUnit(vararg val externalFormats: String) {
                 values().firstOrNull {
                     it.externalFormats.map { f -> f.lowercase() }.contains(inputString.lowercase())
                 } ?: OTHER
-            }
-                ?: NONE
+            } ?: NONE
         }
     }
 }
