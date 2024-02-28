@@ -103,8 +103,8 @@ data class EhrLabValue(
 data class EhrMedication(
     val name: String,
     val atcCode: String,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
+    val startDate: LocalDate?,
+    val endDate: LocalDate?,
     val administrationRoute: String?,
     val dosage: Double?,
     val dosageUnit: String?,
