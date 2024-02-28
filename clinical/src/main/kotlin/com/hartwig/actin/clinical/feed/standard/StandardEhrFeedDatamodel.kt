@@ -255,7 +255,7 @@ data class EhrPriorPrimary(
     val tumorLocation: String,
     val tumorType: String,
     val status: String? = null,
-    val statusDate: LocalDate
+    val statusDate: LocalDate? = null
 )
 
 enum class EhrTumorStatus {
