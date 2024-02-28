@@ -11,18 +11,19 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetTreatmentsToResponseMap = record.clinical.oncologicalHistory.filter {
-            it.allTreatments().any { t -> t.name.lowercase() == treatment.name.lowercase() } }
-            .groupBy { it.treatmentHistoryDetails?.bestResponse }
+            it.allTreatments().any { t -> t.name.equals(treatment.name, ignoreCase = true) }
+        }.groupBy { it.treatmentHistoryDetails?.bestResponse
+            }
 
         val treatmentsSimilarToTargetTreatment = record.clinical.oncologicalHistory.filter {
             (it.matchesTypeFromSet(treatment.types()) != false) &&
                     it.categories().intersect(treatment.categories()).isNotEmpty()
         }
 
-        val treatmentWithResponse = targetTreatmentsToResponseMap.any { it.key in BENEFIT_RESPONSE_SET }
-        val stableDisease = targetTreatmentsToResponseMap.any { it.key == TreatmentResponse.STABLE_DISEASE }
-        val mixedResponse = targetTreatmentsToResponseMap.any { it.key == TreatmentResponse.MIXED }
-        val uncertainResponse = targetTreatmentsToResponseMap.all { it.key == null }
+        val treatmentWithResponse = targetTreatmentsToResponseMap.keys.intersect(BENEFIT_RESPONSE_SET).isNotEmpty()
+        val stableDisease = targetTreatmentsToResponseMap.containsKey(TreatmentResponse.STABLE_DISEASE)
+        val mixedResponse = targetTreatmentsToResponseMap.containsKey(TreatmentResponse.MIXED)
+        val uncertainResponse = targetTreatmentsToResponseMap.keys == setOf(null)
 
         val benefitMessage = "objective benefit from treatment with ${treatment.name}"
         val bestResponse = if (stableDisease) "best response: stable disease" else "best response: mixed"
@@ -33,15 +34,15 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
                         treatmentsSimilarToTargetTreatment.joinToString(",") { it.treatmentDisplay() }
                     }"
                     if (treatmentsSimilarToTargetTreatment.none {
-                        it.treatmentHistoryDetails?.bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE
+                            ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true
                     }) {
                     EvaluationFactory.undetermined(
                         "Undetermined clinical benefit from ${treatment.name} - patient did not $similarDrugMessage",
                         "Undetermined clinical benefit from ${treatment.name} - did not $similarDrugMessage"
                     ) } else {
                         EvaluationFactory.fail(
-                            "Patient has not received ${treatment.name} treatment - did $similarDrugMessage with PD as best response",
-                            "Has not received ${treatment.name} treatment - did $similarDrugMessage with PD as best response"
+                            "Patient did not $similarDrugMessage with PD as best response",
+                            "Did not $similarDrugMessage with PD as best response"
                         )
                     }
                 } else {
