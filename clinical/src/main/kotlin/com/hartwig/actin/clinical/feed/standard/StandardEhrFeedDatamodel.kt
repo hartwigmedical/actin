@@ -81,7 +81,7 @@ enum class EhrBloodTransfusionProduct {
 @JacksonSerializable
 data class EhrComplication(
     val name: String,
-    val categories: List<String>,
+    val categories: List<String> = emptyList(),
     val startDate: LocalDate,
     val endDate: LocalDate
 )
@@ -139,7 +139,7 @@ enum class EhrGender {
 
 @JacksonSerializable
 data class EhrWhoEvaluation(
-    val status: Int,
+    val status: String,
     val evaluationDate: LocalDate
 )
 
