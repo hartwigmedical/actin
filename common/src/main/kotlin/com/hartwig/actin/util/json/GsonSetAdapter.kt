@@ -6,11 +6,21 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 
-class GsonSetAdapter<T : Comparable<T>> : JsonSerializer<Set<T>> {
+class GsonSetAdapter<T> : JsonSerializer<Set<T>> {
 
     override fun serialize(set: Set<T>, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
         val jsonArray = JsonArray()
-        set.sorted().map { context.serialize(it) }.forEach(jsonArray::add)
+        set.sortedWith(Comparator.nullsLast(::compare)).map { context.serialize(it) }.forEach(jsonArray::add)
         return jsonArray
     }
+
+    fun <T> compare(a: T, b: T): Int {
+        return try {
+            (a as? Comparable<T>)?.compareTo(b) ?: compareAsStrings(a, b)
+        } catch (e: ClassCastException) {
+            compareAsStrings(a, b)
+        }
+    }
+
+    private fun <T> compareAsStrings(a: T, b: T) = a.toString().compareTo(b.toString())
 }

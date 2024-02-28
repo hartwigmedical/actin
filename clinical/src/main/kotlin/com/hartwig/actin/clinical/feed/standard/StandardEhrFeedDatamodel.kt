@@ -3,24 +3,24 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Base64
+import java.util.*
 
 @JacksonSerializable
 data class EhrPatientRecord(
-    val allergies: List<EhrAllergy>,
-    val bloodTransfusions: List<EhrBloodTransfusion>,
-    val complications: List<EhrComplication>,
-    val labValues: List<EhrLabValue>,
-    val medications: List<EhrMedication>,
+    val allergies: List<EhrAllergy> = emptyList(),
+    val bloodTransfusions: List<EhrBloodTransfusion> = emptyList(),
+    val complications: List<EhrComplication> = emptyList(),
+    val labValues: List<EhrLabValue> = emptyList(),
+    val medications: List<EhrMedication> = emptyList(),
     val patientDetails: EhrPatientDetail,
-    val priorOtherConditions: List<EhrPriorOtherCondition>,
-    val surgeries: List<EhrSurgery>,
-    val toxicities: List<EhrToxicity>,
-    val treatmentHistory: List<EhrTreatmentHistory>,
+    val priorOtherConditions: List<EhrPriorOtherCondition> = emptyList(),
+    val surgeries: List<EhrSurgery> = emptyList(),
+    val toxicities: List<EhrToxicity> = emptyList(),
+    val treatmentHistory: List<EhrTreatmentHistory> = emptyList(),
     val tumorDetails: EhrTumorDetail,
-    val priorPrimaries: List<EhrPriorPrimary>,
-    val measurements: List<EhrMeasurement>,
-    val whoEvaluations: List<EhrWhoEvaluation>
+    val priorPrimaries: List<EhrPriorPrimary> = emptyList(),
+    val measurements: List<EhrMeasurement> = emptyList(),
+    val whoEvaluations: List<EhrWhoEvaluation> = emptyList()
 )
 
 @JacksonSerializable
@@ -178,16 +178,16 @@ data class EhrToxicity(
 @JacksonSerializable
 data class EhrTreatmentHistory(
     val treatmentName: String,
-    val intention: String?,
+    val intention: String? = null,
     val startDate: LocalDate,
-    val endDate: LocalDate?,
-    val stopReason: String?,
-    val stopReasonDate: LocalDate?,
-    val response: String?,
-    val responseDate: LocalDate?,
+    val endDate: LocalDate? = null,
+    val stopReason: String? = null,
+    val stopReasonDate: LocalDate? = null,
+    val response: String? = null,
+    val responseDate: LocalDate? = null,
     val intendedCycles: Int,
     val administeredCycles: Int,
-    val modifications: List<EhrTreatmentModification>?,
+    val modifications: List<EhrTreatmentModification>? = null,
     val administeredInStudy: Boolean
 )
 
@@ -229,8 +229,8 @@ data class EhrTumorDetail(
     val tumorLocation: String,
     val tumorType: String,
     val tumorGradeDifferentiation: String,
-    val tumorStage: String?,
-    val tumorStageDate: LocalDate,
+    val tumorStage: String? = null,
+    val tumorStageDate: LocalDate? = null,
     val measurableDisease: Boolean,
     val measurableDiseaseDate: LocalDate,
     val lesions: List<EhrLesion>
@@ -251,10 +251,10 @@ enum class EhrLesionLocation {
 
 @JacksonSerializable
 data class EhrPriorPrimary(
-    val diagnosisDate: LocalDate,
+    val diagnosisDate: LocalDate?,
     val tumorLocation: String,
     val tumorType: String,
-    val status: String,
+    val status: String? = null,
     val statusDate: LocalDate
 )
 
@@ -372,5 +372,3 @@ enum class EhrLabUnit(vararg val externalFormats: String) {
 
 inline fun <reified T : Enum<T>> enumeratedInput(input: String) =
     enumValues<T>().firstOrNull { it.name == input.uppercase().replace(" ", "_") } ?: { enumValueOf<T>("OTHER") }
-
-

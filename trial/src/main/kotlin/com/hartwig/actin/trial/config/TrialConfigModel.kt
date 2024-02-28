@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.config
 
 import com.hartwig.actin.trial.TrialDatabaseValidation
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
 
 class TrialConfigModel(
@@ -9,11 +10,12 @@ class TrialConfigModel(
     private val generalInclusionCriteriaByTrial: Map<String, List<InclusionCriteriaConfig>>,
     private val specificInclusionCriteriaByTrialAndCohort: Map<String, Map<String, List<InclusionCriteriaConfig>>>,
     private val referencesByTrialAndId: Map<String, Map<String, InclusionCriteriaReferenceConfig>>,
+    val unusedRulesToKeep: Set<EligibilityRule>,
     private val trialDatabaseValidation: TrialDatabaseValidation
 ) {
 
     fun validation(): TrialDatabaseValidation {
-        return trialDatabaseValidation;
+        return trialDatabaseValidation
     }
 
     fun trials(): List<TrialDefinitionConfig> {
@@ -48,19 +50,16 @@ class TrialConfigModel(
         }
 
         fun createFromDatabase(
-            database: TrialConfigDatabase,
-            trialConfigDatabaseValidator: TrialConfigDatabaseValidator
+            database: TrialConfigDatabase, trialConfigDatabaseValidator: TrialConfigDatabaseValidator
         ): TrialConfigModel {
             val specificInclusionCriteriaByTrialAndCohort =
-                configsByTrial(database.inclusionCriteriaConfigs.filter { it.appliesToCohorts.isNotEmpty() }).mapValues { configsByTrial ->
-                    configsByTrial.value.flatMap { config: InclusionCriteriaConfig ->
-                        config.appliesToCohorts.map { cohortId -> Pair(cohortId, config) }
-                    }
-                        .groupBy({ it.first }, { it.second })
-                }
+                configsByTrial(database.inclusionCriteriaConfigs.filter { it.appliesToCohorts.isNotEmpty() })
+                    .mapValues { inclusionCriteriaConfigsByCohortId(it.value) }
 
             val referencesByTrialAndId = configsByTrial(database.inclusionCriteriaReferenceConfigs)
                 .mapValues { it.value.associateBy(InclusionCriteriaReferenceConfig::referenceId) }
+
+            val validRules = EligibilityRule.values().map(EligibilityRule::toString).toSet()
 
             return TrialConfigModel(
                 database.trialDefinitionConfigs,
@@ -68,8 +67,16 @@ class TrialConfigModel(
                 configsByTrial(database.inclusionCriteriaConfigs.filter { it.appliesToCohorts.isEmpty() }),
                 specificInclusionCriteriaByTrialAndCohort,
                 referencesByTrialAndId,
+                database.unusedRulesToKeep.filter(validRules::contains).map(EligibilityRule::valueOf).toSet(),
                 trialConfigDatabaseValidator.validate(database)
             )
+        }
+
+        private fun inclusionCriteriaConfigsByCohortId(
+            inclusionCriteriaConfigs: List<InclusionCriteriaConfig>
+        ): Map<String, List<InclusionCriteriaConfig>> {
+            return inclusionCriteriaConfigs.flatMap { config -> config.appliesToCohorts.map { Pair(it, config) } }
+                .groupBy({ it.first }, { it.second })
         }
 
         private fun <T : TrialConfig> configsByTrial(configs: List<T>): Map<String, List<T>> {

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.medication
+package com.hartwig.actin.clinical.interpretation
 
 import com.hartwig.actin.clinical.datamodel.Medication
 
