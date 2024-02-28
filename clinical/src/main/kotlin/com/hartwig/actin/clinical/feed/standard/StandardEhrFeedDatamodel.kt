@@ -148,7 +148,7 @@ data class EhrPriorOtherCondition(
     val name: String,
     val category: String?,
     val startDate: LocalDate,
-    val endDate: LocalDate
+    val endDate: LocalDate?
 )
 
 @JacksonSerializable
