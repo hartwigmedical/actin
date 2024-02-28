@@ -41,7 +41,9 @@ class EhrLabValuesExtractor(private val labTranslation: TranslationDatabase<Labo
         unit = labUnit(it),
         value = it.value,
         code = it.measureCode,
-        comparator = ""
+        comparator = it.comparator ?: "",
+        refLimitUp = it.refUpperBound,
+        refLimitLow = it.refLowerBound
     )
 
     private fun labUnit(it: EhrLabValue): LabUnit {

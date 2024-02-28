@@ -92,7 +92,7 @@ data class EhrLabValue(
     val measure: String,
     val measureCode: String,
     val value: Double,
-    val unit: String,
+    val unit: String?,
     val refUpperBound: Double,
     val refLowerBound: Double,
     val comparator: String?,
@@ -364,8 +364,13 @@ enum class EhrLabUnit(vararg val externalFormats: String) {
     NONE("");
 
     companion object {
-        fun fromString(input: String): EhrLabUnit {
-            return values().firstOrNull { it.externalFormats.map { f -> f.lowercase() }.contains(input.lowercase()) } ?: OTHER
+        fun fromString(input: String?): EhrLabUnit {
+            return input?.let { inputString ->
+                values().firstOrNull {
+                    it.externalFormats.map { f -> f.lowercase() }.contains(inputString.lowercase())
+                } ?: OTHER
+            }
+                ?: NONE
         }
     }
 }
