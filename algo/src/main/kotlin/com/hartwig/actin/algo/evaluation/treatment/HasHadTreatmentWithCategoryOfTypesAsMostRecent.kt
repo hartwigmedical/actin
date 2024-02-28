@@ -23,7 +23,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
         }
 
         val mostRecentAntiCancerDrug = priorAntiCancerDrugs.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
-        val nullableTypeString = types?.let { " ${types.joinToString { it.display() }}"}.orEmpty()
+        val typeString = types?.let { " ${types.joinToString { it.display() }}"}.orEmpty()
 
         return when {
             priorAntiCancerDrugs.isEmpty() -> {
@@ -35,8 +35,8 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
 
             types != null && mostRecentAntiCancerDrug?.matchesTypeFromSet(types) == true -> {
                 EvaluationFactory.pass(
-                    "Patient has received$nullableTypeString ${category.display()} as the most recent treatment line",
-                    "Has received$nullableTypeString ${category.display()} as most recent treatment line"
+                    "Patient has received$typeString ${category.display()} as the most recent treatment line",
+                    "Has received$typeString ${category.display()} as most recent treatment line"
                 )
             }
 
@@ -49,22 +49,22 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
 
             treatmentMatch.any { it.startYear == null } -> {
                 EvaluationFactory.undetermined(
-                    "Has received$nullableTypeString ${category.display()} but undetermined if most recent (dates missing in treatment list)",
-                    "Has received$nullableTypeString ${category.display()} but undetermined if most recent"
+                    "Has received$typeString ${category.display()} but undetermined if most recent (dates missing in treatment list)",
+                    "Has received$typeString ${category.display()} but undetermined if most recent"
                 )
             }
 
             treatmentMatch.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Patient has received$nullableTypeString ${category.display()} but not as the most recent treatment line",
-                    "Has received$nullableTypeString ${category.display()} but not as most recent treatment line"
+                    "Patient has received$typeString ${category.display()} but not as the most recent treatment line",
+                    "Has received$typeString ${category.display()} but not as most recent treatment line"
                 )
             }
 
             else -> {
                 EvaluationFactory.fail(
-                    "Patient has not received$nullableTypeString ${category.display()} as prior therapy",
-                    "Has not received$nullableTypeString ${category.display()} as prior therapy"
+                    "Patient has not received$typeString ${category.display()} as prior therapy",
+                    "Has not received$typeString ${category.display()} as prior therapy"
                 )
             }
         }
