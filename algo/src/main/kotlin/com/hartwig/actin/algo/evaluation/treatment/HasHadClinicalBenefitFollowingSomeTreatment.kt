@@ -12,8 +12,7 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetTreatmentsToResponseMap = record.clinical.oncologicalHistory.filter {
             it.allTreatments().any { t -> t.name.equals(treatment.name, ignoreCase = true) }
-        }.groupBy { it.treatmentHistoryDetails?.bestResponse
-            }
+        }.groupBy { it.treatmentHistoryDetails?.bestResponse }
 
         val treatmentsSimilarToTargetTreatment = record.clinical.oncologicalHistory.filter {
             (it.matchesTypeFromSet(treatment.types()) != false) &&
@@ -32,9 +31,9 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
                 if (treatmentsSimilarToTargetTreatment.isNotEmpty()){
                     val similarDrugMessage = "receive exact treatment but received similar drugs (${
                         treatmentsSimilarToTargetTreatment.joinToString(",") { it.treatmentDisplay() }
-                    }"
+                    })"
                     if (treatmentsSimilarToTargetTreatment.none {
-                            ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true
+                        ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true
                     }) {
                     EvaluationFactory.undetermined(
                         "Undetermined clinical benefit from ${treatment.name} - patient did not $similarDrugMessage",
