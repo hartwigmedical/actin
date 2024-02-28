@@ -112,20 +112,23 @@ class EhrMedicationExtractorTest {
 
     @Test
     fun `Should not look up ATC code when medication is trial`() {
-        noAtcLookupTest(ehrMedication.copy(isTrial = true))
+        noAtcLookupTest(ehrMedication.copy(isTrial = true), medication.copy(name = MEDICATION_NAME, atc = null, isTrialMedication = true))
     }
 
     @Test
     fun `Should not look up ATC code when medication is self care`() {
-        noAtcLookupTest(ehrMedication.copy(isSelfCare = true))
+        noAtcLookupTest(
+            ehrMedication.copy(isSelfCare = true),
+            medication.copy(name = MEDICATION_NAME, atc = null, isSelfCare = true)
+        )
     }
 
-    private fun noAtcLookupTest(modifiedMedication: EhrMedication) {
+    private fun noAtcLookupTest(modifiedMedication: EhrMedication, expected: Medication) {
         every { qtProlongatingRiskCuration.find(MEDICATION_NAME) } returns emptySet()
         every { cypInteractionCuration.find(MEDICATION_NAME) } returns emptySet()
         val result = extractor.extract(ehrPatientRecord.copy(medications = listOf(modifiedMedication)))
         assertThat(result.evaluation.warnings).isEmpty()
-        assertThat(result.extracted).containsExactly(medication.copy(name = MEDICATION_NAME, atc = null))
+        assertThat(result.extracted).containsExactly(expected)
     }
 
     private fun atcClassification(): AtcClassification {

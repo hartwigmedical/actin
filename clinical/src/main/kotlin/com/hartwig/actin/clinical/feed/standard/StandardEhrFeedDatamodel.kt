@@ -110,8 +110,8 @@ data class EhrMedication(
     val dosageUnit: String,
     val frequency: Double,
     val frequencyUnit: String,
-    val periodBetweenDosagesValue: Double,
-    val periodBetweenDosagesUnit: String,
+    val periodBetweenDosagesValue: Double?,
+    val periodBetweenDosagesUnit: String?,
     val administrationOnlyIfNeeded: Boolean,
     val isTrial: Boolean,
     val isSelfCare: Boolean
@@ -146,14 +146,14 @@ data class EhrWhoEvaluation(
 @JacksonSerializable
 data class EhrPriorOtherCondition(
     val name: String,
-    val category: String,
+    val category: String?,
     val startDate: LocalDate,
     val endDate: LocalDate
 )
 
 @JacksonSerializable
 data class EhrSurgery(
-    val name: String,
+    val name: String?,
     val endDate: LocalDate,
     val status: String
 )

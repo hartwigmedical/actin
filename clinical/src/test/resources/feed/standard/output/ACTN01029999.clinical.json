@@ -16,7 +16,7 @@
     "primaryTumorSubLocation": null,
     "primaryTumorType": "Adenocarcinoma",
     "primaryTumorSubType": null,
-    "primaryTumorExtraDetails": null,
+    "primaryTumorExtraDetails": "undifferentiated",
     "doids": [
       "3908"
     ],
@@ -324,7 +324,7 @@
   ],
   "medications": [
     {
-      "name": "paracetamol",
+      "name": "METOCLOPRAMIDE TABLET 10MG",
       "status": null,
       "administrationRoute": "oraal",
       "dosage": {
@@ -347,43 +347,11 @@
         "month": 1,
         "day": 1
       },
-      "cypInteractions": [
-        {
-          "type": "INHIBITOR",
-          "strength": "MODERATE",
-          "cyp": "2D6"
-        },
-        {
-          "type": "SUBSTRATE",
-          "strength": "MODERATE_SENSITIVE",
-          "cyp": "3A4"
-        }
-      ],
-      "qtProlongatingRisk": "KNOWN",
-      "atc": {
-        "anatomicalMainGroup": {
-          "code": "N",
-          "name": "NERVOUS SYSTEM"
-        },
-        "therapeuticSubGroup": {
-          "code": "N02",
-          "name": "ANALGESICS"
-        },
-        "pharmacologicalSubGroup": {
-          "code": "N02B",
-          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
-        },
-        "chemicalSubGroup": {
-          "code": "N02BE",
-          "name": "Anilides"
-        },
-        "chemicalSubstance": {
-          "code": "N02BE01",
-          "name": "paracetamol"
-        }
-      },
-      "isSelfCare": false,
-      "isTrialMedication": false
+      "cypInteractions": [],
+      "qtProlongatingRisk": "UNKNOWN",
+      "atc": null,
+      "isSelfCare": true,
+      "isTrialMedication": true
     },
     {
       "name": "paracetamol",

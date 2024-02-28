@@ -131,8 +131,8 @@
       "period_between_dosages_value": 3.5,
       "period_between_dosages_unit": null,
       "administration_only_if_needed": true,
-      "is_trial": true,
-      "is_self_care": true
+      "is_trial": false,
+      "is_self_care": false
     }
   ],
   "patient_details": {
@@ -213,7 +213,7 @@
     "diagnosis_date": "2020-01-01T10:10:00",
     "tumor_location": "long",
     "tumor_type": "metastase adenocarcinoom",
-    "tumor_grade_diffentiation": "undifferentiated",
+    "tumor_grade_differentiation": "undifferentiated",
     "tumor_stage": "IV",
     "tumor_stage_date": "2020-01-01T10:10:00",
     "lesions": [
