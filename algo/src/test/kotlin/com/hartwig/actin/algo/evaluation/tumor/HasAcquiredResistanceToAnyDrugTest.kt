@@ -10,13 +10,13 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import org.junit.Test
 
-class HasAcquiredResistanceToSomeDrugTest {
+class HasAcquiredResistanceToAnyDrugTest {
 
     val TARGET_DRUG_TREATMENT =
         TreatmentTestFactory.drugTreatment("Osimertinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR))
     val WRONG_DRUG_TREATMENT =
         TreatmentTestFactory.drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
-    val function = HasAcquiredResistanceToSomeDrug(TARGET_DRUG_TREATMENT.drugs)
+    val function = HasAcquiredResistanceToAnyDrug(TARGET_DRUG_TREATMENT.drugs)
 
     @Test
     fun `Should pass if target drug in treatment history with stop reason progressive disease`() {

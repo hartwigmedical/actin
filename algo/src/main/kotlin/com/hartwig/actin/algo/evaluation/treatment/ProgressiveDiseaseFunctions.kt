@@ -36,7 +36,7 @@ object ProgressiveDiseaseFunctions {
     fun evaluateTreatmentHistory(record: PatientRecord, drugsToMatch: Set<Drug>): TreatmentHistoryEvaluation {
         val treatmentHistory = record.clinical.oncologicalHistory
 
-        val trialCategoriesToMatch = drugsToMatch.map(Drug::category).filter(TrialFunctions::categoryAllowsTrialMatches).toSet()
+        val allowTrialMatches = drugsToMatch.map(Drug::category).all(TrialFunctions::categoryAllowsTrialMatches)
 
         return treatmentHistory.map { entry ->
             val isPD = treatmentResultedInPD(entry)
@@ -44,7 +44,8 @@ object ProgressiveDiseaseFunctions {
                 (it as? DrugTreatment)?.drugs?.intersect(drugsToMatch) ?: emptyList()
             }.toSet()
             val possibleTrialMatch =
-                entry.isTrial && (entry.categories().isEmpty() || entry.categories().intersect(trialCategoriesToMatch).isNotEmpty())
+                entry.isTrial && (entry.categories().isEmpty() || entry.categories().any { it in drugsToMatch.map(Drug::category) })
+                        && allowTrialMatches
             val matchesWithToxicity = entry.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY
             if (matchingDrugs.isNotEmpty()) {
                 TreatmentHistoryEvaluation(

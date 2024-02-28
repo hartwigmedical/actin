@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.treatment.ProgressiveDiseaseFunctions.e
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 
-class HasAcquiredResistanceToSomeDrug(private val drugsToMatch: Set<Drug>) : EvaluationFunction {
+class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 

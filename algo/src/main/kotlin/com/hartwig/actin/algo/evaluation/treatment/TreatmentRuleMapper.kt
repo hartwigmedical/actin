@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToSomeDrug
+import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
@@ -414,7 +414,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasAcquiredResistanceToSomeDrugCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            HasAcquiredResistanceToSomeDrug(functionInputResolver().createManyDrugsInput(function))
+            HasAcquiredResistanceToAnyDrug(functionInputResolver().createManyDrugsInput(function))
         }
     }
 
