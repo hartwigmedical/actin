@@ -35,8 +35,8 @@ class EhrMedicationExtractor(
                 atc = atcClassification,
                 qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingRiskCuration, atcNameOrInput),
                 cypInteractions = CypInteractionCurationUtil.curateMedicationCypInteractions(cypInteractionCuration, atcNameOrInput),
-                isTrialMedication = false,
-                isSelfCare = false
+                isTrialMedication = it.isTrial,
+                isSelfCare = it.isSelfCare
             )
         }, CurationExtractionEvaluation())
     }
