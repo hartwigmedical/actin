@@ -49,13 +49,24 @@ object TreatmentTestFactory {
         intents: Set<Intent>? = emptySet(),
         isTrial: Boolean = false,
         numCycles: Int? = null,
+        bodyLocations: Set<String>? = null,
+        bodyLocationCategory: Set<BodyLocationCategory>? = null,
         switchToTreatments: List<TreatmentStage>? = null,
         maintenanceTreatment: TreatmentStage? = null,
         stopReasonDetail: String? = null,
         trialAcronym: String? = null
     ): TreatmentHistoryEntry {
         val treatmentHistoryDetails = if (listOf(
-                stopReason, bestResponse, stopYear, stopMonth, numCycles, switchToTreatments, maintenanceTreatment, stopReasonDetail
+                stopReason,
+                bestResponse,
+                stopYear,
+                stopMonth,
+                numCycles,
+                bodyLocations,
+                bodyLocationCategory,
+                switchToTreatments,
+                maintenanceTreatment,
+                stopReasonDetail
             ).any { it != null }
         ) {
             TreatmentHistoryDetails(
@@ -64,6 +75,8 @@ object TreatmentTestFactory {
                 stopYear = stopYear,
                 stopMonth = stopMonth,
                 cycles = numCycles,
+                bodyLocations = bodyLocations,
+                bodyLocationCategories = bodyLocationCategory,
                 switchToTreatments = switchToTreatments,
                 maintenanceTreatment = maintenanceTreatment,
                 stopReasonDetail = stopReasonDetail,

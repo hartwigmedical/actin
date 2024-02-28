@@ -4,16 +4,15 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.trial.ctc.CTCModel
+import com.hartwig.actin.trial.ctc.CTCConfigInterpreter
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
-import com.hartwig.actin.trial.interpretation.EligibilityRuleUsageEvaluator
+import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -36,16 +35,16 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info(" Loaded {} known genes", knownGenes.size)
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
-        val ctcModel = CTCModel(CTCDatabaseReader.read(config.ctcConfigDirectory))
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-
-        val trialFactory = TrialIngestion.create(config.trialConfigDirectory, ctcModel, doidModel, geneFilter, treatmentDatabase)
+        val configInterpreter = if (config.ctcConfigDirectory == null) {
+            SimpleConfigInterpreter()
+        } else {
+            CTCConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory))
+        }
+        val trialIngestion = TrialIngestion.create(config.trialConfigDirectory, configInterpreter, doidModel, geneFilter, treatmentDatabase)
 
         LOGGER.info("Creating trial database")
-        val result = trialFactory.ingestTrials()
-
-        LOGGER.info("Evaluating usage of eligibility rules")
-        EligibilityRuleUsageEvaluator.evaluate(result.trials)
+        val result = trialIngestion.ingestTrials()
 
         val outputDirectory = config.outputDirectory
         LOGGER.info("Writing {} trials to {}", result.trials.size, outputDirectory)
@@ -74,6 +73,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             printValidationErrors(result.trialValidationResult.trialDefinitionValidationErrors)
             printValidationErrors(result.trialValidationResult.inclusionReferenceValidationErrors)
             printValidationErrors(result.trialValidationResult.inclusionCriteriaValidationErrors)
+            printValidationErrors(result.trialValidationResult.unusedRulesToKeepErrors)
         }
     }
 
@@ -89,7 +89,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 }
 
 fun main(args: Array<String>) {
-    val options: Options = TrialCreatorConfig.createOptions()
+    val options = TrialCreatorConfig.createOptions()
     val config: TrialCreatorConfig
     try {
         config = TrialCreatorConfig.createConfig(DefaultParser().parse(options, args))

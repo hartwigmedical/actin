@@ -54,7 +54,7 @@ class CohortStatusInterpreterTest {
         }
 
         private fun createWithCTCCohortIDs(vararg ctcCohortIDs: String): CohortDefinitionConfig {
-            return TestCohortDefinitionConfigFactory.MINIMAL.copy(ctcCohortIds = setOf(*ctcCohortIDs))
+            return TestCohortDefinitionConfigFactory.MINIMAL.copy(externalCohortIds = setOf(*ctcCohortIDs))
         }
     }
 }

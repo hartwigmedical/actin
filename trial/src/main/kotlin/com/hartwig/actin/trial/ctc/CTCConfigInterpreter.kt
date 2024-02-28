@@ -9,22 +9,23 @@ import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseEntry
 import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.trial.interpretation.ConfigInterpreter
 import org.apache.logging.log4j.LogManager
 
-class CTCModel(private val ctcDatabase: CTCDatabase) {
+class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpreter {
 
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
     private val ctcDatabaseValidationErrors = mutableListOf<CTCDatabaseValidationError>()
     private val cohortDefinitionValidationErrors = mutableListOf<CohortDefinitionValidationError>()
 
-    fun validation(): CtcDatabaseValidation {
+    override fun validation(): CtcDatabaseValidation {
         return CtcDatabaseValidation(
             trialDefinitionValidationErrors,
             ctcDatabaseValidationErrors
         )
     }
 
-    fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
+    override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
         if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
             LOGGER.debug(
                 " Skipping study status retrieval for {} ({}) since study is not deemed a CTC trial",
@@ -58,7 +59,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
         return null
     }
 
-    fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata {
+    override fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata {
         val (maybeInterpretedCohortStatus, cohortDefinitionValidationErrors, ctcDatabaseValidationErrors) = CohortStatusInterpreter.interpret(
             ctcDatabase.entries,
             cohortConfig
@@ -76,7 +77,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
         )
     }
 
-    fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
+    override fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
         val newTrialsInCTC = extractNewCTCStudies(trialConfigs)
 
         if (newTrialsInCTC.isEmpty()) {
@@ -96,7 +97,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
             .toSet()
     }
 
-    fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
+    override fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
         val newCohortEntriesInCTC = extractNewCTCCohorts(cohortConfigs)
 
         if (newCohortEntriesInCTC.isEmpty()) {
@@ -114,7 +115,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
         val configuredTrialIds = cohortConfigs.map { it.trialId }.toSet()
 
         val configuredCohortIds =
-            cohortConfigs.flatMap(CohortDefinitionConfig::ctcCohortIds).mapNotNull(String::toIntOrNull)
+            cohortConfigs.flatMap(CohortDefinitionConfig::externalCohortIds).mapNotNull(String::toIntOrNull)
 
         val childrenPerParent =
             ctcDatabase.entries.filter { it.cohortParentId != null }
@@ -145,7 +146,7 @@ class CTCModel(private val ctcDatabase: CTCDatabase) {
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(CTCModel::class.java)
+        private val LOGGER = LogManager.getLogger(CTCConfigInterpreter::class.java)
         const val CTC_TRIAL_PREFIX = "MEC"
 
         fun constructTrialId(entry: CTCDatabaseEntry): String {
