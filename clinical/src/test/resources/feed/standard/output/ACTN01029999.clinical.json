@@ -158,8 +158,8 @@
       "comparator": "",
       "value": 3.7,
       "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     },
     {
@@ -173,8 +173,8 @@
       "comparator": "",
       "value": 88.0,
       "unit": "PERCENTAGE",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     },
     {
@@ -188,8 +188,8 @@
       "comparator": "",
       "value": 252.0,
       "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     },
     {
@@ -203,8 +203,8 @@
       "comparator": "",
       "value": 0.6,
       "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     },
     {
@@ -218,8 +218,8 @@
       "comparator": "",
       "value": 7.7,
       "unit": "MILLIMOLES_PER_LITER",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     }
   ],
