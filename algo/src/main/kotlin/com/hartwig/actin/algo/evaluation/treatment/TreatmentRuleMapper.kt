@@ -353,8 +353,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentCategoryOfTypesAsMostRecentCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            HasHadTreatmentWithCategoryOfTypesAsMostRecent(input.mappedCategory, input.mappedType)
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
+            HasHadTreatmentWithCategoryOfTypesAsMostRecent(input.category, input.types)
         }
     }
 
