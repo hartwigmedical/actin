@@ -35,8 +35,8 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
 
             (treatmentEvaluation.matchesWithUnclearPD || treatmentEvaluation.matchesWithToxicity) -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage- assuming none",
-                    "Undetermined resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage- assuming none"
+                    "Undetermined acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage",
+                    "Undetermined resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage"
                 )
             }
 

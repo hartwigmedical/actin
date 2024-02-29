@@ -39,12 +39,13 @@ object ProgressiveDiseaseFunctions {
         val allowTrialMatches = drugsToMatch.map(Drug::category).all(TrialFunctions::categoryAllowsTrialMatches)
 
         return treatmentHistory.map { entry ->
+            val categoriesToMatch = drugsToMatch.map(Drug::category).toSet()
             val isPD = treatmentResultedInPD(entry)
             val matchingDrugs = entry.allTreatments().flatMap {
                 (it as? DrugTreatment)?.drugs?.intersect(drugsToMatch) ?: emptyList()
             }.toSet()
             val possibleTrialMatch =
-                entry.isTrial && (entry.categories().isEmpty() || entry.categories().any { it in drugsToMatch.map(Drug::category) })
+                entry.isTrial && (entry.categories().isEmpty() || entry.categories().intersect(categoriesToMatch).isNotEmpty())
                         && allowTrialMatches
             val matchesWithToxicity = entry.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY
             if (matchingDrugs.isNotEmpty()) {
