@@ -54,46 +54,49 @@ class EligibleApprovedTreatmentGenerator(
                             subtable.addCell(Cells.createValue("No literature efficacy evidence available yet"))
                         } else {
                             for (annotation in treatment.annotations) {
-                                val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
-                                for (patientPopulation in paper.patientPopulations) {
-                                    if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment == treatment.treatmentCandidate.treatment) {
-                                        val analysisGroup = patientPopulation.analysisGroups.iterator()
-                                            .next() // assume only 1 analysis group per patient population
-                                        subtable.addCell(Cells.createEmpty())
-                                        subtable.addCell(
-                                            Cells.createTitle(annotation.acronym)
-                                                .setAction(PdfAction.createURI(annotation.trialReferences.first().url))
-                                                .addStyle(Styles.urlStyle())
-                                        )
-                                        subtable.addCell(Cells.createValue("PFS: "))
-                                        for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
-                                            if (primaryEndPoint.name == "Median Progression-Free Survival") {
-                                                subtable.addCell(
-                                                    Cells.createKey(
-                                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                for (trialReference in annotation.trialReferences) {
+                                    for (patientPopulation in trialReference.patientPopulations) {
+                                        if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name == treatment.treatmentCandidate.treatment.name) {
+                                            val analysisGroup = patientPopulation.analysisGroups.iterator()
+                                                .next() // assume only 1 analysis group per patient population
+                                            subtable.addCell(Cells.createEmpty())
+                                            subtable.addCell(
+                                                Cells.createTitle(annotation.acronym)
+                                                    .setAction(PdfAction.createURI(annotation.trialReferences.first().url))
+                                                    .addStyle(Styles.urlStyle())
+                                            )
+                                            subtable.addCell(Cells.createValue("PFS: "))
+                                            for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                                                if (primaryEndPoint.name == "Median Progression-Free Survival") {
+                                                    subtable.addCell(
+                                                        Cells.createKey(
+                                                            primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                                ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
+                                                                ?: "NA") + ")"
+                                                        )
                                                     )
-                                                )
-                                            } else {
-                                                subtable.addCell(Cells.createKey("NE"))
+                                                } else {
+                                                    subtable.addCell(Cells.createKey("NE"))
+                                                }
                                             }
-                                        }
 
-                                        subtable.addCell(Cells.createValue("OS: "))
-                                        for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
-                                            if (primaryEndPoint.name == "Median Overall Survival") {
-                                                subtable.addCell(
-                                                    Cells.createKey(
-                                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                            subtable.addCell(Cells.createValue("OS: "))
+                                            for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                                                if (primaryEndPoint.name == "Median Overall Survival") {
+                                                    subtable.addCell(
+                                                        Cells.createKey(
+                                                            primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                                ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
+                                                                ?: "NA") + ")"
+                                                        )
                                                     )
-                                                )
-                                            } else {
-                                                subtable.addCell(Cells.createKey("NE"))
+                                                } else {
+                                                    subtable.addCell(Cells.createKey("NE"))
+                                                }
                                             }
+                                            subtable.addCell(Cells.createValue(" "))
+                                            subtable.addCell(Cells.createValue(" "))
                                         }
-                                        subtable.addCell(Cells.createValue(" "))
-                                        subtable.addCell(Cells.createValue(" "))
                                     }
                                 }
                             }

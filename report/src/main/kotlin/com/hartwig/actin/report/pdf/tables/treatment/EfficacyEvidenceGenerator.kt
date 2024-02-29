@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.treatment
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.PatientPopulation
+import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -31,7 +32,9 @@ class EfficacyEvidenceGenerator(
                 val subtable = Tables.createSingleColWithWidth(width / 2)
                 if (treatment.annotations.isNotEmpty()) {
                     for (annotation in treatment.annotations) {
-                        subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, treatment)))
+                        for (trialReference in annotation.trialReferences) {
+                            subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, trialReference, treatment)))
+                        }
                     }
                 } else subtable.addCell(Cells.createContent("No literature evidence available yet"))
 
@@ -43,12 +46,17 @@ class EfficacyEvidenceGenerator(
         }
     }
 
-    private fun createOneLiteraturePart(width: Float, annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch): Table {
+    private fun createOneLiteraturePart(
+        width: Float,
+        annotation: EfficacyEntry,
+        trialReference: TrialReference,
+        treatment: AnnotatedTreatmentMatch
+    ): Table {
         val subtable = Tables.createSingleColWithWidth(width / 2)
         val subsubtables: MutableList<Table> = mutableListOf()
         subsubtables.add(createTrialHeader(annotation))
-        subsubtables.add(createPatientCharacteristics(annotation, treatment))
-        subsubtables.add(createEndpoints(annotation, treatment))
+        subsubtables.add(createPatientCharacteristics(trialReference, treatment))
+        subsubtables.add(createEndpoints(trialReference, treatment))
         for (i in subsubtables.indices) {
             val subsubtable = subsubtables[i]
             subtable.addCell(Cells.create(subsubtable))
@@ -68,10 +76,10 @@ class EfficacyEvidenceGenerator(
         return table
     }
 
-    private fun createPatientCharacteristics(annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch): Table {
+    private fun createPatientCharacteristics(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(150f, 150f).setWidth(500f)
-        for (patientPopulation in annotation.trialReferences.iterator().next().patientPopulations) {
-            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment == treatment.treatmentCandidate.treatment) {
+        for (patientPopulation in trialReference.patientPopulations) {
+            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name == treatment.treatmentCandidate.treatment.name) {
                 table.addCell(Cells.createContent("WHO/ECOG"))
                 table.addCell(Cells.createContent(createWhoString(patientPopulation)))
                 table.addCell(Cells.createContent("Primary tumor location"))
@@ -109,11 +117,10 @@ class EfficacyEvidenceGenerator(
         return strings.joinToString("\n")
     }
 
-    private fun createEndpoints(annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch): Table {
+    private fun createEndpoints(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
-        val paper = annotation.trialReferences.iterator().next() // for now assume we only have 1 paper per trial
-        for (patientPopulation in paper.patientPopulations) {
-            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment == treatment.treatmentCandidate.treatment) {
+        for (patientPopulation in trialReference.patientPopulations) {
+            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name == treatment.treatmentCandidate.treatment.name) {
                 val analysisGroup =
                     patientPopulation.analysisGroups.iterator().next() // assume only 1 analysis group per patient population
                 table.addCell(Cells.createValue("Median PFS: "))

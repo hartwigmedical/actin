@@ -25,7 +25,7 @@ object TestReportWriterApplication {
     }
 
     private fun createTestReport(): Report {
-        val report = TestReportFactory.createMinimalTestReport()
+        val report = TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing clinical record")
         ClinicalPrinter.printRecord(report.clinical)
         LOGGER.info("Printing molecular record")
