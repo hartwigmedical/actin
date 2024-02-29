@@ -561,6 +561,7 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 2] Medication category list:<br>
 Systemic antibiotics: ATC level code equal to "A07A", "G01AA", "R02AB", "L01D", "J01", "J02" or "J04" <br>
 Anticoagulants: ATC level code equal to "B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF" or "B01AX" <br>
+Antiinflammatory and antirheumatic products: ATC level code equal to "M01" <br>
 Antineoplastic agents: ATC level code equal to "L01" <br>
 Platelet aggregation inhibitors: ATC level code equal to "B01AC" <br>
 Antiepileptics: ATC level code equal to "N03" <br>
