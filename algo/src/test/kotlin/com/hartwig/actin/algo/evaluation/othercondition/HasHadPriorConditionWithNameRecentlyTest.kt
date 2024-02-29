@@ -80,7 +80,7 @@ class HasHadPriorConditionWithNameRecentlyTest {
     }
 
     @Test
-    fun `Should pass when warn and pass matching condition are given`() {
+    fun `Should pass when two pass matching condition are given`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
