@@ -233,7 +233,8 @@ data class EhrTumorDetail(
     val tumorStageDate: LocalDate? = null,
     val measurableDisease: Boolean? = null,
     val measurableDiseaseDate: LocalDate? = null,
-    val lesions: List<EhrLesion>
+    val lesions: List<EhrLesion>? = null,
+    val lesionSite: String? = null
 )
 
 @JacksonSerializable
