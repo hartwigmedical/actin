@@ -8,22 +8,22 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 
 class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
-    private val category: TreatmentCategory, private val type: TreatmentType?
+    private val category: TreatmentCategory, private val types: Set<TreatmentType>?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorAntiCancerDrugs = record.clinical.oncologicalHistory
             .filter { it.categories().any { category -> TreatmentCategory.CANCER_TREATMENT_CATEGORIES.contains(category) } }
 
-        val treatmentMatch = if (type != null) {
+        val treatmentMatch = if (types != null) {
             priorAntiCancerDrugs
-                .filter { it.isOfType(type) == true }
+                .filter { it.matchesTypeFromSet(types) == true }
         } else {
             priorAntiCancerDrugs.filter { it.categories().contains(category) }
         }
 
         val mostRecentAntiCancerDrug = priorAntiCancerDrugs.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
-        val nullableTypeString = type?.let { " ${it.display()}" }.orEmpty()
+        val typeString = types?.let { " ${types.joinToString { it.display() }}"}.orEmpty()
 
         return when {
             priorAntiCancerDrugs.isEmpty() -> {
@@ -33,14 +33,14 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
                 )
             }
 
-            type != null && mostRecentAntiCancerDrug?.isOfType(type) == true -> {
+            types != null && mostRecentAntiCancerDrug?.matchesTypeFromSet(types) == true -> {
                 EvaluationFactory.pass(
-                    "Patient has received ${type.display()} ${category.display()} as the most recent treatment line",
-                    "Has received ${type.display()} ${category.display()} as most recent treatment line"
+                    "Patient has received$typeString ${category.display()} as the most recent treatment line",
+                    "Has received$typeString ${category.display()} as most recent treatment line"
                 )
             }
 
-            type == null && mostRecentAntiCancerDrug?.categories()?.contains(category) == true -> {
+            types == null && mostRecentAntiCancerDrug?.categories()?.contains(category) == true -> {
                 EvaluationFactory.pass(
                     "Patient has received ${category.display()} as the most recent treatment line",
                     "Has received ${category.display()} as most recent treatment line"
@@ -49,22 +49,22 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
 
             treatmentMatch.any { it.startYear == null } -> {
                 EvaluationFactory.undetermined(
-                    "Has received$nullableTypeString ${category.display()} but undetermined if most recent (dates missing in treatment list)",
-                    "Has received$nullableTypeString ${category.display()} but undetermined if most recent"
+                    "Has received$typeString ${category.display()} but undetermined if most recent (dates missing in treatment list)",
+                    "Has received$typeString ${category.display()} but undetermined if most recent"
                 )
             }
 
             treatmentMatch.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Patient has received$nullableTypeString ${category.display()} but not as the most recent treatment line",
-                    "Has received$nullableTypeString ${category.display()} but not as most recent treatment line"
+                    "Patient has received$typeString ${category.display()} but not as the most recent treatment line",
+                    "Has received$typeString ${category.display()} but not as most recent treatment line"
                 )
             }
 
             else -> {
                 EvaluationFactory.fail(
-                    "Patient has not received$nullableTypeString ${category.display()} as prior therapy",
-                    "Has not received$nullableTypeString ${category.display()} as prior therapy"
+                    "Patient has not received$typeString ${category.display()} as prior therapy",
+                    "Has not received$typeString ${category.display()} as prior therapy"
                 )
             }
         }

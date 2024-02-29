@@ -23,7 +23,7 @@ class CTCModelTest {
     @Test
     fun `Should trust CTC study when inconsistent with trial config`() {
         val closedStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(
-            trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+            trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
             open = false
         )
 
@@ -34,13 +34,14 @@ class CTCModelTest {
     @Test
     fun `Should not determine status if study missing in CTC`() {
         val nonExistingCTCStudy: TrialDefinitionConfig =
-            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = CTCModel.CTC_TRIAL_PREFIX + " non-existing")
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " non-existing")
         assertThat(model.isTrialOpen(nonExistingCTCStudy)).isNull()
     }
 
     @Test
     fun `Should trust CTC cohort when inconsistent with cohort config`() {
-        val closedCohort: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(ctcCohortIds = setOf("2"), open = false)
+        val closedCohort: CohortDefinitionConfig =
+            TestCohortDefinitionConfigFactory.MINIMAL.copy(externalCohortIds = setOf("2"), open = false)
 
         // Cohort ID 2 is assumed to be open in proper test CTC database
         assertThat(model.resolveCohortMetadata(closedCohort).open).isTrue
@@ -49,14 +50,14 @@ class CTCModelTest {
     @Test
     fun `Should fallback to cohort config when missing in CTC`() {
         val openNotAvailable: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-            ctcCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
+            externalCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
             open = true,
             slotsAvailable = true
         )
         assertThat(model.resolveCohortMetadata(openNotAvailable).open).isTrue
 
         val closedNotAvailable: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-            ctcCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
+            externalCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
             open = false,
             slotsAvailable = false
         )
@@ -66,7 +67,7 @@ class CTCModelTest {
     @Test
     fun `Should assume closed without slots when missing entirely`() {
         val missing: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(
-            ctcCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
+            externalCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
             open = null,
             slotsAvailable = null
         )
@@ -94,10 +95,10 @@ class CTCModelTest {
         // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
         val trialConfigs: List<TrialDefinitionConfig> = listOf(
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1
+                trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1
             ),
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_2
+                trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_2
             )
         )
 
@@ -111,12 +112,12 @@ class CTCModelTest {
         // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
-                ctcCohortIds = setOf("1")
+                trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                externalCohortIds = setOf("1")
             ),
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
-                ctcCohortIds = setOf("2")
+                trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                externalCohortIds = setOf("2")
             )
         )
 
@@ -141,8 +142,8 @@ class CTCModelTest {
         // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
-                ctcCohortIds = setOf("9999")
+                trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                externalCohortIds = setOf("9999")
             )
         )
 
@@ -156,17 +157,17 @@ class CTCModelTest {
     fun `Should assume parent cohort with all children referenced is not new`() {
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
-                ctcCohortIds = setOf("2")
+                trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                externalCohortIds = setOf("2")
             ),
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = CTCModel.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
-                ctcCohortIds = setOf("3")
+                trialId = CTCConfigInterpreter.CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                externalCohortIds = setOf("3")
             )
         )
 
         val modelWithOneParentTwoChildren =
-            CTCModel(
+            CTCConfigInterpreter(
                 TestCTCDatabaseFactory.createMinimalTestCTCDatabase()
                     .copy(
                         entries = listOf(

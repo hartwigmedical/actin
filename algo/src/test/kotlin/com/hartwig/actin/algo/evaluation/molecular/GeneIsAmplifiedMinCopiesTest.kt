@@ -21,30 +21,36 @@ class GeneIsAmplifiedMinCopiesTest {
         minCopies = 40,
         maxCopies = 40
     )
-    
+
     @Test
     fun canEvaluate() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
 
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp)))
-
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp)))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp))
+        )
 
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(geneRole = GeneRole.TSG)))
         )
-        
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
             )
         )
-        
+
         assertMolecularEvaluation(
-            EvaluationResult.WARN,
+            EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(isReportable = false)))
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp))
         )
 
         assertMolecularEvaluation(

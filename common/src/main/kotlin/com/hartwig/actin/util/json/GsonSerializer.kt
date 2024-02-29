@@ -13,7 +13,7 @@ object GsonSerializer {
             .enableComplexMapKeySerialization()
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
-            .registerTypeHierarchyAdapter(Set::class.java, GsonSetAdapter<Comparable<Any>>())
+            .registerTypeHierarchyAdapter(Set::class.java, GsonSetAdapter<Any>())
             .create()
     }
 }

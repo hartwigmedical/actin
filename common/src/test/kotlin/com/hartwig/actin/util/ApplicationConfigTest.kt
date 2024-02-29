@@ -4,6 +4,7 @@ import com.google.common.io.Resources
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalDir
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalFile
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalValue
+import com.hartwig.actin.util.ApplicationConfig.optionalDir
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
@@ -24,11 +25,43 @@ class ApplicationConfigTest {
     }
 
     @Test(expected = ParseException::class)
-    fun `Should crash on non existing directory`() {
+    fun `Should crash on non-existing non-optional directory`() {
         val options = Options()
         options.addOption("directory", true, "")
         val cmd = DefaultParser().parse(options, arrayOf("-directory", "does not exist"))
         nonOptionalDir(cmd, "directory")
+    }
+
+    @Test
+    fun `Should return null when optional directory is not provided`() {
+        val options = Options()
+        options.addOption("directory", true, "")
+        val cmd = DefaultParser().parse(options, emptyArray())
+        assertThat(optionalDir(cmd, "directory")).isNull()
+    }
+
+    @Test(expected = ParseException::class)
+    fun `Should crash on non-existent optional directory`() {
+        val options = Options()
+        options.addOption("directory", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", "/123/4332l4j/1285"))
+        optionalDir(cmd, "directory")
+    }
+
+    @Test(expected = ParseException::class)
+    fun `Should crash when optional directory points to file`() {
+        val options = Options()
+        options.addOption("directory", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_FILE))
+        optionalDir(cmd, "directory")
+    }
+
+    @Test
+    fun `Should return existing optional directory`() {
+        val options = Options()
+        options.addOption("directory", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_DIRECTORY))
+        optionalDir(cmd, "directory")
     }
 
     @Test

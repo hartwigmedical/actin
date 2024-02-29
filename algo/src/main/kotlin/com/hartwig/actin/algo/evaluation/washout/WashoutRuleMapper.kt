@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.medication.MedicationCategories
-import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
-import com.hartwig.actin.algo.medication.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 

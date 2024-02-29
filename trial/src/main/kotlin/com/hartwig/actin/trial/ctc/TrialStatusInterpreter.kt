@@ -11,7 +11,7 @@ internal object TrialStatusInterpreter {
         trialDefinitionConfig: TrialDefinitionConfig
     ): Pair<Boolean?, List<TrialDefinitionValidationError>> {
         val trialId = trialDefinitionConfig.trialId
-        val trialStates = entries.filter { trialId.equals(CTCModel.constructTrialId(it), ignoreCase = true) }
+        val trialStates = entries.filter { trialId.equals(CTCConfigInterpreter.constructTrialId(it), ignoreCase = true) }
             .map { CTCStatus.fromStatusString(it.studyStatus) }
             .distinct()
         if (trialStates.size > 1) {

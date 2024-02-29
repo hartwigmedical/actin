@@ -59,7 +59,7 @@ object TestTreatmentMatchFactory {
         return listOf(
             AnnotatedTreatmentMatch(
                 treatmentCandidate = TreatmentCandidate(
-                    TreatmentTestFactory.treatment("PEMBROLIZUMAB", true),
+                    TreatmentTestFactory.treatment("Pembrolizumab", true),
                     true,
                     setOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, parameters = emptyList()))
                 ),

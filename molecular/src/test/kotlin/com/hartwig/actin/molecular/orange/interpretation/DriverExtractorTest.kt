@@ -31,7 +31,7 @@ class DriverExtractorTest {
 
         val drivers = driverExtractor.extract(TestOrangeFactory.createProperTestOrangeRecord())
         assertThat(drivers.variants).hasSize(1)
-        assertThat(drivers.copyNumbers).hasSize(2)
+        assertThat(drivers.copyNumbers).hasSize(3)
         assertThat(drivers.homozygousDisruptions).hasSize(1)
         assertThat(drivers.disruptions).hasSize(1)
         assertThat(drivers.fusions).hasSize(1)

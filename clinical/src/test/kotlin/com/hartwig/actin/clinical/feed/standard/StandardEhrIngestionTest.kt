@@ -46,9 +46,8 @@ class StandardEhrIngestionTest {
             directory = INPUT_JSON,
             medicationExtractor = EhrMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
-                qtPrologatingRiskCuration = curationDatabase.qtProlongingCuration,
-                cypInteractionCuration = curationDatabase.cypInteractionCuration,
-                dosageCuration = curationDatabase.medicationDosageCuration
+                qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
+                cypInteractionCuration = curationDatabase.cypInteractionCuration
             ),
             surgeryExtractor = EhrSurgeryExtractor(),
             toxicityExtractor = EhrToxicityExtractor(curationDatabase.toxicityCuration),
@@ -56,8 +55,9 @@ class StandardEhrIngestionTest {
             priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(curationDatabase.nonOncologicalHistoryCuration),
             intolerancesExtractor = EhrIntolerancesExtractor(TestAtcFactory.createProperAtcModel(), curationDatabase.intoleranceCuration),
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
-            treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(TestTreatmentDatabaseFactory.createProper()),
-            secondPrimaryExtractor = EhrSecondPrimariesExtractor(),
+            treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(curationDatabase.treatmentHistoryEntryCuration),
+            secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
+
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(curationDatabase.primaryTumorCuration),
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
@@ -98,7 +98,8 @@ class StandardEhrIngestionTest {
                 requirements = listOf(CurationRequirement(feedInput = "Pain", message = "Could not find toxicity config for input 'Pain'"))
             ),
             CurationResult(
-                categoryName = "Laboratory Translation", requirements = listOf(
+                categoryName = "Laboratory Translation",
+                requirements = listOf(
                     CurationRequirement(
                         feedInput = "dc_NeutrGran",
                         message = "Could not find laboratory translation for lab value with code 'dc_NeutrGran' and name 'Neutrof. granulocyten'"
@@ -119,7 +120,7 @@ class StandardEhrIngestionTest {
                         feedInput = "Hb",
                         message = "Could not find laboratory translation for lab value with code 'Hb' and name 'Hemoglobine'"
                     )
-                )
+                ),
             ),
             CurationResult(
                 categoryName = "Intolerance",

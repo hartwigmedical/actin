@@ -5,20 +5,14 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 
 enum class TreatmentCategory : Displayable {
     CHEMOTHERAPY,
-    RADIOTHERAPY,
     TARGETED_THERAPY,
     IMMUNOTHERAPY,
     HORMONE_THERAPY,
-    ANTIVIRAL_THERAPY,
-    SUPPORTIVE_TREATMENT,
     SURGERY,
     TRANSPLANTATION,
-    TRIAL,
-    CAR_T,
-    TCR_T,
-    GENE_THERAPY,
-    PROPHYLACTIC_TREATMENT,
-    ABLATION;
+    RADIOTHERAPY,
+    ABLATION,
+    SUPPORTIVE_TREATMENT;
 
     override fun display(): String {
         return TreatmentCategoryResolver.toString(this).lowercase()
@@ -26,6 +20,6 @@ enum class TreatmentCategory : Displayable {
 
     companion object {
         val CANCER_TREATMENT_CATEGORIES: Set<TreatmentCategory> =
-            setOf(CHEMOTHERAPY, TARGETED_THERAPY, IMMUNOTHERAPY, HORMONE_THERAPY, TRIAL, CAR_T, TCR_T, GENE_THERAPY)
+            setOf(CHEMOTHERAPY, TARGETED_THERAPY, IMMUNOTHERAPY, HORMONE_THERAPY)
     }
 }
