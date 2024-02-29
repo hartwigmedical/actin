@@ -4,7 +4,12 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.ckb.json.CkbMolecularProfile
+import com.hartwig.actin.algo.ckb.json.CkbTherapy
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.efficacy.ConfidenceInterval
 import com.hartwig.actin.efficacy.DerivedMetric
@@ -35,23 +40,36 @@ class EfficacyEntryFactoryTest {
 
     @Test
     fun `Should convert therapies`() {
-        val actual = evidenceEntryFactory.findTreatmentInDatabase("CAPOX", "Oxaliplatin + Capecitabine")
-        val expected = "CAPECITABINE+OXALIPLATIN"
-        assertThat(actual.name).isEqualTo(expected)
-    }
+        val ckbExtendedEvidenceEntry = CkbExtendedEvidenceTestFactory.createMinimalTestExtendedEvidenceDatabase().first()
+        ckbExtendedEvidenceEntry.therapies = listOf(
+            CkbTherapy(
+                id = 1,
+                therapyName = "Oxaliplatin + Capecitabine",
+                synonyms = "CAPOX"
+            )
+        )
+        val actual = evidenceEntryFactory.convertCkbExtendedEvidence(listOf(ckbExtendedEvidenceEntry)).first().treatments
 
-    @Test
-    fun `Should generate all options`() {
-        val actual = evidenceEntryFactory.generateOptions(listOf("CAPOX", "Oxaliplatin + Capecitabine"))
-        val expected = listOf("CAPOX", "CAPECITABINE+OXALIPLATIN", "OXALIPLATIN+CAPECITABINE")
+        val expected = listOf(
+            DrugTreatment(
+                name = "CAPECITABINE+OXALIPLATIN",
+                drugs = setOf(
+                    Drug(
+                        name = "CAPECITABINE",
+                        drugTypes = setOf(DrugType.ANTIMETABOLITE),
+                        category = TreatmentCategory.CHEMOTHERAPY,
+                        displayOverride = null
+                    ), Drug(name = "OXALIPLATIN", drugTypes = setOf(DrugType.PLATINUM_COMPOUND), category = TreatmentCategory.CHEMOTHERAPY)
+                )
+            )
+        )
         assertThat(actual).isEqualTo(expected)
     }
 
     @Test
     fun `Should convert therapeutic setting to Intent`() {
         val actual = evidenceEntryFactory.extractTherapeuticSettingFromString("Adjuvant")
-        val expected = Intent.ADJUVANT
-        assertThat(actual).isEqualTo(expected)
+        assertThat(actual).isEqualTo(Intent.ADJUVANT)
     }
 
     @Test(expected = IllegalStateException::class)
@@ -127,8 +145,7 @@ class EfficacyEntryFactoryTest {
     @Test
     fun `Should convert time of metastases`() {
         val actual = evidenceEntryFactory.convertTimeOfMetastases("Metachronous")
-        val expected = TimeOfMetastases.METACHRONOUS
-        assertThat(actual).isEqualTo(expected)
+        assertThat(actual).isEqualTo(TimeOfMetastases.METACHRONOUS)
     }
 
     @Test(expected = IllegalStateException::class)

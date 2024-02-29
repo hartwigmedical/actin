@@ -47,19 +47,17 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
         )
     }
 
-    fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): Treatment {
-        val options = generateOptions((therapySynonyms?.split("|") ?: emptyList()) + therapyName)
-        val treatments = options.mapNotNull { treatmentDatabase.findTreatmentByName(it) }.toSet()
-
-        return treatments.singleOrNull()
+    private fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): Treatment {
+        return generateOptions((therapySynonyms?.split("|") ?: emptyList()) + therapyName)
+            .mapNotNull(treatmentDatabase::findTreatmentByName)
+            .distinct().singleOrNull()
             ?: throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $therapyName")
     }
 
-    fun generateOptions(therapies: List<String>): List<String> {
+    private fun generateOptions(therapies: List<String>): List<String> {
         return therapies.flatMap { therapy ->
             if (therapy.contains(" + ")) {
-                val permutations = permutations(therapy.uppercase().split(" + "))
-                permutations.map { it.joinToString("+") }
+                permutations(therapy.uppercase().split(" + ")).map { it.joinToString("+") }
             } else {
                 listOf(therapy.uppercase())
             }
