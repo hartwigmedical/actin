@@ -16,8 +16,6 @@ class HasHadPriorConditionWithNameRecently (
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        println("Start")
-        println(OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions))
         val matchingConditionSummary = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
             .filter { it.name.lowercase().contains(conditionNameToFind.lowercase()) }
             .groupBy {
@@ -32,13 +30,11 @@ class HasHadPriorConditionWithNameRecently (
                     else -> EvaluationResult.FAIL
                 }
             }
-        println(matchingConditionSummary)
 
         return when {
             matchingConditionSummary.containsKey(EvaluationResult.PASS) -> {
-                println(matchingConditionSummary[EvaluationResult.PASS]?.joinToString(", ", transform = PriorOtherCondition::name))
                 EvaluationFactory.pass(
-                    "Patient has history of ${matchingConditionSummary[EvaluationResult.PASS]?.joinToString(",", transform = PriorOtherCondition::name)} " +
+                    "Patient has history of ${matchingConditionSummary[EvaluationResult.PASS]?.joinToString(", ", transform = PriorOtherCondition::name)} " +
                             "(matched to condition name: $conditionNameToFind) within specified time frame",
                     "Recent history of $conditionNameToFind"
                 )
@@ -46,7 +42,7 @@ class HasHadPriorConditionWithNameRecently (
 
             matchingConditionSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "Patient has history of ${matchingConditionSummary[EvaluationResult.WARN]?.joinToString(",", transform = PriorOtherCondition::name)} " +
+                    "Patient has history of ${matchingConditionSummary[EvaluationResult.WARN]?.joinToString(", ", transform = PriorOtherCondition::name)} " +
                             "(matched to condition name: $conditionNameToFind) near start of specified time frame",
                     "Recent history of $conditionNameToFind"
                 )
@@ -54,7 +50,7 @@ class HasHadPriorConditionWithNameRecently (
 
             matchingConditionSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "Patient has history of ${matchingConditionSummary[EvaluationResult.UNDETERMINED]?.joinToString(",", transform = PriorOtherCondition::name)} " +
+                    "Patient has history of ${matchingConditionSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ", transform = PriorOtherCondition::name)} " +
                             "(matched to condition name: $conditionNameToFind), but undetermined whether that is within specified time frame",
                     "History of $conditionNameToFind"
                 )
