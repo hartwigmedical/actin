@@ -108,7 +108,7 @@ class ProgressiveDiseaseFunctionsTest {
 
     // Testing of fun evaluateTreatmentHistory
     @Test
-    fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when treatment history is empty`(){
+    fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when treatment history is empty`() {
         assertThat(
             evaluateTreatmentHistory(TreatmentTestFactory.withTreatmentHistory(emptyList()), TARGET_DRUG_SET)
         ).isEqualTo(
