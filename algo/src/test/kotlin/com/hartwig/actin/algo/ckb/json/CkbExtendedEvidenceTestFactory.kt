@@ -35,7 +35,7 @@ object CkbExtendedEvidenceTestFactory {
         return listOf(
             CkbExtendedEvidenceEntry(
                 nctId = "NCT01",
-                title = "Study of treatment 1 instead of treatment 2",
+                title = "Study of pembrolizumab instead of CAPOX",
                 phase = "Phase III",
                 recruitment = "Completed",
                 therapies = createProperTestTherapies(),
@@ -64,12 +64,12 @@ object CkbExtendedEvidenceTestFactory {
         return listOf(
             CkbTherapy(
                 id = 1,
-                therapyName = "Treatment 1",
+                therapyName = "Capecitabine + Oxaliplatin",
                 synonyms = null
             ),
             CkbTherapy(
                 id = 2,
-                therapyName = "Treatment 2",
+                therapyName = "Pembrolizumab",
                 synonyms = null
             )
         )
@@ -78,7 +78,7 @@ object CkbExtendedEvidenceTestFactory {
     private fun createProperVariantRequirementDetails(): List<CkbVariantRequirementDetail> {
         return listOf(
             CkbVariantRequirementDetail(
-                molecularProfile = CkbMolecularProfile(id = 3, profileName = "EGFR positive"),
+                molecularProfile = CkbMolecularProfile(id = 3, profileName = "MSI high"),
                 requirementType = "required"
             )
         )
@@ -120,8 +120,7 @@ object CkbExtendedEvidenceTestFactory {
         return CkbPatientPopulation(
             id = 20,
             isControl = true,
-            groupName = "Treatment 1",
-            nPatientsEnrolled = null,
+            groupName = "CAPOX",
             nPatients = "40",
             nFemale = "30",
             nMale = "10",
@@ -134,6 +133,8 @@ object CkbExtendedEvidenceTestFactory {
             nEcog2 = "10",
             nEcog3 = null,
             nEcog4 = null,
+            nEcog0to1 = null,
+            nEcog1to2 = null,
             highestEcogScore = 2,
             nLocalizationPrimaryTumor = null,
             otherMutations = "EGFR Staining None: 0 (0%), Weak 1+: 40 (100.0%)",
@@ -152,9 +153,31 @@ object CkbExtendedEvidenceTestFactory {
             medianFollowUpForProgressionFreeSurvival = null,
             medianFollowUpForRandomizationToDataCutOff = null,
             metastaticSites = "Liver: 20 (50.0%), Lung: 10 (25.0%)",
+            timeOfMetastases = "Both",
+            therapy = createTherapyForPopulation1(),
             analysisGroups = createAnalysisGroupsForPopulation1(),
             efficacyEvidence = listOf(),
+            therapyDetails = null,
+            priorTherapies = "Chemo, radiation",
+            race = "Asian: 16,\nWhite: 24",
+            region = "",
             notes = null
+        )
+    }
+
+    private fun createTherapyForPopulation1(): CkbTherapyOfPopulation {
+        return CkbTherapyOfPopulation(
+            id = 1,
+            therapyName = "Capecitabine + Oxaliplatin",
+            synonyms = null,
+            therapyDescriptions = listOf(
+                CkbTherapyDescription(
+                    description = "Description of CAPOX",
+                    references = listOf(createReference())
+                )
+            ),
+            createDate = "01/01/2001",
+            updateDate = "02/02/2002"
         )
     }
 
@@ -162,7 +185,7 @@ object CkbExtendedEvidenceTestFactory {
         return listOf(
             CkbAnalysisGroup(
                 id = 30,
-                name = "Treatment 1",
+                name = "CAPOX",
                 outcome = "N/A",
                 nPatients = "40",
                 endPointMetrics = listOf(
@@ -208,8 +231,7 @@ object CkbExtendedEvidenceTestFactory {
         return CkbPatientPopulation(
             id = 21,
             isControl = false,
-            groupName = "Treatment 2",
-            nPatientsEnrolled = null,
+            groupName = "Pembrolizumab",
             nPatients = "40",
             nFemale = "21",
             nMale = "19",
@@ -222,6 +244,8 @@ object CkbExtendedEvidenceTestFactory {
             nEcog2 = "3",
             nEcog3 = null,
             nEcog4 = null,
+            nEcog0to1 = null,
+            nEcog1to2 = null,
             highestEcogScore = 2,
             nLocalizationPrimaryTumor = null,
             otherMutations = "EGFR Staining None: 2 (5.0%), Weak 1+: 38 (95.0%)",
@@ -240,9 +264,31 @@ object CkbExtendedEvidenceTestFactory {
             medianFollowUpForProgressionFreeSurvival = null,
             medianFollowUpForRandomizationToDataCutOff = null,
             metastaticSites = "Liver: 30 (75.0%), Lung: 10 (25.0%)",
+            timeOfMetastases = null,
+            therapy = createTherapyForPopulation2(),
             analysisGroups = createAnalysisGroupsForPopulation2(),
             efficacyEvidence = createEfficacyEvidenceForPopulation2(),
+            therapyDetails = null,
+            priorTherapies = "Chemo",
+            race = "Asian: 10,\nWhite: 30",
+            region = "",
             notes = null
+        )
+    }
+
+    private fun createTherapyForPopulation2(): CkbTherapyOfPopulation {
+        return CkbTherapyOfPopulation(
+            id = 2,
+            therapyName = "Pembrolizumab",
+            synonyms = null,
+            therapyDescriptions = listOf(
+                CkbTherapyDescription(
+                    description = "Description of pembrolizumab",
+                    references = listOf(createReference())
+                )
+            ),
+            createDate = "01/01/2001",
+            updateDate = "02/02/2002"
         )
     }
 
@@ -250,7 +296,7 @@ object CkbExtendedEvidenceTestFactory {
         return listOf(
             CkbAnalysisGroup(
                 id = 31,
-                name = "Treatment 2",
+                name = "Pembrolizumab",
                 outcome = "Positive",
                 nPatients = "40",
                 endPointMetrics = listOf(
@@ -258,7 +304,7 @@ object CkbExtendedEvidenceTestFactory {
                         id = 42,
                         trialAnalysisGroupId = 31,
                         endPoint = CkbEndPoint(
-                            id = 52,
+                            id = 50,
                             name = "Disease Control Rate",
                             definition = "the proportion of patients who have achieved complete response, partial response, and stable disease",
                             unitOfMeasure = "Percent"
@@ -282,7 +328,7 @@ object CkbExtendedEvidenceTestFactory {
                         id = 43,
                         trialAnalysisGroupId = 31,
                         endPoint = CkbEndPoint(
-                            id = 53,
+                            id = 51,
                             name = "Objective/Overall Response Rate",
                             definition = "the proportion of patients with tumor size reduction of a predefined amount and for a minimum time period",
                             unitOfMeasure = "Percent"
@@ -314,8 +360,8 @@ object CkbExtendedEvidenceTestFactory {
                 id = 70,
                 approvalStatus = "Phase III",
                 evidenceType = "Actionable",
-                efficacyEvidence = "In a phase3 trial, treatment 1 seems better than treatment 2",
-                molecularProfile = CkbMolecularProfile(id = 3, profileName = "EGFR positive"),
+                efficacyEvidence = "In a phase3 trial, pembrolizumab seems better than CAPOX",
+                molecularProfile = CkbMolecularProfile(id = 3, profileName = "MSI high"),
                 therapy = CkbTherapy(id = 1, therapyName = "Treatment 1", synonyms = null),
                 indication = CkbIndication(id = 162, name = "cancer", source = "DOID"),
                 responseType = "sensitive",
@@ -348,7 +394,7 @@ object CkbExtendedEvidenceTestFactory {
         return CkbReference(
             id = 92,
             pubMedId = 12345678,
-            title = "In a phase3 trial, treatment 1 seems better than treatment 2",
+            title = "In a phase3 trial, pembrolizumab seems better than CAPOX",
             url = "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
         )
     }

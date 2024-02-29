@@ -16,6 +16,7 @@ data class TreatmentMatcherConfig(
     val treatmentDirectory: String,
     val doidJson: String,
     val atcTsv: String,
+    val extendedEfficacyJson: String,
     val outputDirectory: String,
     val runHistorically: Boolean,
 ) {
@@ -30,6 +31,7 @@ data class TreatmentMatcherConfig(
             options.addOption(TREATMENT_DIRECTORY, true, "Path to treatment data directory")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
             options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
+            options.addOption(EXTENDED_EFFICACY_JSON, true, "Path to JSON file containing extended efficacy evidence")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to")
             options.addOption(
                 RUN_HISTORICALLY,
@@ -60,7 +62,8 @@ data class TreatmentMatcherConfig(
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 runHistorically = runHistorically,
-                atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV)
+                atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
+                extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON)
             )
         }
 
@@ -71,6 +74,7 @@ data class TreatmentMatcherConfig(
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"
         private const val ATC_TSV = "atc_tsv"
+        private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val RUN_HISTORICALLY = "run_historically"
         private const val LOG_DEBUG = "log_debug"

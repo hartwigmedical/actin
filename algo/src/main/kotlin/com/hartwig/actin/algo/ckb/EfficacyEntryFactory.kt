@@ -1,17 +1,8 @@
 package com.hartwig.actin.algo.ckb
 
 import com.google.gson.Gson
-import com.hartwig.actin.algo.ckb.datamodel.AnalysisGroup
-import com.hartwig.actin.algo.ckb.datamodel.ExtendedEvidenceEntry
-import com.hartwig.actin.algo.ckb.datamodel.ConfidenceInterval
-import com.hartwig.actin.algo.ckb.datamodel.DerivedMetric
-import com.hartwig.actin.algo.ckb.datamodel.PatientPopulation
-import com.hartwig.actin.algo.ckb.datamodel.PrimaryEndPoint
-import com.hartwig.actin.algo.ckb.datamodel.PrimaryEndPointType
-import com.hartwig.actin.algo.ckb.datamodel.PrimaryEndPointUnit
-import com.hartwig.actin.algo.ckb.datamodel.TrialReference
-import com.hartwig.actin.algo.ckb.datamodel.ValuePercentage
-import com.hartwig.actin.algo.ckb.datamodel.VariantRequirement
+import com.google.gson.JsonSyntaxException
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.json.CkbAnalysisGroup
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
@@ -19,22 +10,70 @@ import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
 import com.hartwig.actin.algo.ckb.json.CkbPatientPopulation
 import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
+import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.efficacy.AnalysisGroup
+import com.hartwig.actin.efficacy.ConfidenceInterval
+import com.hartwig.actin.efficacy.DerivedMetric
+import com.hartwig.actin.efficacy.EfficacyEntry
+import com.hartwig.actin.efficacy.PatientPopulation
+import com.hartwig.actin.efficacy.PrimaryEndPoint
+import com.hartwig.actin.efficacy.PrimaryEndPointType
+import com.hartwig.actin.efficacy.PrimaryEndPointUnit
+import com.hartwig.actin.efficacy.TimeOfMetastases
+import com.hartwig.actin.efficacy.TrialReference
+import com.hartwig.actin.efficacy.ValuePercentage
+import com.hartwig.actin.efficacy.VariantRequirement
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 
-object ExtendedEvidenceEntryFactory {
+class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
-    fun extractCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<ExtendedEvidenceEntry> {
+    fun extractEfficacyEvidenceFromCkbFile(ckbExtendedEvidenceJson: String): List<EfficacyEntry> {
+        return convertCkbExtendedEvidence(CkbExtendedEvidenceJson.read(ckbExtendedEvidenceJson))
+    }
+
+    fun convertCkbExtendedEvidence(ckbExtendedEvidenceEntries: List<CkbExtendedEvidenceEntry>): List<EfficacyEntry> {
         return ckbExtendedEvidenceEntries.map(::resolveCkbExtendedEvidence)
     }
 
-    private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): ExtendedEvidenceEntry {
-        return ExtendedEvidenceEntry(
+    private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): EfficacyEntry {
+        return EfficacyEntry(
             acronym = ckbExtendedEvidenceEntry.title,
             phase = ckbExtendedEvidenceEntry.phase,
+            treatments = ckbExtendedEvidenceEntry.therapies.map { findTreatmentInDatabase(it.therapyName, it.synonyms) },
             therapeuticSetting = ckbExtendedEvidenceEntry.therapeuticSetting?.let(::extractTherapeuticSettingFromString),
             variantRequirements = convertVariantRequirements(ckbExtendedEvidenceEntry.variantRequirementDetails),
             trialReferences = convertTrialReferences(ckbExtendedEvidenceEntry.trialReferences),
         )
+    }
+
+    private fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): Treatment {
+        return generateOptions((therapySynonyms?.split("|") ?: emptyList()) + therapyName)
+            .mapNotNull(treatmentDatabase::findTreatmentByName)
+            .distinct().singleOrNull()
+            ?: throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $therapyName")
+    }
+
+    private fun generateOptions(therapies: List<String>): List<String> {
+        return therapies.flatMap { therapy ->
+            if (therapy.contains(" + ")) {
+                permutations(therapy.uppercase().split(" + ")).map { it.joinToString("+") }
+            } else {
+                listOf(therapy.uppercase())
+            }
+        }
+    }
+
+    private fun permutations(drugs: List<String>): Set<List<String>> {
+        if (drugs.isEmpty()) return setOf(emptyList())
+
+        val result: MutableSet<List<String>> = mutableSetOf()
+        for (i in drugs.indices) {
+            permutations(drugs - drugs[i]).forEach { item ->
+                result.add(item + drugs[i])
+            }
+        }
+        return result
     }
 
     fun extractTherapeuticSettingFromString(therapeuticSetting: String): Intent {
@@ -79,18 +118,33 @@ object ExtendedEvidenceEntryFactory {
                 patientsWithWho2 = patientPopulation.nEcog2?.toInt(),
                 patientsWithWho3 = patientPopulation.nEcog3?.toInt(),
                 patientsWithWho4 = patientPopulation.nEcog4?.toInt(),
-                patientsPerPrimaryTumorLocation = convertPrimaryTumorLocation(patientPopulation.nLocalizationPrimaryTumor),
+                patientsWithWho0to1 = patientPopulation.nEcog0to1?.toInt(),
+                patientsWithWho1to2 = patientPopulation.nEcog1to2?.toInt(),
+                patientsPerPrimaryTumorLocation = patientPopulation.nLocalizationPrimaryTumor?.let { convertPrimaryTumorLocation(it) },
                 mutations = patientPopulation.otherMutations, //TODO: convert to map once CKB has made notation consistent
                 patientsWithPrimaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),
                 patientsWithPrimaryTumorRemovedPartial = patientPopulation.nPrimaryTumorRemovedPartial?.toInt(),
                 patientsWithPrimaryTumorRemoved = patientPopulation.nPrimaryTumorRemoved?.toInt(),
                 patientsPerMetastaticSites = patientPopulation.metastaticSites?.let { convertMetastaticSites(it) },
+                timeOfMetastases = patientPopulation.timeOfMetastases?.let { convertTimeOfMetastases(it) },
+                treatment = patientPopulation.therapy?.let { findTreatmentInDatabase(it.therapyName, it.synonyms) },
                 priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
                 patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
-                medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival?.toDouble(),
-                medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival?.toDouble(),
-                analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups)
+                medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival,
+                medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival,
+                analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups),
+                priorTherapies = patientPopulation.priorTherapies,
+                patientsPerRace = if (patientPopulation.race.isNotEmpty()) convertRaceOrRegion(patientPopulation.race) else null,
+                patientsPerRegion = if (patientPopulation.region.isNotEmpty()) convertRaceOrRegion(patientPopulation.region) else null,
             )
+        }
+    }
+
+    fun convertTimeOfMetastases(timeOfMetastases: String): TimeOfMetastases {
+        try {
+            return TimeOfMetastases.valueOf(timeOfMetastases.uppercase())
+        } catch (e: Exception) {
+            throw IllegalStateException("Unknown time of metastases: $timeOfMetastases")
         }
     }
 
@@ -98,17 +152,37 @@ object ExtendedEvidenceEntryFactory {
         return numberOfGender?.toInt() ?: numberOfOtherGender?.let { numberOfPatients.toInt() - numberOfOtherGender.toInt() }
     }
 
-    fun convertPrimaryTumorLocation(primaryTumorLocations: String?): Map<String, Int>? {
-        return primaryTumorLocations?.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
+    fun convertPrimaryTumorLocation(primaryTumorLocations: String): Map<String, Int> {
+        return try {
+            primaryTumorLocations.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
+        } catch (e: JsonSyntaxException) {
+            val regex = """^(\w+): (\d+)(?: \(\d+(?:\.\d+)?%\))?$""".toRegex()
+            primaryTumorLocations.split(", ").associate { item ->
+                regex.find(item)?.let {
+                    val (label, value) = it.destructured
+                    label.trim() to value.toInt()
+                } ?: throw IllegalStateException("Incorrect primary tumor locations formatting: $primaryTumorLocations")
+            }
+        }
     }
 
     fun convertMetastaticSites(metastaticSites: String): Map<String, ValuePercentage> {
         val regex = """^(.*): (\d+) \((\d+(?:\.\d+)?)%\)?$""".toRegex()
-        return metastaticSites.split(", ").associate { item ->
+        return metastaticSites.split(",").associate { item ->
             regex.find(item)?.let {
                 val (label, value, percentage) = it.destructured
                 label.trim() to ValuePercentage(value.toInt(), percentage.toDouble())
             } ?: throw IllegalStateException("Incorrect metastatic site formatting: $metastaticSites")
+        }
+    }
+
+    fun convertRaceOrRegion(raceOrRegion: String): Map<String, Int> {
+        val regex = """^(.*?):\s*(\d+)$""".toRegex()
+        return raceOrRegion.replace("\n", "").split(",").associate { item ->
+            regex.find(item)?.let {
+                val (label, value) = it.destructured
+                label.trim() to value.toInt()
+            } ?: throw IllegalStateException("Incorrect race or region formatting: $raceOrRegion")
         }
     }
 

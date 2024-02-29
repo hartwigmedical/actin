@@ -1,18 +1,18 @@
 [
   {
     "nctId": "NCT01",
-    "title": "Study of treatment 1 instead of treatment 2",
+    "title": "Study of pembrolizumab instead of CAPOX",
     "phase": "Phase III",
     "recruitment": "Completed",
     "therapies": [
       {
         "id": 1,
-        "therapyName": "Treatment 1",
+        "therapyName": "Capecitabine + Oxaliplatin",
         "synonyms": null
       },
       {
         "id": 2,
-        "therapyName": "Treatment 2",
+        "therapyName": "Pembrolizumab",
         "synonyms": null
       }
     ],
@@ -35,7 +35,7 @@
       {
         "molecularProfile": {
           "id": 3,
-          "profileName": "EGFR positive"
+          "profileName": "MSI high"
         },
         "requirementType": "required"
       }
@@ -62,8 +62,7 @@
           {
             "id": 20,
             "is_control": true,
-            "group_name": "Treatment 1",
-            "n_patients_enrolled": null,
+            "group_name": "CAPOX",
             "n_patients": "40",
             "n_female": "30",
             "n_male": "10",
@@ -76,6 +75,8 @@
             "n_ecog_2": "10",
             "n_ecog_3": null,
             "n_ecog_4": null,
+            "n_ecog_0_to_1": null,
+            "n_ecog_1_to_2": null,
             "highest_ecog_score": 2,
             "n_localization_primary_tumor": null,
             "other_mutations": "EGFR Staining None: 0 (0%), Weak 1+: 40 (100.0%)",
@@ -94,10 +95,31 @@
             "median_follow_up_for_progression_free_survival": null,
             "median_follow_up_randomization_to_data_cut_off": null,
             "metastatic_sites": "Liver: 20 (50.0%), Lung: 10 (25.0%)",
+            "time_of_metastases": "Both",
+            "therapy": {
+              "id": 1,
+              "therapyName": "Capecitabine + Oxaliplatin",
+              "synonyms": null,
+              "therapyDescriptions": [
+                {
+                  "description": "Description of CAPOX",
+                  "references": [
+                    {
+                      "id": 92,
+                      "pubMedId": 12345678,
+                      "title": "In a phase3 trial, pembrolizumab seems better than CAPOX",
+                      "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
+                    }
+                  ]
+                }
+              ],
+              "createDate": "01/01/2001",
+              "updateDate": "02/02/2002"
+            },
             "analysis_groups": [
               {
                 "id": 30,
-                "name": "Treatment 1",
+                "name": "CAPOX",
                 "outcome": "N/A",
                 "n_patients": "40",
                 "end_point_metrics": [
@@ -141,13 +163,16 @@
             ],
             "efficacy_evidence": [
             ],
+            "therapy_details": null,
+            "prior_therapies": "Chemo, radiation",
+            "race": "Asian: 16,\nWhite: 24",
+            "region": "",
             "notes": null
           },
           {
             "id": 21,
             "is_control": false,
-            "group_name": "Treatment 2",
-            "n_patients_enrolled": null,
+            "group_name": "Pembrolizumab",
             "n_patients": "40",
             "n_female": "21",
             "n_male": "19",
@@ -160,6 +185,8 @@
             "n_ecog_2": "3",
             "n_ecog_3": null,
             "n_ecog_4": null,
+            "n_ecog_0_to_1": null,
+            "n_ecog_1_to_2": null,
             "highest_ecog_score": 2,
             "n_localization_primary_tumor": null,
             "other_mutations": "EGFR Staining None: 2 (5.0%), Weak 1+: 38 (95.0%)",
@@ -178,10 +205,31 @@
             "median_follow_up_for_progression_free_survival": null,
             "median_follow_up_randomization_to_data_cut_off": null,
             "metastatic_sites": "Liver: 30 (75.0%), Lung: 10 (25.0%)",
+            "time_of_metastases": null,
+            "therapy": {
+              "id": 2,
+              "therapyName": "Pembrolizumab",
+              "synonyms": null,
+              "therapyDescriptions": [
+                {
+                  "description": "Description of pembrolizumab",
+                  "references": [
+                    {
+                      "id": 92,
+                      "pubMedId": 12345678,
+                      "title": "In a phase3 trial, pembrolizumab seems better than CAPOX",
+                      "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
+                    }
+                  ]
+                }
+              ],
+              "createDate": "01/01/2001",
+              "updateDate": "02/02/2002"
+            },
             "analysis_groups": [
               {
                 "id": 31,
-                "name": "Treatment 2",
+                "name": "Pembrolizumab",
                 "outcome": "Positive",
                 "n_patients": "40",
                 "end_point_metrics": [
@@ -189,7 +237,7 @@
                     "id": 42,
                     "trial_analysis_group_id": 31,
                     "end_point": {
-                      "id": 52,
+                      "id": 50,
                       "name": "Disease Control Rate",
                       "definition": "the proportion of patients who have achieved complete response, partial response, and stable disease",
                       "unit_of_measure": "Percent"
@@ -213,7 +261,7 @@
                     "id": 43,
                     "trial_analysis_group_id": 31,
                     "end_point": {
-                      "id": 53,
+                      "id": 51,
                       "name": "Objective/Overall Response Rate",
                       "definition": "the proportion of patients with tumor size reduction of a predefined amount and for a minimum time period",
                       "unit_of_measure": "Percent"
@@ -242,10 +290,10 @@
                 "id": 70,
                 "approvalStatus": "Phase III",
                 "evidenceType": "Actionable",
-                "efficacyEvidence": "In a phase3 trial, treatment 1 seems better than treatment 2",
+                "efficacyEvidence": "In a phase3 trial, pembrolizumab seems better than CAPOX",
                 "molecularProfile": {
                   "id": 3,
-                  "profileName": "EGFR positive"
+                  "profileName": "MSI high"
                 },
                 "therapy": {
                   "id": 1,
@@ -262,7 +310,7 @@
                   {
                     "id": 92,
                     "pubMedId": 12345678,
-                    "title": "In a phase3 trial, treatment 1 seems better than treatment 2",
+                    "title": "In a phase3 trial, pembrolizumab seems better than CAPOX",
                     "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
                   }
                 ],
@@ -289,13 +337,17 @@
                 ]
               }
             ],
+            "therapy_details": null,
+            "prior_therapies": "Chemo",
+            "race": "Asian: 10,\nWhite: 30",
+            "region": "",
             "notes": null
           }
         ],
         "reference": {
           "id": 92,
           "pubMedId": 12345678,
-          "title": "In a phase3 trial, treatment 1 seems better than treatment 2",
+          "title": "In a phase3 trial, pembrolizumab seems better than CAPOX",
           "url": "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
         }
       }
