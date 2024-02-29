@@ -76,6 +76,6 @@ class EhrTumorDetailsExtractor(
                     "lesion",
                     true
                 )
-            } ?: emptyList()
+            }?.filter { config -> config.config()?.ignore?.not() ?: true } ?: emptyList()
     }
 }

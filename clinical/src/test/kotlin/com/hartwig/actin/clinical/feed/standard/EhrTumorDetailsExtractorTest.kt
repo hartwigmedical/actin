@@ -32,10 +32,13 @@ private const val CONCLUSION_2 = "conclusion 2"
 
 private const val CONCLUSION_3 = "conclusion 3"
 
+private const val CONCLUSION_4 = "conclusion 4"
+
 private const val RADIOLOGY_REPORT = "Conclusie:\n" +
         "$CONCLUSION_1.\n" +
         "$CONCLUSION_2.\n" +
         "$CONCLUSION_3.\n" +
+        "$CONCLUSION_4.\n" +
         "\n" +
         "\n" +
         "Hersenen radiologie rapport:"
@@ -123,6 +126,14 @@ class EhrTumorDetailsExtractorTest {
             )
         )
         every { lesionCuration.find(CONCLUSION_3) } returns emptySet()
+        every { lesionCuration.find(CONCLUSION_4) } returns setOf(
+            LesionLocationConfig(
+                input = CONCLUSION_4,
+                ignore = true,
+                location = "other",
+                category = null
+            )
+        )
         val result =
             extractor.extract(EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(lesionSite = RADIOLOGY_REPORT)))
         assertThat(result.extracted).isEqualTo(
