@@ -45,6 +45,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_INCURABLE_CANCER to FunctionInput.NONE,
         EligibilityRule.HAS_ANY_LESION to FunctionInput.NONE,
         EligibilityRule.HAS_LIVER_METASTASES to FunctionInput.NONE,
+        EligibilityRule.HAS_LIVER_METASTASES_ONLY to FunctionInput.NONE,
         EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_KNOWN_CNS_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES to FunctionInput.NONE,
