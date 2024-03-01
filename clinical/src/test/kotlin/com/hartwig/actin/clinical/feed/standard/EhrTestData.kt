@@ -20,8 +20,10 @@ object EhrTestData {
         tumorType = "tumorType",
         lesions = emptyList(),
         measurableDiseaseDate = LocalDate.of(2024, 2, 23),
-        measurableDisease = false,
+        measurableDisease = true,
         tumorGradeDifferentiation = "tumorGradeDifferentiation",
+        tumorStage = "IV",
+        tumorStageDate = LocalDate.of(2024, 2, 29)
     )
 
 

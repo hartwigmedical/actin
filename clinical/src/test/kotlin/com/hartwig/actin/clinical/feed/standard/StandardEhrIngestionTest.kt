@@ -59,7 +59,10 @@ class StandardEhrIngestionTest {
             secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
 
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
-            tumorDetailsExtractor = EhrTumorDetailsExtractor(curationDatabase.primaryTumorCuration),
+            tumorDetailsExtractor = EhrTumorDetailsExtractor(
+                curationDatabase.primaryTumorCuration,
+                curationDatabase.lesionLocationCuration
+            ),
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),

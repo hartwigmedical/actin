@@ -85,7 +85,7 @@ class StandardEhrIngestion(
             Pair(
                 patientEvaluation,
                 ClinicalRecord(
-                    patientId = ehrPatientRecord.patientDetails.hashedId.toBase64(),
+                    patientId = ehrPatientRecord.patientDetails.hashedIdBase64(),
                     patient = patientDetails.extracted,
                     tumor = tumorDetails.extracted,
                     clinicalStatus = clinicalStatus.extracted,
@@ -141,7 +141,7 @@ class StandardEhrIngestion(
             EhrPriorOtherConditionsExtractor(curationDatabaseContext.nonOncologicalHistoryCuration),
             EhrTreatmentHistoryExtractor(curationDatabaseContext.treatmentHistoryEntryCuration),
             EhrClinicalStatusExtractor(),
-            EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration),
+            EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration),
             EhrPriorPrimariesExtractor(),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor()

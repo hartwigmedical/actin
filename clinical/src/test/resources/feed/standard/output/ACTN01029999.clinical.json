@@ -13,9 +13,9 @@
   },
   "tumor": {
     "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": null,
+    "primaryTumorSubLocation": "",
     "primaryTumorType": "Adenocarcinoma",
-    "primaryTumorSubType": null,
+    "primaryTumorSubType": "",
     "primaryTumorExtraDetails": "undifferentiated",
     "doids": [
       "3908"
