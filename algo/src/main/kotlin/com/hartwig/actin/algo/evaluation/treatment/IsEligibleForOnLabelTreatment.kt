@@ -25,7 +25,7 @@ class IsEligibleForOnLabelTreatment(
 
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
                 if (recommendationEngine.standardOfCareEvaluatedTreatments(record)
-                        .any { it.treatmentCandidate.treatment.name == treatmentName }
+                        .any { it.treatmentCandidate.treatment.name.equals(treatmentName, ignoreCase = true) }
                 ) {
                     EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment ${treatmentName.lowercase()}")
                 } else {
