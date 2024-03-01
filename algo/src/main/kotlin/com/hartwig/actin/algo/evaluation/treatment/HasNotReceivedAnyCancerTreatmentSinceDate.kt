@@ -15,6 +15,7 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorCancerTreatment = record.clinical.oncologicalHistory
+        val concatenatedTreatmentDisplay = priorCancerTreatment.joinToString { it.treatmentDisplay() }
 
         return when {
             priorCancerTreatment.isEmpty() -> {
@@ -28,9 +29,9 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
                 treatmentSinceMinDate(it, minDate, true)
             } -> {
                 EvaluationFactory.undetermined(
-                    "Patient has had anti-cancer therapy (${priorCancerTreatment.joinToString(", ")}) but " +
+                    "Patient has had anti-cancer therapy ($concatenatedTreatmentDisplay) but " +
                             "undetermined if in the last $monthsAgo months (date unknown)",
-                    "Received anti-cancer therapy (${priorCancerTreatment.joinToString(", ")}) but " +
+                    "Received anti-cancer therapy ($concatenatedTreatmentDisplay) but " +
                             "undetermined if in the last $monthsAgo months (date unknown)"
                 )
             }
@@ -51,8 +52,8 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
 
             else -> {
                 EvaluationFactory.fail(
-                    "Patient has had anti-cancer therapy (${priorCancerTreatment.joinToString(", ")}) within the last $monthsAgo months",
-                    "Received anti-cancer therapy (${priorCancerTreatment.joinToString(", ")}) within the last $monthsAgo months"
+                    "Patient has had anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months",
+                    "Received anti-cancer therapy ($concatenatedTreatmentDisplay) within the last $monthsAgo months"
                 )
             }
         }
