@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
@@ -25,7 +26,10 @@ private const val MODIFICATION_NAME = "modificationName"
 class EhrTreatmentHistoryExtractorTest {
 
     private val treatmentCurationDatabase = mockk<CurationDatabase<TreatmentHistoryEntryConfig>>()
-    private val extractor = EhrTreatmentHistoryExtractor(treatmentCurationDatabase)
+    private val nonOncologicalHistoryCuration = mockk<CurationDatabase<NonOncologicalHistoryConfig>> {
+        every { find(any()) } returns emptySet()
+    }
+    private val extractor = EhrTreatmentHistoryExtractor(treatmentCurationDatabase, nonOncologicalHistoryCuration)
     private val treatment = DrugTreatment("drug", drugs = emptySet())
     private val treatmentHistoryEntryConfig = TreatmentHistoryEntryConfig(
         TREATMENT_NAME,
