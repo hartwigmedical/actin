@@ -27,7 +27,8 @@ class HasTumorStage internal constructor(
                     "Missing tumor stage details - $derivedStageMessage"
                 )
             } else {
-                fail("Tumor stage details are missing", "Missing tumor stage details")
+                fail("No tumor stage details present but based on lesions requested stage cannot be met",
+                    "Tumor stage unknown but requested stage not met based on lesions")
             }
         }
         return evaluateWithStage(stage)
