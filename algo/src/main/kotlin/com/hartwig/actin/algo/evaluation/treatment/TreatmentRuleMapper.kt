@@ -17,6 +17,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to isEligibleForPalliativeRadiotherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to isEligibleForLocoRegionalTherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to isEligibleForTreatmentLinesCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to isEligibleForIntensiveTreatmentCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
@@ -98,6 +99,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val lines = functionInputResolver().createManyIntegersInput(function)
             IsEligibleForTreatmentLines(lines)
         }
+    }
+
+    private fun isEligibleForIntensiveTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForIntensiveTreatment() }
     }
 
     private fun hasExhaustedSOCTreatmentsCreator(): FunctionCreator {
