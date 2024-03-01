@@ -216,6 +216,7 @@
     "tumor_grade_differentiation": "undifferentiated",
     "tumor_stage": "IV",
     "tumor_stage_date": "2020-01-01T10:10:00",
+    "lesion_site": "brain",
     "lesions": [
       {
         "location": "brain",
