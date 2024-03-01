@@ -39,9 +39,7 @@ private const val RADIOLOGY_REPORT = "Conclusie:\n" +
         "$CONCLUSION_2.\n" +
         "$CONCLUSION_3.\n" +
         "$CONCLUSION_4.\n" +
-        "\n" +
-        "\n" +
-        "Hersenen radiologie rapport:"
+        "\r\n\n\nHersenen radiologie rapport:"
 
 private val TUMOR_DETAILS = TumorDetails(
     primaryTumorLocation = TUMOR_LOCATION,

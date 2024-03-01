@@ -66,7 +66,7 @@ class EhrTumorDetailsExtractor(
     }
 
     private fun extractLesions(patientId: String, radiologyReport: String?): List<CurationResponse<LesionLocationConfig>> {
-        return radiologyReport?.substringAfter("Conclusie:")?.substringBefore("Hersenen radiologie rapport:")?.split("\n")
+        return radiologyReport?.substringAfter("Conclusie:")?.substringBefore("\r\n\n\n")?.split("\n")
             ?.filter { it.isNotBlank() }?.map { line -> line.substringBeforeLast(".") }?.map { line ->
                 CurationResponse.createFromConfigs(
                     lesionCurationDatabase.find(line),
