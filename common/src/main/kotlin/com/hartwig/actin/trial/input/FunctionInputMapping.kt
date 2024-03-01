@@ -272,6 +272,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X to FunctionInput.ONE_DOID_TERM,
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS to FunctionInput.ONE_DOID_TERM_ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME to FunctionInput.ONE_STRING,
+        EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME_WITHIN_Y_MONTHS to FunctionInput.ONE_STRING_ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE to FunctionInput.NONE,

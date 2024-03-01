@@ -29,6 +29,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT to hasPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredDOIDTermCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredNameCreator(),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasHistoryOfPneumonitisCreator(),
             EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
             EligibilityRule.HAS_HISTORY_OF_STROKE_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.STROKE_DOID),
@@ -109,6 +110,16 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             val maxMonthsAgo = input.integer
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
             HasHadPriorConditionWithDoidRecently(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!, minDate)
+        }
+    }
+
+    private fun hasRecentPriorConditionWithConfiguredNameCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneStringOneIntegerInput(function)
+            val nameToFind = input.string
+            val maxMonthsAgo = input.integer
+            val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
+            HasHadPriorConditionWithNameRecently(nameToFind, minDate)
         }
     }
 
