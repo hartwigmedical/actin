@@ -3,7 +3,8 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @JacksonSerializable
 data class EhrPatientRecord(
@@ -117,8 +118,11 @@ data class EhrMedication(
     val isSelfCare: Boolean
 )
 
+@OptIn(ExperimentalEncodingApi::class)
 fun String.toBase64(): String {
-    return Base64.getEncoder().encodeToString(this.toByteArray(Charsets.UTF_8))
+    return Base64.Default.encode(this.chunked(2)
+        .map { it.toInt(16).toByte() }
+        .toByteArray())
 }
 
 @JacksonSerializable
