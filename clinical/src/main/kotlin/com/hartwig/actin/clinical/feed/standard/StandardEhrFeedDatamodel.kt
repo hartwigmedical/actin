@@ -157,9 +157,9 @@ class RemoveNewlinesAndCarriageReturns : JsonDeserializer<String>() {
 data class EhrPriorOtherCondition(
     @field:JsonDeserialize(using = RemoveNewlinesAndCarriageReturns::class)
     val name: String,
-    val category: String?,
+    val category: String? = null,
     val startDate: LocalDate,
-    val endDate: LocalDate?
+    val endDate: LocalDate? = null
 )
 
 @JacksonSerializable

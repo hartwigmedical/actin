@@ -5,5 +5,5 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 data class TreatmentHistoryEntryConfig(
     override val input: String,
     override val ignore: Boolean,
-    val curated: TreatmentHistoryEntry?
+    val curated: TreatmentHistoryEntry? = null
 ) : CurationConfig
