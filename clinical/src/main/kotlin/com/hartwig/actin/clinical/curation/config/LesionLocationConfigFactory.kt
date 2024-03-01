@@ -14,11 +14,12 @@ class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> 
             fields,
             parts
         ) { LesionLocationCategory.valueOf(it) }
+        val location = parts[fields["location"]!!]
         return ValidatedCurationConfig(
             LesionLocationConfig(
                 input = input,
-                ignore = CurationUtil.isIgnoreString(input),
-                location = parts[fields["location"]!!],
+                ignore = CurationUtil.isIgnoreString(location),
+                location = location,
                 category = category
             ), validationErrors
         )
