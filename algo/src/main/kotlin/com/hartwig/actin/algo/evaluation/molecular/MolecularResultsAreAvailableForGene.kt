@@ -12,7 +12,8 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.molecular.type == ExperimentType.WHOLE_GENOME && record.molecular.containsTumorCells) {
             return EvaluationFactory.pass(
-                "WGS has successfully been performed so molecular results are available for gene $gene", "WGS results available for $gene"
+                "WGS has successfully been performed so molecular results are available for gene $gene",
+                "WGS results available for $gene"
             )
         }
 
@@ -44,14 +45,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             record.molecular.type == ExperimentType.WHOLE_GENOME && !record.molecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had WGS but biopsy contained no tumor cells",
-                    "$gene tested but sample purity is too low"
+                    "WGS performed containing $gene, but sample purity was too low"
                 )
             }
 
             record.molecular.type == ExperimentType.TARGETED && !record.molecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had OncoAct tumor NGS panel but biopsy contained too little tumor cells",
-                    "$gene tested but sample purity is too low"
+                    "OncoAct tumor NGS panel performed containing $gene, but sample purity was too low"
                 )
             }
 
