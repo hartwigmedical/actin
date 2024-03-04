@@ -1,42 +1,43 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.tumor.HasLiverMetastases
-import io.mockk.every
-import io.mockk.mockk
+import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
+import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class IsEligibleForLocalLiverTreatmentTest {
 
-    private val patientRecord = TestDataFactory.createMinimalTestPatientRecord()
+    private val function = IsEligibleForLocalLiverTreatment(TestDoidModelFactory.createMinimalTestDoidModel())
 
     @Test
-    fun `Should fail when no liver metastases`() {
-        val alwaysFailsLiverMetastasesEvaluation = mockk<HasLiverMetastases> {
-            every { evaluate(any()) } returns EvaluationFactory.fail("no liver metastases")
-        }
-        val function = IsEligibleForLocalLiverTreatment(alwaysFailsLiverMetastasesEvaluation)
+    fun `Should fail when no liver lesions`() {
+        val patientRecord = TumorTestFactory.withLiverLesions(false)
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 
     @Test
-    fun `Should be undetermined when data regarding liver metastases is missing`() {
-        val alwaysUndeterminedLiverMetastasesEvaluation = mockk<HasLiverMetastases> {
-            every { evaluate(any()) } returns EvaluationFactory.undetermined("data regarding liver metastases missing")
-        }
-        val function = IsEligibleForLocalLiverTreatment(alwaysUndeterminedLiverMetastasesEvaluation)
+    fun `Should be undetermined when data regarding liver lesions is missing`() {
+        val patientRecord = TumorTestFactory.withLiverLesions(null)
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
     @Test
-    fun `Should be undetermined when patient has liver metastases`() {
-        val alwaysPassLiverMetastasesEvaluation = mockk<HasLiverMetastases> {
-            every { evaluate(any()) } returns EvaluationFactory.pass("liver metastases")
-        }
-        val function = IsEligibleForLocalLiverTreatment(alwaysPassLiverMetastasesEvaluation)
+    fun `Should be undetermined when patient has liver lesions`() {
+        val patientRecord = TumorTestFactory.withLiverLesions(true)
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should warn when patient has liver cancer but no liver lesions`() {
+        val patientRecord = TumorTestFactory.withDoidsAndLiverLesions(setOf(DoidConstants.LIVER_CANCER_DOID), false)
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should fail when patient has bone cancer but no liver lesions`() {
+        val patientRecord = TumorTestFactory.withDoidsAndLiverLesions(setOf(DoidConstants.BONE_CANCER_DOID), false)
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 }

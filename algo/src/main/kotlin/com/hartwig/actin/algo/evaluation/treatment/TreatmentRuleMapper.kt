@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
-import com.hartwig.actin.algo.evaluation.tumor.HasLiverMetastases
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
@@ -103,7 +102,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun isEligibleForLocalLiverTreatmentCreator(): FunctionCreator {
-        return FunctionCreator { IsEligibleForLocalLiverTreatment(HasLiverMetastases()) }
+        return FunctionCreator { IsEligibleForLocalLiverTreatment(doidModel()) }
     }
 
     private fun hasExhaustedSOCTreatmentsCreator(): FunctionCreator {
