@@ -142,9 +142,8 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)",
                 treatmentHistoryEntry.treatmentHistoryDetails?.let { details ->
                     if (details.switchToTreatments.isNullOrEmpty()) "" else {
-                        " with switch to " + details.switchToTreatments!!.joinToString(" then ") {
-                            it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)"
-                            }
+                        details.switchToTreatments!!.joinToString(prefix = "with switch to ", separator = " then ") {
+                            it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)" }
                         }
                     }
                 },
