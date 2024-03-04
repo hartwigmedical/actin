@@ -32,7 +32,7 @@ object TestTreatmentMatchFactory {
         return listOf(
             TrialMatch(
                 identification = TrialIdentification(
-                    trialId = "Test 1",
+                    trialId = "Test Trial 1",
                     open = true,
                     acronym = "TEST-1",
                     title = "Example test trial 1"
