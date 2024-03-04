@@ -16,7 +16,7 @@ class HasSpecificMetastasesOnly(private val hasSpecificMetastases: (TumorDetails
         )
         val otherLesions = tumorDetails.otherLesions
         if (hasSpecificMetastases && tumorDetails.otherLesions == null &&
-            (metastasesAccessors - this.hasSpecificMetastases).all { it.invoke(tumorDetails) == null }
+            (metastasesAccessors - this.hasSpecificMetastases).any { it.invoke(tumorDetails) == null }
         ) {
             return EvaluationFactory.warn(
                 "Patient has $typeOfMetastases lesions but data regarding other lesion locations is missing, so unknown if patient has only $typeOfMetastases metastases",
