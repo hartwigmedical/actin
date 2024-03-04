@@ -133,14 +133,14 @@ class EhrTreatmentHistoryExtractor(
                 modification.name,
                 TREATMENT_HISTORY,
             )
-            modificationTreatment.config()?.let { curatedModificaton ->
+            modificationTreatment.config()?.curated?.let {
                 ExtractionResult(
                     listOf(
                         TreatmentStage(
                             cycles = modification.administeredCycles,
                             startYear = modification.date.year,
                             startMonth = modification.date.monthValue,
-                            treatment = curatedModificaton.curated!!.treatments.first(),
+                            treatment = it.treatments.first(),
                         )
                     ), modificationTreatment.extractionEvaluation
                 )
