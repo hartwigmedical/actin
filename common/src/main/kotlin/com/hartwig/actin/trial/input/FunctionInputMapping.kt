@@ -80,7 +80,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_ANY_DRUG_X to FunctionInput.MANY_DRUGS,
 
         EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to FunctionInput.NONE,
-        EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to FunctionInput.ONE_STRING,
+        EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to FunctionInput.ONE_SPECIFIC_TREATMENT,
         EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to FunctionInput.NONE,
         EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to FunctionInput.NONE,
         EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to FunctionInput.MANY_INTEGERS,
