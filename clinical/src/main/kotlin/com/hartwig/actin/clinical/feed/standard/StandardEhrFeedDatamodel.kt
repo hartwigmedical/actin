@@ -1,5 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -149,12 +153,19 @@ data class EhrWhoEvaluation(
     val evaluationDate: LocalDate
 )
 
+class RemoveNewlinesAndCarriageReturns : JsonDeserializer<String>() {
+    override fun deserialize(p0: JsonParser, p1: DeserializationContext?): String {
+        return p0.text?.replace("\n", "")?.replace("\r", "") ?: ""
+    }
+}
+
 @JacksonSerializable
 data class EhrPriorOtherCondition(
+    @field:JsonDeserialize(using = RemoveNewlinesAndCarriageReturns::class)
     val name: String,
-    val category: String?,
+    val category: String? = null,
     val startDate: LocalDate,
-    val endDate: LocalDate?
+    val endDate: LocalDate? = null
 )
 
 @JacksonSerializable

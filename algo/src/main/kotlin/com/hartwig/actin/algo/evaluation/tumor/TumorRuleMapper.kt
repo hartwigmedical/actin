@@ -66,6 +66,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
+            EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSitu(),
         )
     }
 
@@ -332,5 +333,9 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
         return FunctionCreator { MeetsSpecificCriteriaRegardingLiverMetastases() }
+    }
+
+    private fun hasSymptomsOfPrimaryTumorInSitu(): FunctionCreator {
+        return FunctionCreator { HasSymptomsOfPrimaryTumorInSitu() }
     }
 }
