@@ -15,15 +15,15 @@ class MolecularSummaryCRCGenerator(
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createKey("KRAS"))
-        table.addCell(Cells.createValue("Wild-type"))
+        table.addCell(Cells.createValue("Wild-type")) //TODO
         table.addCell(Cells.createKey("NRAS"))
-        table.addCell(Cells.createValue("Wild-type"))
+        table.addCell(Cells.createValue("Wild-type")) //TODO
         table.addCell(Cells.createKey("BRAF"))
-        table.addCell(Cells.createValue("Wild-type"))
+        table.addCell(Cells.createValue("Wild-type")) //TODO
         table.addCell(Cells.createKey("HER2"))
-        table.addCell(Cells.createValue("Not tested"))
+        table.addCell(Cells.createValue("Not tested")) //TODO
         table.addCell(Cells.createKey("Microsatellite (in)stability"))
-        table.addCell(Cells.createValue("Stable"))
+        table.addCell(Cells.createValue("Stable")) //TODO
 
         return table
     }

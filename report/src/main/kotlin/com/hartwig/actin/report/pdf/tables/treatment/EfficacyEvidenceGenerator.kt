@@ -122,9 +122,9 @@ class EfficacyEvidenceGenerator(
         for (patientPopulation in trialReference.patientPopulations) {
             if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name == treatment.treatmentCandidate.treatment.name) {
                 val analysisGroup =
-                    patientPopulation.analysisGroups.iterator().next() // assume only 1 analysis group per patient population
+                    patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
                 table.addCell(Cells.createValue("Median PFS: "))
-                for (primaryEndPoint in analysisGroup.primaryEndPoints) {
+                for (primaryEndPoint in analysisGroup!!.primaryEndPoints) {
                     if (primaryEndPoint.name == "Median Progression-Free Survival") {
                         table.addCell(
                             Cells.createKey(
