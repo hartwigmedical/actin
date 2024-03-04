@@ -138,8 +138,14 @@ class StandardEhrIngestion(
             EhrLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
             EhrToxicityExtractor(curationDatabaseContext.toxicityCuration),
             EhrComplicationExtractor(curationDatabaseContext.complicationCuration),
-            EhrPriorOtherConditionsExtractor(curationDatabaseContext.nonOncologicalHistoryCuration),
-            EhrTreatmentHistoryExtractor(curationDatabaseContext.treatmentHistoryEntryCuration),
+            EhrPriorOtherConditionsExtractor(
+                curationDatabaseContext.nonOncologicalHistoryCuration,
+                curationDatabaseContext.treatmentHistoryEntryCuration
+            ),
+            EhrTreatmentHistoryExtractor(
+                curationDatabaseContext.treatmentHistoryEntryCuration,
+                curationDatabaseContext.nonOncologicalHistoryCuration
+            ),
             EhrClinicalStatusExtractor(),
             EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration),
             EhrPriorPrimariesExtractor(),
