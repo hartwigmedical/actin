@@ -19,8 +19,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
 
         if (record.molecular.type == ExperimentType.TARGETED && record.molecular.containsTumorCells) {
             val geneIsTested = record.molecular.drivers.copyNumbers
-                .filter { it.gene == gene }
-                .isNotEmpty()
+                .any { it.gene == gene }
             return if (geneIsTested) {
                 EvaluationFactory.pass(
                     "OncoAct tumor NGS panel has been successfully performed so molecular results are available for gene $gene",
