@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.datamodel
 
 object TestMedicationFactory {
+
     fun createMinimal(): Medication {
         return Medication(
             name = "",

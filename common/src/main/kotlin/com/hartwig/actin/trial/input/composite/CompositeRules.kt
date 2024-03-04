@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.input.composite
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 object CompositeRules {
+
     val COMPOSITE_RULE_MAPPING = mapOf(
         EligibilityRule.AND to CompositeInput.AT_LEAST_2,
         EligibilityRule.OR to CompositeInput.AT_LEAST_2,

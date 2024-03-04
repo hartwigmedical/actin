@@ -33,11 +33,11 @@ object TestExtendedEvidenceEntryFactory {
         )
     }
 
-    fun createReference(): TrialReference {
+    private fun createReference(): TrialReference {
         return TrialReference(patientPopulations = listOf(createPatientPopulation()), url = "http://www.ncbi.nlm.nih.gov/pubmed/12345678")
     }
 
-    fun createPatientPopulation(): PatientPopulation {
+    private fun createPatientPopulation(): PatientPopulation {
         return PatientPopulation(
             name = "Pembrolizumab",
             isControl = true,
@@ -76,7 +76,7 @@ object TestExtendedEvidenceEntryFactory {
         )
     }
 
-    fun createAnalysisGroup(): AnalysisGroup {
+    private fun createAnalysisGroup(): AnalysisGroup {
         return AnalysisGroup(
             id = 1, primaryEndPoints = listOf(
                 PrimaryEndPoint(

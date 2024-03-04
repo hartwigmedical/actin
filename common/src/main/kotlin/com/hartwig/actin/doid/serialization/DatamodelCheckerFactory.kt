@@ -3,6 +3,7 @@ package com.hartwig.actin.doid.serialization
 import com.hartwig.actin.util.json.JsonDatamodelChecker
 
 object DatamodelCheckerFactory {
+
     fun rootObjectChecker(): JsonDatamodelChecker {
         return allRequiredDatamodelChecker("RootObject", listOf("graphs"))
     }

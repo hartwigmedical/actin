@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DoidJsonTest {
+
     @Test
     fun `Should extract doid from URL`() {
         assertThat(DoidJson.extractDoid(DoidJson.DOID_URL_PREFIX + "300")).isEqualTo("300")
@@ -25,7 +26,7 @@ class DoidJsonTest {
     }
 
     @Test
-    fun canReadDoidJsonFile() {
+    fun `Should read test DOID JSON file`() {
         val entry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_EXAMPLE_FILE_JSON)
         assertThat(entry.id).isEqualTo(DoidJson.ID_TO_READ)
         assertNodes(entry.nodes)

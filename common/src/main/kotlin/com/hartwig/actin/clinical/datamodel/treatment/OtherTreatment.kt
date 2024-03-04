@@ -8,6 +8,7 @@ data class OtherTreatment(
     val categories: Set<TreatmentCategory>,
     val types: Set<OtherTreatmentType> = emptySet()
 ) : Treatment {
+
     override val treatmentClass = TreatmentClass.OTHER_TREATMENT
 
     override fun categories() = categories

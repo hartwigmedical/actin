@@ -1,6 +1,7 @@
 package com.hartwig.actin.doid.config
 
 object DoidManualConfigFactory {
+
     private val MAIN_CANCER_DOIDS = setOf(
         "0050619", // paranasal sinus cancer
         "0060119", // pharynx cancer

@@ -46,7 +46,7 @@ import java.time.LocalDate
 class MolecularRecordJsonTest {
 
     @Test
-    fun canConvertBackAndForthJson() {
+    fun `Should convert test molecular JSON back and forth`() {
         val minimal = createMinimalTestMolecularRecord()
         val convertedMinimal = fromJson(toJson(minimal))
         assertThat(convertedMinimal).isEqualTo(minimal)
@@ -61,12 +61,12 @@ class MolecularRecordJsonTest {
     }
 
     @Test
-    fun canReadMinimalMolecularJson() {
+    fun `Should read minimal molecular JSON`() {
         assertThat(read(MINIMAL_MOLECULAR_JSON)).isNotNull
     }
 
     @Test
-    fun canReadSampleMolecularJson() {
+    fun `Should read sample molecular JSON`() {
         val molecular = read(SAMPLE_MOLECULAR_JSON)
         assertThat(molecular.patientId).isEqualTo("ACTN01029999")
         assertThat(molecular.sampleId).isEqualTo("ACTN01029999T")

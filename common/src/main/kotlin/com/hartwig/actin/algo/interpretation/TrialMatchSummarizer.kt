@@ -11,7 +11,6 @@ object TrialMatchSummarizer {
                 mapOf(trial.identification to trial.cohorts.filter(CohortMatch::isPotentiallyEligible).map(CohortMatch::metadata))
             }
             TrialMatchSummary(1, trial.cohorts.size, eligibleTrialMap)
-        }
-            .fold(TrialMatchSummary(), TrialMatchSummary::plus)
+        }.fold(TrialMatchSummary(), TrialMatchSummary::plus)
     }
 }

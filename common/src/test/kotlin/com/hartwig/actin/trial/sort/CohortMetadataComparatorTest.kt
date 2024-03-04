@@ -4,7 +4,6 @@ import com.hartwig.actin.trial.datamodel.CohortMetadata
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-
 class CohortMetadataComparatorTest {
    
     @Test

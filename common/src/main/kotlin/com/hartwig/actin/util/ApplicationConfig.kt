@@ -7,6 +7,7 @@ import java.nio.file.Files
 import java.util.Locale
 
 object ApplicationConfig {
+
     val LOCALE: Locale = Locale.ENGLISH
 
     fun nonOptionalDir(cmd: CommandLine, param: String): String {

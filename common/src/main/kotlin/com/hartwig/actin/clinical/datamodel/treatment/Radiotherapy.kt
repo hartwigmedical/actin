@@ -8,6 +8,7 @@ data class Radiotherapy(
     val radioType: RadiotherapyType? = null,
     val isInternal: Boolean? = null
 ) : Treatment {
+
     override val treatmentClass = TreatmentClass.RADIOTHERAPY
 
     override fun types() = setOfNotNull(radioType)

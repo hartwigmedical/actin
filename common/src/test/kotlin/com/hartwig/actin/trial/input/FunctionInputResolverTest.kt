@@ -37,8 +37,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
-
 class FunctionInputResolverTest {
+
     private val resolver = createTestResolver()
     
     @Test
@@ -591,7 +591,6 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("not an intent")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(Intent.ADJUVANT, "test")))).isFalse
     }
-
 
     @Test
     fun shouldResolveFunctionsWithManyIntentsOneIntegerInput() {

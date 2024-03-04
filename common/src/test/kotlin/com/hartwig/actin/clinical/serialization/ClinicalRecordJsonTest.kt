@@ -15,35 +15,37 @@ import java.io.File
 class ClinicalRecordJsonTest {
 
     @Test
-    fun canConvertBackAndForthJson() {
+    fun `Should be able to convert clinical JSON back and forth`() {
         val minimal = createMinimalTestClinicalRecord()
         val convertedMinimal = fromJson(toJson(minimal))
         assertThat(convertedMinimal).isEqualTo(minimal)
+
         val proper = createProperTestClinicalRecord()
         val convertedProper = fromJson(toJson(proper))
         assertThat(convertedProper).isEqualTo(proper)
     }
 
     @Test
-    fun canReadClinicalRecordDirectory() {
+    fun `Should be able to read a clinical directory`() {
         val records = readFromDir(CLINICAL_DIRECTORY)
         assertThat(records).hasSize(1)
         assertClinicalRecord(records[0])
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun cannotReadFilesFromNonDir() {
+    fun `Should throw exception when attempting to read a directory from a file`() {
         readFromDir(CLINICAL_JSON)
     }
 
     @Test
-    fun canReadClinicalRecordJson() {
+    fun `Should correctly read test clinical JSON`() {
         assertClinicalRecord(read(CLINICAL_JSON))
     }
 
     companion object {
         private val CLINICAL_DIRECTORY = Resources.getResource("clinical" + File.separator + "records").path
         private val CLINICAL_JSON = CLINICAL_DIRECTORY + File.separator + "patient.clinical.json"
+
         private fun assertClinicalRecord(record: ClinicalRecord) {
             assertThat(record.patientId).isEqualTo("ACTN01029999")
             assertThat(record.priorSecondPrimaries).hasSize(1)

@@ -1,14 +1,16 @@
 package com.hartwig.actin.molecular.datamodel.characteristics
 
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 
 class PredictedTumorOriginTest {
+
     @Test
-    fun shouldIdentifyBestPredictionInUnsortedList() {
+    fun `Should identify best prediction from unsorted list`() {
         val predictedTumorOrigin = withPredictions(0.1, 0.08, 0.4, 0.2)
-        Assert.assertEquals("type 3", predictedTumorOrigin.cancerType())
-        Assert.assertEquals(0.4, predictedTumorOrigin.likelihood(), EPSILON)
+        assertThat(predictedTumorOrigin.cancerType()).isEqualTo("type 3")
+        assertThat(predictedTumorOrigin.likelihood()).isEqualTo(0.4, Offset.offset(EPSILON))
     }
 
     companion object {

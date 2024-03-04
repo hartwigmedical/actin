@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EligibilityComparatorTest {
+
     @Test
     fun `Should sort eligibilities`() {
         val eligibilities = listOf(

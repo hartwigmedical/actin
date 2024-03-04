@@ -14,6 +14,7 @@ import java.nio.file.Files
 import java.time.LocalDate
 
 object MolecularRecordJson {
+
     private val LOGGER = LogManager.getLogger(MolecularRecordJson::class.java)
     private const val MOLECULAR_JSON_EXTENSION = ".molecular.json"
 

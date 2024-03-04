@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.interpretation
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 object TreatmentCategoryResolver {
+
     private const val DELIMITER = ", "
 
     fun fromStringList(categoryStringList: String): Set<TreatmentCategory> {

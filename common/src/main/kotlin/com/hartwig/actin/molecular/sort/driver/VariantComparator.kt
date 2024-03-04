@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.sort.driver
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 
 class VariantComparator : Comparator<Variant> {
+
     private val comparator = Comparator.comparing<Variant, Variant>({ it }, DriverComparator())
         .thenComparing({ it }, GeneAlterationComparator())
         .thenComparing({ it.canonicalImpact.hgvsProteinImpact }, String::compareTo)

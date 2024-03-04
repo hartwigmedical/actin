@@ -5,6 +5,7 @@ import com.hartwig.actin.doid.config.TestDoidManualConfigFactory.createMinimalTe
 import com.hartwig.actin.doid.config.TestDoidManualConfigFactory.createWithOneMainCancerDoid
 
 object TestDoidModelFactory {
+
     fun createMinimalTestDoidModel(): DoidModel {
         return create()
     }

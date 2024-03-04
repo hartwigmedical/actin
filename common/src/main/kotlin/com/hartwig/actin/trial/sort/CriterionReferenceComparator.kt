@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.sort
 import com.hartwig.actin.trial.datamodel.CriterionReference
 
 class CriterionReferenceComparator : Comparator<CriterionReference> {
+
     private val comparator = Comparator.comparing({ reference: CriterionReference -> reference.id.startsWith("I") }, reverseOrder())
         .thenComparing(CriterionReference::id)
         .thenComparing(CriterionReference::text)

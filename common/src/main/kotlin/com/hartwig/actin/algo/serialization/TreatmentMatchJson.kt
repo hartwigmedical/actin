@@ -19,12 +19,14 @@ import java.nio.file.Files
 import java.time.LocalDate
 
 object TreatmentMatchJson {
+
     private val LOGGER = LogManager.getLogger(TreatmentMatchJson::class.java)
     private const val TREATMENT_MATCH_EXTENSION = ".treatment_match.json"
 
     fun write(match: TreatmentMatch, directory: String) {
         val path = Paths.forceTrailingFileSeparator(directory)
         val jsonFile = path + match.patientId + TREATMENT_MATCH_EXTENSION
+
         LOGGER.info("Writing patient treatment match to {}", jsonFile)
         val writer = BufferedWriter(FileWriter(jsonFile))
         writer.write(toJson(match))
@@ -48,5 +50,4 @@ object TreatmentMatchJson {
             .create()
         return gson.fromJson(json, TreatmentMatch::class.java)
     }
-
 }

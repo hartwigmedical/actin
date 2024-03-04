@@ -6,6 +6,7 @@ import com.hartwig.actin.trial.sort.TrialIdentificationComparator
 import kotlin.Int
 
 class TrialMatchComparator : Comparator<TrialMatch> {
+
     private val comparator = Comparator.comparing(TrialMatch::identification, TrialIdentificationComparator())
         .thenComparing(TrialMatch::isPotentiallyEligible)
         .thenComparing({ it.cohorts.size }, Int::compareTo)

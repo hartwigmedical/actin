@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.sort.driver
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
 
 class HomozygousDisruptionComparator : Comparator<HomozygousDisruption> {
+
     private val comparator = Comparator.comparing<HomozygousDisruption, HomozygousDisruption>({ it }, DriverComparator())
         .thenComparing({ it }, GeneAlterationComparator())
 

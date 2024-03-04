@@ -6,8 +6,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialMatchComparatorTest {
+
     @Test
-    fun canSortTrialMatches() {
+    fun `Should sort trial matches properly`() {
         val match1 = withId("Trial 1")
         val match2 = withId("Trial 2")
         val matches = listOf(match2, match1).sortedWith(TrialMatchComparator())

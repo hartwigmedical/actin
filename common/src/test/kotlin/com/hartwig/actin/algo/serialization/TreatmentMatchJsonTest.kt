@@ -12,21 +12,22 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.File
-import java.io.IOException
 
 class TreatmentMatchJsonTest {
+
     @Test
-    fun canConvertBackAndForthJson() {
+    fun `Should be able to convert treatment match JSON back and forth`() {
         val minimal = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
         val convertedMinimal = fromJson(toJson(minimal))
         assertThat(convertedMinimal).isEqualTo(minimal)
+
         val proper = TestTreatmentMatchFactory.createProperTreatmentMatch()
         val convertedProper = fromJson(toJson(proper))
         assertThat(convertedProper).isEqualTo(proper)
     }
 
     @Test
-    fun shouldSortMessageSetsBeforeSerialization() {
+    fun `Should sort messages prior to serialization`() {
         val proper = TestTreatmentMatchFactory.createProperTreatmentMatch()
         val trialMatch: TrialMatch = proper.trialMatches[0]
         val key = trialMatch.evaluations.keys.first()
@@ -66,8 +67,7 @@ class TreatmentMatchJsonTest {
     }
 
     @Test
-    @Throws(IOException::class)
-    fun canReadTreatmentMatchJson() {
+    fun `Should be able to read treatment match JSON`() {
         val match = read(TREATMENT_MATCH_JSON)
         assertThat(match.patientId).isEqualTo("ACTN01029999")
         assertThat(match.trialMatches).hasSize(1)

@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.sort.driver
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 
 class CopyNumberComparator : Comparator<CopyNumber> {
+
     private val comparator = Comparator.comparing<CopyNumber, CopyNumber>({ it }, DriverComparator())
         .thenComparing({ it }, GeneAlterationComparator())
     

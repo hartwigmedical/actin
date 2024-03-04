@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.interpretation
 import com.hartwig.actin.clinical.datamodel.LabValue
 
 object LabInterpreter {
+
     val MAPPINGS: Map<LabMeasurement, LabMeasurement> = mapOf(
         LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO_POCT to LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO,
         LabMeasurement.LYMPHOCYTES_ABS_EDM to LabMeasurement.LYMPHOCYTES_ABS_EDA,

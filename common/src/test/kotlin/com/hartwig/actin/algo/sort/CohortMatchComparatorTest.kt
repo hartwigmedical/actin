@@ -6,8 +6,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CohortMatchComparatorTest {
+
     @Test
-    fun canSortCohortMatches() {
+    fun `Should sort cohort matches properly`() {
         val match1 = withId("A")
         val match2 = withId("B")
         val matches = listOf(match2, match1).sortedWith(CohortMatchComparator())

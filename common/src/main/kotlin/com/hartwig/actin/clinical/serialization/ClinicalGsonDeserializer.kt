@@ -15,6 +15,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 object ClinicalGsonDeserializer {
+
     fun create(): Gson {
         return gsonBuilder().create()
     }
@@ -32,7 +33,7 @@ object ClinicalGsonDeserializer {
     }
 
     private class LocalDateAdapter : JsonDeserializer<LocalDate?> {
-        @Throws(JsonParseException::class)
+
         override fun deserialize(
             jsonElement: JsonElement, type: Type,
             jsonDeserializationContext: JsonDeserializationContext
@@ -53,5 +54,4 @@ object ClinicalGsonDeserializer {
                 ?: throw JsonParseException("Failed to resolve: $json")
         }
     }
-
 }

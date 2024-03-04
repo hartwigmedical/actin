@@ -19,8 +19,8 @@ import java.io.FileWriter
 import java.io.IOException
 import java.nio.file.Files
 
-
 object TrialJson {
+
     private val LOGGER: Logger = LogManager.getLogger(TrialJson::class.java)
     private const val TRIAL_JSON_EXTENSION: String = ".trial.json"
 

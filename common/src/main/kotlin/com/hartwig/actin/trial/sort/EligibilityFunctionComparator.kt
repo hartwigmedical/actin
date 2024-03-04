@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.sort
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 
 class EligibilityFunctionComparator : Comparator<EligibilityFunction> {
+
     private val comparator = Comparator.comparing { function: EligibilityFunction -> function.rule.toString() }
         .thenComparing { function: EligibilityFunction -> function.parameters.isEmpty() }
         .thenComparing { function: EligibilityFunction -> function.parameters.size }

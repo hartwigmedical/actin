@@ -4,6 +4,7 @@ import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.input.composite.CompositeRules
 
 object EligibilityFunctionDisplay {
+
     fun format(function: EligibilityFunction): String {
         return function.rule.toString() + when {
             CompositeRules.isComposite(function.rule) -> {

@@ -5,6 +5,7 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import org.apache.logging.log4j.LogManager
 
 object DoidModelFactory {
+
     private val LOGGER = LogManager.getLogger(DoidModelFactory::class.java)
 
     fun createFromDoidEntry(doidEntry: DoidEntry): DoidModel {

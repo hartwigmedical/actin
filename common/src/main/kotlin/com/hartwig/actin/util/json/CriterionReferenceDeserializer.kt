@@ -7,7 +7,6 @@ import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.util.json.Json.string
 import java.lang.reflect.Type
 
-
 class CriterionReferenceDeserializer : JsonDeserializer<CriterionReference> {
 
     override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext): CriterionReference {

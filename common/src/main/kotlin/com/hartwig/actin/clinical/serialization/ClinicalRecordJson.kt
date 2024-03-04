@@ -10,6 +10,7 @@ import java.io.FileWriter
 import java.nio.file.Files
 
 object ClinicalRecordJson {
+
     private const val CLINICAL_JSON_EXTENSION = ".clinical.json"
 
     fun write(records: List<ClinicalRecord>, directory: String) {

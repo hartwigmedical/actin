@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.util
 
+import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.CohortMatch
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer
 import com.hartwig.actin.algo.interpretation.TrialMatchSummarizer
@@ -25,8 +25,7 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
 
         val allTrialEvaluations = treatmentMatch.trialMatches.flatMap { trialMatch ->
             trialMatch.cohorts.map(CohortMatch::evaluations) + trialMatch.evaluations
-        }
-            .flatMap(Map<Eligibility, Evaluation>::values)
+        }.flatMap(Map<Eligibility, Evaluation>::values)
 
         printEvaluationSummary(allTrialEvaluations, "Rules")
 

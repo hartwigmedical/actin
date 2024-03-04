@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class JsonDatamodelCheckerTest {
+
     private val datamodel = mapOf(
         "A" to true,
         "B" to false

@@ -9,18 +9,19 @@ class PatientRecordFactoryTest {
 
     @Test
     fun `Should create patient record from test records`() {
-        org.junit.Assert.assertNotNull(
+        assertThat(
             PatientRecordFactory.fromInputs(
                 TestClinicalFactory.createMinimalTestClinicalRecord(),
                 TestMolecularFactory.createMinimalTestMolecularRecord()
             )
-        )
-        org.junit.Assert.assertNotNull(
+        ).isNotNull
+
+        assertThat(
             PatientRecordFactory.fromInputs(
                 TestClinicalFactory.createProperTestClinicalRecord(),
                 TestMolecularFactory.createProperTestMolecularRecord()
             )
-        )
+        ).isNotNull
     }
 
     @Test

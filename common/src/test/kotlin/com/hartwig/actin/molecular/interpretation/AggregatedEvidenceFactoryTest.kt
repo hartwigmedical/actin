@@ -16,6 +16,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class AggregatedEvidenceFactoryTest {
+
     private val evidenceFields = listOf(
         AggregatedEvidence::approvedTreatmentsPerEvent,
         AggregatedEvidence::externalEligibleTrialsPerEvent,
@@ -62,7 +63,7 @@ class AggregatedEvidenceFactoryTest {
     }
 
     @Test
-    fun `Shoudl skip evidence on missing characteristics`() {
+    fun `Should skip evidence on missing characteristics`() {
         val characteristics = TestMolecularFactory.createMinimalTestMolecularRecord().characteristics.copy(
             isMicrosatelliteUnstable = null,
             microsatelliteEvidence = TestActionableEvidenceFactory.createExhaustive(),

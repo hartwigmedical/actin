@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 
 object TestDataFactory {
+
     const val TEST_PATIENT = "ACTN01029999"
     const val TEST_SAMPLE = TEST_PATIENT + "T"
 

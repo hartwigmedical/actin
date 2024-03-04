@@ -14,6 +14,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialJsonTest {
+
     @Test
     fun `Should convert to and from JSON`() {
         val minimal = TestTrialFactory.createMinimalTestTrial()

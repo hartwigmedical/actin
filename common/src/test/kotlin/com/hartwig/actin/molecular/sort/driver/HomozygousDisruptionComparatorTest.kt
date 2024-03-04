@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HomozygousDisruptionComparatorTest {
+
     @Test
     fun `Should sort homozygous disruptions`() {
         val homozygousDisruption1 = create("APC", DriverLikelihood.HIGH)

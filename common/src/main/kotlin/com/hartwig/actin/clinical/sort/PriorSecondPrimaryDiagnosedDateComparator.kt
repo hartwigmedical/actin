@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.sort
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 
 class PriorSecondPrimaryDiagnosedDateComparator : Comparator<PriorSecondPrimary> {
+
     private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int?>())
     private val comparator = Comparator.comparing(PriorSecondPrimary::diagnosedYear, nullSafeComparator)
         .thenComparing(PriorSecondPrimary::diagnosedMonth, nullSafeComparator)

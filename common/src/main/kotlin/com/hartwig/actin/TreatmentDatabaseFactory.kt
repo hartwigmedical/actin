@@ -6,16 +6,15 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.serialization.ClinicalGsonDeserializer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
 object TreatmentDatabaseFactory {
+
     private const val DRUG_JSON: String = "drug.json"
     private const val TREATMENT_JSON: String = "treatment.json"
     private val LOGGER: Logger = LogManager.getLogger(TreatmentDatabaseFactory::class.java)
 
-    @Throws(IOException::class)
     fun createFromPath(treatmentDbPath: String): TreatmentDatabase {
         LOGGER.info("Creating treatment database from path {}", treatmentDbPath)
         val drugsByName: Map<String, Drug> = drugJsonToMapByName(readFile(treatmentDbPath, DRUG_JSON))
@@ -44,7 +43,6 @@ object TreatmentDatabaseFactory {
         }.toMap()
     }
 
-    @Throws(IOException::class)
     private fun readFile(basePath: String, filename: String): String {
         return Files.readString(Path.of(basePath, filename))
     }

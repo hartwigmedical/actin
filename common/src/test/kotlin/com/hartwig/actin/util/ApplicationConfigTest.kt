@@ -11,9 +11,6 @@ import org.apache.commons.cli.ParseException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val CONFIG_DIRECTORY = Resources.getResource("config").path
-private val CONFIG_FILE = Resources.getResource("config/file.empty").path
-
 class ApplicationConfigTest {
 
     @Test
@@ -92,5 +89,10 @@ class ApplicationConfigTest {
     fun `Should crash on non existing value`() {
         val cmd = DefaultParser().parse(Options(), arrayOf())
         nonOptionalValue(cmd, "does not exist")
+    }
+
+    companion object {
+        private val CONFIG_DIRECTORY = Resources.getResource("config").path
+        private val CONFIG_FILE = Resources.getResource("config/file.empty").path
     }
 }

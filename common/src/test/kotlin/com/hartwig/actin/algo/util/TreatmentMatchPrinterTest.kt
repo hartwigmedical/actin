@@ -6,7 +6,7 @@ import org.junit.Test
 class TreatmentMatchPrinterTest {
 
     @Test
-    fun canPrintTreatmentMatches() {
+    fun `Should be able to print test treatment matches`() {
         TreatmentMatchPrinter.printMatch(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
         TreatmentMatchPrinter.printMatch(TestTreatmentMatchFactory.createProperTreatmentMatch())
     }

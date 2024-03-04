@@ -5,6 +5,7 @@ import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.datamodel.Eligibility
 
 class CohortComparator : Comparator<Cohort> {
+
     private val comparator = Comparator.comparing(Cohort::metadata, METADATA_COMPARATOR)
         .thenComparing({ it.eligibility.size }, Int::compareTo)
         .thenComparing(Cohort::eligibility, ::compareCohortEligibilities)

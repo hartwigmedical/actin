@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class VirusComparatorTest {
+
     @Test
     fun `Should sort viruses`() {
         val virus1 = create(DriverLikelihood.HIGH, "Human 16", VirusType.HUMAN_PAPILLOMA_VIRUS)

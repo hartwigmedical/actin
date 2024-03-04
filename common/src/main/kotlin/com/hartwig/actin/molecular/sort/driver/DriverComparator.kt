@@ -4,6 +4,7 @@ import com.hartwig.actin.molecular.datamodel.driver.Driver
 import com.hartwig.actin.molecular.sort.evidence.ActionableEvidenceComparator
 
 class DriverComparator : Comparator<Driver> {
+
     private val comparator = Comparator.comparing(Driver::isReportable, reverseOrder())
         .thenComparing(Driver::driverLikelihood, DriverLikelihoodComparator())
         .thenComparing(Driver::event)

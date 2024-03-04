@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 class JsonDatamodelChecker(private val name: String, private val datamodel: Map<String, Boolean>) {
+
     private val logger: Logger = LogManager.getLogger(JsonDatamodelChecker::class.java)
 
     fun check(obj: JsonObject): Boolean {

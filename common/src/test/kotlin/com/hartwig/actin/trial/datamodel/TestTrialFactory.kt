@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.datamodel
 
 object TestTrialFactory {
+
     private const val TEST_TRIAL = "test trial"
 
     fun createMinimalTestTrial(): Trial {
