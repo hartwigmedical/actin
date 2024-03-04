@@ -78,7 +78,7 @@ class EhrTreatmentHistoryExtractorTest {
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 message = "Could not find treatment history config for input 'treatmentName'",
-                patientId = "aGFzaGVkSWQ=",
+                patientId = HASHED_ID_IN_BASE64,
                 category = CurationCategory.ONCOLOGICAL_HISTORY,
                 feedInput = TREATMENT_NAME
             )
@@ -152,7 +152,7 @@ class EhrTreatmentHistoryExtractorTest {
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 message = "Could not find treatment history config for input '$MODIFICATION_NAME'",
-                patientId = "aGFzaGVkSWQ=",
+                patientId = HASHED_ID_IN_BASE64,
                 category = CurationCategory.ONCOLOGICAL_HISTORY,
                 feedInput = MODIFICATION_NAME
             )
