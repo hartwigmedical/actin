@@ -33,8 +33,13 @@ class TrialMatchingChapter(private val report: Report, private val enableExtende
         val table = Tables.createSingleColWithWidth(contentWidth())
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
         val generators = listOf(
-            EligibleActinTrialsGenerator.forClosedCohorts(cohorts, contentWidth(), enableExtendedMode),
-            IneligibleActinTrialsGenerator.fromEvaluatedCohorts(cohorts, contentWidth(), enableExtendedMode)
+            EligibleActinTrialsGenerator.forClosedCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode),
+            IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+                cohorts,
+                report.treatmentMatch.trialSource,
+                contentWidth(),
+                enableExtendedMode
+            )
         )
 
         for (i in generators.indices) {
