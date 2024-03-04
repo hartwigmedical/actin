@@ -18,7 +18,7 @@ class TreatmentHistoryEntryTest {
         val treatmentHistoryEntry = TREATMENT_HISTORY_ENTRY_WITH_DRUG_TYPE.copy(
             treatments = setOf(chemotherapy(TREATMENT_1), chemotherapy(TREATMENT_2))
         )
-        assertThat(treatmentHistoryEntry.treatmentName()).isEqualTo(TREATMENT_1 + ";" + TREATMENT_2)
+        assertThat(treatmentHistoryEntry.treatmentName()).isEqualTo("$TREATMENT_1;$TREATMENT_2")
     }
 
     @Test
