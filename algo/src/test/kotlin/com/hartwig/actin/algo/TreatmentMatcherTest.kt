@@ -23,8 +23,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-private const val EMC_TRIAL_SOURCE = "EMC"
-
 class TreatmentMatcherTest {
     private val patient = TestDataFactory.createMinimalTestPatientRecord()
     private val trials = listOf(TestTrialFactory.createMinimalTestTrial())

@@ -9,6 +9,8 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
+const val EMC_TRIAL_SOURCE = "EMC"
+
 data class TreatmentMatcherConfig(
     val clinicalJson: String,
     val molecularJson: String,
@@ -70,7 +72,7 @@ data class TreatmentMatcherConfig(
                 runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
-                trialSource = ApplicationConfig.optionalValue(cmd, TRIAL_SOURCE) ?: "EMC"
+                trialSource = ApplicationConfig.optionalValue(cmd, TRIAL_SOURCE) ?: EMC_TRIAL_SOURCE
             )
         }
 
