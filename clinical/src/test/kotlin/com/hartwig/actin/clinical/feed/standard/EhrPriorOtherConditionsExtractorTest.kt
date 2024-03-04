@@ -62,6 +62,7 @@ class EhrPriorOtherConditionsExtractorTest {
         )
         val result = extractor.extract(EHR_PATIENT_RECORD_WITH_PRIOR_CONDITIONS)
         assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test

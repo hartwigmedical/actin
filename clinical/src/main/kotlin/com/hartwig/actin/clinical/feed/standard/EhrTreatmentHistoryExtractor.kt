@@ -75,7 +75,7 @@ class EhrTreatmentHistoryExtractor(
             ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
 
-    private fun oncologicalTreatmentHistory(ehrPatientRecord: EhrPatientRecord) =
+    private fun oncologicalTreatmentHistory(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> =
         ehrPatientRecord.treatmentHistory.map { ehrTreatmentHistory ->
 
             val treatment = CurationResponse.createFromConfigs(
@@ -113,7 +113,7 @@ class EhrTreatmentHistoryExtractor(
                     ), switchToTreatments.evaluation + treatment.extractionEvaluation
                 )
             } ?: ExtractionResult(emptyList(), treatment.extractionEvaluation)
-        }.fold<ExtractionResult<List<TreatmentHistoryEntry>>, ExtractionResult<List<TreatmentHistoryEntry>>>(
+        }.fold(
             ExtractionResult(emptyList(), CurationExtractionEvaluation())
         ) { acc, result ->
             ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
