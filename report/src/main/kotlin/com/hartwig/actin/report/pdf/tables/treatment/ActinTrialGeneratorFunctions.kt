@@ -40,6 +40,7 @@ internal object ActinTrialGeneratorFunctions {
                     Paragraph().addAll(
                         listOf(
                             Text(cohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
+                            Text("\n"),
                             Text(cohort.acronym).addStyle(Styles.tableContentStyle())
                         )
                     )
