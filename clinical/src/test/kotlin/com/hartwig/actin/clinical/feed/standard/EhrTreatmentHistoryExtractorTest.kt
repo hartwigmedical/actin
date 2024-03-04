@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
@@ -39,6 +40,7 @@ private val TREATMENT_HISTORY = EhrTreatmentHistory(
     intendedCycles = 1,
     startDate = LocalDate.of(2024, 2, 23),
     administeredInStudy = false,
+    intention = "Palliative"
 )
 
 private val TREATMENT_HISTORY_ENTRY_CONFIG = TreatmentHistoryEntryConfig(
@@ -124,7 +126,8 @@ class EhrTreatmentHistoryExtractorTest {
                         maintenanceTreatment = TreatmentStage(treatment = TREATMENT, cycles = 1, startYear = 2024, startMonth = 2),
                     ),
                     isTrial = false,
-                    trialAcronym = "trialAcronym"
+                    trialAcronym = "trialAcronym",
+                    intents = setOf(Intent.PALLIATIVE)
                 )
             )
         )

@@ -93,7 +93,7 @@ class EhrTreatmentHistoryExtractor(
                         TreatmentHistoryEntry(
                             startYear = ehrTreatmentHistory.startDate.year,
                             startMonth = ehrTreatmentHistory.startDate.monthValue,
-                            intents = ehrTreatmentHistory.intention?.let { intent -> setOf(Intent.valueOf(intent)) },
+                            intents = ehrTreatmentHistory.intention?.let { intent -> setOf(parseIntent(intent)) },
                             treatments = curatedTreatment.curated!!.treatments,
                             treatmentHistoryDetails = TreatmentHistoryDetails(
                                 stopYear = ehrTreatmentHistory.endDate?.year,
@@ -118,6 +118,8 @@ class EhrTreatmentHistoryExtractor(
         ) { acc, result ->
             ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         }
+
+    private fun parseIntent(intent: String) = Intent.valueOf(intent.trim().uppercase())
 
     private fun treatmentStages(
         ehrTreatmentHistory: EhrTreatmentHistory,
