@@ -118,10 +118,12 @@ data class EhrMedication(
     val isSelfCare: Boolean
 )
 
+private const val CHUNK_SIZE_HEX_BYTE = 2
+private const val HEX_BASE = 16
 @OptIn(ExperimentalEncodingApi::class)
 fun String.toBase64(): String {
-    return Base64.Default.encode(this.chunked(2)
-        .map { it.toInt(16).toByte() }
+    return Base64.Default.encode(this.chunked(CHUNK_SIZE_HEX_BYTE)
+        .map { it.toInt(HEX_BASE).toByte() }
         .toByteArray())
 }
 
