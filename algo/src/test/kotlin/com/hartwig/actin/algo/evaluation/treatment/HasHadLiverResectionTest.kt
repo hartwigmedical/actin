@@ -16,14 +16,30 @@ class HasHadLiverResectionTest {
     }
 
     @Test
+    fun `Should fail with melanoma resection`() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(
+                TreatmentTestFactory.treatment(
+                    "melanoma resection",
+                    false, categories = setOf(TreatmentCategory.SURGERY)
+                )
+            ), bodyLocations = setOf("Melanoma")
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
+    }
+
+    @Test
     fun `Should pass when patient had liver resection`() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(
                 TreatmentTestFactory.treatment(
                     "liver resection",
-                    false
+                    false, categories = setOf(TreatmentCategory.SURGERY)
                 )
-            )
+            ), bodyLocations = setOf("Liver")
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -37,9 +53,9 @@ class HasHadLiverResectionTest {
             setOf(
                 TreatmentTestFactory.treatment(
                     "liver resection with microwave ablation",
-                    false
+                    false, categories = setOf(TreatmentCategory.SURGERY, TreatmentCategory.ABLATION)
                 )
-            )
+            ), bodyLocations = setOf("Liver")
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -48,20 +64,18 @@ class HasHadLiverResectionTest {
     }
 
     @Test
-    fun `Should return undetermined for unspecified resection`() {
-        val treatments = setOf(TreatmentTestFactory.treatment("some form of " + HasHadLiverResection.RESECTION_KEYWORD, false))
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(TreatmentTestFactory.treatmentHistoryEntry(treatments)))
-        )
-    }
-
-    @Test
     fun `Should return undetermined for unspecified surgery`() {
-        val treatments = setOf(TreatmentTestFactory.treatment("", false, categories = setOf(TreatmentCategory.SURGERY)))
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(
+                TreatmentTestFactory.treatment(
+                    "resection",
+                    false, categories = setOf(TreatmentCategory.SURGERY)
+                )
+            ), bodyLocations = null
+        )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(TreatmentTestFactory.treatmentHistoryEntry(treatments)))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
 

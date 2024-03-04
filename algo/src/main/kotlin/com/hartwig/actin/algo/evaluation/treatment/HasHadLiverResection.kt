@@ -9,17 +9,20 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadLiverResection : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val lowercaseTreatmentNames = record.clinical.oncologicalHistory
-            .flatMap { entry -> entry.treatments.flatMap { it.synonyms + it.name }.map(String::lowercase) }
+        val priorSurgeries = record.clinical.oncologicalHistory
+            .filter { it.categories().contains(TreatmentCategory.SURGERY) }
+
+        val hadSurgeryToTargetLocation =
+            priorSurgeries.any { radiotherapy ->
+                radiotherapy.treatmentHistoryDetails?.bodyLocations?.any { it.lowercase().contains("liver") } == true
+            }
 
         return when {
-            lowercaseTreatmentNames.any { it.contains("liver") && it.contains(RESECTION_KEYWORD) } -> {
+            hadSurgeryToTargetLocation -> {
                 EvaluationFactory.pass("Patient has had a liver resection", "Had had liver resection")
             }
 
-            lowercaseTreatmentNames.any { it.contains(RESECTION_KEYWORD) } || record.clinical.oncologicalHistory.any { entry ->
-                entry.treatments.any { it.categories().contains(TreatmentCategory.SURGERY) && it.name.isEmpty() }
-            } -> {
+            priorSurgeries.any { it.treatmentHistoryDetails?.bodyLocations == null } -> {
                 EvaluationFactory.undetermined(
                     "Could not be determined whether patient has had a liver resection",
                     "Liver resection undetermined"
@@ -30,9 +33,5 @@ class HasHadLiverResection : EvaluationFunction {
                 EvaluationFactory.fail("Patient has not had a liver resection", "Has not had liver resection")
             }
         }
-    }
-
-    companion object {
-        const val RESECTION_KEYWORD = "resection"
     }
 }
