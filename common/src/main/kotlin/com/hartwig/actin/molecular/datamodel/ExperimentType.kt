@@ -6,6 +6,7 @@ enum class ExperimentType(private val display: String) : Displayable {
     TARGETED("Panel analysis"),
     WHOLE_GENOME("WGS");
 
+
     override fun display(): String {
         return display
     }
