@@ -98,8 +98,10 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndPriorTest(
-                    ExperimentType.AMPLISEQ, MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true)
+                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                    ExperimentType.WHOLE_GENOME,
+                    false,
+                    MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true)
                 )
             )
         )
@@ -110,20 +112,24 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndPriorTest(
-                    ExperimentType.AMPLISEQ, MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = false)
+                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                    ExperimentType.WHOLE_GENOME,
+                    false,
+                    MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = false)
                 )
             )
         )
     }
 
     @Test
-    fun `Should fail if no data is available for any tests for this gene`() {
+    fun `Should resolve to undetermined if no data is available for any tests for this gene`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndPriorTest(
-                    ExperimentType.AMPLISEQ, MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false)
+                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                    ExperimentType.WHOLE_GENOME,
+                    false,
+                    MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false)
                 )
             )
         )
