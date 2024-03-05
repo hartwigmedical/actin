@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientReco
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import java.time.LocalDate
 
@@ -40,7 +41,15 @@ private val TREATMENT_HISTORY = EhrTreatmentHistory(
     intendedCycles = 1,
     startDate = LocalDate.of(2024, 2, 23),
     administeredInStudy = false,
-    intention = "Palliative"
+    intention = "Palliative",
+    stopReason = "TOXICITY",
+    endDate = LocalDate.of(2024, 2, 27),
+    response = "COMPLETE_RESPONSE",
+    modifications = listOf(
+        EhrTreatmentModification(
+            name = MODIFICATION_NAME, administeredCycles = 2, date = LocalDate.of(2024, 2, 23)
+        )
+    )
 )
 
 private val TREATMENT_HISTORY_ENTRY_CONFIG = TreatmentHistoryEntryConfig(
@@ -57,6 +66,28 @@ private val TREATMENT_HISTORY_ENTRY_CONFIG = TreatmentHistoryEntryConfig(
     )
 )
 
+private val EHR_PATIENT_RECORD = createEhrPatientRecord()
+
+private val TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntry(
+    startYear = 2024,
+    startMonth = 2,
+    treatments = TREATMENT_HISTORY_ENTRY_CONFIG.curated!!.treatments,
+    treatmentHistoryDetails = TreatmentHistoryDetails(
+        stopYear = 2024,
+        stopMonth = 2,
+        stopReason = StopReason.TOXICITY,
+        bestResponse = TreatmentResponse.COMPLETE_RESPONSE,
+        bodyLocations = setOf("bone"),
+        bodyLocationCategories = setOf(BodyLocationCategory.BONE),
+        switchToTreatments = listOf(TreatmentStage(treatment = TREATMENT, cycles = 2, startYear = 2024, startMonth = 2)),
+        cycles = 1,
+        maintenanceTreatment = TreatmentStage(treatment = TREATMENT, cycles = 1, startYear = 2024, startMonth = 2),
+    ),
+    isTrial = false,
+    trialAcronym = "trialAcronym",
+    intents = setOf(Intent.PALLIATIVE)
+)
+
 class EhrTreatmentHistoryExtractorTest {
 
     private val treatmentCurationDatabase = mockk<CurationDatabase<TreatmentHistoryEntryConfig>>()
@@ -64,13 +95,12 @@ class EhrTreatmentHistoryExtractorTest {
         every { find(any()) } returns emptySet()
     }
     private val extractor = EhrTreatmentHistoryExtractor(treatmentCurationDatabase, nonOncologicalHistoryCuration)
-    private val minimalEhrPatientRecord = createEhrPatientRecord()
 
     @Test
     fun `Should filter treatment history entry and warn when no curation for treatment name`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns emptySet()
         val result = extractor.extract(
-            minimalEhrPatientRecord.copy(
+            EHR_PATIENT_RECORD.copy(
                 treatmentHistory = listOf(
                     TREATMENT_HISTORY
                 )
@@ -92,66 +122,30 @@ class EhrTreatmentHistoryExtractorTest {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(TREATMENT_HISTORY_ENTRY_CONFIG)
         every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(TREATMENT_HISTORY_ENTRY_CONFIG)
         val result = extractor.extract(
-            minimalEhrPatientRecord.copy(
-                treatmentHistory = listOf(
-                    TREATMENT_HISTORY.copy(
-                        stopReason = "TOXICITY",
-                        endDate = LocalDate.of(2024, 2, 27),
-                        response = "COMPLETE_RESPONSE",
-                        modifications = listOf(
-                            EhrTreatmentModification(
-                                name = MODIFICATION_NAME, administeredCycles = 2, date = LocalDate.of(2024, 2, 23)
-                            )
-                        ),
-                    )
-                )
+            EHR_PATIENT_RECORD.copy(
+                treatmentHistory = listOf(TREATMENT_HISTORY)
             )
         )
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).isEqualTo(
             listOf(
-                TreatmentHistoryEntry(
-                    startYear = 2024,
-                    startMonth = 2,
-                    treatments = TREATMENT_HISTORY_ENTRY_CONFIG.curated!!.treatments,
-                    treatmentHistoryDetails = TreatmentHistoryDetails(
-                        stopYear = 2024,
-                        stopMonth = 2,
-                        stopReason = StopReason.TOXICITY,
-                        bestResponse = TreatmentResponse.COMPLETE_RESPONSE,
-                        bodyLocations = setOf("bone"),
-                        bodyLocationCategories = setOf(BodyLocationCategory.BONE),
-                        switchToTreatments = listOf(TreatmentStage(treatment = TREATMENT, cycles = 2, startYear = 2024, startMonth = 2)),
-                        cycles = 1,
-                        maintenanceTreatment = TreatmentStage(treatment = TREATMENT, cycles = 1, startYear = 2024, startMonth = 2),
-                    ),
-                    isTrial = false,
-                    trialAcronym = "trialAcronym",
-                    intents = setOf(Intent.PALLIATIVE)
-                )
+                TREATMENT_HISTORY_ENTRY
             )
         )
     }
 
     @Test
-    fun `Should filter treatment modification and warn when no curation for modification name`() {
+    fun `Should fallback to original treatment for modification when no curation available and return a warning`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
             TREATMENT_HISTORY_ENTRY_CONFIG
         )
         every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns emptySet()
         val result = extractor.extract(
-            minimalEhrPatientRecord.copy(
-                treatmentHistory = listOf(
-                    TREATMENT_HISTORY.copy(
-                        modifications = listOf(
-                            EhrTreatmentModification(
-                                name = MODIFICATION_NAME, administeredCycles = 1, date = LocalDate.of(2024, 2, 23)
-                            )
-                        )
-                    )
-                )
+            EHR_PATIENT_RECORD.copy(
+                treatmentHistory = listOf(TREATMENT_HISTORY)
             )
         )
+        assertThat(result.extracted).containsExactly(TREATMENT_HISTORY_ENTRY)
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 message = "Could not find treatment history config for input '$MODIFICATION_NAME'",
@@ -163,10 +157,42 @@ class EhrTreatmentHistoryExtractorTest {
     }
 
     @Test
+    fun `Should fallback to original treatment for modification and return no warnings if curation is ignored`() {
+        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG
+        )
+        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(ignore = true)
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                treatmentHistory = listOf(TREATMENT_HISTORY)
+            )
+        )
+        assertThat(result.extracted).containsExactly(TREATMENT_HISTORY_ENTRY)
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should throw exception if modification cannot fall back to original treatment`() {
+        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(curated = TREATMENT_HISTORY_ENTRY.copy(treatments = emptySet()))
+        )
+        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns emptySet()
+        assertThatThrownBy {
+            extractor.extract(
+                EHR_PATIENT_RECORD.copy(
+                    treatmentHistory = listOf(TREATMENT_HISTORY)
+                )
+            )
+        }.isInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Test
     fun `Should consider previous conditions as treatment history if not present in non-oncological history curation and is present in oncological history curation`() {
         every { treatmentCurationDatabase.find(PREVIOUS_CONDITION) } returns setOf(TREATMENT_HISTORY_ENTRY_CONFIG)
         val result = extractor.extract(
-            minimalEhrPatientRecord.copy(
+            EHR_PATIENT_RECORD.copy(
                 treatmentHistory = emptyList(),
                 priorOtherConditions = listOf(
                     PRIOR_CONDITION
@@ -204,7 +230,7 @@ class EhrTreatmentHistoryExtractorTest {
             )
         )
         val result = extractor.extract(
-            minimalEhrPatientRecord.copy(
+            EHR_PATIENT_RECORD.copy(
                 treatmentHistory = emptyList(),
                 priorOtherConditions = listOf(PRIOR_CONDITION)
             )
