@@ -5,7 +5,7 @@ import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryTrialGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryTrialGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleDutchExternalTrialsGenerator
@@ -21,7 +21,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
-class SummaryChapter(private val report: Report) : ReportChapter {
+class SummaryChapterTrial(private val report: Report) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -80,7 +80,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
         val generators = listOfNotNull(
             PatientClinicalHistoryTrialGenerator(report.clinical, keyWidth, valueWidth),
-            MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth),
+            MolecularSummaryTrialGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth),
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, null, contentWidth(), "Trial"),
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()),

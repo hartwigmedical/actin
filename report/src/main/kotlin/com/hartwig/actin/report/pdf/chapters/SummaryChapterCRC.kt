@@ -41,7 +41,7 @@ class SummaryChapterCRC(private val report: Report) : ReportChapter {
 
         val generators = listOfNotNull(
             PatientClinicalHistoryCRCGenerator(report.clinical, keyWidth, valueWidth),
-            MolecularSummaryCRCGenerator(keyWidth, valueWidth),
+            MolecularSummaryCRCGenerator(report.molecular, keyWidth, valueWidth),
             EligibleApprovedTreatmentGenerator(
                 report.clinical,
                 report.molecular,

@@ -23,17 +23,17 @@ class ReportWriterCRC(override val writeToDisk: Boolean, override val outputDire
         LOGGER.debug("Initializing output styles")
         Styles.initialize()
 
-        val efficacyEvidenceDetailsChapter = if (enableExtendedMode) {
-            LOGGER.info("Including SOC literature details")
-            EfficacyEvidenceDetailsChapter(report.treatmentMatch.standardOfCareMatches)
-        } else null
+//        val efficacyEvidenceDetailsChapter = if (enableExtendedMode) {
+//            LOGGER.info("Including SOC literature details")
+//            EfficacyEvidenceDetailsChapter(report.treatmentMatch.standardOfCareMatches)
+//        } else null
 
         val chapters = listOfNotNull(
             SummaryChapterCRC(report),
             EfficacyEvidenceChapter(report),
             ClinicalDetailsChapter(report),
             TrialMatchingChapter(report, enableExtendedMode),
-            efficacyEvidenceDetailsChapter
+            //efficacyEvidenceDetailsChapter
         )
         writePdfChapters(report.patientId, chapters, enableExtendedMode)
     }

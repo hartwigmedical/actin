@@ -10,7 +10,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 import org.apache.logging.log4j.LogManager
 
-class MolecularSummaryGenerator(
+class MolecularSummaryTrialGenerator(
     private val clinical: ClinicalRecord, private val molecular: MolecularRecord,
     private val cohorts: List<EvaluatedCohort>, private val keyWidth: Float, private val valueWidth: Float
 ) : TableGenerator {
@@ -40,6 +40,6 @@ class MolecularSummaryGenerator(
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(MolecularSummaryGenerator::class.java)
+        private val LOGGER = LogManager.getLogger(MolecularSummaryTrialGenerator::class.java)
     }
 }
