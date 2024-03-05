@@ -72,7 +72,8 @@ class StandardEhrIngestionTest {
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),
-            bloodTransfusionExtractor = EhrBloodTransfusionExtractor()
+            bloodTransfusionExtractor = EhrBloodTransfusionExtractor(),
+            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration)
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
