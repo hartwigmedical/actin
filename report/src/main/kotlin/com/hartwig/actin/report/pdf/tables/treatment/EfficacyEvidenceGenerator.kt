@@ -79,7 +79,11 @@ class EfficacyEvidenceGenerator(
     private fun createPatientCharacteristics(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(150f, 150f).setWidth(500f)
         for (patientPopulation in trialReference.patientPopulations) {
-            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name == treatment.treatmentCandidate.treatment.name) {
+            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name.equals(
+                    treatment.treatmentCandidate.treatment.name,
+                    true
+                )
+            ) {
                 table.addCell(Cells.createContent("WHO/ECOG"))
                 table.addCell(Cells.createContent(createWhoString(patientPopulation)))
                 table.addCell(Cells.createContent("Primary tumor location"))
@@ -120,11 +124,15 @@ class EfficacyEvidenceGenerator(
     private fun createEndpoints(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
         for (patientPopulation in trialReference.patientPopulations) {
-            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name == treatment.treatmentCandidate.treatment.name) {
+            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name.equals(
+                    treatment.treatmentCandidate.treatment.name,
+                    true
+                )
+            ) {
                 val analysisGroup =
                     patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
                 table.addCell(Cells.createValue("Median PFS: "))
-                for (primaryEndPoint in analysisGroup!!.primaryEndPoints) {
+                for (primaryEndPoint in analysisGroup!!.endPoints) {
                     if (primaryEndPoint.name == "Median Progression-Free Survival") {
                         table.addCell(
                             Cells.createKey(
@@ -138,7 +146,7 @@ class EfficacyEvidenceGenerator(
                 }
 
                 table.addCell(Cells.createValue("Median OS: "))
-                for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                for (primaryEndPoint in analysisGroup.endPoints!!) {
                     if (primaryEndPoint.name == "Median Overall Survival") {
                         table.addCell(
                             Cells.createKey(

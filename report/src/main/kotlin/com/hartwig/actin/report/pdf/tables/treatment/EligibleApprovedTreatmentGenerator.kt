@@ -56,7 +56,11 @@ class EligibleApprovedTreatmentGenerator(
                             for (annotation in treatment.annotations) {
                                 for (trialReference in annotation.trialReferences) {
                                     for (patientPopulation in trialReference.patientPopulations) {
-                                        if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name == treatment.treatmentCandidate.treatment.name) {
+                                        if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name.equals(
+                                                treatment.treatmentCandidate.treatment.name,
+                                                true
+                                            )
+                                        ) {
                                             val analysisGroup =
                                                 patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
                                             subtable.addCell(Cells.createEmpty())
@@ -66,7 +70,7 @@ class EligibleApprovedTreatmentGenerator(
                                                     .addStyle(Styles.urlStyle())
                                             )
                                             subtable.addCell(Cells.createValue("PFS: "))
-                                            for (primaryEndPoint in analysisGroup!!.primaryEndPoints!!) {
+                                            for (primaryEndPoint in analysisGroup!!.endPoints!!) {
                                                 if (primaryEndPoint.name == "Median Progression-Free Survival") {
                                                     subtable.addCell(
                                                         Cells.createKey(
@@ -81,7 +85,7 @@ class EligibleApprovedTreatmentGenerator(
                                             }
 
                                             subtable.addCell(Cells.createValue("OS: "))
-                                            for (primaryEndPoint in analysisGroup.primaryEndPoints!!) {
+                                            for (primaryEndPoint in analysisGroup.endPoints!!) {
                                                 if (primaryEndPoint.name == "Median Overall Survival") {
                                                     subtable.addCell(
                                                         Cells.createKey(

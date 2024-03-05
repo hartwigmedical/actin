@@ -17,9 +17,9 @@ import com.hartwig.actin.efficacy.ConfidenceInterval
 import com.hartwig.actin.efficacy.DerivedMetric
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.PatientPopulation
-import com.hartwig.actin.efficacy.PrimaryEndPoint
-import com.hartwig.actin.efficacy.PrimaryEndPointType
-import com.hartwig.actin.efficacy.PrimaryEndPointUnit
+import com.hartwig.actin.efficacy.EndPoint
+import com.hartwig.actin.efficacy.EndPointType
+import com.hartwig.actin.efficacy.EndPointUnit
 import com.hartwig.actin.efficacy.TimeOfMetastases
 import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.efficacy.ValuePercentage
@@ -191,37 +191,37 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
             AnalysisGroup(
                 id = analysisGroup.id,
                 nPatients = analysisGroup.nPatients.toInt(),
-                primaryEndPoints = convertPrimaryEndPoints(analysisGroup.endPointMetrics),
+                endPoints = convertEndPoints(analysisGroup.endPointMetrics),
             )
         }
     }
 
-    private fun convertPrimaryEndPoints(primaryEndPoints: List<CkbEndPointMetric>): List<PrimaryEndPoint> {
-        return primaryEndPoints.map { primaryEndPoint ->
-            PrimaryEndPoint(
-                id = primaryEndPoint.id,
-                name = primaryEndPoint.endPoint.name,
-                value = convertPrimaryEndPointValue(
-                    primaryEndPoint.value,
-                    primaryEndPoint.endPoint.unitOfMeasure
+    private fun convertEndPoints(EndPoints: List<CkbEndPointMetric>): List<EndPoint> {
+        return EndPoints.map { EndPoint ->
+            EndPoint(
+                id = EndPoint.id,
+                name = EndPoint.endPoint.name,
+                value = convertEndPointValue(
+                    EndPoint.value,
+                    EndPoint.endPoint.unitOfMeasure
                 ),
-                unitOfMeasure = if (primaryEndPoint.endPoint.unitOfMeasure == "Y/N") {
-                    PrimaryEndPointUnit.YES_OR_NO
+                unitOfMeasure = if (EndPoint.endPoint.unitOfMeasure == "Y/N") {
+                    EndPointUnit.YES_OR_NO
                 } else {
                     try {
-                        PrimaryEndPointUnit.valueOf(primaryEndPoint.endPoint.unitOfMeasure.uppercase())
+                        EndPointUnit.valueOf(EndPoint.endPoint.unitOfMeasure.uppercase())
                     } catch (e: Exception) {
-                        throw IllegalStateException("Unknown primary end point unit measure: $primaryEndPoint.endPoint.unitOfMeasure")
+                        throw IllegalStateException("Unknown end point unit measure: $EndPoint.endPoint.unitOfMeasure")
                     }
                 },
-                confidenceInterval = primaryEndPoint.confidenceInterval95?.let(::convertConfidenceInterval),
-                type = PrimaryEndPointType.valueOf(primaryEndPoint.endPointType.uppercase()),
-                derivedMetrics = convertDerivedMetric(primaryEndPoint.derivedMetrics)
+                confidenceInterval = EndPoint.confidenceInterval95?.let(::convertConfidenceInterval),
+                type = EndPointType.valueOf(EndPoint.endPointType.uppercase()),
+                derivedMetrics = convertDerivedMetric(EndPoint.derivedMetrics)
             )
         }
     }
 
-    fun convertPrimaryEndPointValue(value: String, unit: String): Double? {
+    fun convertEndPointValue(value: String, unit: String): Double? {
         return if (unit == "Y/N") {
             when (value) {
                 "Y" -> {

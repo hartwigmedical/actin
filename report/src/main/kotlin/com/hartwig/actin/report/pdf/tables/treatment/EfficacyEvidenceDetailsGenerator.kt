@@ -1,6 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
 import com.hartwig.actin.efficacy.EfficacyEntry
+import com.hartwig.actin.efficacy.EndPoint
+import com.hartwig.actin.efficacy.EndPointType
 import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -22,7 +24,7 @@ class EfficacyEvidenceDetailsGenerator(
 
         subtables.add(createTrialInformation())
         subtables.add(createPatientCharacteristics(annotation.trialReferences.first().patientPopulations))
-        subtables.add(createPrimaryEndpoints())
+        subtables.add(createPrimaryEndpoints(annotation.trialReferences.first().patientPopulations))
         subtables.add(createSecondaryEndpoints())
 
         for (i in subtables.indices) {
@@ -54,7 +56,7 @@ class EfficacyEvidenceDetailsGenerator(
 
     private fun createPatientCharacteristics(patientPopulations: List<PatientPopulation>): Table {
         val table = Tables.createFixedWidthCols(150f, 100f, 100f, 100f).setWidth(450f)
-        //assuming max 3 treatments per trial
+        // Assuming max 3 treatments per trial
         table.addCell(Cells.createHeader(""))
         table.addCell(Cells.createHeader(patientPopulations[0].name))
         table.addCell(Cells.createHeader(patientPopulations[1].name))
@@ -94,8 +96,21 @@ class EfficacyEvidenceDetailsGenerator(
         return table
     }
 
-    private fun createPrimaryEndpoints(): Table {
+    private fun createPrimaryEndpoints(patientPopulations: List<PatientPopulation>): Table {
         val table = Tables.createFixedWidthCols(100f, 100f, 100f, 100f, 100f).setWidth(500f)
+        val primaryEndpoints = mutableListOf<EndPoint>()
+        for (patientPopulation in patientPopulations) {
+            val analysisGroup =
+                patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
+            val endPoints = analysisGroup?.endPoints
+            if (endPoints != null) {
+                for (endPoint in endPoints) {
+                    if (endPoint.type == EndPointType.PRIMARY) {
+                        primaryEndpoints.add(endPoint)
+                    }
+                }
+            }
+        }
         table.addCell(Cells.createValue("Primary endpoints: "))
         table.addCell(Cells.createKey(""))
         table.addCell(Cells.createKey(""))
