@@ -13,19 +13,27 @@ class HasHadLiverResection : EvaluationFunction {
             .filter { it.categories().contains(TreatmentCategory.SURGERY) }
 
         val hadSurgeryToTargetLocation =
-            priorSurgeries.any { radiotherapy ->
-                radiotherapy.treatmentHistoryDetails?.bodyLocations?.any { it.lowercase().contains("liver") } == true
+            priorSurgeries.any {
+                it.treatmentHistoryDetails?.bodyLocations?.any { it.lowercase().contains("liver") } == true
             }
 
         return when {
-            hadSurgeryToTargetLocation -> {
+            hadSurgeryToTargetLocation && priorSurgeries.any { it.treatments.any { treatment -> treatment.name.contains(RESECTION_KEYWORD) } } -> {
                 EvaluationFactory.pass("Patient has had a liver resection", "Had had liver resection")
             }
 
-            priorSurgeries.any { it.treatmentHistoryDetails?.bodyLocations == null } -> {
+            priorSurgeries.any {
+                it.treatmentHistoryDetails?.bodyLocations == null && it.treatments.any { treatment ->
+                    treatment.name.contains(
+                        RESECTION_KEYWORD
+                    )
+                }
+            } || priorSurgeries.any { it.treatments.any { it.name.isEmpty() } }
+
+            -> {
                 EvaluationFactory.undetermined(
-                    "Could not be determined whether patient has had a liver resection",
-                    "Liver resection undetermined"
+                    "Undetermined if surgery performed was a liver resection",
+                    "Undetermined if surgery was liver resection"
                 )
             }
 
@@ -33,5 +41,9 @@ class HasHadLiverResection : EvaluationFunction {
                 EvaluationFactory.fail("Patient has not had a liver resection", "Has not had liver resection")
             }
         }
+    }
+
+    companion object {
+        const val RESECTION_KEYWORD = "resection"
     }
 }

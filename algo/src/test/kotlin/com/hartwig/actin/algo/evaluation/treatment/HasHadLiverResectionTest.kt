@@ -79,4 +79,20 @@ class HasHadLiverResectionTest {
         )
     }
 
+    @Test
+    fun `Should return undetermined for surgery without name`() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(
+                TreatmentTestFactory.treatment(
+                    "",
+                    false, categories = setOf(TreatmentCategory.SURGERY)
+                )
+            ), bodyLocations = null
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
+    }
+
 }
