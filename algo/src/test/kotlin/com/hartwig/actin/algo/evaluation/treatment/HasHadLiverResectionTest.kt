@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
@@ -16,14 +17,30 @@ class HasHadLiverResectionTest {
     }
 
     @Test
-    fun `Should fail with melanoma resection`() {
+    fun `Should fail with lung resection`() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(
                 TreatmentTestFactory.treatment(
-                    "melanoma resection",
+                    "lung resection",
                     false, categories = setOf(TreatmentCategory.SURGERY)
                 )
-            ), bodyLocations = setOf("Melanoma")
+            ), bodyLocationCategory = setOf(BodyLocationCategory.LUNG)
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
+    }
+
+    @Test
+    fun `Should fail with unspecified surgery with lung body location`() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(
+                TreatmentTestFactory.treatment(
+                    "Surgery",
+                    false, categories = setOf(TreatmentCategory.SURGERY)
+                )
+            ), bodyLocationCategory = setOf(BodyLocationCategory.LUNG)
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
@@ -39,7 +56,7 @@ class HasHadLiverResectionTest {
                     "liver resection",
                     false, categories = setOf(TreatmentCategory.SURGERY)
                 )
-            ), bodyLocations = setOf("Liver")
+            ), bodyLocationCategory = setOf(BodyLocationCategory.LIVER)
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -55,7 +72,7 @@ class HasHadLiverResectionTest {
                     "liver resection with microwave ablation",
                     false, categories = setOf(TreatmentCategory.SURGERY, TreatmentCategory.ABLATION)
                 )
-            ), bodyLocations = setOf("Liver")
+            ), bodyLocationCategory = setOf(BodyLocationCategory.LIVER)
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -87,7 +104,23 @@ class HasHadLiverResectionTest {
                     "surgery",
                     false, categories = setOf(TreatmentCategory.SURGERY)
                 )
-            ), bodyLocations = setOf("Liver")
+            ), bodyLocationCategory = setOf(BodyLocationCategory.LIVER)
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
+    }
+
+    @Test
+    fun `Should return undetermined for unspecified surgery with unknown body location`() {
+        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(
+                TreatmentTestFactory.treatment(
+                    "surgery",
+                    false, categories = setOf(TreatmentCategory.SURGERY)
+                )
+            ), bodyLocations = null
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,

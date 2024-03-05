@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.BodyLocationCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasHadLiverResection : EvaluationFunction {
@@ -14,8 +15,8 @@ class HasHadLiverResection : EvaluationFunction {
 
         val hadResection = priorSurgeries.filter { it.treatments.any { treatment -> treatment.name.contains(RESECTION_KEYWORD) } }
         val hadResectionToTargetLocation =
-            hadResection.any { it.treatmentHistoryDetails?.bodyLocations?.any { it.lowercase().contains("liver") } == true }
-        val hadResectionToUnknownLocation = hadResection.any { it.treatmentHistoryDetails?.bodyLocations == null }
+            hadResection.any { it.treatmentHistoryDetails?.bodyLocationCategories?.any { it == BodyLocationCategory.LIVER } == true }
+        val hadResectionToUnknownLocation = hadResection.any { it.treatmentHistoryDetails?.bodyLocationCategories == null }
 
         val hadSurgeryWithUnknownName = priorSurgeries.filter {
             it.treatments.any {
@@ -26,9 +27,9 @@ class HasHadLiverResection : EvaluationFunction {
             }
         }
         val hadSurgeryWithUnknownNamePotentiallyToTargetLocation = hadSurgeryWithUnknownName.any {
-            it.treatmentHistoryDetails?.bodyLocations?.any {
-                it.lowercase().contains("liver")
-            } == true || it.treatmentHistoryDetails?.bodyLocations == null
+            it.treatmentHistoryDetails?.bodyLocationCategories?.any {
+                it == BodyLocationCategory.LIVER
+            } == true || it.treatmentHistoryDetails?.bodyLocationCategories == null
         }
 
         return when {
