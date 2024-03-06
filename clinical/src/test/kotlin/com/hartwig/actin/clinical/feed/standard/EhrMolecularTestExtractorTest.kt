@@ -13,7 +13,7 @@ import org.junit.Test
 
 private const val IHC_LINE = "HER2 immunohistochemie: negative"
 private val PRIOR_MOLECULAR_TEST =
-    PriorMolecularTest(test = "IHC", item = "HER2", measure = "positive", impliesPotentialIndeterminateStatus = true)
+    PriorMolecularTest(test = "IHC", item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
 private val PATHOLOGY_REPORT =
     "Microscopie:\n\test\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
 
