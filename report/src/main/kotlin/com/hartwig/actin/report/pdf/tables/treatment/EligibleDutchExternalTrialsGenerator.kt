@@ -53,16 +53,16 @@ class EligibleDutchExternalTrialsGenerator(
         }
 
         combinedEventsPerTrial.forEach { (title, events) ->
-            val eventNames = events.joinToString(", \n")
-            val combinedTitle = trialsGroupedByTitle[title]?.firstOrNull()
+            val combinedEvents = events.joinToString(", \n")
+            val combinedEventsTitle = trialsGroupedByTitle[title]?.firstOrNull()
             val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth)
-            combinedTitle?.let {
-                subTable.addCell(Cells.createContentNoBorder(combinedTitle.title))
+            combinedEventsTitle?.let {
+                subTable.addCell(Cells.createContentNoBorder(combinedEventsTitle.title))
                 subTable.addCell(
-                    Cells.createContentNoBorder(combinedTitle.nctId).setAction(PdfAction.createURI(combinedTitle.url)).addStyle(Styles.urlStyle())
+                    Cells.createContentNoBorder(combinedEventsTitle.nctId).setAction(PdfAction.createURI(combinedEventsTitle.url)).addStyle(Styles.urlStyle())
                 )
             }
-            table.addCell(Cells.createContent(eventNames))
+            table.addCell(Cells.createContent(combinedEvents))
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
         }
 
