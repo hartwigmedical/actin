@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
@@ -33,7 +34,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_RECURRENT_CANCER to hasRecurrentCancerCreator(),
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
-            EligibilityRule.HAS_LIVER_METASTASES to hasLivesMetastasesCreator(),
+            EligibilityRule.HAS_LIVER_METASTASES to hasLiverMetastasesCreator(),
+            EligibilityRule.HAS_LIVER_METASTASES_ONLY to hasOnlyLiverMetastasesCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_CNS_METASTASES to hasKnownCnsMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES to hasKnownActiveCnsMetastasesCreator(),
@@ -66,6 +68,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
+            EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSitu(),
         )
     }
 
@@ -204,8 +207,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return FunctionCreator { HasAnyLesion() }
     }
 
-    private fun hasLivesMetastasesCreator(): FunctionCreator {
+    private fun hasLiverMetastasesCreator(): FunctionCreator {
         return FunctionCreator { HasLiverMetastases() }
+    }
+
+    private fun hasOnlyLiverMetastasesCreator(): FunctionCreator {
+        return FunctionCreator { HasSpecificMetastasesOnly(TumorDetails::hasLiverLesions, "liver") }
     }
 
     private fun hasKnownCnsMetastasesCreator(): FunctionCreator {
@@ -237,7 +244,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasOnlyBoneMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasBoneMetastasesOnly() }
+        return FunctionCreator { HasSpecificMetastasesOnly(TumorDetails::hasBoneLesions, "bone") }
     }
 
     private fun hasLungMetastasesCreator(): FunctionCreator {
@@ -332,5 +339,9 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
         return FunctionCreator { MeetsSpecificCriteriaRegardingLiverMetastases() }
+    }
+
+    private fun hasSymptomsOfPrimaryTumorInSitu(): FunctionCreator {
+        return FunctionCreator { HasSymptomsOfPrimaryTumorInSitu() }
     }
 }

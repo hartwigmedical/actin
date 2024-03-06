@@ -52,18 +52,28 @@ class StandardEhrIngestionTest {
             surgeryExtractor = EhrSurgeryExtractor(),
             toxicityExtractor = EhrToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = EhrVitalFunctionsExtractor(),
-            priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(curationDatabase.nonOncologicalHistoryCuration),
+            priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(
+                curationDatabase.nonOncologicalHistoryCuration,
+                curationDatabase.treatmentHistoryEntryCuration
+            ),
             intolerancesExtractor = EhrIntolerancesExtractor(TestAtcFactory.createProperAtcModel(), curationDatabase.intoleranceCuration),
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
-            treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(curationDatabase.treatmentHistoryEntryCuration),
+            treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(
+                curationDatabase.treatmentHistoryEntryCuration,
+                curationDatabase.nonOncologicalHistoryCuration
+            ),
             secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
 
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
-            tumorDetailsExtractor = EhrTumorDetailsExtractor(curationDatabase.primaryTumorCuration),
+            tumorDetailsExtractor = EhrTumorDetailsExtractor(
+                curationDatabase.primaryTumorCuration,
+                curationDatabase.lesionLocationCuration
+            ),
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),
-            bloodTransfusionExtractor = EhrBloodTransfusionExtractor()
+            bloodTransfusionExtractor = EhrBloodTransfusionExtractor(),
+            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration)
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
@@ -129,6 +139,15 @@ class StandardEhrIngestionTest {
                         feedInput = "MORFINE",
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
+                )
+            ),
+            CurationResult(
+                categoryName = "Oncological History",
+                requirements = listOf(
+                    CurationRequirement(
+                        feedInput = "aandoening van mitralis-, aorta- en tricuspidalisklep",
+                        message = "Could not find treatment history config for input 'aandoening van mitralis-, aorta- en tricuspidalisklep'"
+                    )
                 )
             )
         )

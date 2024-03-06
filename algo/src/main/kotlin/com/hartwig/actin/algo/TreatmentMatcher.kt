@@ -15,7 +15,8 @@ class TreatmentMatcher(
     private val recommendationEngine: RecommendationEngine,
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
-    private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator
+    private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
+    private val trialSource: String
 ) {
 
     fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
@@ -31,18 +32,25 @@ class TreatmentMatcher(
             referenceDate = referenceDateProvider.date(),
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,
-            standardOfCareMatches = standardOfCareMatches
+            standardOfCareMatches = standardOfCareMatches,
+            trialSource = trialSource
         )
     }
 
     companion object {
-        fun create(resources: RuleMappingResources, trials: List<Trial>, efficacyEvidence: List<EfficacyEntry>): TreatmentMatcher {
+        fun create(
+            resources: RuleMappingResources,
+            trials: List<Trial>,
+            efficacyEvidence: List<EfficacyEntry>,
+            trialSource: String
+        ): TreatmentMatcher {
             return TreatmentMatcher(
                 TrialMatcher.create(resources),
                 RecommendationEngineFactory(resources).create(),
                 trials,
                 resources.referenceDateProvider,
-                EvaluatedTreatmentAnnotator.create(efficacyEvidence)
+                EvaluatedTreatmentAnnotator.create(efficacyEvidence),
+                trialSource
             )
         }
     }
