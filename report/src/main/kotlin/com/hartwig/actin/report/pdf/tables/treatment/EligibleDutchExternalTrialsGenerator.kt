@@ -31,13 +31,39 @@ class EligibleDutchExternalTrialsGenerator(
         listOf("Trial title", "NCT number").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
         table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
+        val trialsByTitle = externalTrialsPerEvent.flatMap { it.value }.groupBy { it.title }
+        val eventsByCombinedTitle = mutableMapOf<String, MutableList<String>>()
+
         externalTrialsPerEvent.forEach { (event, externalTrials) ->
             val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth)
-            externalTrials.forEach {
-                subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(it.title)))
-                subTable.addCell(Cells.createContentNoBorder(it.nctId).setAction(PdfAction.createURI(it.url)).addStyle(Styles.urlStyle()))
+            externalTrials.forEach { trial ->
+                val trialTitle = trial.title
+                if ((trialsByTitle[trialTitle]?.size ?: 0) > 1) {
+                    eventsByCombinedTitle.getOrPut(trialTitle) { mutableListOf() }.add(event)
+                } else {
+                    subTable.addCell(Cells.createContentNoBorder(trialTitle))
+                    subTable.addCell(
+                        Cells.createContentNoBorder(trial.nctId).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle())
+                    )
+                }
             }
-            table.addCell(Cells.createContent(event))
+            if (subTable.numberOfRows > 0) {
+                table.addCell(Cells.createContent(event))
+                EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
+            }
+        }
+
+        eventsByCombinedTitle.forEach { (combinedTitle, events) ->
+            val eventNames = events.joinToString(", ")
+            val firstTrial = trialsByTitle[combinedTitle]?.firstOrNull()
+            val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth)
+            subTable.addCell(Cells.createContentNoBorder(combinedTitle))
+            firstTrial?.let {
+                subTable.addCell(
+                    Cells.createContentNoBorder(it.nctId).setAction(PdfAction.createURI(it.url)).addStyle(Styles.urlStyle())
+                )
+            }
+            table.addCell(Cells.createContentNoBorder(eventNames))
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
         }
 
