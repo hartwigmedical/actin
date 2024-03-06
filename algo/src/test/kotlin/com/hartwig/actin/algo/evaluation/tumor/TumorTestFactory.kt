@@ -177,6 +177,12 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(otherLesions = otherLesions))
     }
 
+    fun withDoidsAndLiverLesions(doids: Set<String>?, hasLiverLesions: Boolean?): PatientRecord {
+        return base.copy(
+            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids, hasLiverLesions = hasLiverLesions)),
+        )
+    }
+
     fun withTumorDetails(tumor: TumorDetails): PatientRecord {
         return base.copy(clinical = base.clinical.copy(tumor = tumor))
     }

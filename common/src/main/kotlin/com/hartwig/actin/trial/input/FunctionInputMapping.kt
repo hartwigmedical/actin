@@ -86,6 +86,7 @@ object FunctionInputMapping {
         EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to FunctionInput.NONE,
         EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to FunctionInput.NONE,
         EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to FunctionInput.MANY_INTEGERS,
+        EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_LIVER_TREATMENT to FunctionInput.NONE,
         EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to FunctionInput.NONE,
         EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to FunctionInput.ONE_INTEGER,
