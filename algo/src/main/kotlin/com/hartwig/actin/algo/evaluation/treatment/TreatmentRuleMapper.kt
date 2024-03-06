@@ -83,7 +83,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
-        return FunctionCreator { IsEligibleForOnLabelTreatment() }
+        return FunctionCreator { function: EligibilityFunction ->
+            val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
+            IsEligibleForOnLabelTreatment(treatmentName, RecommendationEngineFactory(resources))
+        }
     }
 
     private fun isEligibleForPalliativeRadiotherapyCreator(): FunctionCreator {
