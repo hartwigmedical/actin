@@ -48,7 +48,6 @@ class EhrTumorDetailsExtractor(
     ) = TumorDetails(
         primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
         primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
-        primaryTumorExtraDetails = ehrPatientRecord.tumorDetails.tumorGradeDifferentiation,
         stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
         hasBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN),
