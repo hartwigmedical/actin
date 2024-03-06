@@ -17,9 +17,14 @@ class HasHadLiverResection : EvaluationFunction {
             priorResections.any { it.treatmentHistoryDetails?.bodyLocationCategories?.any { location -> location == BodyLocationCategory.LIVER } == true }
         val hadResectionToUnknownLocation = priorResections.any { it.treatmentHistoryDetails?.bodyLocationCategories == null }
 
-        val hadSurgeryWithUnknownName = priorSurgeries.filter { it.treatments.any { treatment -> treatment.name.equals("Surgery", true) } }
-        val hadSurgeryWithUnknownNamePotentiallyToTargetLocation =
-            hadSurgeryWithUnknownName.any { it.treatmentHistoryDetails?.bodyLocationCategories?.any { category -> category == BodyLocationCategory.LIVER } != false }
+        val hadSurgeryWithUnknownNamePotentiallyToTargetLocation = priorSurgeries.any {
+            it.treatments.any { treatment ->
+                treatment.name.equals(
+                    "Surgery",
+                    true
+                )
+            } && it.treatmentHistoryDetails?.bodyLocationCategories?.any { category -> category == BodyLocationCategory.LIVER } != false
+        }
 
         return when {
             hadResectionToTargetLocation -> {
