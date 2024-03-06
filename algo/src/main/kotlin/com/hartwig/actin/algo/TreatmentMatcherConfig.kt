@@ -9,6 +9,8 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
+const val EMC_TRIAL_SOURCE = "EMC"
+
 data class TreatmentMatcherConfig(
     val clinicalJson: String,
     val molecularJson: String,
@@ -19,6 +21,7 @@ data class TreatmentMatcherConfig(
     val extendedEfficacyJson: String,
     val outputDirectory: String,
     val runHistorically: Boolean,
+    val trialSource: String
 ) {
 
     companion object {
@@ -37,6 +40,11 @@ data class TreatmentMatcherConfig(
                 RUN_HISTORICALLY,
                 false,
                 "If set, runs the algo with a date just after the original patient registration date"
+            )
+            options.addOption(
+                TRIAL_SOURCE,
+                true,
+                "Hospital managing trials provided. Currently only a single hospital is supported, and defaults to EMC"
             )
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
@@ -63,7 +71,8 @@ data class TreatmentMatcherConfig(
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
-                extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON)
+                extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
+                trialSource = ApplicationConfig.optionalValue(cmd, TRIAL_SOURCE) ?: EMC_TRIAL_SOURCE
             )
         }
 
@@ -77,6 +86,7 @@ data class TreatmentMatcherConfig(
         private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val RUN_HISTORICALLY = "run_historically"
+        private const val TRIAL_SOURCE = "trial_source"
         private const val LOG_DEBUG = "log_debug"
     }
 }

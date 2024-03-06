@@ -79,8 +79,9 @@ class ClinicalIngestionFeedAdapterTest {
             UnusedCurationConfig(categoryName = "Primary Tumor", input = "long | metastase adenocarcinoom"),
             UnusedCurationConfig(categoryName = "Non Oncological History", input = "pijn bij maligne neoplasma van longen"),
             UnusedCurationConfig(categoryName = "Complication", input = "overige"),
+            UnusedCurationConfig(categoryName = "Lesion Location", input = "brain"),
             UnusedCurationConfig(categoryName = "Toxicity", input = "dysphagia"),
-            UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "ihc erbb2 3+"),
+            UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "immunohistochemie erbb2 3+"),
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk")
         )

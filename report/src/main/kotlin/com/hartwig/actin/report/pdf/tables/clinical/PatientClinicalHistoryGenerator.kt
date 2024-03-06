@@ -140,9 +140,11 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
             val treatmentWithAnnotation = listOfNotNull(
                 treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)",
-                treatmentHistoryEntry.treatmentHistoryDetails?.switchToTreatments?.let { switchToTreatments ->
-                    "with switch to " + switchToTreatments.joinToString(" then ") {
-                        it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)" }
+                treatmentHistoryEntry.treatmentHistoryDetails?.let { details ->
+                    if (details.switchToTreatments.isNullOrEmpty()) "" else {
+                        details.switchToTreatments!!.joinToString(prefix = "with switch to ", separator = " then ") {
+                            it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)" }
+                        }
                     }
                 },
                 treatmentHistoryEntry.treatmentHistoryDetails?.maintenanceTreatment?.let { maintenanceTreatment ->

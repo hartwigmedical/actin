@@ -74,7 +74,7 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(priorCancerTreatment))
         Assertions.assertThat(function.evaluate(priorCancerTreatment).undeterminedGeneralMessages).containsExactly(
-            "Received anti-cancer therapy (Chemotherapy, Immunotherapy) but undetermined if in the last $monthsAgo months (date unknown)"
+            "Received anti-cancer therapy (Chemotherapy) but undetermined if in the last $monthsAgo months (date unknown)"
         )
     }
 
@@ -96,7 +96,7 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(priorCancerTreatment))
         Assertions.assertThat(function.evaluate(priorCancerTreatment).failGeneralMessages).containsExactly(
-            "Received anti-cancer therapy (Chemotherapy, Immunotherapy) within the last $monthsAgo months"
+            "Received anti-cancer therapy (Immunotherapy) within the last $monthsAgo months"
         )
     }
 }
