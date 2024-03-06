@@ -10,27 +10,16 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadLiverResection : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorSurgeries = record.clinical.oncologicalHistory
-            .filter { it.categories().contains(TreatmentCategory.SURGERY) }
+        val priorSurgeries = record.clinical.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.SURGERY) }
 
-        val hadResection = priorSurgeries.filter { it.treatments.any { treatment -> treatment.name.contains(RESECTION_KEYWORD) } }
+        val priorResections = priorSurgeries.filter { it.treatments.any { treatment -> treatment.name.contains(RESECTION_KEYWORD) } }
         val hadResectionToTargetLocation =
-            hadResection.any { it.treatmentHistoryDetails?.bodyLocationCategories?.any { it == BodyLocationCategory.LIVER } == true }
-        val hadResectionToUnknownLocation = hadResection.any { it.treatmentHistoryDetails?.bodyLocationCategories == null }
+            priorResections.any { it.treatmentHistoryDetails?.bodyLocationCategories?.any { location -> location == BodyLocationCategory.LIVER } == true }
+        val hadResectionToUnknownLocation = priorResections.any { it.treatmentHistoryDetails?.bodyLocationCategories == null }
 
-        val hadSurgeryWithUnknownName = priorSurgeries.filter {
-            it.treatments.any {
-                it.name.equals(
-                    "Surgery",
-                    true
-                )
-            }
-        }
-        val hadSurgeryWithUnknownNamePotentiallyToTargetLocation = hadSurgeryWithUnknownName.any {
-            it.treatmentHistoryDetails?.bodyLocationCategories?.any {
-                it == BodyLocationCategory.LIVER
-            } == true || it.treatmentHistoryDetails?.bodyLocationCategories == null
-        }
+        val hadSurgeryWithUnknownName = priorSurgeries.filter { it.treatments.any { treatment -> treatment.name.equals("Surgery", true) } }
+        val hadSurgeryWithUnknownNamePotentiallyToTargetLocation =
+            hadSurgeryWithUnknownName.any { it.treatmentHistoryDetails?.bodyLocationCategories?.any { category -> category == BodyLocationCategory.LIVER } != false }
 
         return when {
             hadResectionToTargetLocation -> {
