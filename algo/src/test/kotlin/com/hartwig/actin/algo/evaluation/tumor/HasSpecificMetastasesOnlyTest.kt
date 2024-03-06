@@ -72,6 +72,4 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should fail when patient has no bone metastases`() {
         assertEvaluation(EvaluationResult.FAIL, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneLesions(false)))
     }
-
-
 }
