@@ -34,6 +34,7 @@ private val PRIOR_CONDITION = EhrPriorOtherCondition(
 )
 
 private val TREATMENT = DrugTreatment("drug", drugs = emptySet())
+private val MODIFICATION_TREATMENT = DrugTreatment("modification", drugs = emptySet())
 
 private val TREATMENT_HISTORY = EhrTreatmentHistory(
     treatmentName = TREATMENT_NAME,
@@ -79,13 +80,26 @@ private val TREATMENT_HISTORY_ENTRY = TreatmentHistoryEntry(
         bestResponse = TreatmentResponse.COMPLETE_RESPONSE,
         bodyLocations = setOf("bone"),
         bodyLocationCategories = setOf(BodyLocationCategory.BONE),
-        switchToTreatments = listOf(TreatmentStage(treatment = TREATMENT, cycles = 2, startYear = 2024, startMonth = 2)),
+        switchToTreatments = listOf(TreatmentStage(treatment = MODIFICATION_TREATMENT, cycles = 2, startYear = 2024, startMonth = 2)),
         cycles = 1,
         maintenanceTreatment = TreatmentStage(treatment = TREATMENT, cycles = 1, startYear = 2024, startMonth = 2),
     ),
     isTrial = false,
     trialAcronym = "trialAcronym",
     intents = setOf(Intent.PALLIATIVE)
+)
+
+private val TREATMENT_HISTORY_FALLBACK = TREATMENT_HISTORY_ENTRY.copy(
+    treatmentHistoryDetails = TREATMENT_HISTORY_ENTRY.treatmentHistoryDetails?.copy(
+        switchToTreatments = listOf(
+            TreatmentStage(
+                treatment = TREATMENT,
+                cycles = 2,
+                startYear = 2024,
+                startMonth = 2
+            )
+        )
+    )
 )
 
 class EhrTreatmentHistoryExtractorTest {
@@ -120,7 +134,13 @@ class EhrTreatmentHistoryExtractorTest {
     @Test
     fun `Should extract treatment with modifications using curated treatment`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(TREATMENT_HISTORY_ENTRY_CONFIG)
-        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(TREATMENT_HISTORY_ENTRY_CONFIG)
+        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(
+                curated = TREATMENT_HISTORY_ENTRY.copy(
+                    treatments = setOf(MODIFICATION_TREATMENT)
+                )
+            )
+        )
         val result = extractor.extract(
             EHR_PATIENT_RECORD.copy(
                 treatmentHistory = listOf(TREATMENT_HISTORY)
@@ -145,7 +165,7 @@ class EhrTreatmentHistoryExtractorTest {
                 treatmentHistory = listOf(TREATMENT_HISTORY)
             )
         )
-        assertThat(result.extracted).containsExactly(TREATMENT_HISTORY_ENTRY)
+        assertThat(result.extracted).containsExactly(TREATMENT_HISTORY_FALLBACK)
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
                 message = "Could not find treatment history config for input '$MODIFICATION_NAME'",
@@ -169,7 +189,7 @@ class EhrTreatmentHistoryExtractorTest {
                 treatmentHistory = listOf(TREATMENT_HISTORY)
             )
         )
-        assertThat(result.extracted).containsExactly(TREATMENT_HISTORY_ENTRY)
+        assertThat(result.extracted).containsExactly(TREATMENT_HISTORY_FALLBACK)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
