@@ -39,6 +39,18 @@ class EfficacyEntryFactoryTest {
     }
 
     @Test
+    fun `Should convert title to acronym`() {
+        val actual = evidenceEntryFactory.extractAcronymFromTitle("Maintenance Treatment Versus Observation After Induction in Advanced Colorectal Carcinoma (CAIRO3)", "NCT000001")
+        assertThat(actual).isEqualTo("CAIRO3")
+    }
+
+    @Test
+    fun `Should convert title to nctId if acronym is missing`() {
+        val actual = evidenceEntryFactory.extractAcronymFromTitle("Maintenance Treatment Versus Observation After Induction in Advanced Colorectal Carcinoma", "NCT000001")
+        assertThat(actual).isEqualTo("NCT000001")
+    }
+
+    @Test
     fun `Should convert therapies`() {
         val ckbExtendedEvidenceEntry = CkbExtendedEvidenceTestFactory.createMinimalTestExtendedEvidenceDatabase().first()
         ckbExtendedEvidenceEntry.therapies = listOf(
