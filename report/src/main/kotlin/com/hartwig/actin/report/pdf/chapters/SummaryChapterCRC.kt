@@ -49,8 +49,8 @@ class SummaryChapterCRC(private val report: Report) : ReportChapter {
                 contentWidth(),
                 "CRC"
             ),
-            EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
-            EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()),
+            EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
+            EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
         )
 
         for (i in generators.indices) {
