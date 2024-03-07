@@ -11,7 +11,7 @@ object TestExtendedEvidenceEntryFactory {
     fun createProperTestExtendedEvidenceEntries(): List<EfficacyEntry> {
         return listOf(
             EfficacyEntry(
-                acronym = "Study of Pembrolizumab instead of CAPOX",
+                acronym = "Study of Pembrolizumab",
                 phase = "Phase III",
                 treatments = listOf(
                     DrugTreatment(
@@ -23,23 +23,7 @@ object TestExtendedEvidenceEntryFactory {
                                 category = TreatmentCategory.CHEMOTHERAPY
                             )
                         )
-                    ),
-                    DrugTreatment(
-                        "CAPECITABIN+OXALIPLATIN",
-                        setOf(
-                            Drug(
-                                name = "CAPECITABINE",
-                                drugTypes = setOf(DrugType.TOPO1_INHIBITOR),
-                                category = TreatmentCategory.CHEMOTHERAPY
-                            ),
-                            Drug(
-                                name = "OXALIPLATIN",
-                                drugTypes = setOf(DrugType.TOPO1_INHIBITOR),
-                                category = TreatmentCategory.CHEMOTHERAPY
-                            )
-                        )
                     )
-
                 ),
                 therapeuticSetting = Intent.ADJUVANT,
 
@@ -50,16 +34,13 @@ object TestExtendedEvidenceEntryFactory {
     }
 
     fun createReference(): TrialReference {
-        return TrialReference(
-            patientPopulations = listOf(createPatientPopulation1(), createPatientPopulation2()),
-            url = "http://www.ncbi.nlm.nih.gov/pubmed/12345678"
-        )
+        return TrialReference(patientPopulations = listOf(createPatientPopulation()), url = "http://www.ncbi.nlm.nih.gov/pubmed/12345678")
     }
 
-    fun createPatientPopulation1(): PatientPopulation {
+    fun createPatientPopulation(): PatientPopulation {
         return PatientPopulation(
             name = "Pembrolizumab",
-            isControl = false,
+            isControl = true,
             ageMin = 55,
             ageMax = 65,
             ageMedian = 60.0,
@@ -83,56 +64,6 @@ object TestExtendedEvidenceEntryFactory {
             treatment = DrugTreatment(
                 "PEMBROLIZUMAB",
                 setOf(Drug(name = "PEMBROLIZUMAB", drugTypes = setOf(DrugType.TOPO1_INHIBITOR), category = TreatmentCategory.CHEMOTHERAPY))
-            ),
-            priorSystemicTherapy = "Chemo",
-            patientsWithMSI = 33,
-            medianFollowUpForSurvival = "30",
-            medianFollowUpPFS = "30",
-            analysisGroups = listOf(createAnalysisGroup()),
-            priorTherapies = "5-FU",
-            patientsPerRace = null,
-            patientsPerRegion = null,
-        )
-    }
-
-    fun createPatientPopulation2(): PatientPopulation {
-        return PatientPopulation(
-            name = "CAPOX",
-            isControl = true,
-            ageMin = 50,
-            ageMax = 60,
-            ageMedian = 55.0,
-            numberOfPatients = 40,
-            numberOfMale = 100,
-            numberOfFemale = 100,
-            patientsWithWho0 = 100,
-            patientsWithWho1 = 0,
-            patientsWithWho2 = 0,
-            patientsWithWho3 = 0,
-            patientsWithWho4 = 0,
-            patientsWithWho0to1 = 0,
-            patientsWithWho1to2 = 0,
-            patientsPerPrimaryTumorLocation = mapOf("Rectum" to 100),
-            mutations = null,
-            patientsWithPrimaryTumorRemovedComplete = 50,
-            patientsWithPrimaryTumorRemovedPartial = 25,
-            patientsWithPrimaryTumorRemoved = 25,
-            patientsPerMetastaticSites = mapOf("Lung" to ValuePercentage(100, 100.0)),
-            timeOfMetastases = TimeOfMetastases.BOTH,
-            treatment = DrugTreatment(
-                "CAPECITABIN+OXALIPLATIN",
-                setOf(
-                    Drug(
-                        name = "CAPECITABINE",
-                        drugTypes = setOf(DrugType.TOPO1_INHIBITOR),
-                        category = TreatmentCategory.CHEMOTHERAPY
-                    ),
-                    Drug(
-                        name = "OXALIPLATIN",
-                        drugTypes = setOf(DrugType.TOPO1_INHIBITOR),
-                        category = TreatmentCategory.CHEMOTHERAPY
-                    )
-                )
             ),
             priorSystemicTherapy = "Chemo",
             patientsWithMSI = 33,

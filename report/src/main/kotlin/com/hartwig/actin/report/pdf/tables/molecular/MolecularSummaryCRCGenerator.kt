@@ -22,7 +22,7 @@ class MolecularSummaryCRCGenerator(
         table.addCell(Cells.createKey("BRAF"))
         table.addCell(Cells.createValue(geneToDrivers("NRAS")))
         table.addCell(Cells.createKey("HER2"))
-        table.addCell(Cells.createValue("Not tested"))
+        table.addCell(Cells.createValue(geneToDrivers("HER2")))
         table.addCell(Cells.createKey("Microsatellite (in)stability"))
         table.addCell(
             Cells.createValue(
