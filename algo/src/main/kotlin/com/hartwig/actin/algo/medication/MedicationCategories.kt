@@ -16,6 +16,8 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                 mapOf(
                     "Bone resorptive" to convertToAtcLevel(setOf("H05", "M05B"), atcTree),
                     "Anticoagulants" to convertToAtcLevel(setOf("B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF", "B01AX"), atcTree),
+                    "Antiinflammatory and antirheumatic products" to convertToAtcLevel(setOf("M01"), atcTree),
+                    "Antineoplastic agents" to convertToAtcLevel(setOf("L01"), atcTree),
                     "Platelet aggregation inhibitors" to convertToAtcLevel(setOf("B01AC"), atcTree),
                     "Azole" to convertToAtcLevel(setOf("A07AC", "D01AC", "G01AF", "G01BF", "G01AG", "J02AC", "J02AB"), atcTree),
                     "Coumarin derivative" to convertToAtcLevel(setOf("B01AA"), atcTree),

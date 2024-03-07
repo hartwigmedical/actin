@@ -14,11 +14,13 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
-import com.hartwig.actin.trial.TreatmentConstants
 import com.itextpdf.layout.element.Table
 
 class MolecularDriversGenerator(
-    private val molecular: MolecularRecord, private val cohorts: List<EvaluatedCohort>, private val width: Float
+    private val trialSource: String,
+    private val molecular: MolecularRecord,
+    private val cohorts: List<EvaluatedCohort>,
+    private val width: Float
 ) : TableGenerator {
 
     override fun title(): String {
@@ -31,10 +33,10 @@ class MolecularDriversGenerator(
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))
         table.addHeaderCell(Cells.createHeader("Driver likelihood"))
-        table.addHeaderCell(Cells.createHeader("Trials in " + TreatmentConstants.ACTIN_SOURCE))
-        table.addHeaderCell(Cells.createHeader("Trials in " + molecular.externalTrialSource))
-        table.addHeaderCell(Cells.createHeader("Best evidence in " + molecular.evidenceSource))
-        table.addHeaderCell(Cells.createHeader("Resistance in " + molecular.evidenceSource))
+        table.addHeaderCell(Cells.createHeader("Trials in $trialSource"))
+        table.addHeaderCell(Cells.createHeader("Trials in ${molecular.externalTrialSource}"))
+        table.addHeaderCell(Cells.createHeader("Best evidence in ${molecular.evidenceSource}"))
+        table.addHeaderCell(Cells.createHeader("Resistance in ${molecular.evidenceSource}"))
 
         val molecularDriversInterpreter =
             MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))

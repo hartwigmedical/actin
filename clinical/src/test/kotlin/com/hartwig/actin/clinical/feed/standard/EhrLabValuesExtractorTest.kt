@@ -47,7 +47,6 @@ class EhrLabValuesExtractorTest {
     private val labTranslationDatabase = mockk<TranslationDatabase<LaboratoryIdentifiers>>()
     private val extractor = EhrLabValuesExtractor(labTranslationDatabase)
 
-
     @Test
     fun `Should extract and translate lab values with known units`() {
         setupTranslation()
@@ -92,7 +91,7 @@ class EhrLabValuesExtractorTest {
         )
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
-                patientId = "aGFzaGVkSWQ=",
+                patientId = HASHED_ID_IN_BASE64,
                 category = CurationCategory.LABORATORY_TRANSLATION,
                 feedInput = LAB_CODE,
                 message = "Could not find laboratory translation for lab value with code 'HGB' and name 'Hemoglobie'"

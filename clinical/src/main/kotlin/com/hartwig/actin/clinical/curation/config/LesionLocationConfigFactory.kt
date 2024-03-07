@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.curation.config
 
 import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 
 class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> {
@@ -13,10 +14,12 @@ class LesionLocationConfigFactory : CurationConfigFactory<LesionLocationConfig> 
             fields,
             parts
         ) { LesionLocationCategory.valueOf(it) }
+        val location = parts[fields["location"]!!]
         return ValidatedCurationConfig(
             LesionLocationConfig(
                 input = input,
-                location = parts[fields["location"]!!],
+                ignore = CurationUtil.isIgnoreString(location),
+                location = location,
                 category = category
             ), validationErrors
         )

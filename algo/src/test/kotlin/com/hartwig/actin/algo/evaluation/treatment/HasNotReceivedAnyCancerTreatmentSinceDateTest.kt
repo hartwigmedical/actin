@@ -4,15 +4,17 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.time.LocalDate
 
 class HasNotReceivedAnyCancerTreatmentSinceDateTest {
 
-    private val minDate = LocalDate.of(2024, 2, 9).minusMonths(6)
+    private val monthsAgo = 6
+    private val minDate = LocalDate.of(2024, 2, 9).minusMonths(monthsAgo.toLong())
     private val recentDate = minDate.plusMonths(3)
     private val olderDate = minDate.minusMonths(3)
-    val function = HasNotReceivedAnyCancerTreatmentSinceDate(minDate, 6)
+    val function = HasNotReceivedAnyCancerTreatmentSinceDate(minDate, monthsAgo)
     val chemotherapyTreatment = TreatmentTestFactory.treatment(
         name = "Chemotherapy", isSystemic = true, categories = setOf(TreatmentCategory.CHEMOTHERAPY)
     )
@@ -71,6 +73,9 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(priorCancerTreatment))
+        Assertions.assertThat(function.evaluate(priorCancerTreatment).undeterminedGeneralMessages).containsExactly(
+            "Received anti-cancer therapy (Chemotherapy) but undetermined if in the last $monthsAgo months (date unknown)"
+        )
     }
 
     @Test
@@ -90,5 +95,8 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(priorCancerTreatment))
+        Assertions.assertThat(function.evaluate(priorCancerTreatment).failGeneralMessages).containsExactly(
+            "Received anti-cancer therapy (Immunotherapy) within the last $monthsAgo months"
+        )
     }
 }

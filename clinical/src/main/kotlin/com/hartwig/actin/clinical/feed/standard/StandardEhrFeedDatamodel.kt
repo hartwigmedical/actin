@@ -1,9 +1,14 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @JacksonSerializable
 data class EhrPatientRecord(
@@ -117,8 +122,13 @@ data class EhrMedication(
     val isSelfCare: Boolean
 )
 
+private const val CHUNK_SIZE_HEX_BYTE = 2
+private const val HEX_BASE = 16
+@OptIn(ExperimentalEncodingApi::class)
 fun String.toBase64(): String {
-    return Base64.getEncoder().encodeToString(this.toByteArray(Charsets.UTF_8))
+    return Base64.Default.encode(this.chunked(CHUNK_SIZE_HEX_BYTE)
+        .map { it.toInt(HEX_BASE).toByte() }
+        .toByteArray())
 }
 
 @JacksonSerializable
@@ -143,12 +153,19 @@ data class EhrWhoEvaluation(
     val evaluationDate: LocalDate
 )
 
+class RemoveNewlinesAndCarriageReturns : JsonDeserializer<String>() {
+    override fun deserialize(p0: JsonParser, p1: DeserializationContext?): String {
+        return p0.text?.replace("\n", "")?.replace("\r", "") ?: ""
+    }
+}
+
 @JacksonSerializable
 data class EhrPriorOtherCondition(
+    @field:JsonDeserialize(using = RemoveNewlinesAndCarriageReturns::class)
     val name: String,
-    val category: String?,
+    val category: String? = null,
     val startDate: LocalDate,
-    val endDate: LocalDate?
+    val endDate: LocalDate? = null
 )
 
 @JacksonSerializable
@@ -233,7 +250,8 @@ data class EhrTumorDetail(
     val tumorStageDate: LocalDate? = null,
     val measurableDisease: Boolean? = null,
     val measurableDiseaseDate: LocalDate? = null,
-    val lesions: List<EhrLesion>
+    val lesions: List<EhrLesion>? = null,
+    val lesionSite: String? = null
 )
 
 @JacksonSerializable

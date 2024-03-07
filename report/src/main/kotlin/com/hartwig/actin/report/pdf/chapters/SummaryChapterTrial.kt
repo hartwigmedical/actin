@@ -82,8 +82,8 @@ class SummaryChapterTrial(private val report: Report) : ReportChapter {
             PatientClinicalHistoryTrialGenerator(report.clinical, keyWidth, valueWidth),
             MolecularSummaryTrialGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth),
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, null, contentWidth(), "Trial"),
-            EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, contentWidth()),
-            EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, contentWidth()),
+            EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
+            EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
             if (dutchTrials.isNotEmpty()) {
                 EligibleDutchExternalTrialsGenerator(report.molecular.externalTrialSource, dutchTrials, contentWidth())
             } else null,
