@@ -7,5 +7,14 @@ enum class BodyLocationCategory {
     LIVER,
     LUNG,
     LYMPH_NODE,
-    NECK
+    HEAD_AND_NECK,
+    KIDNEY,
+    COLORECTUM,
+    STOMACH,
+    GALL_BLADDER,
+    ESOPHAGUS,
+    BREAST,
+    REPRODUCTIVE_SYSTEM,
+    BLADDER,
+    THYROID_GLAND
 }
