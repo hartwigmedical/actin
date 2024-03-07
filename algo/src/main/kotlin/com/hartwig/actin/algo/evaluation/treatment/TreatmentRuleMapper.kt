@@ -68,6 +68,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_COMPLETE_RESECTION to hasHadCompleteResectionCreator(),
             EligibilityRule.HAS_HAD_PARTIAL_RESECTION to hasHadPartialResectionCreator(),
             EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS to hasHadResectionWithinWeeksCreator(),
+            EligibilityRule.HAS_HAD_LIVER_RESECTION to hasHadLiverResectionCreator(),
             EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS to hasHadLocalHepaticTherapyWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to hasHadIntratumoralInjectionTreatmentCreator(),
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to hasLimitedCumulativeAnthracyclineExposureCreator(),
@@ -476,6 +477,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val minDate = referenceDateProvider().date().minusWeeks(maxWeeksAgo.toLong())
             HasHadRecentResection(minDate)
         }
+    }
+
+    private fun hasHadLiverResectionCreator(): FunctionCreator {
+        return FunctionCreator { HasHadLiverResection() }
     }
 
     private fun hasHadLocalHepaticTherapyWithinWeeksCreator(): FunctionCreator {

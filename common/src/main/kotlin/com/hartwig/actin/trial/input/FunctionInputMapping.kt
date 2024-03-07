@@ -144,6 +144,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HAD_COMPLETE_RESECTION to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_PARTIAL_RESECTION to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS to FunctionInput.ONE_INTEGER,
+        EligibilityRule.HAS_HAD_LIVER_RESECTION to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to FunctionInput.NONE,
         EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to FunctionInput.ONE_DOUBLE,
