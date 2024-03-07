@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import com.hartwig.actin.clinical.feed.emc.EuropeanDecimalDeserializer
 import com.hartwig.actin.clinical.feed.emc.FeedEntry
+import com.hartwig.actin.clinical.feed.emc.FeedSubjectDeserializer
 import com.hartwig.actin.clinical.feed.emc.FeedValidation
 import com.hartwig.actin.clinical.feed.emc.FeedValidator
 import java.time.LocalDateTime
@@ -12,6 +13,7 @@ import java.time.LocalDateTime
 @JacksonSerializable
 data class BodyWeightEntry(
     @JsonProperty("subject")
+    @JsonDeserialize(using = FeedSubjectDeserializer::class)
     override val subject: String,
 
     @JsonProperty("valueQuantity_value")
