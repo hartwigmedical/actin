@@ -73,7 +73,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-        val localTrialNctIds = report.treatmentMatch.trialMatches.map { it.identification.nctId }.toSet()
+        val localTrialNctIds = report.treatmentMatch.trialMatches.mapNotNull { it.identification.nctId }.toSet()
         val aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular)
         val externalEligibleTrials = aggregatedEvidence.externalEligibleTrialsPerEvent
             .map { (event, trials) -> event to trials.filter { it.nctId !in localTrialNctIds } }

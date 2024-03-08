@@ -10,7 +10,7 @@ object TestTrialFactory {
                 open = true,
                 acronym = "",
                 title = "",
-                nctId = ""
+                nctId = null
             ),
             cohorts = emptyList(),
             generalEligibility = emptyList()
