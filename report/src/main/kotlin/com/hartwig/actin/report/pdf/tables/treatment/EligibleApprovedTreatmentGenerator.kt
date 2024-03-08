@@ -47,7 +47,7 @@ class EligibleApprovedTreatmentGenerator(
                     table.addHeaderCell(Cells.createHeader("Treatment"))
                     table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
                     table.addHeaderCell(Cells.createHeader("Personalized PFS prediction"))
-                    treatments?.forEach { treatment: AnnotatedTreatmentMatch ->
+                    treatments.forEach { treatment: AnnotatedTreatmentMatch ->
                         table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                         val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
                         if (treatment.annotations.isEmpty()) {

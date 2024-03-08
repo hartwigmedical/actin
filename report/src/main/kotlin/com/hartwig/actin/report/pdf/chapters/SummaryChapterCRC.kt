@@ -45,7 +45,7 @@ class SummaryChapterCRC(private val report: Report) : ReportChapter {
             EligibleApprovedTreatmentGenerator(
                 report.clinical,
                 report.molecular,
-                report.treatmentMatch.standardOfCareMatches,
+                report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() },
                 contentWidth(),
                 "CRC"
             ),
