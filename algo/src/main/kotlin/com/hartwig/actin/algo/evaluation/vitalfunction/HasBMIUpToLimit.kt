@@ -11,7 +11,7 @@ import kotlin.math.sqrt
 class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val allBodyWeights = record.clinical.bodyWeights
+        val allBodyWeights = record.bodyWeights
         val relevant = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDate) ?: return EvaluationFactory.undetermined(
             if (allBodyWeights.isNotEmpty() && allBodyWeights.none { it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }) {
                 "Body weights not measured in $EXPECTED_UNIT"

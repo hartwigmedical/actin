@@ -51,7 +51,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
-        val referenceDateProvider = create(clinical, config.runHistorically)
+        val referenceDateProvider = create(patient, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
 
         // We assume we never check validity of a gene inside algo.

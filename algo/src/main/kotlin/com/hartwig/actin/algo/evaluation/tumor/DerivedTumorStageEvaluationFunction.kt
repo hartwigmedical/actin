@@ -39,7 +39,7 @@ internal class DerivedTumorStageEvaluationFunction(
 
     private fun evaluatedDerivedStage(record: PatientRecord, newStage: TumorStage): Evaluation {
         return originalFunction.evaluate(
-            record.copy(clinical = record.clinical.copy(tumor = record.clinical.tumor.copy(stage = newStage)))
+            record.copy(tumor = record.tumor.copy(stage = newStage))
         )
     }
 
