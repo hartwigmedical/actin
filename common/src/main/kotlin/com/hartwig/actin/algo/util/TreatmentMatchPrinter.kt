@@ -56,31 +56,31 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
         return if (allCohorts.isNotEmpty()) "${allCohorts.size} (${allCohorts.joinToString(", ")})" else "None"
     }
 
+    private fun trialString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
+        return if (eligibleTrialMap.isEmpty()) "None" else {
+            val names = eligibleTrialMap.keys.map(::trialName)
+            "${names.size} (${names.joinToString(", ")})"
+        }
+    }
+
+    private fun trialName(trial: TrialIdentification): String {
+        return trial.trialId + " (" + trial.acronym + ")"
+    }
+
+    private fun recruitingCohortString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
+        val recruitingCohorts = eligibleTrialMap.flatMap { (trial, cohorts) ->
+            cohorts.filter { it.open && it.slotsAvailable }.map { cohortName(trial, it) }
+        }
+        return if (recruitingCohorts.isNotEmpty()) "${recruitingCohorts.size} (${recruitingCohorts.joinToString(", ")})" else "None"
+    }
+
+    private fun cohortName(trial: TrialIdentification, cohort: CohortMetadata): String {
+        return trial.trialId + " - " + cohort.description
+    }
+
     companion object {
         fun printMatch(treatmentMatch: TreatmentMatch) {
             TreatmentMatchPrinter(DatamodelPrinter.withDefaultIndentation()).print(treatmentMatch)
-        }
-
-        private fun trialString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
-            return if (eligibleTrialMap.isEmpty()) "None" else {
-                val names = eligibleTrialMap.keys.map(::trialName)
-                "${names.size} (${names.joinToString(", ")})"
-            }
-        }
-
-        private fun trialName(trial: TrialIdentification): String {
-            return trial.trialId + " (" + trial.acronym + ")"
-        }
-
-        private fun recruitingCohortString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
-            val recruitingCohorts = eligibleTrialMap.flatMap { (trial, cohorts) ->
-                cohorts.filter { it.open && it.slotsAvailable }.map { cohortName(trial, it) }
-            }
-            return if (recruitingCohorts.isNotEmpty()) "${recruitingCohorts.size} (${recruitingCohorts.joinToString(", ")})" else "None"
-        }
-
-        private fun cohortName(trial: TrialIdentification, cohort: CohortMetadata): String {
-            return trial.trialId + " - " + cohort.description
         }
     }
 }

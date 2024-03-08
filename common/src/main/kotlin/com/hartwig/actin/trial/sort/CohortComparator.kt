@@ -6,7 +6,10 @@ import com.hartwig.actin.trial.datamodel.Eligibility
 
 class CohortComparator : Comparator<Cohort> {
 
-    private val comparator = Comparator.comparing(Cohort::metadata, METADATA_COMPARATOR)
+    private val metadataComparator: Comparator<CohortMetadata> = CohortMetadataComparator()
+    private val eligibilityComparator: Comparator<Eligibility> = EligibilityComparator()
+
+    private val comparator = Comparator.comparing(Cohort::metadata, metadataComparator)
         .thenComparing({ it.eligibility.size }, Int::compareTo)
         .thenComparing(Cohort::eligibility, ::compareCohortEligibilities)
 
@@ -16,13 +19,8 @@ class CohortComparator : Comparator<Cohort> {
 
     private fun compareCohortEligibilities(eligibilities1: List<Eligibility>, eligibilities2: List<Eligibility>): Int {
         return eligibilities1.zip(eligibilities2).map { (eligibility1, eligibility2) ->
-            ELIGIBILITY_COMPARATOR.compare(eligibility1, eligibility2)
+            eligibilityComparator.compare(eligibility1, eligibility2)
         }
             .find { it != 0 } ?: 0
-    }
-
-    companion object {
-        private val METADATA_COMPARATOR: Comparator<CohortMetadata> = CohortMetadataComparator()
-        private val ELIGIBILITY_COMPARATOR: Comparator<Eligibility> = EligibilityComparator()
     }
 }

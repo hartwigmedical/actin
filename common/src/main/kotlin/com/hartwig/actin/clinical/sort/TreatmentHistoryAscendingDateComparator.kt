@@ -20,25 +20,23 @@ class TreatmentHistoryAscendingDateComparator : Comparator<TreatmentHistoryEntry
         return comparator.compare(entry1, entry2)
     }
 
-    companion object {
-        private fun stopsBeforeWithNullStart(entryA: TreatmentHistoryEntry, entryB: TreatmentHistoryEntry): Boolean {
-            val startYearA = entryA.startYear
-            val stopYearA = stopYearForHistoryEntry(entryA)
-            val stopMonthA = stopMonthForHistoryEntry(entryA)
-            val startYearB = entryB.startYear
-            val startMonthB = entryB.startMonth
-            return if (startYearA == null && stopYearA != null && startYearB != null) {
-                startYearB > stopYearA || startYearB == stopYearA &&
-                        (startMonthB == null || stopMonthA == null || startMonthB >= stopMonthA)
-            } else false
-        }
+    private fun stopsBeforeWithNullStart(entryA: TreatmentHistoryEntry, entryB: TreatmentHistoryEntry): Boolean {
+        val startYearA = entryA.startYear
+        val stopYearA = stopYearForHistoryEntry(entryA)
+        val stopMonthA = stopMonthForHistoryEntry(entryA)
+        val startYearB = entryB.startYear
+        val startMonthB = entryB.startMonth
+        return if (startYearA == null && stopYearA != null && startYearB != null) {
+            startYearB > stopYearA || startYearB == stopYearA &&
+                    (startMonthB == null || stopMonthA == null || startMonthB >= stopMonthA)
+        } else false
+    }
 
-        private fun stopYearForHistoryEntry(treatmentHistoryEntry: TreatmentHistoryEntry): Int? {
-            return treatmentHistoryEntry.treatmentHistoryDetails?.stopYear
-        }
+    private fun stopYearForHistoryEntry(treatmentHistoryEntry: TreatmentHistoryEntry): Int? {
+        return treatmentHistoryEntry.treatmentHistoryDetails?.stopYear
+    }
 
-        private fun stopMonthForHistoryEntry(treatmentHistoryEntry: TreatmentHistoryEntry): Int? {
-            return treatmentHistoryEntry.treatmentHistoryDetails?.stopMonth
-        }
+    private fun stopMonthForHistoryEntry(treatmentHistoryEntry: TreatmentHistoryEntry): Int? {
+        return treatmentHistoryEntry.treatmentHistoryDetails?.stopMonth
     }
 }
