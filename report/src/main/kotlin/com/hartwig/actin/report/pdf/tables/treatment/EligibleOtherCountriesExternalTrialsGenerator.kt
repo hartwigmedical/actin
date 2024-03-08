@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.report.interpretation.EvidenceInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
@@ -32,7 +33,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
         listOf("Trial title", "NCT number", "Country").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
         table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
-        externalTrialsPerEvent.forEach { (event, externalTrials) ->
+        EvidenceInterpreter.groupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent).forEach { (event, externalTrials) ->
             val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth, countriesWidth)
             externalTrials.forEach { externalTrial ->
                 subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(externalTrial.title)))

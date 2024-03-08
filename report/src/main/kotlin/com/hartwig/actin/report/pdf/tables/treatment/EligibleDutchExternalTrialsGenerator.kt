@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.report.interpretation.EvidenceInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
@@ -31,38 +32,13 @@ class EligibleDutchExternalTrialsGenerator(
         listOf("Trial title", "NCT number").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
         table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
-        val trialsGroupedByTitle = externalTrialsPerEvent.flatMap { it.value }.groupBy { it.title }
-        val combinedEventsPerTrial = mutableMapOf<String, MutableList<String>>()
-
-        externalTrialsPerEvent.forEach { (event, externalTrials) ->
+        EvidenceInterpreter.groupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent).forEach { (event, externalTrials) ->
             val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth)
-            externalTrials.forEach { trial ->
-                if ((trialsGroupedByTitle[trial.title]?.size ?: 0) > 1) {
-                    combinedEventsPerTrial.getOrPut(trial.title) { mutableListOf() }.add(event)
-                } else {
-                    subTable.addCell(Cells.createContentNoBorder(trial.title))
-                    subTable.addCell(
-                        Cells.createContentNoBorder(trial.nctId).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle())
-                    )
-                }
+            externalTrials.forEach {
+                subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(it.title)))
+                subTable.addCell(Cells.createContentNoBorder(it.nctId).setAction(PdfAction.createURI(it.url)).addStyle(Styles.urlStyle()))
             }
-            if (subTable.numberOfRows > 0) {
-                table.addCell(Cells.createContent(event))
-                EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
-            }
-        }
-
-        combinedEventsPerTrial.forEach { (title, events) ->
-            val combinedEvents = events.joinToString(", \n")
-            val combinedEventsTitle = trialsGroupedByTitle[title]?.firstOrNull()
-            val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth)
-            combinedEventsTitle?.let {
-                subTable.addCell(Cells.createContentNoBorder(combinedEventsTitle.title))
-                subTable.addCell(
-                    Cells.createContentNoBorder(combinedEventsTitle.nctId).setAction(PdfAction.createURI(combinedEventsTitle.url)).addStyle(Styles.urlStyle())
-                )
-            }
-            table.addCell(Cells.createContent(combinedEvents))
+            table.addCell(Cells.createContent(event))
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
         }
 
