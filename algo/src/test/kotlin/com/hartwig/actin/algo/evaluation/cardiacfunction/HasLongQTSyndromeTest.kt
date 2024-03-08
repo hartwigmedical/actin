@@ -38,11 +38,7 @@ class HasLongQTSyndromeTest {
         }
 
         private fun withPriorOtherConditions(priorOtherConditions: List<PriorOtherCondition>): PatientRecord {
-            return TestDataFactory.createMinimalTestPatientRecord().copy(
-                clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(
-                    priorOtherConditions = priorOtherConditions
-                )
-            )
+            return TestDataFactory.createMinimalTestPatientRecord().copy(priorOtherConditions = priorOtherConditions)
         }
     }
 }
