@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.treatment
 
+import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.EndPoint
 import com.hartwig.actin.efficacy.EndPointType
@@ -100,8 +101,11 @@ class EfficacyEvidenceDetailsGenerator(
         val table = Tables.createFixedWidthCols(100f, 100f, 100f, 100f, 100f).setWidth(500f)
         val primaryEndpoints = mutableListOf<EndPoint>()
         for (patientPopulation in patientPopulations) {
-            val analysisGroup =
+            val analysisGroup: AnalysisGroup? = if (patientPopulation.analysisGroups.count() == 1) {
+                patientPopulation.analysisGroups.first()
+            } else {
                 patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
+            }
             val endPoints = analysisGroup?.endPoints
             if (endPoints != null) {
                 for (endPoint in endPoints) {

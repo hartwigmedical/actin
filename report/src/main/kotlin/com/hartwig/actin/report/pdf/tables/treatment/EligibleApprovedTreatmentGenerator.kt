@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.treatment
 
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -61,8 +62,11 @@ class EligibleApprovedTreatmentGenerator(
                                                 true
                                             )
                                         ) {
-                                            val analysisGroup =
+                                            val analysisGroup: AnalysisGroup? = if (patientPopulation.analysisGroups.count() == 1) {
+                                                patientPopulation.analysisGroups.first()
+                                            } else {
                                                 patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
+                                            }
                                             subtable.addCell(Cells.createEmpty())
                                             subtable.addCell(
                                                 Cells.createTitle(annotation.acronym)
@@ -70,32 +74,36 @@ class EligibleApprovedTreatmentGenerator(
                                                     .addStyle(Styles.urlStyle())
                                             )
                                             subtable.addCell(Cells.createValue("PFS: "))
-                                            for (primaryEndPoint in analysisGroup!!.endPoints!!) {
-                                                if (primaryEndPoint.name == "Median Progression-Free Survival") {
-                                                    subtable.addCell(
-                                                        Cells.createKey(
-                                                            primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                                ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
-                                                                ?: "NA") + ")"
+                                            if (analysisGroup != null) {
+                                                for (primaryEndPoint in analysisGroup.endPoints) {
+                                                    if (primaryEndPoint.name == "Median Progression-Free Survival") {
+                                                        subtable.addCell(
+                                                            Cells.createKey(
+                                                                primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                                    ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
+                                                                    ?: "NA") + ")"
+                                                            )
                                                         )
-                                                    )
-                                                } else {
-                                                    subtable.addCell(Cells.createKey("NE"))
+                                                    } else {
+                                                        subtable.addCell(Cells.createKey("NE"))
+                                                    }
                                                 }
                                             }
 
                                             subtable.addCell(Cells.createValue("OS: "))
-                                            for (primaryEndPoint in analysisGroup.endPoints!!) {
-                                                if (primaryEndPoint.name == "Median Overall Survival") {
-                                                    subtable.addCell(
-                                                        Cells.createKey(
-                                                            primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                                ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
-                                                                ?: "NA") + ")"
+                                            if (analysisGroup != null) {
+                                                for (primaryEndPoint in analysisGroup.endPoints) {
+                                                    if (primaryEndPoint.name == "Median Overall Survival") {
+                                                        subtable.addCell(
+                                                            Cells.createKey(
+                                                                primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                                    ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
+                                                                    ?: "NA") + ")"
+                                                            )
                                                         )
-                                                    )
-                                                } else {
-                                                    subtable.addCell(Cells.createKey("NE"))
+                                                    } else {
+                                                        subtable.addCell(Cells.createKey("NE"))
+                                                    }
                                                 }
                                             }
                                             subtable.addCell(Cells.createValue(" "))
