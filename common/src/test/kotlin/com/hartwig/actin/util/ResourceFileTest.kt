@@ -13,6 +13,8 @@ import java.time.LocalDate
 
 class ResourceFileTest {
 
+    private val epsilon = 1.0E-10
+
     @Test
     fun `Should parse strings`() {
         assertThat(optionalString("")).isNull()
@@ -47,10 +49,6 @@ class ResourceFileTest {
     @Test
     fun `Should parse doubles`() {
         assertThat(optionalNumber("")).isNull()
-        assertThat(optionalNumber("4.2")!!).isEqualTo(4.2, Offset.offset(EPSILON))
-    }
-
-    companion object {
-        private const val EPSILON = 1.0E-10
+        assertThat(optionalNumber("4.2")!!).isEqualTo(4.2, Offset.offset(epsilon))
     }
 }

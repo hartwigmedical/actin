@@ -14,6 +14,9 @@ import java.io.File
 
 class ClinicalRecordJsonTest {
 
+    private val clinicalDirectory = Resources.getResource("clinical" + File.separator + "records").path
+    private val clinicalJson = clinicalDirectory + File.separator + "patient.clinical.json"
+
     @Test
     fun `Should be able to convert clinical JSON back and forth`() {
         val minimal = createMinimalTestClinicalRecord()
@@ -27,37 +30,32 @@ class ClinicalRecordJsonTest {
 
     @Test
     fun `Should be able to read a clinical directory`() {
-        val records = readFromDir(CLINICAL_DIRECTORY)
+        val records = readFromDir(clinicalDirectory)
         assertThat(records).hasSize(1)
         assertClinicalRecord(records[0])
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception when attempting to read a directory from a file`() {
-        readFromDir(CLINICAL_JSON)
+        readFromDir(clinicalJson)
     }
 
     @Test
     fun `Should correctly read test clinical JSON`() {
-        assertClinicalRecord(read(CLINICAL_JSON))
+        assertClinicalRecord(read(clinicalJson))
     }
 
-    companion object {
-        private val CLINICAL_DIRECTORY = Resources.getResource("clinical" + File.separator + "records").path
-        private val CLINICAL_JSON = CLINICAL_DIRECTORY + File.separator + "patient.clinical.json"
-
-        private fun assertClinicalRecord(record: ClinicalRecord) {
-            assertThat(record.patientId).isEqualTo("ACTN01029999")
-            assertThat(record.priorSecondPrimaries).hasSize(1)
-            assertThat(record.priorOtherConditions).hasSize(1)
-            assertThat(record.complications!!).hasSize(1)
-            assertThat(record.labValues).hasSize(2)
-            assertThat(record.toxicities).hasSize(2)
-            assertThat(record.intolerances).hasSize(2)
-            assertThat(record.surgeries).hasSize(1)
-            assertThat(record.vitalFunctions).hasSize(1)
-            assertThat(record.bloodTransfusions).hasSize(1)
-            assertThat(record.medications).hasSize(2)
-        }
+    private fun assertClinicalRecord(record: ClinicalRecord) {
+        assertThat(record.patientId).isEqualTo("ACTN01029999")
+        assertThat(record.priorSecondPrimaries).hasSize(1)
+        assertThat(record.priorOtherConditions).hasSize(1)
+        assertThat(record.complications!!).hasSize(1)
+        assertThat(record.labValues).hasSize(2)
+        assertThat(record.toxicities).hasSize(2)
+        assertThat(record.intolerances).hasSize(2)
+        assertThat(record.surgeries).hasSize(1)
+        assertThat(record.vitalFunctions).hasSize(1)
+        assertThat(record.bloodTransfusions).hasSize(1)
+        assertThat(record.medications).hasSize(2)
     }
 }

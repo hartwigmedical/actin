@@ -16,20 +16,18 @@ class CohortMatchComparatorTest {
         assertThat(matches[1]).isEqualTo(match2)
     }
 
-    companion object {
-        private fun withId(id: String): CohortMatch {
-            return CohortMatch(
-                metadata = CohortMetadata(
-                    cohortId = id,
-                    evaluable = true,
-                    open = true,
-                    slotsAvailable = true,
-                    blacklist = false,
-                    description = "",
-                ),
-                isPotentiallyEligible = true,
-                evaluations = emptyMap()
-            )
-        }
+    private fun withId(id: String): CohortMatch {
+        return CohortMatch(
+            metadata = CohortMetadata(
+                cohortId = id,
+                evaluable = true,
+                open = true,
+                slotsAvailable = true,
+                blacklist = false,
+                description = "",
+            ),
+            isPotentiallyEligible = true,
+            evaluations = emptyMap()
+        )
     }
 }

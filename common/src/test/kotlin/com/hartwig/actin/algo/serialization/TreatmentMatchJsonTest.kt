@@ -15,6 +15,9 @@ import java.io.File
 
 class TreatmentMatchJsonTest {
 
+    private val algoDirectory = Resources.getResource("algo").path
+    private val treatmentMatchJson = algoDirectory + File.separator + "patient.treatment_match.json"
+
     @Test
     fun `Should be able to convert treatment match JSON back and forth`() {
         val minimal = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
@@ -68,16 +71,11 @@ class TreatmentMatchJsonTest {
 
     @Test
     fun `Should be able to read treatment match JSON`() {
-        val match = read(TREATMENT_MATCH_JSON)
+        val match = read(treatmentMatchJson)
         assertThat(match.patientId).isEqualTo("ACTN01029999")
         assertThat(match.trialMatches).hasSize(1)
         val trialMatch = match.trialMatches[0]
         assertThat(trialMatch.evaluations).hasSize(1)
         assertThat(trialMatch.cohorts).hasSize(3)
-    }
-
-    companion object {
-        private val ALGO_DIRECTORY = Resources.getResource("algo").path
-        private val TREATMENT_MATCH_JSON = ALGO_DIRECTORY + File.separator + "patient.treatment_match.json"
     }
 }

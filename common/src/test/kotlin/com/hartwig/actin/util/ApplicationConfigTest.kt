@@ -13,12 +13,15 @@ import org.junit.Test
 
 class ApplicationConfigTest {
 
+    private val configDirectory = Resources.getResource("config").path
+    private val configFile = Resources.getResource("config/file.empty").path
+
     @Test
     fun `Should retrieve directory from config`() {
         val options = Options()
         options.addOption("directory", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_DIRECTORY))
-        assertThat(nonOptionalDir(cmd, "directory")).isEqualTo(CONFIG_DIRECTORY)
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", configDirectory))
+        assertThat(nonOptionalDir(cmd, "directory")).isEqualTo(configDirectory)
     }
 
     @Test(expected = ParseException::class)
@@ -49,7 +52,7 @@ class ApplicationConfigTest {
     fun `Should crash when optional directory points to file`() {
         val options = Options()
         options.addOption("directory", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_FILE))
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", configFile))
         optionalDir(cmd, "directory")
     }
 
@@ -57,7 +60,7 @@ class ApplicationConfigTest {
     fun `Should return existing optional directory`() {
         val options = Options()
         options.addOption("directory", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_DIRECTORY))
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", configDirectory))
         optionalDir(cmd, "directory")
     }
 
@@ -65,8 +68,8 @@ class ApplicationConfigTest {
     fun `Should retrieve file from config`() {
         val options = Options()
         options.addOption("file", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-file", CONFIG_FILE))
-        assertThat(nonOptionalFile(cmd, "file")).isEqualTo(CONFIG_FILE)
+        val cmd = DefaultParser().parse(options, arrayOf("-file", configFile))
+        assertThat(nonOptionalFile(cmd, "file")).isEqualTo(configFile)
     }
 
     @Test(expected = ParseException::class)
@@ -89,10 +92,5 @@ class ApplicationConfigTest {
     fun `Should crash on non existing value`() {
         val cmd = DefaultParser().parse(Options(), arrayOf())
         nonOptionalValue(cmd, "does not exist")
-    }
-
-    companion object {
-        private val CONFIG_DIRECTORY = Resources.getResource("config").path
-        private val CONFIG_FILE = Resources.getResource("config/file.empty").path
     }
 }

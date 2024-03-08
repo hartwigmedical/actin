@@ -16,19 +16,17 @@ class TrialMatchComparatorTest {
         assertThat(matches[1]).isEqualTo(match2)
     }
 
-    companion object {
-        private fun withId(id: String): TrialMatch {
-            return TrialMatch(
-                identification = TrialIdentification(
-                    trialId = id,
-                    open = true,
-                    acronym = "",
-                    title = "",
-                ),
-                isPotentiallyEligible = true,
-                cohorts = emptyList(),
-                evaluations = emptyMap()
-            )
-        }
+    private fun withId(id: String): TrialMatch {
+        return TrialMatch(
+            identification = TrialIdentification(
+                trialId = id,
+                open = true,
+                acronym = "",
+                title = "",
+            ),
+            isPotentiallyEligible = true,
+            cohorts = emptyList(),
+            evaluations = emptyMap()
+        )
     }
 }

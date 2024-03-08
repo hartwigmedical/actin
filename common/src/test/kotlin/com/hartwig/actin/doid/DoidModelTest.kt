@@ -50,15 +50,13 @@ class DoidModelTest {
         assertThat(model.resolveDoidForTerm("tumor B")).isNull()
     }
 
-    companion object {
-        private fun createTestModel(manualConfig: DoidManualConfig): DoidModel {
-            val childToParentsMap = mapOf(
-                "200" to listOf("300"),
-                "300" to listOf("400")
-            )
-            val termPerDoidMap = mapOf("200" to "tumor A")
-            val doidPerLowerCaseTermMap = mapOf("tumor a" to "200")
-            return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, manualConfig)
-        }
+    private fun createTestModel(manualConfig: DoidManualConfig): DoidModel {
+        val childToParentsMap = mapOf(
+            "200" to listOf("300"),
+            "300" to listOf("400")
+        )
+        val termPerDoidMap = mapOf("200" to "tumor A")
+        val doidPerLowerCaseTermMap = mapOf("tumor a" to "200")
+        return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, manualConfig)
     }
 }

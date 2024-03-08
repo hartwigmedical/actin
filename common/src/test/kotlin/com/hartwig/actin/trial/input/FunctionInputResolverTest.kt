@@ -39,8 +39,9 @@ import org.junit.Test
 
 class FunctionInputResolverTest {
 
+    private val epsilon = 1.0E-10
     private val resolver = createTestResolver()
-    
+
     @Test
     fun `Should determine input validity for every rule`() {
         for (rule in EligibilityRule.values()) {
@@ -124,7 +125,7 @@ class FunctionInputResolverTest {
         val valid = create(rule, listOf("3.1"))
 
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
-        assertThat(resolver.createOneDoubleInput(valid)).isEqualTo(3.1, Offset.offset(EPSILON))
+        assertThat(resolver.createOneDoubleInput(valid)).isEqualTo(3.1, Offset.offset(epsilon))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("3.1", "3.2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a double")))!!).isFalse
@@ -438,7 +439,7 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("not an haplotype")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("*1_HOM", "*1_HOM")))).isFalse
     }
-    
+
     @Test
     fun `Should resolve functions with one gene input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
@@ -610,20 +611,16 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("1", Intent.ADJUVANT.display())))).isFalse
     }
 
-    companion object {
-        private const val EPSILON = 1.0E-10
+    private fun firstOfType(input: FunctionInput): EligibilityRule {
+        return FunctionInputMapping.RULE_INPUT_MAP.entries.find { it.value == input }?.key
+            ?: throw IllegalStateException("Could not find single rule requiring input: $input")
+    }
 
-        private fun firstOfType(input: FunctionInput): EligibilityRule {
-            return FunctionInputMapping.RULE_INPUT_MAP.entries.find { it.value == input }?.key
-                ?: throw IllegalStateException("Could not find single rule requiring input: $input")
-        }
+    private fun createValidTestFunction(): EligibilityFunction {
+        return create(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, listOf("18"))
+    }
 
-        private fun createValidTestFunction(): EligibilityFunction {
-            return create(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, listOf("18"))
-        }
-
-        private fun create(rule: EligibilityRule, parameters: List<Any>): EligibilityFunction {
-            return EligibilityFunction(rule = rule, parameters = parameters)
-        }
+    private fun create(rule: EligibilityRule, parameters: List<Any>): EligibilityFunction {
+        return EligibilityFunction(rule = rule, parameters = parameters)
     }
 }

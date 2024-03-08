@@ -28,16 +28,14 @@ class EligibilityComparatorTest {
         assertThat(eligibilities[5].references).isEmpty()
     }
 
-    companion object {
-        private fun createWithReferenceId(id: String): Eligibility {
-            return createWithoutReferences().copy(references = setOf(CriterionReference(id = id, text = "")))
-        }
+    private fun createWithReferenceId(id: String): Eligibility {
+        return createWithoutReferences().copy(references = setOf(CriterionReference(id = id, text = "")))
+    }
 
-        private fun createWithoutReferences(): Eligibility {
-            return Eligibility(
-                function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = emptyList()),
-                references = emptySet()
-            )
-        }
+    private fun createWithoutReferences(): Eligibility {
+        return Eligibility(
+            function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = emptyList()),
+            references = emptySet()
+        )
     }
 }
