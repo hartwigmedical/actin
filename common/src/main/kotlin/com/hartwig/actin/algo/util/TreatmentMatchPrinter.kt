@@ -25,7 +25,8 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
 
         val allTrialEvaluations = treatmentMatch.trialMatches.flatMap { trialMatch ->
             trialMatch.cohorts.map(CohortMatch::evaluations) + trialMatch.evaluations
-        }.flatMap(Map<Eligibility, Evaluation>::values)
+        }
+            .flatMap(Map<Eligibility, Evaluation>::values)
 
         printEvaluationSummary(allTrialEvaluations, "Rules")
 
