@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
 object TreatmentTestFactory {
+
     private val base = TestDataFactory.createMinimalTestPatientRecord()
 
     fun treatment(

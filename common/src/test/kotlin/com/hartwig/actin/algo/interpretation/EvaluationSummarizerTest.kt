@@ -8,14 +8,15 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluationSummarizerTest {
+
     @Test
-    fun canInterpretAllPossibleEvaluations() {
+    fun `Should be able to interpret every evaluation result`() {
         val evaluations = EvaluationResult.values().map(EvaluationTestFactory::withResult)
         assertThat(summarize(evaluations)).isNotNull
     }
 
     @Test
-    fun canSummarizeTestData() {
+    fun `Should be able to summarize proper treatment match test data`() {
         val match = TestTreatmentMatchFactory.createProperTreatmentMatch()
         val firstTrialEvaluations = match.trialMatches.first { it.identification.trialId == "Test Trial 1" }.evaluations.values
         assertThat(summarize(firstTrialEvaluations)).isEqualTo(

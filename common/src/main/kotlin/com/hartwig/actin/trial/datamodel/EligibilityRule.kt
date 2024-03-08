@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.datamodel
 
 enum class EligibilityRule {
+
     // Composite rules combining other rules.
     AND,
     OR,

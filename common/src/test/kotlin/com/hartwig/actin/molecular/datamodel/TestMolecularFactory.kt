@@ -34,6 +34,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 object TestMolecularFactory {
+
     private val TODAY: LocalDate = LocalDate.now()
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 

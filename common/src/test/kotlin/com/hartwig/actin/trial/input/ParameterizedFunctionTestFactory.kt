@@ -14,6 +14,8 @@ import com.hartwig.actin.trial.input.single.FunctionInput
 
 class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
 
+    private val arbitraryRule: EligibilityRule = firstNonComposite()
+
     fun create(rule: EligibilityRule): EligibilityFunction {
         return EligibilityFunction(rule, createTestParameters(rule))
     }
@@ -22,11 +24,11 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
         return if (CompositeRules.isComposite(rule)) {
             when (CompositeRules.inputsForCompositeRule(rule)) {
                 CompositeInput.EXACTLY_1 -> {
-                    listOf(create(MOCK_RULE))
+                    listOf(create(arbitraryRule))
                 }
 
                 CompositeInput.AT_LEAST_2 -> {
-                    listOf(create(MOCK_RULE), create(MOCK_RULE))
+                    listOf(create(arbitraryRule), create(arbitraryRule))
                 }
             }
         } else {
@@ -190,13 +192,9 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
         }
     }
 
-    companion object {
-        private val MOCK_RULE: EligibilityRule = firstNonComposite()
-
-        private fun firstNonComposite(): EligibilityRule {
-            return EligibilityRule.values().find { rule ->
-                !CompositeRules.isComposite(rule)
-            } ?: throw IllegalStateException("Only composite functions defined!")
-        }
+    private fun firstNonComposite(): EligibilityRule {
+        return EligibilityRule.values().find { rule ->
+            !CompositeRules.isComposite(rule)
+        } ?: throw IllegalStateException("Only composite functions defined!")
     }
 }

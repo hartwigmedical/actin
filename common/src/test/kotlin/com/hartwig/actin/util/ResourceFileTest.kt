@@ -11,9 +11,9 @@ import org.assertj.core.data.Offset
 import org.junit.Test
 import java.time.LocalDate
 
-private const val EPSILON = 1.0E-10
-
 class ResourceFileTest {
+
+    private val epsilon = 1.0E-10
 
     @Test
     fun `Should parse strings`() {
@@ -49,6 +49,6 @@ class ResourceFileTest {
     @Test
     fun `Should parse doubles`() {
         assertThat(optionalNumber("")).isNull()
-        assertThat(optionalNumber("4.2")!!).isEqualTo(4.2, Offset.offset(EPSILON))
+        assertThat(optionalNumber("4.2")!!).isEqualTo(4.2, Offset.offset(epsilon))
     }
 }

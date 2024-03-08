@@ -7,7 +7,7 @@ import org.junit.Test
 class TabularFileTest {
 
     @Test
-    fun canCreateFields() {
+    fun `Should create fields`() {
         val header = arrayOf("header0", "header1", "header2")
         val fields = createFields(header)
         assertThat(fields["header0"]).isEqualTo(0)

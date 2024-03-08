@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.sort
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 
 class VitalFunctionDescendingDateComparator : Comparator<VitalFunction> {
+
     private val comparator = Comparator.comparing(VitalFunction::date, reverseOrder())
         .thenComparing(VitalFunction::category)
         .thenComparing(VitalFunction::subcategory)

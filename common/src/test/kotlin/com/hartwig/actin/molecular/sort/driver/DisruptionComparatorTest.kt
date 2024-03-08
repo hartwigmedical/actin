@@ -25,18 +25,16 @@ class DisruptionComparatorTest {
         assertThat(disruptions[4]).isEqualTo(disruption5)
     }
 
-    companion object {
-        private fun create(
-            gene: String, driverLikelihood: DriverLikelihood?, type: DisruptionType,
-            junctionCopyNumber: Double, undisruptedCopyNumber: Double
-        ): Disruption {
-            return TestDisruptionFactory.createMinimal().copy(
-                gene = gene,
-                driverLikelihood = driverLikelihood,
-                type = type,
-                junctionCopyNumber = junctionCopyNumber,
-                undisruptedCopyNumber = undisruptedCopyNumber
-            )
-        }
+    private fun create(
+        gene: String, driverLikelihood: DriverLikelihood?, type: DisruptionType,
+        junctionCopyNumber: Double, undisruptedCopyNumber: Double
+    ): Disruption {
+        return TestDisruptionFactory.createMinimal().copy(
+            gene = gene,
+            driverLikelihood = driverLikelihood,
+            type = type,
+            junctionCopyNumber = junctionCopyNumber,
+            undisruptedCopyNumber = undisruptedCopyNumber
+        )
     }
 }

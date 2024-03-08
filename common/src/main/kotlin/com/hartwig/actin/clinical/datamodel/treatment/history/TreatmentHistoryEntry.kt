@@ -13,6 +13,9 @@ data class TreatmentHistoryEntry(
     val trialAcronym: String? = null,
     val treatmentHistoryDetails: TreatmentHistoryDetails? = null
 ) {
+
+    private val delimiter = ";"
+
     fun allTreatments(): Set<Treatment> {
         val switchToTreatments = treatmentHistoryDetails?.switchToTreatments?.map(TreatmentStage::treatment)?.toSet() ?: emptySet()
         return treatments + setOfNotNull(treatmentHistoryDetails?.maintenanceTreatment?.treatment) + switchToTreatments
@@ -61,18 +64,14 @@ data class TreatmentHistoryEntry(
         return treatmentStringUsingFunction(treatments, Treatment::display)
     }
 
-    companion object {
-        private const val DELIMITER = ";"
+    private fun treatmentStringUsingFunction(treatments: Set<Treatment>, treatmentField: (Treatment) -> String): String {
+        return treatments.map(treatmentField).sorted().distinct().joinToString(delimiter)
+            .ifEmpty { treatmentCategoryDisplay(treatments) }
+    }
 
-        private fun treatmentStringUsingFunction(treatments: Set<Treatment>, treatmentField: (Treatment) -> String): String {
-            return treatments.map(treatmentField).sorted().distinct().joinToString(DELIMITER)
-                .ifEmpty { treatmentCategoryDisplay(treatments) }
-        }
-
-        private fun treatmentCategoryDisplay(treatments: Set<Treatment>): String {
-            return treatments.flatMap { it.categories().map(TreatmentCategory::display) }
-                .distinct()
-                .joinToString(DELIMITER)
-        }
+    private fun treatmentCategoryDisplay(treatments: Set<Treatment>): String {
+        return treatments.flatMap { it.categories().map(TreatmentCategory::display) }
+            .distinct()
+            .joinToString(delimiter)
     }
 }

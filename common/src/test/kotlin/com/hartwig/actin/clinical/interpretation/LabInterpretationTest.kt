@@ -6,6 +6,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 class LabInterpretationTest {
+
     private val testDate = LocalDate.of(2020, 1, 1)
     
     @Test
