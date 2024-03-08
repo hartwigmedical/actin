@@ -19,7 +19,7 @@ class HasExhaustedSOCTreatments(private val recommendationEngineFactory: Recomme
                 }
             }
 
-            record.clinical.oncologicalHistory.isEmpty() -> {
+            record.oncologicalHistory.isEmpty() -> {
                 EvaluationFactory.undetermined(
                     "Patient has not had any prior cancer treatments and therefore undetermined exhaustion of SOC",
                     "Undetermined exhaustion of SOC"

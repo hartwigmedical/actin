@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 
 class HasContraindicationToMRI internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
                     return EvaluationFactory.pass(
@@ -27,7 +27,7 @@ class HasContraindicationToMRI internal constructor(private val doidModel: DoidM
                 )
             }
         }
-        for (intolerance in record.clinical.intolerances) {
+        for (intolerance in record.intolerances) {
             if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name, INTOLERANCES_BEING_CONTRAINDICATIONS_TO_MRI)) {
                 return EvaluationFactory.pass(
                     "Patient has a contraindication to MRI due to intolerance " + intolerance.name,

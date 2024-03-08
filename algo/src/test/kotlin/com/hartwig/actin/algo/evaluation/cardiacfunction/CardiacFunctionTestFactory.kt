@@ -5,7 +5,6 @@ import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.ECG
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 
 internal object CardiacFunctionTestFactory {
     fun createMinimal(): ECG {
@@ -23,25 +22,19 @@ internal object CardiacFunctionTestFactory {
     fun withLVEF(lvef: Double?): PatientRecord {
         val base = TestDataFactory.createMinimalTestPatientRecord()
         return base.copy(
-            clinical = (base.clinical.copy(
-                clinicalStatus = base.clinical.clinicalStatus.copy(lvef = lvef)
-            ))
+                clinicalStatus = base.clinicalStatus.copy(lvef = lvef)
         )
     }
 
     fun withECG(ecg: ECG?): PatientRecord {
         return TestDataFactory.createMinimalTestPatientRecord().copy(
-            clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(
                 clinicalStatus = ClinicalStatus(ecg = ecg)
-            )
         )
     }
 
     fun withPriorOtherCondition(priorOtherCondition: PriorOtherCondition): PatientRecord {
         return TestDataFactory.createMinimalTestPatientRecord().copy(
-            clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(
                 priorOtherConditions = listOf(priorOtherCondition)
-            )
         )
     }
 }

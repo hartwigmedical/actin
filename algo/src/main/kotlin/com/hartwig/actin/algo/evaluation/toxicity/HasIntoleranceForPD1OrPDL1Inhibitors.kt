@@ -15,7 +15,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasIntoleranceForPD1OrPDL1Inhibitors internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val intolerances = record.clinical.intolerances.map { it.name }
+        val intolerances = record.intolerances.map { it.name }
             .filter { stringCaseInsensitivelyMatchesQueryCollection(it, INTOLERANCE_TERMS) }
             .toSet()
 
@@ -26,7 +26,7 @@ class HasIntoleranceForPD1OrPDL1Inhibitors internal constructor(private val doid
             )
         } else {
             val autoImmuneDiseaseTerms =
-                OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions).flatMap { it.doids }
+                OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions).flatMap { it.doids }
                     .filter { doidModel.doidWithParents(it).contains(DoidConstants.AUTOIMMUNE_DISEASE_DOID) }
                     .map { doidModel.resolveTermForDoid(it) }.toSet()
 

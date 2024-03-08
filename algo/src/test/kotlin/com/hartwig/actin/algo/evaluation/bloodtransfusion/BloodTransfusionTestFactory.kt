@@ -25,6 +25,23 @@ internal object BloodTransfusionTestFactory {
     }
 
     private fun withClinicalRecord(clinical: ClinicalRecord): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(clinical = clinical)
+        return TestDataFactory.createMinimalTestPatientRecord().copy(
+            patient = clinical.patient,
+            tumor = clinical.tumor,
+            clinicalStatus = clinical.clinicalStatus,
+            oncologicalHistory = clinical.oncologicalHistory,
+            priorSecondPrimaries = clinical.priorSecondPrimaries,
+            priorOtherConditions = clinical.priorOtherConditions,
+            priorMolecularTests = clinical.priorMolecularTests,
+            complications = clinical.complications,
+            labValues = clinical.labValues,
+            toxicities = clinical.toxicities,
+            intolerances = clinical.intolerances,
+            surgeries = clinical.surgeries,
+            bodyWeights = clinical.bodyWeights,
+            vitalFunctions = clinical.vitalFunctions,
+            bloodTransfusions = clinical.bloodTransfusions,
+            medications = clinical.medications,
+        )
     }
 }

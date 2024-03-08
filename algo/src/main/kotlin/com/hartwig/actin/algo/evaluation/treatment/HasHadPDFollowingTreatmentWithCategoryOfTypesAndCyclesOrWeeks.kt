@@ -17,7 +17,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentEvaluations = record.clinical.oncologicalHistory.map { treatmentHistoryEntry ->
+        val treatmentEvaluations = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val isTrial = TrialFunctions.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
             val categoryMatches = treatmentHistoryEntry.categories().contains(category)
 

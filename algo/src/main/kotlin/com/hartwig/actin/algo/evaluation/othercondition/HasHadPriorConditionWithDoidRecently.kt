@@ -20,7 +20,7 @@ class HasHadPriorConditionWithDoidRecently internal constructor(
         var matchingConditionAfterMinDate: String? = null
         var matchingConditionUnclearDate: String? = null
         var matchingConditionIsWithinWarnDate = false
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             if (conditionHasDoid(condition, doidToFind)) {
                 val isAfterMinDate = isAfterDate(minDate, condition.year, condition.month)
                 if (isAfterMinDate == null) {

@@ -12,7 +12,7 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypMedications = record.clinical.medications.filter { medication ->
+        val cypMedications = record.medications.filter { medication ->
             medication.cypInteractions
                 .any { it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR) }
         }

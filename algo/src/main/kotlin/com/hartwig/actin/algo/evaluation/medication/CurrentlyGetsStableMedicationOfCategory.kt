@@ -20,7 +20,7 @@ class CurrentlyGetsStableMedicationOfCategory(
             var hasActiveAndStableMedication = false
             var referenceDosing: Medication? = null
             val filtered =
-                selector.active(record.clinical.medications)
+                selector.active(record.medications)
                     .filter { (it.allLevels() intersect categoryToFind.value).isNotEmpty() }
             for (medication in filtered) {
                 if (referenceDosing != null) {

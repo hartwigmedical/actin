@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasNormalCardiacFunctionByMUGAOrTTE internal constructor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val lvef = record.clinical.clinicalStatus.lvef
+        val lvef = record.clinicalStatus.lvef
 
         return if (lvef != null && lvef < 0.5) {
             EvaluationFactory.warn(

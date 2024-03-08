@@ -108,6 +108,6 @@ object TreatmentTestFactory {
     }
 
     fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(oncologicalHistory = treatmentHistory))
+        return base.copy(oncologicalHistory = treatmentHistory)
     }
 }

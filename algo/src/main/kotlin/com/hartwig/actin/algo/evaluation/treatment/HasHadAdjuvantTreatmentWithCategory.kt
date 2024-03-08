@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 class HasHadAdjuvantTreatmentWithCategory(private val category: TreatmentCategory) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical.oncologicalHistory, category) {
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category) {
             it.intents?.contains(Intent.ADJUVANT) == true
         }
 

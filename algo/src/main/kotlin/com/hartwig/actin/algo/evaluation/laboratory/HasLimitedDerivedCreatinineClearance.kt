@@ -26,9 +26,9 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
     private fun evaluateMDRD(record: PatientRecord, creatinine: LabValue): Evaluation {
         val mdrdValues = CreatinineFunctions.calcMDRD(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             creatinine
         )
         return evaluateValues("MDRD", mdrdValues, creatinine.comparator)
@@ -36,9 +36,9 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
     private fun evaluateCKDEPI(record: PatientRecord, creatinine: LabValue): Evaluation {
         val ckdepiValues = CreatinineFunctions.calcCKDEPI(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             creatinine
         )
         return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator)
@@ -48,9 +48,9 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
         val weight = selectMedianBodyWeightPerDay(record, minimumDateForBodyWeights)
             ?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             weight,
             creatinine
         )

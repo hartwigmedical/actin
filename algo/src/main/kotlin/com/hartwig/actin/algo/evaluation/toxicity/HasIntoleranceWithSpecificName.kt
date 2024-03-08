@@ -10,7 +10,7 @@ class HasIntoleranceWithSpecificName internal constructor(private val termToFind
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val lowercaseTerm = termToFind.lowercase()
-        val allergies = record.clinical.intolerances
+        val allergies = record.intolerances
             .map { it.name }
             .filter { it.lowercase().contains(lowercaseTerm) }
             .toSet()

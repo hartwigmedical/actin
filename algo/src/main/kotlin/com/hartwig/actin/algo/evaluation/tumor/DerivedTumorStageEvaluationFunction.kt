@@ -12,10 +12,10 @@ internal class DerivedTumorStageEvaluationFunction(
     private val originalFunction: EvaluationFunction
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.clinical.tumor.stage != null) {
+        if (record.tumor.stage != null) {
             return originalFunction.evaluate(record)
         }
-        val derivedResults = tumorStageDerivationFunction.apply(record.clinical.tumor)
+        val derivedResults = tumorStageDerivationFunction.apply(record.tumor)
             .associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
 
         if (derivedResults.isEmpty()) {

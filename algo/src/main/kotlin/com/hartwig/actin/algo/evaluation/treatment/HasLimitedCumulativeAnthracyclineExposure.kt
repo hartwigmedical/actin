@@ -13,13 +13,13 @@ import com.hartwig.actin.doid.DoidModel
 class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasSuspectPriorTumorWithSuspectTreatmentHistory = record.clinical.priorSecondPrimaries.any {
+        val hasSuspectPriorTumorWithSuspectTreatmentHistory = record.priorSecondPrimaries.any {
             hasSuspiciousCancerType(it.doids) && hasSuspiciousTreatmentHistory(it.treatmentHistory)
         }
-        val hasSuspectPrimaryTumor = hasSuspiciousCancerType(record.clinical.tumor.doids)
+        val hasSuspectPrimaryTumor = hasSuspiciousCancerType(record.tumor.doids)
 
         val anthracyclineSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.clinical.oncologicalHistory, TreatmentCategory.CHEMOTHERAPY
+            record.oncologicalHistory, TreatmentCategory.CHEMOTHERAPY
         ) { it.isOfType(DrugType.ANTHRACYCLINE) }
 
         return when {

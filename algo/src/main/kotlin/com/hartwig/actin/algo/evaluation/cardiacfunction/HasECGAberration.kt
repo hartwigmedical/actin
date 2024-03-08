@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class HasECGAberration internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ecg = record.clinical.clinicalStatus.ecg
+        val ecg = record.clinicalStatus.ecg
             ?: return EvaluationFactory.fail(
                 "ECG details are missing - it is assumed there are no abnormalities",
                 "Assumed no ECG abnormalities"
