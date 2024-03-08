@@ -22,8 +22,6 @@ private const val TUMOR_TYPE = "tumorType"
 
 private const val TUMOR_SUB_TYPE = "tumorSubType"
 
-private const val TUMOR_GRADE_DIFFERENTIATION = "tumorGradeDifferentiation"
-
 private const val DOID = "3910"
 
 private const val CONCLUSION_1 = "conclusion 1"
@@ -46,7 +44,6 @@ private val TUMOR_DETAILS = TumorDetails(
     primaryTumorSubLocation = TUMOR_SUB_LOCATION,
     primaryTumorType = TUMOR_TYPE,
     primaryTumorSubType = TUMOR_SUB_TYPE,
-    primaryTumorExtraDetails = TUMOR_GRADE_DIFFERENTIATION,
     doids = setOf(DOID),
     stage = TumorStage.IV,
     hasMeasurableDisease = true,

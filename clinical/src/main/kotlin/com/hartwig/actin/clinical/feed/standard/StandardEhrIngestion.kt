@@ -34,7 +34,8 @@ class StandardEhrIngestion(
     private val tumorDetailsExtractor: EhrTumorDetailsExtractor,
     private val secondPrimaryExtractor: EhrPriorPrimariesExtractor,
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
-    private val bodyWeightExtractor: EhrBodyWeightExtractor
+    private val bodyWeightExtractor: EhrBodyWeightExtractor,
+    private val molecularTestExtractor: EhrMolecularTestExtractor
 ) : ClinicalFeedIngestion {
     private val mapper = ObjectMapper().apply {
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -61,6 +62,7 @@ class StandardEhrIngestion(
             val intolerances = intolerancesExtractor.extract(ehrPatientRecord)
             val surgeries = surgeryExtractor.extract(ehrPatientRecord)
             val bodyWeights = bodyWeightExtractor.extract(ehrPatientRecord)
+            val molecularTests = molecularTestExtractor.extract(ehrPatientRecord)
 
             val patientEvaluation = listOf(
                 patientDetails,
@@ -77,7 +79,8 @@ class StandardEhrIngestion(
                 intolerances,
                 surgeries,
                 bodyWeights,
-                secondPrimaries
+                secondPrimaries,
+                molecularTests
             )
                 .map { e -> e.evaluation }
                 .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
@@ -101,7 +104,7 @@ class StandardEhrIngestion(
                     surgeries = surgeries.extracted,
                     bodyWeights = bodyWeights.extracted,
                     priorSecondPrimaries = secondPrimaries.extracted,
-                    priorMolecularTests = emptyList()
+                    priorMolecularTests = molecularTests.extracted
                 )
             )
 
@@ -138,13 +141,20 @@ class StandardEhrIngestion(
             EhrLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
             EhrToxicityExtractor(curationDatabaseContext.toxicityCuration),
             EhrComplicationExtractor(curationDatabaseContext.complicationCuration),
-            EhrPriorOtherConditionsExtractor(curationDatabaseContext.nonOncologicalHistoryCuration),
-            EhrTreatmentHistoryExtractor(curationDatabaseContext.treatmentHistoryEntryCuration),
+            EhrPriorOtherConditionsExtractor(
+                curationDatabaseContext.nonOncologicalHistoryCuration,
+                curationDatabaseContext.treatmentHistoryEntryCuration
+            ),
+            EhrTreatmentHistoryExtractor(
+                curationDatabaseContext.treatmentHistoryEntryCuration,
+                curationDatabaseContext.nonOncologicalHistoryCuration
+            ),
             EhrClinicalStatusExtractor(),
             EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration),
             EhrPriorPrimariesExtractor(),
             EhrPatientDetailsExtractor(),
-            EhrBodyWeightExtractor()
+            EhrBodyWeightExtractor(),
+            EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration)
         )
 
     }

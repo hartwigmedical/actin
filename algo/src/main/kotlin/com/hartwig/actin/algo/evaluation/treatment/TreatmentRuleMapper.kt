@@ -17,6 +17,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to isEligibleForPalliativeRadiotherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to isEligibleForLocoRegionalTherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to isEligibleForTreatmentLinesCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_LIVER_TREATMENT to isEligibleForLocalLiverTreatmentCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to isEligibleForIntensiveTreatmentCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
@@ -67,6 +68,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_COMPLETE_RESECTION to hasHadCompleteResectionCreator(),
             EligibilityRule.HAS_HAD_PARTIAL_RESECTION to hasHadPartialResectionCreator(),
             EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS to hasHadResectionWithinWeeksCreator(),
+            EligibilityRule.HAS_HAD_LIVER_RESECTION to hasHadLiverResectionCreator(),
             EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS to hasHadLocalHepaticTherapyWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to hasHadIntratumoralInjectionTreatmentCreator(),
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to hasLimitedCumulativeAnthracyclineExposureCreator(),
@@ -83,7 +85,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
-        return FunctionCreator { IsEligibleForOnLabelTreatment() }
+        return FunctionCreator { function: EligibilityFunction ->
+            val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
+            IsEligibleForOnLabelTreatment(treatmentName, RecommendationEngineFactory(resources))
+        }
     }
 
     private fun isEligibleForPalliativeRadiotherapyCreator(): FunctionCreator {
@@ -99,6 +104,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val lines = functionInputResolver().createManyIntegersInput(function)
             IsEligibleForTreatmentLines(lines)
         }
+    }
+
+    private fun isEligibleForLocalLiverTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForLocalLiverTreatment(doidModel()) }
     }
 
     private fun isEligibleForIntensiveTreatmentCreator(): FunctionCreator {
@@ -468,6 +477,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val minDate = referenceDateProvider().date().minusWeeks(maxWeeksAgo.toLong())
             HasHadRecentResection(minDate)
         }
+    }
+
+    private fun hasHadLiverResectionCreator(): FunctionCreator {
+        return FunctionCreator { HasHadLiverResection() }
     }
 
     private fun hasHadLocalHepaticTherapyWithinWeeksCreator(): FunctionCreator {

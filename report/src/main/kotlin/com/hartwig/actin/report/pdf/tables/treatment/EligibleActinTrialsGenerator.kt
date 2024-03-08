@@ -6,7 +6,6 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
-import com.hartwig.actin.trial.TreatmentConstants
 import com.itextpdf.layout.element.Table
 
 class EligibleActinTrialsGenerator private constructor(
@@ -52,28 +51,24 @@ class EligibleActinTrialsGenerator private constructor(
 
     companion object {
 
-        fun forOpenCohortsWithSlots(cohorts: List<EvaluatedCohort>, width: Float): EligibleActinTrialsGenerator {
+        fun forOpenCohortsWithSlots(cohorts: List<EvaluatedCohort>, source: String, width: Float): EligibleActinTrialsGenerator {
             val recruitingAndEligible = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
-            val title = String.format(
-                "%s trials that are open and considered eligible and currently have slots available (%s)",
-                TreatmentConstants.ACTIN_SOURCE,
-                recruitingAndEligible.size
-            )
+            val title =
+                "$source trials that are open and considered eligible and currently have slots available (${recruitingAndEligible.size})"
             return create(recruitingAndEligible, title, width)
         }
 
-        fun forOpenCohortsWithNoSlots(cohorts: List<EvaluatedCohort>, width: Float): EligibleActinTrialsGenerator {
+        fun forOpenCohortsWithNoSlots(cohorts: List<EvaluatedCohort>, source: String, width: Float): EligibleActinTrialsGenerator {
             val recruitingAndEligibleWithNoSlots = cohorts.filter { it.isPotentiallyEligible && it.isOpen && !it.hasSlotsAvailable }
-            val title = String.format(
-                "%s trials that are open and considered eligible but currently have no slots available (%s)",
-                TreatmentConstants.ACTIN_SOURCE,
-                recruitingAndEligibleWithNoSlots.size
-            )
+            val title =
+                "$source trials that are open and considered eligible but currently have no slots available (${recruitingAndEligibleWithNoSlots.size})"
             return create(recruitingAndEligibleWithNoSlots, title, width)
         }
 
         fun forClosedCohorts(
-            cohorts: List<EvaluatedCohort>, contentWidth: Float,
+            cohorts: List<EvaluatedCohort>,
+            source: String,
+            contentWidth: Float,
             enableExtendedMode: Boolean
         ): EligibleActinTrialsGenerator {
             val unavailableAndEligible = cohorts
@@ -82,19 +77,30 @@ class EligibleActinTrialsGenerator private constructor(
 
             val title = String.format(
                 "%s trials and cohorts that %smay be eligible, but are closed (%s)",
-                TreatmentConstants.ACTIN_SOURCE,
+                source,
                 if (enableExtendedMode) "" else "meet molecular requirements and ",
                 unavailableAndEligible.size
             )
             return create(unavailableAndEligible, title, contentWidth)
         }
 
-        private fun create(cohorts: List<EvaluatedCohort>, title: String, width: Float): EligibleActinTrialsGenerator {
+        private fun create(
+            cohorts: List<EvaluatedCohort>,
+            title: String,
+            width: Float
+        ): EligibleActinTrialsGenerator {
             val trialColWidth = width / 9
             val cohortColWidth = width / 4
             val molecularColWidth = width / 7
             val checksColWidth = width - (trialColWidth + cohortColWidth + molecularColWidth)
-            return EligibleActinTrialsGenerator(cohorts, title, trialColWidth, cohortColWidth, molecularColWidth, checksColWidth)
+            return EligibleActinTrialsGenerator(
+                cohorts,
+                title,
+                trialColWidth,
+                cohortColWidth,
+                molecularColWidth,
+                checksColWidth
+            )
         }
 
         private fun concat(strings: Set<String>): String {

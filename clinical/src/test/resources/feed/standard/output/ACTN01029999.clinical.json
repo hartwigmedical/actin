@@ -1,5 +1,5 @@
 {
-  "patientId": "aGFzaF9vZl9wYXRpZW50X2lk",
+  "patientId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
   "patient": {
     "gender": "FEMALE",
     "birthYear": 5,
@@ -16,7 +16,7 @@
     "primaryTumorSubLocation": "",
     "primaryTumorType": "Adenocarcinoma",
     "primaryTumorSubType": "",
-    "primaryTumorExtraDetails": "undifferentiated",
+    "primaryTumorExtraDetails": null,
     "doids": [
       "3908"
     ],
@@ -137,7 +137,18 @@
       "isContraindicationForTherapy": true
     }
   ],
-  "priorMolecularTests": [],
+  "priorMolecularTests": [
+    {
+      "test": "IHC",
+      "item": "ERBB2",
+      "measure": null,
+      "scoreText": null,
+      "scoreValuePrefix": null,
+      "scoreValue": 3.0,
+      "scoreValueUnit": "+",
+      "impliesPotentialIndeterminateStatus": false
+    }
+  ],
   "complications": [
     {
       "name": "Other",
