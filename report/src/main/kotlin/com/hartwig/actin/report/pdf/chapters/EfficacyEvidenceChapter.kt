@@ -29,7 +29,7 @@ class EfficacyEvidenceChapter(private val report: Report) : ReportChapter {
 
     private fun addEfficacyEvidenceDetails(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val efficacyEvidenceGenerator = EfficacyEvidenceGenerator(report.treatmentMatch.standardOfCareMatches, contentWidth())
+        val efficacyEvidenceGenerator = EfficacyEvidenceGenerator(report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() }, contentWidth())
         table.addCell(Cells.createTitle(efficacyEvidenceGenerator.title()))
         table.addCell(Cells.createKey("The following standard of care treatment(s) could be an option for this patient. For further details per study see 'SOC literature details' section in extended report."))
         table.addCell(Cells.create(efficacyEvidenceGenerator.contents()))
