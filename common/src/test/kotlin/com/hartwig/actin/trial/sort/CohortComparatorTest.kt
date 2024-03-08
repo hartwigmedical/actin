@@ -12,8 +12,7 @@ class CohortComparatorTest {
         val cohort1 = withId("A")
         val cohort2 = withId("B")
         val cohorts = listOf(cohort2, cohort1).sortedWith(CohortComparator())
-        assertThat(cohort1).isEqualTo(cohorts[0])
-        assertThat(cohort2).isEqualTo(cohorts[1])
+        assertThat(cohorts).containsExactly(cohort1, cohort2)
     }
 
     private fun withId(id: String): Cohort {
