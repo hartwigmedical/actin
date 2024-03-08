@@ -77,15 +77,17 @@ class EligibleApprovedTreatmentGenerator(
                                             if (analysisGroup != null) {
                                                 for (primaryEndPoint in analysisGroup.endPoints) {
                                                     if (primaryEndPoint.name == "Median Progression-Free Survival") {
-                                                        subtable.addCell(
-                                                            Cells.createKey(
-                                                                primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                                    ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
-                                                                    ?: "NA") + ")"
+                                                        if (primaryEndPoint.value != null) {
+                                                            subtable.addCell(
+                                                                Cells.createKey(
+                                                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                                        ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
+                                                                        ?: "NA") + ")"
+                                                                )
                                                             )
-                                                        )
-                                                    } else {
-                                                        subtable.addCell(Cells.createKey("NE"))
+                                                        } else {
+                                                            subtable.addCell(Cells.createKey("NE"))
+                                                        }
                                                     }
                                                 }
                                             }
@@ -94,15 +96,17 @@ class EligibleApprovedTreatmentGenerator(
                                             if (analysisGroup != null) {
                                                 for (primaryEndPoint in analysisGroup.endPoints) {
                                                     if (primaryEndPoint.name == "Median Overall Survival") {
-                                                        subtable.addCell(
-                                                            Cells.createKey(
-                                                                primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                                    ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
-                                                                    ?: "NA") + ")"
+                                                        if (primaryEndPoint.value != null) {
+                                                            subtable.addCell(
+                                                                Cells.createKey(
+                                                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                                                        ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
+                                                                        ?: "NA") + ")"
+                                                                )
                                                             )
-                                                        )
-                                                    } else {
-                                                        subtable.addCell(Cells.createKey("NE"))
+                                                        } else {
+                                                            subtable.addCell(Cells.createKey("NE"))
+                                                        }
                                                     }
                                                 }
                                             }

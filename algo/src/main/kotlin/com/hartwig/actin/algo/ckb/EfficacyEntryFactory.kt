@@ -38,19 +38,13 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
     private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): EfficacyEntry {
         return EfficacyEntry(
-            acronym = extractAcronymFromTitle(ckbExtendedEvidenceEntry.title, ckbExtendedEvidenceEntry.nctId),
+            acronym = ckbExtendedEvidenceEntry.acronym,
             phase = ckbExtendedEvidenceEntry.phase,
             treatments = ckbExtendedEvidenceEntry.therapies.map { findTreatmentInDatabase(it.therapyName, it.synonyms) },
             therapeuticSetting = ckbExtendedEvidenceEntry.therapeuticSetting?.let(::extractTherapeuticSettingFromString),
             variantRequirements = convertVariantRequirements(ckbExtendedEvidenceEntry.variantRequirementDetails),
             trialReferences = convertTrialReferences(ckbExtendedEvidenceEntry.trialReferences),
         )
-    }
-
-    fun extractAcronymFromTitle(title: String, nctId: String): String {
-        val regex = "\\((.*?)\\)$".toRegex()
-        val matchResult = regex.find(title)
-        return matchResult?.groupValues?.get(1) ?: nctId
     }
 
     private fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): Treatment {

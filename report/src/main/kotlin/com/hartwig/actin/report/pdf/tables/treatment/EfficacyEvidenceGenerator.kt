@@ -139,14 +139,16 @@ class EfficacyEvidenceGenerator(
                 if (analysisGroup != null) {
                     for (primaryEndPoint in analysisGroup.endPoints) {
                         if (primaryEndPoint.name == "Median Progression-Free Survival") {
-                            table.addCell(
-                                Cells.createKey(
-                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                        ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                            if (primaryEndPoint.value != null) {
+                                table.addCell(
+                                    Cells.createKey(
+                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                    )
                                 )
-                            )
-                        } else {
-                            table.addCell(Cells.createKey("NA"))
+                            } else {
+                                table.addCell(Cells.createKey("NE"))
+                            }
                         }
                     }
                 }
@@ -155,14 +157,16 @@ class EfficacyEvidenceGenerator(
                 if (analysisGroup != null) {
                     for (primaryEndPoint in analysisGroup.endPoints) {
                         if (primaryEndPoint.name == "Median Overall Survival") {
-                            table.addCell(
-                                Cells.createKey(
-                                    primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                        ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                            if (primaryEndPoint.value != null) {
+                                table.addCell(
+                                    Cells.createKey(
+                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
+                                    )
                                 )
-                            )
-                        } else {
-                            table.addCell(Cells.createKey("NA"))
+                            } else {
+                                table.addCell(Cells.createKey("NE"))
+                            }
                         }
                     }
                 }

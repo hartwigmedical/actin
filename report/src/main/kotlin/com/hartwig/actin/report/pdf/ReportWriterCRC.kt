@@ -25,7 +25,7 @@ class ReportWriterCRC(override val writeToDisk: Boolean, override val outputDire
 
         val efficacyEvidenceDetailsChapter = if (enableExtendedMode) {
             LOGGER.info("Including SOC literature details")
-            EfficacyEvidenceDetailsChapter(report.treatmentMatch.standardOfCareMatches)
+            EfficacyEvidenceDetailsChapter(report.treatmentMatch.standardOfCareMatches?.filter {it.eligible()})
         } else null
 
         val chapters = listOfNotNull(
