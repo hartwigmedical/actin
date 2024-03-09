@@ -157,6 +157,10 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasBoneLesions = hasBoneLesions, otherLesions = otherLesions))
     }
 
+    fun withLiverAndOtherLesions(hasLiverLesions: Boolean?, otherLesions: List<String>): PatientRecord {
+        return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions, otherLesions = otherLesions))
+    }
+
     fun withLiverLesions(hasLiverLesions: Boolean?): PatientRecord {
         return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions))
     }
@@ -171,6 +175,12 @@ internal object TumorTestFactory {
 
     fun withOtherLesions(otherLesions: List<String>?): PatientRecord {
         return withTumorDetails(TumorDetails(otherLesions = otherLesions))
+    }
+
+    fun withDoidsAndLiverLesions(doids: Set<String>?, hasLiverLesions: Boolean?): PatientRecord {
+        return base.copy(
+            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids, hasLiverLesions = hasLiverLesions)),
+        )
     }
 
     fun withTumorDetails(tumor: TumorDetails): PatientRecord {

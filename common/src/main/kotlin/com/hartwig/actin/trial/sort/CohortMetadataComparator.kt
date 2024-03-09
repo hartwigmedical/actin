@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.sort
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 
 class CohortMetadataComparator : Comparator<CohortMetadata> {
+
     private val comparator = Comparator.comparing(CohortMetadata::cohortId)
         .thenComparing(CohortMetadata::description)
         .thenComparing(CohortMetadata::open, reverseOrder())

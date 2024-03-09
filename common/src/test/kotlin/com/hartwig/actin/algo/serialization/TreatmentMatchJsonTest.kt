@@ -12,21 +12,25 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.io.File
-import java.io.IOException
 
 class TreatmentMatchJsonTest {
+
+    private val algoDirectory = Resources.getResource("algo").path
+    private val treatmentMatchJson = algoDirectory + File.separator + "patient.treatment_match.json"
+
     @Test
-    fun canConvertBackAndForthJson() {
+    fun `Should be able to convert treatment match JSON back and forth`() {
         val minimal = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
         val convertedMinimal = fromJson(toJson(minimal))
         assertThat(convertedMinimal).isEqualTo(minimal)
+
         val proper = TestTreatmentMatchFactory.createProperTreatmentMatch()
         val convertedProper = fromJson(toJson(proper))
         assertThat(convertedProper).isEqualTo(proper)
     }
 
     @Test
-    fun shouldSortMessageSetsBeforeSerialization() {
+    fun `Should sort messages prior to serialization`() {
         val proper = TestTreatmentMatchFactory.createProperTreatmentMatch()
         val trialMatch: TrialMatch = proper.trialMatches[0]
         val key = trialMatch.evaluations.keys.first()
@@ -66,18 +70,12 @@ class TreatmentMatchJsonTest {
     }
 
     @Test
-    @Throws(IOException::class)
-    fun canReadTreatmentMatchJson() {
-        val match = read(TREATMENT_MATCH_JSON)
+    fun `Should be able to read treatment match JSON`() {
+        val match = read(treatmentMatchJson)
         assertThat(match.patientId).isEqualTo("ACTN01029999")
         assertThat(match.trialMatches).hasSize(1)
         val trialMatch = match.trialMatches[0]
         assertThat(trialMatch.evaluations).hasSize(1)
         assertThat(trialMatch.cohorts).hasSize(3)
-    }
-
-    companion object {
-        private val ALGO_DIRECTORY = Resources.getResource("algo").path
-        private val TREATMENT_MATCH_JSON = ALGO_DIRECTORY + File.separator + "patient.treatment_match.json"
     }
 }

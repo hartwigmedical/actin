@@ -32,15 +32,13 @@ class TreatmentCategoryInputTest {
         assertCreationFromEnumStrings(OtherTreatmentType.values())
     }
 
-    companion object {
-        private fun assertCreationFromEnumStrings(values: Array<out TreatmentType>) {
-            for (treatmentType in values) {
-                val input = treatmentType.toString().replace("_", " ").lowercase()
-                val treatmentCategoryInput = TreatmentCategoryInput.fromString(input)
-                assertThat(treatmentCategoryInput.mappedType).isEqualTo(treatmentType)
-                assertThat(treatmentCategoryInput.mappedCategory).isEqualTo(treatmentType.category)
-                assertThat(TreatmentCategoryInput.treatmentTypeFromString(input)).isEqualTo(treatmentType)
-            }
+    private fun assertCreationFromEnumStrings(values: Array<out TreatmentType>) {
+        for (treatmentType in values) {
+            val input = treatmentType.toString().replace("_", " ").lowercase()
+            val treatmentCategoryInput = TreatmentCategoryInput.fromString(input)
+            assertThat(treatmentCategoryInput.mappedType).isEqualTo(treatmentType)
+            assertThat(treatmentCategoryInput.mappedCategory).isEqualTo(treatmentType.category)
+            assertThat(TreatmentCategoryInput.treatmentTypeFromString(input)).isEqualTo(treatmentType)
         }
     }
 }

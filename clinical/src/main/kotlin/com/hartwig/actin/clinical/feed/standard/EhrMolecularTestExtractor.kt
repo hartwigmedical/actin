@@ -17,17 +17,19 @@ class EhrMolecularTestExtractor(
         val linesWithIHC = ehrPatientRecord.tumorDetails.tumorGradeDifferentiation
             .split("\n")
             .filter { it.contains(IHC_STRING, ignoreCase = true) }
-        return linesWithIHC.map {
-            val curationResponse = CurationResponse.createFromConfigs(
-                molecularTestCuration.find(it),
-                ehrPatientRecord.patientDetails.hashedIdBase64(),
-                CurationCategory.MOLECULAR_TEST_IHC,
-                it,
-                "molecular test ihc"
-            )
-            ExtractionResult(listOfNotNull(curationResponse.config()?.curated), curationResponse.extractionEvaluation)
-        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
-            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
-        }
+        return linesWithIHC
+            .map { it.replace("\n", "").replace("\r", "") }
+            .map {
+                val curationResponse = CurationResponse.createFromConfigs(
+                    molecularTestCuration.find(it),
+                    ehrPatientRecord.patientDetails.hashedIdBase64(),
+                    CurationCategory.MOLECULAR_TEST_IHC,
+                    it,
+                    "molecular test ihc"
+                )
+                ExtractionResult(listOfNotNull(curationResponse.config()?.curated), curationResponse.extractionEvaluation)
+            }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+            }
     }
 }

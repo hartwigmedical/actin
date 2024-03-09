@@ -8,6 +8,7 @@ data class DrugTreatment(
     override val isSystemic: Boolean = true,
     val maxCycles: Int? = null
 ) : Treatment {
+
     override val treatmentClass = TreatmentClass.DRUG_TREATMENT
 
     override fun categories() = drugs.map(Drug::category).toSet()

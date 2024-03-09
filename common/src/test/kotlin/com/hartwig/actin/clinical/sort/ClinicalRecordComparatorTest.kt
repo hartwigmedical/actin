@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ClinicalRecordComparatorTest {
+
     private val minimal = createMinimalTestClinicalRecord()
     
     @Test

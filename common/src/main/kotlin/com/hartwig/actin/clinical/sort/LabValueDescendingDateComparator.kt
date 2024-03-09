@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.sort
 import com.hartwig.actin.clinical.datamodel.LabValue
 
 class LabValueDescendingDateComparator : Comparator<LabValue> {
+
     // In case a code has been measured twice on the same date -> put the highest value first.
     private val comparator = Comparator.comparing(LabValue::date, reverseOrder())
         .thenComparing(LabValue::code)

@@ -39,33 +39,31 @@ class DoidModelFactoryTest {
         assertThat(model.doidForLowerCaseTermMap["tumor b"]).isNull()
     }
 
-    companion object {
-        private fun createNode(doid: String, term: String?): Node {
-            return Node(
-                doid = doid,
-                url = "",
-                term = term,
-                metadata = null,
-                type = null
-            )
-        }
+    private fun createNode(doid: String, term: String?): Node {
+        return Node(
+            doid = doid,
+            url = "",
+            term = term,
+            metadata = null,
+            type = null
+        )
+    }
 
-        private fun createParentChildEdge(child: String, parent: String): Edge {
-            return createEdge(child, "is_a", parent)
-        }
+    private fun createParentChildEdge(child: String, parent: String): Edge {
+        return createEdge(child, "is_a", parent)
+    }
 
-        private fun createContainmentEdge(child: String, parent: String): Edge {
-            return createEdge(child, "has_a", parent)
-        }
+    private fun createContainmentEdge(child: String, parent: String): Edge {
+        return createEdge(child, "has_a", parent)
+    }
 
-        private fun createEdge(subjectDoid: String, pred: String, objectDoid: String): Edge {
-            return Edge(
-                subject = "",
-                subjectDoid = subjectDoid,
-                `object` = "",
-                objectDoid = objectDoid,
-                predicate = pred
-            )
-        }
+    private fun createEdge(subjectDoid: String, pred: String, objectDoid: String): Edge {
+        return Edge(
+            subject = "",
+            subjectDoid = subjectDoid,
+            `object` = "",
+            objectDoid = objectDoid,
+            predicate = pred
+        )
     }
 }
