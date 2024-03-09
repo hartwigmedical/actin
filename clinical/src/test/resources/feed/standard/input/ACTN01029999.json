@@ -213,7 +213,7 @@
     "diagnosis_date": "2020-01-01T10:10:00",
     "tumor_location": "long",
     "tumor_type": "metastase adenocarcinoom",
-    "tumor_grade_differentiation": "undifferentiated",
+    "tumor_grade_differentiation": "Microscopie:\ntest\n\nConclusie:\n\nunrelated.\r\n\r\n\r\nimmunohistochemie ERBB2 3+\n\n",
     "tumor_stage": "IV",
     "tumor_stage_date": "2020-01-01T10:10:00",
     "lesion_site": "brain",

@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
@@ -87,7 +88,7 @@ class EhrTreatmentHistoryExtractor(
             )
 
             treatment.config()?.let { curatedTreatment ->
-                val switchToTreatments = treatmentStages(ehrTreatmentHistory, ehrPatientRecord)
+                val switchToTreatments = treatmentStages(curatedTreatment.curated?.treatments, ehrTreatmentHistory, ehrPatientRecord)
                 ExtractionResult(
                     listOf(
                         TreatmentHistoryEntry(
@@ -122,6 +123,7 @@ class EhrTreatmentHistoryExtractor(
     private fun parseIntent(intent: String) = Intent.valueOf(intent.trim().uppercase())
 
     private fun treatmentStages(
+        treatments: Set<Treatment>?,
         ehrTreatmentHistory: EhrTreatmentHistory,
         ehrPatientRecord: EhrPatientRecord
     ): ExtractionResult<List<TreatmentStage>> {
@@ -133,18 +135,17 @@ class EhrTreatmentHistoryExtractor(
                 modification.name,
                 TREATMENT_HISTORY,
             )
-            modificationTreatment.config()?.curated?.let {
-                ExtractionResult(
-                    listOf(
-                        TreatmentStage(
-                            cycles = modification.administeredCycles,
-                            startYear = modification.date.year,
-                            startMonth = modification.date.monthValue,
-                            treatment = it.treatments.first(),
-                        )
-                    ), modificationTreatment.extractionEvaluation
-                )
-            } ?: ExtractionResult(emptyList(), modificationTreatment.extractionEvaluation)
+            ExtractionResult(
+                listOf(
+                    TreatmentStage(
+                        cycles = modification.administeredCycles,
+                        startYear = modification.date.year,
+                        startMonth = modification.date.monthValue,
+                        treatment = modificationTreatment.config()?.curated?.treatments?.first() ?: treatments?.firstOrNull()
+                        ?: throw IllegalStateException("Unable to curate or to fall back on original treatment for modification '${modification.name}'")
+                    )
+                ), modificationTreatment.extractionEvaluation
+            )
         }?.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
             ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
         } ?: ExtractionResult(emptyList(), CurationExtractionEvaluation())

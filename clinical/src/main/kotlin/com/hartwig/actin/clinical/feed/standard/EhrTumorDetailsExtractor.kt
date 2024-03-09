@@ -48,7 +48,6 @@ class EhrTumorDetailsExtractor(
     ) = TumorDetails(
         primaryTumorLocation = ehrPatientRecord.tumorDetails.tumorLocation,
         primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
-        primaryTumorExtraDetails = ehrPatientRecord.tumorDetails.tumorGradeDifferentiation,
         stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
         hasBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN),
@@ -56,7 +55,8 @@ class EhrTumorDetailsExtractor(
         hasLungLesions = hasLesions(lesions, LesionLocationCategory.LUNG),
         hasLymphNodeLesions = hasLesions(lesions, LesionLocationCategory.LYMPH_NODE),
         hasCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS),
-        otherLesions = lesions.filter { lesion -> lesion.category == null }.map { lesion -> lesion.location },
+        otherLesions = lesions.filter { lesion -> lesion.ignore.not() }.filter { lesion -> lesion.category == null }
+            .map { lesion -> lesion.location },
         hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
         doids = emptySet()
     )
@@ -76,6 +76,6 @@ class EhrTumorDetailsExtractor(
                     "lesion",
                     true
                 )
-            }?.filter { config -> config.config()?.ignore?.not() ?: true } ?: emptyList()
+            } ?: emptyList()
     }
 }

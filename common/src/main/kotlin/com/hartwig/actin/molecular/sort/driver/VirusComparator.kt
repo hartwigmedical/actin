@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.sort.driver
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 
 class VirusComparator : Comparator<Virus> {
+
     private val comparator = Comparator.comparing<Virus, Virus>({ it }, DriverComparator())
         .thenComparing({ it.type.toString() }, String::compareTo)
         .thenComparing(Virus::name)

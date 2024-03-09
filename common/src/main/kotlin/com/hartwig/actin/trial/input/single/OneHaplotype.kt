@@ -1,3 +1,5 @@
 package com.hartwig.actin.trial.input.single
 
-data class OneHaplotype(val haplotype: String)
+data class OneHaplotype(
+    val haplotype: String
+)

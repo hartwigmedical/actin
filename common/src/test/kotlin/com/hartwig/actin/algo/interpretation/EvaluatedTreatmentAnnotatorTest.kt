@@ -17,13 +17,13 @@ class EvaluatedTreatmentAnnotatorTest {
 
     private val efficacyEntries = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
     private val annotator = EvaluatedTreatmentAnnotator.create(efficacyEntries)
-    val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
+    private val evaluations = listOf(Evaluation(result = EvaluationResult.PASS, recoverable = true))
 
     @Test
     fun `Should annotate SOC treatments with efficacy evidence`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MSI_SIGNATURE, emptyList())
         val treatmentCandidate = TreatmentCandidate(
-            TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.CHEMOTHERAPY), false, setOf(eligibilityFunction)
+            TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.IMMUNOTHERAPY), false, setOf(eligibilityFunction)
         )
         val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
 

@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.sort.driver
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 
 class DisruptionComparator : Comparator<Disruption> {
+
     private val comparator = Comparator.comparing<Disruption, Disruption>({ it }, DriverComparator())
         .thenComparing({ it }, GeneAlterationComparator())
         .thenComparing({ it.type.toString() }, String::compareTo)

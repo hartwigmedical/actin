@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager
 import java.io.FileReader
 
 object DoidJson {
+
     private val LOGGER = LogManager.getLogger(DoidJson::class.java)
 
     const val ID_TO_READ = "http://purl.obolibrary.org/obo/doid.owl"
