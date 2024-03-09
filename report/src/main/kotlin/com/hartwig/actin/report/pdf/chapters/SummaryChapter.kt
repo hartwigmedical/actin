@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.interpretation.EvidenceInterpreter
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
@@ -75,8 +76,12 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
         val aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular)
         val externalEligibleTrials = aggregatedEvidence.externalEligibleTrialsPerEvent
-        val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
-        val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
+        val dutchTrialsGroupedPerEvent = EvidenceInterpreter.groupExternalTrialsByNctIdAndEvents(
+            EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
+        )
+        val nonDutchTrialsGroupedPerEvent = EvidenceInterpreter.groupExternalTrialsByNctIdAndEvents(
+            EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
+        )
 
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
@@ -84,11 +89,11 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
-            if (dutchTrials.isNotEmpty()) {
-                EligibleDutchExternalTrialsGenerator(report.molecular.externalTrialSource, dutchTrials, contentWidth())
+            if (dutchTrialsGroupedPerEvent.isNotEmpty()) {
+                EligibleDutchExternalTrialsGenerator(report.molecular.externalTrialSource, dutchTrialsGroupedPerEvent, contentWidth())
             } else null,
-            if (nonDutchTrials.isNotEmpty()) {
-                EligibleOtherCountriesExternalTrialsGenerator(report.molecular.externalTrialSource, nonDutchTrials, contentWidth())
+            if (nonDutchTrialsGroupedPerEvent.isNotEmpty()) {
+                EligibleOtherCountriesExternalTrialsGenerator(report.molecular.externalTrialSource, nonDutchTrialsGroupedPerEvent, contentWidth())
             } else null
         )
 
