@@ -41,13 +41,7 @@ class AggregatedEvidenceInterpreterTest {
     }
 
     @Test
-    fun `Should not filter out external trials without nctId match among local trials`(){
-        assertThat(AggregatedEvidenceInterpreter().filterExternalTrialsBasedOnNctId(evidence, trialMatches).flatMap { it.value })
-            .containsExactly(externalTrialWithoutMatchToLocal)
-    }
-
-    @Test
-    fun `Should maintain correct event to trial mapping`(){
+    fun `Should not filter out external trials without nctId match among local trials and should maintain event to trial mapping`(){
         assertThat(AggregatedEvidenceInterpreter().filterExternalTrialsBasedOnNctId(evidence, trialMatches)).containsExactlyEntriesOf(
             mapOf(
                 "event1" to listOf(externalTrialWithoutMatchToLocal),
