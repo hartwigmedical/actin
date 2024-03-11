@@ -1,13 +1,16 @@
 package com.hartwig.actin.clinical.feed.emc.digitalfile
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import com.hartwig.actin.clinical.feed.emc.FeedEntry
+import com.hartwig.actin.clinical.feed.emc.FeedSubjectDeserializer
 import java.time.LocalDate
 
 @JacksonSerializable
 data class DigitalFileEntry(
     @JsonProperty("subject")
+    @JsonDeserialize(using = FeedSubjectDeserializer::class)
     override val subject: String,
     @JsonProperty("authored")
     val authored: LocalDate,
