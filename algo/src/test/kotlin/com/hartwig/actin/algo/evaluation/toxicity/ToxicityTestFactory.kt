@@ -12,12 +12,12 @@ internal object ToxicityTestFactory {
     val base = TestDataFactory.createMinimalTestPatientRecord()
     
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(toxicities = toxicities))
+        return base.copy(toxicities = toxicities)
     }
 
     fun withToxicityThatIsAlsoComplication(toxicity: Toxicity): PatientRecord {
         val complication = Complication(name = toxicity.name, categories = emptySet(), year = null, month = null)
-        return base.copy(clinical = base.clinical.copy(toxicities = listOf(toxicity), complications = listOf(complication)))
+        return base.copy(toxicities = listOf(toxicity), complications = listOf(complication))
     }
 
     fun toxicity(
@@ -37,7 +37,7 @@ internal object ToxicityTestFactory {
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(intolerances = intolerances))
+        return base.copy(intolerances = intolerances)
     }
 
     fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", doids: Set<String> = emptySet()): Intolerance {

@@ -8,6 +8,6 @@ internal object ReproductionTestFactory {
     private val base = TestDataFactory.createMinimalTestPatientRecord()
     
     fun withGender(gender: Gender): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(patient = base.clinical.patient.copy(gender = gender)))
+        return base.copy(patient = base.patient.copy(gender = gender))
     }
 }

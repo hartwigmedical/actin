@@ -32,7 +32,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
 
     private fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
         val base = TestDataFactory.createMinimalTestPatientRecord()
-        return base.copy(clinical = base.clinical.copy(oncologicalHistory = treatmentHistory))
+        return base.copy(oncologicalHistory = treatmentHistory)
     }
 
     private fun treatmentHistoryEntry(category: TreatmentCategory): TreatmentHistoryEntry {

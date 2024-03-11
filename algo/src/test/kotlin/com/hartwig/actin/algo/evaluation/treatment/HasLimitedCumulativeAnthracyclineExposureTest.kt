@@ -83,11 +83,9 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         ): PatientRecord {
             val base = TestDataFactory.createMinimalTestPatientRecord()
             return base.copy(
-                clinical = base.clinical.copy(
-                    tumor = base.clinical.tumor.copy(doids = tumorDoids),
-                    oncologicalHistory = treatmentHistory,
-                    priorSecondPrimaries = priorSecondPrimaries
-                )
+                tumor = base.tumor.copy(doids = tumorDoids),
+                oncologicalHistory = treatmentHistory,
+                priorSecondPrimaries = priorSecondPrimaries
             )
         }
 

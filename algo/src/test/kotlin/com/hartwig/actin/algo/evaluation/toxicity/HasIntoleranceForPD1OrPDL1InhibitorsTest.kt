@@ -48,10 +48,8 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
             .copy(doids = setOf(priorConditionDoid), isContraindicationForTherapy = true)
         val base = TestDataFactory.createMinimalTestPatientRecord()
         return base.copy(
-            clinical = base.clinical.copy(
-                intolerances = intolerances,
-                priorOtherConditions = listOf(priorCondition)
-            )
+            intolerances = intolerances,
+            priorOtherConditions = listOf(priorCondition)
         )
     }
 }

@@ -31,9 +31,7 @@ internal object MedicationTestFactory {
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(
-            clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(medications = medications)
-        )
+        return TestDataFactory.createMinimalTestPatientRecord().copy(medications = medications)
     }
 
     fun withCypInteraction(cyp: String, type: CypInteraction.Type, strength: CypInteraction.Strength): PatientRecord {

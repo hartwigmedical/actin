@@ -21,7 +21,7 @@ internal object TumorTestFactory {
 
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids)),
+            tumor = base.tumor.copy(doids = doids),
             molecular = base.molecular.copy(
                 characteristics = base.molecular.characteristics.copy(ploidy = 2.0),
                 drivers = base.molecular.drivers.copy(
@@ -45,7 +45,8 @@ internal object TumorTestFactory {
         doids: Set<String>, amplifiedGene: String, priorMolecularTests: List<PriorMolecularTest>
     ): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests),
+            tumor = base.tumor.copy(doids = doids),
+            priorMolecularTests = priorMolecularTests,
             molecular = base.molecular.copy(
                 characteristics = base.molecular.characteristics.copy(ploidy = 2.0),
                 drivers = base.molecular.drivers.copy(
@@ -134,10 +135,8 @@ internal object TumorTestFactory {
         oncologicalHistoryEntry: TreatmentHistoryEntry
     ): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(
-                oncologicalHistory = listOf(oncologicalHistoryEntry),
-                tumor = TumorDetails(hasCnsLesions = hasCnsLesions, hasBrainLesions = hasBrainLesions)
-            )
+            oncologicalHistory = listOf(oncologicalHistoryEntry),
+            tumor = TumorDetails(hasCnsLesions = hasCnsLesions, hasBrainLesions = hasBrainLesions)
         )
     }
 
@@ -179,12 +178,12 @@ internal object TumorTestFactory {
 
     fun withDoidsAndLiverLesions(doids: Set<String>?, hasLiverLesions: Boolean?): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids, hasLiverLesions = hasLiverLesions)),
+            tumor = base.tumor.copy(doids = doids, hasLiverLesions = hasLiverLesions),
         )
     }
 
     fun withTumorDetails(tumor: TumorDetails): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(tumor = tumor))
+        return base.copy(tumor = tumor)
     }
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
@@ -193,9 +192,8 @@ internal object TumorTestFactory {
 
     fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<PriorMolecularTest>, doids: Set<String>?): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(
-                tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests
-            )
+            tumor = base.tumor.copy(doids = doids),
+            priorMolecularTests = priorMolecularTests
         )
     }
 }

@@ -34,6 +34,6 @@ internal object PriorTumorTestFactory {
     }
 
     fun withPriorSecondPrimaries(priorSecondPrimaries: List<PriorSecondPrimary>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(priorSecondPrimaries = priorSecondPrimaries))
+        return base.copy(priorSecondPrimaries = priorSecondPrimaries)
     }
 }

@@ -30,7 +30,7 @@ class DerivedTumorStageEvaluationFunctionTest {
     fun `Should return original function when no derived stages possible`() {
         val originalEvaluation = EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
         every { evaluationFunction.evaluate(minimalTestPatientRecord) } returns originalEvaluation
-        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.clinical.tumor) } returns emptyList()
+        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns emptyList()
         assertThat(derivedFunction.evaluate(minimalTestPatientRecord)).isEqualTo(originalEvaluation)
     }
 
@@ -43,7 +43,7 @@ class DerivedTumorStageEvaluationFunctionTest {
 
     @Test
     fun `Should evaluate pass when multiple derived stages all evaluate pass`() {
-        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.clinical.tumor) } returns listOf(TumorStage.I, TumorStage.II)
+        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns listOf(TumorStage.I, TumorStage.II)
         every { evaluationFunction.evaluate(withStage(TumorStage.I)) } returns EvaluationTestFactory.withResult(EvaluationResult.PASS)
         every { evaluationFunction.evaluate(withStage(TumorStage.II)) } returns EvaluationTestFactory.withResult(EvaluationResult.PASS)
         val evaluation = derivedFunction.evaluate(minimalTestPatientRecord)
@@ -52,7 +52,7 @@ class DerivedTumorStageEvaluationFunctionTest {
 
     @Test
     fun `Should evaluate pass when multiple derived and at least one passes`() {
-        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.clinical.tumor) } returns listOf(TumorStage.I, TumorStage.II)
+        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns listOf(TumorStage.I, TumorStage.II)
         every { evaluationFunction.evaluate(withStage(TumorStage.I)) } returns EvaluationTestFactory.withResult(EvaluationResult.PASS)
         every { evaluationFunction.evaluate(withStage(TumorStage.II)) } returns EvaluationTestFactory.withResult(EvaluationResult.FAIL)
         val evaluation = derivedFunction.evaluate(minimalTestPatientRecord)
@@ -61,7 +61,7 @@ class DerivedTumorStageEvaluationFunctionTest {
 
     @Test
     fun `Should evaluate fail when multiple derived and no pass or warn`() {
-        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.clinical.tumor) } returns listOf(TumorStage.I, TumorStage.II)
+        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns listOf(TumorStage.I, TumorStage.II)
         every { evaluationFunction.evaluate(withStage(TumorStage.I)) } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
         every { evaluationFunction.evaluate(withStage(TumorStage.II)) } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
         val evaluation = derivedFunction.evaluate(minimalTestPatientRecord)
@@ -70,7 +70,7 @@ class DerivedTumorStageEvaluationFunctionTest {
 
     @Test
     fun `Should evaluate warn when multiple derived and at least one warn and no pass`() {
-        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.clinical.tumor) } returns listOf(TumorStage.I, TumorStage.II)
+        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns listOf(TumorStage.I, TumorStage.II)
         every { evaluationFunction.evaluate(withStage(TumorStage.I)) } returns EvaluationTestFactory.withResult(EvaluationResult.WARN)
         every { evaluationFunction.evaluate(withStage(TumorStage.II)) } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
         val evaluation = derivedFunction.evaluate(minimalTestPatientRecord)
@@ -79,7 +79,7 @@ class DerivedTumorStageEvaluationFunctionTest {
 
     @Test
     fun `Should evaluate not evaluated when multiple derived and all are not evaluated`() {
-        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.clinical.tumor) } returns listOf(TumorStage.I, TumorStage.II)
+        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns listOf(TumorStage.I, TumorStage.II)
         every { evaluationFunction.evaluate(withStage(TumorStage.I)) } returns EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED)
         every { evaluationFunction.evaluate(withStage(TumorStage.II)) } returns EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED)
         val evaluation = derivedFunction.evaluate(minimalTestPatientRecord)
@@ -87,7 +87,7 @@ class DerivedTumorStageEvaluationFunctionTest {
     }
 
     private fun assertSingleStageWithResult(expectedResult: EvaluationResult) {
-        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.clinical.tumor) } returns listOf(TumorStage.I)
+        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns listOf(TumorStage.I)
         every { evaluationFunction.evaluate(withStage(TumorStage.I)) } returns EvaluationTestFactory.withResult(expectedResult)
         val evaluation = derivedFunction.evaluate(minimalTestPatientRecord)
         assertEvaluation(expectedResult, evaluation)
@@ -95,9 +95,7 @@ class DerivedTumorStageEvaluationFunctionTest {
 
     private fun withStage(newStage: TumorStage?): PatientRecord {
         return minimalTestPatientRecord.copy(
-            clinical = minimalTestPatientRecord.clinical.copy(
-                tumor = minimalTestPatientRecord.clinical.tumor.copy(stage = newStage)
-            )
+            tumor = minimalTestPatientRecord.tumor.copy(stage = newStage)
         )
     }
 }

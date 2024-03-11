@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.soc
 
+import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
@@ -22,7 +23,7 @@ class TestStandardOfCareApplication {
         val patient = patient()
 
         LOGGER.info("Running ACTIN Test SOC Application with clinical record")
-        ClinicalPrinter.printRecord(patient.clinical)
+        PatientPrinter.printRecord(patient)
 
         LOGGER.info("and molecular record")
         MolecularPrinter.printRecord(patient.molecular)
@@ -71,9 +72,7 @@ class TestStandardOfCareApplication {
         private fun patient(): PatientRecord {
             val base = TestDataFactory.createMinimalTestPatientRecord()
             return base.copy(
-                clinical = base.clinical.copy(
-                    tumor = base.clinical.tumor.copy(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
-                )
+                tumor = base.tumor.copy(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
             )
         }
     }

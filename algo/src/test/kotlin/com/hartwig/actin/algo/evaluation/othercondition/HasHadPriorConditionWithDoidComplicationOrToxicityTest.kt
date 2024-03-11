@@ -112,11 +112,9 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         assertPassEvaluationWithMessages(
             function.evaluate(
                 minimalPatient.copy(
-                    clinical = minimalPatient.clinical.copy(
-                        toxicities = listOf(toxicity(ToxicitySource.QUESTIONNAIRE, 2)),
-                        complications = listOf(complication),
-                        priorOtherConditions = listOf(priorOtherCondition)
-                    )
+                    toxicities = listOf(toxicity(ToxicitySource.QUESTIONNAIRE, 2)),
+                    complications = listOf(complication),
+                    priorOtherConditions = listOf(priorOtherCondition)
                 )
             ),
             "complication and other condition and toxicity",

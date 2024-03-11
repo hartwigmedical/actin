@@ -14,9 +14,7 @@ internal object LabTestFactory {
     }
 
     fun withLabValues(labValues: List<LabValue>): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(
-            clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(labValues = labValues)
-        )
+        return TestDataFactory.createMinimalTestPatientRecord().copy(labValues = labValues)
     }
 
     fun create(

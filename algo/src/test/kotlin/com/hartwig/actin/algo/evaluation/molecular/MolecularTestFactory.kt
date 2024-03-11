@@ -40,7 +40,7 @@ internal object MolecularTestFactory {
     }
 
     fun withPriorTests(priorTests: List<PriorMolecularTest>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(priorMolecularTests = priorTests))
+        return base.copy(priorMolecularTests = priorTests)
     }
 
     fun withPriorTest(priorTest: PriorMolecularTest): PatientRecord {
@@ -122,7 +122,7 @@ internal object MolecularTestFactory {
     fun withExperimentTypeAndContainingTumorCellsAndPriorTest(type: ExperimentType, containsTumorCells: Boolean, priorTest: PriorMolecularTest): PatientRecord {
         return base.copy(
             molecular = base.molecular.copy(type = type, containsTumorCells = containsTumorCells),
-            clinical = base.clinical.copy(priorMolecularTests = listOf(priorTest))
+            priorMolecularTests = listOf(priorTest)
         )
     }
 

@@ -39,6 +39,6 @@ internal object WashoutTestFactory {
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(medications = medications))
+        return base.copy(medications = medications)
     }
 }

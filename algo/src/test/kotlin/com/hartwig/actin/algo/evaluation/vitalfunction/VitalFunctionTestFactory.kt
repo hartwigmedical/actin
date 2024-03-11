@@ -11,7 +11,7 @@ internal object VitalFunctionTestFactory {
     private val base = TestDataFactory.createMinimalTestPatientRecord()
     
     fun withBodyWeights(bodyWeights: List<BodyWeight>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(bodyWeights = bodyWeights))
+        return base.copy(bodyWeights = bodyWeights)
     }
 
     fun weight(
@@ -24,7 +24,7 @@ internal object VitalFunctionTestFactory {
     }
 
     fun withVitalFunctions(vitalFunctions: List<VitalFunction>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(vitalFunctions = vitalFunctions))
+        return base.copy(vitalFunctions = vitalFunctions)
     }
 
     fun vitalFunction(

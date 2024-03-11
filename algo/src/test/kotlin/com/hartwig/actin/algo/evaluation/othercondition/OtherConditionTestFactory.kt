@@ -18,7 +18,7 @@ internal object OtherConditionTestFactory {
     }
 
     fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(priorOtherConditions = conditions))
+        return base.copy(priorOtherConditions = conditions)
     }
 
     fun priorOtherCondition(
@@ -67,22 +67,22 @@ internal object OtherConditionTestFactory {
     }
 
     fun withComplications(complications: List<Complication>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(complications = complications))
+        return base.copy(complications = complications)
     }
 
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(toxicities = toxicities))
+        return base.copy(toxicities = toxicities)
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(intolerances = intolerances))
+        return base.copy(intolerances = intolerances)
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(medications = medications))
+        return base.copy(medications = medications)
     }
 
     fun withWHO(who: Int?): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(clinicalStatus = base.clinical.clinicalStatus.copy(who = who)))
+        return base.copy(clinicalStatus = base.clinicalStatus.copy(who = who))
     }
 }
