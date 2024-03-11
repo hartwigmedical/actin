@@ -66,18 +66,18 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
         treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
             .sortedWith(TreatmentHistoryAscendingDateComparator())
-            .groupBy { Triple(it.treatments, it.startMonth, it.startYear) }
+            .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
             .forEach { (_, historyEntries) ->
                 val details =
                     historyEntries.flatMap {
                         it.treatmentHistoryDetails?.bodyLocations ?: emptySet()
                     }.joinToString(", ")
                 val entry = historyEntries.first()
-                listOf(extractDateRangeString(entry), extractTreatmentString(entry) + if (details.isNotEmpty()) "($details)" else "")
+                listOf(extractDateRangeString(entry), extractTreatmentString(entry) + if (details.isNotEmpty()) " ($details)" else "")
                     .forEach { table.addCell(createSingleTableEntry(it)) }
             }
-    return table
-}
+        return table
+    }
 
     private fun treatmentHistoryEntryIsSystemic(treatmentHistoryEntry: TreatmentHistoryEntry): Boolean {
         return treatmentHistoryEntry.allTreatments().any { it.isSystemic }
@@ -148,12 +148,10 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
             val treatmentWithAnnotation = listOfNotNull(
                 treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)",
-                treatmentHistoryEntry.treatmentHistoryDetails?.let { details ->
-                    if (details.switchToTreatments.isNullOrEmpty()) "" else {
-                        details.switchToTreatments!!.joinToString(prefix = "with switch to ", separator = " then ") {
-                            it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)" }
-                        }
-                    }
+                treatmentHistoryEntry.treatmentHistoryDetails?.switchToTreatments?.let { switchToTreatments ->
+                    switchToTreatments.joinToString(prefix = "with switch to ", separator = " then ") {
+                        it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)" }
+                    }.ifEmpty { null }
                 },
                 treatmentHistoryEntry.treatmentHistoryDetails?.maintenanceTreatment?.let { maintenanceTreatment ->
                     "continued with ${maintenanceTreatment.treatment.display()} maintenance"
