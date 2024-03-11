@@ -24,8 +24,8 @@ class EvidenceInterpreter private constructor(private val actinInclusionEvents: 
         )
     }
 
-    private fun <T> filter(
-        eventMap: Map<String, List<T>>, evidence: AggregatedEvidence, additionalEventsToFilter: Set<String> = emptySet()
+    private fun filter(
+        eventMap: Map<String, Any>, evidence: AggregatedEvidence, additionalEventsToFilter: Set<String> = emptySet()
     ): Set<String> {
         return eventMap.keys - eventsWithApprovedEvidence(evidence) - actinInclusionEvents - additionalEventsToFilter
     }
