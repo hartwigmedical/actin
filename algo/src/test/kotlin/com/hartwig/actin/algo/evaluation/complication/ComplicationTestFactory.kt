@@ -23,23 +23,18 @@ internal object ComplicationTestFactory {
 
     fun withComplications(complications: List<Complication>?): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(
-                complications = complications,
-                clinicalStatus = ClinicalStatus(hasComplications = complications?.isNotEmpty())
-            )
+            complications = complications,
+            clinicalStatus = ClinicalStatus(hasComplications = complications?.isNotEmpty())
         )
     }
 
     fun withMedication(medication: Medication): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(medications = listOf(medication)))
+        return base.copy(medications = listOf(medication))
     }
 
     fun withCnsLesion(lesion: String): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(
-                tumor = base.clinical.tumor.copy(
-                    hasCnsLesions = true, otherLesions = listOf(lesion)
-                )
+            tumor = base.tumor.copy(hasCnsLesions = true, otherLesions = listOf(lesion)
             )
         )
     }

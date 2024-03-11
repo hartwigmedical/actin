@@ -23,9 +23,7 @@ class HasActiveInfectionTest {
             val infectionStatus = hasActiveInfection?.let { InfectionStatus(hasActiveInfection = it, description = null) }
             val base = TestClinicalFactory.createMinimalTestClinicalRecord()
             return TestDataFactory.createMinimalTestPatientRecord().copy(
-                clinical = base.copy(
-                    clinicalStatus = base.clinicalStatus.copy(infectionStatus = infectionStatus)
-                )
+                clinicalStatus = base.clinicalStatus.copy(infectionStatus = infectionStatus)
             )
         }
     }

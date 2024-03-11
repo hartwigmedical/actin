@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.general
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Gender
@@ -25,29 +24,27 @@ internal object GeneralTestFactory {
     }
 
     fun withWHOAndComplications(who: Int, complicationCategories: Iterable<String>): PatientRecord {
-        val clinicalStatus = TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus.copy(who = who)
+        val clinicalStatus = TestDataFactory.createMinimalTestPatientRecord().clinicalStatus.copy(who = who)
         val complication = Complication(name = "", categories = complicationCategories.toSet(), year = null, month = null)
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord()
-            .copy(clinicalStatus = clinicalStatus, complications = listOf(complication))
-        return withClinicalRecord(clinical)
+        val patientRecord = TestDataFactory.createMinimalTestPatientRecord().copy(
+            clinicalStatus = clinicalStatus.copy(who = who),
+            complications = listOf(complication),
+        )
+        return patientRecord
     }
 
     fun withBodyWeights(bodyWeights: Iterable<BodyWeight>): PatientRecord {
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(bodyWeights = bodyWeights.toList())
-        return withClinicalRecord(clinical)
+        val patientRecord = TestDataFactory.createMinimalTestPatientRecord().copy(bodyWeights = bodyWeights.toList())
+        return patientRecord
     }
 
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(patient = patientDetails)
-        return withClinicalRecord(clinical)
+        val patientRecord = TestDataFactory.createMinimalTestPatientRecord().copy(patient = patientDetails)
+        return patientRecord
     }
 
     private fun withClinicalStatus(clinicalStatus: ClinicalStatus): PatientRecord {
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(clinicalStatus = clinicalStatus)
-        return withClinicalRecord(clinical)
-    }
-
-    private fun withClinicalRecord(clinical: ClinicalRecord): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(clinical = clinical)
+        val patientRecord = TestDataFactory.createMinimalTestPatientRecord().copy(clinicalStatus = clinicalStatus)
+        return patientRecord
     }
 }
