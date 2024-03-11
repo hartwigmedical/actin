@@ -115,7 +115,7 @@ object AggregatedEvidenceFactory {
         return mapsOfSets
             .flatMap { it.entries }
             .groupBy({ it.key }, { it.value })
-            .mapValues { it.value.flatten() }
+            .mapValues { it.value.flatten().distinct() }
     }
 
     private fun <T> evidenceMap(event: String, evidenceSubSet: Set<T>): Map<String, List<T>> {
