@@ -6,6 +6,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.trial.datamodel.TrialIdentification
 import org.junit.Test
 import org.assertj.core.api.Assertions.assertThat
+import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter.filterExternalTrialsBasedOnNctId
 
 
 class AggregatedEvidenceInterpreterTest {
@@ -28,25 +29,24 @@ class AggregatedEvidenceInterpreterTest {
         ExternalTrial("Title of trial 1", setOf(Country.NETHERLANDS, Country.BELGIUM), "url", "NCT00000001")
     private val externalTrialWithoutMatchToLocal =
         ExternalTrial("Title of trial 2", setOf(Country.NETHERLANDS, Country.BELGIUM), "url", "NCT00000002")
-    private val evidence = mapOf(
+    private val externalTrialsPerEvent = mapOf(
         "event1" to listOf(externalTrialWithMatchToLocal, externalTrialWithoutMatchToLocal),
         "event2" to listOf(externalTrialWithMatchToLocal),
         "event3" to listOf(externalTrialWithoutMatchToLocal)
     )
 
     @Test
-    fun `Should filter out all external trials with nctId match among local trials`() {
-        assertThat(AggregatedEvidenceInterpreter().filterExternalTrialsBasedOnNctId(evidence, trialMatches).flatMap { it.value })
-            .doesNotContain(externalTrialWithMatchToLocal)
-    }
-
-    @Test
     fun `Should not filter out external trials without nctId match among local trials and should maintain event to trial mapping`(){
-        assertThat(AggregatedEvidenceInterpreter().filterExternalTrialsBasedOnNctId(evidence, trialMatches)).containsExactlyEntriesOf(
+        assertThat(filterExternalTrialsBasedOnNctId(externalTrialsPerEvent, trialMatches)).containsExactlyEntriesOf(
             mapOf(
                 "event1" to listOf(externalTrialWithoutMatchToLocal),
                 "event3" to listOf(externalTrialWithoutMatchToLocal)
             )
         )
+    }
+
+    @Test
+    fun `Should return unchanged external trial map when trialMatches is empty`(){
+        assertThat(filterExternalTrialsBasedOnNctId(externalTrialsPerEvent, emptyList())).containsExactlyEntriesOf(externalTrialsPerEvent)
     }
 }

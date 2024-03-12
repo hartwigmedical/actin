@@ -3,7 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 
-class AggregatedEvidenceInterpreter {
+object AggregatedEvidenceInterpreter {
 
     fun filterExternalTrialsBasedOnNctId(
         externalTrialsPerEvent: Map<String, List<ExternalTrial>>, trialMatches: List<TrialMatch>
