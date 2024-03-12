@@ -74,8 +74,8 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-        val externalEligibleTrials = AggregatedEvidenceInterpreter.filterExternalTrialsBasedOnNctId(AggregatedEvidenceInterpreter.groupExternalTrialsByNctIdAndEvents(
-            AggregatedEvidenceFactory.create(report.molecular).externalEligibleTrialsPerEvent), report.treatmentMatch.trialMatches
+        val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
+            AggregatedEvidenceFactory.create(report.molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
         )
         val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
         val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
