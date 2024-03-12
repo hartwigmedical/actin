@@ -67,13 +67,12 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
             .sortedWith(TreatmentHistoryAscendingDateComparator())
             .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
-            .forEach { (_, historyEntries) ->
+            .forEach { (key, historyEntries) ->
                 val details =
                     historyEntries.flatMap {
                         it.treatmentHistoryDetails?.bodyLocations ?: emptySet()
                     }.joinToString(", ")
-                val entry = historyEntries.first()
-                listOf(extractDateRangeString(entry), extractTreatmentString(entry) + if (details.isNotEmpty()) " ($details)" else "")
+                listOf(extractDateRangeString(historyEntries.first()), key.first + if (details.isNotEmpty()) " ($details)" else "")
                     .forEach { table.addCell(createSingleTableEntry(it)) }
             }
         return table
