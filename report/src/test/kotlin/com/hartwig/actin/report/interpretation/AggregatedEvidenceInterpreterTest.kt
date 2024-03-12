@@ -4,6 +4,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter.groupExternalTrialsByNctIdAndEvents
 
 class AggregatedEvidenceInterpreterTest {
 
@@ -19,7 +20,7 @@ class AggregatedEvidenceInterpreterTest {
 
     @Test
     fun `Should correctly group trials with identical nctIds combining all events of these trials`(){
-        Assertions.assertThat(AggregatedEvidenceInterpreter().groupExternalTrialsByNctIdAndEvents(evidence)).containsAllEntriesOf(mapOf(
+        Assertions.assertThat(groupExternalTrialsByNctIdAndEvents(evidence)).containsAllEntriesOf(mapOf(
             "event1,\nevent3" to listOf(externalTrialTargetingTwoEvents),
             "event2" to listOf(externalTrialTargetingOneEvent),
             )

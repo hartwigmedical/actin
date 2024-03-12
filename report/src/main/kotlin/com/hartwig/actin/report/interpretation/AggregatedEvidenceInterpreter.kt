@@ -2,7 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 
-class AggregatedEvidenceInterpreter {
+object AggregatedEvidenceInterpreter {
 
     fun groupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent: Map<String, List<ExternalTrial>>): Map<String, List<ExternalTrial>> {
         return externalTrialsPerEvent.flatMap { (event, trials) -> trials.map { event to it } }
