@@ -4,6 +4,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 
+private const val DELIMITER = ";"
+
 data class TreatmentHistoryEntry(
     val treatments: Set<Treatment>,
     val startYear: Int? = null,
@@ -13,8 +15,6 @@ data class TreatmentHistoryEntry(
     val trialAcronym: String? = null,
     val treatmentHistoryDetails: TreatmentHistoryDetails? = null
 ) {
-
-    private val delimiter = ";"
 
     fun allTreatments(): Set<Treatment> {
         val switchToTreatments = treatmentHistoryDetails?.switchToTreatments?.map(TreatmentStage::treatment)?.toSet() ?: emptySet()
@@ -65,13 +65,13 @@ data class TreatmentHistoryEntry(
     }
 
     private fun treatmentStringUsingFunction(treatments: Set<Treatment>, treatmentField: (Treatment) -> String): String {
-        return treatments.map(treatmentField).sorted().distinct().joinToString(delimiter)
+        return treatments.map(treatmentField).sorted().distinct().joinToString(DELIMITER)
             .ifEmpty { treatmentCategoryDisplay(treatments) }
     }
 
     private fun treatmentCategoryDisplay(treatments: Set<Treatment>): String {
         return treatments.flatMap { it.categories().map(TreatmentCategory::display) }
             .distinct()
-            .joinToString(delimiter)
+            .joinToString(DELIMITER)
     }
 }

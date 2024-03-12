@@ -79,7 +79,8 @@ class TrialIngestion(
             trialId = trialConfig.trialId,
             open = determineOpenStatus(trialConfig),
             acronym = trialConfig.acronym,
-            title = trialConfig.title
+            title = trialConfig.title,
+            nctId = trialConfig.nctId
         )
     }
 

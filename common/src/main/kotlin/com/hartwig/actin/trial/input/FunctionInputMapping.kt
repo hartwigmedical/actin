@@ -165,7 +165,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_MOLECULAR_EVENT_WITH_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.INACTIVATION_OF_GENE_X to FunctionInput.ONE_GENE,
-        EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X to FunctionInput.ONE_GENE,
+        EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to FunctionInput.MANY_GENES,
         EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to FunctionInput.ONE_GENE_MANY_CODONS,
         EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y to FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS,
         EligibilityRule.MUTATION_IN_GENE_X_IN_ANY_CODONS_Y to FunctionInput.ONE_GENE_MANY_CODONS,
