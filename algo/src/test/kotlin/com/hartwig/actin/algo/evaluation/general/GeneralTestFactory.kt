@@ -24,27 +24,22 @@ internal object GeneralTestFactory {
     }
 
     fun withWHOAndComplications(who: Int, complicationCategories: Iterable<String>): PatientRecord {
-        val clinicalStatus = TestDataFactory.createMinimalTestPatientRecord().clinicalStatus.copy(who = who)
         val complication = Complication(name = "", categories = complicationCategories.toSet(), year = null, month = null)
-        val patientRecord = TestDataFactory.createMinimalTestPatientRecord().copy(
-            clinicalStatus = clinicalStatus.copy(who = who),
+        return TestDataFactory.createMinimalTestPatientRecord().copy(
+            clinicalStatus = ClinicalStatus(who = who),
             complications = listOf(complication),
         )
-        return patientRecord
     }
 
     fun withBodyWeights(bodyWeights: Iterable<BodyWeight>): PatientRecord {
-        val patientRecord = TestDataFactory.createMinimalTestPatientRecord().copy(bodyWeights = bodyWeights.toList())
-        return patientRecord
+        return TestDataFactory.createMinimalTestPatientRecord().copy(bodyWeights = bodyWeights.toList())
     }
 
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {
-        val patientRecord = TestDataFactory.createMinimalTestPatientRecord().copy(patient = patientDetails)
-        return patientRecord
+        return TestDataFactory.createMinimalTestPatientRecord().copy(patient = patientDetails)
     }
 
     private fun withClinicalStatus(clinicalStatus: ClinicalStatus): PatientRecord {
-        val patientRecord = TestDataFactory.createMinimalTestPatientRecord().copy(clinicalStatus = clinicalStatus)
-        return patientRecord
+        return TestDataFactory.createMinimalTestPatientRecord().copy(clinicalStatus = clinicalStatus)
     }
 }
