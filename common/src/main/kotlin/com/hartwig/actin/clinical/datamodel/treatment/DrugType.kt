@@ -30,7 +30,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ANTI_PD_L1(TreatmentCategory.IMMUNOTHERAPY, "anti-PD-L1"),
     ANTI_PD_L2(TreatmentCategory.IMMUNOTHERAPY, "anti-PD-L2"),
     ANTI_TIGIT(TreatmentCategory.IMMUNOTHERAPY, "anti-TIGIT"),
-    ANTI_TIM_3_MONOCLONAL_ANTIBODY(TreatmentCategory.IMMUNOTHERAPY, "anti-TIM-3 monoclonal antibody"),
+    ANTI_TIM_3(TreatmentCategory.IMMUNOTHERAPY, "anti-TIM-3"),
     ANTI_TISSUE_FACTOR(TreatmentCategory.TARGETED_THERAPY, "anti tissue-factor (TF)"),
     ANTIBIOTIC(TreatmentCategory.SUPPORTIVE_TREATMENT, "antibiotic"),
     ANTIBODY_DRUG_CONJUGATE_IMMUNOTHERAPY(TreatmentCategory.IMMUNOTHERAPY, "antibody-drug conjugate"),
