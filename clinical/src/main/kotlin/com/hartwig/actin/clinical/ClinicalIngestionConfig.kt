@@ -50,7 +50,7 @@ data class ClinicalIngestionConfig(
             options.addOption(
                 FEED_FORMAT,
                 true,
-                "The format of the feed. Accepted values [${FeedFormat.values().joinToString()}]. Default is EMC_TSV"
+                "The format of the feed. Accepted values [${FeedFormat.values().joinToString()}]. Default is ${FeedFormat.EMC_TSV.name}."
             )
             return options
         }

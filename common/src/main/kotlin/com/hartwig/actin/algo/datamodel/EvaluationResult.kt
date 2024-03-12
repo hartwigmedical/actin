@@ -1,38 +1,14 @@
 package com.hartwig.actin.algo.datamodel
 
 enum class EvaluationResult {
-    PASS,
-    WARN,
+    NOT_IMPLEMENTED,
     FAIL,
+    WARN,
     UNDETERMINED,
-    NOT_EVALUATED,
-    NOT_IMPLEMENTED;
+    PASS,
+    NOT_EVALUATED;
 
     fun isWorseThan(otherResult: EvaluationResult): Boolean {
-        return when (otherResult) {
-            NOT_IMPLEMENTED -> {
-                false
-            }
-
-            FAIL -> {
-                this == NOT_IMPLEMENTED
-            }
-
-            WARN -> {
-                this == NOT_IMPLEMENTED || this == FAIL
-            }
-
-            UNDETERMINED -> {
-                this == NOT_IMPLEMENTED || this == FAIL || this == WARN
-            }
-
-            PASS -> {
-                this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED
-            }
-
-            NOT_EVALUATED -> {
-                this == NOT_IMPLEMENTED || this == FAIL || this == WARN || this == UNDETERMINED || this == PASS
-            }
-        }
+        return this < otherResult
     }
 }

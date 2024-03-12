@@ -23,6 +23,7 @@ class TrialMatchComparatorTest {
                 open = true,
                 acronym = "",
                 title = "",
+                nctId = null
             ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),
