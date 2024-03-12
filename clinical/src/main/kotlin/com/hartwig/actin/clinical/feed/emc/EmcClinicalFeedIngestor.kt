@@ -55,13 +55,12 @@ class EmcClinicalFeedIngestor(
     private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
 ) : ClinicalFeedIngestion {
 
-    override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
-        val processedPatientIds: MutableSet<String> = HashSet()
+    override fun ingest(): Map<String, List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>> {
+        val result: MutableMap<String, List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>> = HashMap()
 
         LOGGER.info("Creating clinical model")
-        return feed.subjects().map { patientId ->
-            check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
-            processedPatientIds.add(patientId)
+        feed.subjects().map { patientId ->
+            check(!result.containsKey(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
             val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(patientId))
@@ -116,16 +115,21 @@ class EmcClinicalFeedIngestor(
                 .map { it.evaluation }
                 .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
 
-            Pair(
-                PatientIngestionResult.create(
-                    questionnaire,
-                    record,
-                    patientEvaluation.warnings.toList(),
-                    questionnaireCurationErrors.toSet(),
-                    feed.validationWarnings(patientId)
-                ), patientEvaluation
+            result.put(
+                patientId, listOf(
+                    Pair(
+                        PatientIngestionResult.create(
+                            questionnaire,
+                            record,
+                            patientEvaluation.warnings.toList(),
+                            questionnaireCurationErrors.toSet(),
+                            feed.validationWarnings(patientId)
+                        ), patientEvaluation
+                    )
+                )
             )
         }
+        return result;
     }
 
     private fun extractPatientDetails(subject: String, questionnaire: Questionnaire?): PatientDetails {

@@ -9,15 +9,15 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.util.json.GsonSerializer
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 
 class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) {
 
@@ -63,24 +63,30 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         val ingestionResult = clinicalIngestionAdapter.run()
         LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
-        ClinicalRecordJson.write(ingestionResult.patientResults.map { it.clinicalRecord }, outputDirectory)
+        ClinicalRecordJson.write(
+            ingestionResult.patientResults.flatMap { patientResults -> patientResults.value.map { it.clinicalRecord } },
+            outputDirectory
+        )
         LOGGER.info("Done!")
 
         writeIngestionResults(outputDirectory, ingestionResult)
 
-        if (ingestionResult.patientResults.any { it.curationResults.isNotEmpty() }) {
+        val curationResults: Map<String, List<CurationResult>> = ingestionResult.patientResults.mapValues { patientIngestionResult ->
+            patientIngestionResult.value.flatMap { it.curationResults }
+        }
+
+        if (curationResults.any { it.value.isNotEmpty() }) {
             LOGGER.warn("Summary of warnings:")
-            ingestionResult.patientResults.forEach {
-                if (it.curationResults.isNotEmpty()) {
-                    LOGGER.warn("Curation warnings for patient ${it.patientId}")
-                    it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->
+            curationResults.keys.sorted().forEach {
+                if (curationResults[it]?.isNotEmpty() == true) {
+                    LOGGER.warn("Curation warnings for patient $it")
+                    curationResults[it]?.flatMap { result -> result.requirements }?.forEach { requirement ->
                         LOGGER.warn(requirement.message)
                     }
                 }
             }
             LOGGER.warn("Summary complete.")
         }
-
     }
 
     private fun writeIngestionResults(outputDirectory: String, results: IngestionResult) {

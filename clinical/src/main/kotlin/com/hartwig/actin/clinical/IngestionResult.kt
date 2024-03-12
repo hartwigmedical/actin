@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationEr
 
 data class IngestionResult(
     val configValidationErrors: Set<CurationConfigValidationError> = emptySet(),
-    val patientResults: List<PatientIngestionResult> = emptyList(),
+    val patientResults: Map<String, List<PatientIngestionResult>> = emptyMap(),
     val unusedConfigs: Set<UnusedCurationConfig> = emptySet()
 )
 

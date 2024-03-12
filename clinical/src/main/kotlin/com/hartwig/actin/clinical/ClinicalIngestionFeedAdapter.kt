@@ -2,7 +2,6 @@ package com.hartwig.actin.clinical
 
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
-import com.hartwig.actin.clinical.sort.ClinicalRecordComparator
 
 class ClinicalIngestionFeedAdapter(
     private val clinicalDataFeed: ClinicalFeedIngestion,
@@ -11,15 +10,14 @@ class ClinicalIngestionFeedAdapter(
 
     fun run(): IngestionResult {
         val records = clinicalDataFeed.ingest()
-            .sortedWith { (result1, _), (result2, _) ->
-                ClinicalRecordComparator().compare(
-                    result1.clinicalRecord,
-                    result2.clinicalRecord
-                )
-            }
+        var patientResults: HashMap<String, List<PatientIngestionResult>> = HashMap()
+        records.forEach { key, value ->
+            patientResults.put(key, listOf(value.get(0).first))
+        }
+
         return IngestionResult(
-            unusedConfigs = curationDatabaseContext.allUnusedConfig(records.map { it.second }),
-            patientResults = records.map { it.first }
+            unusedConfigs = curationDatabaseContext.allUnusedConfig(records.values.flatten().map { it.second }),
+            patientResults = patientResults
         )
     }
 }

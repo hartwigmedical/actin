@@ -61,14 +61,17 @@ class ClinicalIngestionFeedAdapterTest {
         val ingestionResult = ingestion.run()
         assertThat(ingestionResult).isNotNull
         val patientResults = ingestionResult.patientResults
-        assertThat(patientResults[0].status).isEqualTo(PatientIngestionStatus.PASS)
         assertThat(patientResults).hasSize(1)
-        assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
-        assertThat(patientResults[0].curationResults).isEmpty()
-        assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
-        assertThat(patientResults[0].questionnaireCurationErrors)
+        val firstPatientResults = patientResults.values.first()
+        assertThat(firstPatientResults.size).isEqualTo(1)
+        val patientResult = firstPatientResults.first()
+        assertThat(patientResult.status).isEqualTo(PatientIngestionStatus.PASS)
+        assertThat(patientResult.patientId).isEqualTo(PATIENT)
+        assertThat(patientResult.curationResults).isEmpty()
+        assertThat(patientResult.clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
+        assertThat(patientResult.questionnaireCurationErrors)
             .containsExactly(QuestionnaireCurationError(PATIENT, "Unrecognized questionnaire option: 'Probably'"))
-        assertThat(patientResults[0].feedValidationWarnings).containsExactly(
+        assertThat(patientResult.feedValidationWarnings).containsExactly(
             FeedValidationWarning(
                 PATIENT,
                 "Empty vital function value"
@@ -92,10 +95,11 @@ class ClinicalIngestionFeedAdapterTest {
 
         val deserialized = gson.fromJson(serialized.decodeToString(), IngestionResult::class.java)
         // The clinical record is not serialized, so we need to compare the patient results separately:
-        assertThat(deserialized.copy(patientResults = emptyList())).isEqualTo(ingestionResult.copy(patientResults = emptyList()))
+        assertThat(deserialized.copy(patientResults = emptyMap())).isEqualTo(ingestionResult.copy(patientResults = emptyMap()))
 
-        val patientIngestionResult = ingestionResult.patientResults.first()
-        assertThat(deserialized.patientResults).extracting(
+        val patientIngestionResult = ingestionResult.patientResults.values.first().first()
+        assertThat(deserialized.patientResults.size).isEqualTo(1)
+        assertThat(deserialized.patientResults.values.first()).extracting(
             PatientIngestionResult::patientId,
             PatientIngestionResult::status,
             PatientIngestionResult::clinicalRecord,

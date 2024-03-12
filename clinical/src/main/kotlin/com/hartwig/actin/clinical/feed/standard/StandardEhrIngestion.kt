@@ -44,8 +44,10 @@ class StandardEhrIngestion(
         registerModule(KotlinModule.Builder().build())
     }
 
-    override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
-        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map {
+    override fun ingest(): Map<String, List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>> {
+        val result: MutableMap<String, List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>> = HashMap()
+
+        Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map {
             val ehrPatientRecord = mapper.readValue(Files.readString(it), EhrPatientRecord::class.java)
             val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
             val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
@@ -119,7 +121,10 @@ class StandardEhrIngestion(
                     emptySet()
                 ), it.first
             )
-        }.collect(Collectors.toList())
+        }.collect(Collectors.toList()).forEach { pair ->
+            result[pair.first.patientId] = listOf(pair)
+        }
+        return result
     }
 
     companion object {
