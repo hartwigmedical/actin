@@ -73,7 +73,7 @@ class EhrPriorOtherConditionsExtractorTest {
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
-                EHR_PATIENT_RECORD_WITH_PRIOR_CONDITIONS.patientDetails.hashedIdBase64(),
+                EHR_PATIENT_RECORD_WITH_PRIOR_CONDITIONS.patientDetails.hashedId,
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 PRIOR_CONDITION_NAME,
                 "Could not find non-oncological history config for input 'prior_condition'"

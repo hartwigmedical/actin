@@ -36,7 +36,7 @@ class EhrTreatmentHistoryExtractor(
             if (nonOncologicalHistoryCuration.find(ehrPreviousCondition.name).isEmpty()) {
                 val treatment = CurationResponse.createFromConfigs(
                     treatmentCuration.find(ehrPreviousCondition.name),
-                    ehrPatientRecord.patientDetails.hashedIdBase64(),
+                    ehrPatientRecord.patientDetails.hashedId,
                     CurationCategory.ONCOLOGICAL_HISTORY,
                     ehrPreviousCondition.name,
                     TREATMENT_HISTORY,
@@ -81,7 +81,7 @@ class EhrTreatmentHistoryExtractor(
 
             val treatment = CurationResponse.createFromConfigs(
                 treatmentCuration.find(ehrTreatmentHistory.treatmentName),
-                ehrPatientRecord.patientDetails.hashedIdBase64(),
+                ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.ONCOLOGICAL_HISTORY,
                 ehrTreatmentHistory.treatmentName,
                 TREATMENT_HISTORY,
@@ -130,7 +130,7 @@ class EhrTreatmentHistoryExtractor(
         return ehrTreatmentHistory.modifications?.map { modification ->
             val modificationTreatment = CurationResponse.createFromConfigs(
                 treatmentCuration.find(modification.name),
-                ehrPatientRecord.patientDetails.hashedIdBase64(),
+                ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.ONCOLOGICAL_HISTORY,
                 modification.name,
                 TREATMENT_HISTORY,
