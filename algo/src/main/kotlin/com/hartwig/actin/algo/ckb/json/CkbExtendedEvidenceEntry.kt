@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class CkbExtendedEvidenceEntry(
     val nctId: String,
-    val acronym: String,
     val title: String,
     val phase: String,
     val recruitment: String,

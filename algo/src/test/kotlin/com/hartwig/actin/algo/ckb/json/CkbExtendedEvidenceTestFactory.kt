@@ -6,7 +6,6 @@ object CkbExtendedEvidenceTestFactory {
         return listOf(
             CkbExtendedEvidenceEntry(
                 nctId = "",
-                acronym = "",
                 title = "",
                 phase = "",
                 recruitment = "",
@@ -36,7 +35,6 @@ object CkbExtendedEvidenceTestFactory {
         return listOf(
             CkbExtendedEvidenceEntry(
                 nctId = "NCT01",
-                acronym = "NCT01",
                 title = "Study of pembrolizumab instead of CAPOX",
                 phase = "Phase III",
                 recruitment = "Completed",

@@ -38,7 +38,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
     private fun resolveCkbExtendedEvidence(ckbExtendedEvidenceEntry: CkbExtendedEvidenceEntry): EfficacyEntry {
         return EfficacyEntry(
-            acronym = ckbExtendedEvidenceEntry.acronym,
+            acronym = ckbExtendedEvidenceEntry.title,
             phase = ckbExtendedEvidenceEntry.phase,
             treatments = ckbExtendedEvidenceEntry.therapies.map { findTreatmentInDatabase(it.therapyName, it.synonyms) },
             therapeuticSetting = ckbExtendedEvidenceEntry.therapeuticSetting?.let(::extractTherapeuticSettingFromString),
