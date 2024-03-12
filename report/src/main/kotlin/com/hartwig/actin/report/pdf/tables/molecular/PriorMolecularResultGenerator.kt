@@ -20,7 +20,7 @@ class PriorMolecularResultGenerator(
 ) {
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createSubTitle("IHC results"))
+        table.addCell(Cells.createSubTitle("IHC results for actionable targets"))
         if (clinical.priorMolecularTests.isEmpty()) {
             table.addCell(Cells.createValue("None"))
         } else {
