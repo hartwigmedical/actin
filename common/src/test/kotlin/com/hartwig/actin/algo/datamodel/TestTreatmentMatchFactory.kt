@@ -36,7 +36,8 @@ object TestTreatmentMatchFactory {
                     trialId = "Test Trial 1",
                     open = true,
                     acronym = "TEST-1",
-                    title = "Example test trial 1"
+                    title = "Example test trial 1",
+                    nctId = "NCT00000001"
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),
@@ -47,7 +48,8 @@ object TestTreatmentMatchFactory {
                     trialId = "Test Trial 2",
                     open = true,
                     acronym = "TEST-2",
-                    title = "Example test trial 2"
+                    title = "Example test trial 2",
+                    nctId = "NCT00000002"
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),

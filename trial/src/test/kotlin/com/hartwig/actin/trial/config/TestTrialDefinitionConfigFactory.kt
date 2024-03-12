@@ -6,6 +6,7 @@ object TestTrialDefinitionConfigFactory {
         trialId = "",
         open = null,
         acronym = "",
-        title = ""
+        title = "",
+        nctId = ""
     )
 }
