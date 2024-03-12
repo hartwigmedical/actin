@@ -80,7 +80,7 @@ object TestClinicalFactory {
         return createProperTestClinicalRecord().copy(oncologicalHistory = createExhaustiveTreatmentHistory())
     }
 
-    fun createTestPatientDetails(): PatientDetails {
+    private fun createTestPatientDetails(): PatientDetails {
         return PatientDetails(
             gender = Gender.MALE,
             birthYear = 1950,
@@ -90,7 +90,7 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestTumorDetails(): TumorDetails {
+    private fun createTestTumorDetails(): TumorDetails {
         return TumorDetails(
             primaryTumorLocation = "Skin",
             primaryTumorSubLocation = "",
@@ -113,7 +113,7 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestClinicalStatus(): ClinicalStatus {
+    private fun createTestClinicalStatus(): ClinicalStatus {
         return ClinicalStatus(
             who = 1,
             infectionStatus = InfectionStatus(hasActiveInfection = false, description = null),
@@ -125,7 +125,7 @@ object TestClinicalFactory {
         return Drug(name = name, drugTypes = setOf(drugType), category = category)
     }
 
-    fun createTreatmentHistory(): List<TreatmentHistoryEntry> {
+    private fun createTreatmentHistory(): List<TreatmentHistoryEntry> {
         val oxaliplatin = drug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND, TreatmentCategory.CHEMOTHERAPY)
         val fluorouracil = drug("5-FU", DrugType.ANTIMETABOLITE, TreatmentCategory.CHEMOTHERAPY)
         val irinotecan = drug("IRINOTECAN", DrugType.TOPO1_INHIBITOR, TreatmentCategory.CHEMOTHERAPY)
@@ -254,7 +254,7 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestPriorSecondPrimaries(): List<PriorSecondPrimary> {
+    private fun createTestPriorSecondPrimaries(): List<PriorSecondPrimary> {
         return listOf(
             PriorSecondPrimary(
                 tumorLocation = "Lung",
@@ -272,7 +272,7 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestPriorOtherConditions(): List<PriorOtherCondition> {
+    private fun createTestPriorOtherConditions(): List<PriorOtherCondition> {
         return listOf(
             PriorOtherCondition(
                 name = "Pancreatitis",
@@ -293,7 +293,7 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
+    private fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
         return listOf(
             PriorMolecularTest(
                 test = "",
@@ -318,11 +318,11 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestComplications(): List<Complication> {
+    private fun createTestComplications(): List<Complication> {
         return listOf(Complication(name = "Ascites", categories = setOf("Ascites"), year = null, month = null))
     }
 
-    fun createTestLabValues(): List<LabValue> {
+    private fun createTestLabValues(): List<LabValue> {
         return listOf(
             LabValue(
                 date = TODAY.minusDays(DAYS_SINCE_LAB_MEASUREMENT_3.toLong()),
@@ -415,7 +415,7 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestToxicities(): List<Toxicity> {
+    private fun createTestToxicities(): List<Toxicity> {
         return listOf(
             Toxicity(
                 name = "Nausea",
@@ -434,7 +434,7 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestIntolerances(): List<Intolerance> {
+    private fun createTestIntolerances(): List<Intolerance> {
         return listOf(
             Intolerance(
                 name = "Wasps",
@@ -449,18 +449,18 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestSurgeries(): List<Surgery> {
+    private fun createTestSurgeries(): List<Surgery> {
         return listOf(Surgery(endDate = TODAY.minusDays(DAYS_SINCE_SURGERY.toLong()), status = SurgeryStatus.FINISHED))
     }
 
-    fun createTestBodyWeights(): List<BodyWeight> {
+    private fun createTestBodyWeights(): List<BodyWeight> {
         return listOf(
             BodyWeight(date = NOW.minusDays(DAYS_SINCE_BODY_WEIGHT_1.toLong()), value = 70.0, unit = "Kilogram", valid = true),
             BodyWeight(date = NOW.minusDays(DAYS_SINCE_BODY_WEIGHT_2.toLong()), value = 68.0, unit = "Kilogram", valid = true)
         )
     }
 
-    fun createTestVitalFunctions(): List<VitalFunction> {
+    private fun createTestVitalFunctions(): List<VitalFunction> {
         return listOf(
             VitalFunction(
                 date = NOW.minusDays(DAYS_SINCE_BLOOD_PRESSURE.toLong()),
@@ -473,11 +473,11 @@ object TestClinicalFactory {
         )
     }
 
-    fun createTestBloodTransfusions(): List<BloodTransfusion> {
+    private fun createTestBloodTransfusions(): List<BloodTransfusion> {
         return listOf(BloodTransfusion(date = TODAY.minusDays(DAYS_SINCE_BLOOD_TRANSFUSION.toLong()), product = "Thrombocyte concentrate"))
     }
 
-    fun createTestMedications(): List<Medication> {
+    private fun createTestMedications(): List<Medication> {
         return listOf(
             TestMedicationFactory.createMinimal().copy(
                 name = "Ibuprofen",
