@@ -52,7 +52,7 @@ class EligibleApprovedTreatmentGenerator(
                         val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
                         if (treatment.annotations.isEmpty()) {
                             subtable.addCell(Cells.createValue(" "))
-                            subtable.addCell(Cells.createValue("No literature efficacy evidence available yet"))
+                            subtable.addCell(Cells.createKey("No literature efficacy evidence available yet"))
                         } else {
                             for (annotation in treatment.annotations) {
                                 for (trialReference in annotation.trialReferences) {
