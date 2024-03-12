@@ -36,7 +36,7 @@ class AggregatedEvidenceInterpreterTest {
             "event2" to listOf(externalTrialTargetingOneEvent),
             "event3" to listOf(externalTrialTargetingTwoEvents)
         )
-        assertThat(filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches)).containsAllEntriesOf(mapOf(
+        assertThat(filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches)).containsExactlyEntriesOf(mapOf(
             "event1,\nevent3" to listOf(externalTrialTargetingTwoEvents),
             "event2" to listOf(externalTrialTargetingOneEvent),
             )
@@ -44,7 +44,7 @@ class AggregatedEvidenceInterpreterTest {
     }
 
     @Test
-    fun `Should not filter out external trials without nctId match among local trials and should maintain event to trial mapping`(){
+    fun `Should filter out external trials with NCT ID that matches local trial and maintain event to trial mapping`(){
         val externalTrialWithMatchToLocal =
             ExternalTrial("Title of trial 1", setOf(Country.NETHERLANDS, Country.BELGIUM), "url", "NCT00000001")
         val externalTrialWithoutMatchToLocal =
