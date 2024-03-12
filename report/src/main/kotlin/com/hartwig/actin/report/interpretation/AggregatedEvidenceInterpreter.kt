@@ -23,6 +23,5 @@ object AggregatedEvidenceInterpreter {
             .map { (event, trials) -> event to trials.filter { it.nctId !in localTrialNctIds } }
             .filter { it.second.isNotEmpty() }
             .toMap()
-
     }
 }

@@ -10,13 +10,13 @@ import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EligibleOtherCountriesExternalTrialsGenerator(
-    private val source: String, private val externalTrialsGroupedPerEvent: Map<String, List<ExternalTrial>>, private val width: Float
+    private val source: String, private val externalTrialsPerEvent: Map<String, List<ExternalTrial>>, private val width: Float
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
             "%s trials potentially eligible based on molecular results which are potentially recruiting outside the Netherlands (%d)",
             source,
-            externalTrialsGroupedPerEvent.values.flatten().size
+            externalTrialsPerEvent.values.flatten().size
         )
     }
 
@@ -32,7 +32,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
         listOf("Trial title", "NCT number", "Country").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
         table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
-        externalTrialsGroupedPerEvent.forEach { (event, externalTrials) ->
+        externalTrialsPerEvent.forEach { (event, externalTrials) ->
             val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth, countriesWidth)
             externalTrials.forEach { externalTrial ->
                 subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(externalTrial.title)))
