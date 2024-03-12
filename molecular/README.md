@@ -271,7 +271,7 @@ The evidences are then mapped to the ACTIN evidence model as follows:
 | On-label, certain responsive, B-level     | On-label experimental treatment     |
 | On-label, uncertain responsive, B-level   | Pre-clinical treatment              |
 | On-label, responsive, C-level or D-level  | Pre-clinical treatment              |
-| Off-label, responsive, A-level            | On-label experimental treatment     | 
+| Off-label, responsive, A-level            | Off-label experimental treatment    | 
 | Off-label, certain responsive, B-level    | Off-label experimental treatment    |
 | Off-label, uncertain responsive, B-level  | Pre-clinical treatment              |
 | Off-label, responsive, C-level or D-level | Pre-clinical treatment              |
