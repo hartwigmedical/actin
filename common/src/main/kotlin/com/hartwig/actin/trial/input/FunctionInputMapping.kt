@@ -167,6 +167,7 @@ object FunctionInputMapping {
         EligibilityRule.INACTIVATION_OF_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X to FunctionInput.ONE_GENE,
         EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to FunctionInput.ONE_GENE_MANY_CODONS,
+        EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to FunctionInput.MANY_GENES,
         EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y to FunctionInput.ONE_GENE_MANY_PROTEIN_IMPACTS,
         EligibilityRule.MUTATION_IN_GENE_X_IN_ANY_CODONS_Y to FunctionInput.ONE_GENE_MANY_CODONS,
         EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y to FunctionInput.ONE_GENE_ONE_INTEGER,

@@ -17,6 +17,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X to geneHasActivatingMutationCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
+            EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y to geneHasVariantWithAnyProteinImpactsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_ANY_CODONS_Y to geneHasVariantInAnyCodonsCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y to geneHasVariantInExonCreator(),
@@ -99,6 +100,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyCodonsInput(function)
             GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons)
+        }
+    }
+
+    private fun anyGeneHasActivatingMutationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val genes = functionInputResolver().createManyGenesInput(function)
+            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null) })
         }
     }
 
