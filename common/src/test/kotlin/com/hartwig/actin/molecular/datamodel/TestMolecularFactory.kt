@@ -186,7 +186,7 @@ object TestMolecularFactory {
                                     + "for Participants With Advanced Solid Tumor (acronym)",
                             countries = setOf(Country.BELGIUM, Country.GERMANY),
                             url = "https://clinicaltrials.gov/study/NCT00000002",
-                            nctId = "NCT00000002"
+                            nctId = "NCT00000020"
                         )
                     ),
                     gene = "PTEN",
