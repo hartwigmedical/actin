@@ -28,7 +28,7 @@ const val IRINOTECAN = "IRINOTECAN"
 const val IRINOTECAN_CETUXIMAB = "IRINOTECAN+CETUXIMAB"
 const val IRINOTECAN_PANITUMUMAB = "IRINOTECAN+PANITUMUMAB"
 const val LAROTRECTINIB = "LAROTRECTINIB"
-const val LONSURF = "LONSURF"
+const val TRIFLURIDINE_TIPIRACIL = "TRIFLURIDINE+TIPIRACIL"
 const val NIVOLUMAB = "NIVOLUMAB"
 const val OXALIPLATIN = "OXALIPLATIN"
 const val PANITUMUMAB = "PANITUMUMAB"
@@ -55,7 +55,7 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
                 createTreatmentCandidate(treatmentName, setOf(2, 3, 4, 5))
             }
 
-            LONSURF -> {
+            TRIFLURIDINE_TIPIRACIL -> {
                 createTreatmentCandidate(treatmentName, setOf(3, 4, 5), optional = true)
             }
 

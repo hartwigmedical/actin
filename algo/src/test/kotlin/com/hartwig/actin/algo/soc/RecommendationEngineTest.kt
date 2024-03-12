@@ -258,7 +258,7 @@ class RecommendationEngineTest {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MOLECULAR_RECORD_WITH_OTHER_BRAF_MUTATION, "rectum"
         )
-        val expectedAdditionalTherapies = listOf(CETUXIMAB, PANITUMUMAB, IRINOTECAN, LONSURF).map(TREATMENT_DATABASE::findTreatmentByName)
+        val expectedAdditionalTherapies = listOf(CETUXIMAB, PANITUMUMAB, IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
 
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalTherapies)
@@ -284,7 +284,7 @@ class RecommendationEngineTest {
         val thirdLinePatientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MOLECULAR_RECORD_WITH_BRAF_V600E
         )
-        val expectedAdditionalCandidates = listOf(ENCORAFENIB_CETUXIMAB, IRINOTECAN, LONSURF).map(TREATMENT_DATABASE::findTreatmentByName)
+        val expectedAdditionalCandidates = listOf(ENCORAFENIB_CETUXIMAB, IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
         assertThat(thirdLinePatientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalCandidates)
     }
@@ -311,7 +311,7 @@ class RecommendationEngineTest {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MINIMAL_MOLECULAR_RECORD, "ascending colon"
         )
-        val expectedAdditionalCandidates = listOf(IRINOTECAN, LONSURF).map(TREATMENT_DATABASE::findTreatmentByName)
+        val expectedAdditionalCandidates = listOf(IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalCandidates)
     }
@@ -387,7 +387,7 @@ class RecommendationEngineTest {
                         FOLFIRI -> listOf("FLUOROURACIL", "IRINOTECAN")
                         FOLFOX -> listOf("FLUOROURACIL", "OXALIPLATIN")
                         FOLFOXIRI -> listOf("FLUOROURACIL", "OXALIPLATIN", "IRINOTECAN")
-                        LONSURF -> listOf("TRIFLURIDINE", "TIPRACIL")
+                        TRIFLURIDINE_TIPIRACIL -> listOf("TRIFLURIDINE", "TIPRACIL")
                         else -> listOf(subTreatmentName)
                     }
                 }

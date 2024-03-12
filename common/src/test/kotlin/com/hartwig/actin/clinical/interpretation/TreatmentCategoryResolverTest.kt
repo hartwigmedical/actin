@@ -20,7 +20,7 @@ class TreatmentCategoryResolverTest {
     fun `Should convert categories to strings`() {
         assertThat(toStringList(emptySet())).isEqualTo("")
         assertThat(toStringList(setOf(TreatmentCategory.CHEMOTHERAPY))).isEqualTo("Chemotherapy")
-        assertThat(toStringList(setOf(TreatmentCategory.ANTIVIRAL_THERAPY))).isEqualTo("Antiviral therapy")
+        assertThat(toStringList(setOf(TreatmentCategory.TARGETED_THERAPY))).isEqualTo("Targeted therapy")
 
         val categories = sortedSetOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY)
         assertThat(toStringList(categories)).isEqualTo("Chemotherapy, Radiotherapy")
@@ -28,6 +28,6 @@ class TreatmentCategoryResolverTest {
 
     @Test
     fun `Should convert strings to categories`() {
-        assertThat(fromStringList("Antiviral therapy")).isEqualTo(setOf(TreatmentCategory.ANTIVIRAL_THERAPY))
+        assertThat(fromStringList("Targeted therapy")).isEqualTo(setOf(TreatmentCategory.TARGETED_THERAPY))
     }
 }

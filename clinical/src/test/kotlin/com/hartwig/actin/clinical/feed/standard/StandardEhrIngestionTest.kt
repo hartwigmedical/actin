@@ -46,24 +46,34 @@ class StandardEhrIngestionTest {
             directory = INPUT_JSON,
             medicationExtractor = EhrMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
-                qtPrologatingRiskCuration = curationDatabase.qtProlongingCuration,
-                cypInteractionCuration = curationDatabase.cypInteractionCuration,
-                dosageCuration = curationDatabase.medicationDosageCuration
+                qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
+                cypInteractionCuration = curationDatabase.cypInteractionCuration
             ),
             surgeryExtractor = EhrSurgeryExtractor(),
             toxicityExtractor = EhrToxicityExtractor(curationDatabase.toxicityCuration),
             vitalFunctionsExtractor = EhrVitalFunctionsExtractor(),
-            priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(curationDatabase.nonOncologicalHistoryCuration),
+            priorOtherConditionsExtractor = EhrPriorOtherConditionsExtractor(
+                curationDatabase.nonOncologicalHistoryCuration,
+                curationDatabase.treatmentHistoryEntryCuration
+            ),
             intolerancesExtractor = EhrIntolerancesExtractor(TestAtcFactory.createProperAtcModel(), curationDatabase.intoleranceCuration),
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
-            treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(TestTreatmentDatabaseFactory.createProper()),
-            secondPrimaryExtractor = EhrSecondPrimariesExtractor(),
+            treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(
+                curationDatabase.treatmentHistoryEntryCuration,
+                curationDatabase.nonOncologicalHistoryCuration
+            ),
+            secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
+
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
-            tumorDetailsExtractor = EhrTumorDetailsExtractor(curationDatabase.primaryTumorCuration),
+            tumorDetailsExtractor = EhrTumorDetailsExtractor(
+                curationDatabase.primaryTumorCuration,
+                curationDatabase.lesionLocationCuration
+            ),
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),
-            bloodTransfusionExtractor = EhrBloodTransfusionExtractor()
+            bloodTransfusionExtractor = EhrBloodTransfusionExtractor(),
+            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration)
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
@@ -98,7 +108,8 @@ class StandardEhrIngestionTest {
                 requirements = listOf(CurationRequirement(feedInput = "Pain", message = "Could not find toxicity config for input 'Pain'"))
             ),
             CurationResult(
-                categoryName = "Laboratory Translation", requirements = listOf(
+                categoryName = "Laboratory Translation",
+                requirements = listOf(
                     CurationRequirement(
                         feedInput = "dc_NeutrGran",
                         message = "Could not find laboratory translation for lab value with code 'dc_NeutrGran' and name 'Neutrof. granulocyten'"
@@ -119,7 +130,7 @@ class StandardEhrIngestionTest {
                         feedInput = "Hb",
                         message = "Could not find laboratory translation for lab value with code 'Hb' and name 'Hemoglobine'"
                     )
-                )
+                ),
             ),
             CurationResult(
                 categoryName = "Intolerance",
@@ -128,6 +139,15 @@ class StandardEhrIngestionTest {
                         feedInput = "MORFINE",
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
+                )
+            ),
+            CurationResult(
+                categoryName = "Oncological History",
+                requirements = listOf(
+                    CurationRequirement(
+                        feedInput = "aandoening van mitralis-, aorta- en tricuspidalisklep",
+                        message = "Could not find treatment history config for input 'aandoening van mitralis-, aorta- en tricuspidalisklep'"
+                    )
                 )
             )
         )

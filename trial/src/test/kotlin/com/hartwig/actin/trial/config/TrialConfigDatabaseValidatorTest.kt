@@ -4,23 +4,23 @@ import com.hartwig.actin.trial.CohortDefinitionValidationError
 import com.hartwig.actin.trial.InclusionCriteriaValidationError
 import com.hartwig.actin.trial.InclusionReferenceValidationError
 import com.hartwig.actin.trial.TrialDefinitionValidationError
+import com.hartwig.actin.trial.UnusedRuleToKeepError
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.interpretation.TestEligibilityFactoryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialConfigDatabaseValidatorTest {
+    private val validator = TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
 
     @Test
     fun `Should confirm trial config databases are valid`() {
-        val validator: TrialConfigDatabaseValidator = createTestValidator()
         assertThat(validator.validate(TestTrialConfigDatabaseFactory.createMinimalTestTrialConfigDatabase()).hasErrors()).isFalse
         assertThat(validator.validate(TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()).hasErrors()).isFalse
     }
 
     @Test
     fun `Should detect ill defined trial config database`() {
-        val validator: TrialConfigDatabaseValidator = createTestValidator()
         val validation = validator.validate(createInvalidTrialConfigDatabase())
         assertThat(validation.trialDefinitionValidationErrors).containsExactly(
             TrialDefinitionValidationError(config = TRIAL_DEFINITION_1, message = "Duplicated trial id of trial 1"),
@@ -60,10 +60,16 @@ class TrialConfigDatabaseValidatorTest {
         )
     }
 
-    companion object {
+    @Test
+    fun `Should detect invalid unused rules to keep`() {
+        val validation = validator.validate(createInvalidTrialConfigDatabase())
+        assertThat(validation.unusedRulesToKeepErrors).containsExactly(UnusedRuleToKeepError(config = "invalid rule"))
+    }
 
+    companion object {
         private const val TRIAL_ID_1 = "trial 1"
         private const val TRIAL_ID_2 = "trial 2"
+
         val TRIAL_DEFINITION_1 = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_1, open = true)
 
         private val COHORT_DEFINITION_1 = TestCohortDefinitionConfigFactory.MINIMAL.copy(
@@ -98,7 +104,6 @@ class TrialConfigDatabaseValidatorTest {
             trialId = "does not exist", referenceId = "I-01", referenceText = "irrelevant"
         )
 
-
         private val INCLUSION_REFERENCE_CONFIG_2 = InclusionCriteriaReferenceConfig(
             trialId = TRIAL_ID_2,
             referenceId = "I-02",
@@ -118,12 +123,9 @@ class TrialConfigDatabaseValidatorTest {
                     )
                 ),
                 inclusionCriteriaConfigs = listOf(INCLUSION_CRITERIA_1, INCLUSION_CRITERIA_2, INCLUSION_CRITERIA_3),
-                inclusionCriteriaReferenceConfigs = listOf(INCLUSION_REFERENCE_CONFIG_1, INCLUSION_REFERENCE_CONFIG_2)
+                inclusionCriteriaReferenceConfigs = listOf(INCLUSION_REFERENCE_CONFIG_1, INCLUSION_REFERENCE_CONFIG_2),
+                unusedRulesToKeep = listOf("invalid rule")
             )
-        }
-
-        private fun createTestValidator(): TrialConfigDatabaseValidator {
-            return TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
         }
     }
 }

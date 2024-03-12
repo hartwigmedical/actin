@@ -8,6 +8,8 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationResponse
 import com.hartwig.actin.clinical.curation.CurationUtil
 import com.hartwig.actin.clinical.curation.CurationUtil.fullTrim
+import com.hartwig.actin.clinical.curation.CypInteractionCurationUtil
+import com.hartwig.actin.clinical.curation.QTProlongatingCurationUtil
 import com.hartwig.actin.clinical.curation.config.CypInteractionConfig
 import com.hartwig.actin.clinical.curation.config.MedicationDosageConfig
 import com.hartwig.actin.clinical.curation.config.MedicationNameConfig
@@ -15,11 +17,9 @@ import com.hartwig.actin.clinical.curation.config.PeriodBetweenUnitConfig
 import com.hartwig.actin.clinical.curation.config.QTProlongatingConfig
 import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
-import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
 import org.apache.logging.log4j.LogManager
 
@@ -57,8 +57,8 @@ class MedicationExtractor(
                     administrationRoute = administrationRouteCuration.extracted,
                     startDate = entry.periodOfUseValuePeriodStart,
                     stopDate = entry.periodOfUseValuePeriodEnd,
-                    cypInteractions = curateMedicationCypInteractions(name),
-                    qtProlongatingRisk = annotateWithQTProlongating(name),
+                    cypInteractions = CypInteractionCurationUtil.curateMedicationCypInteractions(cypInterationCuration, name),
+                    qtProlongatingRisk = QTProlongatingCurationUtil.annotateWithQTProlongating(qtProlongatingCuration, name),
                     atc = atc,
                     isSelfCare = isSelfCare,
                     isTrialMedication = isTrialMedication
@@ -159,38 +159,24 @@ class MedicationExtractor(
             "" -> {
                 null
             }
+
             "active" -> {
                 MedicationStatus.ACTIVE
             }
+
             "on-hold" -> {
                 MedicationStatus.ON_HOLD
             }
+
             "kuur geannuleerd" -> {
                 MedicationStatus.CANCELLED
             }
+
             else -> {
                 LOGGER.warn("Could not interpret medication status: $status for patient $patientId")
                 MedicationStatus.UNKNOWN
             }
         }
-
-    private fun curateMedicationCypInteractions(medicationName: String): List<CypInteraction> {
-        return this.cypInterationCuration.find(medicationName).flatMap(CypInteractionConfig::interactions)
-    }
-
-    private fun annotateWithQTProlongating(medicationName: String): QTProlongatingRisk {
-        val riskConfigs = this.qtProlongatingCuration.find(medicationName)
-        return if (riskConfigs.isEmpty()) {
-            QTProlongatingRisk.NONE
-        } else if (riskConfigs.size > 1) {
-            throw IllegalStateException(
-                "Multiple risk configurations found for one medication name [$medicationName]. " +
-                        "Check the qt_prolongating.tsv for a duplicate"
-            )
-        } else {
-            return riskConfigs.first().status
-        }
-    }
 
     private fun extractIfNeeded(entry: MedicationEntry) =
         entry.dosageInstructionAsNeededDisplay.trim().lowercase() == "zo nodig"

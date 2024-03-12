@@ -5,7 +5,7 @@ object TestCohortDefinitionConfigFactory {
     val MINIMAL = CohortDefinitionConfig(
         trialId = "",
         cohortId = "",
-        ctcCohortIds = setOf(),
+        externalCohortIds = emptySet(),
         evaluable = true,
         open = null,
         slotsAvailable = null,

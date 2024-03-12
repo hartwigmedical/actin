@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import io.mockk.every
 import io.mockk.mockk
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class HasTumorStageTest {
@@ -30,6 +31,17 @@ class HasTumorStageTest {
     @Test
     fun shouldEvaluateUndeterminedWhenMultipleDerivedTumorStagesWhereOnePasses() {
         assertDerivedEvaluation(EvaluationResult.UNDETERMINED, TumorStage.III, TumorStage.IIIB)
+    }
+
+    @Test
+    fun `Should display correct undetermined message with derived stages`() {
+        val patientRecord = TumorTestFactory.withTumorStage(null)
+        val tumorDetails = patientRecord.clinical.tumor
+        val derivationFunction = mockk<TumorStageDerivationFunction>()
+        every { derivationFunction.apply(tumorDetails) } returns listOf(TumorStage.III, TumorStage.IIIB)
+        Assertions.assertThat((tumorStageFunction(derivationFunction).evaluate(patientRecord)).undeterminedGeneralMessages).containsExactly(
+            "Missing tumor stage details - assumed III or IIIB based on lesions"
+        )
     }
 
     @Test

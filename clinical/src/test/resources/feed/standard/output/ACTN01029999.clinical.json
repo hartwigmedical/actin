@@ -1,5 +1,5 @@
 {
-  "patientId": "aGFzaF9vZl9wYXRpZW50X2lk",
+  "patientId": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
   "patient": {
     "gender": "FEMALE",
     "birthYear": 5,
@@ -13,9 +13,9 @@
   },
   "tumor": {
     "primaryTumorLocation": "Lung",
-    "primaryTumorSubLocation": null,
+    "primaryTumorSubLocation": "",
     "primaryTumorType": "Adenocarcinoma",
-    "primaryTumorSubType": null,
+    "primaryTumorSubType": "",
     "primaryTumorExtraDetails": null,
     "doids": [
       "3908"
@@ -44,45 +44,30 @@
     {
       "treatments": [
         {
-          "name": "RADIOTHERAPY",
+          "name": "CAPECITABINE+OXALIPLATIN",
+          "drugs": [
+            {
+              "name": "CAPECITABINE",
+              "drugTypes": [
+                "ANTIMETABOLITE"
+              ],
+              "category": "CHEMOTHERAPY",
+              "displayOverride": null
+            },
+            {
+              "name": "OXALIPLATIN",
+              "drugTypes": [
+                "PLATINUM_COMPOUND"
+              ],
+              "category": "CHEMOTHERAPY",
+              "displayOverride": null
+            }
+          ],
           "synonyms": [],
           "displayOverride": null,
-          "isSystemic": false,
-          "radioType": null,
-          "isInternal": null,
-          "treatmentClass": "RADIOTHERAPY"
-        }
-      ],
-      "startYear": 2020,
-      "startMonth": 1,
-      "intents": null,
-      "isTrial": true,
-      "trialAcronym": null,
-      "treatmentHistoryDetails": {
-        "stopYear": 2020,
-        "stopMonth": 1,
-        "ongoingAsOf": null,
-        "cycles": 5,
-        "bestResponse": null,
-        "stopReason": null,
-        "stopReasonDetail": null,
-        "switchToTreatments": null,
-        "maintenanceTreatment": null,
-        "toxicities": null,
-        "bodyLocationCategories": null,
-        "bodyLocations": null
-      }
-    },
-    {
-      "treatments": [
-        {
-          "name": "RADIOTHERAPY",
-          "synonyms": [],
-          "displayOverride": null,
-          "isSystemic": false,
-          "radioType": null,
-          "isInternal": null,
-          "treatmentClass": "RADIOTHERAPY"
+          "isSystemic": true,
+          "maxCycles": null,
+          "treatmentClass": "DRUG_TREATMENT"
         }
       ],
       "startYear": 2020,
@@ -101,13 +86,30 @@
         "switchToTreatments": [
           {
             "treatment": {
-              "name": "RADIOTHERAPY",
+              "name": "CAPECITABINE+OXALIPLATIN",
+              "drugs": [
+                {
+                  "name": "CAPECITABINE",
+                  "drugTypes": [
+                    "ANTIMETABOLITE"
+                  ],
+                  "category": "CHEMOTHERAPY",
+                  "displayOverride": null
+                },
+                {
+                  "name": "OXALIPLATIN",
+                  "drugTypes": [
+                    "PLATINUM_COMPOUND"
+                  ],
+                  "category": "CHEMOTHERAPY",
+                  "displayOverride": null
+                }
+              ],
               "synonyms": [],
               "displayOverride": null,
-              "isSystemic": false,
-              "radioType": null,
-              "isInternal": null,
-              "treatmentClass": "RADIOTHERAPY"
+              "isSystemic": true,
+              "maxCycles": null,
+              "treatmentClass": "DRUG_TREATMENT"
             },
             "cycles": 0,
             "startYear": 2020,
@@ -128,14 +130,25 @@
       "year": 2020,
       "month": 1,
       "doids": [
-        "5082",
-        "11335"
+        "11335",
+        "5082"
       ],
       "category": "Other",
       "isContraindicationForTherapy": true
     }
   ],
-  "priorMolecularTests": [],
+  "priorMolecularTests": [
+    {
+      "test": "IHC",
+      "item": "ERBB2",
+      "measure": null,
+      "scoreText": null,
+      "scoreValuePrefix": null,
+      "scoreValue": 3.0,
+      "scoreValueUnit": "+",
+      "impliesPotentialIndeterminateStatus": false
+    }
+  ],
   "complications": [
     {
       "name": "Other",
@@ -156,8 +169,8 @@
       "comparator": "",
       "value": 3.7,
       "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     },
     {
@@ -171,8 +184,8 @@
       "comparator": "",
       "value": 88.0,
       "unit": "PERCENTAGE",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     },
     {
@@ -186,8 +199,8 @@
       "comparator": "",
       "value": 252.0,
       "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     },
     {
@@ -201,8 +214,8 @@
       "comparator": "",
       "value": 0.6,
       "unit": "BILLIONS_PER_LITER",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     },
     {
@@ -216,8 +229,8 @@
       "comparator": "",
       "value": 7.7,
       "unit": "MILLIMOLES_PER_LITER",
-      "refLimitLow": null,
-      "refLimitUp": null,
+      "refLimitLow": 3.5,
+      "refLimitUp": 3.5,
       "isOutsideRef": null
     }
   ],
@@ -322,7 +335,7 @@
   ],
   "medications": [
     {
-      "name": "paracetamol",
+      "name": "METOCLOPRAMIDE TABLET 10MG",
       "status": null,
       "administrationRoute": "oraal",
       "dosage": {
@@ -345,43 +358,11 @@
         "month": 1,
         "day": 1
       },
-      "cypInteractions": [
-        {
-          "type": "INHIBITOR",
-          "strength": "MODERATE",
-          "cyp": "2D6"
-        },
-        {
-          "type": "SUBSTRATE",
-          "strength": "MODERATE_SENSITIVE",
-          "cyp": "3A4"
-        }
-      ],
-      "qtProlongatingRisk": "KNOWN",
-      "atc": {
-        "anatomicalMainGroup": {
-          "code": "N",
-          "name": "NERVOUS SYSTEM"
-        },
-        "therapeuticSubGroup": {
-          "code": "N02",
-          "name": "ANALGESICS"
-        },
-        "pharmacologicalSubGroup": {
-          "code": "N02B",
-          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
-        },
-        "chemicalSubGroup": {
-          "code": "N02BE",
-          "name": "Anilides"
-        },
-        "chemicalSubstance": {
-          "code": "N02BE01",
-          "name": "paracetamol"
-        }
-      },
-      "isSelfCare": false,
-      "isTrialMedication": false
+      "cypInteractions": [],
+      "qtProlongatingRisk": "UNKNOWN",
+      "atc": null,
+      "isSelfCare": true,
+      "isTrialMedication": true
     },
     {
       "name": "paracetamol",

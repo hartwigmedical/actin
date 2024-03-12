@@ -4,6 +4,7 @@ object EvaluationTestFactory {
 
     fun withResult(result: EvaluationResult): Evaluation {
         val base = Evaluation(result = result, recoverable = false)
+
         return when (result) {
             EvaluationResult.PASS -> {
                 base.copy(passSpecificMessages = setOf("pass specific"), passGeneralMessages = setOf("pass general"))

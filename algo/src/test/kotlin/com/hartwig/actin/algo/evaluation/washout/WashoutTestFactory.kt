@@ -2,8 +2,8 @@ package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
-import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.datamodel.AtcClassification
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus

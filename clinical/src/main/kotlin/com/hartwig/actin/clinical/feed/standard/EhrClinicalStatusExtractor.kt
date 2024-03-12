@@ -6,8 +6,19 @@ import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 
 class EhrClinicalStatusExtractor : EhrExtractor<ClinicalStatus> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<ClinicalStatus> {
-        val mostRecentWho = ehrPatientRecord.whoEvaluations.maxBy { who -> who.evaluationDate }
-        val clinicalStatus = ClinicalStatus(who = mostRecentWho.status, hasComplications = ehrPatientRecord.complications.isNotEmpty())
+        val mostRecentWho = ehrPatientRecord.whoEvaluations.maxByOrNull { who -> who.evaluationDate }
+        val whoAsInteger = mostRecentWho?.let { parseRangeAndUseLowerValue(it.status) }
+        val clinicalStatus = ClinicalStatus(who = whoAsInteger, hasComplications = ehrPatientRecord.complications.isNotEmpty())
         return ExtractionResult(clinicalStatus, CurationExtractionEvaluation())
+    }
+
+    private fun parseRangeAndUseLowerValue(status: String): Int {
+        val matchResult = "(\\d+)-(\\d+)".toRegex().matchEntire(status)
+        return if (matchResult != null) {
+            val (start, end) = matchResult.destructured
+            minOf(start.toInt(), end.toInt())
+        } else {
+            status.toInt()
+        }
     }
 }

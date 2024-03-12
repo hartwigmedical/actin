@@ -18,7 +18,7 @@ internal object CohortStatusInterpreter {
         entries: List<CTCDatabaseEntry>,
         cohortConfig: CohortDefinitionConfig
     ): CohortStatusInterpretation {
-        val ctcCohortIds: Set<String> = cohortConfig.ctcCohortIds
+        val ctcCohortIds = cohortConfig.externalCohortIds
         if (isNotAvailableOrIncorrect(ctcCohortIds)) {
             LOGGER.debug(
                 " CTC entry for cohort '{}' of trial '{}' explicitly configured to be unavailable or incorrect in CTC. "

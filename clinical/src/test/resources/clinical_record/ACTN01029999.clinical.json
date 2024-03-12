@@ -204,7 +204,7 @@
         "day": 7
       },
       "cypInteractions": [],
-      "qtProlongatingRisk": "NONE",
+      "qtProlongatingRisk": "UNKNOWN",
       "atc": null,
       "isSelfCare": false,
       "isTrialMedication": true

@@ -20,9 +20,7 @@ class PriorMolecularTestComparatorTest {
         assertThat(sorted[3].item).isEqualTo("ZZZ")
     }
 
-    companion object {
-        private fun withItem(item: String): PriorMolecularTest {
-            return PriorMolecularTest(item = item, test = "", impliesPotentialIndeterminateStatus = false)
-        }
+    private fun withItem(item: String): PriorMolecularTest {
+        return PriorMolecularTest(item = item, test = "", impliesPotentialIndeterminateStatus = false)
     }
 }

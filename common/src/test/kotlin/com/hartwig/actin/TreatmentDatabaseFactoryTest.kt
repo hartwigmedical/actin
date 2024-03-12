@@ -10,7 +10,7 @@ import java.nio.file.NoSuchFileException
 class TreatmentDatabaseFactoryTest {
 
     @Test
-    fun shouldCreateDatabaseFromDirectory() {
+    fun `Should create database from directory`() {
         val treatmentDatabase = createFromPath(Resources.getResource("clinical").path)
         assertThat(treatmentDatabase).isNotNull()
         assertThat(treatmentDatabase.findTreatmentByName("Capecitabine+Oxaliplatin")).isNotNull()
@@ -18,7 +18,7 @@ class TreatmentDatabaseFactoryTest {
     }
 
     @Test
-    fun shouldThrowExceptionOnCreateWhenJsonFilesAreMissing() {
+    fun `Should throw exception on create when files are missing`() {
         assertThatThrownBy { createFromPath(Resources.getResource("molecular").path) }
             .isInstanceOf(NoSuchFileException::class.java)
     }

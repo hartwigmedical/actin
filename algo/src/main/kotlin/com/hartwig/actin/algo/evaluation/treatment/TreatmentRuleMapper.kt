@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.evaluation.tumor.HasAcquiredResistanceToAnyDrug
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
@@ -16,6 +17,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to isEligibleForPalliativeRadiotherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to isEligibleForLocoRegionalTherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to isEligibleForTreatmentLinesCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_LIVER_TREATMENT to isEligibleForLocalLiverTreatmentCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to isEligibleForIntensiveTreatmentCreator(),
             EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to hasExhaustedSOCTreatmentsCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
@@ -25,6 +28,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_NOT_RECEIVED_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
+            EligibilityRule.HAS_HAD_TREATMENT_NAME_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificTreatmentCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS to hasHadCombinedTreatmentNamesWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to hasHadCombinedTreatmentNamesWithCyclesCreator(),
@@ -41,6 +45,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES to hasHadLimitedTreatmentsOfCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentsOfCategoryWithTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to hasHadLimitedTreatmentsOfCategoryWithTypesCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_MOST_Z_WEEKS_WITH_STOP_REASON_OTHER_THAN_PD
+                    to hasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPDCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfTypesAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to hasHadAdjuvantTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITHIN_X_MONTHS to hasHadSystemicTherapyWithinMonthsCreator(),
@@ -48,7 +54,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_NAME_X_TREATMENT to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_NON_INTERNAL_RADIOTHERAPY to FunctionCreator { HasHadNonInternalRadiotherapy() },
-            EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X to HasHadRadiotherapyToSomeBodyLocationCreator(),
+            EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X to hasHadRadiotherapyToSomeBodyLocationCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentNameCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentCategoryCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(),
@@ -56,11 +62,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_CYCLES to hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumCyclesCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X to hasProgressiveDiseaseFollowingTreatmentWithAnyDrugCreator(),
+            EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_ANY_DRUG_X to hasAcquiredResistanceToSomeDrugCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_AFTER_LATEST_TREATMENT_LINE to hasRadiologicalProgressionFollowingLatestTreatmentLineCreator(),
             EligibilityRule.HAS_HAD_COMPLETE_RESECTION to hasHadCompleteResectionCreator(),
             EligibilityRule.HAS_HAD_PARTIAL_RESECTION to hasHadPartialResectionCreator(),
             EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS to hasHadResectionWithinWeeksCreator(),
+            EligibilityRule.HAS_HAD_LIVER_RESECTION to hasHadLiverResectionCreator(),
             EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS to hasHadLocalHepaticTherapyWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to hasHadIntratumoralInjectionTreatmentCreator(),
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to hasLimitedCumulativeAnthracyclineExposureCreator(),
@@ -77,7 +85,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
-        return FunctionCreator { IsEligibleForOnLabelTreatment() }
+        return FunctionCreator { function: EligibilityFunction ->
+            val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
+            IsEligibleForOnLabelTreatment(treatmentName, RecommendationEngineFactory(resources))
+        }
     }
 
     private fun isEligibleForPalliativeRadiotherapyCreator(): FunctionCreator {
@@ -93,6 +104,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val lines = functionInputResolver().createManyIntegersInput(function)
             IsEligibleForTreatmentLines(lines)
         }
+    }
+
+    private fun isEligibleForLocalLiverTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForLocalLiverTreatment(doidModel()) }
+    }
+
+    private fun isEligibleForIntensiveTreatmentCreator(): FunctionCreator {
+        return FunctionCreator { IsEligibleForIntensiveTreatment() }
     }
 
     private fun hasExhaustedSOCTreatmentsCreator(): FunctionCreator {
@@ -151,6 +170,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
             HasHadSpecificTreatmentSinceDate(input.treatment, minDate)
+        }
+    }
+
+    private fun hasHadSpecificTreatmentCombinedWithCategoryAndTypesCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneSpecificTreatmentOneTreatmentCategoryManyTypesInput(function)
+            HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(input.treatment, input.category, input.types)
         }
     }
 
@@ -280,6 +306,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPDCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(
+                function
+            )
+            HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(input.category, input.types, input.integer)
+        }
+    }
+
     private fun hasHadAdjuvantTreatmentWithCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
@@ -325,7 +360,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun HasHadRadiotherapyToSomeBodyLocationCreator(): FunctionCreator {
+    private fun hasHadRadiotherapyToSomeBodyLocationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneStringInput(function)
             HasHadRadiotherapyToSomeBodyLocation(input)
@@ -334,8 +369,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentCategoryOfTypesAsMostRecentCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            HasHadTreatmentWithCategoryOfTypesAsMostRecent(input.mappedCategory, input.mappedType)
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
+            HasHadTreatmentWithCategoryOfTypesAsMostRecent(input.category, input.types)
         }
     }
 
@@ -410,6 +445,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasAcquiredResistanceToSomeDrugCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            HasAcquiredResistanceToAnyDrug(functionInputResolver().createManyDrugsInput(function))
+        }
+    }
+
     private fun hasRadiologicalProgressionFollowingLatestTreatmentLineCreator(): FunctionCreator {
         return FunctionCreator { HasRadiologicalProgressionFollowingLatestTreatmentLine() }
     }
@@ -436,6 +477,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val minDate = referenceDateProvider().date().minusWeeks(maxWeeksAgo.toLong())
             HasHadRecentResection(minDate)
         }
+    }
+
+    private fun hasHadLiverResectionCreator(): FunctionCreator {
+        return FunctionCreator { HasHadLiverResection() }
     }
 
     private fun hasHadLocalHepaticTherapyWithinWeeksCreator(): FunctionCreator {

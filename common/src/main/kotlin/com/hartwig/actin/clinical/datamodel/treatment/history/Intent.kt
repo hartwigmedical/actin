@@ -8,6 +8,7 @@ enum class Intent(private val display: String) : Displayable {
     INDUCTION("Induction"),
     CONSOLIDATION("Consolidation"),
     MAINTENANCE("Maintenance"),
+    CURATIVE("Curative"),
     PALLIATIVE("Palliative");
 
     override fun display(): String {

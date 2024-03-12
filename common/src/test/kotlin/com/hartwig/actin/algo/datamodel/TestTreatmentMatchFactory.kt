@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.datamodel
 
 import com.hartwig.actin.TestDataFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
@@ -17,6 +18,7 @@ object TestTreatmentMatchFactory {
         return TreatmentMatch(
             patientId = TestDataFactory.TEST_PATIENT,
             sampleId = TestDataFactory.TEST_SAMPLE,
+            trialSource = "EMC",
             referenceDate = LocalDate.of(2021, 8, 2),
             referenceDateIsLive = true,
             trialMatches = emptyList()
@@ -54,11 +56,11 @@ object TestTreatmentMatchFactory {
         )
     }
 
-    private fun createSocMatches(): List<EvaluatedTreatment> {
+    private fun createSocMatches(): List<AnnotatedTreatmentMatch> {
         return listOf(
-            EvaluatedTreatment(
+            AnnotatedTreatmentMatch(
                 treatmentCandidate = TreatmentCandidate(
-                    TreatmentTestFactory.treatment("Vemurafenib", true),
+                    TreatmentTestFactory.treatment("Pembrolizumab", true),
                     true,
                     setOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES, parameters = emptyList()))
                 ),
@@ -69,7 +71,8 @@ object TestTreatmentMatchFactory {
                         passSpecificMessages = setOf("Patient has active CNS metastases"),
                         passGeneralMessages = setOf("Active CNS metastases")
                     )
-                )
+                ),
+                annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
             )
         )
     }
@@ -147,9 +150,9 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortEvaluationsTrial1CohortA(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                function = EligibilityFunction(rule = EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, parameters = listOf("BRAF")),
-                references = setOf(CriterionReference(id = "I-01", text = "BRAF Activation")),
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has BRAF activation", "BRAF Activation", "BRAF V600E")
+                function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
+                references = setOf(CriterionReference(id = "I-01", text = "MSI")),
+            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
         )
     }
 
@@ -197,9 +200,9 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortEvaluationsTrial2CohortA(): Map<Eligibility, Evaluation> {
         return mapOf(
             Eligibility(
-                function = EligibilityFunction(rule = EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, parameters = listOf("BRAF")),
-                references = setOf(CriterionReference(id = "I-01", text = "BRAF Activation")),
-            ) to unrecoverable(EvaluationResult.PASS, "Patient has BRAF activation", "BRAF Activation", "BRAF V600E")
+                function = EligibilityFunction(rule = EligibilityRule.MSI_SIGNATURE, parameters = emptyList()),
+                references = setOf(CriterionReference(id = "I-01", text = "MSI")),
+            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI", "MSI", "MSI")
         )
     }
 
@@ -211,8 +214,8 @@ object TestTreatmentMatchFactory {
                         EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)
                     )
                 ),
-                references = setOf(CriterionReference(id = "I-03", text = "Patient should not have had Vemurafenib treatment"))
-            ) to unrecoverable(EvaluationResult.FAIL, "Patient has had Vemurafenib treatment", "Vemurafenib treatment", null)
+                references = setOf(CriterionReference(id = "I-03", text = "Patient should not have had pembrolizumab treatment"))
+            ) to unrecoverable(EvaluationResult.FAIL, "Patient has had pembrolizumab treatment", "Pembrolizumab treatment", null)
         )
     }
 
@@ -229,9 +232,11 @@ object TestTreatmentMatchFactory {
             EvaluationResult.NOT_EVALUATED -> {
                 base.copy(passSpecificMessages = setOf(specificMessage), passGeneralMessages = setOfNotNull(generalMessage))
             }
+
             EvaluationResult.WARN -> {
                 base.copy(warnSpecificMessages = setOf(specificMessage), warnGeneralMessages = setOfNotNull(generalMessage))
             }
+
             EvaluationResult.UNDETERMINED -> {
                 base.copy(
                     undeterminedSpecificMessages = setOf(specificMessage), undeterminedGeneralMessages = setOfNotNull(generalMessage)

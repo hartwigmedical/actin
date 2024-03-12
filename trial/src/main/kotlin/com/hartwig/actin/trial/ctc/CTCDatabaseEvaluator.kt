@@ -52,6 +52,6 @@ class CTCDatabaseEvaluator(private val ctcDatabase: CTCDatabase) {
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(CTCModel::class.java)
+        private val LOGGER = LogManager.getLogger(CTCDatabaseEvaluator::class.java)
     }
 }

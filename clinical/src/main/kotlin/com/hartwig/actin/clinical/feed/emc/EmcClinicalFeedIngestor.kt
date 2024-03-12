@@ -3,6 +3,8 @@ package com.hartwig.actin.clinical.feed.emc
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.ClinicalIngestionFeedAdapter
 import com.hartwig.actin.clinical.PatientIngestionResult
+import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.BloodTransfusionsExtractor
 import com.hartwig.actin.clinical.curation.extraction.ClinicalStatusExtractor
@@ -57,13 +59,12 @@ class EmcClinicalFeedIngestor(
         val processedPatientIds: MutableSet<String> = HashSet()
 
         LOGGER.info("Creating clinical model")
-        return feed.subjects().map { subject ->
-            val patientId = subject.replace("-".toRegex(), "")
+        return feed.subjects().map { patientId ->
             check(!processedPatientIds.contains(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(subject))
+            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feed.latestQuestionnaireEntry(patientId))
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val complicationsExtraction = complicationsExtractor.extract(patientId, questionnaire)
             val clinicalStatusExtraction =
@@ -72,15 +73,15 @@ class EmcClinicalFeedIngestor(
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
             val priorOtherConditionsExtraction = priorOtherConditionExtractor.extract(patientId, questionnaire)
             val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
-            val labValuesExtraction = labValueExtractor.extract(patientId, feed.labEntries(subject).map { LabExtraction.extract(it) })
-            val toxicityExtraction = toxicityExtractor.extract(patientId, feed.toxicityEntries(subject), questionnaire)
-            val intoleranceExtraction = intoleranceExtractor.extract(patientId, feed.intoleranceEntries(subject))
-            val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feed.bloodTransfusionEntries(subject))
-            val medicationExtraction = medicationExtractor.extract(patientId, feed.medicationEntries(subject))
+            val labValuesExtraction = labValueExtractor.extract(patientId, feed.labEntries(patientId).map { LabExtraction.extract(it) })
+            val toxicityExtraction = toxicityExtractor.extract(patientId, feed.toxicityEntries(patientId), questionnaire)
+            val intoleranceExtraction = intoleranceExtractor.extract(patientId, feed.intoleranceEntries(patientId))
+            val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feed.bloodTransfusionEntries(patientId))
+            val medicationExtraction = medicationExtractor.extract(patientId, feed.medicationEntries(patientId))
 
             val record = ClinicalRecord(
                 patientId = patientId,
-                patient = extractPatientDetails(subject, questionnaire),
+                patient = extractPatientDetails(patientId, questionnaire),
                 tumor = tumorExtraction.extracted,
                 complications = complicationsExtraction.extracted,
                 clinicalStatus = clinicalStatusExtraction.extracted,
@@ -91,9 +92,9 @@ class EmcClinicalFeedIngestor(
                 labValues = labValuesExtraction.extracted,
                 toxicities = toxicityExtraction.extracted,
                 intolerances = intoleranceExtraction.extracted,
-                surgeries = extractSurgeries(subject),
-                bodyWeights = extractBodyWeights(subject),
-                vitalFunctions = extractVitalFunctions(subject),
+                surgeries = extractSurgeries(patientId),
+                bodyWeights = extractBodyWeights(patientId),
+                vitalFunctions = extractVitalFunctions(patientId),
                 bloodTransfusions = bloodTransfusionsExtraction.extracted,
                 medications = medicationExtraction.extracted
             )
@@ -121,7 +122,7 @@ class EmcClinicalFeedIngestor(
                     record,
                     patientEvaluation.warnings.toList(),
                     questionnaireCurationErrors.toSet(),
-                    feed.validationWarnings(subject)
+                    feed.validationWarnings(patientId)
                 ), patientEvaluation
             )
         }
@@ -155,7 +156,7 @@ class EmcClinicalFeedIngestor(
     }
 
     private fun bodyWeightIsValid(entry: BodyWeightEntry): Boolean {
-        return entry.valueQuantityUnit.lowercase() == "kilogram" && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
+        return entry.valueQuantityUnit.lowercase() == BODY_WEIGHT_EXPECTED_UNIT && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
     }
 
     private fun extractVitalFunctions(subject: String): List<VitalFunction> {
@@ -209,11 +210,19 @@ class EmcClinicalFeedIngestor(
         private val LOGGER = LogManager.getLogger(ClinicalIngestionFeedAdapter::class.java)
 
         fun create(
-            feedModel: FeedModel,
+            feedDirectory: String,
+            curationDirectory: String,
             curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel
         ) = EmcClinicalFeedIngestor(
-            feed = feedModel,
+            feed = FeedModel(
+                ClinicalFeedReader.read(feedDirectory).copy(
+                    questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                        ClinicalFeedReader.read(feedDirectory).questionnaireEntries,
+                        QuestionnaireRawEntryMapper.createFromCurationDirectory(curationDirectory)
+                    )
+                )
+            ),
             tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext),
             complicationsExtractor = ComplicationsExtractor.create(curationDatabaseContext),
             clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),
@@ -230,6 +239,7 @@ class EmcClinicalFeedIngestor(
 
         const val BODY_WEIGHT_MIN = 20.0
         const val BODY_WEIGHT_MAX = 300.0
+        const val BODY_WEIGHT_EXPECTED_UNIT = "kilogram"
         const val HEART_RATE_MIN = 10.0
         const val HEART_RATE_MAX = 300.0
         const val HEART_RATE_EXPECTED_UNIT = "bpm"

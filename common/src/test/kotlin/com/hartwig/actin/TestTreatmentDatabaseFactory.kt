@@ -8,19 +8,24 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 object TestTreatmentDatabaseFactory {
+
     const val CAPECITABINE_OXALIPLATIN = "CAPECITABINE+OXALIPLATIN"
+    const val PEMBROLIZUMAB = "PEMBROLIZUMAB"
     const val RADIOTHERAPY = "RADIOTHERAPY"
     const val ABLATION = "ABLATION"
 
     fun createProper(): TreatmentDatabase {
-        val drugMap = listOf(chemoDrug("CAPECITABINE", DrugType.ANTIMETABOLITE), chemoDrug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND))
-            .associateBy { it.name.lowercase() }
+        val capecitabine = chemoDrug("CAPECITABINE", DrugType.ANTIMETABOLITE)
+        val oxaliplatin = chemoDrug("OXALIPLATIN", DrugType.PLATINUM_COMPOUND)
+        val pembrolizumab = chemoDrug("PEMBROLIZUMAB", DrugType.TOPO1_INHIBITOR)
+        val drugMap = listOf(capecitabine, oxaliplatin, pembrolizumab).associateBy { it.name.lowercase() }
 
-        val capox = DrugTreatment(name = CAPECITABINE_OXALIPLATIN, drugs = drugMap.values.toSet())
+        val capoxTreatment = DrugTreatment(name = CAPECITABINE_OXALIPLATIN, drugs = setOf(capecitabine, oxaliplatin))
+        val pembrolizumabTreatment = DrugTreatment(name = PEMBROLIZUMAB, drugs = setOf(pembrolizumab))
         val radiotherapy = Radiotherapy(name = RADIOTHERAPY)
         val ablation = OtherTreatment(name = ABLATION, isSystemic = false, categories = setOf(TreatmentCategory.ABLATION))
-        val treatmentMap = listOf(capox, radiotherapy, ablation).associateBy { it.name.lowercase() }
-        
+        val treatmentMap = listOf(capoxTreatment, pembrolizumabTreatment, radiotherapy, ablation).associateBy { it.name.lowercase() }
+
         return TreatmentDatabase(drugMap, treatmentMap)
     }
 

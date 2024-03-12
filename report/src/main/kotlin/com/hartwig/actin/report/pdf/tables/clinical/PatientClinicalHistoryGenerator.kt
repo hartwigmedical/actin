@@ -66,8 +66,15 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
         treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
             .sortedWith(TreatmentHistoryAscendingDateComparator())
-            .flatMap { listOf(extractDateRangeString(it), extractTreatmentString(it)) }
-            .forEach { table.addCell(createSingleTableEntry(it)) }
+            .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
+            .forEach { (key, historyEntries) ->
+                val details =
+                    historyEntries.flatMap {
+                        it.treatmentHistoryDetails?.bodyLocations ?: emptySet()
+                    }.joinToString(", ")
+                listOf(extractDateRangeString(historyEntries.first()), key.first + if (details.isNotEmpty()) " ($details)" else "")
+                    .forEach { table.addCell(createSingleTableEntry(it)) }
+            }
         return table
     }
 
@@ -141,9 +148,9 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
             val treatmentWithAnnotation = listOfNotNull(
                 treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)",
                 treatmentHistoryEntry.treatmentHistoryDetails?.switchToTreatments?.let { switchToTreatments ->
-                    "with switch to " + switchToTreatments.joinToString(" then ") {
+                    switchToTreatments.joinToString(prefix = "with switch to ", separator = " then ") {
                         it.treatment.display() + it.cycles?.let { cycles -> " (${cycles} cycles)" }
-                    }
+                    }.ifEmpty { null }
                 },
                 treatmentHistoryEntry.treatmentHistoryDetails?.maintenanceTreatment?.let { maintenanceTreatment ->
                     "continued with ${maintenanceTreatment.treatment.display()} maintenance"
@@ -187,6 +194,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 TumorStatus.ACTIVE -> "considered active"
                 TumorStatus.INACTIVE -> "considered non-active"
                 TumorStatus.EXPECTATIVE -> "considered expectative"
+                TumorStatus.UNKNOWN -> "unknown"
             }
             return "$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$status)"
         }

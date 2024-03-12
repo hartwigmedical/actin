@@ -5,8 +5,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DriverLikelihoodComparatorTest {
+
     @Test
-    fun canSortDriverLikelihoods() {
+    fun `Should sort driver likelihoods`() {
         val high = DriverLikelihood.HIGH
         val medium = DriverLikelihood.MEDIUM
         val low = DriverLikelihood.LOW

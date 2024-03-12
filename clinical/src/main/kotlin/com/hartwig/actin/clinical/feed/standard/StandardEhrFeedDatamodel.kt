@@ -1,26 +1,31 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Base64
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @JacksonSerializable
 data class EhrPatientRecord(
-    val allergies: List<EhrAllergy>,
-    val bloodTransfusions: List<EhrBloodTransfusion>,
-    val complications: List<EhrComplication>,
-    val labValues: List<EhrLabValue>,
-    val medications: List<EhrMedication>,
+    val allergies: List<EhrAllergy> = emptyList(),
+    val bloodTransfusions: List<EhrBloodTransfusion> = emptyList(),
+    val complications: List<EhrComplication> = emptyList(),
+    val labValues: List<EhrLabValue> = emptyList(),
+    val medications: List<EhrMedication> = emptyList(),
     val patientDetails: EhrPatientDetail,
-    val priorOtherConditions: List<EhrPriorOtherCondition>,
-    val surgeries: List<EhrSurgery>,
-    val toxicities: List<EhrToxicity>,
-    val treatmentHistory: List<EhrTreatmentHistory>,
+    val priorOtherConditions: List<EhrPriorOtherCondition> = emptyList(),
+    val surgeries: List<EhrSurgery> = emptyList(),
+    val toxicities: List<EhrToxicity> = emptyList(),
+    val treatmentHistory: List<EhrTreatmentHistory> = emptyList(),
     val tumorDetails: EhrTumorDetail,
-    val priorPrimaries: List<EhrPriorPrimary>,
-    val measurements: List<EhrMeasurement>,
-    val whoEvaluations: List<EhrWhoEvaluation>
+    val priorPrimaries: List<EhrPriorPrimary> = emptyList(),
+    val measurements: List<EhrMeasurement> = emptyList(),
+    val whoEvaluations: List<EhrWhoEvaluation> = emptyList()
 )
 
 @JacksonSerializable
@@ -81,7 +86,7 @@ enum class EhrBloodTransfusionProduct {
 @JacksonSerializable
 data class EhrComplication(
     val name: String,
-    val categories: List<String>,
+    val categories: List<String> = emptyList(),
     val startDate: LocalDate,
     val endDate: LocalDate
 )
@@ -92,7 +97,7 @@ data class EhrLabValue(
     val measure: String,
     val measureCode: String,
     val value: Double,
-    val unit: String,
+    val unit: String?,
     val refUpperBound: Double,
     val refLowerBound: Double,
     val comparator: String?,
@@ -103,22 +108,27 @@ data class EhrLabValue(
 data class EhrMedication(
     val name: String,
     val atcCode: String,
-    val startDate: LocalDate,
-    val endDate: LocalDate,
-    val administrationRoute: String,
-    val dosage: Double,
-    val dosageUnit: String,
-    val frequency: Double,
-    val frequencyUnit: String,
-    val periodBetweenDosagesValue: Double,
-    val periodBetweenDosagesUnit: String,
-    val administrationOnlyIfNeeded: Boolean,
+    val startDate: LocalDate?,
+    val endDate: LocalDate?,
+    val administrationRoute: String?,
+    val dosage: Double?,
+    val dosageUnit: String?,
+    val frequency: Double?,
+    val frequencyUnit: String?,
+    val periodBetweenDosagesValue: Double?,
+    val periodBetweenDosagesUnit: String?,
+    val administrationOnlyIfNeeded: Boolean?,
     val isTrial: Boolean,
     val isSelfCare: Boolean
 )
 
+private const val CHUNK_SIZE_HEX_BYTE = 2
+private const val HEX_BASE = 16
+@OptIn(ExperimentalEncodingApi::class)
 fun String.toBase64(): String {
-    return Base64.getEncoder().encodeToString(this.toByteArray(Charsets.UTF_8))
+    return Base64.Default.encode(this.chunked(CHUNK_SIZE_HEX_BYTE)
+        .map { it.toInt(HEX_BASE).toByte() }
+        .toByteArray())
 }
 
 @JacksonSerializable
@@ -139,21 +149,28 @@ enum class EhrGender {
 
 @JacksonSerializable
 data class EhrWhoEvaluation(
-    val status: Int,
+    val status: String,
     val evaluationDate: LocalDate
 )
 
+class RemoveNewlinesAndCarriageReturns : JsonDeserializer<String>() {
+    override fun deserialize(p0: JsonParser, p1: DeserializationContext?): String {
+        return p0.text?.replace("\n", "")?.replace("\r", "") ?: ""
+    }
+}
+
 @JacksonSerializable
 data class EhrPriorOtherCondition(
+    @field:JsonDeserialize(using = RemoveNewlinesAndCarriageReturns::class)
     val name: String,
-    val category: String,
+    val category: String? = null,
     val startDate: LocalDate,
-    val endDate: LocalDate
+    val endDate: LocalDate? = null
 )
 
 @JacksonSerializable
 data class EhrSurgery(
-    val name: String,
+    val name: String?,
     val endDate: LocalDate,
     val status: String
 )
@@ -178,16 +195,16 @@ data class EhrToxicity(
 @JacksonSerializable
 data class EhrTreatmentHistory(
     val treatmentName: String,
-    val intention: String?,
+    val intention: String? = null,
     val startDate: LocalDate,
-    val endDate: LocalDate?,
-    val stopReason: String?,
-    val stopReasonDate: LocalDate?,
-    val response: String?,
-    val responseDate: LocalDate?,
+    val endDate: LocalDate? = null,
+    val stopReason: String? = null,
+    val stopReasonDate: LocalDate? = null,
+    val response: String? = null,
+    val responseDate: LocalDate? = null,
     val intendedCycles: Int,
     val administeredCycles: Int,
-    val modifications: List<EhrTreatmentModification>?,
+    val modifications: List<EhrTreatmentModification>? = null,
     val administeredInStudy: Boolean
 )
 
@@ -229,11 +246,12 @@ data class EhrTumorDetail(
     val tumorLocation: String,
     val tumorType: String,
     val tumorGradeDifferentiation: String,
-    val tumorStage: String?,
-    val tumorStageDate: LocalDate,
-    val measurableDisease: Boolean,
-    val measurableDiseaseDate: LocalDate,
-    val lesions: List<EhrLesion>
+    val tumorStage: String? = null,
+    val tumorStageDate: LocalDate? = null,
+    val measurableDisease: Boolean? = null,
+    val measurableDiseaseDate: LocalDate? = null,
+    val lesions: List<EhrLesion>? = null,
+    val lesionSite: String? = null
 )
 
 @JacksonSerializable
@@ -251,11 +269,11 @@ enum class EhrLesionLocation {
 
 @JacksonSerializable
 data class EhrPriorPrimary(
-    val diagnosisDate: LocalDate,
+    val diagnosisDate: LocalDate?,
     val tumorLocation: String,
     val tumorType: String,
-    val status: String,
-    val statusDate: LocalDate
+    val status: String? = null,
+    val statusDate: LocalDate? = null
 )
 
 enum class EhrTumorStatus {
@@ -364,13 +382,15 @@ enum class EhrLabUnit(vararg val externalFormats: String) {
     NONE("");
 
     companion object {
-        fun fromString(input: String): EhrLabUnit {
-            return values().firstOrNull { it.externalFormats.map { f -> f.lowercase() }.contains(input.lowercase()) } ?: OTHER
+        fun fromString(input: String?): EhrLabUnit {
+            return input?.let { inputString ->
+                values().firstOrNull {
+                    it.externalFormats.map { f -> f.lowercase() }.contains(inputString.lowercase())
+                } ?: OTHER
+            } ?: NONE
         }
     }
 }
 
 inline fun <reified T : Enum<T>> enumeratedInput(input: String) =
     enumValues<T>().firstOrNull { it.name == input.uppercase().replace(" ", "_") } ?: { enumValueOf<T>("OTHER") }
-
-

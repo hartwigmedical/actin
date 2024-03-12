@@ -4,21 +4,26 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.trial.datamodel.Trial
 
 class TreatmentMatcher(
     private val trialMatcher: TrialMatcher,
     private val recommendationEngine: RecommendationEngine,
     private val trials: List<Trial>,
-    private val referenceDateProvider: ReferenceDateProvider
+    private val referenceDateProvider: ReferenceDateProvider,
+    private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
+    private val trialSource: String
 ) {
 
-    fun evaluateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
+    fun evaluateAndAnnotateMatchesForPatient(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
+
         val standardOfCareMatches = if (!recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) null else {
-            recommendationEngine.standardOfCareEvaluatedTreatments(patient)
+            evaluatedTreatmentAnnotator.annotate(recommendationEngine.standardOfCareEvaluatedTreatments(patient))
         }
 
         return TreatmentMatch(
@@ -27,14 +32,25 @@ class TreatmentMatcher(
             referenceDate = referenceDateProvider.date(),
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,
-            standardOfCareMatches = standardOfCareMatches
+            standardOfCareMatches = standardOfCareMatches,
+            trialSource = trialSource
         )
     }
 
     companion object {
-        fun create(resources: RuleMappingResources, trials: List<Trial>): TreatmentMatcher {
+        fun create(
+            resources: RuleMappingResources,
+            trials: List<Trial>,
+            efficacyEvidence: List<EfficacyEntry>,
+            trialSource: String
+        ): TreatmentMatcher {
             return TreatmentMatcher(
-                TrialMatcher.create(resources), RecommendationEngineFactory(resources).create(), trials, resources.referenceDateProvider
+                TrialMatcher.create(resources),
+                RecommendationEngineFactory(resources).create(),
+                trials,
+                resources.referenceDateProvider,
+                EvaluatedTreatmentAnnotator.create(efficacyEvidence),
+                trialSource
             )
         }
     }

@@ -2,8 +2,8 @@ package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.medication.MedicationStatusInterpretation
-import com.hartwig.actin.algo.medication.MedicationStatusInterpreter
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory

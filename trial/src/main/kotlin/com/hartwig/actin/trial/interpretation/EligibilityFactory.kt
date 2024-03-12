@@ -14,7 +14,7 @@ class EligibilityFactory(private val functionInputResolver: FunctionInputResolve
             generateEligibilityFunction(criterion)
             true
         } catch (exc: Exception) {
-            LOGGER.debug(exc.message)
+            LOGGER.warn(exc.message)
             false
         }
     }
@@ -36,7 +36,7 @@ class EligibilityFactory(private val functionInputResolver: FunctionInputResolve
         }
         val function = EligibilityFunction(rule = rule, parameters = parameters)
         val hasValidInputs = functionInputResolver.hasValidInputs(function)
-        check(!(hasValidInputs == null || !hasValidInputs)) { "Function ${function.rule} has invalid inputs: '${function.parameters}'" }
+        check(!(hasValidInputs == null || !hasValidInputs)) { "Function ${function.rule} has invalid inputs: '${function.parameters}' (source criterion: '$criterion')" }
         return function
     }
 

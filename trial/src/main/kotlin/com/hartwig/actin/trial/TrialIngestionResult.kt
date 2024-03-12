@@ -22,23 +22,21 @@ enum class TrialIngestionStatus {
     }
 }
 
-interface ValidationError<T> {
+interface ValidationError<T> : Comparable<ValidationError<T>> {
     val config: T
     val message: String
+
     fun configFormat(config: T): String
     fun warningMessage(): String {
         return "${this::class.java.simpleName} ${configFormat(config)}: $message"
     }
-}
 
-abstract class TrialValidationError<T : TrialConfig> : ValidationError<T>, Comparable<TrialValidationError<T>> {
-    private val comparator = Comparator.comparing<TrialValidationError<T>, String>({ it.config.trialId }, String::compareTo)
-        .thenComparing(TrialValidationError<T>::message)
-
-    override fun compareTo(other: TrialValidationError<T>): Int {
-        return comparator.compare(this, other)
+    override fun compareTo(other: ValidationError<T>): Int {
+        return this.message.compareTo(other.message)
     }
 }
+
+interface TrialValidationError<T : TrialConfig> : ValidationError<T>
 
 data class CTCDatabaseValidationError(
     override val config: CTCDatabaseEntry, override val message: String
@@ -64,13 +62,17 @@ data class TrialDatabaseValidation(
     val inclusionCriteriaValidationErrors: Set<InclusionCriteriaValidationError>,
     val inclusionReferenceValidationErrors: Set<InclusionReferenceValidationError>,
     val cohortDefinitionValidationErrors: Set<CohortDefinitionValidationError>,
-    val trialDefinitionValidationErrors: Set<TrialDefinitionValidationError>
+    val trialDefinitionValidationErrors: Set<TrialDefinitionValidationError>,
+    val unusedRulesToKeepErrors: Set<UnusedRuleToKeepError>
 ) {
     fun hasErrors(): Boolean {
-        return (inclusionCriteriaValidationErrors +
-                inclusionReferenceValidationErrors +
-                cohortDefinitionValidationErrors +
-                trialDefinitionValidationErrors).isNotEmpty()
+        return listOf(
+            inclusionCriteriaValidationErrors,
+            inclusionReferenceValidationErrors,
+            cohortDefinitionValidationErrors,
+            trialDefinitionValidationErrors,
+            unusedRulesToKeepErrors
+        ).any { it.isNotEmpty() }
     }
 }
 
@@ -86,7 +88,7 @@ data class CtcDatabaseValidation(
 data class InclusionCriteriaValidationError(
     override val config: InclusionCriteriaConfig,
     override val message: String
-) : TrialValidationError<InclusionCriteriaConfig>() {
+) : TrialValidationError<InclusionCriteriaConfig> {
     override fun configFormat(config: InclusionCriteriaConfig): String {
         return "trial id=${config.trialId} cohorts=${config.appliesToCohorts}"
     }
@@ -95,7 +97,7 @@ data class InclusionCriteriaValidationError(
 data class InclusionReferenceValidationError(
     override val config: InclusionCriteriaReferenceConfig,
     override val message: String
-) : TrialValidationError<InclusionCriteriaReferenceConfig>() {
+) : TrialValidationError<InclusionCriteriaReferenceConfig> {
     override fun configFormat(config: InclusionCriteriaReferenceConfig): String {
         return "trial id=${config.trialId} reference id=${config.referenceId}"
     }
@@ -104,7 +106,7 @@ data class InclusionReferenceValidationError(
 data class CohortDefinitionValidationError(
     override val config: CohortDefinitionConfig,
     override val message: String
-) : TrialValidationError<CohortDefinitionConfig>() {
+) : TrialValidationError<CohortDefinitionConfig> {
     override fun configFormat(config: CohortDefinitionConfig): String {
         return "trial id=${config.trialId} cohort id=${config.cohortId}"
     }
@@ -113,12 +115,21 @@ data class CohortDefinitionValidationError(
 data class TrialDefinitionValidationError(
     override val config: TrialDefinitionConfig,
     override val message: String
-) : TrialValidationError<TrialDefinitionConfig>() {
+) : TrialValidationError<TrialDefinitionConfig> {
     override fun configFormat(config: TrialDefinitionConfig): String {
         return "trial id=${config.trialId}"
     }
 }
 
+data class UnusedRuleToKeepError(
+    override val config: String
+) : ValidationError<String> {
+    override val message = config
+
+    override fun configFormat(config: String): String {
+        return "Unrecognized rule to keep"
+    }
+}
 
 data class TrialIngestionResult(
     val ingestionStatus: TrialIngestionStatus,

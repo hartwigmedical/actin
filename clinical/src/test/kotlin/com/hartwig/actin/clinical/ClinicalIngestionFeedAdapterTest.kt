@@ -2,16 +2,12 @@ package com.hartwig.actin.clinical
 
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
-import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
-import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
-import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
-import com.hartwig.actin.clinical.feed.emc.FeedModel
 import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
@@ -22,8 +18,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
 
+private const val PATIENT = "ACTN01029999"
 val EXPECTED_CLINICAL_RECORD: String =
-    "${Resources.getResource("clinical_record").path}/ACTN01029999.clinical.json"
+    "${Resources.getResource("clinical_record").path}/$PATIENT.clinical.json"
 
 class ClinicalIngestionFeedAdapterTest {
 
@@ -49,16 +46,10 @@ class ClinicalIngestionFeedAdapterTest {
             ),
             TestTreatmentDatabaseFactory.createProper()
         )
-        val clinicalFeed = ClinicalFeedReader.read(FEED_DIRECTORY)
         val ingestion = ClinicalIngestionFeedAdapter(
             EmcClinicalFeedIngestor.create(
-                FeedModel(
-                    clinicalFeed.copy(
-                        questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                            clinicalFeed.questionnaireEntries, QuestionnaireRawEntryMapper.createFromCurationDirectory(CURATION_DIRECTORY)
-                        )
-                    )
-                ),
+                FEED_DIRECTORY,
+                CURATION_DIRECTORY,
                 curationDatabase,
                 TestAtcFactory.createProperAtcModel()
             ), curationDatabase
@@ -72,24 +63,26 @@ class ClinicalIngestionFeedAdapterTest {
         val patientResults = ingestionResult.patientResults
         assertThat(patientResults[0].status).isEqualTo(PatientIngestionStatus.PASS)
         assertThat(patientResults).hasSize(1)
-        assertThat(patientResults[0].patientId).isEqualTo("ACTN01029999")
+        assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
         assertThat(patientResults[0].curationResults).isEmpty()
         assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
         assertThat(patientResults[0].questionnaireCurationErrors)
-            .containsExactly(QuestionnaireCurationError("ACTN-01-02-9999", "Unrecognized questionnaire option: 'Probably'"))
+            .containsExactly(QuestionnaireCurationError(PATIENT, "Unrecognized questionnaire option: 'Probably'"))
         assertThat(patientResults[0].feedValidationWarnings).containsExactly(
             FeedValidationWarning(
-                "ACTN-01-02-9999",
+                PATIENT,
                 "Empty vital function value"
             )
         )
 
-        assertThat(ingestionResult.unusedConfigs).containsExactly(
+        assertThat(ingestionResult.unusedConfigs).containsExactlyInAnyOrder(
+            UnusedCurationConfig(categoryName = "Oncological History", input = "capecitabine and oxi"),
             UnusedCurationConfig(categoryName = "Primary Tumor", input = "long | metastase adenocarcinoom"),
             UnusedCurationConfig(categoryName = "Non Oncological History", input = "pijn bij maligne neoplasma van longen"),
             UnusedCurationConfig(categoryName = "Complication", input = "overige"),
+            UnusedCurationConfig(categoryName = "Lesion Location", input = "brain"),
             UnusedCurationConfig(categoryName = "Toxicity", input = "dysphagia"),
-            UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "ihc erbb2 3+"),
+            UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "immunohistochemie erbb2 3+"),
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
             UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk")
         )

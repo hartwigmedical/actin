@@ -7,7 +7,7 @@ data class CkbExtendedEvidenceEntry(
     val title: String,
     val phase: String,
     val recruitment: String,
-    val therapies: List<CkbTherapy>,
+    var therapies: List<CkbTherapy>,
     val ageGroups: List<String>,
     val gender: String,
     val variantRequirements: String,

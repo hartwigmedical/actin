@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
-    private val function = HasHadTreatmentWithCategoryOfTypesAsMostRecent(TreatmentCategory.TARGETED_THERAPY, DrugType.EGFR_INHIBITOR_GEN_3)
+    private val function = HasHadTreatmentWithCategoryOfTypesAsMostRecent(TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR_GEN_3))
     private val functionWithoutType = HasHadTreatmentWithCategoryOfTypesAsMostRecent(TreatmentCategory.TARGETED_THERAPY, null)
 
     @Test

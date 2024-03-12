@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import java.time.LocalDateTime
 
 object TestClinicalFactory {
+
     private val NOW = LocalDateTime.now()
     private val TODAY = NOW.toLocalDate()
     private const val DAYS_SINCE_QUESTIONNAIRE = 10

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.util
 
+import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.CohortMatch
-import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.interpretation.EvaluationSummarizer
@@ -32,8 +32,8 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
 
         printer.print("Standard-of-care treatments evaluated: ${treatmentMatch.standardOfCareMatches?.count() ?: 0}")
         if (treatmentMatch.standardOfCareMatches != null) {
-            printer.print("Eligible SOC treatments: ${treatmentMatch.standardOfCareMatches.count(EvaluatedTreatment::eligible)}")
-            printEvaluationSummary(treatmentMatch.standardOfCareMatches.flatMap(EvaluatedTreatment::evaluations), "SOC rules")
+            printer.print("Eligible SOC treatments: ${treatmentMatch.standardOfCareMatches.count(AnnotatedTreatmentMatch::eligible)}")
+            printEvaluationSummary(treatmentMatch.standardOfCareMatches.flatMap(AnnotatedTreatmentMatch::evaluations), "SOC rules")
         }
     }
 
@@ -56,31 +56,31 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
         return if (allCohorts.isNotEmpty()) "${allCohorts.size} (${allCohorts.joinToString(", ")})" else "None"
     }
 
+    private fun trialString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
+        return if (eligibleTrialMap.isEmpty()) "None" else {
+            val names = eligibleTrialMap.keys.map(::trialName)
+            "${names.size} (${names.joinToString(", ")})"
+        }
+    }
+
+    private fun trialName(trial: TrialIdentification): String {
+        return trial.trialId + " (" + trial.acronym + ")"
+    }
+
+    private fun recruitingCohortString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
+        val recruitingCohorts = eligibleTrialMap.flatMap { (trial, cohorts) ->
+            cohorts.filter { it.open && it.slotsAvailable }.map { cohortName(trial, it) }
+        }
+        return if (recruitingCohorts.isNotEmpty()) "${recruitingCohorts.size} (${recruitingCohorts.joinToString(", ")})" else "None"
+    }
+
+    private fun cohortName(trial: TrialIdentification, cohort: CohortMetadata): String {
+        return trial.trialId + " - " + cohort.description
+    }
+
     companion object {
         fun printMatch(treatmentMatch: TreatmentMatch) {
             TreatmentMatchPrinter(DatamodelPrinter.withDefaultIndentation()).print(treatmentMatch)
-        }
-
-        private fun trialString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
-            return if (eligibleTrialMap.isEmpty()) "None" else {
-                val names = eligibleTrialMap.keys.map(::trialName)
-                "${names.size} (${names.joinToString(", ")})"
-            }
-        }
-
-        private fun trialName(trial: TrialIdentification): String {
-            return trial.trialId + " (" + trial.acronym + ")"
-        }
-
-        private fun recruitingCohortString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {
-            val recruitingCohorts = eligibleTrialMap.flatMap { (trial, cohorts) ->
-                cohorts.filter { it.open && it.slotsAvailable }.map { cohortName(trial, it) }
-            }
-            return if (recruitingCohorts.isNotEmpty()) "${recruitingCohorts.size} (${recruitingCohorts.joinToString(", ")})" else "None"
-        }
-
-        private fun cohortName(trial: TrialIdentification, cohort: CohortMetadata): String {
-            return trial.trialId + " - " + cohort.description
         }
     }
 }

@@ -43,13 +43,14 @@ class MolecularInputCheckerTest {
         assertThat(isProteinImpact("V600E")).isTrue
         assertThat(isProteinImpact("V600*")).isTrue
         assertThat(isProteinImpact("V600fs")).isTrue
-        assertThat(isProteinImpact("M1X")).isTrue
+        assertThat(isProteinImpact("M1F")).isTrue
         assertThat(isProteinImpact("H167_N173del")).isTrue
         assertThat(isProteinImpact("N771_N773dup")).isTrue
         assertThat(isProteinImpact("Ter1211Cext*?")).isTrue
         assertThat(isProteinImpact("")).isFalse
         assertThat(isProteinImpact("MG")).isFalse
-        assertThat(isProteinImpact("M0X")).isFalse
+        assertThat(isProteinImpact("M0F")).isFalse
+        assertThat(isProteinImpact("M100X")).isFalse
         assertThat(isProteinImpact("not a protein impact")).isFalse
         assertThat(isProteinImpact("Val600Glu")).isFalse
         assertThat(isProteinImpact("600")).isFalse

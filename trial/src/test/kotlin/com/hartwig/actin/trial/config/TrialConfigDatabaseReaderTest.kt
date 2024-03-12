@@ -42,7 +42,7 @@ class TrialConfigDatabaseReaderTest {
 
             val config1: CohortDefinitionConfig = findCohort(configs, "A")
             assertThat(config1.trialId).isEqualTo("ACTN 2021")
-            assertThat(config1.ctcCohortIds).containsExactlyInAnyOrder("1", "2")
+            assertThat(config1.externalCohortIds).containsExactlyInAnyOrder("1", "2")
             assertThat(config1.evaluable).isTrue
             assertThat(config1.open).isNull()
             assertThat(config1.slotsAvailable).isNull()
@@ -51,7 +51,7 @@ class TrialConfigDatabaseReaderTest {
 
             val config2: CohortDefinitionConfig = findCohort(configs, "B")
             assertThat(config2.trialId).isEqualTo("ACTN 2021")
-            assertThat(config2.ctcCohortIds).containsExactly("wont_be_mapped_because_closed")
+            assertThat(config2.externalCohortIds).containsExactly("wont_be_mapped_because_closed")
             assertThat(config2.evaluable).isFalse
             assertThat(config2.open).isFalse
             assertThat(config2.slotsAvailable).isFalse

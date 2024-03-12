@@ -78,17 +78,15 @@ object CohortStatusResolver {
         entriesByCohortId: Map<Int, CTCDatabaseEntry>,
         cohortDefinitionConfig: CohortDefinitionConfig
     ): Pair<List<CTCDatabaseEntry?>, List<CohortDefinitionValidationError>> {
-        val entriesAndValidationErrors = cohortDefinitionConfig.ctcCohortIds.map { it.toInt() }.toSet().map { cohortId ->
-            entriesByCohortId[cohortId] to if (!entriesByCohortId.contains(cohortId)) {
+        val entriesAndValidationErrors = cohortDefinitionConfig.externalCohortIds.map(String::toInt).distinct().map { cohortId ->
+            entriesByCohortId[cohortId] to if (entriesByCohortId.contains(cohortId)) null else {
                 CohortDefinitionValidationError(
                     cohortDefinitionConfig,
                     "Could not find CTC database entry with cohort ID '$cohortId'"
                 )
-            } else {
-                null
             }
         }
-        return entriesAndValidationErrors.map { it.first } to entriesAndValidationErrors.map { it.second }.filterNotNull()
+        return entriesAndValidationErrors.map { it.first } to entriesAndValidationErrors.mapNotNull { it.second }
     }
 
     private fun fromEntry(entry: CTCDatabaseEntry): Pair<InterpretedCohortStatus, List<CTCDatabaseValidationError>> {

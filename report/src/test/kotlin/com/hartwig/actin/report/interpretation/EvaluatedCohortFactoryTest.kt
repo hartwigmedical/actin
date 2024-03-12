@@ -21,7 +21,7 @@ class EvaluatedCohortFactoryTest {
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
         assertThat(trial1cohortA.molecularEvents).isNotEmpty
-        assertThat(trial1cohortA.molecularEvents).containsExactly("BRAF V600E")
+        assertThat(trial1cohortA.molecularEvents).containsExactly("MSI")
         assertThat(trial1cohortA.isPotentiallyEligible).isTrue
         assertThat(trial1cohortA.isOpen).isTrue
         assertThat(trial1cohortA.hasSlotsAvailable).isFalse
@@ -46,7 +46,7 @@ class EvaluatedCohortFactoryTest {
 
         val trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A")
         assertThat(trial2cohortA.molecularEvents).isNotEmpty
-        assertThat(trial2cohortA.molecularEvents).containsExactly("BRAF V600E")
+        assertThat(trial2cohortA.molecularEvents).containsExactly("MSI")
         assertThat(trial2cohortA.isPotentiallyEligible).isTrue
         assertThat(trial2cohortA.isOpen).isTrue
         assertThat(trial2cohortA.hasSlotsAvailable).isFalse

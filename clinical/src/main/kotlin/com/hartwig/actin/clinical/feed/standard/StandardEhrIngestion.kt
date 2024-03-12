@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.hartwig.actin.TreatmentDatabase
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.clinical.AtcModel
 import com.hartwig.actin.clinical.PatientIngestionResult
 import com.hartwig.actin.clinical.PatientIngestionStatus
@@ -15,6 +15,7 @@ import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
+import kotlin.io.path.name
 
 
 class StandardEhrIngestion(
@@ -31,18 +32,20 @@ class StandardEhrIngestion(
     private val treatmentHistoryExtractor: EhrTreatmentHistoryExtractor,
     private val clinicalStatusExtractor: EhrClinicalStatusExtractor,
     private val tumorDetailsExtractor: EhrTumorDetailsExtractor,
-    private val secondPrimaryExtractor: EhrSecondPrimariesExtractor,
+    private val secondPrimaryExtractor: EhrPriorPrimariesExtractor,
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
-    private val bodyWeightExtractor: EhrBodyWeightExtractor
+    private val bodyWeightExtractor: EhrBodyWeightExtractor,
+    private val molecularTestExtractor: EhrMolecularTestExtractor
 ) : ClinicalFeedIngestion {
     private val mapper = ObjectMapper().apply {
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
         registerModule(JavaTimeModule())
+        registerModule(KotlinModule.Builder().build())
     }
 
     override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
-        return Files.list(Paths.get(directory)).map {
+        return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map {
             val ehrPatientRecord = mapper.readValue(Files.readString(it), EhrPatientRecord::class.java)
             val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
             val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
@@ -59,6 +62,7 @@ class StandardEhrIngestion(
             val intolerances = intolerancesExtractor.extract(ehrPatientRecord)
             val surgeries = surgeryExtractor.extract(ehrPatientRecord)
             val bodyWeights = bodyWeightExtractor.extract(ehrPatientRecord)
+            val molecularTests = molecularTestExtractor.extract(ehrPatientRecord)
 
             val patientEvaluation = listOf(
                 patientDetails,
@@ -75,7 +79,8 @@ class StandardEhrIngestion(
                 intolerances,
                 surgeries,
                 bodyWeights,
-                secondPrimaries
+                secondPrimaries,
+                molecularTests
             )
                 .map { e -> e.evaluation }
                 .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
@@ -83,7 +88,7 @@ class StandardEhrIngestion(
             Pair(
                 patientEvaluation,
                 ClinicalRecord(
-                    patientId = ehrPatientRecord.patientDetails.hashedId.toBase64(),
+                    patientId = ehrPatientRecord.patientDetails.hashedIdBase64(),
                     patient = patientDetails.extracted,
                     tumor = tumorDetails.extracted,
                     clinicalStatus = clinicalStatus.extracted,
@@ -99,7 +104,7 @@ class StandardEhrIngestion(
                     surgeries = surgeries.extracted,
                     bodyWeights = bodyWeights.extracted,
                     priorSecondPrimaries = secondPrimaries.extracted,
-                    priorMolecularTests = emptyList()
+                    priorMolecularTests = molecularTests.extracted
                 )
             )
 
@@ -121,15 +126,13 @@ class StandardEhrIngestion(
         fun create(
             directory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel,
-            treatmentDatabase: TreatmentDatabase
+            atcModel: AtcModel
         ) = StandardEhrIngestion(
             directory,
             EhrMedicationExtractor(
                 atcModel,
                 curationDatabaseContext.qtProlongingCuration,
-                curationDatabaseContext.cypInteractionCuration,
-                curationDatabaseContext.medicationDosageCuration
+                curationDatabaseContext.cypInteractionCuration
             ),
             EhrSurgeryExtractor(),
             EhrIntolerancesExtractor(atcModel, curationDatabaseContext.intoleranceCuration),
@@ -138,13 +141,20 @@ class StandardEhrIngestion(
             EhrLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
             EhrToxicityExtractor(curationDatabaseContext.toxicityCuration),
             EhrComplicationExtractor(curationDatabaseContext.complicationCuration),
-            EhrPriorOtherConditionsExtractor(curationDatabaseContext.nonOncologicalHistoryCuration),
-            EhrTreatmentHistoryExtractor(treatmentDatabase),
+            EhrPriorOtherConditionsExtractor(
+                curationDatabaseContext.nonOncologicalHistoryCuration,
+                curationDatabaseContext.treatmentHistoryEntryCuration
+            ),
+            EhrTreatmentHistoryExtractor(
+                curationDatabaseContext.treatmentHistoryEntryCuration,
+                curationDatabaseContext.nonOncologicalHistoryCuration
+            ),
             EhrClinicalStatusExtractor(),
-            EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration),
-            EhrSecondPrimariesExtractor(),
+            EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration),
+            EhrPriorPrimariesExtractor(),
             EhrPatientDetailsExtractor(),
-            EhrBodyWeightExtractor()
+            EhrBodyWeightExtractor(),
+            EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration)
         )
 
     }

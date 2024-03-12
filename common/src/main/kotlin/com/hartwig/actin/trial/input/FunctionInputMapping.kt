@@ -45,6 +45,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_INCURABLE_CANCER to FunctionInput.NONE,
         EligibilityRule.HAS_ANY_LESION to FunctionInput.NONE,
         EligibilityRule.HAS_LIVER_METASTASES to FunctionInput.NONE,
+        EligibilityRule.HAS_LIVER_METASTASES_ONLY to FunctionInput.NONE,
         EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_KNOWN_CNS_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES to FunctionInput.NONE,
@@ -77,13 +78,16 @@ object FunctionInputMapping {
         EligibilityRule.HAS_BCLC_STAGE_X to FunctionInput.ONE_STRING,
         EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT to FunctionInput.NONE,
         EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to FunctionInput.NONE,
-        EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_DRUG_X to FunctionInput.ONE_SPECIFIC_TREATMENT,
+        EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_ANY_DRUG_X to FunctionInput.MANY_DRUGS,
+        EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to FunctionInput.NONE,
 
         EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to FunctionInput.NONE,
-        EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to FunctionInput.ONE_STRING,
+        EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to FunctionInput.ONE_SPECIFIC_TREATMENT,
         EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to FunctionInput.NONE,
         EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to FunctionInput.NONE,
         EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X to FunctionInput.MANY_INTEGERS,
+        EligibilityRule.IS_ELIGIBLE_FOR_LOCAL_LIVER_TREATMENT to FunctionInput.NONE,
+        EligibilityRule.IS_ELIGIBLE_FOR_INTENSIVE_TREATMENT to FunctionInput.NONE,
         EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to FunctionInput.ONE_INTEGER,
@@ -93,6 +97,8 @@ object FunctionInputMapping {
         EligibilityRule.HAS_NOT_RECEIVED_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_TREATMENT_NAME_X to FunctionInput.ONE_SPECIFIC_TREATMENT,
         EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER,
+        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to
+                FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_TREATMENT_CATEGORY_MANY_TYPES,
         EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to FunctionInput.MANY_DRUGS,
         EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS to FunctionInput.MANY_STRINGS_ONE_INTEGER,
         EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to
@@ -108,10 +114,12 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_DRUGS_Y to FunctionInput.ONE_TREATMENT_CATEGORY_MANY_DRUGS,
         EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES to FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER,
         EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES to FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER,
-        EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE to FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE,
+        EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE to FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES,
         EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_LINES to
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER,
         EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES to
+                FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER,
+        EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_MOST_Z_WEEKS_WITH_STOP_REASON_OTHER_THAN_PD to
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_INTEGER,
         EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE,
         EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITHIN_X_MONTHS to FunctionInput.ONE_INTEGER,
@@ -136,6 +144,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HAD_COMPLETE_RESECTION to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_PARTIAL_RESECTION to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS to FunctionInput.ONE_INTEGER,
+        EligibilityRule.HAS_HAD_LIVER_RESECTION to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS to FunctionInput.ONE_INTEGER,
         EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to FunctionInput.NONE,
         EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to FunctionInput.ONE_DOUBLE,
@@ -144,6 +153,7 @@ object FunctionInputMapping {
         EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to FunctionInput.NONE,
         EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to FunctionInput.NONE,
         EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to FunctionInput.NONE,
+
 
         EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY to FunctionInput.NONE,
@@ -188,6 +198,7 @@ object FunctionInputMapping {
         EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
+        EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to FunctionInput.ONE_DOUBLE,
         EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to FunctionInput.NONE,
         EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to FunctionInput.NONE,
         EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to FunctionInput.NONE,
@@ -266,6 +277,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X to FunctionInput.ONE_DOID_TERM,
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS to FunctionInput.ONE_DOID_TERM_ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME to FunctionInput.ONE_STRING,
+        EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME_WITHIN_Y_MONTHS to FunctionInput.ONE_STRING_ONE_INTEGER,
         EligibilityRule.HAS_HISTORY_OF_AUTOIMMUNE_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE to FunctionInput.NONE,
