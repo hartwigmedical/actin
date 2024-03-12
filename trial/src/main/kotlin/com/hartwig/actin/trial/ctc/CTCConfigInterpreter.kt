@@ -26,7 +26,7 @@ class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpr
     }
 
     override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
-        if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
+        if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX) || ctcDatabase.mecStudyNotInCTC.contains(trialConfig.trialId)) {
             LOGGER.debug(
                 " Skipping study status retrieval for {} ({}) since study is not deemed a CTC trial",
                 trialConfig.trialId,

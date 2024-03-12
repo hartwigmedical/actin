@@ -13,6 +13,7 @@ class CTCDatabaseReaderTest {
         assertEntries(database.entries)
         assertStudyMETCsToIgnore(database.studyMETCsToIgnore)
         assertUnmappedCohortIds(database.unmappedCohortIds)
+        assertMECNotInCTC(database.mecStudyNotInCTC)
     }
 
     companion object {
@@ -57,6 +58,11 @@ class CTCDatabaseReaderTest {
         private fun assertUnmappedCohortIds(unmappedCohortIds: Set<Int>) {
             assertThat(unmappedCohortIds).hasSize(1)
             assertThat(unmappedCohortIds.contains(1)).isTrue
+        }
+
+        private fun assertMECNotInCTC(studyWithMECIdNotInCTC: Set<String>) {
+            assertThat(studyWithMECIdNotInCTC).hasSize(1)
+            assertThat(studyWithMECIdNotInCTC.contains("MEC-101")).isTrue
         }
     }
 }
