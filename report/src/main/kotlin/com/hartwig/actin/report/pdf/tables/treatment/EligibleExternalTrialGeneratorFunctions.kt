@@ -8,11 +8,11 @@ import com.itextpdf.layout.element.Table
 
 object EligibleExternalTrialGeneratorFunctions {
 
-    fun dutchTrials(externalTrialsPerEvent: Map<String, List<ExternalTrial>>): Map<String, List<ExternalTrial>> {
+    fun dutchTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, List<ExternalTrial>> {
         return filterMapOfExternalTrials(externalTrialsPerEvent) { it.countries.contains(Country.NETHERLANDS) }
     }
 
-    fun nonDutchTrials(externalTrialsPerEvent: Map<String, List<ExternalTrial>>): Map<String, List<ExternalTrial>> {
+    fun nonDutchTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, List<ExternalTrial>> {
         return filterMapOfExternalTrials(externalTrialsPerEvent) { !it.countries.contains(Country.NETHERLANDS) }
     }
 
@@ -34,7 +34,7 @@ object EligibleExternalTrialGeneratorFunctions {
     }
 
     private fun filterMapOfExternalTrials(
-        externalTrialsPerEvent: Map<String, List<ExternalTrial>>, filter: (ExternalTrial) -> Boolean
+        externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, filter: (ExternalTrial) -> Boolean
     ): Map<String, List<ExternalTrial>> {
         return externalTrialsPerEvent.mapValues { (_, externalTrials) -> externalTrials.filter(filter::invoke) }
             .filterValues { it.isNotEmpty() }
