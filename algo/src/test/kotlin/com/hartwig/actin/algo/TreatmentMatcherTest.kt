@@ -85,10 +85,11 @@ class TreatmentMatcherTest {
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }
-        val treatmentMatcher = TreatmentMatcher(trialMatcher, recommendationEngine, trials, CurrentDateProvider())
+        val treatmentMatcher = TreatmentMatcher(trialMatcher, recommendationEngine, trials, CurrentDateProvider(),
+            EvaluatedTreatmentAnnotator.create(evidenceEntries), EMC_TRIAL_SOURCE)
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")
 
-        assertThat(treatmentMatcher.evaluateMatchesForPatient(patientWithoutMolecular)).isEqualTo(expectedTreatmentMatchWithoutMolecular)
+        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patientWithoutMolecular)).isEqualTo(expectedTreatmentMatchWithoutMolecular)
     }
 }

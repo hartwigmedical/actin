@@ -4,8 +4,8 @@ import com.google.common.io.Resources
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalDir
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalFile
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalValue
-import com.hartwig.actin.util.ApplicationConfig.optionalFile
 import com.hartwig.actin.util.ApplicationConfig.optionalDir
+import com.hartwig.actin.util.ApplicationConfig.optionalFile
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
@@ -115,7 +115,7 @@ class ApplicationConfigTest {
     fun `Should accept optional file if exists`() {
         val options = Options()
         options.addOption("file", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-file", CONFIG_FILE))
-        assertThat(optionalFile(cmd, "file")).isEqualTo(CONFIG_FILE)
+        val cmd = DefaultParser().parse(options, arrayOf("-file", configFile))
+        assertThat(optionalFile(cmd, "file")).isEqualTo(configFile)
     }
 }

@@ -22,8 +22,8 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             )
         }
 
-        if (record.molecular.type == ExperimentType.TARGETED && record.molecular.containsTumorCells) {
-            val geneIsTested = record.molecular.drivers.copyNumbers
+        if (molecular.type == ExperimentType.TARGETED && molecular.containsTumorCells) {
+            val geneIsTested = molecular.drivers.copyNumbers
                 .any { it.gene == gene }
             return if (geneIsTested) {
                 EvaluationFactory.pass(
@@ -53,7 +53,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
                 )
             }
 
-            record.molecular.type == ExperimentType.TARGETED && !record.molecular.containsTumorCells -> {
+            molecular.type == ExperimentType.TARGETED && !molecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had OncoAct tumor NGS panel but biopsy contained too little tumor cells",
                     "OncoAct tumor NGS panel performed containing $gene, but sample purity was too low"
