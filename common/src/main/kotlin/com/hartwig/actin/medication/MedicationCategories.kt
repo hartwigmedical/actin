@@ -1,6 +1,5 @@
-package com.hartwig.actin.algo.medication
+package com.hartwig.actin.medication
 
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 
 class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel>>, private val atcTree: AtcTree) {
@@ -52,7 +51,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
         }
 
         private fun convertToAtcLevel(atcCodes: Set<String>, atcTree: AtcTree): Set<AtcLevel> {
-            return atcCodes.map { atcTree.resolve(it) }.toSet()
+            return atcCodes.map(atcTree::resolve).toSet()
         }
     }
 }

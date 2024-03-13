@@ -3,6 +3,8 @@ package com.hartwig.actin.trial.interpretation
 import com.google.common.io.Resources
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.medication.AtcTree
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
@@ -17,7 +19,7 @@ import com.hartwig.actin.trial.datamodel.Trial
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class TrialFactoryTest {
+class TrialIngestionTest {
 
     @Test
     fun `Should not crash when creating from trial config directory`() {
@@ -27,14 +29,15 @@ class TrialFactoryTest {
                 TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
                 TestGeneFilterFactory.createNeverValid(),
-                TreatmentDatabase(emptyMap(), emptyMap())
+                TreatmentDatabase(emptyMap(), emptyMap()),
+                MedicationCategories(emptyMap(), AtcTree(emptyMap()))
             )
         ).isNotNull
     }
 
     @Test
     fun `Should create expected trials from proper test model`() {
-        val factory = TrialIngestion(
+        val ingestion = TrialIngestion(
             TrialConfigModel.createFromDatabase(
                 TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase(),
                 TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
@@ -42,7 +45,7 @@ class TrialFactoryTest {
             TestCTCModelFactory.createWithProperTestCTCDatabase(),
             TestEligibilityFactoryFactory.createTestEligibilityFactory()
         )
-        val trials = factory.ingestTrials()
+        val trials = ingestion.ingestTrials()
         assertThat(trials.trials).hasSize(2)
 
         val trial = findTrial(trials.trials, "TEST-1")
@@ -80,7 +83,7 @@ class TrialFactoryTest {
 
     @Test(expected = IllegalStateException::class)
     fun `Should crash in case trial status cannot be resolved`() {
-        val factory = TrialIngestion(
+        val ingestion = TrialIngestion(
             TrialConfigModel.createFromDatabase(
                 TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase().copy(
                     trialDefinitionConfigs = listOf(TestTrialDefinitionConfigFactory.MINIMAL.copy(open = null))
@@ -91,7 +94,7 @@ class TrialFactoryTest {
             TestEligibilityFactoryFactory.createTestEligibilityFactory()
         )
 
-        factory.ingestTrials()
+        ingestion.ingestTrials()
     }
 
     companion object {

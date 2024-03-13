@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.interpretation
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.TrialIngestionResult
@@ -104,10 +105,12 @@ class TrialIngestion(
             configInterpreter: ConfigInterpreter,
             doidModel: DoidModel,
             geneFilter: GeneFilter,
-            treatmentDatabase: TreatmentDatabase
+            treatmentDatabase: TreatmentDatabase,
+            medicationCategories: MedicationCategories
         ): TrialIngestion {
-            val molecularInputChecker = MolecularInputChecker(geneFilter)
-            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
+            val functionInputResolver = FunctionInputResolver(
+                doidModel, MolecularInputChecker(geneFilter), treatmentDatabase, medicationCategories
+            )
             val eligibilityFactory = EligibilityFactory(functionInputResolver)
             val trialConfigModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory)
             return TrialIngestion(trialConfigModel, configInterpreter, eligibilityFactory)

@@ -5,21 +5,17 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
-import com.hartwig.actin.algo.medication.MedicationCategories
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
-    private val selector: MedicationSelector
-    private val categories: MedicationCategories
-
-    init {
-        val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
-        selector = MedicationSelector(interpreter)
-        categories = MedicationCategories.create(atcTree())
-    }
+    private val selector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date()))
+    private val categories = MedicationCategories.create(atcTree())
+    private val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
@@ -58,21 +54,22 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun hasRecentlyReceivedCancerTherapyOfCategoriesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyStringsOneIntegerInput(function)
-            createReceivedCancerTherapyOfCategoryFunction(input.strings, input.integer)
+            val (mappedCategories, minWeeks) = functionInputResolver().createManyMedicationCategoriesOneIntegerInput(function)
+            createReceivedCancerTherapyOfCategoryFunction(mappedCategories, minWeeks)
         }
     }
 
     private fun hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyStringsTwoIntegersInput(function)
-            createReceivedCancerTherapyOfCategoryFunction(input.strings, input.integer1)
+            val (mappedCategories, minWeeks, _) = functionInputResolver().createManyMedicationCategoriesTwoIntegersInput(function)
+            createReceivedCancerTherapyOfCategoryFunction(mappedCategories, minWeeks)
         }
     }
 
-    private fun createReceivedCancerTherapyOfCategoryFunction(categoryInputs: List<String>, minWeeks: Int): EvaluationFunction {
+    private fun createReceivedCancerTherapyOfCategoryFunction(
+        mappedCategories: Map<String, Set<AtcLevel>>, minWeeks: Int
+    ): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        val mappedCategories = categoryInputs.associateWith(categories::resolve)
         return HasRecentlyReceivedCancerTherapyOfCategory(mappedCategories, emptyMap(), interpreter)
     }
 
@@ -116,28 +113,28 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun createReceivedAnyCancerTherapyFunction(minWeeks: Int): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
         return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, emptyMap(), interpreter)
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyStringsOneIntegerInput(function)
-            createReceivedAnyCancerTherapyButSomeFunction(input.strings, input.integer)
+            val (mappedCategories, minWeeks) = functionInputResolver().createManyMedicationCategoriesOneIntegerInput(function)
+            createReceivedAnyCancerTherapyButSomeFunction(mappedCategories, minWeeks)
         }
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeWithHalfLifeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyStringsTwoIntegersInput(function)
-            createReceivedAnyCancerTherapyButSomeFunction(input.strings, input.integer1)
+            val (mappedCategories, minWeeks, _) = functionInputResolver().createManyMedicationCategoriesTwoIntegersInput(function)
+            createReceivedAnyCancerTherapyButSomeFunction(mappedCategories, minWeeks)
         }
     }
 
-    private fun createReceivedAnyCancerTherapyButSomeFunction(categoriesToIgnore: List<String>, minWeeks: Int): EvaluationFunction {
+    private fun createReceivedAnyCancerTherapyButSomeFunction(
+        mappedIgnoredCategories: Map<String, Set<AtcLevel>>,
+        minWeeks: Int
+    ): EvaluationFunction {
         val interpreter = createInterpreterForWashout(minWeeks)
-        val antiCancerCategories = mapOf("Anticancer" to categories.resolve("Anticancer"))
-        val mappedIgnoredCategories = categoriesToIgnore.associateWith(categories::resolve)
         return HasRecentlyReceivedCancerTherapyOfCategory(antiCancerCategories, mappedIgnoredCategories, interpreter)
     }
 
