@@ -29,7 +29,8 @@ object TestReportWriterApplication {
         LOGGER.info("Printing clinical record")
         ClinicalPrinter.printRecord(report.clinical)
         LOGGER.info("Printing molecular record")
-        MolecularPrinter.printRecord(report.molecular)
+        // TODO (kz) this will blow up when no wgs in molecular history, fix!
+        MolecularPrinter.printRecord(report.molecularHistory.mostRecentWGS()!!)
 
         val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
             LOGGER.info(

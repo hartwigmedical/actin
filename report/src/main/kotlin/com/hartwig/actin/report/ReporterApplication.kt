@@ -2,6 +2,7 @@ package com.hartwig.actin.report
 
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
@@ -25,7 +26,8 @@ class ReporterApplication(private val config: ReporterConfig) {
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-        val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch)
+        val molecularHistory = MolecularHistory.fromWGSandIHC(molecular, clinical.priorMolecularTests)
+        val report = ReportFactory.fromInputs(clinical, molecularHistory, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, config.enableExtendedMode)
         LOGGER.info("Done!")

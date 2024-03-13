@@ -36,36 +36,42 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
     }
 
     private fun addMolecularDetails(document: Document) {
-        val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.clinical, keyWidth, contentWidth() - keyWidth - 10)
-        val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
-        document.add(priorMolecularResults)
+        report.molecularHistory.mostRecentWGS()?.let { molecular ->
+            val keyWidth = Formats.STANDARD_KEY_WIDTH
+            val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.molecularHistory, keyWidth, contentWidth() - keyWidth - 10)
+            val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
+            document.add(priorMolecularResults)
 
-        val table = Tables.createSingleColWithWidth(contentWidth())
-        table.addCell(Cells.createEmpty())
-        table.addCell(
-            Cells.createTitle("${report.molecular.type.display()} (${report.molecular.sampleId}, ${date(report.molecular.date)})")
-        )
+            val table = Tables.createSingleColWithWidth(contentWidth())
+            table.addCell(Cells.createEmpty())
+            table.addCell(
+                Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
+            )
 
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-        val generators: MutableList<TableGenerator> = mutableListOf(
-            MolecularCharacteristicsGenerator(report.molecular, contentWidth())
-        )
-        if (report.molecular.containsTumorCells) {
-            generators.add(PredictedTumorOriginGenerator(report.molecular, contentWidth()))
-            generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, report.molecular, cohorts, contentWidth()))
-        }
-        for (i in generators.indices) {
-            val generator = generators[i]
-            table.addCell(Cells.createSubTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
+            val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+            val generators: MutableList<TableGenerator> = mutableListOf(
+                MolecularCharacteristicsGenerator(molecular, contentWidth())
+            )
+            if (molecular.containsTumorCells) {
+                generators.add(PredictedTumorOriginGenerator(molecular, contentWidth()))
+                generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, contentWidth()))
             }
+            for (i in generators.indices) {
+                val generator = generators[i]
+                table.addCell(Cells.createSubTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
+                if (i < generators.size - 1) {
+                    table.addCell(Cells.createEmpty())
+                }
+            }
+            if (!molecular.containsTumorCells) {
+                table.addCell(Cells.createContent("No successful WGS could be performed on the submitted biopsy"))
+            }
+            document.add(table)
+        } ?: run {
+            // TODO (kz) what should report show if no WGS?
+            // TODO (kz) add section for priorMolecular
+            throw IllegalStateException("No molecular data available")
         }
-        if (!report.molecular.containsTumorCells) {
-            table.addCell(Cells.createContent("No successful WGS could be performed on the submitted biopsy"))
-        }
-        document.add(table)
     }
 }

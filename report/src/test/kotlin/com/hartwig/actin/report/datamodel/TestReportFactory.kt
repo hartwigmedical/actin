@@ -10,7 +10,7 @@ object TestReportFactory {
         return Report(
             patientId = TestDataFactory.TEST_PATIENT,
             clinical = TestClinicalFactory.createMinimalTestClinicalRecord(),
-            molecular = TestMolecularFactory.createMinimalTestMolecularRecord(),
+            molecularHistory = TestMolecularFactory.createMinimalTestMolecularHistory(),
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
         )
     }
@@ -18,7 +18,7 @@ object TestReportFactory {
     fun createProperTestReport(): Report {
         return createMinimalTestReport().copy(
             clinical = TestClinicalFactory.createProperTestClinicalRecord(),
-            molecular = TestMolecularFactory.createProperTestMolecularRecord(),
+            molecularHistory = TestMolecularFactory.createProperTestMolecularHistory(),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         )
     }
@@ -26,7 +26,7 @@ object TestReportFactory {
     fun createExhaustiveTestReport(): Report {
         return createMinimalTestReport().copy(
             clinical = TestClinicalFactory.createExhaustiveTestClinicalRecord(),
-            molecular = TestMolecularFactory.createExhaustiveTestMolecularRecord(),
+            molecularHistory = TestMolecularFactory.createExhaustiveTestMolecularHistory(),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         )
     }

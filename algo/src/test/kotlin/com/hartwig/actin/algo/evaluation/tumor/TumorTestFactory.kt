@@ -49,7 +49,7 @@ internal object TumorTestFactory {
         doids: Set<String>, amplifiedGene: String, priorMolecularTests: List<PriorMolecularTest>
     ): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests),
+            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids)),
             molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                 drivers = baseMolecular.drivers.copy(
@@ -66,7 +66,7 @@ internal object TumorTestFactory {
                     )
                 )
             ),
-                emptyList())
+                priorMolecularTests)
         )
     }
 
@@ -199,8 +199,9 @@ internal object TumorTestFactory {
     fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<PriorMolecularTest>, doids: Set<String>?): PatientRecord {
         return base.copy(
             clinical = base.clinical.copy(
-                tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests
-            )
+                tumor = base.clinical.tumor.copy(doids = doids)
+            ),
+            molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular, priorMolecularTests)
         )
     }
 }

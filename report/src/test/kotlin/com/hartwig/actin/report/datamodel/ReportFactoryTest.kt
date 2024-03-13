@@ -13,14 +13,14 @@ class ReportFactoryTest {
         assertThat(
             fromInputs(
                 TestClinicalFactory.createMinimalTestClinicalRecord(),
-                TestMolecularFactory.createMinimalTestMolecularRecord(),
+                TestMolecularFactory.createMinimalTestMolecularHistory(),
                 TestTreatmentMatchFactory.createMinimalTreatmentMatch()
             )
         ).isNotNull
         assertThat(
             fromInputs(
                 TestClinicalFactory.createProperTestClinicalRecord(),
-                TestMolecularFactory.createProperTestMolecularRecord(),
+                TestMolecularFactory.createProperTestMolecularHistory(),
                 TestTreatmentMatchFactory.createProperTreatmentMatch()
             )
         ).isNotNull
@@ -29,8 +29,8 @@ class ReportFactoryTest {
     @Test
     fun `Should use clinical patient ID on mismatch`() {
         val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(patientId = "clinical")
-        val molecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+        val molecularHistorys = TestMolecularFactory.createMinimalTestMolecularHistory()
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(patientId = "treatment-match")
-        assertThat(fromInputs(clinical, molecular, treatmentMatch).patientId).isEqualTo("clinical")
+        assertThat(fromInputs(clinical, molecularHistorys, treatmentMatch).patientId).isEqualTo("clinical")
     }
 }

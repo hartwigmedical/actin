@@ -74,35 +74,40 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-        val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
-            AggregatedEvidenceFactory.create(report.molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
-        )
-        val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
-        val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
+        report.molecularHistory.mostRecentWGS()?.let { molecular ->
+            val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
+                AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
+            )
+            val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
+            val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
 
-        val generators = listOfNotNull(
-            PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
-            MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth),
-            EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
-            EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
-            EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
-            if (dutchTrials.isNotEmpty()) {
-                EligibleDutchExternalTrialsGenerator(report.molecular.externalTrialSource, dutchTrials, contentWidth())
-            } else null,
-            if (nonDutchTrials.isNotEmpty()) {
-                EligibleOtherCountriesExternalTrialsGenerator(report.molecular.externalTrialSource, nonDutchTrials, contentWidth())
-            } else null
-        )
+            val generators = listOfNotNull(
+                PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
+                MolecularSummaryGenerator(report.clinical, report.molecularHistory, cohorts, keyWidth, valueWidth),
+                EligibleApprovedTreatmentGenerator(report.clinical, molecular, contentWidth()),
+                EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
+                EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
+                if (dutchTrials.isNotEmpty()) {
+                    EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
+                } else null,
+                if (nonDutchTrials.isNotEmpty()) {
+                    EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, nonDutchTrials, contentWidth())
+                } else null
+            )
 
-        for (i in generators.indices) {
-            val generator = generators[i]
-            table.addCell(Cells.createTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
+            for (i in generators.indices) {
+                val generator = generators[i]
+                table.addCell(Cells.createTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
+                if (i < generators.size - 1) {
+                    table.addCell(Cells.createEmpty())
+                }
             }
+            document.add(table)
+        } ?: run {
+            // TODO (kz) handle lack of molecular data
+            throw IllegalStateException("No molecular data available")
         }
-        document.add(table)
     }
 
     companion object {

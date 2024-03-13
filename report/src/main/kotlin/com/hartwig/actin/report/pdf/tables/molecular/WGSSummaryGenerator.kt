@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -18,31 +18,32 @@ import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
 class WGSSummaryGenerator(
-    private val clinical: ClinicalRecord, private val molecular: MolecularRecord,
+    private val clinical: ClinicalRecord, private val molecularHistory: MolecularHistory,
     cohorts: List<EvaluatedCohort>, private val keyWidth: Float, private val valueWidth: Float
 ) : TableGenerator {
     private val summarizer: MolecularDriversSummarizer
 
     init {
-        summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
+        // TODO (kz) this will blow up when no wgs in molecular history, fix! also many places below
+        summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularHistory.mostRecentWGS()!!.drivers, cohorts)
     }
 
     override fun title(): String {
         return String.format(
             ApplicationConfig.LOCALE,
             "%s of %s (%s)",
-            molecular.type.display(),
+            molecularHistory.mostRecentWGS()!!.type.display(),
             clinical.patientId,
-            date(molecular.date)
+            date(molecularHistory.mostRecentWGS()!!.date)
         )
     }
 
     override fun contents(): Table {
-        val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, keyWidth + valueWidth)
+        val characteristicsGenerator = MolecularCharacteristicsGenerator(molecularHistory.mostRecentWGS()!!, keyWidth + valueWidth)
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createKey("Biopsy location"))
         table.addCell(biopsySummary())
-        if (molecular.containsTumorCells) {
+        if (molecularHistory.mostRecentWGS()!!.containsTumorCells) {
             table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
             table.addCell(tumorOriginPredictionCell())
             listOf(
@@ -74,11 +75,11 @@ class WGSSummaryGenerator(
 
     private fun biopsySummary(): Cell {
         val biopsyLocation = clinical.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN
-        val purity = molecular.characteristics.purity
+        val purity = molecularHistory.mostRecentWGS()!!.characteristics.purity
         return if (purity != null) {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
-            purityText.addStyle(if (molecular.hasSufficientQualityAndPurity) Styles.tableHighlightStyle() else Styles.tableNoticeStyle())
+            purityText.addStyle(if (molecularHistory.mostRecentWGS()!!.hasSufficientQualityAndPurity) Styles.tableHighlightStyle() else Styles.tableNoticeStyle())
             Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
         } else {
             Cells.createValue(biopsyLocation)
@@ -87,7 +88,7 @@ class WGSSummaryGenerator(
 
     private fun tumorOriginPredictionCell(): Cell {
         val paragraph = Paragraph(Text(tumorOriginPrediction()).addStyle(Styles.tableHighlightStyle()))
-        val purity = molecular.characteristics.purity
+        val purity = molecularHistory.mostRecentWGS()!!.characteristics.purity
         if (purity != null && purity < 0.2) {
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity))).addStyle(Styles.tableNoticeStyle())
             paragraph.add(purityText)
@@ -96,10 +97,10 @@ class WGSSummaryGenerator(
     }
 
     private fun tumorOriginPrediction(): String {
-        val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity) {
+        val predictedTumorOrigin = molecularHistory.mostRecentWGS()!!.characteristics.predictedTumorOrigin
+        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecularHistory.mostRecentWGS()!!.hasSufficientQualityAndPurity) {
             TumorOriginInterpreter.interpret(predictedTumorOrigin)
-        } else if (molecular.hasSufficientQuality && predictedTumorOrigin != null) {
+        } else if (molecularHistory.mostRecentWGS()!!.hasSufficientQuality && predictedTumorOrigin != null) {
             val predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
             if (predictionsMeetingThreshold.isEmpty()) {
                 String.format(
