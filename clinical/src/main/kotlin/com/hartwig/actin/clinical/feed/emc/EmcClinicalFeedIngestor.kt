@@ -58,7 +58,8 @@ class EmcClinicalFeedIngestor(
     override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
         val processedPatientIds: MutableSet<String> = HashSet()
         LOGGER.info("Creating clinical model")
-        return feed.read().map { (patientId, feedRecord) ->
+        return feed.read().map { feedRecord ->
+            val patientId = feedRecord.patientEntry().subject
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 

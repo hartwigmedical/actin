@@ -13,13 +13,10 @@ import java.io.IOException
 import java.time.LocalDateTime
 
 class FeedModel(private val feed: EmcClinicalFeed) {
-    fun read(): Map<String, FeedRecord> {
-        val map: HashMap<String, FeedRecord> = HashMap()
-        feed.patientEntries.forEach { patientEntry ->
-            val patientId = patientEntry.subject
-            map[patientId] = FeedRecord.fromFeed(feed, patientId)
+    fun read(): List<FeedRecord> {
+        return feed.patientEntries.map { patientEntry ->
+            FeedRecord.fromFeed(feed, patientEntry.subject)
         }
-        return map.toMutableMap()
     }
 
     class FeedRecord(

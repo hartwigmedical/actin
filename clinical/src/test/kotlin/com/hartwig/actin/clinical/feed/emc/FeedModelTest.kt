@@ -15,7 +15,7 @@ class FeedModelTest {
     @Before
     fun setUp() {
         model = TestFeedFactory.createProperTestFeedModel()
-        feedRecord = model.read()[TestFeedFactory.TEST_SUBJECT]!!
+        feedRecord = model.read().first()
     }
 
     @Test
