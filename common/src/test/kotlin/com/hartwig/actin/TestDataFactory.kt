@@ -12,14 +12,14 @@ object TestDataFactory {
         return PatientRecord(
             patientId = TEST_PATIENT,
             clinical = TestClinicalFactory.createMinimalTestClinicalRecord(),
-            molecular = TestMolecularFactory.createMinimalTestMolecularRecord(),
+            molecularHistory = TestMolecularFactory.createMinimalTestMolecularHistory(),
         )
     }
 
     fun createProperTestPatientRecord(): PatientRecord {
         return createMinimalTestPatientRecord().copy(
             clinical = TestClinicalFactory.createProperTestClinicalRecord(),
-            molecular = TestMolecularFactory.createProperTestMolecularRecord()
+            molecularHistory = TestMolecularFactory.createProperTestMolecularHistory()
         )
     }
 }

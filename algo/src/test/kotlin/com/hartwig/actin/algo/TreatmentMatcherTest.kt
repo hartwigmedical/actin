@@ -14,6 +14,7 @@ import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
@@ -44,7 +45,7 @@ class TreatmentMatcherTest {
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
-        sampleId = patient.molecular?.sampleId ?: "N/A",
+        sampleId = patient.molecularHistory.mostRecentWGS()?.sampleId ?: "N/A",
         referenceDate = LocalDate.now(),
         referenceDateIsLive = true,
         trialMatches = trialMatches,
@@ -81,7 +82,7 @@ class TreatmentMatcherTest {
 
     @Test
     fun `Should match without molecular input`() {
-        val patientWithoutMolecular = patient.copy(molecular = null)
+        val patientWithoutMolecular = patient.copy(molecularHistory = MolecularHistory.empty())
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }

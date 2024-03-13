@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
@@ -74,6 +75,18 @@ object TestMolecularFactory {
             characteristics = createExhaustiveTestCharacteristics(),
             drivers = createExhaustiveTestDrivers()
         )
+    }
+
+    fun createMinimalTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory.fromWGSandIHC(createMinimalTestMolecularRecord(), emptyList())
+    }
+
+    fun createProperTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory.fromWGSandIHC(createProperTestMolecularRecord(), TestClinicalFactory.createTestPriorMolecularTests())
+    }
+
+    fun createExhaustiveTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory.fromWGSandIHC(createExhaustiveTestMolecularRecord(), TestClinicalFactory.createTestPriorMolecularTests())
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {

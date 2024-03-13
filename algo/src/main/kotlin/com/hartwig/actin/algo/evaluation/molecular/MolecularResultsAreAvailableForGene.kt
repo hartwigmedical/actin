@@ -10,11 +10,11 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecular == null) {
+        if (record.molecularHistory.mostRecentWGS() == null) {
             return EvaluationFactory.undetermined("No molecular data", "No molecular data")
         }
 
-        val molecular = record.molecular!!
+        val molecular = record.molecularHistory.mostRecentWGS()!!
         if (molecular.type == ExperimentType.WHOLE_GENOME && molecular.containsTumorCells) {
             return EvaluationFactory.pass(
                 "WGS has successfully been performed so molecular results are available for gene $gene",
