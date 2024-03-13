@@ -34,9 +34,12 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
         ClinicalPrinter.printRecord(clinical)
 
-        LOGGER.info("Loading molecular record from {}", config.molecularJson)
-        val molecular = MolecularRecordJson.read(config.molecularJson)
-        MolecularPrinter.printRecord(molecular)
+        val molecular = config.molecularJson?.let { molecularJson ->
+            LOGGER.info("Loading molecular record from {}", molecularJson)
+            MolecularRecordJson.read(molecularJson)
+        }
+        molecular?.let(MolecularPrinter::printRecord) ?: LOGGER.info("No molecular record provided")
+
         val patient = PatientRecordFactory.fromInputs(clinical, molecular)
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)

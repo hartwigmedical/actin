@@ -1,18 +1,18 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.google.common.annotations.VisibleForTesting
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import org.apache.logging.log4j.LogManager
 
-class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) : EvaluationFunction {
-    override fun evaluate(record: PatientRecord): Evaluation {
+class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) : MolecularEvaluationFunction {
+
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalUnreportableVariantMatches: MutableSet<String> = mutableSetOf()
@@ -20,7 +20,7 @@ class GeneHasVariantWithProteinImpact(private val gene: String, private val allo
         val reportableOtherVariantMatches: MutableSet<String> = mutableSetOf()
         val reportableOtherProteinImpactMatches: MutableSet<String> = mutableSetOf()
 
-        for (variant in record.molecular.drivers.variants) {
+        for (variant in molecular.drivers.variants) {
             if (variant.gene == gene) {
                 val canonicalProteinImpact = toProteinImpact(variant.canonicalImpact.hgvsProteinImpact)
                 for (allowedProteinImpact in allowedProteinImpacts) {
@@ -89,7 +89,7 @@ class GeneHasVariantWithProteinImpact(private val gene: String, private val allo
                     reportableOtherVariantMatches,
                     "Variant(s) ${concat(reportableOtherProteinImpactMatches)} in $gene detected but in non-canonical transcript",
                     "${concat(reportableOtherProteinImpactMatches)} found in non-canonical transcript of gene $gene"
-            )
+                )
             )
         )
     }

@@ -13,7 +13,7 @@ const val EMC_TRIAL_SOURCE = "EMC"
 
 data class TreatmentMatcherConfig(
     val clinicalJson: String,
-    val molecularJson: String,
+    val molecularJson: String?,
     val trialDatabaseDirectory: String,
     val treatmentDirectory: String,
     val doidJson: String,
@@ -64,7 +64,7 @@ data class TreatmentMatcherConfig(
 
             return TreatmentMatcherConfig(
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
-                molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
+                molecularJson = ApplicationConfig.optionalFile(cmd, MOLECULAR_JSON),
                 trialDatabaseDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),

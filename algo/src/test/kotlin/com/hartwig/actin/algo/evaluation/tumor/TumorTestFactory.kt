@@ -7,6 +7,7 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
@@ -14,7 +15,8 @@ import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 
 internal object TumorTestFactory {
     private val base = TestDataFactory.createMinimalTestPatientRecord()
-    
+    private val baseMolecular = base.molecular as MolecularRecord
+
     fun withDoids(vararg doids: String): PatientRecord {
         return withDoids(setOf(*doids))
     }
@@ -22,9 +24,9 @@ internal object TumorTestFactory {
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
             clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids)),
-            molecular = base.molecular.copy(
-                characteristics = base.molecular.characteristics.copy(ploidy = 2.0),
-                drivers = base.molecular.drivers.copy(
+            molecular = baseMolecular.copy(
+                characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
+                drivers = baseMolecular.drivers.copy(
                     copyNumbers = setOf(
                         TestCopyNumberFactory.createMinimal().copy(
                             isReportable = true,
@@ -46,9 +48,9 @@ internal object TumorTestFactory {
     ): PatientRecord {
         return base.copy(
             clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests),
-            molecular = base.molecular.copy(
-                characteristics = base.molecular.characteristics.copy(ploidy = 2.0),
-                drivers = base.molecular.drivers.copy(
+            molecular = baseMolecular.copy(
+                characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
+                drivers = baseMolecular.drivers.copy(
                     copyNumbers = setOf(
                         TestCopyNumberFactory.createMinimal().copy(
                             isReportable = true,
@@ -188,7 +190,7 @@ internal object TumorTestFactory {
     }
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
-        return base.copy(molecular = base.molecular.copy(type = type))
+        return base.copy(molecular = baseMolecular.copy(type = type))
     }
 
     fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<PriorMolecularTest>, doids: Set<String>?): PatientRecord {

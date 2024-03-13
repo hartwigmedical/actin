@@ -6,5 +6,5 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 data class PatientRecord(
     val patientId: String,
     val clinical: ClinicalRecord,
-    val molecular: MolecularRecord
+    val molecular: MolecularRecord?
 )

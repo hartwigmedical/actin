@@ -25,7 +25,7 @@ class TestStandardOfCareApplication {
         ClinicalPrinter.printRecord(patient.clinical)
 
         LOGGER.info("and molecular record")
-        MolecularPrinter.printRecord(patient.molecular)
+        MolecularPrinter.printRecord(patient.molecular!!)
 
         LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH)
