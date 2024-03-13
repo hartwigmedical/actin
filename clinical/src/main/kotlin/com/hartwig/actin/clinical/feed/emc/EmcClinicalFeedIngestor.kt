@@ -59,9 +59,7 @@ class EmcClinicalFeedIngestor(
         val result: MutableMap<String, List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>> = HashMap()
 
         LOGGER.info("Creating clinical model")
-        feed.toNewWay().forEach { (patientId, feedRecord) ->
-//        feed.subjects().map { patientId ->
-//            check(!result.containsKey(patientId)) { "Cannot create clinical records. Duplicate patientId: $patientId" }
+        feed.read().forEach { (patientId, feedRecord) ->
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
             val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.latestQuestionnaireEntry())
@@ -143,12 +141,12 @@ class EmcClinicalFeedIngestor(
         )
     }
 
-    private fun extractSurgeries(feedRecord: FeedRecord): List<Surgery> {
+    private fun extractSurgeries(feedRecord: FeedModel.FeedRecord): List<Surgery> {
         return feedRecord.uniqueSurgeryEntries()
             .map { Surgery(endDate = it.periodEnd, status = resolveSurgeryStatus(it.encounterStatus)) }
     }
 
-    private fun extractBodyWeights(feedRecord: FeedRecord): List<BodyWeight> {
+    private fun extractBodyWeights(feedRecord: FeedModel.FeedRecord): List<BodyWeight> {
         return feedRecord.uniqueBodyWeightEntries().map { entry: BodyWeightEntry ->
             BodyWeight(
                 date = entry.effectiveDateTime,
@@ -163,7 +161,7 @@ class EmcClinicalFeedIngestor(
         return entry.valueQuantityUnit.lowercase() == BODY_WEIGHT_EXPECTED_UNIT && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
     }
 
-    private fun extractVitalFunctions(feedRecord: FeedRecord): List<VitalFunction> {
+    private fun extractVitalFunctions(feedRecord: FeedModel.FeedRecord): List<VitalFunction> {
         return feedRecord.vitalFunctionEntries().map { entry ->
             VitalFunction(
                 date = entry.effectiveDateTime,

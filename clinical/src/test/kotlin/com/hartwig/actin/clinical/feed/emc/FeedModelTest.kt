@@ -9,13 +9,13 @@ import org.junit.Before
 import org.junit.Test
 
 class FeedModelTest {
-    lateinit var model: FeedModel
-    lateinit var feedRecord: FeedRecord
+    private lateinit var model: FeedModel
+    private lateinit var feedRecord: FeedModel.FeedRecord
 
     @Before
     fun setUp() {
         model = TestFeedFactory.createProperTestFeedModel()
-        feedRecord = model.toNewWay()[TestFeedFactory.TEST_SUBJECT]!!
+        feedRecord = model.read()[TestFeedFactory.TEST_SUBJECT]!!
     }
 
     @Test
