@@ -5,6 +5,6 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 
 interface ClinicalFeedIngestion {
 
-    fun ingest(): Map<String, List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>>
+    fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>
 
 }

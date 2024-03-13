@@ -55,11 +55,11 @@ class EmcClinicalFeedIngestor(
     private val bloodTransfusionsExtractor: BloodTransfusionsExtractor,
 ) : ClinicalFeedIngestion {
 
-    override fun ingest(): Map<String, List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>> {
-        val result: MutableMap<String, List<Pair<PatientIngestionResult, CurationExtractionEvaluation>>> = HashMap()
-
+    override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
+        val processedPatientIds: MutableSet<String> = HashSet()
         LOGGER.info("Creating clinical model")
-        feed.read().forEach { (patientId, feedRecord) ->
+        return feed.read().map { (patientId, feedRecord) ->
+            processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
             val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.latestQuestionnaireEntry())
@@ -114,21 +114,16 @@ class EmcClinicalFeedIngestor(
                 .map { it.evaluation }
                 .fold(CurationExtractionEvaluation()) { acc, evaluation -> acc + evaluation }
 
-            result.put(
-                patientId, listOf(
-                    Pair(
-                        PatientIngestionResult.create(
-                            questionnaire,
-                            record,
-                            patientEvaluation.warnings.toList(),
-                            questionnaireCurationErrors.toSet(),
-                            feedRecord.validationWarnings()
-                        ), patientEvaluation
-                    )
-                )
+            Pair(
+                PatientIngestionResult.create(
+                    questionnaire,
+                    record,
+                    patientEvaluation.warnings.toList(),
+                    questionnaireCurationErrors.toSet(),
+                    feedRecord.validationWarnings()
+                ), patientEvaluation
             )
         }
-        return result;
     }
 
     private fun extractPatientDetails(patient: PatientEntry, questionnaire: Questionnaire?): PatientDetails {

@@ -64,23 +64,18 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         val ingestionResult = clinicalIngestionAdapter.run()
         LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
         ClinicalRecordJson.write(
-            ingestionResult.patientResults.flatMap { patientResults -> patientResults.value.map { it.clinicalRecord } },
+            ingestionResult.patientResults.map { it.clinicalRecord },
             outputDirectory
         )
         LOGGER.info("Done!")
 
         writeIngestionResults(outputDirectory, ingestionResult)
 
-        val curationResults: Map<String, List<CurationResult>> = ingestionResult.patientResults.mapValues { patientIngestionResult ->
-            patientIngestionResult.value.flatMap { it.curationResults }
-        }
-
-        if (curationResults.any { it.value.isNotEmpty() }) {
-            LOGGER.warn("Summary of warnings:")
-            curationResults.keys.sorted().forEach {
-                if (curationResults[it]?.isNotEmpty() == true) {
-                    LOGGER.warn("Curation warnings for patient $it")
-                    curationResults[it]?.flatMap { result -> result.requirements }?.forEach { requirement ->
+        if (ingestionResult.patientResults.any { it.curationResults.isNotEmpty() }) {
+            ingestionResult.patientResults.forEach {
+                if (it.curationResults.isNotEmpty()) {
+                    LOGGER.warn("Curation warnings for patient ${it.patientId}")
+                    it.curationResults.flatMap { result -> result.requirements }.forEach { requirement ->
                         LOGGER.warn(requirement.message)
                     }
                 }
