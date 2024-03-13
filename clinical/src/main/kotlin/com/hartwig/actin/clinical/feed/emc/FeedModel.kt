@@ -1,70 +1,37 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
 import com.hartwig.actin.clinical.feed.emc.digitalfile.DigitalFileEntry
-import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
-import com.hartwig.actin.clinical.feed.emc.lab.LabEntry
-import com.hartwig.actin.clinical.feed.emc.medication.MedicationEntry
-import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
-import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
-import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
-import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import java.io.IOException
 import java.time.LocalDateTime
 
 class FeedModel(private val feed: EmcClinicalFeed) {
-    fun subjects(): Set<String> {
-        return feed.patientEntries.map { it.subject }.toSortedSet()
-    }
-
-    fun validationWarnings(subject: String): Set<FeedValidationWarning> {
-        return feed.validationWarnings.filter { it.subject == subject }.toSet()
-    }
-
-    fun patientEntry(subject: String): PatientEntry {
-        return entriesForSubject(feed.patientEntries, subject).firstOrNull()
-            ?: throw IllegalStateException("Could not find patient for subject $subject")
-    }
-
-    fun bloodTransfusionEntries(subject: String): List<DigitalFileEntry> {
-        return entriesForSubject(feed.digitalFileEntries, subject)
-            .filter(DigitalFileEntry::isBloodTransfusionEntry)
-    }
-
-    fun toxicityEntries(subject: String): List<DigitalFileEntry> {
-        return entriesForSubject(feed.digitalFileEntries, subject)
-            .filter(DigitalFileEntry::isToxicityEntry)
-    }
-
-    fun latestQuestionnaireEntry(subject: String): QuestionnaireEntry? {
-        return entriesForSubject(feed.questionnaireEntries, subject).maxByOrNull(QuestionnaireEntry::authored)
-    }
-
-    fun uniqueSurgeryEntries(subject: String): List<SurgeryEntry> {
-        return entriesForSubject(feed.surgeryEntries, subject).distinctBy { Pair(it.periodStart, it.periodEnd) }
-    }
-
-    fun medicationEntries(subject: String): List<MedicationEntry> {
-        return entriesForSubject(feed.medicationEntries, subject)
-    }
-
-    fun labEntries(subject: String): List<LabEntry> {
-        return entriesForSubject(feed.labEntries, subject)
-    }
-
-    fun vitalFunctionEntries(subject: String): List<VitalFunctionEntry> {
-        return entriesForSubject(
-            feed.vitalFunctionEntries,
-            subject
-        ).distinctBy {
-            VitalFunctionProperties(
-                it.effectiveDateTime,
-                it.quantityValue ?: Double.NaN,
-                it.quantityUnit,
-                it.componentCodeDisplay,
-                it.isValid()
+    fun toNewWay(): Map<String, FeedRecord> {
+        val map: HashMap<String, FeedRecord> = HashMap()
+        feed.patientEntries.forEach { patientEntry ->
+            val patientId = patientEntry.subject
+            map[patientId] = FeedRecord(
+                patientEntry,
+                entriesForSubject(feed.labEntries, patientId),
+                entriesForSubject(feed.medicationEntries, patientId),
+                entriesForSubject(feed.intoleranceEntries, patientId),
+                entriesForSubject(feed.bodyWeightEntries, patientId).distinct(),
+                entriesForSubject(feed.questionnaireEntries, patientId),
+                entriesForSubject(feed.digitalFileEntries, patientId).filter(DigitalFileEntry::isToxicityEntry),
+                entriesForSubject(feed.digitalFileEntries, patientId).filter(DigitalFileEntry::isBloodTransfusionEntry),
+                feed.validationWarnings.filter { it.subject == patientId }.toSet(),
+                entriesForSubject(feed.surgeryEntries, patientId).distinctBy { Pair(it.periodStart, it.periodEnd) },
+                entriesForSubject(feed.vitalFunctionEntries, patientId).distinctBy {
+                    VitalFunctionProperties(
+                        it.effectiveDateTime,
+                        it.quantityValue ?: Double.NaN,
+                        it.quantityUnit,
+                        it.componentCodeDisplay,
+                        it.isValid()
+                    )
+                }
             )
         }
+        return map.toMutableMap()
     }
 
     private data class VitalFunctionProperties(
@@ -74,14 +41,6 @@ class FeedModel(private val feed: EmcClinicalFeed) {
         val componentCodeDisplay: String,
         val valid: Boolean
     )
-
-    fun intoleranceEntries(subject: String): List<IntoleranceEntry> {
-        return entriesForSubject(feed.intoleranceEntries, subject)
-    }
-
-    fun uniqueBodyWeightEntries(subject: String): List<BodyWeightEntry> {
-        return entriesForSubject(feed.bodyWeightEntries, subject).distinct()
-    }
 
     companion object {
         @Throws(IOException::class)
