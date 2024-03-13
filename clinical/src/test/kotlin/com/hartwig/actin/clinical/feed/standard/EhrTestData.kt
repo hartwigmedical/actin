@@ -27,6 +27,4 @@ object EhrTestData {
         tumorStage = "IV",
         tumorStageDate = LocalDate.of(2024, 2, 29)
     )
-
-
 }

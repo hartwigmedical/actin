@@ -6,8 +6,11 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.trial.ctc.CTCConfigInterpreter
 import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
+import com.hartwig.actin.trial.interpretation.ConfigInterpreter
 import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
 import com.hartwig.actin.trial.interpretation.TrialIngestion
+import com.hartwig.actin.trial.nki.NKIConfigInterpreter
+import com.hartwig.actin.trial.nki.NKIDatabaseReader
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
@@ -36,11 +39,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-        val configInterpreter = if (config.ctcConfigDirectory == null) {
-            SimpleConfigInterpreter()
-        } else {
-            CTCConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory))
-        }
+        val configInterpreter = configInterpreter()
         val trialIngestion = TrialIngestion.create(config.trialConfigDirectory, configInterpreter, doidModel, geneFilter, treatmentDatabase)
 
         LOGGER.info("Creating trial database")
@@ -58,6 +57,20 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
             GsonSerializer.create().toJson(result).toByteArray()
         )
         printAllValidationErrors(result)
+    }
+
+    private fun configInterpreter(): ConfigInterpreter {
+        if (config.ctcConfigDirectory != null && config.nkiConfigDirectory != null) {
+            throw IllegalArgumentException("Only one of CTC and NKI config directories can be specified")
+        }
+
+        return if (config.ctcConfigDirectory != null) {
+            CTCConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory))
+        } else if (config.nkiConfigDirectory != null) {
+            NKIConfigInterpreter(NKIDatabaseReader.read(config.nkiConfigDirectory))
+        } else {
+            SimpleConfigInterpreter()
+        }
     }
 
     private fun printAllValidationErrors(result: TrialIngestionResult) {
