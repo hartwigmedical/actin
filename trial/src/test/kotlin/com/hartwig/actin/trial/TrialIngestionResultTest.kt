@@ -4,8 +4,8 @@ import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
-import com.hartwig.actin.trial.ctc.config.TestCTCDatabaseEntryFactory
 import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.status.config.TestCTCDatabaseEntryFactory
 import com.hartwig.actin.util.json.GsonSerializer
 import org.junit.Test
 
@@ -31,7 +31,7 @@ class TrialIngestionResultTest {
     fun `Should serialize trial ingestion result`() {
         val result = TrialIngestionResult(
             ingestionStatus = TrialIngestionStatus.FAIL,
-            ctcDatabaseValidation = CtcDatabaseValidation(
+            trialStatusDatabaseValidation = CtcDatabaseValidation(
                 trialDefinitionValidationErrors = listOf(TrialDefinitionValidationError(TestTrialDefinitionConfigFactory.MINIMAL, "msg")),
                 ctcDatabaseValidationErrors = listOf(CTCDatabaseValidationError(TestCTCDatabaseEntryFactory.MINIMAL, "msg")),
             ),

@@ -8,12 +8,12 @@ import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidator
 import com.hartwig.actin.trial.config.TrialConfigModel
-import com.hartwig.actin.trial.ctc.TestCTCModelFactory
 import com.hartwig.actin.trial.datamodel.Cohort
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.trial.status.TestCTCModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

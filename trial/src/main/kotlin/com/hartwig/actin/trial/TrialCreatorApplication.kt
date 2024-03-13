@@ -4,14 +4,13 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
-import com.hartwig.actin.trial.ctc.CTCConfigInterpreter
-import com.hartwig.actin.trial.ctc.config.CTCDatabaseReader
 import com.hartwig.actin.trial.interpretation.ConfigInterpreter
 import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
 import com.hartwig.actin.trial.interpretation.TrialIngestion
-import com.hartwig.actin.trial.nki.NKIConfigInterpreter
-import com.hartwig.actin.trial.nki.NKIDatabaseReader
 import com.hartwig.actin.trial.serialization.TrialJson
+import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
+import com.hartwig.actin.trial.status.ctc.CTCDatabaseReader
+import com.hartwig.actin.trial.status.nki.NKIDatabaseReader
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import org.apache.commons.cli.DefaultParser
@@ -65,19 +64,19 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         }
 
         return if (config.ctcConfigDirectory != null) {
-            CTCConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory))
+            TrialStatusConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory))
         } else if (config.nkiConfigDirectory != null) {
-            NKIConfigInterpreter(NKIDatabaseReader.read(config.nkiConfigDirectory))
+            TrialStatusConfigInterpreter(NKIDatabaseReader.read(config.nkiConfigDirectory))
         } else {
             SimpleConfigInterpreter()
         }
     }
 
     private fun printAllValidationErrors(result: TrialIngestionResult) {
-        if (result.ctcDatabaseValidation.hasErrors()) {
+        if (result.trialStatusDatabaseValidation.hasErrors()) {
             LOGGER.warn("There were validation errors in the CTC database configuration")
-            printValidationErrors(result.ctcDatabaseValidation.ctcDatabaseValidationErrors)
-            printValidationErrors(result.ctcDatabaseValidation.trialDefinitionValidationErrors)
+            printValidationErrors(result.trialStatusDatabaseValidation.ctcDatabaseValidationErrors)
+            printValidationErrors(result.trialStatusDatabaseValidation.trialDefinitionValidationErrors)
         }
 
         if (result.trialValidationResult.hasErrors()) {
