@@ -23,60 +23,49 @@ class FeedRecord(
     private val surgeryEntries: List<SurgeryEntry>,
     private val distinctBy1: List<VitalFunctionEntry>
 ) {
-    // done
     fun patientEntry(): PatientEntry {
         return patientEntry
     }
 
-    // done
     fun labEntries(): List<LabEntry> {
         return labEntries
     }
 
-    // done
     fun medicationEntries(): List<MedicationEntry> {
         return medicationEntries
     }
 
-    // done
     fun intoleranceEntries(): List<IntoleranceEntry> {
         return intoleranceEntries
     }
 
-    // done
     fun uniqueBodyWeightEntries(): List<BodyWeightEntry> {
         return bodyWeightEntries
     }
 
-    // done
     fun latestQuestionnaireEntry(): QuestionnaireEntry? {
         return questionnaireEntries.maxByOrNull(QuestionnaireEntry::authored)
     }
 
-    // done
     fun toxicityEntries(): List<DigitalFileEntry> {
         return filter
         //return filter.filter(DigitalFileEntry::isToxicityEntry)
     }
 
-    // done
     fun bloodTransfusionEntries(): List<DigitalFileEntry> {
 //        return FeedModel.entriesForSubject(feed.digitalFileEntries, subject)
 //            .filter(DigitalFileEntry::isBloodTransfusionEntry)
         return filter1
     }
 
-    // done
     fun uniqueSurgeryEntries(): List<SurgeryEntry> {
         return surgeryEntries
     }
 
-    // done
     fun validationWarnings(): Set<FeedValidationWarning> {
         return validationWarnings
     }
 
-    // done
     fun vitalFunctionEntries(): List<VitalFunctionEntry> {
         return distinctBy1
     }
