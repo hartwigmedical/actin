@@ -39,7 +39,7 @@ class DecisionTreeNodeTest {
     @Test
     fun `Should combine inclusion criteria from multiple decision node levels`() {
         val brafV600EMut = EligibilityFunction(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y, listOf("BRAF", "V600E"))
-        val krasMut = EligibilityFunction(EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X, listOf("KRAS"))
+        val krasMut = EligibilityFunction(EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X, listOf("KRAS"))
         val brafV600ECandidates = listOf(treatmentCandidate("treatment1"), treatmentCandidate("treatment2"))
         val brafV600EWtKrasMutCandidates = listOf(treatmentCandidate("treatment3"), treatmentCandidate("treatment4"))
         val brafV600EWtKrasWtCandidates = listOf(treatmentCandidate("treatment5"), treatmentCandidate("treatment6"))

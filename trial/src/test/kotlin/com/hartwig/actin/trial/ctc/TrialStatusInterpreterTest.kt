@@ -14,7 +14,7 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(),
-                TrialDefinitionConfig("trial-1", true, "", "")
+                TrialDefinitionConfig("trial-1", true, "", "", "")
             )
         ).isEqualTo(null to emptyList<TrialDefinitionValidationError>())
     }
@@ -26,7 +26,7 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(openMETC1, closedMETC2),
-                TrialDefinitionConfig(CTCConfigInterpreter.constructTrialId(openMETC1), true, "", "")
+                TrialDefinitionConfig(CTCConfigInterpreter.constructTrialId(openMETC1), true, "", "", "")
             ).first
         ).isTrue
     }
@@ -35,7 +35,7 @@ class TrialStatusInterpreterTest {
     fun `Should resolve to closed for trials with inconsistent entries and return validation error`() {
         val openMETC1 = createEntry(STUDY_METC_1, "Open")
         val closedMETC1 = createEntry(STUDY_METC_1, "Gesloten")
-        val config = TrialDefinitionConfig(CTCConfigInterpreter.constructTrialId(closedMETC1), false, ",", "")
+        val config = TrialDefinitionConfig(CTCConfigInterpreter.constructTrialId(closedMETC1), false, ",", "", "")
         val (isOpen, validation) = TrialStatusInterpreter.isOpen(
             listOf(openMETC1, closedMETC1),
             config
@@ -51,7 +51,7 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(closedMETC1, openMETC2),
-                TrialDefinitionConfig(CTCConfigInterpreter.constructTrialId(closedMETC1), false, "", "")
+                TrialDefinitionConfig(CTCConfigInterpreter.constructTrialId(closedMETC1), false, "", "", "")
             ).first
         ).isFalse
     }

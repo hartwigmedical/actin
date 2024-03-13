@@ -27,12 +27,14 @@ object TestTrialConfigDatabaseFactory {
                 open = true,
                 acronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
                 title = "Title for " + TestTrialData.TEST_TRIAL_METC_1,
+                nctId = "nctId for " + TestTrialData.TEST_TRIAL_METC_1
             ),
             TrialDefinitionConfig(
                 trialId = TestTrialData.TEST_TRIAL_METC_2,
                 open = true,
                 acronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_2,
                 title = "Title for " + TestTrialData.TEST_TRIAL_METC_2,
+                nctId = "nctId for " + TestTrialData.TEST_TRIAL_METC_2
             )
         )
     }
