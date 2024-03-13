@@ -42,9 +42,9 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
+import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
@@ -58,7 +58,7 @@ class FunctionInputResolver(
 
     private fun hasValidSingleInputs(function: EligibilityFunction): Boolean? {
         try {
-            when (function.rule.input) {
+            when (FunctionInputMapping.RULE_INPUT_MAP[function.rule]) {
                 FunctionInput.NONE -> {
                     return function.parameters.isEmpty()
                 }
@@ -650,7 +650,7 @@ class FunctionInputResolver(
         }
 
         private fun assertParamType(function: EligibilityFunction, requestedInput: FunctionInput) {
-            if (requestedInput != function.rule.input) {
+            if (requestedInput != FunctionInputMapping.RULE_INPUT_MAP[function.rule]) {
                 throw IllegalStateException("Incorrect type of inputs requested for '${function.rule}': $requestedInput")
             }
         }

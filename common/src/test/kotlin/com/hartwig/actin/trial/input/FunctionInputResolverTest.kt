@@ -612,7 +612,7 @@ class FunctionInputResolverTest {
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {
-        return EligibilityRule.values().find { it.input == input }
+        return FunctionInputMapping.RULE_INPUT_MAP.entries.find { it.value == input }?.key
             ?: throw IllegalStateException("Could not find single rule requiring input: $input")
     }
 
