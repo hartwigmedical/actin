@@ -34,7 +34,7 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 }
             }
         } else {
-            createForInputs(FunctionInputMapping.RULE_INPUT_MAP[rule]!!)
+            createForInputs(rule.input!!)
         }
     }
 

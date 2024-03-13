@@ -62,7 +62,7 @@ class FunctionInputResolver(
 
     private fun hasValidSingleInputs(function: EligibilityFunction): Boolean? {
         try {
-            when (FunctionInputMapping.RULE_INPUT_MAP[function.rule]) {
+            when (function.rule.input) {
                 FunctionInput.NONE -> {
                     return function.parameters.isEmpty()
                 }
@@ -702,7 +702,7 @@ class FunctionInputResolver(
         }
 
         private fun assertParamType(function: EligibilityFunction, requestedInput: FunctionInput) {
-            if (requestedInput != FunctionInputMapping.RULE_INPUT_MAP[function.rule]) {
+            if (requestedInput != function.rule.input) {
                 throw IllegalStateException("Incorrect type of inputs requested for '${function.rule}': $requestedInput")
             }
         }
