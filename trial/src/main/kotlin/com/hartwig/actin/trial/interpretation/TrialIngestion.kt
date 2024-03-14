@@ -32,14 +32,16 @@ class TrialIngestion(
         configInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
         val trialDatabaseValidation = trialConfigModel.validation()
         val ctcDatabaseValidation = configInterpreter.validation()
-        val trials = trialConfigModel.trials().map { trialConfig ->
-            val trialId = trialConfig.trialId
-            val referencesById = trialConfigModel.referencesForTrial(trialId)
-            Trial(
-                identification = toIdentification(trialConfig),
-                generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
-                cohorts = cohortsForTrial(trialId, referencesById)
-            )
+        val trials = if (trialDatabaseValidation.inclusionCriteriaValidationErrors.isNotEmpty()) emptyList() else {
+            trialConfigModel.trials().map { trialConfig ->
+                val trialId = trialConfig.trialId
+                val referencesById = trialConfigModel.referencesForTrial(trialId)
+                Trial(
+                    identification = toIdentification(trialConfig),
+                    generalEligibility = toEligibility(trialConfigModel.generalInclusionCriteriaForTrial(trialId), referencesById),
+                    cohorts = cohortsForTrial(trialId, referencesById)
+                )
+            }
         }
         EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep)
 

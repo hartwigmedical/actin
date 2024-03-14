@@ -7,7 +7,6 @@ import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
-import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidator
 import com.hartwig.actin.trial.config.TrialConfigModel
 import com.hartwig.actin.trial.ctc.TestCTCModelFactory
@@ -20,6 +19,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialIngestionTest {
+    private val eligibilityFactory = TestEligibilityFactoryFactory.createTestEligibilityFactory()
 
     @Test
     fun `Should not crash when creating from trial config directory`() {
@@ -40,15 +40,15 @@ class TrialIngestionTest {
         val ingestion = TrialIngestion(
             TrialConfigModel.createFromDatabase(
                 TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase(),
-                TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+                TrialConfigDatabaseValidator(eligibilityFactory)
             ),
             TestCTCModelFactory.createWithProperTestCTCDatabase(),
-            TestEligibilityFactoryFactory.createTestEligibilityFactory()
+            eligibilityFactory
         )
-        val trials = ingestion.ingestTrials()
-        assertThat(trials.trials).hasSize(2)
+        val ingestionResult = ingestion.ingestTrials()
+        assertThat(ingestionResult.trials).hasSize(2)
 
-        val trial = findTrial(trials.trials, "TEST-1")
+        val trial = findTrial(ingestionResult.trials, "TEST-1")
         assertThat(trial.identification.open).isTrue
         assertThat(trial.identification.acronym).isEqualTo("Acronym-TEST-1")
         assertThat(trial.identification.title).isEqualTo("Title for TEST-1")
@@ -83,18 +83,33 @@ class TrialIngestionTest {
 
     @Test(expected = IllegalStateException::class)
     fun `Should crash in case trial status cannot be resolved`() {
+        val trialConfigDatabase = TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()
         val ingestion = TrialIngestion(
             TrialConfigModel.createFromDatabase(
-                TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase().copy(
-                    trialDefinitionConfigs = listOf(TestTrialDefinitionConfigFactory.MINIMAL.copy(open = null))
+                trialConfigDatabase.copy(
+                    trialDefinitionConfigs = trialConfigDatabase.trialDefinitionConfigs.map { it.copy(open = null) }
                 ),
-                TrialConfigDatabaseValidator(TestEligibilityFactoryFactory.createTestEligibilityFactory())
+                TrialConfigDatabaseValidator(eligibilityFactory)
             ),
             TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
-            TestEligibilityFactoryFactory.createTestEligibilityFactory()
+            eligibilityFactory
         )
 
         ingestion.ingestTrials()
+    }
+
+    @Test
+    fun `Should not create trials when there are invalid inclusion criteria`() {
+        val baseConfigDatabase = TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()
+        val trialConfigDatabase = baseConfigDatabase.copy(
+            inclusionCriteriaConfigs = baseConfigDatabase.inclusionCriteriaConfigs.map { it.copy(inclusionRule = "INVALID") }
+        )
+        val ingestion = TrialIngestion(
+            TrialConfigModel.createFromDatabase(trialConfigDatabase, TrialConfigDatabaseValidator(eligibilityFactory)),
+            TestCTCModelFactory.createWithProperTestCTCDatabase(),
+            eligibilityFactory
+        )
+        assertThat(ingestion.ingestTrials().trials).isEmpty()
     }
 
     companion object {
