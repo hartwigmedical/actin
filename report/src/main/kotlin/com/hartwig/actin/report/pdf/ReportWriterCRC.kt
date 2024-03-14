@@ -33,7 +33,7 @@ class ReportWriterCRC(override val writeToDisk: Boolean, override val outputDire
             EfficacyEvidenceChapter(report),
             ClinicalDetailsChapter(report),
             TrialMatchingChapter(report, enableExtendedMode),
-            //efficacyEvidenceDetailsChapter
+            efficacyEvidenceDetailsChapter
         )
         writePdfChapters(report.patientId, chapters, enableExtendedMode)
     }

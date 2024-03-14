@@ -34,7 +34,7 @@ object TestExtendedEvidenceEntryFactory {
     }
 
     fun createReference(): TrialReference {
-        return TrialReference(patientPopulations = listOf(createPatientPopulation()), url = "http://www.ncbi.nlm.nih.gov/pubmed/12345678")
+        return TrialReference(patientPopulations = listOf(createPatientPopulation(), createPatientPopulation()), url = "http://www.ncbi.nlm.nih.gov/pubmed/12345678")
     }
 
     fun createPatientPopulation(): PatientPopulation {
@@ -78,7 +78,7 @@ object TestExtendedEvidenceEntryFactory {
 
     fun createAnalysisGroup(): AnalysisGroup {
         return AnalysisGroup(
-            id = 1, nPatients = 200, endPoints = listOf(
+            id = 1, name = "Analyis group", nPatients = 200, endPoints = listOf(
                 EndPoint(
                     id = 2,
                     name = "Median Progression-Free Survival",

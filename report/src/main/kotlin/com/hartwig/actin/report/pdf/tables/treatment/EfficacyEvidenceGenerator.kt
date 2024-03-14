@@ -24,11 +24,11 @@ class EfficacyEvidenceGenerator(
             return Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
-            val table = Tables.createFixedWidthCols(100f, width - 250f, 150f).setWidth(width)
+            val table = Tables.createFixedWidthCols(120f, width - 250f, 150f).setWidth(width)
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
             table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
-            treatments.sortedBy { it.annotations.size }.forEach { treatment: AnnotatedTreatmentMatch ->
+            treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                 if (treatment.annotations.isNotEmpty()) {
                     val subtable = Tables.createSingleColWithWidth(width / 2)
@@ -88,16 +88,16 @@ class EfficacyEvidenceGenerator(
                 table.addCell(Cells.createContent(createWhoString(patientPopulation)))
                 table.addCell(Cells.createContent("Primary tumor location"))
                 table.addCell(Cells.createContent(patientPopulation.patientsPerPrimaryTumorLocation?.entries?.joinToString(", ") { "${it.key.replaceFirstChar { word -> word.uppercase() }}: ${it.value}" }
-                    ?: "No information available"))
+                    ?: "NA"))
                 table.addCell(Cells.createContent("Mutations"))
                 table.addCell(Cells.createContent(patientPopulation.mutations ?: "NA"))
                 table.addCell(Cells.createContent("Metastatic sites"))
                 table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
-                    ?: "No information available"))
+                    ?: "NA"))
                 table.addCell(Cells.createContent("Previous systemic therapy"))
-                table.addCell(Cells.createContent(patientPopulation.priorSystemicTherapy ?: "No information available"))
+                table.addCell(Cells.createContent(patientPopulation.priorSystemicTherapy ?: "NA"))
                 table.addCell(Cells.createContent("Prior therapies"))
-                table.addCell(Cells.createContent(patientPopulation.priorTherapies ?: "No information available"))
+                table.addCell(Cells.createContent(patientPopulation.priorTherapies ?: "NA"))
 
             }
         }
@@ -125,7 +125,7 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createEndpoints(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
-        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(200f)
+        val table = Tables.createFixedWidthCols(100f, 250f).setWidth(350f)
         for (patientPopulation in trialReference.patientPopulations) {
             if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name.equals(
                     treatment.treatmentCandidate.treatment.name,

@@ -24,9 +24,8 @@ class EfficacyEvidenceDetailsGenerator(
         val subtables: MutableList<Table> = mutableListOf()
 
         subtables.add(createTrialInformation())
-        subtables.add(createPatientCharacteristics(annotation.trialReferences.first().patientPopulations))
-        subtables.add(createPrimaryEndpoints(annotation.trialReferences.first().patientPopulations))
-        subtables.add(createSecondaryEndpoints())
+        subtables.add(createPatientCharacteristics(annotation.trialReferences.first().patientPopulations)) //currently always 1
+        subtables.add(createPrimaryEndpoints(annotation.trialReferences.first().patientPopulations)) //currently always 1
 
         for (i in subtables.indices) {
             val subtable = subtables[i]
@@ -56,20 +55,16 @@ class EfficacyEvidenceDetailsGenerator(
     }
 
     private fun createPatientCharacteristics(patientPopulations: List<PatientPopulation>): Table {
-        val table = Tables.createFixedWidthCols(150f, 100f, 100f, 100f).setWidth(450f)
-        // Assuming max 3 treatments per trial
+        val table = Tables.createFixedWidthCols(150f, 200f, 200f).setWidth(450f)
+        // Assuming max 2 treatments per trial
         table.addCell(Cells.createHeader(""))
-        table.addCell(Cells.createHeader(patientPopulations[0].name))
-        table.addCell(Cells.createHeader(patientPopulations[1].name))
-        if (patientPopulations.size > 2) {
-            table.addCell(Cells.createHeader(patientPopulations[2].name))
-        } else (table.addCell(Cells.createContent("")))
+        table.addCell(Cells.createHeader(patientPopulations[0].name + " (n=" + patientPopulations[0].numberOfPatients + ")"))
+        table.addCell(Cells.createHeader(patientPopulations[1].name + " (n=" + patientPopulations[1].numberOfPatients + ")"))
+
         table.addCell(Cells.createContent("Age (median [range])"))
         table.addCell(Cells.createContent(patientPopulations[0].ageMedian.toString() + " [" + patientPopulations[0].ageMin + "-" + patientPopulations[0].ageMax + "]"))
         table.addCell(Cells.createContent(patientPopulations[1].ageMedian.toString() + " [" + patientPopulations[1].ageMin + "-" + patientPopulations[1].ageMax + "]"))
-        if (patientPopulations.size > 2) {
-            table.addCell(Cells.createHeader(patientPopulations[2].ageMedian.toString() + " [" + patientPopulations[2].ageMin + "-" + patientPopulations[2].ageMax + "]"))
-        } else table.addCell(Cells.createContent(""))
+
         table.addCell(Cells.createContent("Sex"))
         table.addCell(
             Cells.createContent(
@@ -81,24 +76,40 @@ class EfficacyEvidenceDetailsGenerator(
                 "Male: " + (patientPopulations[1].numberOfMale ?: "NA") + "\n Female: " + (patientPopulations[1].numberOfFemale ?: "NA")
             )
         )
-        if (patientPopulations.size > 2) {
-            table.addCell(
-                Cells.createContent(
-                    "Male: " + (patientPopulations[2].numberOfMale ?: "NA") + "\n Female: " + (patientPopulations[2].numberOfFemale ?: "NA")
-                )
-            )
-        } else table.addCell(Cells.createContent(""))
+
         table.addCell(Cells.createContent("WHO/ECOG"))
         table.addCell(Cells.createContent(createWhoString(patientPopulations[0])))
         table.addCell(Cells.createContent(createWhoString(patientPopulations[1])))
-        if (patientPopulations.size > 2) {
-            table.addCell(Cells.createContent(createWhoString(patientPopulations[2])))
-        } else table.addCell(Cells.createContent(""))
+
+        table.addCell(Cells.createContent("Primary tumor location"))
+        table.addCell(Cells.createContent(patientPopulations[0].patientsPerPrimaryTumorLocation?.entries?.joinToString("\n") { "${it.key.replaceFirstChar { word -> word.uppercase() }}: ${it.value}" }
+            ?: "NA"))
+        table.addCell(Cells.createContent(patientPopulations[1].patientsPerPrimaryTumorLocation?.entries?.joinToString("\n") { "${it.key.replaceFirstChar { word -> word.uppercase() }}: ${it.value}" }
+            ?: "NA"))
+
+        table.addCell(Cells.createContent("Mutations"))
+        table.addCell(Cells.createContent(patientPopulations[0].mutations ?: "NA"))
+        table.addCell(Cells.createContent(patientPopulations[1].mutations ?: "NA"))
+
+        table.addCell(Cells.createContent("Metastatic sites"))
+        table.addCell(Cells.createContent(patientPopulations[0].patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
+            ?: "NA"))
+        table.addCell(Cells.createContent(patientPopulations[1].patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
+            ?: "NA"))
+
+        table.addCell(Cells.createContent("Previous systemic therapy"))
+        table.addCell(Cells.createContent(patientPopulations[0].priorSystemicTherapy ?: "NA"))
+        table.addCell(Cells.createContent(patientPopulations[1].priorSystemicTherapy ?: "NA"))
+
+        table.addCell(Cells.createContent("Prior therapies"))
+        table.addCell(Cells.createContent(patientPopulations[0].priorTherapies ?: "NA"))
+        table.addCell(Cells.createContent(patientPopulations[1].priorTherapies ?: "NA"))
+
         return table
     }
 
     private fun createPrimaryEndpoints(patientPopulations: List<PatientPopulation>): Table {
-        val table = Tables.createFixedWidthCols(100f, 100f, 100f, 100f, 100f).setWidth(500f)
+        val table = Tables.createFixedWidthCols(200f, 100f, 100f, 100f, 100f).setWidth(600f)
         val primaryEndpoints = mutableListOf<EndPoint>()
         for (patientPopulation in patientPopulations) {
             val analysisGroup: AnalysisGroup? = if (patientPopulation.analysisGroups.count() == 1) {
@@ -121,36 +132,23 @@ class EfficacyEvidenceDetailsGenerator(
         table.addCell(Cells.createKey(""))
         table.addCell(Cells.createKey(""))
         table.addCell(Cells.createHeader(""))
-        table.addCell(Cells.createHeader("FOLFOXORI + bevacizumab"))
-        table.addCell(Cells.createHeader("FOLFIRI + bevacizumab"))
+        table.addCell(Cells.createHeader(patientPopulations[0].name))
+        table.addCell(Cells.createHeader(patientPopulations[1].name))
         table.addCell(Cells.createHeader("Hazard ratio (HR) / Odds Ratio (OR)"))
         table.addCell(Cells.createHeader("P value"))
-        table.addCell(Cells.createContent("Time to second progression (95% CI)"))
-        table.addCell(Cells.createContent("19.2 months (17.3-21.4)"))
-        table.addCell(Cells.createContent("16.4 months (15.1-17.5)"))
-        table.addCell(Cells.createContent("HR 0.74 (0.63-0.88)"))
-        table.addCell(Cells.createContent("p = 0.0005"))
-        return table
-    }
 
-    private fun createSecondaryEndpoints(): Table {
-        val table = Tables.createFixedWidthCols(100f, 100f, 100f, 100f, 100f).setWidth(500f)
-        table.addCell(Cells.createValue("Secondary endpoints: "))
-        table.addCell(Cells.createKey(""))
-        table.addCell(Cells.createKey(""))
-        table.addCell(Cells.createKey(""))
-        table.addCell(Cells.createKey(""))
-        table.addCell(Cells.createHeader(""))
-        table.addCell(Cells.createHeader("FOLFOXORI + bevacizumab"))
-        table.addCell(Cells.createHeader("FOLFIRI + bevacizumab"))
-        table.addCell(Cells.createHeader("Hazard ratio (HR) / Odds Ratio (OR)"))
-        table.addCell(Cells.createHeader("P value"))
-        table.addCell(Cells.createContent("Median PFS (95% CI)"))
-        table.addCell(Cells.createContent("12 months (11.1-12.9)"))
-        table.addCell(Cells.createContent("10 months (9.2-11.6)"))
-        table.addCell(Cells.createContent("HR 0.75 (0.63-0.88)"))
-        table.addCell(Cells.createContent("p = 0.0005"))
-        table.addCell(Cells.createSpanningSubNote("Median follow-up was 35.9 months", table))
+        for (endPoint in primaryEndpoints) {
+            if (endPoint.derivedMetrics.isNotEmpty()) {
+                table.addCell(Cells.createContent("${endPoint.name} (95% CI)"))
+                table.addCell(Cells.createContent("${endPoint.value} (${endPoint.confidenceInterval?.lowerLimit ?: "NA"} - ${endPoint.confidenceInterval?.upperLimit ?: "NA"})"))
+                val otherEndpoint = primaryEndpoints.find { it.id == endPoint.derivedMetrics.first().relativeMetricId }
+                table.addCell(Cells.createContent("${otherEndpoint?.value} ${endPoint.unitOfMeasure.display()} (${otherEndpoint?.confidenceInterval?.lowerLimit ?: "NA"} - ${otherEndpoint?.confidenceInterval?.upperLimit ?: "NA"})"))
+                table.addCell(Cells.createContent("${endPoint.derivedMetrics.first().value} (${endPoint.derivedMetrics.first().confidenceInterval?.lowerLimit ?: "NA"} - ${endPoint.derivedMetrics.first().confidenceInterval?.upperLimit ?: "NA"})"))
+                table.addCell(Cells.createContent("p = ${endPoint.derivedMetrics.first().pValue}"))
+            }
+        }
+        table.addCell(Cells.createSpanningSubNote("Median follow-up for PFS was ${patientPopulations[0].medianFollowUpPFS} months", table))
+
         return table
     }
 

@@ -47,7 +47,7 @@ class EligibleApprovedTreatmentGenerator(
                     table.addHeaderCell(Cells.createHeader("Treatment"))
                     table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
                     table.addHeaderCell(Cells.createHeader("Personalized PFS prediction"))
-                    treatments.sortedBy { it.annotations.size }.forEach { treatment: AnnotatedTreatmentMatch ->
+                    treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                         table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                         if (treatment.annotations.isEmpty()) {
                             table.addCell(Cells.createContent("No literature efficacy evidence available yet"))

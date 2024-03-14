@@ -190,6 +190,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
         return analysisGroups.map { analysisGroup ->
             AnalysisGroup(
                 id = analysisGroup.id,
+                name = analysisGroup.name,
                 nPatients = analysisGroup.nPatients.toInt(),
                 endPoints = convertEndPoints(analysisGroup.endPointMetrics),
             )
