@@ -2,8 +2,6 @@ package com.hartwig.actin.clinical
 
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
-import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
-import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
@@ -31,12 +29,7 @@ class ClinicalIngestionFeedAdapterTest {
     @Test
     fun `Questionnaire in feed should be of latest version`() {
         val feed = FeedModel(
-            ClinicalFeedReader.read(FEED_DIRECTORY).copy(
-                questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
-                    ClinicalFeedReader.read(FEED_DIRECTORY).questionnaireEntries,
-                    QuestionnaireRawEntryMapper.createFromCurationDirectory(CURATION_DIRECTORY)
-                )
-            )
+            ClinicalFeedReader.read(FEED_DIRECTORY)
         )
         val versionUnderTest = QuestionnaireVersion.version(feed.latestQuestionnaireEntry(PATIENT)!!)
         val latestVersion = QuestionnaireVersion.values().last()
