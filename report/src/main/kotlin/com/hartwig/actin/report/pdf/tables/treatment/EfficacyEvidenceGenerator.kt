@@ -28,7 +28,7 @@ class EfficacyEvidenceGenerator(
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
             table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
-            treatments.sortedBy { it.treatmentCandidate.treatment.name }.forEach { treatment: AnnotatedTreatmentMatch ->
+            treatments.sortedBy { it.annotations.size }.forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
                 if (treatment.annotations.isNotEmpty()) {
                     val subtable = Tables.createSingleColWithWidth(width / 2)
@@ -38,7 +38,7 @@ class EfficacyEvidenceGenerator(
                         }
                     }
                     table.addCell(Cells.createContent(subtable))
-                } else table.addCell(Cells.createContent("No literature evidence available yet"))
+                } else table.addCell(Cells.createContent("No literature efficacy evidence available yet"))
 
                 table.addCell(Cells.createContent("Not evaluated yet"))
             }
@@ -125,7 +125,7 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createEndpoints(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
-        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
+        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(200f)
         for (patientPopulation in trialReference.patientPopulations) {
             if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name.equals(
                     treatment.treatmentCandidate.treatment.name,
