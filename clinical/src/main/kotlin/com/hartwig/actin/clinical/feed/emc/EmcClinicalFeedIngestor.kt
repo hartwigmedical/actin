@@ -59,11 +59,11 @@ class EmcClinicalFeedIngestor(
         val processedPatientIds: MutableSet<String> = HashSet()
         LOGGER.info("Creating clinical model")
         return feed.read().map { feedRecord ->
-            val patientId = feedRecord.patientEntry().subject
+            val patientId = feedRecord.patientEntry.subject
             processedPatientIds.add(patientId)
             LOGGER.info(" Extracting and curating data for patient {}", patientId)
 
-            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.latestQuestionnaireEntry())
+            val (questionnaire, questionnaireCurationErrors) = QuestionnaireExtraction.extract(feedRecord.latestQuestionnaireEntry)
             val tumorExtraction = tumorDetailsExtractor.extract(patientId, questionnaire)
             val complicationsExtraction = complicationsExtractor.extract(patientId, questionnaire)
             val clinicalStatusExtraction =
@@ -72,15 +72,15 @@ class EmcClinicalFeedIngestor(
             val priorSecondPrimaryExtraction = priorSecondPrimaryExtractor.extract(patientId, questionnaire)
             val priorOtherConditionsExtraction = priorOtherConditionExtractor.extract(patientId, questionnaire)
             val priorMolecularTestsExtraction = priorMolecularTestsExtractor.extract(patientId, questionnaire)
-            val labValuesExtraction = labValueExtractor.extract(patientId, feedRecord.labEntries().map { LabExtraction.extract(it) })
-            val toxicityExtraction = toxicityExtractor.extract(patientId, feedRecord.toxicityEntries(), questionnaire)
-            val intoleranceExtraction = intoleranceExtractor.extract(patientId, feedRecord.intoleranceEntries())
-            val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feedRecord.bloodTransfusionEntries())
-            val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medicationEntries())
+            val labValuesExtraction = labValueExtractor.extract(patientId, feedRecord.labEntries.map { LabExtraction.extract(it) })
+            val toxicityExtraction = toxicityExtractor.extract(patientId, feedRecord.toxicityEntries, questionnaire)
+            val intoleranceExtraction = intoleranceExtractor.extract(patientId, feedRecord.intoleranceEntries)
+            val bloodTransfusionsExtraction = bloodTransfusionsExtractor.extract(patientId, feedRecord.bloodTransfusionEntries)
+            val medicationExtraction = medicationExtractor.extract(patientId, feedRecord.medicationEntries)
 
             val record = ClinicalRecord(
                 patientId = patientId,
-                patient = extractPatientDetails(feedRecord.patientEntry(), questionnaire),
+                patient = extractPatientDetails(feedRecord.patientEntry, questionnaire),
                 tumor = tumorExtraction.extracted,
                 complications = complicationsExtraction.extracted,
                 clinicalStatus = clinicalStatusExtraction.extracted,
@@ -121,7 +121,7 @@ class EmcClinicalFeedIngestor(
                     record,
                     patientEvaluation.warnings.toList(),
                     questionnaireCurationErrors.toSet(),
-                    feedRecord.validationWarnings()
+                    feedRecord.validationWarnings
                 ), patientEvaluation
             )
         }
@@ -138,12 +138,12 @@ class EmcClinicalFeedIngestor(
     }
 
     private fun extractSurgeries(feedRecord: FeedModel.FeedRecord): List<Surgery> {
-        return feedRecord.uniqueSurgeryEntries()
+        return feedRecord.uniqueSurgeryEntries
             .map { Surgery(endDate = it.periodEnd, status = resolveSurgeryStatus(it.encounterStatus)) }
     }
 
     private fun extractBodyWeights(feedRecord: FeedModel.FeedRecord): List<BodyWeight> {
-        return feedRecord.uniqueBodyWeightEntries().map { entry: BodyWeightEntry ->
+        return feedRecord.uniqueBodyWeightEntries.map { entry: BodyWeightEntry ->
             BodyWeight(
                 date = entry.effectiveDateTime,
                 value = entry.valueQuantityValue,
@@ -158,7 +158,7 @@ class EmcClinicalFeedIngestor(
     }
 
     private fun extractVitalFunctions(feedRecord: FeedModel.FeedRecord): List<VitalFunction> {
-        return feedRecord.vitalFunctionEntries().map { entry ->
+        return feedRecord.uniqueVitalFunctionEntries.map { entry ->
             VitalFunction(
                 date = entry.effectiveDateTime,
                 category = VitalFunctionExtraction.determineCategory(entry.codeDisplayOriginal),

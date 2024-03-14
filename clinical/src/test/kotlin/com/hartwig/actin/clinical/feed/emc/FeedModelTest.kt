@@ -26,48 +26,48 @@ class FeedModelTest {
 
     @Test
     fun `Should be able to retrieve toxicity questionnaire entries`() {
-        val toxicities = feedRecord.toxicityEntries()
+        val toxicities = feedRecord.toxicityEntries
         Assert.assertEquals(3, toxicities.size.toLong())
     }
 
     @Test
     fun `Should be able to determine latest questionnaire`() {
-        val latest = feedRecord.latestQuestionnaireEntry()
+        val latest = feedRecord.latestQuestionnaireEntry
         Assert.assertNotNull(latest)
         Assert.assertEquals(LocalDate.of(2021, 8, 1), latest!!.authored)
     }
 
     @Test
     fun `Should be able to retrieve unique surgery entries`() {
-        Assert.assertEquals(1, feedRecord.uniqueSurgeryEntries().size.toLong())
+        Assert.assertEquals(1, feedRecord.uniqueSurgeryEntries.size.toLong())
     }
 
     @Test
     fun `Should be able to retrieve medication entries`() {
-        Assert.assertNotNull(feedRecord.medicationEntries())
+        Assert.assertNotNull(feedRecord.medicationEntries)
     }
 
     @Test
     fun `Should be able to retrieve lab entries`() {
-        Assert.assertNotNull(feedRecord.labEntries())
+        Assert.assertNotNull(feedRecord.labEntries)
     }
 
     @Test
     fun `Should be able to retrieve unique vital function entries`() {
-        Assert.assertNotNull(feedRecord.vitalFunctionEntries())
-        Assert.assertEquals(3, feedRecord.vitalFunctionEntries().size.toLong())
-        Assert.assertEquals("Diastolic blood pressure", feedRecord.vitalFunctionEntries()[2].componentCodeDisplay)
+        Assert.assertNotNull(feedRecord.uniqueVitalFunctionEntries)
+        Assert.assertEquals(3, feedRecord.uniqueVitalFunctionEntries.size.toLong())
+        Assert.assertEquals("Diastolic blood pressure", feedRecord.uniqueVitalFunctionEntries[2].componentCodeDisplay)
     }
 
     @Test
     fun `Should be able to retrieve intolerance entries`() {
-        Assert.assertNotNull(feedRecord.intoleranceEntries())
+        Assert.assertNotNull(feedRecord.intoleranceEntries)
     }
 
     @Test
     fun `Should be able to retrieve unique body weight entries`() {
-        Assert.assertNotNull(feedRecord.uniqueBodyWeightEntries())
-        Assert.assertEquals(3, feedRecord.uniqueBodyWeightEntries().size.toLong())
+        Assert.assertNotNull(feedRecord.uniqueBodyWeightEntries)
+        Assert.assertEquals(3, feedRecord.uniqueBodyWeightEntries.size.toLong())
     }
 
     companion object {
