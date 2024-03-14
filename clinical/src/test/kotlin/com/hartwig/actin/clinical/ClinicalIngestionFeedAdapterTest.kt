@@ -2,14 +2,19 @@ package com.hartwig.actin.clinical
 
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.correction.QuestionnaireCorrection
+import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
+import com.hartwig.actin.clinical.feed.emc.FeedModel
 import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
@@ -23,6 +28,22 @@ val EXPECTED_CLINICAL_RECORD: String =
     "${Resources.getResource("clinical_record").path}/$PATIENT.clinical.json"
 
 class ClinicalIngestionFeedAdapterTest {
+    @Test
+    fun `Questionnaire in feed should be of latest version`() {
+        val feed = FeedModel(
+            ClinicalFeedReader.read(FEED_DIRECTORY).copy(
+                questionnaireEntries = QuestionnaireCorrection.correctQuestionnaires(
+                    ClinicalFeedReader.read(FEED_DIRECTORY).questionnaireEntries,
+                    QuestionnaireRawEntryMapper.createFromCurationDirectory(CURATION_DIRECTORY)
+                )
+            )
+        )
+        val versionUnderTest = QuestionnaireVersion.version(feed.latestQuestionnaireEntry(PATIENT)!!)
+        val latestVersion = QuestionnaireVersion.values().last()
+
+        assertThat(versionUnderTest).isNotNull()
+        assertThat(versionUnderTest).isEqualTo(latestVersion)
+    }
 
     @Test
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
