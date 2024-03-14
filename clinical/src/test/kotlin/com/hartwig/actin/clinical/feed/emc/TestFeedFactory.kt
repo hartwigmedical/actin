@@ -17,7 +17,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 val FEED_DIRECTORY: String = Resources.getResource("feed/emc").path + "/"
-val FEED_DIRECTORY_1_3: String = Resources.getResource("feed/emc_1-3").path + "/"
 
 object TestFeedFactory {
     const val TEST_SUBJECT = "ACTN-01-02-9999"
