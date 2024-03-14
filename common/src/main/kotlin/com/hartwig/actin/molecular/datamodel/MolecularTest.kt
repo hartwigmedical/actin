@@ -3,23 +3,40 @@ package com.hartwig.actin.molecular.datamodel
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import java.time.LocalDate
 
-data class MolecularTest(
-    val type: ExperimentType,
-    val date: LocalDate?,
+interface MolecularTest {
+    val type: ExperimentType
+    val date: LocalDate?
     val result: Any
-) {
+}
+
+data class WGSMolecularTest(
+    override val type: ExperimentType,
+    override val date: LocalDate?,
+    override val result: MolecularRecord
+) : MolecularTest {
 
     companion object {
-        fun fromWGS(result: MolecularRecord): MolecularTest {
-            return MolecularTest(result.type, result.date, result)
-        }
-
-        fun fromIHC(result: PriorMolecularTest): MolecularTest {
-            return MolecularTest(ExperimentType.IHC, date = null, result)
-        }
-
-        fun fromIHC(priorMolecularTests: List<PriorMolecularTest>): List<MolecularTest> {
-            return priorMolecularTests.map { MolecularTest.fromIHC(it) }
+        fun fromMolecularRecord(result: MolecularRecord): WGSMolecularTest {
+            return WGSMolecularTest(result.type, result.date, result)
         }
     }
 }
+
+data class IHCMolecularTest(
+    override val type: ExperimentType,
+    override val date: LocalDate?,
+    override val result: PriorMolecularTest
+) : MolecularTest {
+
+    companion object {
+        fun fromPriorMolecularTest(result: PriorMolecularTest): IHCMolecularTest {
+            return IHCMolecularTest(ExperimentType.IHC, date = null, result)
+        }
+
+        fun fromPriorMolecularTests(priorMolecularTests: List<PriorMolecularTest>): List<IHCMolecularTest> {
+            return priorMolecularTests.map { IHCMolecularTest.fromPriorMolecularTest(it) }
+        }
+    }
+}
+
+

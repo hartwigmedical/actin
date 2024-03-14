@@ -1,9 +1,10 @@
 package com.hartwig.actin
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.WGSMolecularTest
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -25,7 +26,7 @@ object PatientRecordFactory {
 
         return PatientRecord(patientId = clinical.patientId, clinical = clinical,
             molecularHistory = if (molecular != null) {
-                MolecularHistory(MolecularTest.fromIHC(clinical.priorMolecularTests) + MolecularTest.fromWGS(molecular))
+                MolecularHistory(IHCMolecularTest.fromPriorMolecularTests(clinical.priorMolecularTests) + WGSMolecularTest.fromMolecularRecord(molecular))
             } else {
                 MolecularHistory.empty()
             })

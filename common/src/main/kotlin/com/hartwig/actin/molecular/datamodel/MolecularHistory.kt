@@ -37,13 +37,15 @@ data class MolecularHistory(
             return MolecularHistory(emptyList())
         }
 
-        fun fromWGSandIHC(wgs: MolecularRecord?, ihc: List<PriorMolecularTest>): MolecularHistory {
+        // TODO (kz) convenience constructor, but change to make it Lists of specific
+        //  molecular test subtypes? see at call sites for what looks better
+        fun fromWGSandIHC(molecularRecord: MolecularRecord?, priorMolecularTests: List<PriorMolecularTest>): MolecularHistory {
             return MolecularHistory(
-                (if (wgs != null) {
-                    listOf(MolecularTest.fromWGS(wgs))
+                (if (molecularRecord != null) {
+                    listOf(WGSMolecularTest.fromMolecularRecord(molecularRecord))
                 } else {
                     emptyList()
-                }) + MolecularTest.fromIHC(ihc)
+                }) + IHCMolecularTest.fromPriorMolecularTests(priorMolecularTests)
             )
         }
     }
