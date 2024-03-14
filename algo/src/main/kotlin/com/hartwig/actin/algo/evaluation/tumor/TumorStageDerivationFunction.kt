@@ -7,13 +7,13 @@ import com.hartwig.actin.doid.DoidModel
 import java.util.function.Predicate
 
 internal class TumorStageDerivationFunction private constructor(private val derivationRules: Map<Predicate<TumorDetails>, Set<TumorStage>>) {
-    fun apply(tumor: TumorDetails): List<TumorStage> {
+    fun apply(tumor: TumorDetails): List<TumorStage>? {
         return if (DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids) && hasNoTumorStage(tumor)) {
             derivationRules.entries
                 .filter { it.key.test(tumor) }
                 .flatMap { it.value }
         } else {
-            emptyList()
+            null
         }
     }
 
@@ -26,7 +26,7 @@ internal class TumorStageDerivationFunction private constructor(private val deri
                             hasNoUncategorizedLesions()
                         )
                     ) to setOf(TumorStage.I, TumorStage.II),
-                    hasExactlyCategorizedLesions(1, doidModel) to setOf(TumorStage.III, TumorStage.IV),
+                    hasExactlyCategorizedLesions(1, doidModel).or(hasUncategorizedLesions()) to setOf(TumorStage.III, TumorStage.IV),
                     hasAtLeastCategorizedLesions(2, doidModel) to setOf(TumorStage.IV)
                 )
             )
@@ -59,6 +59,10 @@ internal class TumorStageDerivationFunction private constructor(private val deri
 
         private fun hasNoUncategorizedLesions(): Predicate<TumorDetails> {
             return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherLesions.isNullOrEmpty() }
+        }
+
+        private fun hasUncategorizedLesions(): Predicate<TumorDetails> {
+            return Predicate<TumorDetails> { tumor: TumorDetails -> tumor.otherLesions?.isNotEmpty() ?: false }
         }
 
         private fun hasAllKnownLesionDetails(): Predicate<TumorDetails> {

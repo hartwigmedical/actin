@@ -16,10 +16,10 @@ class HasTumorStage internal constructor(
     override fun evaluate(record: PatientRecord): Evaluation {
         val stage = record.clinical.tumor.stage
         if (stage == null) {
-            val derivedStages = tumorStageDerivationFunction.apply(record.clinical.tumor).toSet()
-            return if (derivedStages.size == 1) {
+            val derivedStages = tumorStageDerivationFunction.apply(record.clinical.tumor)?.toSet()
+            return if (derivedStages?.size == 1) {
                 evaluateWithStage(derivedStages.iterator().next())
-            } else if (derivedStages.map { evaluateWithStage(it) }.any { it.result == EvaluationResult.PASS }) {
+            } else if (derivedStages?.map { evaluateWithStage(it) }?.any { it.result == EvaluationResult.PASS } == true) {
                 val derivedStageMessage = "assumed ${derivedStages.filter { 
                     evaluateWithStage(it).result == EvaluationResult.PASS }.joinToString(" or ") { it.display() }} based on lesions"
                 undetermined(
