@@ -28,18 +28,17 @@ class EfficacyEvidenceGenerator(
             table.addHeaderCell(Cells.createHeader("Treatment"))
             table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
             table.addHeaderCell(Cells.createHeader("Database efficacy evidence"))
-            treatments?.forEach { treatment: AnnotatedTreatmentMatch ->
+            treatments.sortedBy { it.treatmentCandidate.treatment.name }.forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
-                val subtable = Tables.createSingleColWithWidth(width / 2)
                 if (treatment.annotations.isNotEmpty()) {
+                    val subtable = Tables.createSingleColWithWidth(width / 2)
                     for (annotation in treatment.annotations) {
                         for (trialReference in annotation.trialReferences) {
                             subtable.addCell(Cells.create(createOneLiteraturePart(width, annotation, trialReference, treatment)))
                         }
                     }
-                } else subtable.addCell(Cells.createContent("No literature evidence available yet"))
-
-                table.addCell(Cells.createContent(subtable))
+                    table.addCell(Cells.createContent(subtable))
+                } else table.addCell(Cells.createContent("No literature evidence available yet"))
 
                 table.addCell(Cells.createContent("Not evaluated yet"))
             }
@@ -78,7 +77,7 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createPatientCharacteristics(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
-        val table = Tables.createFixedWidthCols(150f, 150f).setWidth(500f)
+        val table = Tables.createFixedWidthCols(100f, 150f).setWidth(400f)
         for (patientPopulation in trialReference.patientPopulations) {
             if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name.equals(
                     treatment.treatmentCandidate.treatment.name,
@@ -88,15 +87,18 @@ class EfficacyEvidenceGenerator(
                 table.addCell(Cells.createContent("WHO/ECOG"))
                 table.addCell(Cells.createContent(createWhoString(patientPopulation)))
                 table.addCell(Cells.createContent("Primary tumor location"))
-                table.addCell(Cells.createContent(patientPopulation.patientsPerPrimaryTumorLocation?.entries?.joinToString(", ") { "${it.key}: ${it.value}" }
-                    ?: "No information"))
+                table.addCell(Cells.createContent(patientPopulation.patientsPerPrimaryTumorLocation?.entries?.joinToString(", ") { "${it.key.replaceFirstChar { word -> word.uppercase() }}: ${it.value}" }
+                    ?: "No information available"))
                 table.addCell(Cells.createContent("Mutations"))
                 table.addCell(Cells.createContent(patientPopulation.mutations ?: "NA"))
                 table.addCell(Cells.createContent("Metastatic sites"))
                 table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
-                    ?: "No information"))
-                table.addCell(Cells.createContent("Previous systemic chemotherapy"))
-                table.addCell(Cells.createContent(patientPopulation.priorSystemicTherapy.toString()))
+                    ?: "No information available"))
+                table.addCell(Cells.createContent("Previous systemic therapy"))
+                table.addCell(Cells.createContent(patientPopulation.priorSystemicTherapy ?: "No information available"))
+                table.addCell(Cells.createContent("Prior therapies"))
+                table.addCell(Cells.createContent(patientPopulation.priorTherapies ?: "No information available"))
+
             }
         }
 //        table.addCell(
@@ -119,7 +121,7 @@ class EfficacyEvidenceGenerator(
             patientsWithWho3?.let { strings.add("3: $it") }
             patientsWithWho4?.let { strings.add("4: $it") }
         }
-        return strings.joinToString("\n")
+        return strings.joinToString(", ")
     }
 
     private fun createEndpoints(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
@@ -160,7 +162,7 @@ class EfficacyEvidenceGenerator(
                             if (primaryEndPoint.value != null) {
                                 table.addCell(
                                     Cells.createKey(
-                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
+                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
                                             ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
                                     )
                                 )

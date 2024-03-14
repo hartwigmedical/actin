@@ -47,13 +47,12 @@ class EligibleApprovedTreatmentGenerator(
                     table.addHeaderCell(Cells.createHeader("Treatment"))
                     table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
                     table.addHeaderCell(Cells.createHeader("Personalized PFS prediction"))
-                    treatments.forEach { treatment: AnnotatedTreatmentMatch ->
+                    treatments.sortedBy { it.treatmentCandidate.treatment.name }.forEach { treatment: AnnotatedTreatmentMatch ->
                         table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
-                        val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
                         if (treatment.annotations.isEmpty()) {
-                            subtable.addCell(Cells.createValue(" "))
-                            subtable.addCell(Cells.createKey("No literature efficacy evidence available yet"))
+                            table.addCell(Cells.createKey("No literature efficacy evidence available yet"))
                         } else {
+                            val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
                             for (annotation in treatment.annotations) {
                                 for (trialReference in annotation.trialReferences) {
                                     for (patientPopulation in trialReference.patientPopulations) {
@@ -116,8 +115,8 @@ class EligibleApprovedTreatmentGenerator(
                                     }
                                 }
                             }
+                            table.addCell(Cells.createContent(subtable))
                         }
-                        table.addCell(Cells.createContent(subtable))
                         table.addCell(Cells.createContent("Not evaluated yet"))
                     }
                     return makeWrapping(table)

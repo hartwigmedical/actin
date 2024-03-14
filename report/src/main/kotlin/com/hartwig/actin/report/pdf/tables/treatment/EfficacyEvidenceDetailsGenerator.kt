@@ -167,7 +167,7 @@ class EfficacyEvidenceDetailsGenerator(
                 patientsWithWho3?.let { strings.add("3: $it") }
                 patientsWithWho4?.let { strings.add("4: $it") }
             }
-            return strings.joinToString("\n")
+            return strings.joinToString(", ")
         }
     }
 }
