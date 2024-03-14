@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.medication.MedicationCategories
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
@@ -44,17 +44,16 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsActiveMedicationWithCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val categoryNameInput = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsMedicationOfAtcLevel(selector, categoryNameInput, categories.resolve(categoryNameInput))
+            val categoryInput = functionInputResolver().createOneMedicationCategoryInput(function)
+            CurrentlyGetsMedicationOfAtcLevel(selector, categoryInput.categoryName, categoryInput.atcLevels)
         }
     }
 
     private fun hasRecentlyReceivedMedicationOfAtcLevelCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val categoryInput = functionInputResolver().createOneStringOneIntegerInput(function)
-            val categoryNameInput = categoryInput.string
-            val maxStopDate = referenceDateProvider().date().minusWeeks(categoryInput.integer.toLong())
-            HasRecentlyReceivedMedicationOfAtcLevel(selector, categoryNameInput, categories.resolve(categoryNameInput), maxStopDate)
+            val (categoryInput, integerInput) = functionInputResolver().createOneMedicationCategoryOneIntegerInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(integerInput.toLong())
+            HasRecentlyReceivedMedicationOfAtcLevel(selector, categoryInput.categoryName, categoryInput.atcLevels, maxStopDate)
         }
     }
 

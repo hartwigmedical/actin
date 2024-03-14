@@ -4,14 +4,16 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.date
 import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.medication.AtcTree
 import java.time.LocalDate
 
-class RequiresRegularHematopoieticSupport(private val atcTree: AtcTree, private val minDate: LocalDate, private val maxDate: LocalDate) :
-    EvaluationFunction {
+class RequiresRegularHematopoieticSupport(
+    private val atcTree: AtcTree, private val minDate: LocalDate, private val maxDate: LocalDate
+) : EvaluationFunction {
+    
     override fun evaluate(record: PatientRecord): Evaluation {
         val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
         for (transfusion in record.clinical.bloodTransfusions) {

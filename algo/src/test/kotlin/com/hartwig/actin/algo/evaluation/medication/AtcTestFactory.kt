@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.clinical.datamodel.AtcClassification
 import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.medication.AtcTree
 
 internal object AtcTestFactory {
 
