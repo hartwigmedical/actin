@@ -10,7 +10,7 @@ class HasBiopsyAmenableLesion : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.molecular?.type != ExperimentType.WHOLE_GENOME) {
-            EvaluationFactory.undetermined(
+            EvaluationFactory.recoverableUndetermined(
                 "Currently biopsy-amenability of lesions cannot be determined without WGS",
                 "Biopsy amenability unknown"
             )
