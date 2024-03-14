@@ -31,7 +31,7 @@ class EfficacyEvidenceDetailsChapter(private val socMatches: List<AnnotatedTreat
     private fun addEfficacyEvidenceDetails(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generators: MutableList<TableGenerator> = mutableListOf()
-        val allAnnotations = socMatches?.flatMap { it.annotations } ?: emptyList()
+        val allAnnotations = socMatches?.flatMap { it.annotations }?.distinct() ?: emptyList()
         if (allAnnotations.isNotEmpty()) {
             for (annotation in allAnnotations) {
                 val efficacyEvidenceGenerator = EfficacyEvidenceDetailsGenerator(annotation, contentWidth())

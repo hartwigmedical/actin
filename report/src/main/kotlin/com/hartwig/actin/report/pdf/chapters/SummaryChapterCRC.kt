@@ -4,7 +4,6 @@ import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryCRCGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryCRCGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleDutchExternalTrialsGenerator
@@ -48,8 +47,7 @@ class SummaryChapterCRC(private val report: Report) : ReportChapter {
         val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
 
         val generators = listOfNotNull(
-            PatientClinicalHistoryCRCGenerator(report.clinical, keyWidth, valueWidth),
-            MolecularSummaryCRCGenerator(report.molecular, keyWidth, valueWidth),
+            PatientClinicalHistoryCRCGenerator(report.clinical, report.molecular, keyWidth, valueWidth),
             EligibleApprovedTreatmentGenerator(
                 report.clinical,
                 report.molecular,

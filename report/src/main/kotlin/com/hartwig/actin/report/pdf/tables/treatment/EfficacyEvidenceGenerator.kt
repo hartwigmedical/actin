@@ -7,7 +7,9 @@ import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EfficacyEvidenceGenerator(
@@ -69,7 +71,8 @@ class EfficacyEvidenceGenerator(
 
     private fun createTrialHeader(annotation: EfficacyEntry): Table {
         val table = Tables.createFixedWidthCols(100f, 150f).setWidth(250f)
-        table.addCell(Cells.createSubTitle(annotation.acronym))
+        table.addCell(Cells.createSubTitle(annotation.acronym).setAction(PdfAction.createURI(annotation.trialReferences.first().url))
+            .addStyle(Styles.urlStyle()))
         table.addCell(Cells.createValue(""))
         table.addCell(Cells.createValue("Patient characteristics: "))
         table.addCell(Cells.createKey(""))
