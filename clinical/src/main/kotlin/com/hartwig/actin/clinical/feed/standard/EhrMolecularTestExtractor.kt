@@ -22,7 +22,7 @@ class EhrMolecularTestExtractor(
             .map {
                 val curationResponse = CurationResponse.createFromConfigs(
                     molecularTestCuration.find(it),
-                    ehrPatientRecord.patientDetails.hashedIdBase64(),
+                    ehrPatientRecord.patientDetails.hashedId,
                     CurationCategory.MOLECULAR_TEST_IHC,
                     it,
                     "molecular test ihc"
