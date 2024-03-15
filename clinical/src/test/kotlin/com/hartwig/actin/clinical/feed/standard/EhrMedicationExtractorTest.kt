@@ -56,7 +56,7 @@ class EhrMedicationExtractorTest {
         atc = atcClassification,
         isTrialMedication = false,
         isSelfCare = false,
-        qtProlongatingRisk = QTProlongatingRisk.UNKNOWN,
+        qtProlongatingRisk = QTProlongatingRisk.NONE,
         cypInteractions = emptyList()
     )
     private val ehrPatientRecord = EhrPatientRecord(
