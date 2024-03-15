@@ -37,6 +37,7 @@ enum class LabUnit(private val display: String) : Displayable {
     MILLIMETERS_PER_HOUR("mm/hr"),
     MILLILITERS_PER_MINUTE("mL/min"),
     FEMTOLITERS("fL"),
+    FEMTOMOLE("fmol"),
     MILLILITERS("mL"),
     KILO_PASCAL("kPa"),
     SECONDS("sec"),

@@ -16,6 +16,8 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     CARBOHYDRATE_ANTIGEN_15_3("C153", "CA 15-3", LabUnit.KILOUNITS_PER_LITER),
     CALCIUM("Ca", "calcium", LabUnit.MILLIMOLES_PER_LITER),
     CARCINOEMBRYONIC_ANTIGEN("CEA", "CEA", LabUnit.MICROGRAMS_PER_LITER),
+    CGA("CgA","Chromogranin A", LabUnit.NONE),
+    CGA_1("CgA-1","Chromogranin A", LabUnit.NONE),
     CORRECTED_CALCIUM("Ca_C", "corrected calcium", LabUnit.MILLIMOLES_PER_LITER),
     CREATININE("CREA", "creatinine", LabUnit.MICROMOLES_PER_LITER),
     CREATININE_CLEARANCE_CG("CGCRCL", "creatinine clearance (Cockcroft-Gault)", LabUnit.NONE),
@@ -23,6 +25,7 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     DIRECT_BILIRUBIN("DBIL", "direct bilirubin", LabUnit.MICROMOLES_PER_LITER),
     EGFR_CKD_EPI("CKD-EPIeGFR", "estimated GFR (CKD-EPI)", LabUnit.MILLILITERS_PER_MINUTE),
     EGFR_MDRD("MDRDeGFR", "estimated GFR (MDRD)", LabUnit.NONE),
+    ESR("ESR", "erythrocyte sedimentation rate", LabUnit.MILLIMETERS_PER_HOUR),
     FREE_T4("FT4", "free T4", LabUnit.PICOMOLES_PER_LITER),
     HCG_AND_BETA_HCG("HCG", "HCG", LabUnit.INTERNATIONAL_UNITS_PER_LITER),
     HEMOGLOBIN("Hb", "hemoglobin", LabUnit.MILLIMOLES_PER_LITER),
@@ -35,6 +38,8 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     LYMPHOCYTES_ABS_EDA("LYMPHO-ABS-eDA", "absolute lymphocyte count eDA", LabUnit.BILLIONS_PER_LITER),
     LYMPHOCYTES_ABS_EDM("LYMPHO-ABS-eDM", "absolute lymphocyte count eDM", LabUnit.BILLIONS_PER_LITER),
     MAGNESIUM("MG", "magnesium", LabUnit.MILLIMOLES_PER_LITER),
+    MCH("MCH", "Mean corpuscular hemoglobin", LabUnit.FEMTOMOLE),
+    MCHC("MCHC", "Mean corpuscular hemoglobin concentration", LabUnit.MILLIMOLES_PER_LITER),
     NEUTROPHILS_ABS("NEUTRO-ABS", "absolute neutrophil count", LabUnit.BILLIONS_PER_LITER),
     NEUTROPHILS_ABS_EDA("NEUTRO-ABS-eDA", "absolute neutrophil count eDA", LabUnit.BILLIONS_PER_LITER),
     NT_PRO_BNP("BNP", "NT-proBNP", LabUnit.PICOMOLES_PER_LITER),
@@ -48,7 +53,9 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     TOTAL_BILIRUBIN("TBIL", "total bilirubin", LabUnit.MICROMOLES_PER_LITER),
     TOTAL_PROTEIN_URINE("TE_U", "total urine protein", LabUnit.GRAMS_PER_LITER),
     TRIGLYCERIDE("TG", "triglycerides", LabUnit.MILLIMOLES_PER_LITER),
-    TROPONIN_I_T("HSTNT", "troponin I and T", LabUnit.NANOGRAMS_PER_LITER);
+    TROPONIN_I_T("HSTNT", "troponin I and T", LabUnit.NANOGRAMS_PER_LITER),
+    RETICULOCYTES_ABS("RETI-ABS", "absolute reticulocyte count", LabUnit.BILLIONS_PER_LITER),
+    U_SG("U_SG", "urine specific gravity", LabUnit.KILOGRAMS_PER_LITER);
 
     override fun display(): String {
         return display
