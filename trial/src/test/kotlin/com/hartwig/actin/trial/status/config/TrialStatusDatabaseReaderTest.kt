@@ -1,8 +1,10 @@
 package com.hartwig.actin.trial.status.config
 
 import com.google.common.io.Resources
+import com.hartwig.actin.trial.status.TrialStatus
+import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.TrialStatusEntry
-import com.hartwig.actin.trial.status.ctc.CTCDatabaseReader
+import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -10,7 +12,7 @@ class TrialStatusDatabaseReaderTest {
 
     @Test
     fun shouldLoadExpectedDatabaseFromTestDirectory() {
-        val database = CTCDatabaseReader.read(CTC_CONFIG_DIRECTORY)
+        val database = TrialStatusDatabaseReader(CTCTrialStatusEntryReader()).read(CTC_CONFIG_DIRECTORY)
 
         assertEntries(database.entries)
         assertStudyMETCsToIgnore(database.studyMETCsToIgnore)
@@ -26,11 +28,11 @@ class TrialStatusDatabaseReaderTest {
             assertThat(entry1.studyMETC).isEqualTo("METC 1")
             assertThat(entry1.studyAcronym).isEqualTo("StudyWithCohort")
             assertThat(entry1.studyTitle).isEqualTo("This is a study with cohort")
-            assertThat(entry1.studyStatus).isEqualTo("Open")
+            assertThat(entry1.studyStatus).isEqualTo(TrialStatus.OPEN)
             assertThat((entry1.cohortId as Int).toLong()).isEqualTo(1)
             assertThat((entry1.cohortParentId as Int).toLong()).isEqualTo(2)
             assertThat(entry1.cohortName).isEqualTo("Cohort A")
-            assertThat(entry1.cohortStatus).isEqualTo("Closed")
+            assertThat(entry1.cohortStatus).isEqualTo(TrialStatus.CLOSED)
             assertThat((entry1.cohortSlotsNumberAvailable as Int).toLong()).isEqualTo(5)
             assertThat(entry1.cohortSlotsDateUpdate).isEqualTo("23-04-04")
 
@@ -38,7 +40,7 @@ class TrialStatusDatabaseReaderTest {
             assertThat(entry2.studyMETC).isEqualTo("METC 2")
             assertThat(entry2.studyAcronym).isEqualTo("StudyWithoutCohort")
             assertThat(entry2.studyTitle).isEqualTo("This is a study without cohort")
-            assertThat(entry2.studyStatus).isEqualTo("Closed")
+            assertThat(entry2.studyStatus).isEqualTo(TrialStatus.CLOSED)
             assertThat(entry2.cohortId).isNull()
             assertThat(entry2.cohortParentId).isNull()
             assertThat(entry2.cohortName).isNull()

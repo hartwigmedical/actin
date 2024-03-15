@@ -17,7 +17,7 @@ internal object TrialStatusInterpreter {
             return false to listOf(
                 TrialDefinitionValidationError(
                     trialDefinitionConfig,
-                    "Inconsistent study status found in trial study database"
+                    "Inconsistent study status found in trial status database"
                 )
             )
         } else if (trialStates.size == 1) {

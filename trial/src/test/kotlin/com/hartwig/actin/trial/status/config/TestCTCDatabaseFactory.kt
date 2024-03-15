@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.status.config
 
 import com.hartwig.actin.trial.TestTrialData
+import com.hartwig.actin.trial.status.TrialStatus
 import com.hartwig.actin.trial.status.TrialStatusDatabase
 import com.hartwig.actin.trial.status.TrialStatusEntry
 
@@ -24,10 +25,10 @@ object TestCTCDatabaseFactory {
             studyMETC = TestTrialData.TEST_TRIAL_METC_1,
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_1,
-            studyStatus = "Open",
+            studyStatus = TrialStatus.OPEN,
             cohortId = 1,
             cohortName = "Cohort A-1",
-            cohortStatus = "Gesloten",
+            cohortStatus = TrialStatus.CLOSED,
             cohortSlotsNumberAvailable = 0
         )
         val study1Mapping2CohortA = TrialStatusEntry(
@@ -35,10 +36,10 @@ object TestCTCDatabaseFactory {
             studyMETC = TestTrialData.TEST_TRIAL_METC_1,
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_1,
-            studyStatus = "Open",
+            studyStatus = TrialStatus.OPEN,
             cohortId = 2,
             cohortName = "Cohort A-2",
-            cohortStatus = "Open",
+            cohortStatus = TrialStatus.OPEN,
             cohortSlotsNumberAvailable = 5,
         )
         val study1UnmappedCohort = TrialStatusEntry(
@@ -46,10 +47,10 @@ object TestCTCDatabaseFactory {
             studyMETC = TestTrialData.TEST_TRIAL_METC_1,
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_1,
-            studyStatus = "Open",
+            studyStatus = TrialStatus.OPEN,
             cohortId = TestTrialData.TEST_UNMAPPED_COHORT_ID,
             cohortName = "Cohort D",
-            cohortStatus = "Open",
+            cohortStatus = TrialStatus.OPEN,
             cohortSlotsNumberAvailable = 0,
         )
         val study2Mapping = TrialStatusEntry(
@@ -57,14 +58,14 @@ object TestCTCDatabaseFactory {
             studyMETC = TestTrialData.TEST_TRIAL_METC_2,
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_2,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_2,
-            studyStatus = "Open",
+            studyStatus = TrialStatus.OPEN,
         )
         val ignoreStudy = TrialStatusEntry(
             studyId = 3,
             studyMETC = TestTrialData.TEST_TRIAL_METC_IGNORE,
             studyAcronym = "Acronym-Ignore",
             studyTitle = "Title-Ignore",
-            studyStatus = "Open",
+            studyStatus = TrialStatus.OPEN,
         )
         return listOf(study1Mapping1CohortA, study1Mapping2CohortA, study1UnmappedCohort, study2Mapping, ignoreStudy)
     }

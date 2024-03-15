@@ -9,8 +9,9 @@ import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
 import com.hartwig.actin.trial.interpretation.TrialIngestion
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
-import com.hartwig.actin.trial.status.ctc.CTCDatabaseReader
-import com.hartwig.actin.trial.status.nki.NKIDatabaseReader
+import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
+import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
+import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import org.apache.commons.cli.DefaultParser
@@ -64,9 +65,9 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         }
 
         return if (config.ctcConfigDirectory != null) {
-            TrialStatusConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory))
+            TrialStatusConfigInterpreter(TrialStatusDatabaseReader(CTCTrialStatusEntryReader()).read(config.ctcConfigDirectory))
         } else if (config.nkiConfigDirectory != null) {
-            TrialStatusConfigInterpreter(NKIDatabaseReader.read(config.nkiConfigDirectory))
+            TrialStatusConfigInterpreter(TrialStatusDatabaseReader(NKITrialStatusEntryReader()).read(config.nkiConfigDirectory))
         } else {
             SimpleConfigInterpreter()
         }

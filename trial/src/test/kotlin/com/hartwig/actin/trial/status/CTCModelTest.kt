@@ -5,8 +5,8 @@ import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
-import com.hartwig.actin.trial.status.config.TestCTCDatabaseEntryFactory
 import com.hartwig.actin.trial.status.config.TestCTCDatabaseFactory
+import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -171,17 +171,17 @@ class CTCModelTest {
                 TestCTCDatabaseFactory.createMinimalTestCTCDatabase()
                     .copy(
                         entries = listOf(
-                            TestCTCDatabaseEntryFactory.MINIMAL.copy(
+                            TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
                                 studyMETC = TestTrialData.TEST_TRIAL_METC_1,
                                 cohortId = 1,
                                 cohortParentId = null
                             ),
-                            TestCTCDatabaseEntryFactory.MINIMAL.copy(
+                            TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
                                 studyMETC = TestTrialData.TEST_TRIAL_METC_1,
                                 cohortId = 2,
                                 cohortParentId = 1
                             ),
-                            TestCTCDatabaseEntryFactory.MINIMAL.copy(
+                            TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
                                 studyMETC = TestTrialData.TEST_TRIAL_METC_1,
                                 cohortId = 3,
                                 cohortParentId = 1

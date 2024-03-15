@@ -1,11 +1,19 @@
 package com.hartwig.actin.trial
 
+import com.hartwig.actin.trial.config.CohortDefinitionValidationError
 import com.hartwig.actin.trial.config.InclusionCriteriaConfig
 import com.hartwig.actin.trial.config.InclusionCriteriaReferenceConfig
+import com.hartwig.actin.trial.config.InclusionCriteriaValidationError
+import com.hartwig.actin.trial.config.InclusionReferenceValidationError
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
+import com.hartwig.actin.trial.config.TrialDatabaseValidation
+import com.hartwig.actin.trial.config.TrialDefinitionValidationError
+import com.hartwig.actin.trial.config.UnusedRuleToKeepError
 import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.status.config.TestCTCDatabaseEntryFactory
+import com.hartwig.actin.trial.status.TrialStatusDatabaseValidation
+import com.hartwig.actin.trial.status.TrialStatusDatabaseValidationError
+import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory
 import com.hartwig.actin.util.json.GsonSerializer
 import org.junit.Test
 
@@ -31,9 +39,14 @@ class TrialIngestionResultTest {
     fun `Should serialize trial ingestion result`() {
         val result = TrialIngestionResult(
             ingestionStatus = TrialIngestionStatus.FAIL,
-            trialStatusDatabaseValidation = CtcDatabaseValidation(
+            trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
                 trialDefinitionValidationErrors = listOf(TrialDefinitionValidationError(TestTrialDefinitionConfigFactory.MINIMAL, "msg")),
-                ctcDatabaseValidationErrors = listOf(CTCDatabaseValidationError(TestCTCDatabaseEntryFactory.MINIMAL, "msg")),
+                ctcDatabaseValidationErrors = listOf(
+                    TrialStatusDatabaseValidationError(
+                        TestTrialStatusDatabaseEntryFactory.MINIMAL,
+                        "msg"
+                    )
+                ),
             ),
             trialValidationResult = TrialDatabaseValidation(
                 setOf(InclusionCriteriaValidationError(config = inclusionCriterion, message = "Not a valid inclusion criterion for trial")),

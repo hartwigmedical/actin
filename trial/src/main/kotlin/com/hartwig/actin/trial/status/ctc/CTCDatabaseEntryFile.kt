@@ -28,7 +28,7 @@ object CTCDatabaseEntryFile {
     }
 
     private val OPEN_STATES = setOf("Open")
-    private val CLOSED_STATES = setOf("Gesloten", "Nog niet geopend", "Gesloten voor inclusie", "Onbekend", "Tijdelijk gesloten")
+    private val CLOSED_STATES = setOf("Gesloten", "Nog niet geopend", "Gesloten voor inclusie", "Onbekend", "Tijdelijk gesloten", "Closed")
 
     private fun fromStatusString(string: String): TrialStatus {
         return when {
