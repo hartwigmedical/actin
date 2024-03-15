@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
@@ -35,6 +36,12 @@ class PatientClinicalHistoryCRCGenerator(private val record: ClinicalRecord, pri
         table.addCell(createValue(lesions(record.tumor)))
         table.addCell(createKey("Stage"))
         table.addCell(createValue(stage(record.tumor)))
+        table.addCell(createKey("Measurable disease (RECIST)"))
+        table.addCell(createValue(measurableDisease(record.tumor)))
+        table.addCell(createKey("DPYD"))
+        table.addCell(createValue(createPeachSummaryForGene(molecular.pharmaco, "DPYD")))
+        table.addCell(createKey("UGT1A1"))
+        table.addCell(createValue(createPeachSummaryForGene(molecular.pharmaco, "UGT1A1")))
 
         val table2 = createFixedWidthCols(keyWidth, valueWidth)
         table2.addCell(createKey("\n"))
@@ -134,6 +141,23 @@ class PatientClinicalHistoryCRCGenerator(private val record: ClinicalRecord, pri
             } else {
                 "MSS"
             }
+        }
+
+        private fun measurableDisease(tumor: TumorDetails): String {
+            return if (tumor.hasMeasurableDisease == true) {
+                "Yes"
+            } else if (tumor.hasMeasurableDisease == false) {
+                "No"
+            } else "NA"
+        }
+
+        private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): String {
+            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
+            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
+        }
+
+        private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: String): PharmacoEntry? {
+            return pharmaco.find { it.gene == geneToFind }
         }
 
         private fun molecularResults(molecular: MolecularRecord): String {

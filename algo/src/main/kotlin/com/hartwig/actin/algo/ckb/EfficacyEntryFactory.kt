@@ -118,8 +118,8 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
                 patientsWithWho2 = patientPopulation.nEcog2?.toInt(),
                 patientsWithWho3 = patientPopulation.nEcog3?.toInt(),
                 patientsWithWho4 = patientPopulation.nEcog4?.toInt(),
-                patientsWithWho0to1 = patientPopulation.nEcog0to1?.toInt(),
-                patientsWithWho1to2 = patientPopulation.nEcog1to2?.toInt(),
+                patientsWithWho0to1 = if (!patientPopulation.nEcog0.isNullOrEmpty() && !patientPopulation.nEcog1.isNullOrEmpty()) patientPopulation.nEcog0to1?.toInt() else null,
+                patientsWithWho1to2 = if (!patientPopulation.nEcog1.isNullOrEmpty() && !patientPopulation.nEcog2.isNullOrEmpty()) patientPopulation.nEcog1to2?.toInt() else null,
                 patientsPerPrimaryTumorLocation = patientPopulation.nLocalizationPrimaryTumor?.let { convertPrimaryTumorLocation(it) },
                 mutations = patientPopulation.otherMutations, //TODO: convert to map once CKB has made notation consistent
                 patientsWithPrimaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),
