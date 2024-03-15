@@ -1,7 +1,7 @@
 package com.hartwig.actin.database.molecular
 
 import com.hartwig.actin.database.dao.DatabaseAccess
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson
+import com.hartwig.actin.molecular.serialization.MolecularHistoryJson
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -15,8 +15,12 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
-        LOGGER.info("Loading molecular record from {}", config.molecularJson)
-        val record = MolecularRecordJson.read(config.molecularJson)
+        LOGGER.info("Loading molecular history from {}", config.molecularJson)
+        val molecularHistory = MolecularHistoryJson.read(config.molecularJson)
+        val record = requireNotNull(molecularHistory.mostRecentWGS()) {
+            "No WGS record found in molecular history"
+        }
+
         val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
         LOGGER.info("Writing molecular record for {}", record.sampleId)

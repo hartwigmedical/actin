@@ -13,9 +13,8 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson
+import com.hartwig.actin.molecular.serialization.MolecularHistoryJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import org.apache.commons.cli.DefaultParser
@@ -36,8 +35,11 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val clinical: ClinicalRecord = ClinicalRecordJson.read(config.clinicalJson)
         ClinicalPrinter.printRecord(clinical)
 
-        LOGGER.info("Loading molecular record from {}", config.molecularJson)
-        val molecular: MolecularRecord = MolecularRecordJson.read(config.molecularJson)
+        LOGGER.info("Loading molecular history from {}", config.molecularJson)
+        val molecularHistory = MolecularHistoryJson.read(config.molecularJson)
+        val molecular = requireNotNull(molecularHistory.mostRecentWGS()) {
+            "No WGS record found in molecular history"
+        }
         MolecularPrinter.printRecord(molecular)
 
         val patient: PatientRecord = PatientRecordFactory.fromInputs(clinical, molecular)

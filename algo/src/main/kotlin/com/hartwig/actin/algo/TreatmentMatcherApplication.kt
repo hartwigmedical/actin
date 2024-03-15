@@ -13,7 +13,7 @@ import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson
+import com.hartwig.actin.molecular.serialization.MolecularHistoryJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
@@ -34,13 +34,14 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
         ClinicalPrinter.printRecord(clinical)
 
-        val molecular = config.molecularJson?.let { molecularJson ->
-            LOGGER.info("Loading molecular record from {}", molecularJson)
-            MolecularRecordJson.read(molecularJson)
+        val molecularHistory = config.molecularJson?.let { molecularJson ->
+            LOGGER.info("Loading molecular history from {}", molecularJson)
+            MolecularHistoryJson.read(molecularJson)
         }
-        molecular?.let(MolecularPrinter::printRecord) ?: LOGGER.info("No molecular record provided")
+        // TODO (kz) make a molecularHistoryPrinter
+        molecularHistory?.mostRecentWGS()?.let(MolecularPrinter::printRecord) ?: LOGGER.info("No molecular record provided")
 
-        val patient = PatientRecordFactory.fromInputs(clinical, molecular)
+        val patient = PatientRecordFactory.fromInputs(clinical, molecularHistory?.mostRecentWGS())
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
         val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
