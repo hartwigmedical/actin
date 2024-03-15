@@ -9,8 +9,8 @@ import org.junit.Test
 class MolecularHistoryJsonTest {
 
     @Test
-    fun `Should be able to write to Molecular History to JSON`() {
-        val proper = TestMolecularFactory.createProperTestMolecularHistory()
+    fun `Should be able to read and write Molecular History to JSON`() {
+        val proper = TestMolecularFactory.createExhaustiveTestMolecularHistory()
         val convertedProper = fromJson(toJson(proper))
         assertThat(convertedProper).isEqualTo(proper)
     }

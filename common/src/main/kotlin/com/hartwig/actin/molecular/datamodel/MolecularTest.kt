@@ -45,18 +45,18 @@ data class IHCMolecularTest(
     }
 }
 
-class MolecularTestAdapter : TypeAdapter<MolecularTest>() {
+class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>() {
     override fun write(out: JsonWriter, value: MolecularTest?) {
         val jsonObject = JsonObject()
         when (value) {
             is WGSMolecularTest -> {
                 jsonObject.addProperty("data_type", "WGSMolecularTest")
-                jsonObject.add("data", Gson().toJsonTree(value))
+                jsonObject.add("data", gson.toJsonTree(value))
             }
 
             is IHCMolecularTest -> {
                 jsonObject.addProperty("data_type", "IHCMolecularTest")
-                jsonObject.add("data", Gson().toJsonTree(value))
+                jsonObject.add("data", gson.toJsonTree(value))
             }
 
             else -> throw IllegalArgumentException("Unknown molecular test type: $value")
@@ -70,8 +70,8 @@ class MolecularTestAdapter : TypeAdapter<MolecularTest>() {
         val data = jsonObject.get("data")
 
         return when (type) {
-            "WGSMolecularTest" -> Gson().fromJson(data, WGSMolecularTest::class.java)
-            "IHCMolecularTest" -> Gson().fromJson(data, IHCMolecularTest::class.java)
+            "WGSMolecularTest" -> gson.fromJson(data, WGSMolecularTest::class.java)
+            "IHCMolecularTest" -> gson.fromJson(data, IHCMolecularTest::class.java)
             else -> throw IllegalArgumentException("Unknown molecular test type: $type")
         }
     }

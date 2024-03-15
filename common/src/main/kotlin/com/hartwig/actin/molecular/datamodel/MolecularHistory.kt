@@ -65,7 +65,7 @@ class MolecularHistoryAdapter(private val gson: Gson) : TypeAdapter<MolecularHis
         val jsonObject = gson.toJsonTree(value).asJsonObject
         val molecularTestsArray = JsonArray()
         value.molecularTests.forEach { molecularTest ->
-            molecularTestsArray.add(MolecularTestAdapter().toJsonTree(molecularTest))
+            molecularTestsArray.add(MolecularTestAdapter(gson).toJsonTree(molecularTest))
         }
         jsonObject.add("molecularTests", molecularTestsArray)
 
@@ -76,7 +76,7 @@ class MolecularHistoryAdapter(private val gson: Gson) : TypeAdapter<MolecularHis
         val jsonObject = JsonParser.parseReader(input).asJsonObject
         val molecularTestsJsonArray = jsonObject.getAsJsonArray("molecularTests")
         val molecularTests = molecularTestsJsonArray.map { element ->
-            MolecularTestAdapter().fromJsonTree(element)
+            MolecularTestAdapter(gson).fromJsonTree(element)
         }
 
         jsonObject.remove("molecularTests")
