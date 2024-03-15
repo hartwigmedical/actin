@@ -81,11 +81,9 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
         val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
 
-        val daysThatResultsAreRecent: Long = 14
-
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
-            if (report.molecular.date!! > LocalDate.now().minusDays(daysThatResultsAreRecent)) {
+            if (report.molecular.date!! > LocalDate.now().minusDays(14)) {
                 MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
             } else null,
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
@@ -96,9 +94,6 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             } else null,
             if (nonDutchTrials.isNotEmpty()) {
                 EligibleOtherCountriesExternalTrialsGenerator(report.molecular.externalTrialSource, nonDutchTrials, contentWidth())
-            } else null,
-            if (report.molecular.date!! <= LocalDate.now().minusDays(daysThatResultsAreRecent)) {
-                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
             } else null,
         )
 
