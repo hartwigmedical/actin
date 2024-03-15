@@ -13,7 +13,7 @@ class HasTumorStageTest {
     @Test
     fun shouldEvaluateNormallyWhenTumorStageExists() {
         val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(any()) } returns emptySet()
+        every { derivationFunction.apply(any()) } returns null
         val victim = tumorStageFunction(derivationFunction)
         assertEvaluation(EvaluationResult.FAIL, victim.evaluate(TumorTestFactory.withTumorStage(null)))
         assertEvaluation(EvaluationResult.PASS, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)))
@@ -29,8 +29,26 @@ class HasTumorStageTest {
     }
 
     @Test
-    fun shouldEvaluateUndeterminedWhenMultipleDerivedTumorStagesWhereOnePasses() {
-        assertDerivedEvaluation(EvaluationResult.UNDETERMINED, TumorStage.III, TumorStage.IIIB)
+    fun `Should pass when one stage of set to match passes`() {
+        val patientRecord = TumorTestFactory.withTumorStage(null)
+        val tumorDetails = patientRecord.clinical.tumor
+        val derivationFunction = mockk<TumorStageDerivationFunction>()
+        every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IIIB)
+        assertEvaluation(EvaluationResult.PASS, HasTumorStage(derivationFunction, setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should pass when all stages of set to match pass`() {
+        val patientRecord = TumorTestFactory.withTumorStage(null)
+        val tumorDetails = patientRecord.clinical.tumor
+        val derivationFunction = mockk<TumorStageDerivationFunction>()
+        every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IV)
+        assertEvaluation(EvaluationResult.PASS, HasTumorStage(derivationFunction, setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should evaluate undetermined when multiple derived tumor stages where one passes`() {
+        assertDerivedEvaluation(EvaluationResult.UNDETERMINED, TumorStage.III, TumorStage.II)
     }
 
     @Test
@@ -50,7 +68,7 @@ class HasTumorStageTest {
     }
 
     private fun tumorStageFunction(derivationFunction: TumorStageDerivationFunction): HasTumorStage {
-        return HasTumorStage(derivationFunction, TumorStage.III)
+        return HasTumorStage(derivationFunction, setOf(TumorStage.III))
     }
 
     private fun assertDerivedEvaluation(expectedResult: EvaluationResult, vararg derivedStages: TumorStage) {
