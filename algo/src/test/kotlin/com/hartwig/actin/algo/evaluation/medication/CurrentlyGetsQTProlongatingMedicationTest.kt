@@ -39,10 +39,4 @@ class CurrentlyGetsQTProlongatingMedicationTest {
         val medications = listOf(TestMedicationFactory.createMinimal())
         assertEvaluation(EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
-
-    @Test
-    fun `Should fail when patient uses medication with unknown QT-prolongating status`(){
-        val medications = listOf(MedicationTestFactory.medication(qtProlongatingRisk = QTProlongatingRisk.UNKNOWN))
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
-    }
 }

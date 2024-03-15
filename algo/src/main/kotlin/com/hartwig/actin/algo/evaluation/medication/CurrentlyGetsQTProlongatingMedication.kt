@@ -5,14 +5,12 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.Medication
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk.KNOWN
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk.POSSIBLE
-import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk.CONDITIONAL
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 
 class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSelector) : EvaluationFunction {
         
     override fun evaluate(record: PatientRecord): Evaluation {
-        val qtMedication = record.clinical.medications.filter { it.qtProlongatingRisk in setOf(KNOWN,POSSIBLE,CONDITIONAL)}
+        val qtMedication = record.clinical.medications.filter { it.qtProlongatingRisk != QTProlongatingRisk.NONE}
         val activeQtMedication = qtMedication.filter(selector::isActive).toSet()
         val plannedQtMedication = qtMedication.filter(selector::isPlanned).toSet()
 
