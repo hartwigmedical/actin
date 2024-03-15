@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -487,7 +488,7 @@ class RecommendationEngineTest {
                 tumor = tumorDetails,
                 oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames)
             )
-            return PatientRecordFactory.fromInputs(clinicalRecord, molecularRecord)
+            return PatientRecordFactory.fromInputs(clinicalRecord, MolecularHistory.fromWGSandIHC(molecularRecord, emptyList()))
         }
 
         private fun assertSpecificTreatmentNotRecommended(name: String) {

@@ -40,9 +40,10 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val molecular = requireNotNull(molecularHistory.mostRecentWGS()) {
             "No WGS record found in molecular history"
         }
+        // TODO (kz) make a molecularHistoryPrinter
         MolecularPrinter.printRecord(molecular)
 
-        val patient: PatientRecord = PatientRecordFactory.fromInputs(clinical, molecular)
+        val patient: PatientRecord = PatientRecordFactory.fromInputs(clinical, molecularHistory)
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)

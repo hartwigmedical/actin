@@ -178,7 +178,7 @@ class GeneHasActivatingMutationTest {
     fun `Should evaluate to undetermined when no molecular input`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionNotIgnoringCodons.evaluate(TestDataFactory.createMinimalTestPatientRecord().copy(molecularHistory = MolecularHistory.empty()))
+            functionNotIgnoringCodons.evaluate(TestDataFactory.createMinimalTestPatientRecord().copy(molecularHistory = MolecularHistory.empty("N/A")))
         )
     }
 

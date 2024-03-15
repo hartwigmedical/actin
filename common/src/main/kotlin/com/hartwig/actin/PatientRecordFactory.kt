@@ -1,10 +1,7 @@
 package com.hartwig.actin
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.WGSMolecularTest
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -13,22 +10,19 @@ object PatientRecordFactory {
     private val LOGGER: Logger = LogManager.getLogger(PatientRecordFactory::class.java)
 
     @JvmStatic
-    fun fromInputs(clinical: ClinicalRecord, molecular: MolecularRecord?): PatientRecord {
-        if (molecular == null) {
+    fun fromInputs(clinical: ClinicalRecord, molecularHistory: MolecularHistory?): PatientRecord {
+        if (molecularHistory == null) {
             LOGGER.warn("No molecular data for patient '{}'", clinical.patientId)
-        } else if (clinical.patientId != molecular.patientId) {
+        } else if (clinical.patientId != molecularHistory.patientId) {
             LOGGER.warn(
                 "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
                 clinical.patientId,
-                molecular.patientId
+                molecularHistory.patientId
             )
         }
 
         return PatientRecord(patientId = clinical.patientId, clinical = clinical,
-            molecularHistory = if (molecular != null) {
-                MolecularHistory(IHCMolecularTest.fromPriorMolecularTests(clinical.priorMolecularTests) + WGSMolecularTest.fromMolecularRecord(molecular))
-            } else {
-                MolecularHistory.empty()
-            })
+            molecularHistory = molecularHistory ?: MolecularHistory.empty(clinical.patientId)
+        )
     }
 }

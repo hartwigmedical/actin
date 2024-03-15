@@ -41,7 +41,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         // TODO (kz) make a molecularHistoryPrinter
         molecularHistory?.mostRecentWGS()?.let(MolecularPrinter::printRecord) ?: LOGGER.info("No molecular record provided")
 
-        val patient = PatientRecordFactory.fromInputs(clinical, molecularHistory?.mostRecentWGS())
+        val patient = PatientRecordFactory.fromInputs(clinical, molecularHistory)
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
         val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)

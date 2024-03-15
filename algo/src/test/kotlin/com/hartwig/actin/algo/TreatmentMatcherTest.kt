@@ -82,7 +82,7 @@ class TreatmentMatcherTest {
 
     @Test
     fun `Should match without molecular input`() {
-        val patientWithoutMolecular = patient.copy(molecularHistory = MolecularHistory.empty())
+        val patientWithoutMolecular = patient.copy(molecularHistory = MolecularHistory.empty("N/A"))
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }
