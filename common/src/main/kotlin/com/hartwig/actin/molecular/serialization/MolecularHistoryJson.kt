@@ -6,6 +6,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularHistoryAdapter
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
+import com.hartwig.actin.util.json.GsonSerializer
 import org.apache.logging.log4j.LogManager
 import java.io.BufferedWriter
 import java.io.File
@@ -31,13 +32,7 @@ object MolecularHistoryJson {
     }
 
     fun toJson(molecularHistory: MolecularHistory): String {
-        val gsonBuilder = GsonBuilder()
-        return gsonBuilder.serializeNulls()
-            .enableComplexMapKeySerialization()
-            .registerTypeAdapter(object : TypeToken<LocalDate?>() {}.type, GsonLocalDateAdapter())
-            .registerTypeAdapter(MolecularHistory::class.java, MolecularHistoryAdapter(gsonBuilder.create()))
-            .create()
-            .toJson(molecularHistory)
+        return GsonSerializer.create().toJson(molecularHistory)
     }
 
     fun fromJson(json: String): MolecularHistory {
