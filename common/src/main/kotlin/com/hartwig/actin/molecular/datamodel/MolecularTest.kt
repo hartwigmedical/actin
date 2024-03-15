@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
@@ -47,31 +46,16 @@ data class IHCMolecularTest(
 
 class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>() {
     override fun write(out: JsonWriter, value: MolecularTest?) {
-        val jsonObject = JsonObject()
-        when (value) {
-            is WGSMolecularTest -> {
-                jsonObject.addProperty("data_type", "WGSMolecularTest")
-                jsonObject.add("data", gson.toJsonTree(value))
-            }
-
-            is IHCMolecularTest -> {
-                jsonObject.addProperty("data_type", "IHCMolecularTest")
-                jsonObject.add("data", gson.toJsonTree(value))
-            }
-
-            else -> throw IllegalArgumentException("Unknown molecular test type: $value")
-        }
-        Gson().toJson(jsonObject, out)
+        gson.toJson(gson.toJsonTree(value), out)
     }
 
     override fun read(input: JsonReader): MolecularTest? {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
-        val type = jsonObject.get("data_type").asString
-        val data = jsonObject.get("data")
+        val type = jsonObject.get("type").asString
 
         return when (type) {
-            "WGSMolecularTest" -> gson.fromJson(data, WGSMolecularTest::class.java)
-            "IHCMolecularTest" -> gson.fromJson(data, IHCMolecularTest::class.java)
+            ExperimentType.WHOLE_GENOME.toString() -> gson.fromJson(jsonObject, WGSMolecularTest::class.java)
+            ExperimentType.IHC.toString() -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
             else -> throw IllegalArgumentException("Unknown molecular test type: $type")
         }
     }
