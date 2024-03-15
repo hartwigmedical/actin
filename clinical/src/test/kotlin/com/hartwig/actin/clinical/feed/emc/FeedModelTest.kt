@@ -5,18 +5,11 @@ import com.hartwig.actin.clinical.feed.emc.FeedModel.Companion.fromFeedDirectory
 import java.io.IOException
 import java.time.LocalDate
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 
 class FeedModelTest {
-    private lateinit var model: FeedModel
-    private lateinit var feedRecord: FeedModel.FeedRecord
-
-    @Before
-    fun setUp() {
-        model = TestFeedFactory.createProperTestFeedModel()
-        feedRecord = model.read().first()
-    }
+    private val model: FeedModel = TestFeedFactory.createProperTestFeedModel()
+    private val feedRecord: FeedRecord = model.read().single()
 
     @Test
     @Throws(IOException::class)

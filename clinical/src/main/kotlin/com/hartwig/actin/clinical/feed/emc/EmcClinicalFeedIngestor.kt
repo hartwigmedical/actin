@@ -137,12 +137,12 @@ class EmcClinicalFeedIngestor(
         )
     }
 
-    private fun extractSurgeries(feedRecord: FeedModel.FeedRecord): List<Surgery> {
+    private fun extractSurgeries(feedRecord: FeedRecord): List<Surgery> {
         return feedRecord.uniqueSurgeryEntries
             .map { Surgery(endDate = it.periodEnd, status = resolveSurgeryStatus(it.encounterStatus)) }
     }
 
-    private fun extractBodyWeights(feedRecord: FeedModel.FeedRecord): List<BodyWeight> {
+    private fun extractBodyWeights(feedRecord: FeedRecord): List<BodyWeight> {
         return feedRecord.uniqueBodyWeightEntries.map { entry: BodyWeightEntry ->
             BodyWeight(
                 date = entry.effectiveDateTime,
@@ -157,7 +157,7 @@ class EmcClinicalFeedIngestor(
         return entry.valueQuantityUnit.lowercase() == BODY_WEIGHT_EXPECTED_UNIT && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
     }
 
-    private fun extractVitalFunctions(feedRecord: FeedModel.FeedRecord): List<VitalFunction> {
+    private fun extractVitalFunctions(feedRecord: FeedRecord): List<VitalFunction> {
         return feedRecord.uniqueVitalFunctionEntries.map { entry ->
             VitalFunction(
                 date = entry.effectiveDateTime,

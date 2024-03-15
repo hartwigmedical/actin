@@ -72,6 +72,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         writeIngestionResults(outputDirectory, ingestionResult)
 
         if (ingestionResult.patientResults.any { it.curationResults.isNotEmpty() }) {
+            LOGGER.warn("Summary of warnings:")
             ingestionResult.patientResults.forEach {
                 if (it.curationResults.isNotEmpty()) {
                     LOGGER.warn("Curation warnings for patient ${it.patientId}")

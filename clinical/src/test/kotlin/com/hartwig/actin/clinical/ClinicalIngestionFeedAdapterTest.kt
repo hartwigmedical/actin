@@ -66,10 +66,6 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(patientResults[0].curationResults).isEmpty()
         assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
         assertThat(patientResults[0].questionnaireCurationErrors)
-
-        assertThat(patientResults[0].curationResults).isEmpty()
-        assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
-        assertThat(patientResults[0].questionnaireCurationErrors)
             .containsExactly(QuestionnaireCurationError(PATIENT, "Unrecognized questionnaire option: 'Probably'"))
         assertThat(patientResults[0].feedValidationWarnings).containsExactly(
             FeedValidationWarning(
@@ -117,6 +113,5 @@ class ClinicalIngestionFeedAdapterTest {
                     patientIngestionResult.feedValidationWarnings
                 )
             )
-
     }
 }
