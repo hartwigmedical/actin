@@ -293,7 +293,7 @@
     {
       "date": "2020-01-01T00:00:00",
       "value": 3.5,
-      "unit": "KG",
+      "unit": "Kilogram",
       "valid": true
     }
   ],
