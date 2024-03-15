@@ -26,6 +26,7 @@ class EfficacyEvidenceDetailsGenerator(
         subtables.add(createTrialInformation())
         subtables.add(createPatientCharacteristics(annotation.trialReferences.first().patientPopulations)) //currently always 1
         subtables.add(createPrimaryEndpoints(annotation.trialReferences.first().patientPopulations)) //currently always 1
+        subtables.add(createSecondaryEndpoints(annotation.trialReferences.first().patientPopulations)) //currently always 1
 
         for (i in subtables.indices) {
             val subtable = subtables[i]
@@ -55,7 +56,7 @@ class EfficacyEvidenceDetailsGenerator(
     }
 
     private fun createPatientCharacteristics(patientPopulations: List<PatientPopulation>): Table {
-        val table = Tables.createFixedWidthCols(150f, 200f, 200f).setWidth(450f)
+        val table = Tables.createFixedWidthCols(200f, 200f, 200f).setWidth(600f)
         // Assuming max 2 treatments per trial
         table.addCell(Cells.createHeader(""))
         table.addCell(Cells.createHeader(patientPopulations[0].name + " (n=" + patientPopulations[0].numberOfPatients + ")"))
@@ -77,6 +78,18 @@ class EfficacyEvidenceDetailsGenerator(
             )
         )
 
+        table.addCell(Cells.createContent("Race"))
+        table.addCell(Cells.createContent(patientPopulations[0].patientsPerRace?.entries?.joinToString(", ") { it.key + ": " + it.value + " patients" }
+            ?: "NA"))
+        table.addCell(Cells.createContent(patientPopulations[1].patientsPerRace?.entries?.joinToString(", ") { it.key + ": " + it.value + " patients" }
+            ?: "NA"))
+
+        table.addCell(Cells.createContent("Region"))
+        table.addCell(Cells.createContent(patientPopulations[0].patientsPerRegion?.entries?.joinToString(", ") { it.key + ": " + it.value + " patients" }
+            ?: "NA"))
+        table.addCell(Cells.createContent(patientPopulations[1].patientsPerRegion?.entries?.joinToString(", ") { it.key + ": " + it.value + " patients" }
+            ?: "NA"))
+
         table.addCell(Cells.createContent("WHO/ECOG"))
         table.addCell(Cells.createContent(createWhoString(patientPopulations[0])))
         table.addCell(Cells.createContent(createWhoString(patientPopulations[1])))
@@ -97,7 +110,11 @@ class EfficacyEvidenceDetailsGenerator(
         table.addCell(Cells.createContent(patientPopulations[1].patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
             ?: "NA"))
 
-        table.addCell(Cells.createContent("Previous systemic therapy"))
+        table.addCell(Cells.createContent("Time of metastases"))
+        table.addCell(Cells.createContent(patientPopulations[0].timeOfMetastases?.display() ?: "NA"))
+        table.addCell(Cells.createContent(patientPopulations[1].timeOfMetastases?.display() ?: "NA"))
+
+        table.addCell(Cells.createContent("Patients with previous systemic therapy"))
         table.addCell(Cells.createContent(patientPopulations[0].priorSystemicTherapy ?: "NA"))
         table.addCell(Cells.createContent(patientPopulations[1].priorSystemicTherapy ?: "NA"))
 
@@ -120,9 +137,7 @@ class EfficacyEvidenceDetailsGenerator(
             val endPoints = analysisGroup?.endPoints
             if (endPoints != null) {
                 for (endPoint in endPoints) {
-                    if (endPoint.type == EndPointType.PRIMARY) {
                         primaryEndpoints.add(endPoint)
-                    }
                 }
             }
         }
@@ -138,7 +153,49 @@ class EfficacyEvidenceDetailsGenerator(
         table.addCell(Cells.createHeader("P value"))
 
         for (endPoint in primaryEndpoints) {
-            if (endPoint.derivedMetrics.isNotEmpty()) {
+            if (endPoint.type == EndPointType.PRIMARY && endPoint.derivedMetrics.isNotEmpty()) {
+                table.addCell(Cells.createContent("${endPoint.name} (95% CI)"))
+                table.addCell(Cells.createContent("${endPoint.value} (${endPoint.confidenceInterval?.lowerLimit ?: "NA"} - ${endPoint.confidenceInterval?.upperLimit ?: "NA"})"))
+                val otherEndpoint = primaryEndpoints.find { it.id == endPoint.derivedMetrics.first().relativeMetricId }
+                table.addCell(Cells.createContent("${otherEndpoint?.value} ${endPoint.unitOfMeasure.display()} (${otherEndpoint?.confidenceInterval?.lowerLimit ?: "NA"} - ${otherEndpoint?.confidenceInterval?.upperLimit ?: "NA"})"))
+                table.addCell(Cells.createContent("${endPoint.derivedMetrics.first().value} (${endPoint.derivedMetrics.first().confidenceInterval?.lowerLimit ?: "NA"} - ${endPoint.derivedMetrics.first().confidenceInterval?.upperLimit ?: "NA"})"))
+                table.addCell(Cells.createContent("p = ${endPoint.derivedMetrics.first().pValue}"))
+            }
+        }
+        table.addCell(Cells.createSpanningSubNote("Median follow-up for PFS was ${patientPopulations[0].medianFollowUpPFS} months", table))
+
+        return table
+    }
+
+    private fun createSecondaryEndpoints(patientPopulations: List<PatientPopulation>): Table {
+        val table = Tables.createFixedWidthCols(200f, 100f, 100f, 100f, 100f).setWidth(600f)
+        val primaryEndpoints = mutableListOf<EndPoint>()
+        for (patientPopulation in patientPopulations) {
+            val analysisGroup: AnalysisGroup? = if (patientPopulation.analysisGroups.count() == 1) {
+                patientPopulation.analysisGroups.first()
+            } else {
+                patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
+            }
+            val endPoints = analysisGroup?.endPoints
+            if (endPoints != null) {
+                for (endPoint in endPoints) {
+                    primaryEndpoints.add(endPoint)
+                }
+            }
+        }
+        table.addCell(Cells.createValue("Secondary endpoints: "))
+        table.addCell(Cells.createKey(""))
+        table.addCell(Cells.createKey(""))
+        table.addCell(Cells.createKey(""))
+        table.addCell(Cells.createKey(""))
+        table.addCell(Cells.createHeader(""))
+        table.addCell(Cells.createHeader(patientPopulations[0].name))
+        table.addCell(Cells.createHeader(patientPopulations[1].name))
+        table.addCell(Cells.createHeader("Hazard ratio (HR) / Odds Ratio (OR)"))
+        table.addCell(Cells.createHeader("P value"))
+
+        for (endPoint in primaryEndpoints) {
+            if (endPoint.type == EndPointType.SECONDARY && endPoint.derivedMetrics.isNotEmpty()) {
                 table.addCell(Cells.createContent("${endPoint.name} (95% CI)"))
                 table.addCell(Cells.createContent("${endPoint.value} (${endPoint.confidenceInterval?.lowerLimit ?: "NA"} - ${endPoint.confidenceInterval?.upperLimit ?: "NA"})"))
                 val otherEndpoint = primaryEndpoints.find { it.id == endPoint.derivedMetrics.first().relativeMetricId }
