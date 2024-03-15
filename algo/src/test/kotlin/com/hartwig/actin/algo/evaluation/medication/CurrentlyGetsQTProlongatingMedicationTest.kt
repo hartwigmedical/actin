@@ -39,4 +39,5 @@ class CurrentlyGetsQTProlongatingMedicationTest {
         val medications = listOf(TestMedicationFactory.createMinimal())
         assertEvaluation(EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)))
     }
+
 }
