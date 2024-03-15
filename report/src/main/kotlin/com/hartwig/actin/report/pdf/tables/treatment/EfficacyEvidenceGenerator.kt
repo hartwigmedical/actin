@@ -98,7 +98,7 @@ class EfficacyEvidenceGenerator(
                 table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
                     ?: "NA"))
                 table.addCell(Cells.createContent("Previous systemic therapy"))
-                table.addCell(Cells.createContent(patientPopulation.priorSystemicTherapy ?: "NA"))
+                table.addCell(Cells.createContent((patientPopulation.priorSystemicTherapy ?: "NA") + "/" + patientPopulation.numberOfPatients))
                 table.addCell(Cells.createContent("Prior therapies"))
                 table.addCell(Cells.createContent(patientPopulation.priorTherapies ?: "NA"))
 

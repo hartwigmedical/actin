@@ -114,9 +114,9 @@ class EfficacyEvidenceDetailsGenerator(
         table.addCell(Cells.createContent(patientPopulations[0].timeOfMetastases?.display() ?: "NA"))
         table.addCell(Cells.createContent(patientPopulations[1].timeOfMetastases?.display() ?: "NA"))
 
-        table.addCell(Cells.createContent("Patients with previous systemic therapy"))
-        table.addCell(Cells.createContent(patientPopulations[0].priorSystemicTherapy ?: "NA"))
-        table.addCell(Cells.createContent(patientPopulations[1].priorSystemicTherapy ?: "NA"))
+        table.addCell(Cells.createContent("Previous systemic therapy"))
+        table.addCell(Cells.createContent((patientPopulations[0].priorSystemicTherapy ?: "NA") + "/" + patientPopulations[0].numberOfPatients))
+        table.addCell(Cells.createContent((patientPopulations[1].priorSystemicTherapy ?: "NA") + "/" + patientPopulations[1].numberOfPatients))
 
         table.addCell(Cells.createContent("Prior therapies"))
         table.addCell(Cells.createContent(patientPopulations[0].priorTherapies ?: "NA"))
