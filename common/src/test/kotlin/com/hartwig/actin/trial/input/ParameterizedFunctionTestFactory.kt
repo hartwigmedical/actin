@@ -134,6 +134,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf(TumorStage.I.display())
             }
 
+            FunctionInput.MANY_TUMOR_STAGES -> {
+                listOf(TumorStage.I.display(),TumorStage.II.display())
+            }
+
             FunctionInput.ONE_HLA_ALLELE -> {
                 listOf("A*02:01")
             }

@@ -183,6 +183,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_TUMOR_STAGES -> {
+                    createManyTumorStagesInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_HLA_ALLELE -> {
                     createOneHlaAlleleInput(function)
                     return true
@@ -455,6 +460,11 @@ class FunctionInputResolver(
         return TumorStage.valueOf(parameterAsString(function, 0))
     }
 
+    fun createManyTumorStagesInput(function: EligibilityFunction): Set<TumorStage> {
+        assertParamConfig(function, FunctionInput.MANY_TUMOR_STAGES, 1)
+        return  toStringList(function.parameters.first()).map(:: toTumorStage).toSet()
+    }
+
     fun createOneHlaAlleleInput(function: EligibilityFunction): OneHlaAllele {
         assertParamConfig(function, FunctionInput.ONE_HLA_ALLELE, 1)
         val allele = function.parameters.first() as String
@@ -589,6 +599,14 @@ class FunctionInputResolver(
             return Intent.valueOf(intentName.uppercase(Locale.getDefault()))
         } catch (e: Exception) {
             throw IllegalStateException("Intent name not found: $intentName")
+        }
+    }
+
+    private fun toTumorStage(stage: String): TumorStage {
+        try {
+            return TumorStage.valueOf(stage.uppercase(Locale.getDefault()))
+        } catch (e: Exception) {
+            throw IllegalStateException("Tumor stage not found: $stage")
         }
     }
 

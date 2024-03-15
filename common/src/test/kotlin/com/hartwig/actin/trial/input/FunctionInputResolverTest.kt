@@ -411,6 +411,18 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many tumor stage input`() {
+        val rule = firstOfType(FunctionInput.MANY_TUMOR_STAGES)
+        val valid = create(rule, listOf("I;IV"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue()
+
+        assertThat(resolver.createManyTumorStagesInput(valid)).isEqualTo(setOf(TumorStage.I, TumorStage.IV))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("IIIa")))!!).isTrue
+        assertThat(resolver.hasValidInputs(create(rule, listOf("II;III")))!!).isTrue
+    }
+
+    @Test
     fun `Should resolve functions with one hla allele input`() {
         val rule: EligibilityRule = firstOfType(FunctionInput.ONE_HLA_ALLELE)
         val allele = "A*02:01"

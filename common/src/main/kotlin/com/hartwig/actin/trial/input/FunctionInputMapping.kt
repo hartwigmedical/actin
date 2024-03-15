@@ -37,6 +37,7 @@ object FunctionInputMapping {
         EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to FunctionInput.NONE,
         EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to FunctionInput.NONE,
         EligibilityRule.HAS_STAGE_X to FunctionInput.ONE_TUMOR_STAGE,
+        EligibilityRule.HAS_ANY_STAGE_X to FunctionInput.MANY_TUMOR_STAGES,
         EligibilityRule.HAS_LOCALLY_ADVANCED_CANCER to FunctionInput.NONE,
         EligibilityRule.HAS_METASTATIC_CANCER to FunctionInput.NONE,
         EligibilityRule.HAS_UNRESECTABLE_CANCER to FunctionInput.NONE,
