@@ -95,7 +95,7 @@ class EfficacyEvidenceGenerator(
                 table.addCell(Cells.createContent("Mutations"))
                 table.addCell(Cells.createContent(patientPopulation.mutations ?: "NA"))
                 table.addCell(Cells.createContent("Metastatic sites"))
-                table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
+                table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.percentage + "%)" }
                     ?: "NA"))
                 table.addCell(Cells.createContent("Previous systemic therapy"))
                 table.addCell(Cells.createContent((patientPopulation.priorSystemicTherapy ?: "NA") + "/" + patientPopulation.numberOfPatients))

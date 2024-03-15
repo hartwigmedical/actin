@@ -105,9 +105,9 @@ class EfficacyEvidenceDetailsGenerator(
         table.addCell(Cells.createContent(patientPopulations[1].mutations ?: "NA"))
 
         table.addCell(Cells.createContent("Metastatic sites"))
-        table.addCell(Cells.createContent(patientPopulations[0].patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
+        table.addCell(Cells.createContent(patientPopulations[0].patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.percentage + "%)" }
             ?: "NA"))
-        table.addCell(Cells.createContent(patientPopulations[1].patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.value + "%)" }
+        table.addCell(Cells.createContent(patientPopulations[1].patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.percentage + "%)" }
             ?: "NA"))
 
         table.addCell(Cells.createContent("Time of metastases"))
