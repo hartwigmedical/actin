@@ -13,7 +13,7 @@ class HasTumorStageTest {
     @Test
     fun shouldEvaluateNormallyWhenTumorStageExists() {
         val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(any()) } returns emptyList()
+        every { derivationFunction.apply(any()) } returns emptySet()
         val victim = tumorStageFunction(derivationFunction)
         assertEvaluation(EvaluationResult.FAIL, victim.evaluate(TumorTestFactory.withTumorStage(null)))
         assertEvaluation(EvaluationResult.PASS, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)))
@@ -38,9 +38,9 @@ class HasTumorStageTest {
         val patientRecord = TumorTestFactory.withTumorStage(null)
         val tumorDetails = patientRecord.clinical.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(tumorDetails) } returns listOf(TumorStage.III, TumorStage.IIIB)
+        every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IV)
         Assertions.assertThat((tumorStageFunction(derivationFunction).evaluate(patientRecord)).undeterminedGeneralMessages).containsExactly(
-            "Missing tumor stage details - assumed III or IIIB based on lesions"
+            "Missing tumor stage details - assumed III or IV based on lesions"
         )
     }
 
@@ -57,7 +57,7 @@ class HasTumorStageTest {
         val patientRecord = TumorTestFactory.withTumorStage(null)
         val tumorDetails = patientRecord.clinical.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(tumorDetails) } returns listOf(*derivedStages)
+        every { derivationFunction.apply(tumorDetails) } returns setOf(*derivedStages)
         assertEvaluation(expectedResult, tumorStageFunction(derivationFunction).evaluate(patientRecord))
     }
 }

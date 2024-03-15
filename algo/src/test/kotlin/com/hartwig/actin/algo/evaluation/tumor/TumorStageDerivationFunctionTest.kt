@@ -17,8 +17,8 @@ class TumorStageDerivationFunctionTest {
     }
 
     @Test
-    fun `Should return empty set of derivation when no lesion details configured`() {
-        assertThat(derivationFunction.apply(tumorDetailsWithNoStage)).isEmpty()
+    fun `Should return null when no lesion details configured`() {
+        assertThat(derivationFunction.apply(tumorDetailsWithNoStage)).isNull()
     }
 
     @Test
