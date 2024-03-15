@@ -71,7 +71,7 @@ object BodyWeightFunctions {
 
     fun selectMedianBodyWeightPerDay(record: PatientRecord, minimalDate: LocalDate): List<BodyWeight>? {
         val result = record.clinical.bodyWeights
-            .filter { it.date.toLocalDate() > minimalDate && it.valid }
+            .filter { it.date.toLocalDate() > minimalDate && it.valid && it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }
             .groupBy { it.date }
             .map { selectMedianBodyWeightValue(it.value) }
             .sortedWith(BodyWeightDescendingDateComparator())
