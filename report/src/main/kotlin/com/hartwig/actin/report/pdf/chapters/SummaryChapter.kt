@@ -94,7 +94,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             } else null,
             if (nonDutchTrials.isNotEmpty()) {
                 EligibleOtherCountriesExternalTrialsGenerator(report.molecular.externalTrialSource, nonDutchTrials, contentWidth())
-            } else null,
+            } else null
         )
 
         for (i in generators.indices) {
