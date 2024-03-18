@@ -16,7 +16,7 @@ class HasPotentialAbsorptionDifficulties internal constructor(private val doidMo
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val conditions = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions).flatMap { it.doids }
-            .filter { doidModel.doidWithParents(it).contains(DoidConstants.GASTROINTESTINAL_SYSTEM_DISEASE_DOID) }
+            .filter { doidModel.doidWithParents(it).any { doid -> doid in DoidConstants.ABSORPTION_DIFFICULTIES_DOID_SET } }
             .map { doidModel.resolveTermForDoid(it) }
 
         if (conditions.isNotEmpty()) {

@@ -26,7 +26,7 @@ class HasPotentialAbsorptionDifficultiesTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
 
         // Add a condition with correct DOID
-        val absorptionDoid = DoidConstants.GASTROINTESTINAL_SYSTEM_DISEASE_DOID
+        val absorptionDoid = DoidConstants.ABSORPTION_DIFFICULTIES_DOID_SET.iterator().next()
         conditions.add(OtherConditionTestFactory.priorOtherCondition(doids = setOf(absorptionDoid)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions)))
     }
