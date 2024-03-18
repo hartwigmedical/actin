@@ -70,7 +70,7 @@ class EhrTreatmentHistoryExtractor(
             } else {
                 ExtractionResult(
                     emptyList(),
-                    CurationExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = setOf(ehrPreviousCondition.name))
+                    CurationExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = setOf(ehrPreviousCondition.name.lowercase()))
                 )
             }
         }.fold<ExtractionResult<List<TreatmentHistoryEntry>>, ExtractionResult<List<TreatmentHistoryEntry>>>(
