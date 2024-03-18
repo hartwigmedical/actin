@@ -11,20 +11,20 @@ import org.apache.logging.log4j.LogManager
 class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusDatabase) : ConfigInterpreter {
 
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
-    private val ctcDatabaseValidationErrors = mutableListOf<TrialStatusDatabaseValidationError>()
+    private val trialStatusDatabaseValidationErrors = mutableListOf<TrialStatusDatabaseValidationError>()
     private val cohortDefinitionValidationErrors = mutableListOf<CohortDefinitionValidationError>()
 
     override fun validation(): TrialStatusDatabaseValidation {
         return TrialStatusDatabaseValidation(
             trialDefinitionValidationErrors,
-            ctcDatabaseValidationErrors
+            trialStatusDatabaseValidationErrors
         )
     }
 
     override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
-        if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX)) {
+        if (!trialConfig.trialId.startsWith(MEC_TRIAL_PREFIX)) {
             LOGGER.debug(
-                " Skipping study status retrieval for {} ({}) since study is not deemed a CTC trial",
+                " Skipping study status retrieval for {} ({}) since study is not managed by the trial status database",
                 trialConfig.trialId,
                 trialConfig.acronym
             )
@@ -32,36 +32,36 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
             return null
         }
 
-        val (openInCTC, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(trialStatusDatabase.entries, trialConfig)
+        val (openInTrialStatusDatabase, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(trialStatusDatabase.entries, trialConfig)
         trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
-        if (openInCTC != null) {
+        if (openInTrialStatusDatabase != null) {
             if (trialConfig.open != null) {
                 trialDefinitionValidationErrors.add(
                     TrialDefinitionValidationError(
                         trialConfig,
-                        "Trial has a manually configured open status while status could be derived from CTC"
+                        "Trial has a manually configured open status while status could be derived from trial status database"
                     )
                 )
             }
-            return openInCTC
+            return openInTrialStatusDatabase
         }
 
         trialDefinitionValidationErrors.add(
             TrialDefinitionValidationError(
                 trialConfig,
-                "No study status found in CTC overview, using manually configured status for study status"
+                "No study status found in trial status overview, using manually configured status for study status"
             )
         )
         return null
     }
 
     override fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata {
-        val (maybeInterpretedCohortStatus, cohortDefinitionValidationErrors, ctcDatabaseValidationErrors) = CohortStatusInterpreter.interpret(
+        val (maybeInterpretedCohortStatus, cohortDefinitionValidationErrors, trialStatusDatabaseValidationErrors) = CohortStatusInterpreter.interpret(
             trialStatusDatabase.entries,
             cohortConfig
         )
         this.cohortDefinitionValidationErrors.addAll(cohortDefinitionValidationErrors)
-        this.ctcDatabaseValidationErrors.addAll(ctcDatabaseValidationErrors)
+        this.trialStatusDatabaseValidationErrors.addAll(trialStatusDatabaseValidationErrors)
         val interpretedCohortStatus = maybeInterpretedCohortStatus ?: fromCohortConfig(cohortConfig)
         return CohortMetadata(
             cohortId = cohortConfig.cohortId,
@@ -74,18 +74,18 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     }
 
     override fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>) {
-        val newTrialsInCTC = extractNewCTCStudies(trialConfigs)
+        val newTrialsInTrialStatusDatabase = extractNewTrialStatusDatabaseStudies(trialConfigs)
 
-        if (newTrialsInCTC.isEmpty()) {
-            LOGGER.info(" No new studies found in CTC database that are not explicitly ignored.")
+        if (newTrialsInTrialStatusDatabase.isEmpty()) {
+            LOGGER.info(" No new studies found in trial status database that are not explicitly ignored.")
         } else {
-            ctcDatabaseValidationErrors.addAll(newTrialsInCTC.map {
-                TrialStatusDatabaseValidationError(it, " New trial detected in CTC that is not configured to be ignored")
+            trialStatusDatabaseValidationErrors.addAll(newTrialsInTrialStatusDatabase.map {
+                TrialStatusDatabaseValidationError(it, " New trial detected in trial status database that is not configured to be ignored")
             })
         }
     }
 
-    internal fun extractNewCTCStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {
+    internal fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {
         val configuredTrialIds = trialConfigs.map { it.trialId }
 
         return trialStatusDatabase.entries.filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
@@ -94,20 +94,20 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     }
 
     override fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>) {
-        val newCohortEntriesInCTC = extractNewCTCCohorts(cohortConfigs)
+        val newCohortEntriesInTrialStatusDatabase = extractNewTrialStatusDatabaseCohorts(cohortConfigs)
 
-        if (newCohortEntriesInCTC.isEmpty()) {
-            LOGGER.info(" No new cohorts found in CTC database that are not explicitly unmapped.")
+        if (newCohortEntriesInTrialStatusDatabase.isEmpty()) {
+            LOGGER.info(" No new cohorts found in trial status database that are not explicitly unmapped.")
         } else {
-            ctcDatabaseValidationErrors.addAll(newCohortEntriesInCTC.map {
+            trialStatusDatabaseValidationErrors.addAll(newCohortEntriesInTrialStatusDatabase.map {
                 TrialStatusDatabaseValidationError(
-                    it, "New cohort detected in CTC that is not configured as unmapped"
+                    it, "New cohort detected in trial status dataabase that is not configured as unmapped"
                 )
             })
         }
     }
 
-    internal fun extractNewCTCCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<TrialStatusEntry> {
+    internal fun extractNewTrialStatusDatabaseCohorts(cohortConfigs: List<CohortDefinitionConfig>): Set<TrialStatusEntry> {
         val configuredTrialIds = cohortConfigs.map { it.trialId }.toSet()
 
         val configuredCohortIds =
@@ -143,10 +143,10 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
 
     companion object {
         private val LOGGER = LogManager.getLogger(TrialStatusConfigInterpreter::class.java)
-        const val CTC_TRIAL_PREFIX = "MEC"
+        const val MEC_TRIAL_PREFIX = "MEC"
 
         fun constructTrialId(entry: TrialStatusEntry): String {
-            return CTC_TRIAL_PREFIX + " " + entry.studyMETC
+            return MEC_TRIAL_PREFIX + " " + entry.studyMETC
         }
     }
 }

@@ -16,14 +16,14 @@ import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 
 class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
@@ -88,7 +88,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
     private fun printAllValidationErrors(result: TrialIngestionResult) {
         if (result.trialStatusDatabaseValidation.hasErrors()) {
             LOGGER.warn("There were validation errors in the CTC database configuration")
-            printValidationErrors(result.trialStatusDatabaseValidation.ctcDatabaseValidationErrors)
+            printValidationErrors(result.trialStatusDatabaseValidation.trialStatusDatabaseValidationErrors)
             printValidationErrors(result.trialStatusDatabaseValidation.trialDefinitionValidationErrors)
         }
 

@@ -41,7 +41,7 @@ class TrialIngestionResultTest {
             ingestionStatus = TrialIngestionStatus.FAIL,
             trialStatusDatabaseValidation = TrialStatusDatabaseValidation(
                 trialDefinitionValidationErrors = listOf(TrialDefinitionValidationError(TestTrialDefinitionConfigFactory.MINIMAL, "msg")),
-                ctcDatabaseValidationErrors = listOf(
+                trialStatusDatabaseValidationErrors = listOf(
                     TrialStatusDatabaseValidationError(
                         TestTrialStatusDatabaseEntryFactory.MINIMAL,
                         "msg"

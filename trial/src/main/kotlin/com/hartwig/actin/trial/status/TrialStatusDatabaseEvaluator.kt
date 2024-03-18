@@ -37,15 +37,15 @@ class TrialStatusDatabaseEvaluator(private val trialStatusDatabase: TrialStatusD
     }
 
     internal fun extractUnusedStudyMETCsToIgnore(): List<String> {
-        val ctcStudyMETCs = trialStatusDatabase.entries.map { it.studyMETC }.toSet()
+        val trialStatusStudyMETCs = trialStatusDatabase.entries.map { it.studyMETC }.toSet()
 
-        return trialStatusDatabase.studyMETCsToIgnore.filter { !ctcStudyMETCs.contains(it) }
+        return trialStatusDatabase.studyMETCsToIgnore.filter { !trialStatusStudyMETCs.contains(it) }
     }
 
     internal fun extractUnusedUnmappedCohorts(): List<Int> {
-        val ctcCohortIds = trialStatusDatabase.entries.mapNotNull { it.cohortId }.toSet()
+        val trialStatusCohortIds = trialStatusDatabase.entries.mapNotNull { it.cohortId }.toSet()
 
-        return trialStatusDatabase.unmappedCohortIds.filter { !ctcCohortIds.contains(it) }
+        return trialStatusDatabase.unmappedCohortIds.filter { !trialStatusCohortIds.contains(it) }
     }
 
     companion object {

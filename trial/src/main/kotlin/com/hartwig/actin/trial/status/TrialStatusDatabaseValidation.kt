@@ -25,9 +25,9 @@ data class TrialStatusUnmappedValidationError(override val config: Int, override
 
 data class TrialStatusDatabaseValidation(
     val trialDefinitionValidationErrors: List<TrialDefinitionValidationError>,
-    val ctcDatabaseValidationErrors: List<TrialStatusDatabaseValidationError>,
+    val trialStatusDatabaseValidationErrors: List<TrialStatusDatabaseValidationError>,
 ) {
     fun hasErrors(): Boolean {
-        return (trialDefinitionValidationErrors + ctcDatabaseValidationErrors).isNotEmpty()
+        return (trialDefinitionValidationErrors + trialStatusDatabaseValidationErrors).isNotEmpty()
     }
 }

@@ -19,8 +19,8 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
         )
 
         LOGGER.info("Evaluating usage of trial status database configuration")
-        val ctcDatabaseEvaluator = TrialStatusDatabaseEvaluator(trialStatusDatabase)
-        ctcDatabaseEvaluator.evaluateDatabaseConfiguration()
+        val trialStatusDatabaseEvaluator = TrialStatusDatabaseEvaluator(trialStatusDatabase)
+        trialStatusDatabaseEvaluator.evaluateDatabaseConfiguration()
 
         return trialStatusDatabase
     }

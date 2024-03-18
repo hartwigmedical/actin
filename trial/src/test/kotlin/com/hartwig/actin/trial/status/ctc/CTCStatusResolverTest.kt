@@ -1,24 +1,28 @@
 package com.hartwig.actin.trial.status.ctc
 
 import com.hartwig.actin.trial.status.TrialStatus
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CTCStatusResolverTest {
 
     @Test
     fun `Should resolve open status`() {
-        assertEquals(TrialStatus.OPEN, CTCStatusResolver.resolve("Open"))
+        assertThat(CTCStatusResolver.resolve("Open")).isEqualTo(TrialStatus.OPEN)
     }
 
     @Test
     fun `Should resolve closed status`() {
-        assertEquals(TrialStatus.CLOSED, CTCStatusResolver.resolve("Gesloten"))
-        assertEquals(TrialStatus.CLOSED, CTCStatusResolver.resolve("Nog niet geopend"))
-        assertEquals(TrialStatus.CLOSED, CTCStatusResolver.resolve("Gesloten voor inclusie"))
-        assertEquals(TrialStatus.CLOSED, CTCStatusResolver.resolve("Onbekend"))
-        assertEquals(TrialStatus.CLOSED, CTCStatusResolver.resolve("Tijdelijk gesloten"))
-        assertEquals(TrialStatus.CLOSED, CTCStatusResolver.resolve("Closed"))
+        assertThat(CTCStatusResolver.resolve("Gesloten")).isEqualTo(TrialStatus.CLOSED)
+        assertThat(CTCStatusResolver.resolve("Nog niet geopend")).isEqualTo(TrialStatus.CLOSED)
+        assertThat(CTCStatusResolver.resolve("Gesloten voor inclusie")).isEqualTo(TrialStatus.CLOSED)
+        assertThat(CTCStatusResolver.resolve("Onbekend")).isEqualTo(TrialStatus.CLOSED)
+        assertThat(CTCStatusResolver.resolve("Tijdelijk gesloten")).isEqualTo(TrialStatus.CLOSED)
+        assertThat(CTCStatusResolver.resolve("Closed")).isEqualTo(TrialStatus.CLOSED)
     }
 
+    @Test
+    fun `Should resolve unexpected status to uninterpretable`() {
+        assertThat(CTCStatusResolver.resolve("UNKNOWN")).isEqualTo(TrialStatus.UNINTERPRETABLE)
+    }
 }
