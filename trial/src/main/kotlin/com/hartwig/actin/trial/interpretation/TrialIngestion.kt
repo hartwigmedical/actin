@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.interpretation
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.TrialIngestionResult
@@ -31,6 +32,17 @@ class TrialIngestion(
         configInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
         val trialDatabaseValidation = trialConfigModel.validation()
         val ctcDatabaseValidation = configInterpreter.validation()
+        val trials = if (trialDatabaseValidation.inclusionCriteriaValidationErrors.isEmpty()) createTrials() else emptyList()
+
+        return TrialIngestionResult(
+            TrialIngestionStatus.from(ctcDatabaseValidation, trialDatabaseValidation),
+            ctcDatabaseValidation,
+            trialDatabaseValidation,
+            trials
+        )
+    }
+
+    private fun createTrials(): List<Trial> {
         val trials = trialConfigModel.trials().map { trialConfig ->
             val trialId = trialConfig.trialId
             val referencesById = trialConfigModel.referencesForTrial(trialId)
@@ -41,13 +53,7 @@ class TrialIngestion(
             )
         }
         EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep)
-
-        return TrialIngestionResult(
-            TrialIngestionStatus.from(ctcDatabaseValidation, trialDatabaseValidation),
-            ctcDatabaseValidation,
-            trialDatabaseValidation,
-            trials
-        )
+        return trials
     }
 
     private fun cohortsForTrial(trialId: String, referencesById: Map<String, InclusionCriteriaReferenceConfig>): List<Cohort> {
@@ -104,10 +110,12 @@ class TrialIngestion(
             configInterpreter: ConfigInterpreter,
             doidModel: DoidModel,
             geneFilter: GeneFilter,
-            treatmentDatabase: TreatmentDatabase
+            treatmentDatabase: TreatmentDatabase,
+            medicationCategories: MedicationCategories
         ): TrialIngestion {
-            val molecularInputChecker = MolecularInputChecker(geneFilter)
-            val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
+            val functionInputResolver = FunctionInputResolver(
+                doidModel, MolecularInputChecker(geneFilter), treatmentDatabase, medicationCategories
+            )
             val eligibilityFactory = EligibilityFactory(functionInputResolver)
             val trialConfigModel = TrialConfigModel.create(trialConfigDirectory, eligibilityFactory)
             return TrialIngestion(trialConfigModel, configInterpreter, eligibilityFactory)

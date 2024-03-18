@@ -1,6 +1,5 @@
-package com.hartwig.actin.algo.evaluation.medication
+package com.hartwig.actin.medication
 
-import com.hartwig.actin.algo.medication.MedicationCategories
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
