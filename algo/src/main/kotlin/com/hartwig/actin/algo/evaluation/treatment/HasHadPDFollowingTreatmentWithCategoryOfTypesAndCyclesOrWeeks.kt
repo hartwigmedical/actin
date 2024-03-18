@@ -18,7 +18,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentEvaluations = record.clinical.oncologicalHistory.map { treatmentHistoryEntry ->
-            val isTrial = TrialFunctions.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
+            val mayMatchAsTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
             val categoryMatches = treatmentHistoryEntry.categories().contains(category)
 
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
@@ -38,7 +38,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 
                 PDFollowingTreatmentEvaluation.create(
                     hadTreatment = true,
-                    hadTrial = isTrial,
+                    hadTrial = mayMatchAsTrial,
                     hadPD = treatmentResultedInPD,
                     hadCyclesOrWeeks = meetsMinCycles && meetsMinWeeks,
                     hadUnclearCycles = minCycles != null && cycles == null,
@@ -46,7 +46,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 )
             } ?: PDFollowingTreatmentEvaluation.create(
                 hadTreatment = if (categoryMatches && !treatmentHistoryEntry.hasTypeConfigured()) null else false,
-                hadTrial = isTrial
+                hadTrial = mayMatchAsTrial
             )
         }
             .toSet()

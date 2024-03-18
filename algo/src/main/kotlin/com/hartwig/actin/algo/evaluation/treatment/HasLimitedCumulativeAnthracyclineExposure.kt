@@ -19,8 +19,8 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
         val hasSuspectPrimaryTumor = hasSuspiciousCancerType(record.clinical.tumor.doids)
 
         val anthracyclineSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.clinical.oncologicalHistory, TreatmentCategory.CHEMOTHERAPY
-        ) { it.isOfType(DrugType.ANTHRACYCLINE) }
+            record.clinical.oncologicalHistory, TreatmentCategory.CHEMOTHERAPY, { it.isOfType(DrugType.ANTHRACYCLINE) }
+        )
 
         return when {
             anthracyclineSummary.hasSpecificMatch() -> {
