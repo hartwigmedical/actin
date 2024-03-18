@@ -51,21 +51,15 @@ class EligibleActinTrialsGenerator private constructor(
 
     companion object {
 
-        fun forOpenCohortsWithSlots(cohorts: List<EvaluatedCohort>, source: String, width: Float): EligibleActinTrialsGenerator {
-            val recruitingAndEligibleCohorts = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
-            val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.groupBy { it.trialId }.map { (trial, _) -> trial }
-            val title = "$source trials that are open and considered eligible and currently have slots available " +
-                    "(trials: ${recruitingAndEligibleTrials.size}, cohorts: ${recruitingAndEligibleCohorts.size})"
+        fun forOpenCohorts(
+            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean): EligibleActinTrialsGenerator {
+            val recruitingAndEligibleCohorts = cohorts.filter { it.isPotentiallyEligible && it.isOpen &&
+                    if (slotsAvailable) it.hasSlotsAvailable else !it.hasSlotsAvailable}
+            val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
+            val title = "$source trials that are open and considered eligible" +
+                    if (slotsAvailable) "and currently have slots available " else "but currently have no slots available" +
+                    "(${recruitingAndEligibleCohorts.size} cohorts from ${recruitingAndEligibleTrials.size} trials)"
             return create(recruitingAndEligibleCohorts, title, width)
-        }
-
-        fun forOpenCohortsWithNoSlots(cohorts: List<EvaluatedCohort>, source: String, width: Float): EligibleActinTrialsGenerator {
-            val recruitingAndEligibleCohortsWithNoSlots = cohorts.filter { it.isPotentiallyEligible && it.isOpen && !it.hasSlotsAvailable }
-            val recruitingAndEligibleTrialsWithNoSlots = recruitingAndEligibleCohortsWithNoSlots
-                .groupBy { it.trialId }.map { (trial, _) -> trial }
-            val title = "$source trials that are open and considered eligible but currently have no slots available " +
-                    "(trials: ${recruitingAndEligibleTrialsWithNoSlots.size}, cohorts: ${recruitingAndEligibleCohortsWithNoSlots.size})"
-            return create(recruitingAndEligibleCohortsWithNoSlots, title, width)
         }
 
         fun forClosedCohorts(
