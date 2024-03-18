@@ -17,8 +17,8 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
                 .any { it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR) }
         }
 
-        val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name }
-        val plannedCypMedications = cypMedications.filter { selector.isPlanned(it) }.map { it.name }
+        val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name }.toSet()
+        val plannedCypMedications = cypMedications.filter { selector.isPlanned(it) }.map { it.name }.toSet()
 
         return when {
             activeCypMedications.isNotEmpty() -> {

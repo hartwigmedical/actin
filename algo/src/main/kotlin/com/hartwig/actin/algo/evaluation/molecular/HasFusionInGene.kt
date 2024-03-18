@@ -1,25 +1,24 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
-class HasFusionInGene(private val gene: String) : EvaluationFunction {
+class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodOther: MutableSet<String> = mutableSetOf()
         val unreportableFusionsWithGainOfFunction: MutableSet<String> = mutableSetOf()
-        val evidenceSource = record.molecular.evidenceSource
+        val evidenceSource = molecular.evidenceSource
 
-        for (fusion in record.molecular.drivers.fusions) {
+        for (fusion in molecular.drivers.fusions) {
             val isAllowedDriverType =
                 (fusion.geneStart == gene && fusion.geneStart == fusion.geneEnd) ||
                         (fusion.geneStart == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType)) ||
@@ -100,7 +99,7 @@ class HasFusionInGene(private val gene: String) : EvaluationFunction {
                     "Fusion(s) ${concat(unreportableFusionsWithGainOfFunction)} detected in gene $gene"
                             + " but not considered reportable; however fusion is annotated with having gain-of-function evidence in $evidenceSource",
                     "No reportable fusion(s) detected in gene $gene but annotated with having gain-of-function evidence in $evidenceSource"
-            )
+                )
             )
         )
     }

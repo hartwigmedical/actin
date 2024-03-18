@@ -9,7 +9,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.*
 
 class MolecularPrinter(private val printer: DatamodelPrinter) {
 
@@ -84,7 +84,7 @@ class MolecularPrinter(private val printer: DatamodelPrinter) {
             }
         }
 
-        private fun <T> keys(map: Map<String, List<T>>): String {
+        private fun keys(map: Map<String, Any>): String {
             return concat(map.keys)
         }
 

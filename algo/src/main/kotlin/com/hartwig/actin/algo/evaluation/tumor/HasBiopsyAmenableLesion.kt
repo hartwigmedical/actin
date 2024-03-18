@@ -9,15 +9,16 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 class HasBiopsyAmenableLesion : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (record.molecular.type != ExperimentType.WHOLE_GENOME) {
-            EvaluationFactory.undetermined(
+        return if (record.molecular?.type != ExperimentType.WHOLE_GENOME) {
+            EvaluationFactory.recoverableUndetermined(
                 "Currently biopsy-amenability of lesions cannot be determined without WGS",
                 "Biopsy amenability unknown"
             )
-        } else
+        } else {
             EvaluationFactory.pass(
                 "It is assumed that patient will have biopsy-amenable lesions (presence of WGS analysis)",
                 "Biopsy amenability assumed"
             )
+        }
     }
 }

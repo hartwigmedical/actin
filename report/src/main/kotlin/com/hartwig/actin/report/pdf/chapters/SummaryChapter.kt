@@ -21,6 +21,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
+import java.time.LocalDate
 
 class SummaryChapter(private val report: Report) : ReportChapter {
 
@@ -74,7 +75,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-        val externalEligibleTrials = AggregatedEvidenceInterpreter.filterExternalTrialsBasedOnNctId(
+        val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
             AggregatedEvidenceFactory.create(report.molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
         )
         val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
@@ -82,10 +83,12 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
-            MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth),
+            if (report.molecular.date != null && report.molecular.date!! > LocalDate.now().minusDays(14)) {
+                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
+            } else null,
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
-            EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
-            EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
             if (dutchTrials.isNotEmpty()) {
                 EligibleDutchExternalTrialsGenerator(report.molecular.externalTrialSource, dutchTrials, contentWidth())
             } else null,

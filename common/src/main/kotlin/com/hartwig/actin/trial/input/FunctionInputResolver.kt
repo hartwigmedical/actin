@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TreatmentDatabase
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
@@ -9,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.input.composite.CompositeInput
@@ -33,6 +35,7 @@ import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
+import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
@@ -42,14 +45,15 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
-import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.util.*
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
     private val molecularInputChecker: MolecularInputChecker,
-    private val treatmentDatabase: TreatmentDatabase
+    private val treatmentDatabase: TreatmentDatabase,
+    private val medicationCategories: MedicationCategories
 ) {
 
     fun hasValidInputs(function: EligibilityFunction): Boolean? {
@@ -58,7 +62,7 @@ class FunctionInputResolver(
 
     private fun hasValidSingleInputs(function: EligibilityFunction): Boolean? {
         try {
-            when (FunctionInputMapping.RULE_INPUT_MAP[function.rule]) {
+            when (function.rule.input) {
                 FunctionInput.NONE -> {
                     return function.parameters.isEmpty()
                 }
@@ -253,6 +257,26 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_MEDICATION_CATEGORY -> {
+                    createOneMedicationCategoryInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER -> {
+                    createOneMedicationCategoryOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_MEDICATION_CATEGORIES_ONE_INTEGER -> {
+                    createManyMedicationCategoriesOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_MEDICATION_CATEGORIES_TWO_INTEGERS -> {
+                    createManyMedicationCategoriesTwoIntegersInput(function)
+                    return true
+                }
+
                 else -> {
                     LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
                     return null
@@ -304,7 +328,7 @@ class FunctionInputResolver(
         assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER, 2)
         return OneTreatmentCategoryOrTypeOneInteger(
             treatment = TreatmentCategoryInput.fromString(parameterAsString(function, 0)),
-            integer = parameterAsString(function, 1).toInt()
+            integer = parameterAsInt(function, 1)
         )
     }
 
@@ -323,7 +347,7 @@ class FunctionInputResolver(
         return OneTreatmentCategoryManyTypesOneInteger(
             category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
             types = toTreatmentTypeSet(function.parameters[1]),
-            integer = parameterAsString(function, 2).toInt()
+            integer = parameterAsInt(function, 2)
         )
     }
 
@@ -336,7 +360,7 @@ class FunctionInputResolver(
         assertParamConfig(function, FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_INTEGER, 2)
         return OneSpecificTreatmentOneInteger(
             treatment = toTreatment(parameterAsString(function, 0)),
-            integer = parameterAsString(function, 1).toInt()
+            integer = parameterAsInt(function, 1)
         )
     }
 
@@ -344,8 +368,8 @@ class FunctionInputResolver(
         assertParamConfig(function, FunctionInput.MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS, 3)
         return ManySpecificTreatmentsTwoIntegers(
             treatments = toTreatments(function.parameters.first()),
-            integer1 = parameterAsString(function, 1).toInt(),
-            integer2 = parameterAsString(function, 2).toInt()
+            integer1 = parameterAsInt(function, 1),
+            integer2 = parameterAsInt(function, 2)
         )
     }
 
@@ -388,7 +412,7 @@ class FunctionInputResolver(
 
     fun createManyDrugsOneIntegerInput(function: EligibilityFunction): ManyDrugsOneInteger {
         assertParamConfig(function, FunctionInput.MANY_DRUGS_ONE_INTEGER, 2)
-        return ManyDrugsOneInteger(toDrugSet(function.parameters.first()), parameterAsString(function, 1).toInt())
+        return ManyDrugsOneInteger(toDrugSet(function.parameters.first()), parameterAsInt(function, 1))
     }
 
     private fun toDrugSet(input: Any): Set<Drug> {
@@ -413,7 +437,7 @@ class FunctionInputResolver(
         assertParamConfig(function, FunctionInput.ONE_STRING_ONE_INTEGER, 2)
         return OneIntegerOneString(
             string = parameterAsString(function, 0),
-            integer = parameterAsString(function, 1).toInt()
+            integer = parameterAsInt(function, 1)
         )
     }
 
@@ -421,7 +445,7 @@ class FunctionInputResolver(
         assertParamConfig(function, FunctionInput.MANY_STRINGS_ONE_INTEGER, 2)
         return OneIntegerManyStrings(
             strings = toStringList(function.parameters.first()),
-            integer = parameterAsString(function, 1).toInt()
+            integer = parameterAsInt(function, 1)
         )
     }
 
@@ -429,15 +453,15 @@ class FunctionInputResolver(
         assertParamConfig(function, FunctionInput.MANY_STRINGS_TWO_INTEGERS, 3)
         return TwoIntegersManyStrings(
             strings = toStringList(function.parameters.first()),
-            integer1 = parameterAsString(function, 1).toInt(),
-            integer2 = parameterAsString(function, 2).toInt()
+            integer1 = parameterAsInt(function, 1),
+            integer2 = parameterAsInt(function, 2)
         )
     }
 
     fun createOneIntegerOneStringInput(function: EligibilityFunction): OneIntegerOneString {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_ONE_STRING, 2)
         return OneIntegerOneString(
-            integer = (parameterAsString(function, 0)).toInt(),
+            integer = parameterAsInt(function, 0),
             string = parameterAsString(function, 1)
         )
     }
@@ -445,7 +469,7 @@ class FunctionInputResolver(
     fun createOneIntegerManyStringsInput(function: EligibilityFunction): OneIntegerManyStrings {
         assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_STRINGS, 2)
         return OneIntegerManyStrings(
-            integer = parameterAsString(function, 0).toInt(),
+            integer = parameterAsInt(function, 0),
             strings = toStringList(function.parameters[1])
         )
     }
@@ -556,7 +580,7 @@ class FunctionInputResolver(
 
         return OneDoidTermOneInteger(
             doidTerm = doidString,
-            integer = parameterAsString(function, 1).toInt()
+            integer = parameterAsInt(function, 1)
         )
     }
 
@@ -576,7 +600,33 @@ class FunctionInputResolver(
 
         return ManyIntentsOneInteger(
             intents = toIntents(function.parameters.first()),
-            integer = parameterAsString(function, 1).toInt(),
+            integer = parameterAsInt(function, 1),
+        )
+    }
+
+    fun createOneMedicationCategoryInput(function: EligibilityFunction): OneMedicationCategory {
+        assertParamConfig(function, FunctionInput.ONE_MEDICATION_CATEGORY, 1)
+        val categoryName = parameterAsString(function, 0)
+        return OneMedicationCategory(categoryName, medicationCategories.resolve(categoryName))
+    }
+
+    fun createOneMedicationCategoryOneIntegerInput(function: EligibilityFunction): Pair<OneMedicationCategory, Int> {
+        assertParamConfig(function, FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER, 2)
+        val categoryName = parameterAsString(function, 0)
+        return Pair(OneMedicationCategory(categoryName, medicationCategories.resolve(categoryName)), parameterAsInt(function, 1))
+    }
+
+    fun createManyMedicationCategoriesOneIntegerInput(function: EligibilityFunction): Pair<Map<String, Set<AtcLevel>>, Int> {
+        assertParamConfig(function, FunctionInput.MANY_MEDICATION_CATEGORIES_ONE_INTEGER, 2)
+        return Pair(toStringList(function.parameters[0]).associateWith(medicationCategories::resolve), parameterAsInt(function, 1))
+    }
+
+    fun createManyMedicationCategoriesTwoIntegersInput(function: EligibilityFunction): Triple<Map<String, Set<AtcLevel>>, Int, Int> {
+        assertParamConfig(function, FunctionInput.MANY_MEDICATION_CATEGORIES_TWO_INTEGERS, 3)
+        return Triple(
+            toStringList(function.parameters[0]).associateWith(medicationCategories::resolve),
+            parameterAsInt(function, 1),
+            parameterAsInt(function, 2)
         )
     }
 
@@ -593,6 +643,8 @@ class FunctionInputResolver(
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String
+
+    private fun parameterAsInt(function: EligibilityFunction, i: Int) = parameterAsString(function, i).toInt()
 
     private fun firstParameterAsGene(function: EligibilityFunction): String {
         val gene = parameterAsString(function, 0)
@@ -650,7 +702,7 @@ class FunctionInputResolver(
         }
 
         private fun assertParamType(function: EligibilityFunction, requestedInput: FunctionInput) {
-            if (requestedInput != FunctionInputMapping.RULE_INPUT_MAP[function.rule]) {
+            if (requestedInput != function.rule.input) {
                 throw IllegalStateException("Incorrect type of inputs requested for '${function.rule}': $requestedInput")
             }
         }

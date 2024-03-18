@@ -10,7 +10,7 @@ import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EligibleOtherCountriesExternalTrialsGenerator(
-    private val source: String, private val externalTrialsPerEvent: Map<String, List<ExternalTrial>>, private val width: Float
+    private val source: String, private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, private val width: Float
 ) : TableGenerator {
     override fun title(): String {
         return String.format(

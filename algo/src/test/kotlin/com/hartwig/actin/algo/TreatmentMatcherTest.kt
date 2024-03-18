@@ -44,7 +44,7 @@ class TreatmentMatcherTest {
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
-        sampleId = patient.molecular.sampleId,
+        sampleId = patient.molecular?.sampleId ?: "N/A",
         referenceDate = LocalDate.now(),
         referenceDateIsLive = true,
         trialMatches = trialMatches,
@@ -77,5 +77,19 @@ class TreatmentMatcherTest {
                     )
                 )
             )
+    }
+
+    @Test
+    fun `Should match without molecular input`() {
+        val patientWithoutMolecular = patient.copy(molecular = null)
+        val trialMatcher = mockk<TrialMatcher> {
+            every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
+        }
+        val treatmentMatcher = TreatmentMatcher(trialMatcher, recommendationEngine, trials, CurrentDateProvider(),
+            EvaluatedTreatmentAnnotator.create(evidenceEntries), EMC_TRIAL_SOURCE)
+        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
+        val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")
+
+        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patientWithoutMolecular)).isEqualTo(expectedTreatmentMatchWithoutMolecular)
     }
 }

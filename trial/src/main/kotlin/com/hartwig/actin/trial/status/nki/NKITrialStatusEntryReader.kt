@@ -6,12 +6,11 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.hartwig.actin.trial.status.TrialStatus
 import com.hartwig.actin.trial.status.TrialStatusEntry
 import com.hartwig.actin.trial.status.TrialStatusEntryReader
 import java.io.File
 
-private const val TRIALS_JSON = "trials.json"
+private const val TRIALS_JSON = "trial_status.json"
 
 class NKITrialStatusEntryReader : TrialStatusEntryReader {
 
@@ -24,14 +23,14 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
 
 
     override fun read(inputPath: String): List<TrialStatusEntry> {
-        return mapper.readValue(File(inputPath + TRIALS_JSON), object : TypeReference<List<NKITrialStatus>>() {})
+        return mapper.readValue(File("$inputPath/$TRIALS_JSON"), object : TypeReference<List<NKITrialStatus>>() {})
             .map {
                 TrialStatusEntry(
                     studyId = it.studyId.toInt(),
                     studyMETC = it.studyMetc,
                     studyAcronym = it.studyAcronym,
                     studyTitle = it.studyTitle,
-                    studyStatus = if (it.studyStatus == "OPEN") TrialStatus.OPEN else if (it.studyStatus == "CLOSED") TrialStatus.CLOSED else TrialStatus.UNINTERPRETABLE,
+                    studyStatus = NKIStatusResolver.resolve(it.studyStatus),
                 )
             }
     }

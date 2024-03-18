@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.medication
+package com.hartwig.actin.medication
 
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.util.TabularFile

@@ -3,6 +3,8 @@ package com.hartwig.actin.trial
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.medication.AtcTree
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.trial.interpretation.ConfigInterpreter
 import com.hartwig.actin.trial.interpretation.SimpleConfigInterpreter
@@ -40,7 +42,17 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val configInterpreter = configInterpreter()
-        val trialIngestion = TrialIngestion.create(config.trialConfigDirectory, configInterpreter, doidModel, geneFilter, treatmentDatabase)
+        LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
+        val atcTree = AtcTree.createFromFile(config.atcTsv)
+
+        val trialIngestion = TrialIngestion.create(
+            config.trialConfigDirectory,
+            configInterpreter,
+            doidModel,
+            geneFilter,
+            treatmentDatabase,
+            MedicationCategories.create(atcTree)
+        )
 
         LOGGER.info("Creating trial database")
         val result = trialIngestion.ingestTrials()
