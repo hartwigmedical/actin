@@ -52,9 +52,10 @@ class EligibleActinTrialsGenerator private constructor(
     companion object {
 
         fun forOpenCohorts(
-            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean): EligibleActinTrialsGenerator {
+            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
+        ): EligibleActinTrialsGenerator {
             val recruitingAndEligibleCohorts = cohorts.filter { it.isPotentiallyEligible && it.isOpen &&
-                    if (slotsAvailable) it.hasSlotsAvailable else !it.hasSlotsAvailable}
+                    it.hasSlotsAvailable == slotsAvailable }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
             val title = "$source trials that are open and considered eligible" +
                     if (slotsAvailable) "and currently have slots available " else "but currently have no slots available" +
