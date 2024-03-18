@@ -19,10 +19,9 @@ internal class TumorStageDerivationFunction private constructor(private val deri
     companion object {
         fun create(doidModel: DoidModel): TumorStageDerivationFunction {
             return TumorStageDerivationFunction(
-                mapOf(
+                linkedMapOf(
                     hasAtLeastCategorizedLesions(2, doidModel) to setOf(TumorStage.IV),
-                    hasExactlyCategorizedLesions(1, doidModel) to setOf(TumorStage.III, TumorStage.IV),
-                    hasExactlyCategorizedLesions(0, doidModel).and(hasUncategorizedLesions()) to setOf(TumorStage.III, TumorStage.IV),
+                    hasExactlyCategorizedLesions(1, doidModel).or(hasUncategorizedLesions()) to setOf(TumorStage.III, TumorStage.IV),
                     hasAllKnownLesionDetails().and(
                         hasExactlyCategorizedLesions(0, doidModel).and(
                             hasNoUncategorizedLesions()

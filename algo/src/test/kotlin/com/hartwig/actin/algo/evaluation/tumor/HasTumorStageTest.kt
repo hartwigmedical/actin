@@ -58,7 +58,7 @@ class HasTumorStageTest {
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IV)
         Assertions.assertThat((tumorStageFunction(derivationFunction).evaluate(patientRecord)).undeterminedGeneralMessages).containsExactly(
-            "Missing tumor stage details - assumed III or IV based on lesions"
+            "Missing tumor stage details - derived III or IV based on lesions"
         )
     }
 
