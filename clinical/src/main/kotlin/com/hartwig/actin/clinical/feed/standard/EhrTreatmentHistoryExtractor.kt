@@ -4,7 +4,6 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
 import com.hartwig.actin.clinical.curation.CurationResponse
-import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.NonOncologicalHistoryConfig
 import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
@@ -33,8 +32,8 @@ class EhrTreatmentHistoryExtractor(
     }
 
     private fun getOncologicalPreviousConditions(ehrPatientRecord: EhrPatientRecord) =
-        ehrPatientRecord.priorOtherConditions.mapNotNull { ehrPreviousCondition ->
-            if (nonOncologicalHistoryCuration.find(ehrPreviousCondition.name).all(CurationConfig::ignore)) {
+        ehrPatientRecord.priorOtherConditions.map { ehrPreviousCondition ->
+            if (nonOncologicalHistoryCuration.find(ehrPreviousCondition.name).isEmpty()) {
                 val treatment = CurationResponse.createFromConfigs(
                     treatmentCuration.find(ehrPreviousCondition.name),
                     ehrPatientRecord.patientDetails.hashedId,
@@ -69,7 +68,10 @@ class EhrTreatmentHistoryExtractor(
                     )
                 } ?: ExtractionResult(emptyList(), treatment.extractionEvaluation)
             } else {
-                null
+                ExtractionResult(
+                    emptyList(),
+                    CurationExtractionEvaluation(treatmentHistoryEntryEvaluatedInputs = setOf(ehrPreviousCondition.name))
+                )
             }
         }.fold<ExtractionResult<List<TreatmentHistoryEntry>>, ExtractionResult<List<TreatmentHistoryEntry>>>(
             ExtractionResult(emptyList(), CurationExtractionEvaluation())
