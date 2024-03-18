@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.algo.evaluation.medication.MedicationSelector.Companion.SYSTEMIC_ADMINISTRATION_ROUTE_SET
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Medication
 import org.assertj.core.api.Assertions.assertThat
@@ -144,5 +145,16 @@ class MedicationSelectorTest {
         val filtered = MedicationTestFactory.alwaysInactive()
             .activeOrRecentlyStoppedWithCypInteraction(medications, "9A9", CypInteraction.Type.INHIBITOR, minStopDate)
         assertThat(filtered.map(Medication::name)).containsExactly("CYP9A9 inhibitor recently stopped")
+    }
+
+    @Test
+    fun `Should correctly check systemic status`() {
+        val medications = listOf(
+            MedicationTestFactory.medication(name = "systemic", administrationRoute = SYSTEMIC_ADMINISTRATION_ROUTE_SET.iterator().next()),
+            MedicationTestFactory.medication(name = "non-systemic", administrationRoute = "non-systemic route"),
+        )
+        val filtered = medications.filter { MedicationTestFactory.alwaysActive().isSystemic(it) }
+        assertThat(filtered).hasSize(1)
+        assertThat(filtered[0].name).isEqualTo("systemic")
     }
 }

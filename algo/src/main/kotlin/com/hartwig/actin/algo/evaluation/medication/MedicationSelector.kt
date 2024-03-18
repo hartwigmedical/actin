@@ -1,7 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation.ACTIVE
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation.PLANNED
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Medication
@@ -62,10 +63,26 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
     }
 
     fun isActive(medication: Medication): Boolean {
-        return interpreter.interpret(medication) == MedicationStatusInterpretation.ACTIVE
+        return interpreter.interpret(medication) == ACTIVE
+    }
+
+    fun isSystemicAndActive(medication: Medication): Boolean {
+        return isSystemic(medication) && isActive(medication)
+    }
+
+    fun isSystemicAndPlanned(medication: Medication): Boolean {
+        return isSystemic(medication) && isPlanned(medication)
+    }
+
+    fun isSystemic(medication: Medication): Boolean {
+        return medication.administrationRoute?.lowercase() in SYSTEMIC_ADMINISTRATION_ROUTE_SET
     }
 
     fun isPlanned(medication: Medication): Boolean {
-        return interpreter.interpret(medication) == MedicationStatusInterpretation.PLANNED
+        return interpreter.interpret(medication) == PLANNED
+    }
+
+    companion object {
+        val SYSTEMIC_ADMINISTRATION_ROUTE_SET = setOf("oraal", "parenteraal", "subcutaan", "intramusculair")
     }
 }

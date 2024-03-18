@@ -12,7 +12,8 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         MedicationTestFactory.alwaysActive(),
         "category to find",
         setOf(AtcLevel(code = "category to find", name = "")),
-        evaluationDate.plusDays(1)
+        evaluationDate.plusDays(1),
+        onlyCheckSystemic = false
     )
     
     @Test
@@ -40,7 +41,8 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
             MedicationTestFactory.alwaysStopped(),
             "category to find",
             setOf(AtcLevel(code = "category to find", name = "")),
-            evaluationDate.minusDays(1)
+            evaluationDate.minusDays(1),
+            onlyCheckSystemic = false
         )
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))
@@ -53,7 +55,8 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
             MedicationTestFactory.alwaysStopped(),
             "category to find",
             setOf(AtcLevel(code = "category to find", name = "")),
-            evaluationDate.minusWeeks(2)
+            evaluationDate.minusWeeks(2),
+            onlyCheckSystemic = false
         )
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))
@@ -61,5 +64,30 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(medications))
         )
+    }
+
+    @Test
+    fun `Should only consider systemic drugs when isSystemic is true`() {
+        val function = HasRecentlyReceivedMedicationOfAtcLevel(
+            MedicationTestFactory.alwaysActive(),
+            "category to find",
+            setOf(AtcLevel(code = "category to find", name = "")),
+            evaluationDate.plusDays(1),
+            onlyCheckSystemic = true
+        )
+        val atc = AtcTestFactory.atcClassification("category to find")
+        val systemicDrug = listOf(
+            MedicationTestFactory.medication(
+                atc = atc, administrationRoute = MedicationSelector.SYSTEMIC_ADMINISTRATION_ROUTE_SET.iterator().next()
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(systemicDrug)))
+
+        val nonSystemicDrug = listOf(
+            MedicationTestFactory.medication(
+                atc = atc, administrationRoute = "non-systemic"
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(nonSystemicDrug)))
     }
 }

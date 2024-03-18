@@ -54,10 +54,11 @@ internal object MedicationTestFactory {
         stopDate: LocalDate? = null,
         qtProlongatingRisk: QTProlongatingRisk = QTProlongatingRisk.NONE,
         atc: AtcClassification? = null,
-        isSelfCare: Boolean = false
+        isSelfCare: Boolean = false,
+        administrationRoute: String = ""
     ): Medication {
         return TestMedicationFactory.createMinimal().copy(
-            name = name, dosage = dosage, stopDate = stopDate, qtProlongatingRisk = qtProlongatingRisk, atc = atc, isSelfCare = isSelfCare
+            name = name, dosage = dosage, stopDate = stopDate, qtProlongatingRisk = qtProlongatingRisk, atc = atc, isSelfCare = isSelfCare, administrationRoute = administrationRoute
         )
     }
 

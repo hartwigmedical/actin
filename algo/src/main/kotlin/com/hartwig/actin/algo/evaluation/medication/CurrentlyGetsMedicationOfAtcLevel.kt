@@ -9,7 +9,10 @@ import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.Medication
 
 class CurrentlyGetsMedicationOfAtcLevel(
-    private val selector: MedicationSelector, private val categoryName: String, private val categoryAtcLevels: Set<AtcLevel>
+    private val selector: MedicationSelector,
+    private val categoryName: String,
+    private val categoryAtcLevels: Set<AtcLevel>,
+    private val onlyCheckSystemic: Boolean
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -17,8 +20,10 @@ class CurrentlyGetsMedicationOfAtcLevel(
             (it.allLevels() intersect categoryAtcLevels).isNotEmpty()
         }
 
-        val activeMedicationsWithAtcLevel = filteredMedicationNames(medicationsWithAtcLevel, selector::isActive)
-        val plannedMedicationsWithAtcLevel = filteredMedicationNames(medicationsWithAtcLevel, selector::isPlanned)
+        val activeMedicationsWithAtcLevel =
+            filteredSystemicMedicationNames(medicationsWithAtcLevel, if (onlyCheckSystemic) selector::isSystemicAndActive else selector::isActive)
+        val plannedMedicationsWithAtcLevel =
+            filteredSystemicMedicationNames(medicationsWithAtcLevel, if (onlyCheckSystemic) selector::isSystemicAndPlanned else selector::isPlanned)
 
         return when {
             activeMedicationsWithAtcLevel.isNotEmpty() -> {
@@ -46,9 +51,8 @@ class CurrentlyGetsMedicationOfAtcLevel(
         }
     }
 
-    private fun filteredMedicationNames(
+    private fun filteredSystemicMedicationNames(
         medications: List<Medication>, filter: (Medication) -> Boolean
     ) = medications.filter(filter::invoke).map(Medication::name)
-
 }
 

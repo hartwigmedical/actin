@@ -12,7 +12,8 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
     private val selector: MedicationSelector,
     private val categoryName: String,
     private val categoryAtcLevels: Set<AtcLevel>,
-    private val minStopDate: LocalDate
+    private val minStopDate: LocalDate,
+    private val onlyCheckSystemic: Boolean
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -24,7 +25,8 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
         }
 
         val medications = selector.activeOrRecentlyStopped(record.clinical.medications, minStopDate)
-                .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
+            .filter { if (onlyCheckSystemic) selector.isSystemic(it) else true }
+            .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
 
         val foundMedicationNames = medications.map { it.name }.filter { it.isNotEmpty() }
 

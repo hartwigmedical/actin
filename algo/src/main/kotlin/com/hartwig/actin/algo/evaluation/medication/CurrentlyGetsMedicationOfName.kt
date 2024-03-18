@@ -6,11 +6,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
-class CurrentlyGetsMedicationOfName(private val selector: MedicationSelector, private val termsToFind: Set<String>) : EvaluationFunction {
+class CurrentlyGetsMedicationOfName(
+    private val selector: MedicationSelector, private val termsToFind: Set<String>, private val onlyCheckSystemic: Boolean
+): EvaluationFunction {
         
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasActiveMedicationWithName = selector.activeWithAnyTermInName(record.clinical.medications, termsToFind).isNotEmpty()
-        val hasPlannedMedicationWithName = selector.plannedWithAnyTermInName(record.clinical.medications, termsToFind).isNotEmpty()
+        val hasActiveMedicationWithName =
+            selector.activeWithAnyTermInName(record.clinical.medications, termsToFind).any { !onlyCheckSystemic || selector.isSystemic(it) }
+        val hasPlannedMedicationWithName = selector.plannedWithAnyTermInName(record.clinical.medications, termsToFind)
+            .any { !onlyCheckSystemic || selector.isSystemic(it) }
 
         return when {
             hasActiveMedicationWithName -> {

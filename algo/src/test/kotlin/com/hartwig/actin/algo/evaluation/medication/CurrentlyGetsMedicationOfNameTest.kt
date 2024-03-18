@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import org.junit.Test
 
 class CurrentlyGetsMedicationOfNameTest {
-    private val alwaysActiveFunction = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysActive(), setOf("term 1"))
-    private val alwaysPlannedFunction = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysPlanned(), setOf("term 1"))
+    private val alwaysActiveFunction = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysActive(), setOf("term 1"), false)
+    private val alwaysPlannedFunction = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysPlanned(), setOf("term 1"), false)
 
     @Test
     fun `Should fail when patient uses no medications`() {
@@ -47,5 +47,19 @@ class CurrentlyGetsMedicationOfNameTest {
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 2")))
             )
         )
+    }
+
+    @Test
+    fun `Should only consider systemic drugs when isSystemic is true`() {
+        val function = CurrentlyGetsMedicationOfName(MedicationTestFactory.alwaysActive(), setOf("term 1"), true)
+        val systemicDrug = listOf(
+            MedicationTestFactory.medication(
+                "This is Term 1", administrationRoute = MedicationSelector.SYSTEMIC_ADMINISTRATION_ROUTE_SET.iterator().next()
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(systemicDrug)))
+
+        val nonSystemicDrug = listOf(MedicationTestFactory.medication("This is Term 1", administrationRoute = "non-systemic"))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(nonSystemicDrug)))
     }
 }
