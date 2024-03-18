@@ -24,13 +24,14 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
 
     override fun read(inputPath: String): List<TrialStatusEntry> {
         return mapper.readValue(File("$inputPath/$TRIALS_JSON"), object : TypeReference<List<NKITrialStatus>>() {})
+            .filter { it.studyStatus != null && it.studyMetc != null }
             .map {
                 TrialStatusEntry(
                     studyId = it.studyId.toInt(),
-                    studyMETC = it.studyMetc,
+                    studyMETC = it.studyMetc!!,
                     studyAcronym = it.studyAcronym,
                     studyTitle = it.studyTitle,
-                    studyStatus = NKIStatusResolver.resolve(it.studyStatus),
+                    studyStatus = NKIStatusResolver.resolve(it.studyStatus!!),
                 )
             }
     }
