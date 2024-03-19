@@ -9,7 +9,7 @@ import kotlin.math.abs
 
 class HasWHOStatus internal constructor(private val requiredWHO: Int) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val who = record.clinical.clinicalStatus.who
+        val who = record.clinicalStatus.who
         val warningComplicationCategories = WHOFunctions.findComplicationCategoriesAffectingWHOStatus(record)
         return when {
             who == null -> {

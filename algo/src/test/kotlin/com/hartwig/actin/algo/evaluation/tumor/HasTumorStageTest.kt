@@ -64,7 +64,7 @@ class HasTumorStageTest {
     @Test
     fun `Should display correct undetermined message with derived stages`() {
         val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.clinical.tumor
+        val tumorDetails = patientRecord.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IV)
         Assertions.assertThat((tumorStageFunction(derivationFunction).evaluate(patientRecord)).undeterminedGeneralMessages).containsExactly(
@@ -83,7 +83,7 @@ class HasTumorStageTest {
 
     private fun assertDerivedEvaluation(expectedResult: EvaluationResult, vararg derivedStages: TumorStage) {
         val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.clinical.tumor
+        val tumorDetails = patientRecord.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(tumorDetails) } returns setOf(*derivedStages)
         assertEvaluation(expectedResult, tumorStageFunction(derivationFunction).evaluate(patientRecord))

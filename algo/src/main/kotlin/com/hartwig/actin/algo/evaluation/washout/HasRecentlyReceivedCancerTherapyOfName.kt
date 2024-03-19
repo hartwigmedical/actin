@@ -15,7 +15,7 @@ class HasRecentlyReceivedCancerTherapyOfName(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val lowercaseNamesToFind = namesToFind.map { it.lowercase() }.toSet()
-        val namesFound = record.clinical.medications
+        val namesFound = record.medications
             .filter {
                 lowercaseNamesToFind.contains(it.name.lowercase()) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
             }

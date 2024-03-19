@@ -14,8 +14,8 @@ internal object VitalFunctionSelector {
     fun selectRecentVitalFunctionsWrongUnit(
         record: PatientRecord, categoryToFind: VitalFunctionCategory
     ): List<VitalFunction> {
-        val referenceDate = ReferenceDateProviderFactory.create(record.clinical, true).date().minusMonths(MAX_AGE_MONTHS.toLong())
-        return record.clinical.vitalFunctions.filter {
+        val referenceDate = ReferenceDateProviderFactory.create(record, true).date().minusMonths(MAX_AGE_MONTHS.toLong())
+        return record.vitalFunctions.filter {
             it.date.toLocalDate() > referenceDate && it.category == categoryToFind && EXPECTED_UNIT[categoryToFind] != it.unit
         }
     }
@@ -23,7 +23,7 @@ internal object VitalFunctionSelector {
     fun selectMedianPerDay(
         record: PatientRecord, categoryToFind: VitalFunctionCategory, maxEntries: Int, minimalDate: LocalDate
     ): List<VitalFunction> {
-        return record.clinical.vitalFunctions.asSequence().filter {
+        return record.vitalFunctions.asSequence().filter {
             it.date.toLocalDate() > minimalDate && it.category == categoryToFind && it.valid
         }
             .groupBy { it.date }
@@ -33,7 +33,7 @@ internal object VitalFunctionSelector {
     }
 
     fun selectBloodPressures(record: PatientRecord, category: BloodPressureCategory, minimalDate: LocalDate): List<VitalFunction> {
-        return record.clinical.vitalFunctions.asSequence().filter {
+        return record.vitalFunctions.asSequence().filter {
             it.date.toLocalDate() > minimalDate && isBloodPressure(it) && it.subcategory
                 .equals(category.display(), ignoreCase = true) && it.valid
         }

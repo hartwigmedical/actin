@@ -11,8 +11,8 @@ import com.hartwig.actin.doid.DoidModel
 class HasCancerWithNeuroendocrineComponent (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical.tumor.doids
-        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) && record.clinical.tumor.primaryTumorExtraDetails == null) {
+        val tumorDoids = record.tumor.doids
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) && record.tumor.primaryTumorExtraDetails == null) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether tumor of patient may have a neuroendocrine component",
                 "Undetermined neuroendocrine component"
@@ -21,7 +21,7 @@ class HasCancerWithNeuroendocrineComponent (private val doidModel: DoidModel) : 
         val hasNeuroendocrineDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, tumorDoids, NEUROENDOCRINE_DOIDS)
         val hasNeuroendocrineTerm = DoidEvaluationFunctions.isOfAtLeastOneDoidTerm(doidModel, tumorDoids, NEUROENDOCRINE_TERMS)
         val hasNeuroendocrineDetails =
-            TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical.tumor, NEUROENDOCRINE_EXTRA_DETAILS)
+            TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor, NEUROENDOCRINE_EXTRA_DETAILS)
         if (hasNeuroendocrineDoid || hasNeuroendocrineTerm || hasNeuroendocrineDetails) {
             return EvaluationFactory.pass("Patient has cancer with neuroendocrine component", "Presence of neuroendocrine component")
         }
@@ -30,7 +30,7 @@ class HasCancerWithNeuroendocrineComponent (private val doidModel: DoidModel) : 
             DoidConstants.SMALL_CELL_DOID_SET
         )
         val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(
-            record.clinical.tumor,
+            record.tumor,
             HasCancerWithSmallCellComponent.SMALL_CELL_EXTRA_DETAILS
         )
         if (hasSmallCellDoid || hasSmallCellDetails) {

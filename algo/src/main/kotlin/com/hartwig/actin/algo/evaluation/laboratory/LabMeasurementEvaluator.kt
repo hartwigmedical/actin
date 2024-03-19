@@ -17,7 +17,7 @@ class LabMeasurementEvaluator(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val interpretation = LabInterpreter.interpret(record.clinical.labValues)
+        val interpretation = LabInterpreter.interpret(record.labValues)
         val mostRecent = interpretation.mostRecentValue(measurement)
         if (!isValid(mostRecent, measurement)) {
             return when {

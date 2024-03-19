@@ -9,7 +9,7 @@ class HasUnresectablePeritonealMetastases : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val targetTerms = listOf("peritoneum", "peritoneal", "intraperitoneum", "intraperitoneal")
-        val hasPeritonealMetastases = record.clinical.tumor.otherLesions?.any { lesion ->
+        val hasPeritonealMetastases = record.tumor.otherLesions?.any { lesion ->
             val lowercaseLesion = lesion.lowercase()
             targetTerms.any(lowercaseLesion::startsWith) || targetTerms.any { lowercaseLesion.contains(" $it") }
         }

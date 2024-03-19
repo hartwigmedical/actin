@@ -40,7 +40,7 @@ class HasMinimumSitesWithLesionsTest {
     @Test
     fun shouldNotCountAdditionalLesionDetailsOrBiopsyLocationContainingLymphWhenLymphNodeLesionsPresent() {
         val patient = TumorTestFactory.withTumorDetails(
-            testPatient.clinical.tumor.copy(otherLesions = listOf("lymph node"), biopsyLocation = "lymph")
+            testPatient.tumor.copy(otherLesions = listOf("lymph node"), biopsyLocation = "lymph")
         )
         assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(6).evaluate(patient))
     }

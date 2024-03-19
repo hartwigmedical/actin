@@ -9,7 +9,7 @@ class HasEvaluableDisease : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        return when (record.clinical.tumor.hasMeasurableDisease) {
+        return when (record.tumor.hasMeasurableDisease) {
             true -> {
                 EvaluationFactory.recoverablePass(
                     "Patient has measurable disease and hence will have evaluable disease",

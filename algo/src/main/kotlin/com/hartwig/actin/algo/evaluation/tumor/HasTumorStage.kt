@@ -17,9 +17,9 @@ class HasTumorStage internal constructor(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (stagesToMatch.isEmpty()) throw IllegalStateException("No stages to match configured")
-        val stage = record.clinical.tumor.stage
+        val stage = record.tumor.stage
         if (stage == null) {
-            val derivedStages = tumorStageDerivationFunction.apply(record.clinical.tumor)?.toSet()
+            val derivedStages = tumorStageDerivationFunction.apply(record.tumor)?.toSet()
             return if (derivedStages?.size == 1) {
                 evaluateWithStage(derivedStages.iterator().next())
             } else if (derivedStages?.map { evaluateWithStage(it) }?.all { it.result == EvaluationResult.PASS } == true) {

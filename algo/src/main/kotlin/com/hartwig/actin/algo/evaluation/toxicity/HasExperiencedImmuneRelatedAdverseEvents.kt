@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasExperiencedImmuneRelatedAdverseEvents internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasHadImmuneTherapy = record.clinical.oncologicalHistory.any { it.categories().contains(TreatmentCategory.IMMUNOTHERAPY) }
+        val hasHadImmuneTherapy = record.oncologicalHistory.any { it.categories().contains(TreatmentCategory.IMMUNOTHERAPY) }
         //TODO: Update according to README
         return if (hasHadImmuneTherapy) {
             EvaluationFactory.warn(

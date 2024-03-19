@@ -14,7 +14,7 @@ class HasHadPriorConditionWithDoid(private val doidModel: DoidModel, private val
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToFind)
         val conditions =
-            OtherConditionSelector.selectConditionsMatchingDoid(record.clinical.priorOtherConditions, doidToFind, doidModel)
+            OtherConditionSelector.selectConditionsMatchingDoid(record.priorOtherConditions, doidToFind, doidModel)
         return if (conditions.isNotEmpty()) {
             pass(
                 PriorConditionMessages.passSpecific(Characteristic.CONDITION, conditions, doidTerm),
