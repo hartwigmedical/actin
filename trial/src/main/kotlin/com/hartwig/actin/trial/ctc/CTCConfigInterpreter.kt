@@ -32,10 +32,11 @@ class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpr
         trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
 
         if (ctcDatabase.mecStudiesNotInCTC.contains(trialConfig.trialId) && openInCTC != null) {
-            LOGGER.warn(
-                "Trial {} ({}) is configured as not in CTC while status could be derived from CTC",
-                trialConfig.trialId,
-                trialConfig.acronym
+            ctcConfigValidationErrors.add(
+                CTCConfigValidationError(
+                    trialConfig.trialId,
+                    "Trial is configured as not in CTC while status could be derived from CTC"
+                )
             )
         }
 
@@ -116,8 +117,8 @@ class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpr
     }
 
     internal fun extractUnusedMECStudiesNotInCTC(trialConfigs: List<TrialDefinitionConfig>): List<String> {
-        val databaseTrialIds = trialConfigs.map { it.trialId }.toSet()
-        return ctcDatabase.mecStudiesNotInCTC.filter { !databaseTrialIds.contains(it) }
+        val trialConfigIds = trialConfigs.map { it.trialId }.toSet()
+        return ctcDatabase.mecStudiesNotInCTC.filter { !trialConfigIds.contains(it) }
     }
 
     internal fun extractNewCTCStudies(trialConfigs: List<TrialDefinitionConfig>): Set<CTCDatabaseEntry> {
