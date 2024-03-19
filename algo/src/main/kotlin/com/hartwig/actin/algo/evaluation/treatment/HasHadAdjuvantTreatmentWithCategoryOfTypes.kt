@@ -16,7 +16,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<Treatmen
         val adjuvantTreatmentHistory = record.oncologicalHistory.filter { it.intents?.contains(Intent.ADJUVANT) == true }
 
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            adjuvantTreatmentHistory, warnCategory, { it.matchesTypeFromSet(types) }
+            adjuvantTreatmentHistory, warnCategory, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
         )
 
         return when {

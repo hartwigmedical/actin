@@ -13,9 +13,9 @@ class HasHadAdjuvantTreatmentWithCategory(private val category: TreatmentCategor
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             record.oncologicalHistory,
             category,
-            { it.intents?.contains(Intent.ADJUVANT) == true },
+            { historyEntry -> historyEntry.intents?.contains(Intent.ADJUVANT) == true },
             { true },
-            { it.intents?.contains(Intent.ADJUVANT) != false }
+            { historyEntry -> historyEntry.intents?.contains(Intent.ADJUVANT) != false }
         )
 
         return if (treatmentSummary.hasSpecificMatch()) {
