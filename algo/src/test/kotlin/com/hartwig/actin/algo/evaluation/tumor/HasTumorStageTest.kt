@@ -16,7 +16,7 @@ class HasTumorStageTest {
         val tumorDetails = patientRecord.clinical.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IIIB)
-        Assertions.assertThatIllegalArgumentException().isThrownBy { HasTumorStage(derivationFunction, emptySet()).evaluate(patientRecord) }
+        Assertions.assertThatIllegalStateException().isThrownBy { HasTumorStage(derivationFunction, emptySet()).evaluate(patientRecord) }
             .withMessage("No stages to match configured")
     }
 
