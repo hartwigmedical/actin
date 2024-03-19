@@ -29,6 +29,7 @@ class TrialIngestion(
     fun ingestTrials(): TrialIngestionResult {
         configInterpreter.checkModelForNewTrials(trialConfigModel.trials())
         configInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
+        configInterpreter.checkModelForUnusedMecStudiesNotInCTC(trialConfigModel.trials())
         val trialDatabaseValidation = trialConfigModel.validation()
         val ctcDatabaseValidation = configInterpreter.validation()
         val trials = trialConfigModel.trials().map { trialConfig ->

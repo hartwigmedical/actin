@@ -10,7 +10,7 @@ class CTCDatabaseReaderTest {
 
     @Test
     fun shouldLoadExpectedDatabaseFromTestDirectory() {
-        val ctcDatabase = CTCDatabaseReader.read(CTC_CONFIG_DIRECTORY, TRIAL_CONFIG_DIRECTORY)
+        val ctcDatabase = CTCDatabaseReader.read(CTC_CONFIG_DIRECTORY)
         val trialDatabase = TrialConfigDatabaseReader.read(TRIAL_CONFIG_DIRECTORY)
 
         assertEntries(ctcDatabase.entries)

@@ -58,7 +58,7 @@ data class CTCUnmappedValidationError(override val config: Int, override val mes
     }
 }
 
-data class CTCUnusedValidationError(override val config: String, override val message: String) : ValidationError<String> {
+data class CTCConfigValidationError(override val config: String, override val message: String): ValidationError<String> {
     override fun configFormat(config: String): String {
         return "trial id=${config}"
     }

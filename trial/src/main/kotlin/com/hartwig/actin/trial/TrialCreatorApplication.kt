@@ -39,7 +39,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val configInterpreter = if (config.ctcConfigDirectory == null) {
             SimpleConfigInterpreter()
         } else {
-            CTCConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory, config.trialConfigDirectory))
+            CTCConfigInterpreter(CTCDatabaseReader.read(config.ctcConfigDirectory))
         }
         val trialIngestion = TrialIngestion.create(config.trialConfigDirectory, configInterpreter, doidModel, geneFilter, treatmentDatabase)
 

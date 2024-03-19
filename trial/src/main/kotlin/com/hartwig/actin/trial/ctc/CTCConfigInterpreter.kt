@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial.ctc
 
+import com.hartwig.actin.trial.CTCConfigValidationError
 import com.hartwig.actin.trial.CTCDatabaseValidationError
 import com.hartwig.actin.trial.CohortDefinitionValidationError
 import com.hartwig.actin.trial.CtcDatabaseValidation
@@ -16,6 +17,7 @@ class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpr
 
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
     private val ctcDatabaseValidationErrors = mutableListOf<CTCDatabaseValidationError>()
+    private val ctcConfigValidationErrors = mutableListOf<CTCConfigValidationError>()
     private val cohortDefinitionValidationErrors = mutableListOf<CohortDefinitionValidationError>()
 
     override fun validation(): CtcDatabaseValidation {
@@ -96,6 +98,23 @@ class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpr
                 CTCDatabaseValidationError(it, " New trial detected in CTC that is not configured to be ignored")
             })
         }
+    }
+
+    override fun checkModelForUnusedMecStudiesNotInCTC(trialConfigs: List<TrialDefinitionConfig>) {
+        val unusedMecStudiesNotInCTC = extractUnusedMECStudiesNotInCTC(trialConfigs)
+
+        if (unusedMecStudiesNotInCTC.isNotEmpty()) {
+            unusedMecStudiesNotInCTC.map {
+                ctcConfigValidationErrors.add(
+                    CTCConfigValidationError(unusedMecStudiesNotInCTC.joinToString { ", " },"Trial ID that is configured to be ignored is not actually present in trial database")
+                )
+            }
+        }
+    }
+
+    internal fun extractUnusedMECStudiesNotInCTC(trialConfigs: List<TrialDefinitionConfig>): List<String> {
+        val databaseTrialIds = trialConfigs.map { it.trialId }.toSet()
+        return ctcDatabase.mecStudiesNotInCTC.filter { !databaseTrialIds.contains(it) }
     }
 
     internal fun extractNewCTCStudies(trialConfigs: List<TrialDefinitionConfig>): Set<CTCDatabaseEntry> {
