@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
-import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 
 class HasTumorStage internal constructor(

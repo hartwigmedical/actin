@@ -13,7 +13,7 @@ class HasTumorStageTest {
     @Test
     fun `Should throw an exception when the set of stages to match is empty`(){
         val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.clinical.tumor
+        val tumorDetails = patientRecord.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IIIB)
         Assertions.assertThatIllegalStateException().isThrownBy { HasTumorStage(derivationFunction, emptySet()).evaluate(patientRecord) }
@@ -41,7 +41,7 @@ class HasTumorStageTest {
     @Test
     fun `Should pass when one stage of set to match passes`() {
         val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.clinical.tumor
+        val tumorDetails = patientRecord.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IIIB)
         assertEvaluation(EvaluationResult.PASS, HasTumorStage(derivationFunction, setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
@@ -50,7 +50,7 @@ class HasTumorStageTest {
     @Test
     fun `Should pass when all stages of set to match pass`() {
         val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.clinical.tumor
+        val tumorDetails = patientRecord.tumor
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IV)
         assertEvaluation(EvaluationResult.PASS, HasTumorStage(derivationFunction, setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))

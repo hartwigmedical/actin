@@ -79,7 +79,7 @@ class DerivedTumorStageEvaluationFunctionTest {
 
     @Test
     fun `Should evaluate not evaluated when multiple derived and all are not evaluated`() {
-        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns listOf(TumorStage.I, TumorStage.II)
+        every { tumorStageDerivationFunction.apply(minimalTestPatientRecord.tumor) } returns setOf(TumorStage.I, TumorStage.II)
         every { evaluationFunction.evaluate(withStage(TumorStage.I)) } returns EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED)
         every { evaluationFunction.evaluate(withStage(TumorStage.II)) } returns EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED)
         val evaluation = derivedFunction.evaluate(minimalTestPatientRecord)
