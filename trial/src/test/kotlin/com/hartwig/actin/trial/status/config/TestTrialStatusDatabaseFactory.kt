@@ -5,22 +5,22 @@ import com.hartwig.actin.trial.status.TrialStatus
 import com.hartwig.actin.trial.status.TrialStatusDatabase
 import com.hartwig.actin.trial.status.TrialStatusEntry
 
-object TestCTCDatabaseFactory {
+object TestTrialStatusDatabaseFactory {
 
-    fun createMinimalTestCTCDatabase(): TrialStatusDatabase {
+    fun createMinimalTestTrialStatusDatabase(): TrialStatusDatabase {
         return TrialStatusDatabase(emptyList(), emptySet(), emptySet(), emptySet())
     }
 
-    fun createProperTestCTCDatabase(): TrialStatusDatabase {
+    fun createProperTestTrialStatusDatabase(): TrialStatusDatabase {
         return TrialStatusDatabase(
-            entries = createTestCTCEntries(),
+            entries = createTestTrialStatusEntries(),
             studyMETCsToIgnore = setOf(TestTrialData.TEST_TRIAL_METC_IGNORE),
             unmappedCohortIds = setOf(TestTrialData.TEST_UNMAPPED_COHORT_ID),
             mecStudiesNotInTrialStatusDatabase = setOf(TestTrialData.TEST_MEC_NOT_IN_CTC)
         )
     }
 
-    private fun createTestCTCEntries(): List<TrialStatusEntry> {
+    private fun createTestTrialStatusEntries(): List<TrialStatusEntry> {
         val study1Mapping1CohortA = TrialStatusEntry(
             studyId = 1,
             studyMETC = TestTrialData.TEST_TRIAL_METC_1,

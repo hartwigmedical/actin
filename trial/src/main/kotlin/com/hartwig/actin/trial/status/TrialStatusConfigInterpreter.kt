@@ -6,9 +6,9 @@ import com.hartwig.actin.trial.config.TrialDefinitionConfig
 import com.hartwig.actin.trial.config.TrialDefinitionValidationError
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.interpretation.ConfigInterpreter
-import org.apache.logging.log4j.LogManager
 
-class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusDatabase) : ConfigInterpreter {
+class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusDatabase, private val trialPrefix: String = "") :
+    ConfigInterpreter {
 
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
     private val trialStatusDatabaseValidationErrors = mutableListOf<TrialStatusDatabaseValidationError>()
@@ -25,7 +25,8 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
         val (openInTrialStatusDatabase, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(
             trialStatusDatabase.entries,
-            trialConfig
+            trialConfig,
+            this::constructTrialId
         )
         trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
 
@@ -38,7 +39,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
             )
         }
 
-        if (!trialConfig.trialId.startsWith(MEC_TRIAL_PREFIX) || trialStatusDatabase.mecStudiesNotInTrialStatusDatabase.contains(trialConfig.trialId)) {
+        if (!trialConfig.trialId.startsWith(trialPrefix) || trialStatusDatabase.mecStudiesNotInTrialStatusDatabase.contains(trialConfig.trialId)) {
             LOGGER.debug(
                 " Skipping study status retrieval for {} ({}) since study is not deemed a trial status database trial",
                 trialConfig.trialId,
@@ -175,12 +176,11 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
         }
     }
 
-    companion object {
-        private val LOGGER = LogManager.getLogger(TrialStatusInterpreter::class.java)
-        const val MEC_TRIAL_PREFIX = "MEC"
+    private fun constructTrialId(entry: TrialStatusEntry): String {
+        return trialPrefix + " " + entry.studyMETC
+    }
 
-        fun constructTrialId(entry: TrialStatusEntry): String {
-            return MEC_TRIAL_PREFIX + " " + entry.studyMETC
-        }
+    companion object {
+        private val LOGGER = org.apache.logging.log4j.LogManager.getLogger(TrialStatusInterpreter::class.java)
     }
 }

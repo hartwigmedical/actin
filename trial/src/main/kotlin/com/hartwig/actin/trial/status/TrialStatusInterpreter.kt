@@ -7,10 +7,11 @@ internal object TrialStatusInterpreter {
 
     fun isOpen(
         entries: List<TrialStatusEntry>,
-        trialDefinitionConfig: TrialDefinitionConfig
+        trialDefinitionConfig: TrialDefinitionConfig,
+        trialIdConstructor: (TrialStatusEntry) -> String,
     ): Pair<Boolean?, List<TrialDefinitionValidationError>> {
         val trialId = trialDefinitionConfig.trialId
-        val trialStates = entries.filter { trialId.equals(TrialStatusConfigInterpreter.constructTrialId(it), ignoreCase = true) }
+        val trialStates = entries.filter { trialId.equals(trialIdConstructor.invoke(it), ignoreCase = true) }
             .map { it.studyStatus }
             .distinct()
         if (trialStates.size > 1) {

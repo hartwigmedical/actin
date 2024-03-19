@@ -1,12 +1,12 @@
 package com.hartwig.actin.trial.status
 
-import com.hartwig.actin.trial.status.config.TestCTCDatabaseFactory
+import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialStatusDatabaseEvaluatorTest {
 
-    private val evaluator = TrialStatusDatabaseEvaluator(TestCTCDatabaseFactory.createProperTestCTCDatabase())
+    private val evaluator = TrialStatusDatabaseEvaluator(TestTrialStatusDatabaseFactory.createProperTestTrialStatusDatabase())
 
     @Test
     fun `Should pick up unused study METCs to ignore`() {
@@ -15,7 +15,7 @@ class TrialStatusDatabaseEvaluatorTest {
         evaluator.evaluateDatabaseConfiguration()
 
         val evaluatorWithUnused =
-            TrialStatusDatabaseEvaluator(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(studyMETCsToIgnore = setOf("unused")))
+            TrialStatusDatabaseEvaluator(TestTrialStatusDatabaseFactory.createMinimalTestTrialStatusDatabase().copy(studyMETCsToIgnore = setOf("unused")))
         val unusedStudyMETCs = evaluatorWithUnused.extractUnusedStudyMETCsToIgnore()
         assertThat(unusedStudyMETCs).containsExactly("unused")
 
@@ -29,7 +29,7 @@ class TrialStatusDatabaseEvaluatorTest {
         evaluator.evaluateDatabaseConfiguration()
 
         val evaluatorWithUnused =
-            TrialStatusDatabaseEvaluator(TestCTCDatabaseFactory.createMinimalTestCTCDatabase().copy(unmappedCohortIds = setOf(1)))
+            TrialStatusDatabaseEvaluator(TestTrialStatusDatabaseFactory.createMinimalTestTrialStatusDatabase().copy(unmappedCohortIds = setOf(1)))
         val unusedUnmappedCohortIds = evaluatorWithUnused.extractUnusedUnmappedCohorts()
         assertThat(unusedUnmappedCohortIds).containsExactly(1)
 

@@ -1,67 +1,69 @@
 package com.hartwig.actin.trial.status
 
+import com.hartwig.actin.trial.CTC_TRIAL_PREFIX
 import com.hartwig.actin.trial.TestTrialData
 import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.TestCohortDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TestTrialDefinitionConfigFactory
 import com.hartwig.actin.trial.config.TrialDefinitionConfig
-import com.hartwig.actin.trial.status.config.TestCTCDatabaseFactory
 import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory
+import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class CTCModelTest {
+class TrialStatusConfigInterpreterTest {
 
-    private val model = TestCTCModelFactory.createWithProperTestCTCDatabase()
+    private val trialStatusConfigInterpreter = TestTrialStatusConfigInterpreterFactory.createWithProperTestTrialStatusDatabase()
 
     @Test
-    fun `Should not determine status when study is not CTC study`() {
-        val nonCTCStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = "not a CTC study")
-        assertThat(model.isTrialOpen(nonCTCStudy)).isNull()
+    fun `Should not determine status when study is not trial status database study`() {
+        val notIncludedStudy: TrialDefinitionConfig =
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = "not a trial status database study")
+        assertThat(trialStatusConfigInterpreter.isTrialOpen(notIncludedStudy)).isNull()
     }
 
     @Test
-    fun `Should trust CTC study when inconsistent with trial config`() {
+    fun `Should trust trial status database study when inconsistent with trial config`() {
         val closedStudy: TrialDefinitionConfig = TestTrialDefinitionConfigFactory.MINIMAL.copy(
-            trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+            trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
             open = false
         )
 
-        // TEST_TRIAL_1 is assumed to be open in proper test CTC database
-        assertThat(model.isTrialOpen(closedStudy)).isTrue
+        // TEST_TRIAL_1 is assumed to be open in proper test trial status database
+        assertThat(trialStatusConfigInterpreter.isTrialOpen(closedStudy)).isTrue
     }
 
     @Test
-    fun `Should not determine status if study missing in CTC`() {
+    fun `Should not determine status if study missing in trial status database`() {
         val nonExistingCTCStudy: TrialDefinitionConfig =
-            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " non-existing")
-        assertThat(model.isTrialOpen(nonExistingCTCStudy)).isNull()
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = "$CTC_TRIAL_PREFIX non-existing")
+        assertThat(trialStatusConfigInterpreter.isTrialOpen(nonExistingCTCStudy)).isNull()
     }
 
     @Test
-    fun `Should trust CTC cohort when inconsistent with cohort config`() {
+    fun `Should trust trial status database cohort when inconsistent with cohort config`() {
         val closedCohort: CohortDefinitionConfig =
             TestCohortDefinitionConfigFactory.MINIMAL.copy(externalCohortIds = setOf("2"), open = false)
 
-        // Cohort ID 2 is assumed to be open in proper test CTC database
-        assertThat(model.resolveCohortMetadata(closedCohort).open).isTrue
+        // Cohort ID 2 is assumed to be open in proper test trial status database
+        assertThat(trialStatusConfigInterpreter.resolveCohortMetadata(closedCohort).open).isTrue
     }
 
     @Test
-    fun `Should fallback to cohort config when missing in CTC`() {
+    fun `Should fallback to cohort config when missing in trial status database`() {
         val openNotAvailable: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(
             externalCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
             open = true,
             slotsAvailable = true
         )
-        assertThat(model.resolveCohortMetadata(openNotAvailable).open).isTrue
+        assertThat(trialStatusConfigInterpreter.resolveCohortMetadata(openNotAvailable).open).isTrue
 
         val closedNotAvailable: CohortDefinitionConfig = TestCohortDefinitionConfigFactory.MINIMAL.copy(
             externalCohortIds = setOf(CohortStatusInterpreter.NOT_AVAILABLE),
             open = false,
             slotsAvailable = false
         )
-        assertThat(model.resolveCohortMetadata(closedNotAvailable).open).isFalse
+        assertThat(trialStatusConfigInterpreter.resolveCohortMetadata(closedNotAvailable).open).isFalse
     }
 
     @Test
@@ -72,103 +74,103 @@ class CTCModelTest {
             slotsAvailable = null
         )
 
-        val metadata = model.resolveCohortMetadata(missing)
+        val metadata = trialStatusConfigInterpreter.resolveCohortMetadata(missing)
         assertThat(metadata.open).isFalse
         assertThat(metadata.slotsAvailable).isFalse
     }
 
     @Test
     fun `Should classify all studies as new when trial config is empty`() {
-        // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
+        // The proper trial status database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
         val trialConfigs: List<TrialDefinitionConfig> = emptyList()
 
-        val newStudyMETCs = model.extractNewTrialStatusDatabaseStudies(trialConfigs)
+        val newStudyMETCs = trialStatusConfigInterpreter.extractNewTrialStatusDatabaseStudies(trialConfigs)
         assertThat(newStudyMETCs.map { it.studyMETC }.toSet()).containsExactly(
             TestTrialData.TEST_TRIAL_METC_1,
             TestTrialData.TEST_TRIAL_METC_2
         )
-        model.checkModelForNewTrials(trialConfigs)
+        trialStatusConfigInterpreter.checkModelForNewTrials(trialConfigs)
     }
 
     @Test
     fun `Should find no new study METCs when all trials are configured`() {
-        // The proper CTC database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
+        // The proper trial status database has 3 trials: TEST_TRIAL_1, TEST_TRIAL_2 and IGNORE_TRIAL
         val trialConfigs: List<TrialDefinitionConfig> = listOf(
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
-                trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1
+                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1
             ),
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
-                trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_2
+                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_2
             )
         )
 
-        assertThat(model.extractNewTrialStatusDatabaseStudies(trialConfigs)).isEmpty()
+        assertThat(trialStatusConfigInterpreter.extractNewTrialStatusDatabaseStudies(trialConfigs)).isEmpty()
 
-        model.checkModelForNewTrials(trialConfigs)
+        trialStatusConfigInterpreter.checkModelForNewTrials(trialConfigs)
     }
 
     @Test
     fun `Should find no new cohortIds when all cohorts are configured`() {
-        // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
+        // The proper trial status database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 externalCohortIds = setOf("1")
             ),
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 externalCohortIds = setOf("2")
             )
         )
 
-        assertThat(model.extractNewTrialStatusDatabaseCohorts(cohortConfigs)).isEmpty()
+        assertThat(trialStatusConfigInterpreter.extractNewTrialStatusDatabaseCohorts(cohortConfigs)).isEmpty()
 
-        model.checkModelForNewCohorts(cohortConfigs)
+        trialStatusConfigInterpreter.checkModelForNewCohorts(cohortConfigs)
     }
 
     @Test
     fun `Should find no new cohorts when cohort config is empty`() {
-        // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
+        // The proper trial status database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = emptyList()
 
-        val newCohorts = model.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
+        val newCohorts = trialStatusConfigInterpreter.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
         assertThat(newCohorts).isEmpty()
 
-        model.checkModelForNewCohorts(cohortConfigs)
+        trialStatusConfigInterpreter.checkModelForNewCohorts(cohortConfigs)
     }
 
     @Test
     fun `Should classify all cohorts as new when cohorts are not used while trial exists`() {
-        // The proper CTC database has 3 cohorts: 1, 2 and (unmapped) 3
+        // The proper trial status database has 3 cohorts: 1, 2 and (unmapped) 3
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 externalCohortIds = setOf("9999")
             )
         )
 
-        val newCohorts = model.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
+        val newCohorts = trialStatusConfigInterpreter.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
         assertThat(newCohorts.map { it.cohortId }).containsExactly(1, 2)
 
-        model.checkModelForNewCohorts(cohortConfigs)
+        trialStatusConfigInterpreter.checkModelForNewCohorts(cohortConfigs)
     }
 
     @Test
     fun `Should assume parent cohort with all children referenced is not new`() {
         val cohortConfigs: List<CohortDefinitionConfig> = listOf(
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 externalCohortIds = setOf("2")
             ),
             TestCohortDefinitionConfigFactory.MINIMAL.copy(
-                trialId = TrialStatusConfigInterpreter.MEC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
+                trialId = CTC_TRIAL_PREFIX + " " + TestTrialData.TEST_TRIAL_METC_1,
                 externalCohortIds = setOf("3")
             )
         )
 
         val modelWithOneParentTwoChildren =
             TrialStatusConfigInterpreter(
-                TestCTCDatabaseFactory.createMinimalTestCTCDatabase()
+                TestTrialStatusDatabaseFactory.createMinimalTestTrialStatusDatabase()
                     .copy(
                         entries = listOf(
                             TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
@@ -195,29 +197,33 @@ class CTCModelTest {
     }
 
     @Test
-    fun `Should find no unused MEC trial ids not in CTC when all these trials are configured`() {
+    fun `Should find no unused MEC trial ids not in trial status database when all these trials are configured`() {
         val trialConfigs: List<TrialDefinitionConfig> = listOf(
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
                 trialId = TestTrialData.TEST_MEC_NOT_IN_CTC
             )
         )
 
-        assertThat(model.extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)).isEmpty()
+        assertThat(trialStatusConfigInterpreter.extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)).isEmpty()
 
-        model.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs)
+        trialStatusConfigInterpreter.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs)
     }
 
     @Test
-    fun `Should find unused MEC trial ids not in CTC when trial id not configured`() {
+    fun `Should find unused MEC trial ids not in trial status database when trial id not configured`() {
         val trialConfigs: List<TrialDefinitionConfig> = listOf(
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
                 trialId = TestTrialData.TEST_TRIAL_METC_1
             )
         )
 
-        assertThat(model.extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)).isEqualTo(listOf(TestTrialData.TEST_MEC_NOT_IN_CTC))
+        assertThat(trialStatusConfigInterpreter.extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)).isEqualTo(
+            listOf(
+                TestTrialData.TEST_MEC_NOT_IN_CTC
+            )
+        )
 
-        model.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs)
+        trialStatusConfigInterpreter.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs)
     }
 
 }
