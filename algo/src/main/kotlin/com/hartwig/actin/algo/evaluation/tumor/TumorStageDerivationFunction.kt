@@ -46,14 +46,14 @@ internal class TumorStageDerivationFunction private constructor(private val deri
 
         private fun lesionCount(doidModel: DoidModel, tumor: TumorDetails): Int {
             return listOf(
-                tumor.hasLiverLesions to DoidConstants.LIVER_CANCER_DOID,
-                tumor.hasLymphNodeLesions to DoidConstants.LYMPH_NODE_CANCER_DOID,
-                tumor.hasCnsLesions to DoidConstants.CNS_CANCER_DOID,
-                tumor.hasBrainLesions to DoidConstants.BRAIN_CANCER_DOID,
-                tumor.hasLungLesions to DoidConstants.LUNG_CANCER_DOID,
-                tumor.hasBoneLesions to DoidConstants.BONE_CANCER_DOID
+                Triple(tumor.hasLiverLesions, tumor.liverLesionsCount, DoidConstants.LIVER_CANCER_DOID),
+                Triple(tumor.hasLymphNodeLesions, tumor.lymphNodeLesionsCount, DoidConstants.LYMPH_NODE_CANCER_DOID),
+                Triple(tumor.hasCnsLesions, tumor.cnsLesionsCount, DoidConstants.CNS_CANCER_DOID),
+                Triple(tumor.hasBrainLesions, tumor.brainLesionsCount, DoidConstants.BRAIN_CANCER_DOID),
+                Triple(tumor.hasLungLesions, tumor.lungLesionsCount,  DoidConstants.LUNG_CANCER_DOID),
+                Triple(tumor.hasBoneLesions, tumor. boneLesionsCount, DoidConstants.BONE_CANCER_DOID)
             ).count {
-                evaluateMetastases(it.first, tumor.doids, it.second, doidModel)
+                evaluateMetastases(it.first, it.second, tumor.doids, it.third, doidModel)
             }
         }
 
@@ -74,8 +74,13 @@ internal class TumorStageDerivationFunction private constructor(private val deri
             }
         }
 
-        private fun evaluateMetastases(hasLesions: Boolean?, tumorDoids: Set<String>?, doidToMatch: String, doidModel: DoidModel): Boolean {
-            return (hasLesions ?: false) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)
+        private fun evaluateMetastases(hasLesions: Boolean?, lesionCount: Int?, tumorDoids: Set<String>?, doidToMatch: String, doidModel: DoidModel): Boolean {
+            return if (doidToMatch != DoidConstants.LUNG_CANCER_DOID) {
+                (hasLesions ?: false) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)
+            }
+            else {
+                (lesionCount ?: 0) >= 2
+            }
         }
     }
 }
