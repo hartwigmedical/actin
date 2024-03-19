@@ -48,10 +48,12 @@ class TumorStageDerivationFunctionTest {
     fun `Should return stage IV when multiple lesions`() {
         assertThat(derivationFunction.apply(breastCancerWithNoStage.copy(hasBoneLesions = true, hasBrainLesions = true)))
             .containsOnly(TumorStage.IV)
+        assertThat(derivationFunction.apply(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3, hasBoneLesions = true)))
+            .containsOnly(TumorStage.IV)
     }
 
     @Test
-    fun `Should return stage III and IV when lung cancer with other lung lesions`() {
+    fun `Should return stage III and IV when lung cancer with other lung lesions besides the primary lung cancer`() {
         assertThat(derivationFunction.apply(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3)))
             .containsOnly(TumorStage.III, TumorStage.IV)
     }
