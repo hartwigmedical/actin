@@ -20,7 +20,25 @@ object PatientRecordFactory {
                 molecular.patientId
             )
         }
-
-        return PatientRecord(patientId = clinical.patientId, clinical = clinical, molecular = molecular)
+        return PatientRecord(
+            patientId = clinical.patientId,
+            patient = clinical.patient,
+            tumor = clinical.tumor,
+            clinicalStatus = clinical.clinicalStatus,
+            oncologicalHistory = clinical.oncologicalHistory,
+            priorSecondPrimaries = clinical.priorSecondPrimaries,
+            priorOtherConditions = clinical.priorOtherConditions,
+            priorMolecularTests = clinical.priorMolecularTests,
+            complications = clinical.complications,
+            labValues = clinical.labValues,
+            toxicities = clinical.toxicities,
+            intolerances = clinical.intolerances,
+            surgeries = clinical.surgeries,
+            bodyWeights = clinical.bodyWeights,
+            vitalFunctions = clinical.vitalFunctions,
+            bloodTransfusions = clinical.bloodTransfusions,
+            medications = clinical.medications,
+            molecular = molecular
+        )
     }
 }

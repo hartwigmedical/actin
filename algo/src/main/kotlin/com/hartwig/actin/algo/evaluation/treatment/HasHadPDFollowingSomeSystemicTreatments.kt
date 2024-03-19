@@ -12,9 +12,9 @@ class HasHadPDFollowingSomeSystemicTreatments(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentHistory = record.clinical.oncologicalHistory
+        val treatmentHistory = record.oncologicalHistory
         val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(treatmentHistory)
-        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.clinical.oncologicalHistory)
+        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.oncologicalHistory)
         val lastTreatment = SystemicTreatmentAnalyser.lastSystemicTreatment(treatmentHistory)
         if (minSystemicCount >= minSystemicTreatments) {
             return when {

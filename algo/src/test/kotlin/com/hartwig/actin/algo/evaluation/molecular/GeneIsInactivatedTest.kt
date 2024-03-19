@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
@@ -49,7 +49,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should fail without any alterations`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
     }
 
     @Test

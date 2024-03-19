@@ -11,7 +11,7 @@ class HasHadAdjuvantTreatmentWithCategory(private val category: TreatmentCategor
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.clinical.oncologicalHistory,
+            record.oncologicalHistory,
             category,
             { it.intents?.contains(Intent.ADJUVANT) == true },
             { true },

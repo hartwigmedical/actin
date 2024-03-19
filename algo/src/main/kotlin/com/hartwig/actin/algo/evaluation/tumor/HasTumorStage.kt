@@ -14,9 +14,9 @@ class HasTumorStage internal constructor(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage = record.clinical.tumor.stage
+        val stage = record.tumor.stage
         if (stage == null) {
-            val derivedStages = tumorStageDerivationFunction.apply(record.clinical.tumor).toSet()
+            val derivedStages = tumorStageDerivationFunction.apply(record.tumor).toSet()
             return if (derivedStages.size == 1) {
                 evaluateWithStage(derivedStages.iterator().next())
             } else if (derivedStages.map { evaluateWithStage(it) }.any { it.result == EvaluationResult.PASS }) {

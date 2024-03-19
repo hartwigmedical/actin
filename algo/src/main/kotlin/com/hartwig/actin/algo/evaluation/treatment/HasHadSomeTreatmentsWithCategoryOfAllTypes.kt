@@ -14,7 +14,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.clinical.oncologicalHistory, category, { types.all { type -> it.isOfType(type) == true } }
+            record.oncologicalHistory, category, { types.all { type -> it.isOfType(type) == true } }
         )
         val typesList = Format.concatItemsWithAnd(types)
         val baseMessage = "received at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"

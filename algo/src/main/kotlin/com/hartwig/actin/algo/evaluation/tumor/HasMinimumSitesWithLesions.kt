@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasMinimumSitesWithLesions (private val minimumSitesWithLesions: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDetails = record.clinical.tumor
+        val tumorDetails = record.tumor
         val distinctCategorizedLesionLocations = listOf(
             tumorDetails.hasBoneLesions,
             tumorDetails.hasBrainLesions,

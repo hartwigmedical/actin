@@ -12,13 +12,13 @@ private const val TUMOR_SUB_LOCATION_SIDE_TEMPLATE = "Tumor sub-location %s is o
 class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical.tumor.doids
+        val tumorDoids = record.tumor.doids
         return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             EvaluationFactory.undetermined("Unable to identify tumor type", "Tumor type")
         } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
             EvaluationFactory.fail("Tumor is not colorectal cancer", "Tumor type")
         } else {
-            val subLocation = record.clinical.tumor.primaryTumorSubLocation?.lowercase()
+            val subLocation = record.tumor.primaryTumorSubLocation?.lowercase()
             when {
                 subLocation.isNullOrEmpty() -> EvaluationFactory.undetermined(
                     "Tumor sub-location unknown, left-sidedness is unknown", "Unknown sidedness of tumor"

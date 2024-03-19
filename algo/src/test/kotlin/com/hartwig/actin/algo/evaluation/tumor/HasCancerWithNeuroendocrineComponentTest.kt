@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -54,7 +54,7 @@ class HasCancerWithNeuroendocrineComponentTest {
     }
 
     private fun createWithNeuroendocrineProfile(): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
+        val base = TestPatientFactory.createMinimalTestPatientRecord()
         val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
             molecular = baseMolecular.copy(

@@ -12,14 +12,14 @@ import com.hartwig.actin.doid.DoidModel
 
 class HasPotentialSignificantHeartDisease internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ecg = record.clinical.clinicalStatus.ecg
+        val ecg = record.clinicalStatus.ecg
         if (ecg != null && ecg.hasSigAberrationLatestECG) {
             return EvaluationFactory.pass(
                 "Patient has an abnormality on latest ECG and therefore potentially significant cardiac disease",
                 "Potentially significant cardiac disease (ECG abnormalities present)"
             )
         }
-        val heartConditions = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+        val heartConditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .filter { condition -> isPotentiallyHeartDisease(condition.name) || containsPotentialHeartDiseaseDoid(condition.doids) }
             .map { it.name }.toSet()
 

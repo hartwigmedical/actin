@@ -257,4 +257,26 @@ class EhrTreatmentHistoryExtractorTest {
         )
         assertThat(result.extracted).isEmpty()
     }
+
+    @Test
+    fun `Should include evaluated input when prior condition is ignored in both prior condition and oncological history curation`() {
+        every { nonOncologicalHistoryCuration.find(PREVIOUS_CONDITION) } returns setOf(
+            NonOncologicalHistoryConfig(
+                input = PREVIOUS_CONDITION,
+                ignore = true
+            )
+        )
+        every { treatmentCurationDatabase.find(PREVIOUS_CONDITION) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(
+                ignore = true,
+                input = PREVIOUS_CONDITION
+            )
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                treatmentHistory = listOf(TREATMENT_HISTORY.copy(treatmentName = PREVIOUS_CONDITION, modifications = null)),
+            )
+        )
+        assertThat(result.evaluation.treatmentHistoryEntryEvaluatedInputs).containsExactly(PREVIOUS_CONDITION)
+    }
 }

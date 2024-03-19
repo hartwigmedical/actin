@@ -13,7 +13,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasHistoryOfPneumonitis internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.PNEUMONITIS_DOID)) {
                     return EvaluationFactory.pass(
@@ -23,7 +23,7 @@ class HasHistoryOfPneumonitis internal constructor(private val doidModel: DoidMo
                 }
             }
         }
-        for (toxicity in record.clinical.toxicities) {
+        for (toxicity in record.toxicities) {
             if (toxicity.source == ToxicitySource.QUESTIONNAIRE || (toxicity.grade ?: 0) >= 2) {
                 if (stringCaseInsensitivelyMatchesQueryCollection(toxicity.name, TOXICITIES_CAUSING_PNEUMONITIS)) {
                     return EvaluationFactory.pass(

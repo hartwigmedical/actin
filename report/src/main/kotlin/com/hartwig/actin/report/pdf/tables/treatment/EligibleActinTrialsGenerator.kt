@@ -51,18 +51,18 @@ class EligibleActinTrialsGenerator private constructor(
 
     companion object {
 
-        fun forOpenCohortsWithSlots(cohorts: List<EvaluatedCohort>, source: String, width: Float): EligibleActinTrialsGenerator {
-            val recruitingAndEligible = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
-            val title =
-                "$source trials that are open and considered eligible and currently have slots available (${recruitingAndEligible.size})"
-            return create(recruitingAndEligible, title, width)
-        }
-
-        fun forOpenCohortsWithNoSlots(cohorts: List<EvaluatedCohort>, source: String, width: Float): EligibleActinTrialsGenerator {
-            val recruitingAndEligibleWithNoSlots = cohorts.filter { it.isPotentiallyEligible && it.isOpen && !it.hasSlotsAvailable }
-            val title =
-                "$source trials that are open and considered eligible but currently have no slots available (${recruitingAndEligibleWithNoSlots.size})"
-            return create(recruitingAndEligibleWithNoSlots, title, width)
+        fun forOpenCohorts(
+            cohorts: List<EvaluatedCohort>, source: String, width: Float, slotsAvailable: Boolean
+        ): EligibleActinTrialsGenerator {
+            val recruitingAndEligibleCohorts = cohorts.filter {
+                it.isPotentiallyEligible && it.isOpen &&
+                        it.hasSlotsAvailable == slotsAvailable
+            }
+            val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
+            val title = "$source trials that are open and considered eligible" +
+                    if (slotsAvailable) "and currently have slots available " else "but currently have no slots available" +
+                            "(${recruitingAndEligibleCohorts.size} cohorts from ${recruitingAndEligibleTrials.size} trials)"
+            return create(recruitingAndEligibleCohorts, title, width)
         }
 
         fun forClosedCohorts(

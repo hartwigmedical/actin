@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.priortumor
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 
 internal object PriorTumorTestFactory {
-    val base = TestDataFactory.createMinimalTestPatientRecord()
+    val base = TestPatientFactory.createMinimalTestPatientRecord()
 
     fun priorSecondPrimary(
         doid: String? = null,
@@ -34,6 +34,6 @@ internal object PriorTumorTestFactory {
     }
 
     fun withPriorSecondPrimaries(priorSecondPrimaries: List<PriorSecondPrimary>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(priorSecondPrimaries = priorSecondPrimaries))
+        return base.copy(priorSecondPrimaries = priorSecondPrimaries)
     }
 }

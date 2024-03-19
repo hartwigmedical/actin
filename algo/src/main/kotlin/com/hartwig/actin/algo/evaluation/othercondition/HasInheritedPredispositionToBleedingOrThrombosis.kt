@@ -12,14 +12,14 @@ import com.hartwig.actin.doid.DoidModel
 class HasInheritedPredispositionToBleedingOrThrombosis(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingDoidTerm = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+        val matchingDoidTerm = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .flatMap(PriorOtherCondition::doids)
             .find {
                 doidModel.doidWithParents(it).any(DOID_CONSTANTS_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS::contains)
             }
             ?.let { doidModel::resolveTermForDoid }
 
-        val hasMatchingName = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+        val hasMatchingName = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .any { it.name.lowercase().contains(NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS.lowercase()) }
 
         val baseMessage = "(typically) inherited predisposition to bleeding or thrombosis"
