@@ -51,7 +51,7 @@ internal class TumorStageDerivationFunction private constructor(private val deri
                 Triple(tumor.hasCnsLesions, tumor.cnsLesionsCount, DoidConstants.CNS_CANCER_DOID),
                 Triple(tumor.hasBrainLesions, tumor.brainLesionsCount, DoidConstants.BRAIN_CANCER_DOID),
                 Triple(tumor.hasLungLesions, tumor.lungLesionsCount,  DoidConstants.LUNG_CANCER_DOID),
-                Triple(tumor.hasBoneLesions, tumor. boneLesionsCount, DoidConstants.BONE_CANCER_DOID)
+                Triple(tumor.hasBoneLesions, tumor.boneLesionsCount, DoidConstants.BONE_CANCER_DOID)
             ).count {
                 evaluateMetastases(it.first, it.second, tumor.doids, it.third, doidModel)
             }
@@ -74,13 +74,11 @@ internal class TumorStageDerivationFunction private constructor(private val deri
             }
         }
 
-        private fun evaluateMetastases(hasLesions: Boolean?, lesionCount: Int?, tumorDoids: Set<String>?, doidToMatch: String, doidModel: DoidModel): Boolean {
-            return if (doidToMatch != DoidConstants.LUNG_CANCER_DOID) {
+        private fun evaluateMetastases(hasLesions: Boolean?, lesionsCount: Int?, tumorDoids: Set<String>?, doidToMatch: String, doidModel: DoidModel): Boolean {
+            return if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.LUNG_CANCER_DOID) || doidToMatch != DoidConstants.LUNG_CANCER_DOID) {
                 (hasLesions ?: false) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)
             }
-            else {
-                (lesionCount ?: 0) >= 2
-            }
+            else (lesionsCount ?: 0) >= 2
         }
     }
 }
