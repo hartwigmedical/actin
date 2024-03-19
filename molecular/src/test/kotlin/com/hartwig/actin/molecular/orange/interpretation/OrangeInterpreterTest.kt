@@ -150,6 +150,36 @@ class OrangeInterpreterTest {
         interpreter.interpret(record)
     }
 
+    @Test
+    fun `Should allow empty list as scrubbed germline disruption`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withGermlineHomozygousDisruptions(emptyList()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
+    @Test
+    fun `Should allow empty list as scrubbed germline breakends`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withAllGermlineBreakends(emptyList()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
+    @Test
+    fun `Should allow empty list as scrubbed germline SV`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withAllGermlineStructuralVariants(emptyList()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
     companion object {
         private fun orangeRecordWithQCStatus(status: PurpleQCStatus): OrangeRecord {
             return orangeRecordWithQCStatuses(setOf(status))
