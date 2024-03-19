@@ -13,7 +13,7 @@ object TestCTCDatabaseFactory {
             entries = createTestCTCEntries(),
             studyMETCsToIgnore = setOf(TestTrialData.TEST_TRIAL_METC_IGNORE),
             unmappedCohortIds = setOf(TestTrialData.TEST_UNMAPPED_COHORT_ID),
-            mecStudyNotInCTC = setOf(TestTrialData.TEST_MEC_NOT_IN_CTC)
+            mecStudiesNotInCTC = setOf(TestTrialData.TEST_MEC_NOT_IN_CTC)
         )
     }
 

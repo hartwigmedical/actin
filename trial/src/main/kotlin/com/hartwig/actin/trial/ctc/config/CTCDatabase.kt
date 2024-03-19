@@ -4,5 +4,5 @@ data class CTCDatabase(
     val entries: List<CTCDatabaseEntry>,
     val studyMETCsToIgnore: Set<String>,
     val unmappedCohortIds: Set<Int>,
-    val mecStudyNotInCTC: Set<String>
+    val mecStudiesNotInCTC: Set<String>
 )

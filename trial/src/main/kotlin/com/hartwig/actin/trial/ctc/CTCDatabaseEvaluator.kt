@@ -2,12 +2,14 @@ package com.hartwig.actin.trial.ctc
 
 import com.hartwig.actin.trial.CTCIgnoreValidationError
 import com.hartwig.actin.trial.CTCUnmappedValidationError
+import com.hartwig.actin.trial.CTCUnusedValidationError
+import com.hartwig.actin.trial.config.TrialConfigDatabase
 import com.hartwig.actin.trial.ctc.config.CTCDatabase
 import org.apache.logging.log4j.LogManager
 
-class CTCDatabaseEvaluator(private val ctcDatabase: CTCDatabase) {
+class CTCDatabaseEvaluator(private val ctcDatabase: CTCDatabase, private val trialConfigDatabase: TrialConfigDatabase) {
 
-    fun evaluateDatabaseConfiguration(): Pair<List<CTCIgnoreValidationError>, List<CTCUnmappedValidationError>> {
+    fun evaluateDatabaseConfiguration(): Triple<List<CTCIgnoreValidationError>, List<CTCUnmappedValidationError>, List<CTCUnusedValidationError>> {
         val unusedStudyMETCsToIgnore = extractUnusedStudyMETCsToIgnore()
 
         val ignoreValidationErrors = if (unusedStudyMETCsToIgnore.isEmpty()) {
@@ -36,7 +38,21 @@ class CTCDatabaseEvaluator(private val ctcDatabase: CTCDatabase) {
             }
         }
 
-        return ignoreValidationErrors to unmappedValidationErrors
+        val unusedMecStudiesNotInCtc = extractUnusedMECStudiesNotInCTC()
+
+        val unusedValidationErrors = if (unusedMecStudiesNotInCtc.isEmpty()) {
+            LOGGER.info("")
+            emptyList()
+        } else {
+            unusedMecStudiesNotInCtc.map {
+                CTCUnusedValidationError(
+                    it,
+                    "Trial ID that is configured to be ignored is not actually present in trial database"
+                )
+            }
+        }
+
+        return Triple(ignoreValidationErrors, unmappedValidationErrors, unusedValidationErrors)
     }
 
     internal fun extractUnusedStudyMETCsToIgnore(): List<String> {
@@ -49,6 +65,11 @@ class CTCDatabaseEvaluator(private val ctcDatabase: CTCDatabase) {
         val ctcCohortIds = ctcDatabase.entries.mapNotNull { it.cohortId }.toSet()
 
         return ctcDatabase.unmappedCohortIds.filter { !ctcCohortIds.contains(it) }
+    }
+
+    internal fun extractUnusedMECStudiesNotInCTC(): List<String> {
+        val databaseTrialIds = trialConfigDatabase.trialDefinitionConfigs.map { it.trialId }.toSet()
+        return ctcDatabase.mecStudiesNotInCTC.filter { !databaseTrialIds.contains(it) }
     }
 
     companion object {

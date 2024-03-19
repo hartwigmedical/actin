@@ -26,7 +26,18 @@ class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpr
     }
 
     override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
-        if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX) || ctcDatabase.mecStudyNotInCTC.contains(trialConfig.trialId)) {
+        val (openInCTC, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig)
+        trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
+
+        if (ctcDatabase.mecStudiesNotInCTC.contains(trialConfig.trialId) && openInCTC != null) {
+            LOGGER.warn(
+                "Trial {} ({}) is configured as not in CTC while status could be derived from CTC",
+                trialConfig.trialId,
+                trialConfig.acronym
+            )
+        }
+
+        if (!trialConfig.trialId.startsWith(CTC_TRIAL_PREFIX) || ctcDatabase.mecStudiesNotInCTC.contains(trialConfig.trialId)) {
             LOGGER.debug(
                 " Skipping study status retrieval for {} ({}) since study is not deemed a CTC trial",
                 trialConfig.trialId,
@@ -36,8 +47,6 @@ class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpr
             return null
         }
 
-        val (openInCTC, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(ctcDatabase.entries, trialConfig)
-        trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
         if (openInCTC != null) {
             if (trialConfig.open != null) {
                 trialDefinitionValidationErrors.add(

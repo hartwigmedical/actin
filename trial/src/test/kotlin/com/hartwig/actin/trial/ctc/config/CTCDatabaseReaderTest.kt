@@ -1,6 +1,8 @@
 package com.hartwig.actin.trial.ctc.config
 
 import com.google.common.io.Resources
+import com.hartwig.actin.trial.config.TrialConfigDatabase
+import com.hartwig.actin.trial.config.TrialConfigDatabaseReader
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -8,16 +10,18 @@ class CTCDatabaseReaderTest {
 
     @Test
     fun shouldLoadExpectedDatabaseFromTestDirectory() {
-        val database = CTCDatabaseReader.read(CTC_CONFIG_DIRECTORY)
+        val ctcDatabase = CTCDatabaseReader.read(CTC_CONFIG_DIRECTORY, TRIAL_CONFIG_DIRECTORY)
+        val trialDatabase = TrialConfigDatabaseReader.read(TRIAL_CONFIG_DIRECTORY)
 
-        assertEntries(database.entries)
-        assertStudyMETCsToIgnore(database.studyMETCsToIgnore)
-        assertUnmappedCohortIds(database.unmappedCohortIds)
-        assertMECNotInCTC(database.mecStudyNotInCTC)
+        assertEntries(ctcDatabase.entries)
+        assertStudyMETCsToIgnore(ctcDatabase.studyMETCsToIgnore)
+        assertUnmappedCohortIds(ctcDatabase.unmappedCohortIds)
+        assertMECNotInCTC(ctcDatabase.mecStudiesNotInCTC, trialDatabase)
     }
 
     companion object {
         private val CTC_CONFIG_DIRECTORY = Resources.getResource("ctc_config").path
+        private val TRIAL_CONFIG_DIRECTORY = Resources.getResource("trial_config").path
 
         private fun assertEntries(entries: List<CTCDatabaseEntry>) {
             assertThat(entries).hasSize(2)
@@ -60,9 +64,10 @@ class CTCDatabaseReaderTest {
             assertThat(unmappedCohortIds.contains(1)).isTrue
         }
 
-        private fun assertMECNotInCTC(studyWithMECIdNotInCTC: Set<String>) {
+        private fun assertMECNotInCTC(studyWithMECIdNotInCTC: Set<String>, trialDatabase: TrialConfigDatabase) {
             assertThat(studyWithMECIdNotInCTC).hasSize(1)
-            assertThat(studyWithMECIdNotInCTC.contains("MEC-101")).isTrue
+            assertThat(studyWithMECIdNotInCTC.contains("ACTN 2021")).isTrue
+            assertThat(trialDatabase.trialDefinitionConfigs.map { it.trialId }.containsAll(studyWithMECIdNotInCTC)).isTrue()
         }
     }
 }

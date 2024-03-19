@@ -1,5 +1,6 @@
 package com.hartwig.actin.trial.ctc.config
 
+import com.hartwig.actin.trial.config.TrialConfigDatabaseReader
 import com.hartwig.actin.trial.ctc.CTCDatabaseEvaluator
 import com.hartwig.actin.util.Paths
 import org.apache.logging.log4j.LogManager
@@ -13,18 +14,18 @@ object CTCDatabaseReader {
     private const val UNMAPPED_COHORTS_TSV = "unmapped_cohorts.tsv"
     private const val MEC_NOT_IN_CTC_TSV = "mec_studies_not_in_ctc.tsv"
 
-    fun read(ctcConfigDirectory: String): CTCDatabase {
+    fun read(ctcConfigDirectory: String, ctcTrialConfigDirectory: String): CTCDatabase {
         LOGGER.info("Reading CTC config from {}", ctcConfigDirectory)
         val basePath = Paths.forceTrailingFileSeparator(ctcConfigDirectory)
         val ctcDatabase = CTCDatabase(
             entries = readCTCDatabaseEntries(basePath + CTC_DATABASE_TSV),
             studyMETCsToIgnore = readIgnoreStudies(basePath + IGNORE_STUDIES_TSV),
             unmappedCohortIds = readUnmappedCohorts(basePath + UNMAPPED_COHORTS_TSV),
-            mecStudyNotInCTC = readMECNotInCTCStudies(basePath + MEC_NOT_IN_CTC_TSV)
+            mecStudiesNotInCTC = readMECNotInCTCStudies(basePath + MEC_NOT_IN_CTC_TSV)
         )
 
         LOGGER.info("Evaluating usage of CTC database configuration")
-        val ctcDatabaseEvaluator = CTCDatabaseEvaluator(ctcDatabase)
+        val ctcDatabaseEvaluator = CTCDatabaseEvaluator(ctcDatabase, TrialConfigDatabaseReader.read(ctcTrialConfigDirectory))
         ctcDatabaseEvaluator.evaluateDatabaseConfiguration()
 
         return ctcDatabase
