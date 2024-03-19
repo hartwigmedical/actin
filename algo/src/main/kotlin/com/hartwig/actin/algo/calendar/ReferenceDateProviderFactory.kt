@@ -1,14 +1,10 @@
 package com.hartwig.actin.algo.calendar
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 
 object ReferenceDateProviderFactory {
-    fun create(clinical: ClinicalRecord, runHistorically: Boolean): ReferenceDateProvider {
-        return if (runHistorically) HistoricDateProvider.fromClinical(clinical) else CurrentDateProvider()
-    }
 
     fun create(patientRecord: PatientRecord, runHistorically: Boolean): ReferenceDateProvider {
-        return if (runHistorically) HistoricDateProvider.fromPatientRecord(patientRecord) else CurrentDateProvider()
+        return if (runHistorically) HistoricDateProvider.fromPatientDetails(patientRecord.patient) else CurrentDateProvider()
     }
 }

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory.create
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
@@ -55,7 +55,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
-        val referenceDateProvider = create(patient, config.runHistorically)
+        val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
 
         // We assume we never check validity of a gene inside algo.
