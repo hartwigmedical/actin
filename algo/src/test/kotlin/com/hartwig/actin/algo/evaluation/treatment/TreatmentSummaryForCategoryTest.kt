@@ -122,7 +122,7 @@ class TreatmentSummaryForCategoryTest {
     }
 
     @Test
-    fun `Should not count trial treatments with non-empty type lists`() {
+    fun `Should not count trial treatments with assigned type(s)`() {
         val treatments = listOf(
             treatmentHistoryEntry(setOf(treatment("", true, types = setOf(OtherTreatmentType.RADIOFREQUENCY))), isTrial = true)
         )
