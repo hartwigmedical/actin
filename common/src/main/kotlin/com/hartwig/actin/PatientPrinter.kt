@@ -3,7 +3,7 @@ package com.hartwig.actin
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.util.DatamodelPrinter
 
-class PatientPrinter (private val printer: DatamodelPrinter) {
+class PatientPrinter(private val printer: DatamodelPrinter) {
 
     fun print(record: PatientRecord) {
         printer.print("Patient: " + record.patientId)
