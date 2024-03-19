@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.BodyWeight
@@ -99,7 +99,7 @@ class HasLimitedDerivedCreatinineClearanceTest {
     }
 
     private fun create(gender: Gender, labValues: List<LabValue>, bodyWeights: List<BodyWeight>): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
+        val base = TestPatientFactory.createMinimalTestPatientRecord()
         return base.copy(
             patient = base.patient.copy(birthYear = BIRTH_YEAR, gender = gender),
             labValues = labValues,

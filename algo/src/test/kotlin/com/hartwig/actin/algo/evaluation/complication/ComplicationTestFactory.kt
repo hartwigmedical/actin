@@ -1,13 +1,13 @@
 package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Medication
 
 internal object ComplicationTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
     
     fun complication(name: String = "", categories: Set<String> = emptySet()): Complication {
         return Complication(name = name, categories = categories, year = null, month = null)

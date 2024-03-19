@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
@@ -15,7 +15,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 
 internal object TumorTestFactory {
 
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
     private val baseMolecular = base.molecular as MolecularRecord
 
     fun withDoids(vararg doids: String): PatientRecord {

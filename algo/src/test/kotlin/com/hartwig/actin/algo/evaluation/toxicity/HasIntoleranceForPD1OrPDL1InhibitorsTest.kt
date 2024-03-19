@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -46,7 +46,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     private fun patient(intolerances: List<Intolerance>, priorConditionDoid: String): PatientRecord {
         val priorCondition = TestPriorOtherConditionFactory.createMinimal()
             .copy(doids = setOf(priorConditionDoid), isContraindicationForTherapy = true)
-        return TestDataFactory.createMinimalTestPatientRecord().copy(
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(
             intolerances = intolerances,
             priorOtherConditions = listOf(priorCondition)
         )

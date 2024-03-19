@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -13,8 +13,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DerivedTumorStageEvaluationFunctionTest {
-    private val properTestPatientRecord = TestDataFactory.createProperTestPatientRecord()
-    private val minimalTestPatientRecord = TestDataFactory.createMinimalTestPatientRecord()
+    private val properTestPatientRecord = TestPatientFactory.createProperTestPatientRecord()
+    private val minimalTestPatientRecord = TestPatientFactory.createMinimalTestPatientRecord()
     private val tumorStageDerivationFunction: TumorStageDerivationFunction = mockk()
     private val evaluationFunction: EvaluationFunction = mockk()
     private val derivedFunction = DerivedTumorStageEvaluationFunction(tumorStageDerivationFunction, evaluationFunction)

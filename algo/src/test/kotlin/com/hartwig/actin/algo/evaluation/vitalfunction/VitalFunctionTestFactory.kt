@@ -1,14 +1,14 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import java.time.LocalDateTime
 
 internal object VitalFunctionTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
     
     fun withBodyWeights(bodyWeights: List<BodyWeight>): PatientRecord {
         return base.copy(bodyWeights = bodyWeights)

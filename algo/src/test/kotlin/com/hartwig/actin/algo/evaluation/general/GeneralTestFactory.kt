@@ -1,8 +1,7 @@
 package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.datamodel.BodyWeight
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Gender
@@ -25,21 +24,17 @@ internal object GeneralTestFactory {
 
     fun withWHOAndComplications(who: Int, complicationCategories: Iterable<String>): PatientRecord {
         val complication = Complication(name = "", categories = complicationCategories.toSet(), year = null, month = null)
-        return TestDataFactory.createMinimalTestPatientRecord().copy(
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(
             clinicalStatus = ClinicalStatus(who = who),
             complications = listOf(complication),
         )
     }
 
-    fun withBodyWeights(bodyWeights: Iterable<BodyWeight>): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(bodyWeights = bodyWeights.toList())
-    }
-
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(patient = patientDetails)
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(patient = patientDetails)
     }
 
     private fun withClinicalStatus(clinicalStatus: ClinicalStatus): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(clinicalStatus = clinicalStatus)
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(clinicalStatus = clinicalStatus)
     }
 }

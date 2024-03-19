@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Intolerance
@@ -12,7 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import java.time.LocalDate
 
 internal object OtherConditionTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
     
     fun withPriorOtherCondition(condition: PriorOtherCondition): PatientRecord {
         return withPriorOtherConditions(listOf(condition))

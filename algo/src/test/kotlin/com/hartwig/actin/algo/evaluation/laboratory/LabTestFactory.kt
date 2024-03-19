@@ -1,10 +1,9 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import java.time.LocalDate
 
@@ -14,7 +13,7 @@ internal object LabTestFactory {
     }
 
     fun withLabValues(labValues: List<LabValue>): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(labValues = labValues)
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(labValues = labValues)
     }
 
     fun create(

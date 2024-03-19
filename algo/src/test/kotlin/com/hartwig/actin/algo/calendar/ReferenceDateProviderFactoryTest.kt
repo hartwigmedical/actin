@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.calendar
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import org.junit.Assert
 import org.junit.Test
 
@@ -8,7 +8,7 @@ class ReferenceDateProviderFactoryTest {
 
     @Test
     fun canCreateAllFlavors() {
-        val patient = TestDataFactory.createMinimalTestPatientRecord()
+        val patient = TestPatientFactory.createMinimalTestPatientRecord()
 
         val provider1 = ReferenceDateProviderFactory.create(patient, true)
         Assert.assertNotNull(provider1.date())

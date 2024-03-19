@@ -1,16 +1,15 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.AtcClassification
 import com.hartwig.actin.clinical.datamodel.CypInteraction
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import java.time.LocalDate
 
 internal object MedicationTestFactory {
@@ -31,7 +30,7 @@ internal object MedicationTestFactory {
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(medications = medications)
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(medications = medications)
     }
 
     fun withCypInteraction(cyp: String, type: CypInteraction.Type, strength: CypInteraction.Strength): PatientRecord {

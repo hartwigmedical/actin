@@ -1,17 +1,17 @@
 package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
-import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.AtcClassification
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
+import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import java.time.LocalDate
 
 internal object WashoutTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
     
     fun activeFromDate(referenceDate: LocalDate): MedicationStatusInterpreter {
         return object : MedicationStatusInterpreter {

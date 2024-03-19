@@ -1,8 +1,7 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
@@ -422,7 +421,7 @@ class RecommendationEngineTest {
             FOLFOX
         )
 
-        private val MINIMAL_PATIENT_RECORD = TestDataFactory.createMinimalTestPatientRecord()
+        private val MINIMAL_PATIENT_RECORD = TestPatientFactory.createMinimalTestPatientRecord()
         private val MINIMAL_CRC_PATIENT_RECORD = MINIMAL_PATIENT_RECORD.copy(
             tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
         )
