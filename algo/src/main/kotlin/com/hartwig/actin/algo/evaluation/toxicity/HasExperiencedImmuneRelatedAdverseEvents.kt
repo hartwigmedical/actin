@@ -1,13 +1,10 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
@@ -29,7 +26,7 @@ class HasExperiencedImmuneRelatedAdverseEvents internal constructor() : Evaluati
         //TODO: make "anticancer drug" doid -> each drug in intolerances-sheet with this doid has to be in drug database with at least category defined.
 
         return when {
-            (hasHadImmuneTherapy && hasHadImmuneTherapyWithStopReasonToxicity && hasImmuneTherapyAllergy) -> {
+            (hasHadImmuneTherapy && (hasHadImmuneTherapyWithStopReasonToxicity || hasImmuneTherapyAllergy)) -> {
                 EvaluationFactory.warn(
                     "Patient may have experienced immunotherapy related adverse events",
                     "Probable prior immunotherapy related adverse events"
