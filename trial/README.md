@@ -21,11 +21,12 @@ java -cp actin.jar com.hartwig.actin.trial.TrialCreatorApplication \
 for ACTIN to ingest. Their database is delivered in a tsv file `ctc_database.tsv` and can be ingested in ACTIN-Trial to resolve trial
 and cohort states. In addition, the CTC database is used for ACTIN to become aware of new or closed trials and cohorts.
 
-Along with the CTC database itself, the `ctc_config_directory` is expected to contain two additional files:
+Along with the CTC database itself, the `ctc_config_directory` is expected to contain three additional files:
 
 - `ignore_studies.tsv`: A single-column file with studies that are present in the CTC database but ACTIN explicitly should ignore
 - `unmapped_cohorts.tsv`: A single-colum file with cohort IDs that are present in the CTC database but ACTIN explicitly doesn't map to
   internal cohorts.
+- `mec_studies_not_in_ctc.tsv`: A single-column file with studies that have a MEC ID but are not present in the CTC database, for which the manual configured status is used
 
 The CTC database is used to resolve trial and cohorts states as described in the next section, and in addition the following checks are
 performed on the CTC database itself as well as the two additional configuration files:
