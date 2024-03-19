@@ -10,9 +10,9 @@ import com.hartwig.actin.doid.DoidModel
 class HasStomachUndifferentiatedTumor (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical.tumor.doids
-        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.clinical.tumor.primaryTumorType == null
-                    && record.clinical.tumor.primaryTumorSubType == null)
+        val tumorDoids = record.tumor.doids
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.tumor.primaryTumorType == null
+                    && record.tumor.primaryTumorSubType == null)
         ) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether patient has undifferentiated stomach tumor",
@@ -21,8 +21,8 @@ class HasStomachUndifferentiatedTumor (private val doidModel: DoidModel) : Evalu
         }
         val isStomachCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.STOMACH_CANCER_DOID)
         val isUndifferentiatedType =
-            TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical.tumor, UNDIFFERENTIATED_TYPES) ||
-                    TumorTypeEvaluationFunctions.hasTumorWithDetails(record.clinical.tumor, UNDIFFERENTIATED_DETAILS)
+            TumorTypeEvaluationFunctions.hasTumorWithType(record.tumor, UNDIFFERENTIATED_TYPES) ||
+                    TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor, UNDIFFERENTIATED_DETAILS)
         return if (isStomachCancer && isUndifferentiatedType) {
             EvaluationFactory.pass("Patient has undifferentiated stomach tumor", "Tumor type")
         } else

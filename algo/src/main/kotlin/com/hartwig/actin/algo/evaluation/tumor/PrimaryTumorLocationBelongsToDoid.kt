@@ -15,7 +15,7 @@ class PrimaryTumorLocationBelongsToDoid(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm: String? = doidModel.resolveTermForDoid(doidToMatch)
-        val tumorDoids = record.clinical.tumor.doids
+        val tumorDoids = record.tumor.doids
         val tumorBelongsToDoid = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)
         return when {
             !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined(
@@ -24,7 +24,7 @@ class PrimaryTumorLocationBelongsToDoid(
             )
 
             tumorBelongsToDoid && subLocationQuery != null -> {
-                val subLocation = record.clinical.tumor.primaryTumorSubLocation
+                val subLocation = record.tumor.primaryTumorSubLocation
                 when {
                     subLocation != null && subLocation.lowercase()
                         .contains(subLocationQuery.lowercase()) ->

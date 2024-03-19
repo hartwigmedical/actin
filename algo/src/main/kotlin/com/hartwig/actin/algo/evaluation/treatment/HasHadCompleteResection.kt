@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadCompleteResection : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val lowercaseTreatmentNames = record.clinical.oncologicalHistory
+        val lowercaseTreatmentNames = record.oncologicalHistory
             .flatMap { entry -> entry.treatments.flatMap { it.synonyms + it.name }.map(String::lowercase) }
 
         return when {
@@ -17,7 +17,7 @@ class HasHadCompleteResection : EvaluationFunction {
                 EvaluationFactory.pass("Patient has had a complete resection", "Had had complete resection")
             }
 
-            lowercaseTreatmentNames.any { it.contains(RESECTION_KEYWORD) } || record.clinical.oncologicalHistory.any { entry ->
+            lowercaseTreatmentNames.any { it.contains(RESECTION_KEYWORD) } || record.oncologicalHistory.any { entry ->
                 entry.treatments.any { it.categories().contains(TreatmentCategory.SURGERY) && it.name.isEmpty() }
             } -> {
                 EvaluationFactory.undetermined(

@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
@@ -15,7 +15,7 @@ class HasSufficientLabValueTest {
     fun canEvaluate() {
         val measurement = LabMeasurement.THROMBOCYTES_ABS
         val function = HasSufficientLabValue(200.0, measurement, measurement.defaultUnit)
-        val record = TestDataFactory.createMinimalTestPatientRecord()
+        val record = TestPatientFactory.createMinimalTestPatientRecord()
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record, measurement, LabTestFactory.create(measurement, 300.0))
@@ -36,7 +36,7 @@ class HasSufficientLabValueTest {
     fun canEvaluateCaseRequiringConversion() {
         val measurement = LabMeasurement.HEMOGLOBIN
         val function = HasSufficientLabValue(7.5, measurement, LabUnit.MILLIMOLES_PER_LITER)
-        val record = TestDataFactory.createMinimalTestPatientRecord()
+        val record = TestPatientFactory.createMinimalTestPatientRecord()
         val targetUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MILLIMOLES_PER_LITER)
         val offUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.GRAMS_PER_DECILITER)
 

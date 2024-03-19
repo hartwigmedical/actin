@@ -14,14 +14,14 @@ class HasRecentlyReceivedTrialMedication(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (minStopDate.isBefore(record.clinical.patient.registrationDate)) {
+        if (minStopDate.isBefore(record.patient.registrationDate)) {
             return EvaluationFactory.undetermined(
                 "Required stop date prior to registration date for recent trial medication usage evaluation",
                 "Recent trial medication"
             )
         }
 
-        val medications = selector.activeOrRecentlyStopped(record.clinical.medications, minStopDate).filter(Medication::isTrialMedication)
+        val medications = selector.activeOrRecentlyStopped(record.medications, minStopDate).filter(Medication::isTrialMedication)
 
         val foundMedicationNames = medications.map { it.name }.filter { it.isNotEmpty() }
 

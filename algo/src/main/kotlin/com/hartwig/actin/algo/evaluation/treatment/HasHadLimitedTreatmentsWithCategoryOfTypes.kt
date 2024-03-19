@@ -15,7 +15,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical.oncologicalHistory, category) {
+            TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category) {
                 it.matchesTypeFromSet(types)
             }
 

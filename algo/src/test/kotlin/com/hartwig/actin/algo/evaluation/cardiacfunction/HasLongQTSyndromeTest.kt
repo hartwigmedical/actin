@@ -1,12 +1,11 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
@@ -38,11 +37,7 @@ class HasLongQTSyndromeTest {
         }
 
         private fun withPriorOtherConditions(priorOtherConditions: List<PriorOtherCondition>): PatientRecord {
-            return TestDataFactory.createMinimalTestPatientRecord().copy(
-                clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(
-                    priorOtherConditions = priorOtherConditions
-                )
-            )
+            return TestPatientFactory.createMinimalTestPatientRecord().copy(priorOtherConditions = priorOtherConditions)
         }
     }
 }

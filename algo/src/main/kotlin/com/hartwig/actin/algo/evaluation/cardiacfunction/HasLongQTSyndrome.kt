@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasLongQTSyndrome internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             if (condition.doids.any { doidModel.doidWithParents(it).contains(DoidConstants.LONG_QT_SYNDROME_DOID) }) {
                 return EvaluationFactory.pass("Patient has long QT syndrome", "Presence of long QT syndrome")
             }

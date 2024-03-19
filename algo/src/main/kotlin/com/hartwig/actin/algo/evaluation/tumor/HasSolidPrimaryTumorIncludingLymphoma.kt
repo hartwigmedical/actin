@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasSolidPrimaryTumorIncludingLymphoma (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical.tumor.doids
+        val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
                 "No tumor location/type configured for patient, unknown if solid primary tumor or lymphoma",

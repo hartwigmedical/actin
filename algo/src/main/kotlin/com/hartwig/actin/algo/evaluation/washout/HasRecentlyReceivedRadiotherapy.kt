@@ -11,7 +11,7 @@ class HasRecentlyReceivedRadiotherapy(private val referenceYear: Int, private va
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val radiotherapyEvaluations =
-            record.clinical.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
+            record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
             .map {
                 it.startYear?.let { year ->
                     val month = it.startMonth

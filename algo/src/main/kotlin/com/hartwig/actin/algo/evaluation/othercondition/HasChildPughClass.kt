@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasChildPughClass(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             if (condition.doids.any { doidModel.doidWithParents(it).contains(DoidConstants.LIVER_CIRRHOSIS_DOID) }) {
                 return EvaluationFactory.undetermined(
                     "Currently Child-Pugh class cannot be determined",

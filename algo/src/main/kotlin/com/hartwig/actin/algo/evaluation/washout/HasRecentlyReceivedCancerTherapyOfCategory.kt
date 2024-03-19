@@ -18,7 +18,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val atcLevelsToFind: Set<AtcLevel> = categories.values.flatten().toSet() - categoriesToIgnore.values.flatten().toSet()
         val categoryNames: Set<String> = categories.keys
 
-        val activeMedicationsMatchingCategories = record.clinical.medications
+        val activeMedicationsMatchingCategories = record.medications
             .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
             .filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() || it.isTrialMedication }
 

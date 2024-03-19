@@ -19,7 +19,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
         var hasPlannedSurgeryAfterEval = false
         var hasUnexpectedSurgeryAfterEval = false
         var hasCancelledSurgeryAfterEval = false
-        for (surgery in record.clinical.surgeries) {
+        for (surgery in record.surgeries) {
             if (minDate.isBefore(surgery.endDate)) {
                 if (evaluationDate.isBefore(surgery.endDate)) {
                     when (surgery.status) {
@@ -69,7 +69,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
             )
         }
 
-        val surgicalTreatmentsOccurredAfterMinDate = record.clinical.oncologicalHistory
+        val surgicalTreatmentsOccurredAfterMinDate = record.oncologicalHistory
             .filter { it.categories().contains(TreatmentCategory.SURGERY) }
             .map { isAfterDate(minDate, it.startYear, it.startMonth) }
 

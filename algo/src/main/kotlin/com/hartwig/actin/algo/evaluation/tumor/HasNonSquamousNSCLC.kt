@@ -10,7 +10,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasNonSquamousNSCLC (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical.tumor.doids
+        val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether patient non-squamous NSCLC tumor type",

@@ -22,7 +22,7 @@ class HasToxicityWithGrade internal constructor(
         var hasAtLeastOneMatchingQuestionnaireToxicity = false
         val unresolvableToxicities: MutableSet<String> = Sets.newHashSet()
         val toxicities: MutableSet<String> = Sets.newHashSet()
-        for (toxicity in selectRelevantToxicities(record.clinical)) {
+        for (toxicity in selectRelevantToxicities(record.toxicities, record.complications)) {
             val grade = if (toxicity.grade == null && toxicity.source == ToxicitySource.QUESTIONNAIRE) {
                 if (minGrade > DEFAULT_QUESTIONNAIRE_GRADE) {
                     hasUnresolvableQuestionnaireToxicities = true
@@ -66,10 +66,10 @@ class HasToxicityWithGrade internal constructor(
         )
     }
 
-    private fun selectRelevantToxicities(clinical: ClinicalRecord): List<Toxicity> {
-        val withoutOutdatedEHRToxicities = dropOutdatedEHRToxicities(clinical.toxicities)
+    private fun selectRelevantToxicities(toxicities: List<Toxicity>, complications: List<Complication>?): List<Toxicity> {
+        val withoutOutdatedEHRToxicities = dropOutdatedEHRToxicities(toxicities)
         val withoutEHRToxicitiesThatAreComplications =
-            dropEHRToxicitiesThatAreComplications(withoutOutdatedEHRToxicities, clinical.complications)
+            dropEHRToxicitiesThatAreComplications(withoutOutdatedEHRToxicities, complications)
         return applyIgnoreFilters(withoutEHRToxicitiesThatAreComplications, ignoreFilters)
     }
 

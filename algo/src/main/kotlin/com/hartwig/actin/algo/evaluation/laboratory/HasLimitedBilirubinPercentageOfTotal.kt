@@ -12,7 +12,7 @@ class HasLimitedBilirubinPercentageOfTotal internal constructor(private val maxP
     LabEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
-        val interpretation = LabInterpreter.interpret(record.clinical.labValues)
+        val interpretation = LabInterpreter.interpret(record.labValues)
         check(labValue.code == LabMeasurement.DIRECT_BILIRUBIN.code) { "Bilirubin percentage must take direct bilirubin as input" }
         val mostRecentTotal = interpretation.mostRecentValue(LabMeasurement.TOTAL_BILIRUBIN)
         if (mostRecentTotal == null || mostRecentTotal.date.isBefore(minValidDate)) {

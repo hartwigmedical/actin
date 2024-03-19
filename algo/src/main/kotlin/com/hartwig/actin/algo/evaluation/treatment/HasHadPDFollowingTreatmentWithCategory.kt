@@ -12,7 +12,7 @@ class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCate
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.clinical.oncologicalHistory, category,
+            record.oncologicalHistory, category,
             ProgressiveDiseaseFunctions::treatmentResultedInPD
         )
 

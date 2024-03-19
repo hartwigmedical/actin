@@ -1,11 +1,12 @@
 package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 
 internal object BloodTransfusionTestFactory {
     fun withBloodTransfusion(transfusion: BloodTransfusion): PatientRecord {
@@ -25,6 +26,6 @@ internal object BloodTransfusionTestFactory {
     }
 
     private fun withClinicalRecord(clinical: ClinicalRecord): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(clinical = clinical)
+        return PatientRecordFactory.fromInputs(clinical, TestMolecularFactory.createMinimalTestMolecularRecord())
     }
 }

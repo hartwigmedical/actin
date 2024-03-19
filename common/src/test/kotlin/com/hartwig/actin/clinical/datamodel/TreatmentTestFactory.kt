@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.datamodel
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
@@ -18,7 +18,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
 object TreatmentTestFactory {
 
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
 
     fun treatment(
         name: String, isSystemic: Boolean, categories: Set<TreatmentCategory> = emptySet(), types: Set<OtherTreatmentType> = emptySet()
@@ -109,6 +109,6 @@ object TreatmentTestFactory {
     }
 
     fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(oncologicalHistory = treatmentHistory))
+        return base.copy(oncologicalHistory = treatmentHistory)
     }
 }

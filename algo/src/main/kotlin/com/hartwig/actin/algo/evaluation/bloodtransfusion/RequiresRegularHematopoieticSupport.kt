@@ -16,7 +16,7 @@ class RequiresRegularHematopoieticSupport(
     
     override fun evaluate(record: PatientRecord): Evaluation {
         val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
-        for (transfusion in record.clinical.bloodTransfusions) {
+        for (transfusion in record.bloodTransfusions) {
             if (transfusion.date.isAfter(minDate) && transfusion.date.isBefore(maxDate)) {
                 return EvaluationFactory.pass(
                     "Patient has had blood transfusion $inBetweenRange",
@@ -25,7 +25,7 @@ class RequiresRegularHematopoieticSupport(
             }
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)
-        val medications = record.clinical.medications
+        val medications = record.medications
             .filter { activeBetweenDates(it) }
             .filter { it.atc?.chemicalSubGroup in resolvedCategories }
             .map { it.name }
