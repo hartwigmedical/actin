@@ -19,14 +19,14 @@ import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.trial.input.FunctionInputResolver
+import java.io.IOException
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
-import kotlin.system.exitProcess
 
 class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
@@ -54,7 +54,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        val referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
+        val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
         val functionInputResolver = FunctionInputResolver(
             doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )

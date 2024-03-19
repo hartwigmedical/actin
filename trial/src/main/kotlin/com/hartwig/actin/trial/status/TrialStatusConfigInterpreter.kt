@@ -12,6 +12,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
 
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
     private val trialStatusDatabaseValidationErrors = mutableListOf<TrialStatusDatabaseValidationError>()
+    private val trialStatusConfigValidationErrors = mutableListOf<TrialStatusDatabaseConfigValidationError>()
     private val cohortDefinitionValidationErrors = mutableListOf<CohortDefinitionValidationError>()
 
     override fun validation(): TrialStatusDatabaseValidation {
@@ -22,9 +23,24 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     }
 
     override fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean? {
-        if (!trialConfig.trialId.startsWith(MEC_TRIAL_PREFIX)) {
+        val (openInTrialStatusDatabase, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(
+            trialStatusDatabase.entries,
+            trialConfig
+        )
+        trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
+
+        if (trialStatusDatabase.mecStudiesNotInTrialStatusDatabase.contains(trialConfig.trialId) && openInTrialStatusDatabase != null) {
+            trialStatusConfigValidationErrors.add(
+                TrialStatusDatabaseConfigValidationError(
+                    trialConfig.trialId,
+                    "Trial is configured as not in trial status database while status could be derived from trial status database"
+                )
+            )
+        }
+
+        if (!trialConfig.trialId.startsWith(MEC_TRIAL_PREFIX) || trialStatusDatabase.mecStudiesNotInTrialStatusDatabase.contains(trialConfig.trialId)) {
             LOGGER.debug(
-                " Skipping study status retrieval for {} ({}) since study is not managed by the trial status database",
+                " Skipping study status retrieval for {} ({}) since study is not deemed a trial status database trial",
                 trialConfig.trialId,
                 trialConfig.acronym
             )
@@ -32,8 +48,6 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
             return null
         }
 
-        val (openInTrialStatusDatabase, interpreterValidationErrors) = TrialStatusInterpreter.isOpen(trialStatusDatabase.entries, trialConfig)
-        trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
         if (openInTrialStatusDatabase != null) {
             if (trialConfig.open != null) {
                 trialDefinitionValidationErrors.add(
@@ -49,7 +63,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
         trialDefinitionValidationErrors.add(
             TrialDefinitionValidationError(
                 trialConfig,
-                "No study status found in trial status overview, using manually configured status for study status"
+                "No study status found in trial status database overview, using manually configured status for study status"
             )
         )
         return null
@@ -85,6 +99,26 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
         }
     }
 
+    override fun checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
+        val unusedMecStudiesNotInTrialStatusDatabase = extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)
+
+        if (unusedMecStudiesNotInTrialStatusDatabase.isNotEmpty()) {
+            unusedMecStudiesNotInTrialStatusDatabase.map {
+                trialStatusConfigValidationErrors.add(
+                    TrialStatusDatabaseConfigValidationError(
+                        unusedMecStudiesNotInTrialStatusDatabase.joinToString { ", " },
+                        "Trial ID that is configured to be ignored is not actually present in trial database"
+                    )
+                )
+            }
+        }
+    }
+
+    internal fun extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>): List<String> {
+        val trialConfigIds = trialConfigs.map { it.trialId }.toSet()
+        return trialStatusDatabase.mecStudiesNotInTrialStatusDatabase.filter { !trialConfigIds.contains(it) }
+    }
+
     internal fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {
         val configuredTrialIds = trialConfigs.map { it.trialId }
 
@@ -101,7 +135,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
         } else {
             trialStatusDatabaseValidationErrors.addAll(newCohortEntriesInTrialStatusDatabase.map {
                 TrialStatusDatabaseValidationError(
-                    it, "New cohort detected in trial status dataabase that is not configured as unmapped"
+                    it, "New cohort detected in trial status database that is not configured as unmapped"
                 )
             })
         }
@@ -142,7 +176,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(TrialStatusConfigInterpreter::class.java)
+        private val LOGGER = LogManager.getLogger(TrialStatusInterpreter::class.java)
         const val MEC_TRIAL_PREFIX = "MEC"
 
         fun constructTrialId(entry: TrialStatusEntry): String {

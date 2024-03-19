@@ -19,7 +19,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
         val treatmentDesc =
             "combined therapy with ${treatment.name} and ${types?.let { " ${concatItemsWithAnd(types)}" } ?: ""} ${category.display()}"
 
-        val relevantHistory = record.clinical.oncologicalHistory.filter { history ->
+        val relevantHistory = record.oncologicalHistory.filter { history ->
             history.allTreatments().any { pastTreatment -> pastTreatment.name.lowercase() == treatment.name.lowercase() }
         }
         if (relevantHistory.isEmpty()) return EvaluationFactory.fail("Patient has not received ${treatment.name}")
@@ -28,7 +28,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
             return EvaluationFactory.pass("Patient has received $treatmentDesc")
         }
 
-        if (historyMatchesCategoryAndTypes(record.clinical.oncologicalHistory)) {
+        if (historyMatchesCategoryAndTypes(record.oncologicalHistory)) {
             return EvaluationFactory.undetermined(
                 "Patient may have received $treatmentDesc during past trial participation",
                 "Can't determine whether patient has received $treatmentDesc"

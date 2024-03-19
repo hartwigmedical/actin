@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadLiverResection : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorSurgeries = record.clinical.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.SURGERY) }
+        val priorSurgeries = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.SURGERY) }
 
         val priorResections = priorSurgeries.filter { it.treatments.any { treatment -> treatment.name.contains(RESECTION_KEYWORD) } }
         val hadResectionToTargetLocation =

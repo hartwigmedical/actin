@@ -8,10 +8,10 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 
 class HasAnyComplication internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return record.clinical.clinicalStatus.hasComplications?.let { hasComplications: Boolean ->
+        return record.clinicalStatus.hasComplications?.let { hasComplications: Boolean ->
             if (hasComplications) {
                 val complicationString =
-                    concatLowercaseWithAnd(record.clinical.complications?.map { it.name.ifEmpty { "Unknown" } } ?: emptyList())
+                    concatLowercaseWithAnd(record.complications?.map { it.name.ifEmpty { "Unknown" } } ?: emptyList())
                 EvaluationFactory.pass(
                     "Patient has at least one cancer-related complication: $complicationString",
                     "Present complication(s): $complicationString"

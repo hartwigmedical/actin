@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -17,9 +17,9 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class OrangeInterpreterTest {
 
@@ -33,8 +33,8 @@ class OrangeInterpreterTest {
     fun `Should interpret proper orange record`() {
         val interpreter = createTestInterpreter()
         val record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord())
-        assertThat(record.patientId).isEqualTo(TestDataFactory.TEST_PATIENT)
-        assertThat(record.sampleId).isEqualTo(TestDataFactory.TEST_SAMPLE)
+        assertThat(record.patientId).isEqualTo(TestPatientFactory.TEST_PATIENT)
+        assertThat(record.sampleId).isEqualTo(TestPatientFactory.TEST_SAMPLE)
         assertThat(record.type).isEqualTo(ExperimentType.WHOLE_GENOME)
         assertThat(record.refGenomeVersion).isEqualTo(RefGenomeVersion.V37)
         assertThat(record.date).isEqualTo(LocalDate.of(2021, 5, 6))

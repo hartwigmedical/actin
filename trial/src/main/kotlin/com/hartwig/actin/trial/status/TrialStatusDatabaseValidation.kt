@@ -31,3 +31,9 @@ data class TrialStatusDatabaseValidation(
         return (trialDefinitionValidationErrors + trialStatusDatabaseValidationErrors).isNotEmpty()
     }
 }
+
+data class TrialStatusDatabaseConfigValidationError(override val config: String, override val message: String) : ValidationError<String> {
+    override fun configFormat(config: String): String {
+        return "trial id=${config}"
+    }
+}

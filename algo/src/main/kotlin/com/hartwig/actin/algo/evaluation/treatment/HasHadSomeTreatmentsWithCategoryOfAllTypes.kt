@@ -13,7 +13,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical.oncologicalHistory, category) {
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category) {
             types.all { type -> it.isOfType(type) == true }
         }
         val typesList = Format.concatItemsWithAnd(types)

@@ -1,15 +1,15 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.Test
 
 class LabMeasurementEvaluatorTest {
    
@@ -17,7 +17,7 @@ class LabMeasurementEvaluatorTest {
     fun `Should evaluate`() {
         val measurement = LabMeasurement.ALBUMIN
         val function = LabMeasurementEvaluator(measurement, passingLabEvaluationFunction, ALWAYS_VALID_DATE, ALWAYS_VALID_DATE)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
         val labValue: LabValue = LabTestFactory.create(measurement, date = TEST_DATE)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)))
     }

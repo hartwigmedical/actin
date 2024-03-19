@@ -14,7 +14,7 @@ class HasNotReceivedAnyCancerTreatmentSinceDate(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorCancerTreatment = record.clinical.oncologicalHistory
+        val priorCancerTreatment = record.oncologicalHistory
         val concatenatedTreatmentDisplay = priorCancerTreatment.filter { treatmentSinceMinDate(it, minDate, true) }
             .joinToString { it.treatmentDisplay() }
 

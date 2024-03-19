@@ -9,7 +9,7 @@ class TrialStatusDatabaseEvaluatorTest {
     private val evaluator = TrialStatusDatabaseEvaluator(TestCTCDatabaseFactory.createProperTestCTCDatabase())
 
     @Test
-    fun shouldPickUpUnusedStudyMETCsToIgnore() {
+    fun `Should pick up unused study METCs to ignore`() {
         // The proper CTC database has no unused METCs to ignore
         assertThat(evaluator.extractUnusedStudyMETCsToIgnore()).isEmpty()
         evaluator.evaluateDatabaseConfiguration()
@@ -23,7 +23,7 @@ class TrialStatusDatabaseEvaluatorTest {
     }
 
     @Test
-    fun shouldPickUpUnusedUnmappedCohortIds() {
+    fun `Should pick up unused unmapped cohort IDs`() {
         // The proper CTC database has no unused unmapped cohort IDs to ignore
         assertThat(evaluator.extractUnusedUnmappedCohorts()).isEmpty()
         evaluator.evaluateDatabaseConfiguration()

@@ -11,14 +11,14 @@ import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 class HasCancerOfUnknownPrimary (private val doidModel: DoidModel, private val categoryOfCUP: TumorTypeInput) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical.tumor.doids
+        val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
                 "No tumor location/type configured for patient, cancer of unknown primary (CUP) status undetermined",
                 "Unconfigured tumor location/type"
             )
         }
-        val tumorSubLocation = record.clinical.tumor.primaryTumorSubLocation
+        val tumorSubLocation = record.tumor.primaryTumorSubLocation
         val isCUP = tumorSubLocation != null && tumorSubLocation == CUP_PRIMARY_TUMOR_SUB_LOCATION
         val hasCorrectCUPCategory = DoidEvaluationFunctions.isOfExclusiveDoidType(
             doidModel, tumorDoids, categoryOfCUP.doid()

@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 class CurrentlyGetsAnyCypInhibitingOrInducingMedication(private val selector: MedicationSelector) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypMedications = record.clinical.medications.filter { medication ->
+        val cypMedications = record.medications.filter { medication ->
             medication.cypInteractions.any { it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR }
         }
 

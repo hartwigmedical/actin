@@ -13,7 +13,7 @@ class CurrentlyGetsMedicationOfAtcLevel(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val medicationsWithAtcLevel = record.clinical.medications.filter {
+        val medicationsWithAtcLevel = record.medications.filter {
             (it.allLevels() intersect categoryAtcLevels).isNotEmpty()
         }
 

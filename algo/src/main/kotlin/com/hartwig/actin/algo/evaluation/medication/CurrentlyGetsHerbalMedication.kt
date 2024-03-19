@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class CurrentlyGetsHerbalMedication(private val selector: MedicationSelector) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasActiveSelfCareMedication = record.clinical.medications
+        val hasActiveSelfCareMedication = record.medications
             .filter { it.isSelfCare }
             .any(selector::isActive)
 
-        val hasPlannedSelfCareMedication = record.clinical.medications
+        val hasPlannedSelfCareMedication = record.medications
             .filter { it.isSelfCare }
             .any(selector::isPlanned)
 

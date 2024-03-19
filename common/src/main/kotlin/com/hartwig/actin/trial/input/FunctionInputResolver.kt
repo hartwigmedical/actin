@@ -45,9 +45,9 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
+import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.util.*
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
@@ -182,8 +182,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_TUMOR_STAGE -> {
-                    createOneTumorStageInput(function)
+                FunctionInput.MANY_TUMOR_STAGES -> {
+                    createManyTumorStagesInput(function)
                     return true
                 }
 
@@ -474,9 +474,9 @@ class FunctionInputResolver(
         )
     }
 
-    fun createOneTumorStageInput(function: EligibilityFunction): TumorStage {
-        assertParamConfig(function, FunctionInput.ONE_TUMOR_STAGE, 1)
-        return TumorStage.valueOf(parameterAsString(function, 0))
+    fun createManyTumorStagesInput(function: EligibilityFunction): Set<TumorStage> {
+        assertParamConfig(function, FunctionInput.MANY_TUMOR_STAGES, 1)
+        return toStringList(function.parameters.first()).map(TumorStage::valueOf).toSet()
     }
 
     fun createOneHlaAlleleInput(function: EligibilityFunction): OneHlaAllele {

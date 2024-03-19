@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.evaluation.complication.ComplicationTestFactory.complication
 import com.hartwig.actin.algo.evaluation.general.WHOFunctions.COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS
 import org.assertj.core.api.Assertions.assertThat
@@ -11,7 +11,7 @@ class ComplicationFunctionsTest {
 
     @Test
     fun `Should return empty for category search when complications are null`() {
-        val record: PatientRecord = TestDataFactory.createMinimalTestPatientRecord()
+        val record: PatientRecord = TestPatientFactory.createMinimalTestPatientRecord()
         val filteredComplicationNames =
             ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
         assertThat(filteredComplicationNames).isEmpty()
@@ -28,12 +28,10 @@ class ComplicationFunctionsTest {
             complication(name = "second matching", categories = setOf("chronic pain issues", "nothing"))
         )
 
-        val base = TestDataFactory.createMinimalTestPatientRecord()
+        val base = TestPatientFactory.createMinimalTestPatientRecord()
 
         val record: PatientRecord = base.copy(
-            clinical = base.clinical.copy(
-                complications = complications, clinicalStatus = base.clinical.clinicalStatus.copy(hasComplications = true)
-            )
+                complications = complications, clinicalStatus = base.clinicalStatus.copy(hasComplications = true)
         )
 
         val filteredComplicationNames =

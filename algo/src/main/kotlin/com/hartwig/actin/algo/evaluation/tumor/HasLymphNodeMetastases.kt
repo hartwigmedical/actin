@@ -7,6 +7,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasLymphNodeMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return TumorMetastasisEvaluator.evaluate(record.clinical.tumor.hasLymphNodeLesions, "lymph node")
+        return TumorMetastasisEvaluator.evaluate(record.tumor.hasLymphNodeLesions, "lymph node")
     }
 }

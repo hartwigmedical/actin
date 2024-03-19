@@ -12,7 +12,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorAntiCancerDrugs = record.clinical.oncologicalHistory
+        val priorAntiCancerDrugs = record.oncologicalHistory
             .filter { it.categories().any { category -> TreatmentCategory.CANCER_TREATMENT_CATEGORIES.contains(category) } }
 
         val treatmentMatch = if (types != null) {

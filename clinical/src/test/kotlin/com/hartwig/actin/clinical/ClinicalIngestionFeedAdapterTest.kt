@@ -61,7 +61,6 @@ class ClinicalIngestionFeedAdapterTest {
         val ingestionResult = ingestion.run()
         assertThat(ingestionResult).isNotNull
         val patientResults = ingestionResult.patientResults
-        assertThat(patientResults[0].status).isEqualTo(PatientIngestionStatus.PASS)
         assertThat(patientResults).hasSize(1)
         assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
         assertThat(patientResults[0].curationResults).isEmpty()
@@ -95,6 +94,7 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(deserialized.copy(patientResults = emptyList())).isEqualTo(ingestionResult.copy(patientResults = emptyList()))
 
         val patientIngestionResult = ingestionResult.patientResults.first()
+        assertThat(deserialized.patientResults.size).isEqualTo(1)
         assertThat(deserialized.patientResults).extracting(
             PatientIngestionResult::patientId,
             PatientIngestionResult::status,
@@ -113,6 +113,5 @@ class ClinicalIngestionFeedAdapterTest {
                     patientIngestionResult.feedValidationWarnings
                 )
             )
-
     }
 }

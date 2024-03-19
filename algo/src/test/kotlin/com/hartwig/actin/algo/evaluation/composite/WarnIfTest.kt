@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.composite
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -13,7 +13,7 @@ class WarnIfTest {
 
     @Test
     fun canWarnIf() {
-        val patient: PatientRecord = TestDataFactory.createProperTestPatientRecord()
+        val patient: PatientRecord = TestPatientFactory.createProperTestPatientRecord()
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient))
         assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient))
         assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.fail()).evaluate(patient))
@@ -24,7 +24,7 @@ class WarnIfTest {
 
     @Test
     fun canMoveMessagesToWarnOnPass() {
-        val result: Evaluation = WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestDataFactory.createMinimalTestPatientRecord())
+        val result: Evaluation = WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestPatientRecord())
         assertThat(result.passSpecificMessages).isEmpty()
         assertThat(result.passGeneralMessages).isEmpty()
         assertThat(result.warnSpecificMessages).isNotEmpty()

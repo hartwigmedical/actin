@@ -8,14 +8,15 @@ import com.hartwig.actin.trial.status.TrialStatusEntry
 object TestCTCDatabaseFactory {
 
     fun createMinimalTestCTCDatabase(): TrialStatusDatabase {
-        return TrialStatusDatabase(emptyList(), emptySet(), emptySet())
+        return TrialStatusDatabase(emptyList(), emptySet(), emptySet(), emptySet())
     }
 
     fun createProperTestCTCDatabase(): TrialStatusDatabase {
         return TrialStatusDatabase(
             entries = createTestCTCEntries(),
             studyMETCsToIgnore = setOf(TestTrialData.TEST_TRIAL_METC_IGNORE),
-            unmappedCohortIds = setOf(TestTrialData.TEST_UNMAPPED_COHORT_ID)
+            unmappedCohortIds = setOf(TestTrialData.TEST_UNMAPPED_COHORT_ID),
+            mecStudiesNotInTrialStatusDatabase = setOf(TestTrialData.TEST_MEC_NOT_IN_CTC)
         )
     }
 

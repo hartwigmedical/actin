@@ -10,10 +10,10 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 class CurrentlyGetsCypXInducingMedication(private val selector: MedicationSelector, private val termToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypInducersReceived = selector.activeWithCypInteraction(record.clinical.medications, termToFind, CypInteraction.Type.INDUCER)
+        val cypInducersReceived = selector.activeWithCypInteraction(record.medications, termToFind, CypInteraction.Type.INDUCER)
             .map { it.name }.toSet()
 
-        val cypInducersPlanned = selector.plannedWithCypInteraction(record.clinical.medications, termToFind, CypInteraction.Type.INDUCER)
+        val cypInducersPlanned = selector.plannedWithCypInteraction(record.medications, termToFind, CypInteraction.Type.INDUCER)
             .map { it.name }.toSet()
 
         return when {

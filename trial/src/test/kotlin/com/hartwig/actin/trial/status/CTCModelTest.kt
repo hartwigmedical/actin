@@ -193,4 +193,31 @@ class CTCModelTest {
         val newCohorts = modelWithOneParentTwoChildren.extractNewTrialStatusDatabaseCohorts(cohortConfigs)
         assertThat(newCohorts).isEmpty()
     }
+
+    @Test
+    fun `Should find no unused MEC trial ids not in CTC when all these trials are configured`() {
+        val trialConfigs: List<TrialDefinitionConfig> = listOf(
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(
+                trialId = TestTrialData.TEST_MEC_NOT_IN_CTC
+            )
+        )
+
+        assertThat(model.extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)).isEmpty()
+
+        model.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs)
+    }
+
+    @Test
+    fun `Should find unused MEC trial ids not in CTC when trial id not configured`() {
+        val trialConfigs: List<TrialDefinitionConfig> = listOf(
+            TestTrialDefinitionConfigFactory.MINIMAL.copy(
+                trialId = TestTrialData.TEST_TRIAL_METC_1
+            )
+        )
+
+        assertThat(model.extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)).isEqualTo(listOf(TestTrialData.TEST_MEC_NOT_IN_CTC))
+
+        model.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs)
+    }
+
 }

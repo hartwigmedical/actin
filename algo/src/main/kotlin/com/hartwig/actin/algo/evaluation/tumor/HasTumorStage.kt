@@ -10,18 +10,24 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
 class HasTumorStage internal constructor(
-    private val tumorStageDerivationFunction: TumorStageDerivationFunction, private val stageToMatch: TumorStage
+    private val tumorStageDerivationFunction: TumorStageDerivationFunction, private val stagesToMatch: Set<TumorStage>
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage = record.clinical.tumor.stage
+        if (stagesToMatch.isEmpty()) throw IllegalStateException("No stages to match configured")
+        val stage = record.tumor.stage
         if (stage == null) {
-            val derivedStages = tumorStageDerivationFunction.apply(record.clinical.tumor).toSet()
-            return if (derivedStages.size == 1) {
+            val derivedStages = tumorStageDerivationFunction.apply(record.tumor)?.toSet()
+            return if (derivedStages?.size == 1) {
                 evaluateWithStage(derivedStages.iterator().next())
-            } else if (derivedStages.map { evaluateWithStage(it) }.any { it.result == EvaluationResult.PASS }) {
-                val derivedStageMessage = "assumed ${derivedStages.filter { 
-                    evaluateWithStage(it).result == EvaluationResult.PASS }.joinToString(" or ") { it.display() }} based on lesions"
+            } else if (derivedStages?.map { evaluateWithStage(it) }?.all { it.result == EvaluationResult.PASS } == true) {
+                val derivedStageMessage = "passes with derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
+                pass(
+                    "No tumor stage details present but $derivedStageMessage",
+                    "Missing tumor stage details - $derivedStageMessage"
+                )
+            } else if (derivedStages?.map { evaluateWithStage(it) }?.any { it.result == EvaluationResult.PASS } == true) {
+                val derivedStageMessage = "derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
                 undetermined(
                     "No tumor stage details present but $derivedStageMessage",
                     "Missing tumor stage details - $derivedStageMessage"
@@ -35,10 +41,11 @@ class HasTumorStage internal constructor(
     }
 
     private fun evaluateWithStage(stage: TumorStage): Evaluation {
-        return if (stage == stageToMatch || stage.category == stageToMatch) {
-            pass("Patient tumor stage is exact stage " + stageToMatch.display(), "Adequate tumor stage")
+        val stageString = stagesToMatch.joinToString(" or ") { it.display() }
+        return if (stage in stagesToMatch || stage.category in stagesToMatch) {
+            pass("Patient tumor stage is requested stage $stageString", "Adequate tumor stage")
         } else {
-            fail("Patient tumor stage is not exact stage " + stageToMatch.display(), "Inadequate tumor stage")
+            fail("Patient tumor stage is not requested stage $stageString", "Inadequate tumor stage")
         }
     }
 }

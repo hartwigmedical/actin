@@ -30,6 +30,7 @@ class TrialIngestion(
     fun ingestTrials(): TrialIngestionResult {
         configInterpreter.checkModelForNewTrials(trialConfigModel.trials())
         configInterpreter.checkModelForNewCohorts(trialConfigModel.cohorts())
+        configInterpreter.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigModel.trials())
         val trialDatabaseValidation = trialConfigModel.validation()
         val ctcDatabaseValidation = configInterpreter.validation()
         val trials = if (trialDatabaseValidation.inclusionCriteriaValidationErrors.isEmpty()) createTrials() else emptyList()

@@ -1,9 +1,7 @@
 package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
-import com.hartwig.actin.clinical.datamodel.BodyWeight
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Gender
@@ -25,29 +23,18 @@ internal object GeneralTestFactory {
     }
 
     fun withWHOAndComplications(who: Int, complicationCategories: Iterable<String>): PatientRecord {
-        val clinicalStatus = TestClinicalFactory.createMinimalTestClinicalRecord().clinicalStatus.copy(who = who)
         val complication = Complication(name = "", categories = complicationCategories.toSet(), year = null, month = null)
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord()
-            .copy(clinicalStatus = clinicalStatus, complications = listOf(complication))
-        return withClinicalRecord(clinical)
-    }
-
-    fun withBodyWeights(bodyWeights: Iterable<BodyWeight>): PatientRecord {
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(bodyWeights = bodyWeights.toList())
-        return withClinicalRecord(clinical)
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(
+            clinicalStatus = ClinicalStatus(who = who),
+            complications = listOf(complication),
+        )
     }
 
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(patient = patientDetails)
-        return withClinicalRecord(clinical)
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(patient = patientDetails)
     }
 
     private fun withClinicalStatus(clinicalStatus: ClinicalStatus): PatientRecord {
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(clinicalStatus = clinicalStatus)
-        return withClinicalRecord(clinical)
-    }
-
-    private fun withClinicalRecord(clinical: ClinicalRecord): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(clinical = clinical)
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(clinicalStatus = clinicalStatus)
     }
 }

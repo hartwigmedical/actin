@@ -10,7 +10,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasIntoleranceWithSpecificDoid(private val doidModel: DoidModel, private val doidToFind: String) : EvaluationFunction {
         
     override fun evaluate(record: PatientRecord): Evaluation {
-        val allergies = record.clinical.intolerances
+        val allergies = record.intolerances
             .filter { intolerance -> intolerance.doids.flatMap { doidModel.doidWithParents(it) }.contains(doidToFind) }
             .map { it.name }
             .toSet()
