@@ -11,15 +11,16 @@ import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
+import java.io.IOException
+import java.time.LocalDate
+import java.time.LocalDateTime
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.apache.logging.log4j.util.Strings
 import org.junit.Test
-import java.io.IOException
-import java.time.LocalDate
-import java.time.LocalDateTime
+
 
 class EmcClinicalFeedReaderTest {
     @Test
@@ -39,11 +40,12 @@ class EmcClinicalFeedReaderTest {
     companion object {
         private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed/emc").path
         private const val EPSILON = 1.0E-10
+        private const val PATIENT = "ACTN01029999"
 
         private fun assertPatients(entries: List<PatientEntry>) {
             assertEquals(1, entries.size.toLong())
             val entry = entries[0]
-            assertEquals("ACTN-01-02-9999", entry.subject)
+            assertEquals(PATIENT, entry.subject)
             assertEquals(1953, entry.birthYear.toLong())
             assertEquals(Gender.MALE, entry.gender)
             assertEquals(LocalDate.of(2020, 7, 13), entry.periodStart)
@@ -53,7 +55,7 @@ class EmcClinicalFeedReaderTest {
         private fun assertQuestionnaires(entries: List<QuestionnaireEntry>) {
             assertEquals(1, entries.size.toLong())
             val entry = findByAuthoredDate(entries, LocalDate.of(2021, 8, 16))
-            assertEquals("ACTN-01-02-9999", entry.subject)
+            assertEquals(PATIENT, entry.subject)
             assertEquals("INT Consult", entry.description)
             assertEquals("Beloop", entry.itemText)
             assertEquals(26, entry.text.split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong())
@@ -74,7 +76,7 @@ class EmcClinicalFeedReaderTest {
         private fun assertSurgeries(entries: List<SurgeryEntry>) {
             assertEquals(1, entries.size.toLong())
             val entry = entries[0]
-            assertEquals("ACTN-01-02-9999", entry.subject)
+            assertEquals(PATIENT, entry.subject)
             assertEquals("surgery", entry.classDisplay)
             assertEquals(LocalDate.of(2020, 8, 28), entry.periodStart)
             assertEquals(LocalDate.of(2020, 8, 28), entry.periodEnd)
@@ -86,7 +88,7 @@ class EmcClinicalFeedReaderTest {
         private fun assertMedication(entries: List<MedicationEntry>) {
             assertEquals(1, entries.size.toLong())
             val entry = entries[0]
-            assertEquals("ACTN-01-02-9999", entry.subject)
+            assertEquals(PATIENT, entry.subject)
             assertEquals("19-0716 PEMBROLIZUMAB V/P INFOPL 25MG/ML FL 4ML", entry.codeText)
             assertTrue(entry.code5ATCDisplay.isEmpty())
             assertEquals("MILLIGRAM", entry.dosageInstructionDoseQuantityUnit)
@@ -117,7 +119,7 @@ class EmcClinicalFeedReaderTest {
         private fun assertLab(entries: List<LabEntry>) {
             assertEquals(1, entries.size.toLong())
             val entry1 = findByCodeCodeOriginal(entries, "AC")
-            assertEquals("ACTN-01-02-9999", entry1.subject)
+            assertEquals(PATIENT, entry1.subject)
             assertEquals("ACTH", entry1.codeDisplayOriginal)
             assertEquals(Strings.EMPTY, entry1.valueQuantityComparator)
             assertEquals(5.5, entry1.valueQuantityValue, EPSILON)
@@ -134,7 +136,7 @@ class EmcClinicalFeedReaderTest {
         private fun assertVitalFunctions(entries: List<VitalFunctionEntry>) {
             assertEquals(1, entries.size.toLong())
             val entry = entries[0]
-            assertEquals("ACTN-01-02-9999", entry.subject)
+            assertEquals(PATIENT, entry.subject)
             assertEquals(LocalDateTime.of(2019, 4, 28, 13, 45), entry.effectiveDateTime)
             assertEquals("NIBP", entry.codeDisplayOriginal)
             assertEquals("Systolic blood pressure", entry.componentCodeDisplay)
@@ -145,7 +147,7 @@ class EmcClinicalFeedReaderTest {
         private fun assertIntolerances(entries: List<IntoleranceEntry>) {
             assertEquals(1, entries.size.toLong())
             val entry = entries[0]
-            assertEquals("ACTN-01-02-9999", entry.subject)
+            assertEquals(PATIENT, entry.subject)
             assertEquals(LocalDate.of(2014, 4, 21), entry.assertedDate)
             assertEquals("medication", entry.category)
             assertEquals("Propensity to adverse reactions to drug", entry.categoryAllergyCategoryDisplay)
@@ -159,11 +161,11 @@ class EmcClinicalFeedReaderTest {
         private fun assertBodyWeights(entries: List<BodyWeightEntry>) {
             assertEquals(2, entries.size.toLong())
             val entry1 = findByDate(entries, LocalDateTime.of(2020, 8, 11, 0, 0, 0, 0))
-            assertEquals("ACTN-01-02-9999", entry1.subject)
+            assertEquals(PATIENT, entry1.subject)
             assertEquals(61.1, entry1.valueQuantityValue, EPSILON)
             assertEquals("kilogram", entry1.valueQuantityUnit)
             val entry2 = findByDate(entries, LocalDateTime.of(2020, 8, 20, 8, 43, 0, 0))
-            assertEquals("ACTN-01-02-9999", entry2.subject)
+            assertEquals(PATIENT, entry2.subject)
             assertEquals(58.9, entry2.valueQuantityValue, EPSILON)
             assertEquals("kilogram", entry2.valueQuantityUnit)
         }

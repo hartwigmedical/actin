@@ -1,25 +1,24 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 
-class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : EvaluationFunction {
-    
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val fusionSkippingEvents = record.molecular.drivers.fusions.filter { fusion ->
+class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
+
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
+        val fusionSkippingEvents = molecular.drivers.fusions.filter { fusion ->
             fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.fusedExonUp == exonToSkip - 1
                     && fusion.fusedExonDown == exonToSkip + 1
         }
             .map(Fusion::event)
             .toSet()
 
-        val exonSplicingVariants = record.molecular.drivers.variants.filter { variant ->
+        val exonSplicingVariants = molecular.drivers.variants.filter { variant ->
             val isCanonicalSplice =
                 variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion
             val canonicalExonAffected = variant.canonicalImpact.affectedExon

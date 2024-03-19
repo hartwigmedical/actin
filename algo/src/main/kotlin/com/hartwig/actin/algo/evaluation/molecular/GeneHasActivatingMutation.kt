@@ -1,10 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
@@ -12,9 +11,8 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 
 class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
-    EvaluationFunction {
-
-    override fun evaluate(record: PatientRecord): Evaluation {
+    MolecularEvaluationFunction {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val activatingVariants: MutableSet<String> = mutableSetOf()
         val activatingVariantsAssociatedWithResistance: MutableSet<String> = mutableSetOf()
         val activatingVariantsNoHotspotAndNoGainOfFunction: MutableSet<String> = mutableSetOf()
@@ -24,10 +22,10 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         val nonHighDriverSubclonalVariants: MutableSet<String> = mutableSetOf()
         val nonHighDriverVariants: MutableSet<String> = mutableSetOf()
         val otherMissenseOrHotspotVariants: MutableSet<String> = mutableSetOf()
-        val hasHighMutationalLoad = record.molecular.characteristics.hasHighTumorMutationalLoad
-        val evidenceSource = record.molecular.evidenceSource
+        val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
+        val evidenceSource = molecular.evidenceSource
 
-        for (variant in record.molecular.drivers.variants) {
+        for (variant in molecular.drivers.variants) {
             if (variant.gene == gene && (codonsToIgnore == null || codonsToIgnore.none {
                     isCodonMatch(
                         variant.canonicalImpact.affectedCodon,
@@ -127,35 +125,35 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
                 ),
                 EventsWithMessages(
                     activatingSubclonalVariants,
-                "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                        " but have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF),
-                gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                        " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
+                    "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
+                            " but have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF),
+                    gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
+                            " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
                 ),
                 EventsWithMessages(
                     nonHighDriverGainOfFunctionVariants,
-                "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) +
-                        " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource",
-                "$gene potentially activating mutation(s) having gain-of-function protein effect evidence in $evidenceSource but without high driver prediction"
+                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) +
+                            " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource",
+                    "$gene potentially activating mutation(s) having gain-of-function protein effect evidence in $evidenceSource but without high driver prediction"
                 ),
                 EventsWithMessages(
                     nonHighDriverSubclonalVariants,
-                "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                        " have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)} and no high driver likelihood",
-                "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
+                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
+                            " have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)} and no high driver likelihood",
+                    "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
                 ),
                 EventsWithMessages(
                     nonHighDriverVariants,
-                "Gene $gene has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants) +
-                        " but no high driver likelihood",
+                    "Gene $gene has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants) +
+                            " but no high driver likelihood",
                     "$gene potentially activating mutation(s) but no high driver likelihood"
                 ),
                 EventsWithMessages(
                     otherMissenseOrHotspotVariants,
-                "Gene $gene has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants) +
-                        " that are missense or have hotspot status, but are not considered reportable",
+                    "Gene $gene has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants) +
+                            " that are missense or have hotspot status, but are not considered reportable",
                     "$gene potentially activating mutation(s) but mutation(s) not reportable"
-            )
+                )
             )
         )
     }

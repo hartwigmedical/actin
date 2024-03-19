@@ -5,12 +5,13 @@ import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.sort.EligibilityComparator
 
 class EvaluationMapComparator : Comparator<Map<Eligibility, Evaluation>> {
+
     private val eligibilityComparator: Comparator<Eligibility> = EligibilityComparator()
 
     override fun compare(map1: Map<Eligibility, Evaluation>, map2: Map<Eligibility, Evaluation>): Int {
         val keys1 = map1.keys.toList()
         val keys2 = map2.keys.toList()
-        
+
         val sizeCompare = keys1.size - keys2.size
         if (sizeCompare != 0) {
             return sizeCompare

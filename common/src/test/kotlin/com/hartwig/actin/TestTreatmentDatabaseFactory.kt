@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 object TestTreatmentDatabaseFactory {
+
     const val CAPECITABINE_OXALIPLATIN = "CAPECITABINE+OXALIPLATIN"
     const val PEMBROLIZUMAB = "PEMBROLIZUMAB"
     const val RADIOTHERAPY = "RADIOTHERAPY"

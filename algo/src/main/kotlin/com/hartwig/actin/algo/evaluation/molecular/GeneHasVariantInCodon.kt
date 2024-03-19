@@ -1,22 +1,21 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 
-class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>) : EvaluationFunction {
-    
-    override fun evaluate(record: PatientRecord): Evaluation {
+class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>) : MolecularEvaluationFunction {
+
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalUnreportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalCodonMatches: MutableSet<String> = mutableSetOf()
         val reportableOtherVariantMatches: MutableSet<String> = mutableSetOf()
         val reportableOtherCodonMatches: MutableSet<String> = mutableSetOf()
-        for (variant in record.molecular.drivers.variants) {
+        for (variant in molecular.drivers.variants) {
             if (variant.gene == gene) {
                 for (codon in codons) {
                     if (isCodonMatch(variant.canonicalImpact.affectedCodon, codon)) {
@@ -84,7 +83,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                     reportableOtherVariantMatches,
                     "Variant(s) in codon(s) ${concat(reportableOtherCodonMatches)} in $gene detected but in non-canonical transcript",
                     "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene but in non-canonical transcript"
-            )
+                )
             )
         )
     }

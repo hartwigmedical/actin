@@ -18,16 +18,14 @@ class VitalFunctionDescendingDateComparatorTest {
         assertThat(vitalFunctions).containsExactly(vitalFunction1, vitalFunction2, vitalFunction3)
     }
 
-    companion object {
-        private fun withDate(date: LocalDate): VitalFunction {
-            return VitalFunction(
-                date = date.atStartOfDay(),
-                category = VitalFunctionCategory.HEART_RATE,
-                subcategory = "",
-                value = 0.0,
-                unit = "",
-                valid = true
-            )
-        }
+    private fun withDate(date: LocalDate): VitalFunction {
+        return VitalFunction(
+            date = date.atStartOfDay(),
+            category = VitalFunctionCategory.HEART_RATE,
+            subcategory = "",
+            value = 0.0,
+            unit = "",
+            valid = true
+        )
     }
 }

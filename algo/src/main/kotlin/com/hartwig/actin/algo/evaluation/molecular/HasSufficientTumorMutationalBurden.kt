@@ -1,15 +1,14 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
-class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double) : EvaluationFunction {
-    
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorMutationalBurden = record.molecular.characteristics.tumorMutationalBurden
+class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double) : MolecularEvaluationFunction {
+
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
+        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
             ?: return EvaluationFactory.fail("Unknown tumor mutational burden (TMB)", "Unknown TMB")
 
         if (tumorMutationalBurden >= minTumorMutationalBurden) {
@@ -20,8 +19,8 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
             )
         }
         val tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5
-        return if (tumorMutationalBurdenIsAlmostAllowed && record.molecular.hasSufficientQuality
-            && !record.molecular.hasSufficientQualityAndPurity
+        return if (tumorMutationalBurdenIsAlmostAllowed && molecular.hasSufficientQuality
+            && !molecular.hasSufficientQualityAndPurity
         ) {
             EvaluationFactory.warn(
                 "Tumor mutational burden (TMB) of sample $tumorMutationalBurden almost exceeds $minTumorMutationalBurden"

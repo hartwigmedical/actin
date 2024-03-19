@@ -34,6 +34,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 object TestMolecularFactory {
+
     private val TODAY: LocalDate = LocalDate.now()
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
@@ -185,7 +186,7 @@ object TestMolecularFactory {
                                     + "for Participants With Advanced Solid Tumor (acronym)",
                             countries = setOf(Country.BELGIUM, Country.GERMANY),
                             url = "https://clinicaltrials.gov/study/NCT00000002",
-                            nctId = "NCT00000002"
+                            nctId = "NCT00000020"
                         )
                     ),
                     gene = "PTEN",

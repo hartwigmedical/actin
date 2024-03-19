@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.sort.driver
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 
 class DriverLikelihoodComparator : Comparator<DriverLikelihood?> {
+
     override fun compare(driverLikelihood1: DriverLikelihood?, driverLikelihood2: DriverLikelihood?): Int {
         if (driverLikelihood1 == null && driverLikelihood2 == null) {
             return 0

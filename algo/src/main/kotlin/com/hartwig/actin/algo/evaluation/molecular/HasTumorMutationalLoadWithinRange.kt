@@ -1,17 +1,16 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class HasTumorMutationalLoadWithinRange(
     private val minTumorMutationalLoad: Int, private val maxTumorMutationalLoad: Int?
-) : EvaluationFunction {
+) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorMutationalLoad = record.molecular.characteristics.tumorMutationalLoad
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
+        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
             ?: return EvaluationFactory.fail("Unknown tumor mutational load (TML)", "TML unknown")
 
         val meetsMinTumorLoad = tumorMutationalLoad >= minTumorMutationalLoad
@@ -33,8 +32,8 @@ class HasTumorMutationalLoadWithinRange(
             }
         }
         val tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5
-        return if (tumorMutationalLoadIsAlmostAllowed && record.molecular.hasSufficientQuality
-            && !record.molecular.hasSufficientQualityAndPurity
+        return if (tumorMutationalLoadIsAlmostAllowed && molecular.hasSufficientQuality
+            && !molecular.hasSufficientQualityAndPurity
         ) {
             EvaluationFactory.warn(
                 "Tumor mutational load (TML) of sample $tumorMutationalLoad almost exceeds $minTumorMutationalLoad"

@@ -13,7 +13,7 @@ class EhrComplicationExtractor(private val complicationCuration: CurationDatabas
         return ehrPatientRecord.complications.map {
             val curatedComplication = CurationResponse.createFromConfigs(
                 complicationCuration.find(it.name),
-                ehrPatientRecord.patientDetails.hashedIdBase64(),
+                ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.COMPLICATION,
                 it.name,
                 "complication"

@@ -1,31 +1,31 @@
 package com.hartwig.actin.molecular.datamodel.characteristics
 
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 
 class PredictedTumorOriginTest {
+
+    private val epsilon = 0.001
+
     @Test
-    fun shouldIdentifyBestPredictionInUnsortedList() {
+    fun `Should identify best prediction from unsorted list`() {
         val predictedTumorOrigin = withPredictions(0.1, 0.08, 0.4, 0.2)
-        Assert.assertEquals("type 3", predictedTumorOrigin.cancerType())
-        Assert.assertEquals(0.4, predictedTumorOrigin.likelihood(), EPSILON)
+        assertThat(predictedTumorOrigin.cancerType()).isEqualTo("type 3")
+        assertThat(predictedTumorOrigin.likelihood()).isEqualTo(0.4, Offset.offset(epsilon))
     }
 
-    companion object {
-        private const val EPSILON = 0.001
-
-        private fun withPredictions(vararg likelihoods: Double): PredictedTumorOrigin {
-            return PredictedTumorOrigin(
-                predictions = likelihoods.mapIndexed { i, likelihood ->
-                    CupPrediction(
-                        cancerType = String.format("type %s", i + 1),
-                        likelihood = likelihood,
-                        snvPairwiseClassifier = likelihood,
-                        genomicPositionClassifier = likelihood,
-                        featureClassifier = likelihood,
-                    )
-                }
-            )
-        }
+    private fun withPredictions(vararg likelihoods: Double): PredictedTumorOrigin {
+        return PredictedTumorOrigin(
+            predictions = likelihoods.mapIndexed { i, likelihood ->
+                CupPrediction(
+                    cancerType = String.format("type %s", i + 1),
+                    likelihood = likelihood,
+                    snvPairwiseClassifier = likelihood,
+                    genomicPositionClassifier = likelihood,
+                    featureClassifier = likelihood,
+                )
+            }
+        )
     }
 }

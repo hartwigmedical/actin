@@ -28,7 +28,7 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
             ),
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT to hasPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
             EligibilityRule.HAS_HISTORY_OF_MYOCARDIAL_INFARCT_WITHIN_X_MONTHS to hasRecentPriorConditionWithDoidCreator(DoidConstants.MYOCARDIAL_INFARCT_DOID),
-            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredDOIDTermCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_WITH_DOID_TERM_X_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredDoidTermCreator(),
             EligibilityRule.HAS_HISTORY_OF_SPECIFIC_CONDITION_X_BY_NAME_WITHIN_Y_MONTHS to hasRecentPriorConditionWithConfiguredNameCreator(),
             EligibilityRule.HAS_HISTORY_OF_PNEUMONITIS to hasHistoryOfPneumonitisCreator(),
             EligibilityRule.HAS_HISTORY_OF_STROKE to hasHistoryOfStrokeCreator(),
@@ -87,10 +87,6 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return FunctionCreator { HasHadPriorConditionWithDoid(doidModel(), doidToFind) }
     }
 
-    private fun hasPotentialRespiratoryCompromiseCreator(): FunctionCreator {
-        return FunctionCreator { HasPotentialRespiratoryCompromise() }
-    }
-
     private fun hasInheritedPredispositionToBleedingOrThrombosisCreator(): FunctionCreator {
         return FunctionCreator { HasInheritedPredispositionToBleedingOrThrombosis(doidModel()) }
     }
@@ -99,17 +95,21 @@ class OtherConditionRuleMapper(resources: RuleMappingResources) : RuleMapper(res
         return FunctionCreator { function: EligibilityFunction ->
             val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithDoidRecently(doidModel(), doidToFind, minDate)
+            HasHadPriorConditionWithDoidsFromSetRecently(
+                doidModel(), setOf(doidToFind), doidModel().resolveTermForDoid(doidToFind) ?: "DOID $doidToFind", minDate
+            )
         }
     }
 
-    private fun hasRecentPriorConditionWithConfiguredDOIDTermCreator(): FunctionCreator {
+    private fun hasRecentPriorConditionWithConfiguredDoidTermCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneDoidTermOneIntegerInput(function)
             val doidTermToFind = input.doidTerm
             val maxMonthsAgo = input.integer
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong())
-            HasHadPriorConditionWithDoidRecently(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!, minDate)
+            HasHadPriorConditionWithDoidsFromSetRecently(
+                doidModel(), setOf(doidModel().resolveDoidForTerm(doidTermToFind)!!), doidTermToFind, minDate
+            )
         }
     }
 

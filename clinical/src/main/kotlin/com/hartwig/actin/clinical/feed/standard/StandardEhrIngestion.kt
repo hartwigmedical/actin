@@ -88,7 +88,7 @@ class StandardEhrIngestion(
             Pair(
                 patientEvaluation,
                 ClinicalRecord(
-                    patientId = ehrPatientRecord.patientDetails.hashedIdBase64(),
+                    patientId = ehrPatientRecord.patientDetails.hashedId,
                     patient = patientDetails.extracted,
                     tumor = tumorDetails.extracted,
                     clinicalStatus = clinicalStatus.extracted,

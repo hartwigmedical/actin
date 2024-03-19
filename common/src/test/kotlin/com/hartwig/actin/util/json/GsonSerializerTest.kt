@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class GsonSerializerTest {
+
     private val gson = GsonSerializer.create()
 
     @Test

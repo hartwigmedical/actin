@@ -1,11 +1,16 @@
 package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.TestTreatmentDatabaseFactory
+import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
+import com.hartwig.actin.trial.datamodel.ATC_CODE_1
+import com.hartwig.actin.trial.datamodel.ATC_CODE_2
+import com.hartwig.actin.trial.datamodel.CATEGORY_1
+import com.hartwig.actin.trial.datamodel.CATEGORY_2
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestFunctionInputResolverFactory
@@ -28,6 +33,7 @@ import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
+import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
@@ -37,10 +43,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
-
 class FunctionInputResolverTest {
+
+    private val epsilon = 1.0E-10
     private val resolver = createTestResolver()
-    
+
     @Test
     fun `Should determine input validity for every rule`() {
         for (rule in EligibilityRule.values()) {
@@ -124,7 +131,7 @@ class FunctionInputResolverTest {
         val valid = create(rule, listOf("3.1"))
 
         assertThat(resolver.hasValidInputs(valid)!!).isTrue
-        assertThat(resolver.createOneDoubleInput(valid)).isEqualTo(3.1, Offset.offset(EPSILON))
+        assertThat(resolver.createOneDoubleInput(valid)).isEqualTo(3.1, Offset.offset(epsilon))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("3.1", "3.2")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a double")))!!).isFalse
@@ -425,7 +432,7 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun shouldResolveFunctionsWithOneHaplotypeInput() {
+    fun `Should resolve functions with one haplotype input`() {
         val resolver = createTestResolver()
         val rule = firstOfType(FunctionInput.ONE_HAPLOTYPE)
         val haplotype = "*1_HOM"
@@ -438,7 +445,7 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf("not an haplotype")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("*1_HOM", "*1_HOM")))).isFalse
     }
-    
+
     @Test
     fun `Should resolve functions with one gene input`() {
         val resolver = TestFunctionInputResolverFactory.createResolverWithOneValidGene("gene")
@@ -576,7 +583,7 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun shouldResolveFunctionsWithManyIntentsInput() {
+    fun `Should resolve functions with many intents input`() {
         val resolver = createTestResolver()
 
         val rule = firstOfType(FunctionInput.MANY_INTENTS)
@@ -592,9 +599,8 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf(Intent.ADJUVANT, "test")))).isFalse
     }
 
-
     @Test
-    fun shouldResolveFunctionsWithManyIntentsOneIntegerInput() {
+    fun `Should resolve functions with many intents one integer input`() {
         val resolver = createTestResolver()
 
         val rule = firstOfType(FunctionInput.MANY_INTENTS_ONE_INTEGER)
@@ -602,29 +608,101 @@ class FunctionInputResolverTest {
         val valid = create(rule, listOf(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display(), "1"))
         assertThat(resolver.hasValidInputs(valid)).isTrue
 
-        val inputs: ManyIntentsOneInteger = resolver.createManyIntentsOneIntegerInput(valid)
-        assertThat(inputs)
-            .isEqualTo(ManyIntentsOneInteger(intents = setOf(Intent.ADJUVANT, Intent.NEOADJUVANT), integer = 1))
+        val inputs = resolver.createManyIntentsOneIntegerInput(valid)
+        assertThat(inputs).isEqualTo(ManyIntentsOneInteger(intents = setOf(Intent.ADJUVANT, Intent.NEOADJUVANT), integer = 1))
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf(Intent.ADJUVANT.display(), "test", "1")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1", Intent.ADJUVANT.display())))).isFalse
     }
 
-    companion object {
-        private const val EPSILON = 1.0E-10
+    @Test
+    fun `Should resolve functions with one medication category input`() {
+        val resolver = createTestResolver()
 
-        private fun firstOfType(input: FunctionInput): EligibilityRule {
-            return FunctionInputMapping.RULE_INPUT_MAP.entries.find { it.value == input }?.key
-                ?: throw IllegalStateException("Could not find single rule requiring input: $input")
-        }
+        val rule = firstOfType(FunctionInput.ONE_MEDICATION_CATEGORY)
 
-        private fun createValidTestFunction(): EligibilityFunction {
-            return create(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, listOf("18"))
-        }
+        val valid = create(rule, listOf(ATC_CODE_1))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
 
-        private fun create(rule: EligibilityRule, parameters: List<Any>): EligibilityFunction {
-            return EligibilityFunction(rule = rule, parameters = parameters)
-        }
+        assertThat(resolver.createOneMedicationCategoryInput(valid))
+            .isEqualTo(OneMedicationCategory(ATC_CODE_1, setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1))))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1, "1")))).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one medication category one integer input`() {
+        val resolver = createTestResolver()
+
+        val rule = firstOfType(FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER)
+
+        val valid = create(rule, listOf(ATC_CODE_1, "1"))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+
+        assertThat(resolver.createOneMedicationCategoryOneIntegerInput(valid))
+            .isEqualTo(Pair(OneMedicationCategory(ATC_CODE_1, setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1))), 1))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1)))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1, "1", "2")))).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many medication categories one integer input`() {
+        val resolver = createTestResolver()
+
+        val rule = firstOfType(FunctionInput.MANY_MEDICATION_CATEGORIES_ONE_INTEGER)
+
+        val manyCategoriesString = "$ATC_CODE_1;$ATC_CODE_2"
+        val valid = create(rule, listOf(manyCategoriesString, "1"))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+        assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1, "1")))).isTrue
+
+        val expectedCategoryMap = mapOf(
+            ATC_CODE_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
+            ATC_CODE_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
+        )
+        assertThat(resolver.createManyMedicationCategoriesOneIntegerInput(valid)).isEqualTo(Pair(expectedCategoryMap, 1))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(manyCategoriesString)))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(manyCategoriesString, "1", "2")))).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with many medication categories two integers input`() {
+        val resolver = createTestResolver()
+
+        val rule = firstOfType(FunctionInput.MANY_MEDICATION_CATEGORIES_TWO_INTEGERS)
+
+        val manyCategoriesString = "$ATC_CODE_1;$ATC_CODE_2"
+        val valid = create(rule, listOf(manyCategoriesString, "1", "2"))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+        assertThat(resolver.hasValidInputs(create(rule, listOf(ATC_CODE_1, "1", "2")))).isTrue
+
+        val expectedCategoryMap = mapOf(
+            ATC_CODE_1 to setOf(AtcLevel(name = CATEGORY_1, code = ATC_CODE_1)),
+            ATC_CODE_2 to setOf(AtcLevel(name = CATEGORY_2, code = ATC_CODE_2))
+        )
+        assertThat(resolver.createManyMedicationCategoriesTwoIntegersInput(valid)).isEqualTo(Triple(expectedCategoryMap, 1, 2))
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(manyCategoriesString)))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(manyCategoriesString, "1")))).isFalse
+    }
+
+    private fun firstOfType(input: FunctionInput): EligibilityRule {
+        return EligibilityRule.values().find { it.input == input }
+            ?: throw IllegalStateException("Could not find single rule requiring input: $input")
+    }
+
+    private fun createValidTestFunction(): EligibilityFunction {
+        return create(EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, listOf("18"))
+    }
+
+    private fun create(rule: EligibilityRule, parameters: List<Any>): EligibilityFunction {
+        return EligibilityFunction(rule = rule, parameters = parameters)
     }
 }

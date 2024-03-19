@@ -7,6 +7,7 @@ import java.nio.file.Files
 import java.util.Locale
 
 object ApplicationConfig {
+
     val LOCALE: Locale = Locale.ENGLISH
 
     fun nonOptionalDir(cmd: CommandLine, param: String): String {
@@ -28,6 +29,14 @@ object ApplicationConfig {
     fun nonOptionalFile(cmd: CommandLine, param: String): String {
         val value: String = nonOptionalValue(cmd, param)
         if (!pathExists(value)) {
+            throw ParseException("Parameter '$param' must be an existing file: $value")
+        }
+        return value
+    }
+
+    fun optionalFile(cmd: CommandLine, param: String): String? {
+        val value: String? = optionalValue(cmd, param)
+        if (value != null && !pathExists(value)) {
             throw ParseException("Parameter '$param' must be an existing file: $value")
         }
         return value

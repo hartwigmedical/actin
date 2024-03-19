@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
@@ -20,6 +21,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
+import java.time.LocalDate
 
 class SummaryChapter(private val report: Report) : ReportChapter {
 
@@ -73,14 +75,17 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-        val aggregatedEvidence = AggregatedEvidenceFactory.create(report.molecular)
-        val externalEligibleTrials = aggregatedEvidence.externalEligibleTrialsPerEvent
+        val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
+            AggregatedEvidenceFactory.create(report.molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
+        )
         val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
         val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
 
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
-            MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth),
+            if (report.molecular.date != null && report.molecular.date!! > LocalDate.now().minusDays(14)) {
+                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
+            } else null,
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),

@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.datamodel
 
 object TestTrialFactory {
+
     private const val TEST_TRIAL = "test trial"
 
     fun createMinimalTestTrial(): Trial {
@@ -9,7 +10,8 @@ object TestTrialFactory {
                 trialId = TEST_TRIAL,
                 open = true,
                 acronym = "",
-                title = ""
+                title = "",
+                nctId = null
             ),
             cohorts = emptyList(),
             generalEligibility = emptyList()

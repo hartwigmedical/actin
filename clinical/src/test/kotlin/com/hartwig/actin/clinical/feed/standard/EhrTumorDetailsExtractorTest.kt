@@ -95,7 +95,7 @@ class EhrTumorDetailsExtractorTest {
         )
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
-                EHR_PATIENT_RECORD.patientDetails.hashedIdBase64(),
+                EHR_PATIENT_RECORD.patientDetails.hashedId,
                 CurationCategory.PRIMARY_TUMOR,
                 "tumorLocation | tumorType",
                 "Could not find primary tumor config for input 'tumorLocation | tumorType'",
@@ -139,7 +139,7 @@ class EhrTumorDetailsExtractorTest {
         )
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
-                EHR_PATIENT_RECORD.patientDetails.hashedIdBase64(),
+                EHR_PATIENT_RECORD.patientDetails.hashedId,
                 CurationCategory.LESION_LOCATION,
                 CONCLUSION_3,
                 "Could not find lesion config for input 'conclusion 3'",

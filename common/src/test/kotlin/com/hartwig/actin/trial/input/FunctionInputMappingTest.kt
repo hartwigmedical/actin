@@ -6,11 +6,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class FunctionInputMappingTest {
+
     @Test
-    fun everyRuleHasInputsConfigured() {
+    fun `Should have configured every rule in terms of having function input`() {
         for (rule in EligibilityRule.values()) {
             if (!isComposite(rule)) {
-                assertThat(FunctionInputMapping.RULE_INPUT_MAP.containsKey(rule)).isTrue
+                assertThat(rule.input).isNotNull
             }
         }
     }

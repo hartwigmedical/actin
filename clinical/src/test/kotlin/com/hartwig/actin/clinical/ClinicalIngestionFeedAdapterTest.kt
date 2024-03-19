@@ -18,8 +18,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
 
+private const val PATIENT = "ACTN01029999"
 val EXPECTED_CLINICAL_RECORD: String =
-    "${Resources.getResource("clinical_record").path}/ACTN01029999.clinical.json"
+    "${Resources.getResource("clinical_record").path}/$PATIENT.clinical.json"
 
 class ClinicalIngestionFeedAdapterTest {
 
@@ -62,14 +63,14 @@ class ClinicalIngestionFeedAdapterTest {
         val patientResults = ingestionResult.patientResults
         assertThat(patientResults[0].status).isEqualTo(PatientIngestionStatus.PASS)
         assertThat(patientResults).hasSize(1)
-        assertThat(patientResults[0].patientId).isEqualTo("ACTN01029999")
+        assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
         assertThat(patientResults[0].curationResults).isEmpty()
         assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
         assertThat(patientResults[0].questionnaireCurationErrors)
-            .containsExactly(QuestionnaireCurationError("ACTN-01-02-9999", "Unrecognized questionnaire option: 'Probably'"))
+            .containsExactly(QuestionnaireCurationError(PATIENT, "Unrecognized questionnaire option: 'Probably'"))
         assertThat(patientResults[0].feedValidationWarnings).containsExactly(
             FeedValidationWarning(
-                "ACTN-01-02-9999",
+                PATIENT,
                 "Empty vital function value"
             )
         )
