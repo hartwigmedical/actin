@@ -106,7 +106,10 @@ class CTCConfigInterpreter(private val ctcDatabase: CTCDatabase) : ConfigInterpr
         if (unusedMecStudiesNotInCTC.isNotEmpty()) {
             unusedMecStudiesNotInCTC.map {
                 ctcConfigValidationErrors.add(
-                    CTCConfigValidationError(unusedMecStudiesNotInCTC.joinToString { ", " },"Trial ID that is configured to be ignored is not actually present in trial database")
+                    CTCConfigValidationError(
+                        unusedMecStudiesNotInCTC.joinToString { ", " },
+                        "Trial ID that is configured to be ignored is not actually present in trial database"
+                    )
                 )
             }
         }
