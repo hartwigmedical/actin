@@ -11,7 +11,17 @@ import org.junit.Test
 class HasTumorStageTest {
 
     @Test
-    fun shouldEvaluateNormallyWhenTumorStageExists() {
+    fun `Should throw an exception when the set of stages to match is empty`(){
+        val patientRecord = TumorTestFactory.withTumorStage(null)
+        val tumorDetails = patientRecord.clinical.tumor
+        val derivationFunction = mockk<TumorStageDerivationFunction>()
+        every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IIIB)
+        Assertions.assertThatIllegalArgumentException().isThrownBy { HasTumorStage(derivationFunction, emptySet()).evaluate(patientRecord) }
+            .withMessage("No stages to match configured")
+    }
+
+    @Test
+    fun `Should evaluate normally when tumor stage exists`() {
         val derivationFunction = mockk<TumorStageDerivationFunction>()
         every { derivationFunction.apply(any()) } returns null
         val victim = tumorStageFunction(derivationFunction)
@@ -22,7 +32,7 @@ class HasTumorStageTest {
     }
 
     @Test
-    fun shouldFollowNonDerivedEvaluationWhenSingleDerivedTumor() {
+    fun `Should follow non-derived evaluation when single derived tumor`() {
         assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.III)
         assertDerivedEvaluation(EvaluationResult.PASS, TumorStage.IIIB)
         assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.IV)
@@ -63,7 +73,7 @@ class HasTumorStageTest {
     }
 
     @Test
-    fun shouldEvaluateFailWhenMultipleDerivedTumorStagesWhereAllFail() {
+    fun `Should evaluate fail when multiple derived tumor stages where all fail`() {
         assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.I, TumorStage.II)
     }
 

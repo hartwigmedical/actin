@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial.input
 
-import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -130,10 +129,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
 
             FunctionInput.ONE_INTEGER_MANY_STRINGS -> {
                 listOf("1", "string1;string2")
-            }
-
-            FunctionInput.ONE_TUMOR_STAGE -> {
-                listOf(TumorStage.I.display())
             }
 
             FunctionInput.MANY_TUMOR_STAGES -> {

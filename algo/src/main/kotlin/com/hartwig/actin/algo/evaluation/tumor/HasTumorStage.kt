@@ -8,12 +8,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
+import java.lang.IllegalArgumentException
 
 class HasTumorStage internal constructor(
     private val tumorStageDerivationFunction: TumorStageDerivationFunction, private val stagesToMatch: Set<TumorStage>
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        if (stagesToMatch.isEmpty()) throw IllegalArgumentException("No stages to match configured")
         val stage = record.clinical.tumor.stage
         if (stage == null) {
             val derivedStages = tumorStageDerivationFunction.apply(record.clinical.tumor)?.toSet()
@@ -40,7 +42,7 @@ class HasTumorStage internal constructor(
     }
 
     private fun evaluateWithStage(stage: TumorStage): Evaluation {
-        val stageString = stagesToMatch.map { it.display() }.joinToString(" or ")
+        val stageString = stagesToMatch.joinToString(" or ") { it.display() }
         return if (stage in stagesToMatch || stage.category in stagesToMatch) {
             pass("Patient tumor stage is requested stage $stageString", "Adequate tumor stage")
         } else {
