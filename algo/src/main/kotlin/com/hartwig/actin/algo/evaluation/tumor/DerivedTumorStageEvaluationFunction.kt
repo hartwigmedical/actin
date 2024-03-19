@@ -16,9 +16,9 @@ internal class DerivedTumorStageEvaluationFunction(
             return originalFunction.evaluate(record)
         }
         val derivedResults = tumorStageDerivationFunction.apply(record.tumor)
-            .associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
+            ?.associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
 
-        if (derivedResults.isEmpty()) {
+        if (derivedResults.isNullOrEmpty()) {
             return originalFunction.evaluate(record)
         }
         if (derivedResults.size == 1) {
