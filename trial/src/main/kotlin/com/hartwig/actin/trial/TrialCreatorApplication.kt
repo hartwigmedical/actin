@@ -87,7 +87,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
 
     private fun printAllValidationErrors(result: TrialIngestionResult) {
         if (result.trialStatusDatabaseValidation.hasErrors()) {
-            LOGGER.warn("There were validation errors in the CTC database configuration")
+            LOGGER.warn("There were validation errors in the trial status database configuration")
             printValidationErrors(result.trialStatusDatabaseValidation.trialStatusDatabaseValidationErrors)
             printValidationErrors(result.trialStatusDatabaseValidation.trialDefinitionValidationErrors)
         }
