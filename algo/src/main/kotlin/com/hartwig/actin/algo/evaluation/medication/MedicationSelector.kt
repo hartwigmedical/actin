@@ -83,6 +83,6 @@ class MedicationSelector(private val interpreter: MedicationStatusInterpreter) {
     }
 
     companion object {
-        val SYSTEMIC_ADMINISTRATION_ROUTE_SET = setOf("oraal", "parenteraal", "subcutaan", "intramusculair")
+        val SYSTEMIC_ADMINISTRATION_ROUTE_SET = setOf("oral", "parenteral", "subcutaneous", "intramuscular")
     }
 }

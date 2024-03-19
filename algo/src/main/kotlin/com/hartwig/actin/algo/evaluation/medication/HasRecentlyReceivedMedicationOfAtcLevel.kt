@@ -25,7 +25,7 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
         }
 
         val medications = selector.activeOrRecentlyStopped(record.clinical.medications, minStopDate)
-            .filter { if (onlyCheckSystemic) selector.isSystemic(it) else true }
+            .filter { !onlyCheckSystemic || selector.isSystemic(it) }
             .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
 
         val foundMedicationNames = medications.map { it.name }.filter { it.isNotEmpty() }

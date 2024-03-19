@@ -21,9 +21,9 @@ class CurrentlyGetsMedicationOfAtcLevel(
         }
 
         val activeMedicationsWithAtcLevel =
-            filteredSystemicMedicationNames(medicationsWithAtcLevel, if (onlyCheckSystemic) selector::isSystemicAndActive else selector::isActive)
+            filteredMedicationNames(medicationsWithAtcLevel, if (onlyCheckSystemic) selector::isSystemicAndActive else selector::isActive)
         val plannedMedicationsWithAtcLevel =
-            filteredSystemicMedicationNames(medicationsWithAtcLevel, if (onlyCheckSystemic) selector::isSystemicAndPlanned else selector::isPlanned)
+            filteredMedicationNames(medicationsWithAtcLevel, if (onlyCheckSystemic) selector::isSystemicAndPlanned else selector::isPlanned)
 
         return when {
             activeMedicationsWithAtcLevel.isNotEmpty() -> {
@@ -51,7 +51,7 @@ class CurrentlyGetsMedicationOfAtcLevel(
         }
     }
 
-    private fun filteredSystemicMedicationNames(
+    private fun filteredMedicationNames(
         medications: List<Medication>, filter: (Medication) -> Boolean
     ) = medications.filter(filter::invoke).map(Medication::name)
 }

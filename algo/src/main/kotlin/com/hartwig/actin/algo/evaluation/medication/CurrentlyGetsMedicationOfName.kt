@@ -11,10 +11,9 @@ class CurrentlyGetsMedicationOfName(
 ): EvaluationFunction {
         
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasActiveMedicationWithName =
-            selector.activeWithAnyTermInName(record.clinical.medications, termsToFind).any { !onlyCheckSystemic || selector.isSystemic(it) }
-        val hasPlannedMedicationWithName = selector.plannedWithAnyTermInName(record.clinical.medications, termsToFind)
-            .any { !onlyCheckSystemic || selector.isSystemic(it) }
+        val systemicCriteria = if (onlyCheckSystemic) selector::isSystemic else { _ -> true }
+        val hasActiveMedicationWithName = selector.activeWithAnyTermInName(record.clinical.medications, termsToFind).any(systemicCriteria)
+        val hasPlannedMedicationWithName = selector.plannedWithAnyTermInName(record.clinical.medications, termsToFind).any(systemicCriteria)
 
         return when {
             hasActiveMedicationWithName -> {

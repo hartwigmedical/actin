@@ -157,4 +157,28 @@ class MedicationSelectorTest {
         assertThat(filtered).hasSize(1)
         assertThat(filtered[0].name).isEqualTo("systemic")
     }
+
+    @Test
+    fun `Should correctly check systemic plus active status`() {
+        val medications = listOf(
+            MedicationTestFactory.medication(
+                name = "systemic and active", administrationRoute = SYSTEMIC_ADMINISTRATION_ROUTE_SET.iterator().next()
+            ),
+        )
+        val filtered = medications.filter { MedicationTestFactory.alwaysActive().isSystemicAndActive(it) }
+        assertThat(filtered).hasSize(1)
+        assertThat(filtered[0].name).isEqualTo("systemic and active")
+    }
+
+    @Test
+    fun `Should correctly check systemic plus planned status`() {
+        val medications = listOf(
+            MedicationTestFactory.medication(
+                name = "systemic and planned", administrationRoute = SYSTEMIC_ADMINISTRATION_ROUTE_SET.iterator().next()
+            ),
+        )
+        val filtered = medications.filter { MedicationTestFactory.alwaysPlanned().isSystemicAndPlanned(it) }
+        assertThat(filtered).hasSize(1)
+        assertThat(filtered[0].name).isEqualTo("systemic and planned")
+    }
 }

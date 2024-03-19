@@ -15,12 +15,12 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION to getsActiveMedicationWithConfiguredNameCreator(),
-            EligibilityRule.CURRENTLY_GETS_SYSTEMIC_NAME_X_MEDICATION to getsActiveSystemicMedicationWithConfiguredNameCreator(),
-            EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithCategoryCreator(),
-            EligibilityRule.CURRENTLY_GETS_SYSTEMIC_CATEGORY_X_MEDICATION to getsActiveSystemicMedicationWithCategoryCreator(),
-            EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfAtcLevelCreator(),
-            EligibilityRule.HAS_RECEIVED_SYSTEMIC_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedSystemicMedicationOfAtcLevelCreator(),
+            EligibilityRule.CURRENTLY_GETS_NAME_X_MEDICATION to getsActiveMedicationWithConfiguredNameCreator(false),
+            EligibilityRule.CURRENTLY_GETS_SYSTEMIC_NAME_X_MEDICATION to getsActiveMedicationWithConfiguredNameCreator(true),
+            EligibilityRule.CURRENTLY_GETS_CATEGORY_X_MEDICATION to getsActiveMedicationWithCategoryCreator(false),
+            EligibilityRule.CURRENTLY_GETS_SYSTEMIC_CATEGORY_X_MEDICATION to getsActiveMedicationWithCategoryCreator(true),
+            EligibilityRule.HAS_RECEIVED_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfAtcLevelCreator(false),
+            EligibilityRule.HAS_RECEIVED_SYSTEMIC_CATEGORY_X_MEDICATION_WITHIN_Y_WEEKS to hasRecentlyReceivedMedicationOfAtcLevelCreator(true),
             EligibilityRule.CURRENTLY_GETS_POTENTIALLY_QT_PROLONGATING_MEDICATION to getsQTProlongatingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_ANY_CYP to getsAnyCYPInducingMedicationCreator(),
             EligibilityRule.CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X to getsCYPXInducingMedicationCreator(),
@@ -38,50 +38,28 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         )
     }
 
-    private fun getsActiveMedicationWithConfiguredNameCreator(): FunctionCreator {
+    private fun getsActiveMedicationWithConfiguredNameCreator(onlyCheckSystemic: Boolean): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsMedicationOfName(selector, setOf(termToFind), onlyCheckSystemic = false)
+            CurrentlyGetsMedicationOfName(selector, setOf(termToFind), onlyCheckSystemic = onlyCheckSystemic)
         }
     }
 
-    private fun getsActiveSystemicMedicationWithConfiguredNameCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsMedicationOfName(selector, setOf(termToFind), onlyCheckSystemic = true)
-        }
-    }
-
-    private fun getsActiveMedicationWithCategoryCreator(): FunctionCreator {
+    private fun getsActiveMedicationWithCategoryCreator(onlyCheckSystemic: Boolean): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val categoryInput = functionInputResolver().createOneMedicationCategoryInput(function)
-            CurrentlyGetsMedicationOfAtcLevel(selector, categoryInput.categoryName, categoryInput.atcLevels, onlyCheckSystemic = false)
-        }
-    }
-
-    private fun getsActiveSystemicMedicationWithCategoryCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
-            val categoryInput = functionInputResolver().createOneMedicationCategoryInput(function)
-            CurrentlyGetsMedicationOfAtcLevel(selector, categoryInput.categoryName, categoryInput.atcLevels, onlyCheckSystemic = true)
-        }
-    }
-
-    private fun hasRecentlyReceivedMedicationOfAtcLevelCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
-            val (categoryInput, integerInput) = functionInputResolver().createOneMedicationCategoryOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(integerInput.toLong())
-            HasRecentlyReceivedMedicationOfAtcLevel(
-                selector, categoryInput.categoryName, categoryInput.atcLevels, maxStopDate, onlyCheckSystemic = false
+            CurrentlyGetsMedicationOfAtcLevel(
+                selector, categoryInput.categoryName, categoryInput.atcLevels, onlyCheckSystemic = onlyCheckSystemic
             )
         }
     }
 
-    private fun hasRecentlyReceivedSystemicMedicationOfAtcLevelCreator(): FunctionCreator {
+    private fun hasRecentlyReceivedMedicationOfAtcLevelCreator(onlyCheckSystemic: Boolean): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val (categoryInput, integerInput) = functionInputResolver().createOneMedicationCategoryOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(integerInput.toLong())
             HasRecentlyReceivedMedicationOfAtcLevel(
-                selector, categoryInput.categoryName, categoryInput.atcLevels, maxStopDate, onlyCheckSystemic = true
+                selector, categoryInput.categoryName, categoryInput.atcLevels, maxStopDate, onlyCheckSystemic = onlyCheckSystemic
             )
         }
     }
