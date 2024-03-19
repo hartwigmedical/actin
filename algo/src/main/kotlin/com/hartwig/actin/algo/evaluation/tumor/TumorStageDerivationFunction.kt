@@ -75,10 +75,10 @@ internal class TumorStageDerivationFunction private constructor(private val deri
         }
 
         private fun evaluateMetastases(hasLesions: Boolean?, lesionsCount: Int?, tumorDoids: Set<String>?, doidToMatch: String, doidModel: DoidModel): Boolean {
-            return if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.LUNG_CANCER_DOID) || doidToMatch != DoidConstants.LUNG_CANCER_DOID) {
+            return if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.LUNG_CANCER_DOID) || doidToMatch != DoidConstants.LUNG_CANCER_DOID || lesionsCount == null) {
                 (hasLesions ?: false) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)
             }
-            else (lesionsCount ?: 0) >= 2
+            else lesionsCount >= 2
         }
     }
 }
