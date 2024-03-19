@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.tables.treatment
 
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.treatment.ActinTrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
@@ -31,21 +31,7 @@ class EligibleActinTrialsGenerator private constructor(
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
 
-        ActinTrialGeneratorFunctions.sortedCohortGroups(cohorts).forEach { cohortList: List<EvaluatedCohort> ->
-            val trialSubTable = Tables.createFixedWidthCols(
-                cohortColWidth, molecularEventColWidth, checksColWidth
-            )
-            cohortList.forEach { cohort: EvaluatedCohort ->
-                val cohortText = ActinTrialGeneratorFunctions.createCohortString(cohort)
-                val cellContents = listOf(cohortText, concat(cohort.molecularEvents), concat(cohort.warnings))
-                ActinTrialGeneratorFunctions.addContentListToTable(
-                    cellContents,
-                    !cohort.isOpen || !cohort.hasSlotsAvailable,
-                    trialSubTable
-                )
-            }
-            ActinTrialGeneratorFunctions.insertTrialRow(cohortList, table, trialSubTable)
-        }
+        addTrialsToTable(cohorts, table, cohortColWidth, molecularEventColWidth, checksColWidth, EvaluatedCohort::warnings)
         return makeWrapping(table)
     }
 
@@ -101,10 +87,6 @@ class EligibleActinTrialsGenerator private constructor(
                 molecularColWidth,
                 checksColWidth
             )
-        }
-
-        private fun concat(strings: Set<String>): String {
-            return strings.sorted().joinToString(Formats.COMMA_SEPARATOR).ifEmpty { Formats.VALUE_NONE }
         }
     }
 }
