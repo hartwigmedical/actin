@@ -7,8 +7,8 @@ import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import org.apache.logging.log4j.LogManager
 import java.io.File
+import org.apache.logging.log4j.LogManager
 
 object TestReportWriterApplication {
 
@@ -29,7 +29,7 @@ object TestReportWriterApplication {
         LOGGER.info("Printing clinical record")
         ClinicalPrinter.printRecord(report.clinical)
         LOGGER.info("Printing molecular record")
-        MolecularPrinter.printRecord(report.molecular)
+        report.molecular?.let { MolecularPrinter.printRecord(report.molecular!!) }
 
         val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
             LOGGER.info(

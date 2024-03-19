@@ -11,7 +11,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class EligibleApprovedTreatmentGenerator(
-    private val clinical: ClinicalRecord, private val molecular: MolecularRecord,
+    private val clinical: ClinicalRecord, private val molecular: MolecularRecord?,
     private val width: Float
 ) : TableGenerator {
 
@@ -23,9 +23,10 @@ class EligibleApprovedTreatmentGenerator(
         val table = Tables.createSingleColWithWidth(width)
         table.addHeaderCell(Cells.createHeader("Treatment"))
         val isCUP = TumorDetailsInterpreter.isCUP(clinical.tumor)
-        val hasConfidentPrediction = TumorOriginInterpreter.hasConfidentPrediction(molecular.characteristics.predictedTumorOrigin)
+        val hasConfidentPrediction =
+            molecular?.let { TumorOriginInterpreter.hasConfidentPrediction(molecular.characteristics.predictedTumorOrigin) } ?: false
         if (isCUP && hasConfidentPrediction) {
-            table.addCell(Cells.createContent("Potential SOC for " + molecular.characteristics.predictedTumorOrigin!!.cancerType()))
+            table.addCell(Cells.createContent("Potential SOC for " + molecular!!.characteristics.predictedTumorOrigin!!.cancerType()))
         } else {
             table.addCell(Cells.createContent("Not yet determined"))
         }
