@@ -14,7 +14,7 @@ class TrialStatusInterpreterTest {
             TrialStatusInterpreter.isOpen(
                 listOf(),
                 TrialDefinitionConfig("trial-1", true, "", "", "")
-            ) { it.studyMETC }
+            ) { it.metcStudyID }
         ).isEqualTo(null to emptyList<TrialDefinitionValidationError>())
     }
 
@@ -25,8 +25,8 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(openMETC1, closedMETC2),
-                TrialDefinitionConfig(openMETC1.studyMETC, true, "", "", "")
-            ) { it.studyMETC }.first
+                TrialDefinitionConfig(openMETC1.metcStudyID, true, "", "", "")
+            ) { it.metcStudyID }.first
         ).isTrue
     }
 
@@ -34,11 +34,11 @@ class TrialStatusInterpreterTest {
     fun `Should resolve to closed for trials with inconsistent entries and return validation error`() {
         val openMETC1 = createEntry(STUDY_METC_1, TrialStatus.OPEN)
         val closedMETC1 = createEntry(STUDY_METC_1, TrialStatus.CLOSED)
-        val config = TrialDefinitionConfig(closedMETC1.studyMETC, false, ",", "", "")
+        val config = TrialDefinitionConfig(closedMETC1.metcStudyID, false, ",", "", "")
         val (isOpen, validation) = TrialStatusInterpreter.isOpen(
             listOf(openMETC1, closedMETC1),
             config
-        ) { it.studyMETC }
+        ) { it.metcStudyID }
         assertThat(isOpen).isFalse
         assertThat(validation).containsExactly(
             TrialDefinitionValidationError(
@@ -55,8 +55,8 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(closedMETC1, openMETC2),
-                TrialDefinitionConfig(closedMETC1.studyMETC, false, "", "", "")
-            ) { it.studyMETC }.first
+                TrialDefinitionConfig(closedMETC1.metcStudyID, false, "", "", "")
+            ) { it.metcStudyID }.first
         ).isFalse
     }
 
@@ -65,7 +65,7 @@ class TrialStatusInterpreterTest {
         private const val STUDY_METC_2 = "MEC 2"
 
         private fun createEntry(studyMETC: String, studyStatus: TrialStatus): TrialStatusEntry {
-            return TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(studyMETC = studyMETC, studyStatus = studyStatus)
+            return TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(metcStudyID = studyMETC, studyStatus = studyStatus)
         }
     }
 }

@@ -37,7 +37,7 @@ class TrialStatusDatabaseEvaluator(private val trialStatusDatabase: TrialStatusD
     }
 
     internal fun extractUnusedStudyMETCsToIgnore(): List<String> {
-        val trialStatusStudyMETCs = trialStatusDatabase.entries.map { it.studyMETC }.toSet()
+        val trialStatusStudyMETCs = trialStatusDatabase.entries.map { it.metcStudyID }.toSet()
 
         return trialStatusDatabase.studyMETCsToIgnore.filter { !trialStatusStudyMETCs.contains(it) }
     }

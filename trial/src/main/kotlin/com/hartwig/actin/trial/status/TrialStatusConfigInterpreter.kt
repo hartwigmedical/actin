@@ -123,7 +123,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     internal fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {
         val configuredTrialIds = trialConfigs.map { it.trialId }
 
-        return trialStatusDatabase.entries.filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
+        return trialStatusDatabase.entries.filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.metcStudyID) }
             .filter { !configuredTrialIds.contains(constructTrialId(it)) }
             .toSet()
     }
@@ -154,7 +154,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
 
         return trialStatusDatabase.entries.asSequence()
             .filter { configuredTrialIds.contains(constructTrialId(it)) }
-            .filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.studyMETC) }
+            .filter { !trialStatusDatabase.studyMETCsToIgnore.contains(it.metcStudyID) }
             .filter { it.cohortId != null }
             .filter { !trialStatusDatabase.unmappedCohortIds.contains(it.cohortId) }
             .filter { !configuredCohortIds.contains(it.cohortId) }
@@ -177,7 +177,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     }
 
     private fun constructTrialId(entry: TrialStatusEntry): String {
-        return trialPrefix + " " + entry.studyMETC
+        return trialPrefix + " " + entry.metcStudyID
     }
 
     companion object {

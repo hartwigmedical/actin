@@ -15,14 +15,14 @@ class NKITrialStatusEntryReaderTest {
         assertThat(status).containsExactly(
             TrialStatusEntry(
                 studyId = 1,
-                studyMETC = "MEC-001",
+                metcStudyID = "MEC-001",
                 studyAcronym = "OPN-001",
                 studyTitle = "Open trial",
                 studyStatus = TrialStatus.OPEN
             ),
             TrialStatusEntry(
                 studyId = 2,
-                studyMETC = "MEC-002",
+                metcStudyID = "MEC-002",
                 studyAcronym = "CLS-001",
                 studyTitle = "Closed trial",
                 studyStatus = TrialStatus.CLOSED

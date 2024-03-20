@@ -2,7 +2,7 @@ package com.hartwig.actin.trial.status
 
 data class TrialStatusEntry(
     val studyId: Int,
-    val studyMETC: String,
+    val metcStudyID: String,
     val studyAcronym: String?,
     val studyTitle: String?,
     val studyStatus: TrialStatus,

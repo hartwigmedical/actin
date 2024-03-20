@@ -28,7 +28,7 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
             .map {
                 TrialStatusEntry(
                     studyId = it.studyId.toInt(),
-                    studyMETC = it.studyMetc!!,
+                    metcStudyID = it.studyMetc!!,
                     studyAcronym = it.studyAcronym,
                     studyTitle = it.studyTitle,
                     studyStatus = NKIStatusResolver.resolve(it.studyStatus!!),

@@ -85,7 +85,7 @@ class TrialStatusConfigInterpreterTest {
         val trialConfigs: List<TrialDefinitionConfig> = emptyList()
 
         val newStudyMETCs = trialStatusConfigInterpreter.extractNewTrialStatusDatabaseStudies(trialConfigs)
-        assertThat(newStudyMETCs.map { it.studyMETC }.toSet()).containsExactly(
+        assertThat(newStudyMETCs.map { it.metcStudyID }.toSet()).containsExactly(
             TestTrialData.TEST_TRIAL_METC_1,
             TestTrialData.TEST_TRIAL_METC_2
         )
@@ -174,17 +174,17 @@ class TrialStatusConfigInterpreterTest {
                     .copy(
                         entries = listOf(
                             TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
-                                studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+                                metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
                                 cohortId = 1,
                                 cohortParentId = null
                             ),
                             TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
-                                studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+                                metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
                                 cohortId = 2,
                                 cohortParentId = 1
                             ),
                             TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(
-                                studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+                                metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
                                 cohortId = 3,
                                 cohortParentId = 1
                             )

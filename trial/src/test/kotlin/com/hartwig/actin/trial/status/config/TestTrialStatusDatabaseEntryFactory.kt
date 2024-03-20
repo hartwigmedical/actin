@@ -7,7 +7,7 @@ object TestTrialStatusDatabaseEntryFactory {
 
     val MINIMAL = TrialStatusEntry(
         studyId = 0,
-        studyMETC = "",
+        metcStudyID = "",
         studyAcronym = "",
         studyTitle = "",
         studyStatus = TrialStatus.OPEN

@@ -19,7 +19,7 @@ class CTCTrialStatusEntryReader : TrialStatusEntryReader {
     private fun create(fields: Map<String, Int>, parts: List<String>): TrialStatusEntry {
         return TrialStatusEntry(
             studyId = ResourceFile.integer(parts[fields["StudyID"]!!]),
-            studyMETC = parts[fields["StudyMETC"]!!],
+            metcStudyID = parts[fields["StudyMETC"]!!],
             studyAcronym = parts[fields["StudyAcroniem"]!!],
             studyTitle = parts[fields["StudyTitle"]!!],
             studyStatus = CTCStatusResolver.resolve(parts[fields["StudyStatus"]!!]),

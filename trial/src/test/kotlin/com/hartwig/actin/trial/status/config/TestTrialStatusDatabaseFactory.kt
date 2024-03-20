@@ -23,7 +23,7 @@ object TestTrialStatusDatabaseFactory {
     private fun createTestTrialStatusEntries(): List<TrialStatusEntry> {
         val study1Mapping1CohortA = TrialStatusEntry(
             studyId = 1,
-            studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+            metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_1,
             studyStatus = TrialStatus.OPEN,
@@ -34,7 +34,7 @@ object TestTrialStatusDatabaseFactory {
         )
         val study1Mapping2CohortA = TrialStatusEntry(
             studyId = 1,
-            studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+            metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_1,
             studyStatus = TrialStatus.OPEN,
@@ -45,7 +45,7 @@ object TestTrialStatusDatabaseFactory {
         )
         val study1UnmappedCohort = TrialStatusEntry(
             studyId = 1,
-            studyMETC = TestTrialData.TEST_TRIAL_METC_1,
+            metcStudyID = TestTrialData.TEST_TRIAL_METC_1,
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_1,
             studyStatus = TrialStatus.OPEN,
@@ -56,14 +56,14 @@ object TestTrialStatusDatabaseFactory {
         )
         val study2Mapping = TrialStatusEntry(
             studyId = 2,
-            studyMETC = TestTrialData.TEST_TRIAL_METC_2,
+            metcStudyID = TestTrialData.TEST_TRIAL_METC_2,
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_2,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_2,
             studyStatus = TrialStatus.OPEN,
         )
         val ignoreStudy = TrialStatusEntry(
             studyId = 3,
-            studyMETC = TestTrialData.TEST_TRIAL_METC_IGNORE,
+            metcStudyID = TestTrialData.TEST_TRIAL_METC_IGNORE,
             studyAcronym = "Acronym-Ignore",
             studyTitle = "Title-Ignore",
             studyStatus = TrialStatus.OPEN,
