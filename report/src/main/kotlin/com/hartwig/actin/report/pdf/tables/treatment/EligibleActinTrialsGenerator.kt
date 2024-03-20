@@ -59,25 +59,18 @@ class EligibleActinTrialsGenerator private constructor(
                         it.hasSlotsAvailable == slotsAvailable
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
-            val title = "$source trials that are open and considered eligible" +
-                    if (slotsAvailable) {
-                        " and currently have slots available "
-                    } else {
-                        " but currently have no slots available "
-                    } +
-                    if (recruitingAndEligibleCohorts.isNotEmpty()) {
-                        "(${recruitingAndEligibleCohorts.size}" + if (recruitingAndEligibleCohorts.size > 1) {
-                            " cohorts"
-                        } else {
-                            " cohort"
-                        } + " from ${recruitingAndEligibleTrials.size} " + if (recruitingAndEligibleTrials.size > 1) {
-                            "trials)"
-                        } else {
-                            "trial)"
-                        }
-                    } else "(0)"
+            val slotsText = if (slotsAvailable) "and currently have slots available" else "but currently have no slots available"
+            val cohortFromTrialsText = if (recruitingAndEligibleCohorts.isNotEmpty()) {
+                "(${recruitingAndEligibleCohorts.size}" + pleuralize(" cohort", recruitingAndEligibleCohorts.size) +
+                        " from ${recruitingAndEligibleTrials.size} " + pleuralize("trial", recruitingAndEligibleTrials.size) + ")"
+            } else "(0)"
+            val title = "$source trials that are open and considered eligible $slotsText $cohortFromTrialsText"
 
             return create(recruitingAndEligibleCohorts, title, width)
+        }
+
+        private fun pleuralize(word: String, count: Int): String {
+            return if (count > 1) word + "s" else word
         }
 
         fun forClosedCohorts(
