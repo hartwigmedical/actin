@@ -1,19 +1,16 @@
-package com.hartwig.actin.report.pdf.tables.treatment
+package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortComparator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
-import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
-typealias ContentDefinition = Pair<List<String>, Boolean>
-
-internal object ActinTrialGeneratorFunctions {
+object ActinTrialGeneratorFunctions {
 
     fun addTrialsToTable(
         evaluatedCohorts: List<EvaluatedCohort>,
@@ -27,30 +24,10 @@ internal object ActinTrialGeneratorFunctions {
             val trialSubTable = Tables.createFixedWidthCols(
                 cohortColumnWidth, molecularEventColumnWidth, feedbackColumnWidth
             )
-            contentForTrialCohortList(cohortList, feedbackFunction).forEach { (cellContent, deemphasizeContent) ->
-                addContentListToTable(cellContent, deemphasizeContent, trialSubTable)
-            }
+            ActinTrialContentFunctions.contentForTrialCohortList(cohortList, feedbackFunction)
+                .forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable) }
+            
             insertTrialRow(cohortList, table, trialSubTable)
-        }
-    }
-
-    fun contentForTrialCohortList(
-        cohorts: List<EvaluatedCohort>, feedbackFunction: (EvaluatedCohort) -> Set<String>
-    ): List<ContentDefinition> {
-        val commonFeedback = if (cohorts.size > 1) {
-            cohorts.map(feedbackFunction).reduce { acc, set -> acc.intersect(set) }
-        } else emptySet()
-        val prefix = if (commonFeedback.isEmpty()) emptyList() else listOf(
-            ContentDefinition(
-                listOf("All cohorts", "", concat(commonFeedback)),
-                false
-            )
-        )
-        return prefix + cohorts.map { cohort: EvaluatedCohort ->
-            ContentDefinition(
-                listOf(cohort.cohort ?: "", concat(cohort.molecularEvents), concat(feedbackFunction.invoke(cohort) - commonFeedback)),
-                !cohort.isOpen || !cohort.hasSlotsAvailable
-            )
         }
     }
 
@@ -61,10 +38,10 @@ internal object ActinTrialGeneratorFunctions {
         return sortedCohorts.map(EvaluatedCohort::trialId).distinct().mapNotNull { cohortsByTrialId[it] }
     }
 
-    private fun addContentListToTable(cellContent: List<String>, deemphasizeContent: Boolean, table: Table) {
+    private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table) {
         cellContent.map { text: String ->
-            if (deemphasizeContent) {
-                Cells.createContentNoBorderDeemphasize(text)
+            if (deEmphasizeContent) {
+                Cells.createContentNoBorderDeEmphasize(text)
             } else {
                 Cells.createContentNoBorder(text)
             }
@@ -87,9 +64,5 @@ internal object ActinTrialGeneratorFunctions {
             }
             table.addCell(createContent(finalSubTable))
         }
-    }
-
-    private fun concat(strings: Set<String>): String {
-        return strings.sorted().joinToString(Formats.COMMA_SEPARATOR).ifEmpty { Formats.VALUE_NONE }
     }
 }

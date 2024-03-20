@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.treatment
+package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.pdf.tables.TableGenerator

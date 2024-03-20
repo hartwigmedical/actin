@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.treatment
+package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord

@@ -109,11 +109,11 @@ object Cells {
         return cell
     }
 
-    fun createContentNoBorderDeemphasize(text: String): Cell {
-        return createContentNoBorderDeemphasize(Paragraph(text))
+    fun createContentNoBorderDeEmphasize(text: String): Cell {
+        return createContentNoBorderDeEmphasize(Paragraph(text))
     }
 
-    private fun createContentNoBorderDeemphasize(element: IBlockElement): Cell {
+    private fun createContentNoBorderDeEmphasize(element: IBlockElement): Cell {
         val cell = createContentNoBorder(element)
         cell.setFontColor(Styles.PALETTE_MID_GREY)
         return cell

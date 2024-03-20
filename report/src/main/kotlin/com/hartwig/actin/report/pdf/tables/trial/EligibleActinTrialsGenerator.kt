@@ -1,8 +1,8 @@
-package com.hartwig.actin.report.pdf.tables.treatment
+package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.treatment.ActinTrialGeneratorFunctions.addTrialsToTable
+import com.hartwig.actin.report.pdf.tables.trial.ActinTrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
