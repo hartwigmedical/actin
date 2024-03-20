@@ -77,7 +77,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-    fun `Should return undetermined if treatment is in different set from category and types in patient history`() {
+    fun `Should fail if history contains treatment with correct name and other with correct category and type but in different instance`() {
         val history = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
@@ -96,7 +96,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
         )
 
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(history)
+            EvaluationResult.FAIL, FUNCTION.evaluate(history)
         )
     }
 
