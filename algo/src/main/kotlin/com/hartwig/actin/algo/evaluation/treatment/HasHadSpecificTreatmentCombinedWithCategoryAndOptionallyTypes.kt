@@ -17,7 +17,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentDesc =
-            "combined therapy with ${treatment.name} and ${types?.let { " ${concatItemsWithAnd(types)}" } ?: ""} ${category.display()}"
+            "combined therapy with ${treatment.display()} and ${types?.let { "${concatItemsWithAnd(types)}" } ?: ""} ${category.display()}"
 
         val relevantHistory = record.oncologicalHistory.filter { history ->
             history.allTreatments().any { pastTreatment -> pastTreatment.name.lowercase() == treatment.name.lowercase() }
