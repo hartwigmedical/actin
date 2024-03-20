@@ -8,5 +8,6 @@ data class Intolerance(
     val type: String,
     val clinicalStatus: String,
     val verificationStatus: String,
-    val criticality: String
+    val criticality: String,
+    val drugAllergyType: String,
 )

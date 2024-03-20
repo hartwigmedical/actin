@@ -1,2 +1,2 @@
-input	name	doids
-Simvastatine	Simvastatine	0060500
+input	name	doids   drugAllergyType
+Simvastatine	Simvastatine	0060500 notspecified

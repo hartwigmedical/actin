@@ -24,12 +24,13 @@ class IntoleranceConfigFactoryTest {
                 setOf(DOID)
             )
         } returns true
-        val config = victim.create(fields, arrayOf("input", "name", DOID))
+        val config = victim.create(fields, arrayOf("input", "name", DOID, "drugAllergyType"))
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isFalse()
         assertThat(config.config.name).isEqualTo("name")
         assertThat(config.config.doids).containsExactly(DOID)
+        assertThat(config.config.drugAllergyType).isEqualTo("drugAllergyType")
     }
 
     @Test
@@ -41,7 +42,7 @@ class IntoleranceConfigFactoryTest {
             )
         } returns false
         val config: ValidatedCurationConfig<IntoleranceConfig> =
-            IntoleranceConfigFactory(doidValidator).create(fields, arrayOf("input", "name", DOID))
+            IntoleranceConfigFactory(doidValidator).create(fields, arrayOf("input", "name", DOID, "drugAllergyType"))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.INTOLERANCE.categoryName,

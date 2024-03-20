@@ -23,6 +23,8 @@ private const val CURATED_MEDICATION_INTOLERANCE = "Paracetamol"
 
 private const val DOID = "1"
 
+private const val DRUG_ALLERGY_TYPE = "unspecified"
+
 private const val ATC = "N02BE01"
 
 private const val CANNOT_CURATE = "Cannot curate"
@@ -38,13 +40,15 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_INPUT,
                 ignore = false,
                 name = CURATED_INTOLERANCE,
-                doids = setOf(DOID)
+                doids = setOf(DOID),
+                drugAllergyType = DRUG_ALLERGY_TYPE
             ),
             IntoleranceConfig(
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
-                doids = setOf(DOID)
+                doids = setOf(DOID),
+                drugAllergyType = DRUG_ALLERGY_TYPE
             )
         ), atcModel
     )

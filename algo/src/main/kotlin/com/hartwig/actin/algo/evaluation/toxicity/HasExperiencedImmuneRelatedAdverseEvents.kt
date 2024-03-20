@@ -2,10 +2,8 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 
@@ -17,16 +15,10 @@ class HasExperiencedImmuneRelatedAdverseEvents internal constructor() : Evaluati
         val hasHadImmuneTherapyWithStopReasonToxicity = immunotherapyTreatmentList.any {
             it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY
         }
-        val intolerances = record.clinical.intolerances.filter { it.doids.contains(DoidConstants.DRUG_ALLERGY_DOID) }.map(Intolerance::name)
-        val hasImmuneTherapyAllergy = immunotherapyTreatmentList.any { it.treatmentName() in intolerances }
-
-        //TODO: map intolerances from name to drug and check category of drug in database
-        //TreatmentDatabase().findDrugByName() .findDrugByName(drugName) ?: throw IllegalStateException("Drug not found in DB: $drugName")
-
-        //TODO: make "anticancer drug" doid -> each drug in intolerances-sheet with this doid has to be in drug database with at least category defined.
+        val hasImmunotherapyAllergies = record.clinical.intolerances.any { it.drugAllergyType == "Immunotherapy drug allergy" }
 
         return when {
-            (hasHadImmuneTherapy && (hasHadImmuneTherapyWithStopReasonToxicity || hasImmuneTherapyAllergy)) -> {
+            (hasHadImmuneTherapy && (hasHadImmuneTherapyWithStopReasonToxicity || hasImmunotherapyAllergies)) -> {
                 EvaluationFactory.warn(
                     "Patient may have experienced immunotherapy related adverse events",
                     "Probable prior immunotherapy related adverse events"

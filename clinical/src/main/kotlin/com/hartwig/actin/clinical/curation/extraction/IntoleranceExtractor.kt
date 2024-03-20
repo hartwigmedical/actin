@@ -23,7 +23,8 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                 verificationStatus = CurationUtil.capitalizeFirstLetterOnly(entry.verificationStatus),
                 criticality = CurationUtil.capitalizeFirstLetterOnly(entry.criticality),
                 doids = emptySet(),
-                subcategories = emptySet()
+                subcategories = emptySet(),
+                drugAllergyType = ""
             )
         }
             .map {
