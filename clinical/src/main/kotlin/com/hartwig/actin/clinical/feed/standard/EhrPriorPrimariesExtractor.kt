@@ -21,7 +21,7 @@ class EhrPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatab
                 "prior primary"
             )
             ExtractionResult(listOfNotNull(curatedPriorPrimary.config()?.let { secondPrimaryConfig ->
-                if (!secondPrimaryConfig.ignore) {
+                if (secondPrimaryConfig.ignore) {
                     null
                 } else {
                     secondPrimaryConfig.curated

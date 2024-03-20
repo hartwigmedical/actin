@@ -1,6 +1,8 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
@@ -33,41 +35,57 @@ private val EHR_PRIOR_PRIMARY = EhrPriorPrimary(
     statusDate = LocalDate.of(2024, 2, 23)
 )
 
+private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
+    priorPrimaries = listOf(EHR_PRIOR_PRIMARY)
+)
+
+private const val INPUT = "location | type"
+
 class EhrPriorPrimariesExtractorTest {
 
     private val secondPrimaryConfigCurationDatabase = mockk<CurationDatabase<SecondPrimaryConfig>>()
     private val extractor = EhrPriorPrimariesExtractor(secondPrimaryConfigCurationDatabase)
 
     @Test
-    fun `Should extract and curate prior primary`() {
-        val ehrPatientRecord = mockk<EhrPatientRecord>()
-        val input = "location | type"
-        every { secondPrimaryConfigCurationDatabase.find(input) } returns setOf(
+    fun `Should curate and extract prior primary`() {
+        every { secondPrimaryConfigCurationDatabase.find(INPUT) } returns setOf(
             SecondPrimaryConfig(
                 ignore = false,
-                input = input,
+                input = INPUT,
                 curated = PRIOR_SECOND_PRIMARY
             )
         )
-        every { ehrPatientRecord.priorPrimaries } returns listOf(
-            EHR_PRIOR_PRIMARY
-        )
-        val result = extractor.extract(ehrPatientRecord)
+        val result = extractor.extract(EHR_PATIENT_RECORD)
         assertThat(result.extracted).containsExactly(PRIOR_SECOND_PRIMARY)
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation())
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(INPUT)))
+        assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
-    fun `Should default tumor status to UNKNOWN when null`() {
-        val ehrPatientRecord = mockk<EhrPatientRecord>()
-        every { ehrPatientRecord.priorPrimaries } returns listOf(
-            EHR_PRIOR_PRIMARY.copy(status = null)
+    fun `Should return curation warning when input not found`() {
+        every { secondPrimaryConfigCurationDatabase.find(INPUT) } returns emptySet()
+        val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).containsExactly(
+            CurationWarning(
+                patientId = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
+                category = CurationCategory.SECOND_PRIMARY,
+                feedInput = INPUT,
+                message = "Could not find prior primary config for input 'location | type'"
+            )
         )
-        val result = extractor.extract(ehrPatientRecord)
-        assertThat(result.extracted).containsExactly(
-            PRIOR_SECOND_PRIMARY.copy(status = TumorStatus.UNKNOWN)
-        )
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation())
     }
 
+    @Test
+    fun `Should ignore primaries when configured in curation`() {
+        every { secondPrimaryConfigCurationDatabase.find(INPUT) } returns setOf(
+            SecondPrimaryConfig(
+                ignore = true,
+                input = INPUT
+            )
+        )
+        val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
 }
