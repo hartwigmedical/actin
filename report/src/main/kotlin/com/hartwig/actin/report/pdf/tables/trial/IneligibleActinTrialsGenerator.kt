@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.pdf.tables.treatment
+package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -38,22 +38,14 @@ class IneligibleActinTrialsGenerator private constructor(
             headerSubTable.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
             table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
         }
-        ActinTrialGeneratorFunctions.sortedCohortGroups(cohorts).forEach { cohortList: List<EvaluatedCohort> ->
-            val trialSubTable = Tables.createFixedWidthCols(
-                cohortColWidth, molecularEventColWidth, ineligibilityReasonColWith
-            )
-            cohortList.forEach { cohort: EvaluatedCohort ->
-                val cohortText = ActinTrialGeneratorFunctions.createCohortString(cohort)
-                val molecularText = cohort.molecularEvents.sorted().joinToString(", ")
-                val ineligibilityText = if (cohort.fails.isEmpty()) "?" else cohort.fails.sorted().joinToString(", ")
-                ActinTrialGeneratorFunctions.addContentListToTable(
-                    listOf(cohortText, molecularText, ineligibilityText),
-                    !cohort.isOpen || !cohort.hasSlotsAvailable,
-                    trialSubTable
-                )
-            }
-            ActinTrialGeneratorFunctions.insertTrialRow(cohortList, table, trialSubTable)
-        }
+        ActinTrialGeneratorFunctions.addTrialsToTable(
+            cohorts,
+            table,
+            cohortColWidth,
+            molecularEventColWidth,
+            ineligibilityReasonColWith,
+            EvaluatedCohort::fails
+        )
         val subNote = listOfNotNull(
             if (cohorts.any { !it.isOpen }) " Cohorts shown in grey are closed or have no slots available." else null,
             if (cohorts.any { it.isOpen && !it.hasSlotsAvailable }) {
