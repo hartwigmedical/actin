@@ -35,7 +35,8 @@ class StandardEhrIngestion(
     private val secondPrimaryExtractor: EhrPriorPrimariesExtractor,
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
     private val bodyWeightExtractor: EhrBodyWeightExtractor,
-    private val molecularTestExtractor: EhrMolecularTestExtractor
+    private val molecularTestExtractor: EhrMolecularTestExtractor,
+    private val dataQualityMask: DataQualityMask
 ) : ClinicalFeedIngestion {
     private val mapper = ObjectMapper().apply {
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -46,7 +47,7 @@ class StandardEhrIngestion(
 
     override fun ingest(): List<Pair<PatientIngestionResult, CurationExtractionEvaluation>> {
         return Files.list(Paths.get(directory)).filter { it.name.endsWith("json") }.map {
-            val ehrPatientRecord = mapper.readValue(Files.readString(it), EhrPatientRecord::class.java)
+            val ehrPatientRecord = dataQualityMask.apply(mapper.readValue(Files.readString(it), EhrPatientRecord::class.java))
             val patientDetails = patientDetailsExtractor.extract(ehrPatientRecord)
             val tumorDetails = tumorDetailsExtractor.extract(ehrPatientRecord)
             val secondPrimaries = secondPrimaryExtractor.extract(ehrPatientRecord)
@@ -154,7 +155,8 @@ class StandardEhrIngestion(
             EhrPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor(),
-            EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration)
+            EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
+            DataQualityMask()
         )
 
     }
