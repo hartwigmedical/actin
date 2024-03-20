@@ -58,10 +58,10 @@ class EmcClinicalFeedReaderTest {
             assertEquals(PATIENT, entry.subject)
             assertEquals("INT Consult", entry.description)
             assertEquals("Beloop", entry.itemText)
-            assertEquals(26, entry.text.split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong())
+            assertEquals(37, entry.text.split("\\n").dropLastWhile { it.isEmpty() }.toTypedArray().size.toLong())
             assertTrue(entry.text.startsWith("ACTIN Questionnaire"))
-            assertTrue(entry.text.contains("CNS lesions yes/no/unknown"))
-            assertTrue(entry.text.contains("Other (e.g. Osteoporosis, Pleural effusion)"))
+            assertTrue(entry.text.contains("CNS lesions"))
+            assertTrue(entry.text.contains("Cancer-related complications (e.g. pleural effusion)"))
         }
 
         private fun findByAuthoredDate(entries: List<QuestionnaireEntry>, dateToFind: LocalDate): QuestionnaireEntry {

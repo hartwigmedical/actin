@@ -13,32 +13,32 @@
       "month": 8,
       "day": 16
     },
-    "otherMolecularPatientId": null
+    "otherMolecularPatientId": "GAYA-01-02-9999"
   },
   "tumor": {
-    "primaryTumorLocation": "Unknown",
-    "primaryTumorSubLocation": "CUP",
-    "primaryTumorType": "Carcinoma",
+    "primaryTumorLocation": "Ovary",
+    "primaryTumorSubLocation": "",
+    "primaryTumorType": "",
     "primaryTumorSubType": "",
     "primaryTumorExtraDetails": "",
     "doids": [
-      "299"
+      "0050933"
     ],
-    "stage": null,
+    "stage": "IV",
     "hasMeasurableDisease": true,
-    "hasBrainLesions": null,
-    "hasActiveBrainLesions": null,
-    "hasCnsLesions": null,
+    "hasBrainLesions": true,
+    "hasActiveBrainLesions": true,
+    "hasCnsLesions": false,
     "hasActiveCnsLesions": null,
     "hasBoneLesions": null,
-    "hasLiverLesions": true,
+    "hasLiverLesions": false,
     "hasLungLesions": null,
-    "hasLymphNodeLesions": null,
+    "hasLymphNodeLesions": true,
     "otherLesions": null,
-    "biopsyLocation": null
+    "biopsyLocation": "Lymph node"
   },
   "clinicalStatus": {
-    "who": 2,
+    "who": 0,
     "infectionStatus": null,
     "ecg": {
       "hasSigAberrationLatestECG": true,
@@ -49,23 +49,135 @@
     "lvef": null,
     "hasComplications": null
   },
-  "oncologicalHistory": [],
-  "priorSecondPrimaries": [],
+  "oncologicalHistory": [
+    {
+      "treatments": [
+        {
+          "name": "CISPLATIN",
+          "drugs": [
+            {
+              "name": "CISPLATIN",
+              "drugTypes": [
+                "ANTIMETABOLITE"
+              ],
+              "category": "CHEMOTHERAPY",
+              "displayOverride": null
+            }
+          ],
+          "synonyms": [],
+          "displayOverride": null,
+          "isSystemic": true,
+          "maxCycles": null,
+          "treatmentClass": "DRUG_TREATMENT"
+        }
+      ],
+      "startYear": null,
+      "startMonth": null,
+      "intents": null,
+      "isTrial": false,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": null,
+        "stopMonth": null,
+        "ongoingAsOf": null,
+        "cycles": null,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": null,
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    },
+    {
+      "treatments": [
+        {
+          "name": "ABLATION",
+          "isSystemic": false,
+          "synonyms": [],
+          "displayOverride": null,
+          "categories": [
+            "ABLATION"
+          ],
+          "types": [],
+          "treatmentClass": "OTHER_TREATMENT"
+        }
+      ],
+      "startYear": null,
+      "startMonth": null,
+      "intents": null,
+      "isTrial": false,
+      "trialAcronym": null,
+      "treatmentHistoryDetails": {
+        "stopYear": null,
+        "stopMonth": null,
+        "ongoingAsOf": null,
+        "cycles": null,
+        "bestResponse": null,
+        "stopReason": null,
+        "stopReasonDetail": null,
+        "switchToTreatments": null,
+        "maintenanceTreatment": null,
+        "toxicities": null,
+        "bodyLocationCategories": null,
+        "bodyLocations": null
+      }
+    }
+  ],
+  "priorSecondPrimaries": [
+    {
+      "tumorLocation": "Prostate",
+      "tumorSubLocation": "",
+      "tumorType": "Carcinoma",
+      "tumorSubType": "",
+      "doids": [
+        "10286"
+      ],
+      "diagnosedYear": 2019,
+      "diagnosedMonth": null,
+      "treatmentHistory": "",
+      "lastTreatmentYear": 2019,
+      "lastTreatmentMonth": null,
+      "status": "ACTIVE"
+    }
+  ],
   "priorOtherConditions": [
     {
-      "name": "Liver cirrhosis and sarcoidosis",
-      "year": 2019,
-      "month": 7,
+      "name": "diabetes",
+      "year": null,
+      "month": null,
       "doids": [
-        "5082",
-        "11335"
+        "0081062"
       ],
-      "category": "Liver disease",
+      "category": "",
       "isContraindicationForTherapy": false
     }
   ],
-  "priorMolecularTests": [],
-  "complications": null,
+  "priorMolecularTests": [
+    {
+      "test": "IHC",
+      "item": "ERBB2",
+      "measure": null,
+      "scoreText": null,
+      "scoreValuePrefix": null,
+      "scoreValue": 3,
+      "scoreValueUnit": "+",
+      "impliesPotentialIndeterminateStatus": false
+    },
+    {
+      "test": "",
+      "item": "PD-L1",
+      "measure": null,
+      "scoreText": "Positive",
+      "scoreValuePrefix": null,
+      "scoreValue": null,
+      "scoreValueUnit": null,
+      "impliesPotentialIndeterminateStatus": false
+    }
+  ],
+"complications": null,
   "labValues": [
     {
       "date": {
@@ -107,9 +219,9 @@
       "grade": 0
     },
     {
-      "name": "Neuropathy",
+      "name": "Nausea",
       "categories": [
-        "Neuro"
+        "Gastrointestinal"
       ],
       "evaluatedDate": {
         "year": 2021,

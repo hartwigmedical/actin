@@ -51,6 +51,7 @@ class ClinicalIngestionFeedAdapterTest {
                             "2513" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "10286" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "0050933" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "5082" to CurationDoidValidator.DISEASE_DOID,
                             "11335" to CurationDoidValidator.DISEASE_DOID,
@@ -94,13 +95,16 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(ingestionResult.unusedConfigs).containsExactlyInAnyOrder(
             UnusedCurationConfig(categoryName = "Oncological History", input = "capecitabine and oxi"),
             UnusedCurationConfig(categoryName = "Primary Tumor", input = "long | metastase adenocarcinoom"),
+            UnusedCurationConfig(categoryName = "Primary Tumor", input = "carcinoma | unknown"),
             UnusedCurationConfig(categoryName = "Non Oncological History", input = "pijn bij maligne neoplasma van longen"),
+            UnusedCurationConfig(categoryName = "Non Oncological History", input = "sarcoidose"),
             UnusedCurationConfig(categoryName = "Complication", input = "overige"),
             UnusedCurationConfig(categoryName = "Lesion Location", input = "brain"),
             UnusedCurationConfig(categoryName = "Toxicity", input = "dysphagia"),
+            UnusedCurationConfig(categoryName = "Toxicity", input = "neuropathy gr3"),
             UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "immunohistochemie erbb2 3+"),
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
-            UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk")
+            UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
         )
 
         val gson = GsonSerializer.create()

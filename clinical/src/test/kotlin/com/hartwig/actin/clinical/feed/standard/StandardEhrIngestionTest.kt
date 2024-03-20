@@ -33,9 +33,12 @@ class StandardEhrIngestionTest {
                         mapOf(
                             "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "10286" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "0050933" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "5082" to CurationDoidValidator.DISEASE_DOID,
                             "11335" to CurationDoidValidator.DISEASE_DOID,
-                            "0060500" to CurationDoidValidator.DISEASE_DOID
+                            "0060500" to CurationDoidValidator.DISEASE_DOID,
+                            "0081062" to CurationDoidValidator.DISEASE_DOID
                         )
                     )
                 )
