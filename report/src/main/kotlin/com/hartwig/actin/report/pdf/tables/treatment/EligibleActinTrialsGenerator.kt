@@ -60,8 +60,23 @@ class EligibleActinTrialsGenerator private constructor(
             }
             val recruitingAndEligibleTrials = recruitingAndEligibleCohorts.map(EvaluatedCohort::trialId).distinct()
             val title = "$source trials that are open and considered eligible" +
-                    if (slotsAvailable) "and currently have slots available " else "but currently have no slots available" +
-                            "(${recruitingAndEligibleCohorts.size} cohorts from ${recruitingAndEligibleTrials.size} trials)"
+                    if (slotsAvailable) {
+                        " and currently have slots available "
+                    } else {
+                        " but currently have no slots available "
+                    } +
+                    if (recruitingAndEligibleCohorts.isNotEmpty()) {
+                        "(${recruitingAndEligibleCohorts.size}" + if (recruitingAndEligibleCohorts.size > 1) {
+                            " cohorts"
+                        } else {
+                            " cohort"
+                        } + " from ${recruitingAndEligibleTrials.size} " + if (recruitingAndEligibleTrials.size > 1) {
+                            "trials)"
+                        } else {
+                            "trial)"
+                        }
+                    } else "(0)"
+
             return create(recruitingAndEligibleCohorts, title, width)
         }
 
