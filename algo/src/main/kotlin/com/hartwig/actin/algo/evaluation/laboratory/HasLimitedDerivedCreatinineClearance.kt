@@ -58,7 +58,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
         val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator, maxCreatinineClearance)
 
         return when {
-            result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
+            result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.recoverableUndetermined(
                 "Cockcroft-Gault may be above maximum but weight of patient is not known",
                 "Cockcroft-Gault may be above max but patient weight unknown"
             )
@@ -68,7 +68,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
                 "Cockcroft-Gault above max of $maxCreatinineClearance",
             )
 
-            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.undetermined(
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined(
                 "Cockcroft-Gault evaluation led to ambiguous results",
                 "Cockcroft-Gault evaluation ambiguous"
             )
