@@ -137,6 +137,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_DRUG -> {
+                    createOneDrugInput(function)
+                    return true
+                }
+
                 FunctionInput.MANY_DRUGS -> {
                     createManyDrugsInput(function)
                     return true
@@ -403,6 +408,11 @@ class FunctionInputResolver(
             category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
             drugs = toDrugSet(function.parameters[1])
         )
+    }
+
+    fun createOneDrugInput(function: EligibilityFunction): Drug {
+        assertParamConfig(function, FunctionInput.ONE_DRUG, 1)
+        return toDrug(parameterAsString(function, 0))
     }
 
     fun createManyDrugsInput(function: EligibilityFunction): Set<Drug> {
