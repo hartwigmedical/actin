@@ -21,10 +21,10 @@ class EhrTumorDetailsExtractor(
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
         val curatedTumorResponse = CurationResponse.createFromConfigs(
             primaryTumorConfigCurationDatabase.find(input),
-            ehrPatientRecord.patientDetails.hashedIdBase64(), CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
+            ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
         val lesionCurationResponse =
-            extractLesions(ehrPatientRecord.patientDetails.hashedIdBase64(), ehrPatientRecord.tumorDetails.lesionSite)
+            extractLesions(ehrPatientRecord.patientDetails.hashedId, ehrPatientRecord.tumorDetails.lesionSite)
         val curatedLesions = lesionCurationResponse.mapNotNull { it.config() }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         return curatedTumorResponse.config()?.let {

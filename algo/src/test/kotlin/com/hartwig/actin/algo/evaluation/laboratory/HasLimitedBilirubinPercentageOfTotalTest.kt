@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.LabValue
@@ -29,7 +29,7 @@ class HasLimitedBilirubinPercentageOfTotalTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TestDataFactory.createMinimalTestPatientRecord(),
+                TestPatientFactory.createMinimalTestPatientRecord(),
                 LabMeasurement.DIRECT_BILIRUBIN,
                 LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN)
             )
@@ -48,7 +48,7 @@ class HasLimitedBilirubinPercentageOfTotalTest {
     fun crashOnWrongInputLabValue() {
         val function = HasLimitedBilirubinPercentageOfTotal(50.0, LocalDate.of(2020, 3, 3))
         function.evaluate(
-            TestDataFactory.createMinimalTestPatientRecord(),
+            TestPatientFactory.createMinimalTestPatientRecord(),
             LabMeasurement.ALBUMIN,
             LabTestFactory.create(LabMeasurement.ALBUMIN)
         )

@@ -80,7 +80,7 @@ class RecommendationEngine(
         )
 
         private fun expandedTumorDoids(patientRecord: PatientRecord, doidModel: DoidModel): Set<String> {
-            return patientRecord.clinical.tumor.doids?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
+            return patientRecord.tumor.doids?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
         }
 
         fun treatmentHasNoFailedEvaluations(evaluatedTreatment: EvaluatedTreatment): Boolean {

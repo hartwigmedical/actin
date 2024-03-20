@@ -129,16 +129,11 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     @Test
     fun `Should return undetermined when trial treatments meet threshold`() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)),
+            setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY)),
             isTrial = true
         )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            FUNCTION.evaluate(
-                TreatmentTestFactory.withTreatmentHistory(
-                    listOf(treatmentHistoryEntry)
-                )
-            )
+            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
         )
     }
 
@@ -146,7 +141,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
         val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), 1)
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)),
+            setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TRANSPLANTATION)),
             isTrial = true
         )
         EvaluationAssert.assertEvaluation(

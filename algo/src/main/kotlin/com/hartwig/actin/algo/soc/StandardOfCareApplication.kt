@@ -5,7 +5,6 @@ import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.clinical.util.ClinicalPrinter
@@ -13,6 +12,9 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.medication.AtcTree
+import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.molecular.serialization.MolecularHistoryJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
@@ -56,8 +58,10 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        val referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
-        val functionInputResolver = FunctionInputResolver(doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase)
+        val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
+        val functionInputResolver = FunctionInputResolver(
+            doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
+        )
         val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
         val recommendationEngine = RecommendationEngineFactory(resources).create()
 

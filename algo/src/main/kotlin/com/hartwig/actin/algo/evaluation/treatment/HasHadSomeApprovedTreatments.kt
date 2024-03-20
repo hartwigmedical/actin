@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasHadSomeApprovedTreatments(private val minApprovedTreatments: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (record.clinical.oncologicalHistory.isEmpty() && minApprovedTreatments > 0) {
+        return if (record.oncologicalHistory.isEmpty() && minApprovedTreatments > 0) {
             EvaluationFactory.fail(
                 "Patient has not had prior tumor treatment, and thus no approved treatments",
                 "Has not had approved treatments"

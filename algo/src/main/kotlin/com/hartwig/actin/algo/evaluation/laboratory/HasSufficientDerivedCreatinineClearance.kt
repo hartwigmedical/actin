@@ -26,9 +26,9 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
     private fun evaluateMDRD(record: PatientRecord, creatinine: LabValue): Evaluation {
         val mdrdValues = CreatinineFunctions.calcMDRD(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             creatinine
         )
         return evaluateValues("MDRD", mdrdValues, creatinine.comparator)
@@ -36,9 +36,9 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
     private fun evaluateCKDEPI(record: PatientRecord, creatinine: LabValue): Evaluation {
         val ckdepiValues = CreatinineFunctions.calcCKDEPI(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             creatinine
         )
         return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator)
@@ -48,9 +48,9 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
         val weight = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDateForBodyWeights)
             ?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             weight,
             creatinine
         )
@@ -59,7 +59,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
         val unit = LabMeasurement.CREATININE.defaultUnit.display()
 
         return when {
-            result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
+            result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.recoverableUndetermined(
                 "eGFR (Cockcroft-Gault) may be insufficient based on creatinine level ($unit) but weight of patient is not known",
                 "eGFR (CG) may be insufficient based on creatinine level ($unit) but patient weight unknown"
             )
@@ -69,7 +69,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
                 "eGFR (Cockcroft-Gault) below min of $minCreatinineClearance",
             )
 
-            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.undetermined(
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined(
                 "eGFR (Cockcroft-Gault) evaluation led to ambiguous results",
                 "eGFR (Cockcroft-Gault) evaluation ambiguous"
             )

@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 class HasHadPriorConditionWithName internal constructor(private val nameToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasHadPriorConditionWithName = OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)
+        val hasHadPriorConditionWithName = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .any { it.name.lowercase().contains(nameToFind.lowercase()) }
 
         if (hasHadPriorConditionWithName) {

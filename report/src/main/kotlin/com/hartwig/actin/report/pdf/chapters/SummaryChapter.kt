@@ -21,6 +21,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
+import java.time.LocalDate
 
 class SummaryChapter(private val report: Report) : ReportChapter {
 
@@ -81,19 +82,35 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
             val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
 
-            val generators = listOfNotNull(
-                PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
-                MolecularSummaryGenerator(report.clinical, report.molecularHistory, cohorts, keyWidth, valueWidth),
-                EligibleApprovedTreatmentGenerator(report.clinical, molecular, contentWidth()),
-                EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
-                EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
-                if (dutchTrials.isNotEmpty()) {
-                    EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
-                } else null,
-                if (nonDutchTrials.isNotEmpty()) {
-                    EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, nonDutchTrials, contentWidth())
-                } else null
-            )
+//            val generators = listOfNotNull(
+//                PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
+//                MolecularSummaryGenerator(report.clinical, report.molecularHistory, cohorts, keyWidth, valueWidth),
+//                EligibleApprovedTreatmentGenerator(report.clinical, molecular, contentWidth()),
+//                EligibleActinTrialsGenerator.forOpenCohortsWithSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
+//                EligibleActinTrialsGenerator.forOpenCohortsWithNoSlots(cohorts, report.treatmentMatch.trialSource, contentWidth()),
+//                if (dutchTrials.isNotEmpty()) {
+//                    EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
+//                } else null,
+//                if (nonDutchTrials.isNotEmpty()) {
+//                    EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, nonDutchTrials, contentWidth())
+//                } else null
+//            )
+            // TODO (kz) cleanup!!!
+        val generators = listOfNotNull(
+            PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
+            if (report.molecular.date != null && report.molecular.date!! > LocalDate.now().minusDays(14)) {
+                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
+            } else null,
+            EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
+            if (dutchTrials.isNotEmpty()) {
+                EligibleDutchExternalTrialsGenerator(report.molecular.externalTrialSource, dutchTrials, contentWidth())
+            } else null,
+            if (nonDutchTrials.isNotEmpty()) {
+                EligibleOtherCountriesExternalTrialsGenerator(report.molecular.externalTrialSource, nonDutchTrials, contentWidth())
+            } else null
+        )
 
             for (i in generators.indices) {
                 val generator = generators[i]

@@ -5,14 +5,15 @@ import com.hartwig.actin.trial.TestTrialData
 object TestCTCDatabaseFactory {
 
     fun createMinimalTestCTCDatabase(): CTCDatabase {
-        return CTCDatabase(emptyList(), emptySet(), emptySet())
+        return CTCDatabase(emptyList(), emptySet(), emptySet(), emptySet())
     }
 
     fun createProperTestCTCDatabase(): CTCDatabase {
         return CTCDatabase(
             entries = createTestCTCEntries(),
             studyMETCsToIgnore = setOf(TestTrialData.TEST_TRIAL_METC_IGNORE),
-            unmappedCohortIds = setOf(TestTrialData.TEST_UNMAPPED_COHORT_ID)
+            unmappedCohortIds = setOf(TestTrialData.TEST_UNMAPPED_COHORT_ID),
+            mecStudiesNotInCTC = setOf(TestTrialData.TEST_MEC_NOT_IN_CTC)
         )
     }
 

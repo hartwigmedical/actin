@@ -1,9 +1,8 @@
 package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 
 internal object InfectionTestFactory {
     fun withPriorOtherCondition(conditions: PriorOtherCondition): PatientRecord {
@@ -11,9 +10,7 @@ internal object InfectionTestFactory {
     }
 
     fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
-        return TestDataFactory.createMinimalTestPatientRecord().copy(
-            clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(priorOtherConditions = conditions)
-        )
+        return TestPatientFactory.createMinimalTestPatientRecord().copy(priorOtherConditions = conditions)
     }
 
     fun priorOtherCondition(name: String = "", doids: Set<String> = emptySet()): PriorOtherCondition {

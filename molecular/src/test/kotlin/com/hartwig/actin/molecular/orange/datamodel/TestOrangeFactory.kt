@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
@@ -55,7 +55,7 @@ object TestOrangeFactory {
 
     fun createMinimalTestOrangeRecord(): OrangeRecord {
         return ImmutableOrangeRecord.builder()
-            .sampleId(TestDataFactory.TEST_SAMPLE)
+            .sampleId(TestPatientFactory.TEST_SAMPLE)
             .samplingDate(LocalDate.of(2021, 5, 6))
             .experimentType(ExperimentType.WHOLE_GENOME)
             .refGenomeVersion(OrangeRefGenomeVersion.V37)

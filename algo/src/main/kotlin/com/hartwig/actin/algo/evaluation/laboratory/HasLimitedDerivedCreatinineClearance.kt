@@ -26,9 +26,9 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
     private fun evaluateMDRD(record: PatientRecord, creatinine: LabValue): Evaluation {
         val mdrdValues = CreatinineFunctions.calcMDRD(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             creatinine
         )
         return evaluateValues("MDRD", mdrdValues, creatinine.comparator)
@@ -36,9 +36,9 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
     private fun evaluateCKDEPI(record: PatientRecord, creatinine: LabValue): Evaluation {
         val ckdepiValues = CreatinineFunctions.calcCKDEPI(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             creatinine
         )
         return evaluateValues("CKDEPI", ckdepiValues, creatinine.comparator)
@@ -48,9 +48,9 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
         val weight = selectMedianBodyWeightPerDay(record, minimumDateForBodyWeights)
             ?.let { BodyWeightFunctions.determineMedianBodyWeight(it) }
         val cockcroftGault = CreatinineFunctions.calcCockcroftGault(
-            record.clinical.patient.birthYear,
+            record.patient.birthYear,
             referenceYear,
-            record.clinical.patient.gender,
+            record.patient.gender,
             weight,
             creatinine
         )
@@ -58,7 +58,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
         val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator, maxCreatinineClearance)
 
         return when {
-            result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.undetermined(
+            result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.recoverableUndetermined(
                 "Cockcroft-Gault may be above maximum but weight of patient is not known",
                 "Cockcroft-Gault may be above max but patient weight unknown"
             )
@@ -68,7 +68,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
                 "Cockcroft-Gault above max of $maxCreatinineClearance",
             )
 
-            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.undetermined(
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined(
                 "Cockcroft-Gault evaluation led to ambiguous results",
                 "Cockcroft-Gault evaluation ambiguous"
             )

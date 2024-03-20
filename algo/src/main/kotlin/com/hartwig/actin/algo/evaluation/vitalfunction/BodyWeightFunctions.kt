@@ -22,8 +22,8 @@ object BodyWeightFunctions {
         record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean, minimumDate: LocalDate
     ): Evaluation {
         val relevant = selectMedianBodyWeightPerDay(record, minimumDate)
-            ?: return if (record.clinical.bodyWeights.isNotEmpty() &&
-                record.clinical.bodyWeights.none { it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }
+            ?: return if (record.bodyWeights.isNotEmpty() &&
+                record.bodyWeights.none { it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }
             ) {
                 EvaluationFactory.undetermined(
                     "Body weights not measured in $EXPECTED_UNIT",
@@ -70,7 +70,7 @@ object BodyWeightFunctions {
     }
 
     fun selectMedianBodyWeightPerDay(record: PatientRecord, minimalDate: LocalDate): List<BodyWeight>? {
-        val result = record.clinical.bodyWeights
+        val result = record.bodyWeights
             .filter { it.date.toLocalDate() > minimalDate && it.valid }
             .groupBy { it.date }
             .map { selectMedianBodyWeightValue(it.value) }

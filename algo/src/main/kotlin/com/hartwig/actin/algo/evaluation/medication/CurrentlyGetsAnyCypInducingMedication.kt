@@ -12,10 +12,10 @@ class CurrentlyGetsAnyCypInducingMedication(private val selector: MedicationSele
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val cypInducersReceived =
-            selector.activeWithCypInteraction(record.clinical.medications, null, CypInteraction.Type.INDUCER).map { it.name }
+            selector.activeWithCypInteraction(record.medications, null, CypInteraction.Type.INDUCER).map { it.name }
 
         val cypInducersPlanned =
-            selector.plannedWithCypInteraction(record.clinical.medications, null, CypInteraction.Type.INDUCER).map { it.name }
+            selector.plannedWithCypInteraction(record.medications, null, CypInteraction.Type.INDUCER).map { it.name }
 
         return when {
             cypInducersReceived.isNotEmpty() -> {

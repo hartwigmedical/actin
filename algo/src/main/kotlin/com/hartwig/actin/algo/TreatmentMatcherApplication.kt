@@ -2,16 +2,17 @@ package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory.create
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.medication.AtcTree
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.molecular.serialization.MolecularHistoryJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
@@ -55,13 +56,14 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
-        val referenceDateProvider = create(clinical, config.runHistorically)
+        val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
 
         // We assume we never check validity of a gene inside algo.
         val molecularInputChecker = MolecularInputChecker.createAnyGeneValid()
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-        val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
+        val functionInputResolver =
+            FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
         val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 

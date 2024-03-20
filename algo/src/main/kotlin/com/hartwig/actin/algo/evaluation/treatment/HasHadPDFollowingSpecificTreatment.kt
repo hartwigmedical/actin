@@ -32,7 +32,7 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
     }
 
     private fun evaluateTreatmentHistory(record: PatientRecord, treatmentNamesToMatch: Set<String>): TreatmentHistoryEvaluation {
-        val treatmentHistory = record.clinical.oncologicalHistory
+        val treatmentHistory = record.oncologicalHistory
 
         return treatmentHistory.map { entry ->
             val isPD = treatmentResultedInPD(entry)

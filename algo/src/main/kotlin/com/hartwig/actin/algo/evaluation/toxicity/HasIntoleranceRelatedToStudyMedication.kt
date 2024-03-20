@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 class HasIntoleranceRelatedToStudyMedication : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        val allergies = record.clinical.intolerances
+        val allergies = record.intolerances
             .filter { it.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true) }
             .filter { it.doids.contains(DoidConstants.DRUG_ALLERGY_DOID) || it.category.equals(MEDICATION_CATEGORY, ignoreCase = true) }
             .map { it.name }

@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorRadiotherapies = record.clinical.oncologicalHistory
+        val priorRadiotherapies = record.oncologicalHistory
             .filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
 
         val hadRadiotherapyToTargetLocation =

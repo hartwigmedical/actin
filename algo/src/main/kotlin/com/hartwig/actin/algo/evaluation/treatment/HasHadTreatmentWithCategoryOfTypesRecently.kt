@@ -16,14 +16,14 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentAssessment = record.clinical.oncologicalHistory.map { treatmentHistoryEntry ->
+        val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
                     && treatmentHistoryEntry.matchesTypeFromSet(types) == true
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
-                hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
+                hasHadTrialAfterMinDate = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
                         && startedPastMinDate == true
             )
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }

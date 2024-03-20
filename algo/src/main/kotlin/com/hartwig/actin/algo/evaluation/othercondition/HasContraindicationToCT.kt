@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.DoidModel
 
 class HasContraindicationToCT internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
                     return EvaluationFactory.pass(
@@ -27,7 +27,7 @@ class HasContraindicationToCT internal constructor(private val doidModel: DoidMo
                 )
             }
         }
-        for (intolerance in record.clinical.intolerances) {
+        for (intolerance in record.intolerances) {
             if (stringCaseInsensitivelyMatchesQueryCollection(intolerance.name, INTOLERANCES_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
                     "Patient has a contraindication to CT due to intolerance " + intolerance.name,
@@ -35,7 +35,7 @@ class HasContraindicationToCT internal constructor(private val doidModel: DoidMo
                 )
             }
         }
-        for (medication in record.clinical.medications) {
+        for (medication in record.medications) {
             if (stringCaseInsensitivelyMatchesQueryCollection(medication.name, MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
                     "Patient has a contraindication to CT due to medication " + medication.name,
@@ -43,7 +43,7 @@ class HasContraindicationToCT internal constructor(private val doidModel: DoidMo
                 )
             }
         }
-        for (complication in record.clinical.complications ?: emptyList()) {
+        for (complication in record.complications ?: emptyList()) {
             if (stringCaseInsensitivelyMatchesQueryCollection(complication.name, COMPLICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
                     "Patient has a contraindication to CT due to complication " + complication.name,

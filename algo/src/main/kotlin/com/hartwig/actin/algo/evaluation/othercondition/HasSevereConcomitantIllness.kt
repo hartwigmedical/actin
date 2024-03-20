@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class HasSevereConcomitantIllness internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val whoStatus = record.clinical.clinicalStatus.who
+        val whoStatus = record.clinicalStatus.who
 
         if (whoStatus == 3 || whoStatus == 4) {
             return EvaluationFactory.warn(

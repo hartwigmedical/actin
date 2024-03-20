@@ -10,9 +10,9 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?)
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentHistory =
             if (categoryToIgnore == null) {
-                record.clinical.oncologicalHistory
+                record.oncologicalHistory
             } else {
-                record.clinical.oncologicalHistory.filterNot { it.categories().contains(categoryToIgnore) }
+                record.oncologicalHistory.filterNot { it.categories().contains(categoryToIgnore) }
             }
 
         return if (treatmentHistory.isEmpty()) {

@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
@@ -19,9 +19,12 @@ import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+//    private val base = TestDataFactory.createMinimalTestPatientRecord()
+//    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
     private val basePriorMolecular = emptyList<PriorMolecularTest>()
+
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
+    private val baseMolecular = base.molecular as MolecularRecord
 
     fun priorMolecularTest(
         test: String = "",
@@ -45,6 +48,7 @@ internal object MolecularTestFactory {
 
     fun withPriorTests(priorTests: List<PriorMolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular, priorTests))
+//        return base.copy(priorMolecularTests = priorTests)
     }
 
     fun withPriorTest(priorTest: PriorMolecularTest): PatientRecord {
@@ -123,12 +127,18 @@ internal object MolecularTestFactory {
         return withMolecularRecord(baseMolecular.copy(immunology = immunology))
     }
 
-    fun withExperimentTypeAndContainingTumorCellsAndPriorTest(type: ExperimentType, containsTumorCells: Boolean, priorTest: PriorMolecularTest): PatientRecord {
+    fun withExperimentTypeAndContainingTumorCellsAndPriorTest(
+        type: ExperimentType,
+        containsTumorCells: Boolean,
+        priorTest: PriorMolecularTest
+    ): PatientRecord {
         return base.copy(
-            molecularHistory = MolecularHistory.fromWGSandIHC(
-                baseMolecular.copy(type = type, containsTumorCells = containsTumorCells),
-                listOf(priorTest)
-            ),
+//            molecularHistory = MolecularHistory.fromWGSandIHC(
+//                baseMolecular.copy(type = type, containsTumorCells = containsTumorCells),
+//                listOf(priorTest)
+//            ),
+            molecular = baseMolecular.copy(type = type, containsTumorCells = containsTumorCells),
+            priorMolecularTests = listOf(priorTest)
         )
     }
 

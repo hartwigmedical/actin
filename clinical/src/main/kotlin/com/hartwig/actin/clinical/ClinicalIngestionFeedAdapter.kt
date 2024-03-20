@@ -17,6 +17,7 @@ class ClinicalIngestionFeedAdapter(
                     result2.clinicalRecord
                 )
             }
+
         return IngestionResult(
             unusedConfigs = curationDatabaseContext.allUnusedConfig(records.map { it.second }),
             patientResults = records.map { it.first }

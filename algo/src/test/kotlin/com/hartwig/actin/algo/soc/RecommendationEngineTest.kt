@@ -1,8 +1,7 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
@@ -347,7 +346,7 @@ class RecommendationEngineTest {
                 driverLikelihood = DriverLikelihood.HIGH,
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
             )
-        ).copy(clinical = MINIMAL_CRC_PATIENT_RECORD.clinical)
+        ).copy(tumor = MINIMAL_CRC_PATIENT_RECORD.tumor)
 
         assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientWithNtrkFusion)).isFalse
         assertThat(resultsForPatient(patientWithNtrkFusion).map(TreatmentCandidate::treatment))
@@ -355,7 +354,7 @@ class RecommendationEngineTest {
 
         val pastTreatmentNames = listOf(FOLFOX, IRINOTECAN, FLUOROURACIL, CAPECITABINE, CETUXIMAB, "TARGETED_THERAPY")
         val patientWithNtrkFusionAndSocExhaustion = patientWithNtrkFusion.copy(
-            clinical = patientWithNtrkFusion.clinical.copy(oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames))
+            oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames)
         )
         assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientWithNtrkFusionAndSocExhaustion)).isTrue
         assertThat(resultsForPatient(patientWithNtrkFusionAndSocExhaustion).map(TreatmentCandidate::treatment))
@@ -423,11 +422,9 @@ class RecommendationEngineTest {
             FOLFOX
         )
 
-        private val MINIMAL_PATIENT_RECORD = TestDataFactory.createMinimalTestPatientRecord()
+        private val MINIMAL_PATIENT_RECORD = TestPatientFactory.createMinimalTestPatientRecord()
         private val MINIMAL_CRC_PATIENT_RECORD = MINIMAL_PATIENT_RECORD.copy(
-            clinical = MINIMAL_PATIENT_RECORD.clinical.copy(
-                tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
-            )
+            tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
         )
 
         private val MINIMAL_MOLECULAR_RECORD = TestMolecularFactory.createMinimalTestMolecularRecord()
@@ -484,11 +481,13 @@ class RecommendationEngineTest {
                 doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID),
                 primaryTumorSubLocation = tumorSubLocation
             )
-            val clinicalRecord = MINIMAL_PATIENT_RECORD.clinical.copy(
+            val patientRecord = MINIMAL_PATIENT_RECORD.copy(
                 tumor = tumorDetails,
-                oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames)
+                oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
+                molecular = molecularRecord
             )
-            return PatientRecordFactory.fromInputs(clinicalRecord, MolecularHistory.fromWGSandIHC(molecularRecord, emptyList()))
+//            return PatientRecordFactory.fromInputs(clinicalRecord, MolecularHistory.fromWGSandIHC(molecularRecord, emptyList()))
+            return patientRecord
         }
 
         private fun assertSpecificTreatmentNotRecommended(name: String) {
@@ -503,14 +502,12 @@ class RecommendationEngineTest {
 
         private fun patientRecordWithTumorDoids(tumorDoid: String): PatientRecord {
             val tumorDetails = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID, tumorDoid))
-            return MINIMAL_PATIENT_RECORD.copy(clinical = MINIMAL_PATIENT_RECORD.clinical.copy(tumor = tumorDetails))
+            return MINIMAL_PATIENT_RECORD.copy(tumor = tumorDetails)
         }
 
         private fun patientWithTreatmentHistoryEntry(treatmentHistoryEntry: TreatmentHistoryEntry): PatientRecord {
             return MINIMAL_CRC_PATIENT_RECORD.copy(
-                clinical = MINIMAL_CRC_PATIENT_RECORD.clinical.copy(
-                    oncologicalHistory = listOf(treatmentHistoryEntry)
-                )
+                oncologicalHistory = listOf(treatmentHistoryEntry)
             )
         }
 

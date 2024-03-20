@@ -4,17 +4,19 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.date
 import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.medication.AtcTree
 import java.time.LocalDate
 
-class RequiresRegularHematopoieticSupport(private val atcTree: AtcTree, private val minDate: LocalDate, private val maxDate: LocalDate) :
-    EvaluationFunction {
+class RequiresRegularHematopoieticSupport(
+    private val atcTree: AtcTree, private val minDate: LocalDate, private val maxDate: LocalDate
+) : EvaluationFunction {
+    
     override fun evaluate(record: PatientRecord): Evaluation {
         val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
-        for (transfusion in record.clinical.bloodTransfusions) {
+        for (transfusion in record.bloodTransfusions) {
             if (transfusion.date.isAfter(minDate) && transfusion.date.isBefore(maxDate)) {
                 return EvaluationFactory.pass(
                     "Patient has had blood transfusion $inBetweenRange",
@@ -23,7 +25,7 @@ class RequiresRegularHematopoieticSupport(private val atcTree: AtcTree, private 
             }
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)
-        val medications = record.clinical.medications
+        val medications = record.medications
             .filter { activeBetweenDates(it) }
             .filter { it.atc?.chemicalSubGroup in resolvedCategories }
             .map { it.name }
