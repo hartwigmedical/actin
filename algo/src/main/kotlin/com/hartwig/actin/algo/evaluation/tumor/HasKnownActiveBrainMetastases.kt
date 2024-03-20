@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasKnownActiveBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasBrainMetastases = record.clinical.tumor.hasBrainLesions
+        val hasBrainMetastases = record.tumor.hasBrainLesions
         // If a patient's active brain metastases status is unknown, set to false if patient is known to have no brain metastases
-        val hasActiveBrainMetastases = record.clinical.tumor.hasActiveBrainLesions ?: if (hasBrainMetastases == false) false else null
+        val hasActiveBrainMetastases = record.tumor.hasActiveBrainLesions ?: if (hasBrainMetastases == false) false else null
 
         if (hasActiveBrainMetastases == null) {
             return if (hasBrainMetastases == true) {

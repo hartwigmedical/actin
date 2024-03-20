@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasSufficientLVEF internal constructor(private val minLVEF: Double) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val lvef = record.clinical.clinicalStatus.lvef
+        val lvef = record.clinicalStatus.lvef
 
         return if (lvef == null) {
             EvaluationFactory.notEvaluated("No LVEF known", "LVEF unknown")

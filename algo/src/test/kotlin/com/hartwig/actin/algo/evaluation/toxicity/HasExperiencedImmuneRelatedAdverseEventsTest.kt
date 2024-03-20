@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -52,8 +52,8 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
     }
 
     private fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        return base.copy(clinical = base.clinical.copy(oncologicalHistory = treatmentHistory))
+        val base = TestPatientFactory.createMinimalTestPatientRecord()
+        return base.copy(oncologicalHistory = treatmentHistory)
     }
 
     private fun treatmentHistoryEntry(category: TreatmentCategory): TreatmentHistoryEntry {

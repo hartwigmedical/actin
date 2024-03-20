@@ -1,19 +1,19 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withDoids
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
 class HasLeftSidedColorectalTumorTest {
     @Test
     fun shouldReturnUndeterminedWhenNoTumorDoidsConfigured() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
     }
 
     @Test

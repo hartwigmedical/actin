@@ -151,7 +151,7 @@ class StandardEhrIngestion(
             ),
             EhrClinicalStatusExtractor(),
             EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration),
-            EhrPriorPrimariesExtractor(),
+            EhrPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor(),
             EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration)

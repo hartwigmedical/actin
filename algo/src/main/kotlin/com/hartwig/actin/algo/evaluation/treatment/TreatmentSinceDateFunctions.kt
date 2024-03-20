@@ -14,7 +14,7 @@ object TreatmentSinceDateFunctions {
     fun evaluateTreatmentMatchingPredicateSinceDate(
         record: PatientRecord, minDate: LocalDate, predicateDescription: String, predicate: (Treatment) -> Boolean
     ): Evaluation {
-        val matchingTreatments = record.clinical.oncologicalHistory
+        val matchingTreatments = record.oncologicalHistory
             .mapNotNull { entry -> TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate) }
 
         return when {

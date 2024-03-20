@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
@@ -11,8 +12,14 @@ object TrialFunctions {
         TreatmentCategory.SURGERY
     )
 
-    fun treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry: TreatmentHistoryEntry, category: TreatmentCategory): Boolean {
-        return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial
+    fun treatmentMayMatchAsTrial(
+        treatmentHistoryEntry: TreatmentHistoryEntry,
+        category: TreatmentCategory,
+        treatmentCannotBeMatchedSpecifically: (Treatment) -> Boolean = { it.types().isEmpty() }
+    ): Boolean {
+        return categoryAllowsTrialMatches(category) && treatmentHistoryEntry.isTrial && treatmentHistoryEntry.allTreatments().any {
+            (it.categories().isEmpty() || category in it.categories()) && treatmentCannotBeMatchedSpecifically(it)
+        }
     }
 
     fun categoryAllowsTrialMatches(category: TreatmentCategory): Boolean {

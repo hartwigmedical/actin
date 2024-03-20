@@ -19,7 +19,7 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
                 "Present " + concatLowercaseWithAnd(painComplications)
             )
         }
-        val activePainMedications = record.clinical.medications
+        val activePainMedications = record.medications
             .filter {
                 it.name.equals(SEVERE_PAIN_MEDICATION, ignoreCase = true)
                         && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE

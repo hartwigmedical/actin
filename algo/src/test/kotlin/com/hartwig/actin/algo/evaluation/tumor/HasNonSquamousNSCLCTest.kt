@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
@@ -12,7 +12,7 @@ class HasNonSquamousNSCLCTest {
     @Test
     fun `Should return undetermined when no tumor doids configured`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function().evaluate(TestDataFactory.createMinimalTestPatientRecord())
+            EvaluationResult.UNDETERMINED, function().evaluate(TestPatientFactory.createMinimalTestPatientRecord())
         )
     }
 

@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -24,7 +24,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         TestDoidModelFactory.createWithOneDoidAndTerm(DOID, DOID_TERM), DOID, COMPLICATION_CATEGORY, TOXICITY_CATEGORY
     )
 
-    private val minimalPatient = TestDataFactory.createMinimalTestPatientRecord()
+    private val minimalPatient = TestPatientFactory.createMinimalTestPatientRecord()
 
     private val complication = OtherConditionTestFactory.complication(
         categories = setOf(COMPLICATION_CATEGORY),
@@ -112,11 +112,9 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         assertPassEvaluationWithMessages(
             function.evaluate(
                 minimalPatient.copy(
-                    clinical = minimalPatient.clinical.copy(
-                        toxicities = listOf(toxicity(ToxicitySource.QUESTIONNAIRE, 2)),
-                        complications = listOf(complication),
-                        priorOtherConditions = listOf(priorOtherCondition)
-                    )
+                    toxicities = listOf(toxicity(ToxicitySource.QUESTIONNAIRE, 2)),
+                    complications = listOf(complication),
+                    priorOtherConditions = listOf(priorOtherCondition)
                 )
             ),
             "complication and other condition and toxicity",

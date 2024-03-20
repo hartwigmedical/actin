@@ -54,7 +54,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         LOGGER.info("Loading treatment data from {}", config.treatmentDirectory)
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
-        val referenceDateProvider = ReferenceDateProviderFactory.create(clinical, config.runHistorically)
+        val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
         val functionInputResolver = FunctionInputResolver(
             doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )

@@ -12,8 +12,11 @@ class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCate
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.clinical.oncologicalHistory, category,
-            ProgressiveDiseaseFunctions::treatmentResultedInPD
+            record.oncologicalHistory,
+            category,
+            ProgressiveDiseaseFunctions::treatmentResultedInPD,
+            { true },
+            { entry -> ProgressiveDiseaseFunctions.treatmentResultedInPD(entry) != false }
         )
 
         return if (treatmentSummary.hasSpecificMatch()) {

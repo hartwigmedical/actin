@@ -8,6 +8,16 @@ import org.junit.Test
 class PatientRecordFactoryTest {
 
     @Test
+    fun `Should create patient record without molecular record`() {
+        assertThat(
+            PatientRecordFactory.fromInputs(
+                TestClinicalFactory.createMinimalTestClinicalRecord(),
+                null
+            )
+        ).isNotNull
+    }
+
+    @Test
     fun `Should create patient record from test records`() {
         assertThat(
             PatientRecordFactory.fromInputs(

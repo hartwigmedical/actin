@@ -10,7 +10,7 @@ import com.hartwig.actin.doid.DoidModel
 class HasOvarianCancerWithMucinousComponent (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical.tumor.doids
+        val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether patient has ovarian cancer with mucinous component",

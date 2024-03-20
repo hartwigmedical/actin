@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
@@ -14,7 +14,8 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 
 internal object TumorTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
+
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
     private val baseMolecular = base.molecular as MolecularRecord
 
     fun withDoids(vararg doids: String): PatientRecord {
@@ -23,7 +24,7 @@ internal object TumorTestFactory {
 
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids)),
+            tumor = base.tumor.copy(doids = doids),
             molecular = baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                 drivers = baseMolecular.drivers.copy(
@@ -47,7 +48,8 @@ internal object TumorTestFactory {
         doids: Set<String>, amplifiedGene: String, priorMolecularTests: List<PriorMolecularTest>
     ): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests),
+            tumor = base.tumor.copy(doids = doids),
+            priorMolecularTests = priorMolecularTests,
             molecular = baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                 drivers = baseMolecular.drivers.copy(
@@ -136,10 +138,8 @@ internal object TumorTestFactory {
         oncologicalHistoryEntry: TreatmentHistoryEntry
     ): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(
-                oncologicalHistory = listOf(oncologicalHistoryEntry),
-                tumor = TumorDetails(hasCnsLesions = hasCnsLesions, hasBrainLesions = hasBrainLesions)
-            )
+            oncologicalHistory = listOf(oncologicalHistoryEntry),
+            tumor = TumorDetails(hasCnsLesions = hasCnsLesions, hasBrainLesions = hasBrainLesions)
         )
     }
 
@@ -181,12 +181,12 @@ internal object TumorTestFactory {
 
     fun withDoidsAndLiverLesions(doids: Set<String>?, hasLiverLesions: Boolean?): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(tumor = base.clinical.tumor.copy(doids = doids, hasLiverLesions = hasLiverLesions)),
+            tumor = base.tumor.copy(doids = doids, hasLiverLesions = hasLiverLesions)
         )
     }
 
     fun withTumorDetails(tumor: TumorDetails): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(tumor = tumor))
+        return base.copy(tumor = tumor)
     }
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
@@ -195,9 +195,8 @@ internal object TumorTestFactory {
 
     fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<PriorMolecularTest>, doids: Set<String>?): PatientRecord {
         return base.copy(
-            clinical = base.clinical.copy(
-                tumor = base.clinical.tumor.copy(doids = doids), priorMolecularTests = priorMolecularTests
-            )
+            tumor = base.tumor.copy(doids = doids),
+            priorMolecularTests = priorMolecularTests
         )
     }
 }

@@ -62,7 +62,7 @@ class StandardEhrIngestionTest {
                 curationDatabase.treatmentHistoryEntryCuration,
                 curationDatabase.nonOncologicalHistoryCuration
             ),
-            secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
+            secondPrimaryExtractor = EhrPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
 
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(
