@@ -26,6 +26,6 @@ internal object BloodTransfusionTestFactory {
     }
 
     private fun withClinicalRecord(clinical: ClinicalRecord): PatientRecord {
-        return PatientRecordFactory.fromInputs(clinical, TestMolecularFactory.createMinimalTestMolecularRecord())
+        return PatientRecordFactory.fromInputs(clinical, TestMolecularFactory.createMinimalTestMolecularHistory())
     }
 }

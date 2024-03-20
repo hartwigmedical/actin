@@ -484,9 +484,8 @@ class RecommendationEngineTest {
             val patientRecord = MINIMAL_PATIENT_RECORD.copy(
                 tumor = tumorDetails,
                 oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
-                molecular = molecularRecord
+                molecularHistory = MolecularHistory.fromWGSandIHC(molecularRecord, emptyList())
             )
-//            return PatientRecordFactory.fromInputs(clinicalRecord, MolecularHistory.fromWGSandIHC(molecularRecord, emptyList()))
             return patientRecord
         }
 

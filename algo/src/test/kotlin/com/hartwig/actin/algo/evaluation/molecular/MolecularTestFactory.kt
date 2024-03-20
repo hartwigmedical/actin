@@ -19,12 +19,10 @@ import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
-//    private val base = TestDataFactory.createMinimalTestPatientRecord()
-//    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
-    private val basePriorMolecular = emptyList<PriorMolecularTest>()
 
     private val base = TestPatientFactory.createMinimalTestPatientRecord()
-    private val baseMolecular = base.molecular as MolecularRecord
+    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+    private val basePriorMolecular = emptyList<PriorMolecularTest>()
 
     fun priorMolecularTest(
         test: String = "",
@@ -47,8 +45,8 @@ internal object MolecularTestFactory {
     }
 
     fun withPriorTests(priorTests: List<PriorMolecularTest>): PatientRecord {
+        // TODO (kz) come up with a more general way to substitute a subtype of tests from the entire history?
         return base.copy(molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular, priorTests))
-//        return base.copy(priorMolecularTests = priorTests)
     }
 
     fun withPriorTest(priorTest: PriorMolecularTest): PatientRecord {
@@ -133,12 +131,10 @@ internal object MolecularTestFactory {
         priorTest: PriorMolecularTest
     ): PatientRecord {
         return base.copy(
-//            molecularHistory = MolecularHistory.fromWGSandIHC(
-//                baseMolecular.copy(type = type, containsTumorCells = containsTumorCells),
-//                listOf(priorTest)
-//            ),
-            molecular = baseMolecular.copy(type = type, containsTumorCells = containsTumorCells),
-            priorMolecularTests = listOf(priorTest)
+            molecularHistory = MolecularHistory.fromWGSandIHC(
+                baseMolecular.copy(type = type, containsTumorCells = containsTumorCells),
+                listOf(priorTest)
+            )
         )
     }
 

@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
@@ -177,9 +178,7 @@ class GeneHasActivatingMutationTest {
     fun `Should evaluate to undetermined when no molecular input`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            // TODO (kz) clean this up
-//            functionNotIgnoringCodons.evaluate(TestDataFactory.createMinimalTestPatientRecord().copy(molecularHistory = MolecularHistory.empty("N/A")))
-            functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestPatientRecord().copy(molecular = null))
+            functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestPatientRecord().copy(molecularHistory = MolecularHistory.empty("N/A")))
         )
     }
 
