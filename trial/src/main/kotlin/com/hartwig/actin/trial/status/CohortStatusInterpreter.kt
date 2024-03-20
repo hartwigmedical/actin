@@ -8,8 +8,8 @@ internal object CohortStatusInterpreter {
     private val LOGGER = LogManager.getLogger(CohortStatusInterpreter::class.java)
 
     const val NOT_AVAILABLE = "NA"
-    const val NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY = "not_in_ctc_overview_unknown_why"
-    const val OVERRULED_BECAUSE_INCORRECT_IN_CTC = "overruled_because_incorrect_in_ctc"
+    const val NOT_IN_TRIAL_STATUS_DATABASE_OVERVIEW_UNKNOWN_WHY = "not_in_trial_status_database_overview_unknown_why"
+    const val OVERRULED_BECAUSE_INCORRECT_IN_TRIAL_STATUS_DATABASE = "overruled_because_incorrect_in_trial_status_database"
     const val WONT_BE_MAPPED_BECAUSE_CLOSED = "wont_be_mapped_because_closed"
     const val WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE = "wont_be_mapped_because_not_available"
 
@@ -20,7 +20,7 @@ internal object CohortStatusInterpreter {
         val ctcCohortIds = cohortConfig.externalCohortIds
         if (isNotAvailableOrIncorrect(ctcCohortIds)) {
             LOGGER.debug(
-                " CTC entry for cohort '{}' of trial '{}' explicitly configured to be unavailable or incorrect in CTC. "
+                " Trial status entry for cohort '{}' of trial '{}' explicitly configured to be unavailable or incorrect in trial status database. "
                         + "Ingesting cohort status as configured",
                 cohortConfig.cohortId,
                 cohortConfig.trialId
@@ -28,7 +28,7 @@ internal object CohortStatusInterpreter {
             return CohortStatusInterpretation(null, emptyList(), emptyList())
         } else if (isMissingBecauseClosedOrUnavailable(ctcCohortIds)) {
             LOGGER.debug(
-                " CTC entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
+                " Trial status entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
                         + "Setting cohort to closed without slots", cohortConfig.cohortId, cohortConfig.trialId
             )
             return CohortStatusInterpretation(closedWithoutSlots(), emptyList(), emptyList())
@@ -41,8 +41,8 @@ internal object CohortStatusInterpreter {
         return isSingleEntryWithValue(
             ctcCohortIds,
             NOT_AVAILABLE,
-            NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY,
-            OVERRULED_BECAUSE_INCORRECT_IN_CTC
+            NOT_IN_TRIAL_STATUS_DATABASE_OVERVIEW_UNKNOWN_WHY,
+            OVERRULED_BECAUSE_INCORRECT_IN_TRIAL_STATUS_DATABASE
         )
     }
 

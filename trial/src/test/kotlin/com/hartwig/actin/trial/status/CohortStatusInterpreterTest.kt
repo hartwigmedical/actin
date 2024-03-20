@@ -15,14 +15,14 @@ class CohortStatusInterpreterTest {
 
     @Test
     fun `Should ignore cohorts that are configured as not in CTC overview unknown why`() {
-        val notInCTCOverviewUnknownWhy = createWithCTCCohortIDs(CohortStatusInterpreter.NOT_IN_CTC_OVERVIEW_UNKNOWN_WHY)
+        val notInCTCOverviewUnknownWhy = createWithCTCCohortIDs(CohortStatusInterpreter.NOT_IN_TRIAL_STATUS_DATABASE_OVERVIEW_UNKNOWN_WHY)
         assertThat(evaluate(notInCTCOverviewUnknownWhy)).isNull()
     }
 
     @Test
     fun `Should ignore cohorts that are configured as overruled because incorrect in CTC`() {
         val overruledBecauseIncorrectInCTC =
-            createWithCTCCohortIDs(CohortStatusInterpreter.OVERRULED_BECAUSE_INCORRECT_IN_CTC)
+            createWithCTCCohortIDs(CohortStatusInterpreter.OVERRULED_BECAUSE_INCORRECT_IN_TRIAL_STATUS_DATABASE)
         assertThat(evaluate(overruledBecauseIncorrectInCTC)).isNull()
     }
 
