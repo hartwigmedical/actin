@@ -28,7 +28,8 @@ class HasTumorStage internal constructor(
                     "Missing tumor stage details - $derivedStageMessage"
                 )
             } else if (derivedStages?.map { evaluateWithStage(it) }?.any { it.result == EvaluationResult.PASS } == true) {
-                val derivedStageMessage = "derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions"
+                val stageMessage = stagesToMatch.joinToString(" or ") { it.display() } + "requested for trial"
+                val derivedStageMessage = "derived ${derivedStages.joinToString(" or ") { it.display() }} based on lesions ($stageMessage)"
                 undetermined(
                     "No tumor stage details present but $derivedStageMessage",
                     "Missing tumor stage details - $derivedStageMessage"
