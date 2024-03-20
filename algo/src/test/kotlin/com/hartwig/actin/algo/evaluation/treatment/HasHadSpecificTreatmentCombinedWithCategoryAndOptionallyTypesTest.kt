@@ -19,13 +19,15 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-    fun `Should fail if treatment history contains no treatment with required name`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(
-                drugTreatment("wrong name", MATCHING_CATEGORY, emptySet()),
+    fun `Should fail if history contains treatment with right category and type but not combined with treatment with required name`() {
+        val treatmentHistory =
+            withTreatmentHistory(
+                listOf(
+                    treatmentHistoryEntry(setOf(drugTreatment("wrong name", MATCHING_CATEGORY, emptySet()))),
+                    treatmentHistoryEntry(setOf(drugTreatment("other drug", MATCHING_CATEGORY, MATCHING_TYPES)))
+                )
             )
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(treatmentHistory))
     }
 
     @Test
