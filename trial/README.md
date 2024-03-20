@@ -26,7 +26,7 @@ Along with the CTC database itself, the `ctc_config_directory` is expected to co
 - `ignore_studies.tsv`: A single-column file with studies that are present in the CTC database but ACTIN explicitly should ignore
 - `unmapped_cohorts.tsv`: A single-colum file with cohort IDs that are present in the CTC database but ACTIN explicitly doesn't map to
   internal cohorts.
-- `mec_studies_not_in_ctc.tsv`: A single-column file with studies that have a MEC ID but are not present in the CTC database, for which the manual configured status is used
+- `studies_not_in_ctc.tsv`: A single-column file with studies that have a MEC ID but are not present in the CTC database, for which the manual configured status is used
 
 The CTC database is used to resolve trial and cohorts states as described in the next section, and in addition the following checks are
 performed on the CTC database itself as well as the two additional configuration files:
@@ -41,6 +41,15 @@ performed on the CTC database itself as well as the two additional configuration
     - A child of a cohort that is explicitly referenced in the `cohort_definition`
 
 An example CTC config database can be found [here](src/test/resources/ctc_config)
+
+### NKI trial database ###
+
+The NKI also provides us with updates on trial and cohort status . Their database is delivered in a json file `trial_status.json`, and otherwise 
+behaves identically to the CTC database.
+
+Given that, with the NKI json itself, the `nki_config_directory` is expected to contain the same three additional files as above.
+
+The additional checks described above for the CTC database are also performed on the NKI database.
 
 ### Configuration of trials in the trial database
 
