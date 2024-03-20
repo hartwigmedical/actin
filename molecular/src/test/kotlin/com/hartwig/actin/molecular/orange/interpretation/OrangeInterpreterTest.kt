@@ -151,7 +151,7 @@ class OrangeInterpreterTest {
     }
 
     @Test
-    fun `Should allow empty list as scrubbed germline disruption`() {
+    fun `Should accept empty list as scrubbed for germline disruption`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
@@ -161,7 +161,7 @@ class OrangeInterpreterTest {
     }
 
     @Test
-    fun `Should allow empty list as scrubbed germline breakends`() {
+    fun `Should accept empty list as scrubbed for germline breakends`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
@@ -171,7 +171,7 @@ class OrangeInterpreterTest {
     }
 
     @Test
-    fun `Should allow empty list as scrubbed germline SV`() {
+    fun `Should accept empty list as for scrubbed germline SV`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
