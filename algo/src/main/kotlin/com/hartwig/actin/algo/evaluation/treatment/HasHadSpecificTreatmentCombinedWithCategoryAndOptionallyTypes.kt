@@ -16,25 +16,24 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
     private val types: Set<TreatmentType>?
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentDesc =
-            "combined therapy with ${treatment.display()} and ${types?.let { "${concatItemsWithAnd(types)}" } ?: ""} ${category.display()}"
-
         val relevantHistory = record.oncologicalHistory.filter { history ->
             history.allTreatments().any { pastTreatment -> pastTreatment.name.lowercase() == treatment.name.lowercase() }
         }
-        if (relevantHistory.isEmpty()) return EvaluationFactory.fail("Patient has not received ${treatment.name}")
+
+        val treatmentDesc =
+            "combined therapy with ${treatment.display()} and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
 
         if (historyMatchesCategoryAndTypes(relevantHistory)) {
-            return EvaluationFactory.pass("Patient has received $treatmentDesc")
+            return EvaluationFactory.pass("Patient has received $treatmentDesc", "Has received $treatmentDesc")
         }
 
         if (historyMatchesCategoryAndTypes(record.oncologicalHistory)) {
             return EvaluationFactory.undetermined(
-                "Patient may have received $treatmentDesc during past trial participation",
-                "Can't determine whether patient has received $treatmentDesc"
+                "Undetermined if patient may have received $treatmentDesc",
+                "Undetermined if received $treatmentDesc"
             )
         }
-        return EvaluationFactory.fail("Patient has not received $treatmentDesc")
+        return EvaluationFactory.fail("Patient has not received $treatmentDesc", "Has not received $treatmentDesc")
     }
 
     private fun historyMatchesCategoryAndTypes(treatmentHistory: List<TreatmentHistoryEntry>): Boolean {

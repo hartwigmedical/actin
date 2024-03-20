@@ -12,34 +12,35 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
 class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
+
     @Test
     fun `Should fail if treatment history contains no treatments`() {
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun `Should fail if treatment history contains no treatment with given name`() {
+    fun `Should fail if treatment history contains no treatment with required name`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
-                drugTreatment(MATCHING_TREATMENT_NAME + "asdf", MATCHING_CATEGORY, emptySet())
+                drugTreatment("wrong name", MATCHING_CATEGORY, emptySet()),
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun `Should fail if treatment history contains no treatment in category`() {
+    fun `Should fail if treatment history contains no treatment with required category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
                 drugTreatment(MATCHING_TREATMENT_NAME, DIFFERENT_CATEGORY),
-                drugTreatment("test", DIFFERENT_CATEGORY)
+                drugTreatment("wrong name", DIFFERENT_CATEGORY)
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun `Should fail if the only treatment in the given category in the patient history is the named one`() {
+    fun `Should fail if the named one is correct but there is no other from the required category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
                 drugTreatment(MATCHING_TREATMENT_NAME, MATCHING_CATEGORY),
@@ -50,7 +51,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-    fun `Should match only on treatment name and category if function contains no types`() {
+    fun `Should pass on treatment name and category if function requires no types`() {
         val function =
             HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
                 drugTreatment(MATCHING_TREATMENT_NAME, DIFFERENT_CATEGORY), MATCHING_CATEGORY, emptySet()
@@ -59,7 +60,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-    fun `Should fail if types provided to function but none match treatment history`() {
+    fun `Should fail if types required but none match treatment history`() {
         val history = withTreatmentHistory(
             listOf(
                 treatmentHistoryEntry(
