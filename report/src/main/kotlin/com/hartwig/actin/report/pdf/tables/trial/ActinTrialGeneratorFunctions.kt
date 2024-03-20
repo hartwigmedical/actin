@@ -39,12 +39,9 @@ object ActinTrialGeneratorFunctions {
     }
 
     private fun addContentListToTable(cellContent: List<String>, deEmphasizeContent: Boolean, table: Table) {
-        cellContent.map { text: String ->
-            if (deEmphasizeContent) {
-                Cells.createContentNoBorderDeEmphasize(text)
-            } else {
-                Cells.createContentNoBorder(text)
-            }
+        cellContent.map {
+            val paragraph = Paragraph(it).setKeepTogether(true)
+            if (deEmphasizeContent) Cells.createContentNoBorderDeEmphasize(paragraph) else Cells.createContentNoBorder(paragraph)
         }.forEach(table::addCell)
     }
 
