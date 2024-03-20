@@ -204,9 +204,9 @@ class TrialStatusConfigInterpreterTest {
             )
         )
 
-        assertThat(trialStatusConfigInterpreter.extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)).isEmpty()
+        assertThat(trialStatusConfigInterpreter.extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)).isEmpty()
 
-        trialStatusConfigInterpreter.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs)
+        trialStatusConfigInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
     }
 
     @Test
@@ -217,13 +217,13 @@ class TrialStatusConfigInterpreterTest {
             )
         )
 
-        assertThat(trialStatusConfigInterpreter.extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)).isEqualTo(
+        assertThat(trialStatusConfigInterpreter.extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)).isEqualTo(
             listOf(
                 TestTrialData.TEST_MEC_NOT_IN_CTC
             )
         )
 
-        trialStatusConfigInterpreter.checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs)
+        trialStatusConfigInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
     }
 
 }

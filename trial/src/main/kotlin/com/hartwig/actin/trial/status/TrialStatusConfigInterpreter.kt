@@ -30,7 +30,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
         )
         trialDefinitionValidationErrors.addAll(interpreterValidationErrors)
 
-        if (trialStatusDatabase.mecStudiesNotInTrialStatusDatabase.contains(trialConfig.trialId) && openInTrialStatusDatabase != null) {
+        if (trialStatusDatabase.studiesNotInTrialStatusDatabase.contains(trialConfig.trialId) && openInTrialStatusDatabase != null) {
             trialStatusConfigValidationErrors.add(
                 TrialStatusDatabaseConfigValidationError(
                     trialConfig.trialId,
@@ -39,7 +39,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
             )
         }
 
-        if (!trialConfig.trialId.startsWith(trialPrefix) || trialStatusDatabase.mecStudiesNotInTrialStatusDatabase.contains(trialConfig.trialId)) {
+        if (trialStatusDatabase.studiesNotInTrialStatusDatabase.contains(trialConfig.trialId)) {
             LOGGER.debug(
                 " Skipping study status retrieval for {} ({}) since study is not deemed a trial status database trial",
                 trialConfig.trialId,
@@ -100,8 +100,8 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
         }
     }
 
-    override fun checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
-        val unusedMecStudiesNotInTrialStatusDatabase = extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs)
+    override fun checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
+        val unusedMecStudiesNotInTrialStatusDatabase = extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
 
         if (unusedMecStudiesNotInTrialStatusDatabase.isNotEmpty()) {
             unusedMecStudiesNotInTrialStatusDatabase.map {
@@ -115,9 +115,9 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
         }
     }
 
-    internal fun extractUnusedMECStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>): List<String> {
+    internal fun extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>): List<String> {
         val trialConfigIds = trialConfigs.map { it.trialId }.toSet()
-        return trialStatusDatabase.mecStudiesNotInTrialStatusDatabase.filter { !trialConfigIds.contains(it) }
+        return trialStatusDatabase.studiesNotInTrialStatusDatabase.filter { !trialConfigIds.contains(it) }
     }
 
     internal fun extractNewTrialStatusDatabaseStudies(trialConfigs: List<TrialDefinitionConfig>): Set<TrialStatusEntry> {

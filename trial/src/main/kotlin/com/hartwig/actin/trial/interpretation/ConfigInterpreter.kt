@@ -9,7 +9,7 @@ interface ConfigInterpreter {
     fun isTrialOpen(trialConfig: TrialDefinitionConfig): Boolean?
     fun checkModelForNewTrials(trialConfigs: List<TrialDefinitionConfig>)
     fun checkModelForNewCohorts(cohortConfigs: List<CohortDefinitionConfig>)
-    fun checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>)
+    fun checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>)
 
     fun resolveCohortMetadata(cohortConfig: CohortDefinitionConfig): CohortMetadata
     fun validation(): TrialStatusDatabaseValidation
@@ -28,7 +28,7 @@ class SimpleConfigInterpreter : ConfigInterpreter {
         // no-op
     }
 
-    override fun checkModelForUnusedMecStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
+    override fun checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs: List<TrialDefinitionConfig>) {
         // no-op
     }
 

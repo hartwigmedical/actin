@@ -17,7 +17,7 @@ class TrialStatusDatabaseReaderTest {
         assertEntries(database.entries)
         assertStudyMETCsToIgnore(database.studyMETCsToIgnore)
         assertUnmappedCohortIds(database.unmappedCohortIds)
-        assertMECNotInCTC(database.mecStudiesNotInTrialStatusDatabase)
+        assertStudyNotInCTC(database.studiesNotInTrialStatusDatabase)
     }
 
     companion object {
@@ -64,7 +64,7 @@ class TrialStatusDatabaseReaderTest {
             assertThat(unmappedCohortIds.contains(1)).isTrue
         }
 
-        private fun assertMECNotInCTC(studyWithMECIdNotInCTC: Set<String>) {
+        private fun assertStudyNotInCTC(studyWithMECIdNotInCTC: Set<String>) {
             assertThat(studyWithMECIdNotInCTC).hasSize(1)
             assertThat(studyWithMECIdNotInCTC.contains("ACTN 2021")).isTrue
         }

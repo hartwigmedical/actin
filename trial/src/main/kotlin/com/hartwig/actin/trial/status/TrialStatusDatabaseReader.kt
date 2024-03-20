@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager
 
 private const val IGNORE_STUDIES_TSV = "ignore_studies.tsv"
 private const val UNMAPPED_COHORTS_TSV = "unmapped_cohorts.tsv"
-private const val MEC_NOT_IN_CTC_TSV = "mec_studies_not_in_ctc.tsv"
+private const val MEC_NOT_IN_CTC_TSV = "studies_not_in_ctc.tsv"
 
 class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusEntryReader) {
 
@@ -17,7 +17,7 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
             entries = entries,
             studyMETCsToIgnore = readIgnoreStudies(basePath + IGNORE_STUDIES_TSV),
             unmappedCohortIds = readUnmappedCohorts(basePath + UNMAPPED_COHORTS_TSV),
-            mecStudiesNotInTrialStatusDatabase = readMECNotInCTCStudies(basePath + MEC_NOT_IN_CTC_TSV)
+            studiesNotInTrialStatusDatabase = readStudiesNotInCTCStudies(basePath + MEC_NOT_IN_CTC_TSV)
         )
 
         LOGGER.info("Evaluating usage of trial status database configuration")
@@ -29,7 +29,7 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
 
     private fun readIgnoreStudies(tsv: String): Set<String> {
         val ignoreStudies = IgnoreStudiesFile.read(tsv)
-        LOGGER.info(" Read {} study METCs to ignore from {}", ignoreStudies.size, tsv)
+        LOGGER.info(" Read {} study METC ids to ignore from {}", ignoreStudies.size, tsv)
         return ignoreStudies
     }
 
@@ -39,9 +39,9 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
         return unmappedCohorts
     }
 
-    private fun readMECNotInCTCStudies(tsv: String): Set<String> {
-        val notInCTCStudies = MECNotInTrialStatusDatabase.read(tsv)
-        LOGGER.info(" Read {} MEC studies without CTC status from {}", notInCTCStudies.size, tsv)
+    private fun readStudiesNotInCTCStudies(tsv: String): Set<String> {
+        val notInCTCStudies = StudiesNotInTrialStatusDatabase.read(tsv)
+        LOGGER.info(" Read {} studies without CTC status from {}", notInCTCStudies.size, tsv)
         return notInCTCStudies
     }
 

@@ -34,7 +34,8 @@ internal object ComplicationTestFactory {
 
     fun withCnsLesion(lesion: String): PatientRecord {
         return base.copy(
-            tumor = base.tumor.copy(hasCnsLesions = true, otherLesions = listOf(lesion)
+            tumor = base.tumor.copy(
+                hasCnsLesions = true, otherLesions = listOf(lesion)
             )
         )
     }

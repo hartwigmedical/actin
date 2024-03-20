@@ -16,7 +16,7 @@ object TestTrialStatusDatabaseFactory {
             entries = createTestTrialStatusEntries(),
             studyMETCsToIgnore = setOf(TestTrialData.TEST_TRIAL_METC_IGNORE),
             unmappedCohortIds = setOf(TestTrialData.TEST_UNMAPPED_COHORT_ID),
-            mecStudiesNotInTrialStatusDatabase = setOf(TestTrialData.TEST_MEC_NOT_IN_CTC)
+            studiesNotInTrialStatusDatabase = setOf(TestTrialData.TEST_MEC_NOT_IN_CTC)
         )
     }
 

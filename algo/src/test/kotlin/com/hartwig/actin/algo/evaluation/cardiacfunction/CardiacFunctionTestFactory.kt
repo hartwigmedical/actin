@@ -22,7 +22,7 @@ internal object CardiacFunctionTestFactory {
     fun withLVEF(lvef: Double?): PatientRecord {
         val base = TestPatientFactory.createMinimalTestPatientRecord()
         return base.copy(
-                clinicalStatus = base.clinicalStatus.copy(lvef = lvef)
+            clinicalStatus = base.clinicalStatus.copy(lvef = lvef)
         )
     }
 
