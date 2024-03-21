@@ -69,5 +69,6 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
                 table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy"))
             }
         } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))
+        document.add(table)
     }
 }
