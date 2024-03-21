@@ -1,24 +1,28 @@
 package com.hartwig.actin.clinical.util
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.util.DatamodelPrinter
 import com.hartwig.actin.util.DatamodelPrinter.Companion.withDefaultIndentation
 
-class ClinicalPrinter private constructor(private val printer: DatamodelPrinter) {
+class PatientRecordPrinter private constructor(private val printer: DatamodelPrinter) {
 
-    fun print(record: ClinicalRecord) {
+    fun print(record: PatientRecord) {
         printer.print("Patient: " + record.patientId)
         printer.print("Birth year: " + record.patient.birthYear)
         printer.print("Gender: " + record.patient.gender)
         printer.print("Primary tumor location: " + tumorLocation(record.tumor))
         printer.print("Primary tumor type: " + tumorType(record.tumor))
         printer.print("WHO status: " + record.clinicalStatus.who)
+
+        // TODO (kz) replace this with a MolecularHistoryPrinter
+        record.molecularHistory.mostRecentWGS()?.let(MolecularPrinter::printRecord)
     }
 
     companion object {
-        fun printRecord(record: ClinicalRecord) {
-            ClinicalPrinter(withDefaultIndentation()).print(record)
+        fun printRecord(record: PatientRecord) {
+            PatientRecordPrinter(withDefaultIndentation()).print(record)
         }
 
         private fun tumorLocation(tumor: TumorDetails): String? {

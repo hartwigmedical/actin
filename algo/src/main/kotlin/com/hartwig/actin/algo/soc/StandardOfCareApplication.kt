@@ -2,19 +2,19 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
-import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.clinical.util.PatientRecordPrinter
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.molecular.serialization.MolecularHistoryJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
@@ -32,20 +32,10 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
-
-        LOGGER.info("Loading clinical record from {}", config.clinicalJson)
-        val clinical: ClinicalRecord = ClinicalRecordJson.read(config.clinicalJson)
-        ClinicalPrinter.printRecord(clinical)
-
-        LOGGER.info("Loading molecular history from {}", config.molecularJson)
-        val molecularHistory = MolecularHistoryJson.read(config.molecularJson)
-        val molecular = requireNotNull(molecularHistory.mostRecentWGS()) {
-            "No WGS record found in molecular history"
-        }
-        // TODO (kz) make a molecularHistoryPrinter
-        MolecularPrinter.printRecord(molecular)
-
-        val patient: PatientRecord = PatientRecordFactory.fromInputs(clinical, molecularHistory)
+        
+        LOGGER.info("Loading patient record from from {}", config.patientJson)
+        val patient = PatientRecordJson.read(config.patientJson)
+        PatientRecordPrinter.printRecord(patient)
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)

@@ -1,21 +1,18 @@
 package com.hartwig.actin.algo
 
-import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
-import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
-import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.clinical.util.PatientRecordPrinter
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.molecular.serialization.MolecularHistoryJson
-import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
 import org.apache.commons.cli.DefaultParser
@@ -31,18 +28,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
-        LOGGER.info("Loading clinical record from {}", config.clinicalJson)
-        val clinical = ClinicalRecordJson.read(config.clinicalJson)
-        ClinicalPrinter.printRecord(clinical)
-
-        val molecularHistory = config.molecularJson?.let { molecularJson ->
-            LOGGER.info("Loading molecular history from {}", molecularJson)
-            MolecularHistoryJson.read(molecularJson)
-        }
-        // TODO (kz) make a molecularHistoryPrinter
-        molecularHistory?.mostRecentWGS()?.let(MolecularPrinter::printRecord) ?: LOGGER.info("No molecular record provided")
-
-        val patient = PatientRecordFactory.fromInputs(clinical, molecularHistory)
+        LOGGER.info("Loading patient record from {}", config.patientRecordJson)
+        val patient = PatientRecordJson.read(config.patientRecordJson)
+        PatientRecordPrinter.printRecord(patient)
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
         val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)

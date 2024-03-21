@@ -12,8 +12,7 @@ import org.apache.logging.log4j.core.config.Configurator
 const val EMC_TRIAL_SOURCE = "EMC"
 
 data class TreatmentMatcherConfig(
-    val clinicalJson: String,
-    val molecularJson: String?,
+    val patientRecordJson: String,
     val trialDatabaseDirectory: String,
     val treatmentDirectory: String,
     val doidJson: String,
@@ -28,8 +27,7 @@ data class TreatmentMatcherConfig(
 
         fun createOptions(): Options {
             val options = Options()
-            options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient")
-            options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient")
+            options.addOption(PATIENT_RECORD_JSON, true, "File containing the patient record")
             options.addOption(TRIAL_DATABASE_DIRECTORY, true, "Directory containing all available trials")
             options.addOption(TREATMENT_DIRECTORY, true, "Path to treatment data directory")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
@@ -63,8 +61,7 @@ data class TreatmentMatcherConfig(
             }
 
             return TreatmentMatcherConfig(
-                clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
-                molecularJson = ApplicationConfig.optionalFile(cmd, MOLECULAR_JSON),
+                patientRecordJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_RECORD_JSON),
                 trialDatabaseDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
@@ -77,8 +74,7 @@ data class TreatmentMatcherConfig(
         }
 
         val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherConfig::class.java)
-        private const val CLINICAL_JSON = "clinical_json"
-        private const val MOLECULAR_JSON = "molecular_json"
+        private const val PATIENT_RECORD_JSON = "patient_record_json"
         private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"
