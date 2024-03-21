@@ -43,16 +43,17 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
         val otherTreatments = treatmentHistory.flatMap { treatmentLine ->
             treatmentLine.allTreatments().filterNot { treatment -> (treatment as? DrugTreatment)?.drugs?.contains(drugToFind) == true }
         }
-        val possibleTrialMatches = treatmentHistory.any { it.isTrial
-                && it.treatments.any { treatment -> (treatment as? DrugTreatment)?.drugs?.contains(drugToFind) == true}
-                && it.treatments.any { treatment -> (treatment as? DrugTreatment)?.drugs.isNullOrEmpty() }
+        val possibleMatches = treatmentHistory.any {
+            it.treatments.any { treatment -> (treatment as? DrugTreatment)?.drugs?.contains(drugToFind) == true}
+                    && (it.treatments.any { treatment -> (treatment as? DrugTreatment)?.drugs.isNullOrEmpty() }
+                    || it.treatments.any { treatment -> treatment.categories().contains(category) && treatment.types().isEmpty() })
         }
         return when {
             drugMatches.isNotEmpty()
                     && otherTreatments.any { it.categories().contains(category) && it.types().containsAll(lookForTypes) } -> {
                         true
                     }
-            drugMatches.isNotEmpty() && possibleTrialMatches -> null
+            drugMatches.isNotEmpty() && possibleMatches -> null
             else -> false
         }
     }
