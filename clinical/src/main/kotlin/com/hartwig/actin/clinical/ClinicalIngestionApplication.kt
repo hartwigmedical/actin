@@ -9,15 +9,15 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.util.json.GsonSerializer
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 
 class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) {
 
