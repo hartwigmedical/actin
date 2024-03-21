@@ -83,39 +83,7 @@
         "bestResponse": null,
         "stopReason": null,
         "stopReasonDetail": null,
-        "switchToTreatments": [
-          {
-            "treatment": {
-              "name": "CAPECITABINE+OXALIPLATIN",
-              "drugs": [
-                {
-                  "name": "CAPECITABINE",
-                  "drugTypes": [
-                    "ANTIMETABOLITE"
-                  ],
-                  "category": "CHEMOTHERAPY",
-                  "displayOverride": null
-                },
-                {
-                  "name": "OXALIPLATIN",
-                  "drugTypes": [
-                    "PLATINUM_COMPOUND"
-                  ],
-                  "category": "CHEMOTHERAPY",
-                  "displayOverride": null
-                }
-              ],
-              "synonyms": [],
-              "displayOverride": null,
-              "isSystemic": true,
-              "maxCycles": null,
-              "treatmentClass": "DRUG_TREATMENT"
-            },
-            "cycles": 0,
-            "startYear": 2020,
-            "startMonth": 1
-          }
-        ],
+        "switchToTreatments": [],
         "maintenanceTreatment": null,
         "toxicities": null,
         "bodyLocationCategories": null,
