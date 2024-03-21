@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.TestPatientFactory.createMinimalTestPatientRecord
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -45,14 +45,14 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
                 stopReason = StopReason.TOXICITY
             )
         )
-        val intolerance = Intolerance("Nivolumab", setOf(DoidConstants.DRUG_ALLERGY_DOID), "", setOf(""), "", "", "", "")
-        val base = TestDataFactory.createMinimalTestPatientRecord()
-        val record = base.copy(clinical = base.clinical.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments))
+        val intolerance = Intolerance("Nivolumab", setOf(DoidConstants.DRUG_ALLERGY_DOID), "", setOf(""), "", "", "", "", "")
+        val base = createMinimalTestPatientRecord()
+        val record = base.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments)
         assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
     }
 
     private fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {
-        val base = TestPatientFactory.createMinimalTestPatientRecord()
+        val base = createMinimalTestPatientRecord()
         return base.copy(oncologicalHistory = treatmentHistory)
     }
 
