@@ -131,7 +131,8 @@
       "type": "Allergy",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
-      "criticality": "Low"
+      "criticality": "Low",
+      "drugAllergyType": "not specified"
     }
   ],
   "surgeries": [

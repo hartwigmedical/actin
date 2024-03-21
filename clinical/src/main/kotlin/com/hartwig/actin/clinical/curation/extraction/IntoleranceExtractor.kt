@@ -35,7 +35,7 @@ class IntoleranceExtractor(private val intoleranceCuration: CurationDatabase<Int
                     val subcategories = if (it.category.equals("medication", ignoreCase = true)) {
                         atcModel.resolveByName(config.name.lowercase())
                     } else emptySet()
-                    it.copy(name = config.name, doids = config.doids, subcategories = subcategories)
+                    it.copy(name = config.name, doids = config.doids, subcategories = subcategories, drugAllergyType = config.drugAllergyType)
                 } ?: it
                 ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
             }
