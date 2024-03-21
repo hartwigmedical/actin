@@ -18,32 +18,42 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val treatmentDesc =
-            "combined therapy with $drugToFind and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
-
-        if (containsTargetDrugAndTreatmentCombination(record.oncologicalHistory)) {
-            return EvaluationFactory.pass("Patient has received $treatmentDesc", "Has received $treatmentDesc")
-        }
-
-        if (containsTargetDrugAndTreatmentCombination(record.oncologicalHistory)) {
-            return EvaluationFactory.undetermined(
-                "Undetermined if patient may have received $treatmentDesc",
-                "Undetermined if received $treatmentDesc"
-            )
-        }
-        return EvaluationFactory.fail("Patient has not received $treatmentDesc", "Has not received $treatmentDesc")
-    }
-
-    private fun containsTargetDrugAndTreatmentCombination(treatmentHistory: List<TreatmentHistoryEntry>): Boolean {
-        val lookForTypes = types ?: emptySet()
-        val drugMatches = treatmentHistory
+        val drugMatches = record.oncologicalHistory
             .flatMap(TreatmentHistoryEntry::allTreatments)
             .flatMap { (it as? DrugTreatment)?.drugs ?: emptyList() }
             .filter { it == drugToFind }
+
+        val treatmentDesc =
+            "combined therapy with $drugToFind and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
+
+        return if (containsTargetDrugAndTreatmentCombination(record.oncologicalHistory, drugMatches) == true) {
+            EvaluationFactory.pass("Patient has received $treatmentDesc", "Has received $treatmentDesc")
+        } else if (containsTargetDrugAndTreatmentCombination(record.oncologicalHistory, drugMatches) == null) {
+            EvaluationFactory.undetermined(
+                "Undetermined if patient may have received $treatmentDesc",
+                "Undetermined if received $treatmentDesc"
+            )
+        } else {
+            EvaluationFactory.fail("Patient has not received $treatmentDesc", "Has not received $treatmentDesc")
+        }
+    }
+
+    private fun containsTargetDrugAndTreatmentCombination(treatmentHistory: List<TreatmentHistoryEntry>, drugMatches: List<Drug>): Boolean? {
+        val lookForTypes = types ?: emptySet()
         val otherTreatments = treatmentHistory.flatMap { treatmentLine ->
             treatmentLine.allTreatments().filterNot { treatment -> (treatment as? DrugTreatment)?.drugs?.contains(drugToFind) == true }
         }
-        return drugMatches.isNotEmpty()
-                && otherTreatments.any { it.categories().contains(category) && it.types().containsAll(lookForTypes) }
+        val possibleTrialMatches = treatmentHistory.any { it.isTrial
+                && it.treatments.any { treatment -> (treatment as? DrugTreatment)?.drugs?.contains(drugToFind) == true}
+                && it.treatments.any { treatment -> (treatment as? DrugTreatment)?.drugs.isNullOrEmpty() }
+        }
+        return when {
+            drugMatches.isNotEmpty()
+                    && otherTreatments.any { it.categories().contains(category) && it.types().containsAll(lookForTypes) } -> {
+                        true
+                    }
+            drugMatches.isNotEmpty() && possibleTrialMatches -> null
+            else -> false
+        }
     }
 }
