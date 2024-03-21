@@ -14,8 +14,8 @@ class EhrBodyWeightExtractor : EhrExtractor<List<BodyWeight>> {
                 BodyWeight(
                     value = it.value,
                     date = it.date.atStartOfDay(),
-                    unit = if (enumeratedInput<EhrMeasurementUnit>(it.unit) == EhrMeasurementUnit.KILOGRAMS) "Kilogram" else throw IllegalArgumentException(
-                        "Unit of body weight is not Kilogram"
+                    unit = if (enumeratedInput<EhrMeasurementUnit>(it.unit) == EhrMeasurementUnit.KILOGRAMS) "Kilograms" else throw IllegalArgumentException(
+                        "Unit of body weight is not Kilograms"
                     ),
                     valid = true
                 )
