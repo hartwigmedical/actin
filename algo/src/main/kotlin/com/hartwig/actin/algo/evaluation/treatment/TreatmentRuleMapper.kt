@@ -28,7 +28,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_NOT_RECEIVED_ANY_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
-            EligibilityRule.HAS_HAD_TREATMENT_NAME_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificTreatmentCombinedWithCategoryAndTypesCreator(),
+            EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS to hasHadCombinedTreatmentNamesWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to hasHadCombinedTreatmentNamesWithCyclesCreator(),
@@ -173,10 +173,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadSpecificTreatmentCombinedWithCategoryAndTypesCreator(): FunctionCreator {
+    private fun hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneSpecificTreatmentOneTreatmentCategoryManyTypesInput(function)
-            HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(input.treatment, input.category, input.types)
+            val input = functionInputResolver().createOneSpecificDrugOneTreatmentCategoryManyTypesInput(function)
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(input.drug, input.category, input.types)
         }
     }
 

@@ -18,33 +18,7 @@ import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.input.datamodel.TreatmentCategoryInput
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
-import com.hartwig.actin.trial.input.single.FunctionInput
-import com.hartwig.actin.trial.input.single.ManyDrugsOneInteger
-import com.hartwig.actin.trial.input.single.ManyGenes
-import com.hartwig.actin.trial.input.single.ManyIntents
-import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
-import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
-import com.hartwig.actin.trial.input.single.OneDoidTermOneInteger
-import com.hartwig.actin.trial.input.single.OneGene
-import com.hartwig.actin.trial.input.single.OneGeneManyCodons
-import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
-import com.hartwig.actin.trial.input.single.OneGeneOneInteger
-import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
-import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
-import com.hartwig.actin.trial.input.single.OneHaplotype
-import com.hartwig.actin.trial.input.single.OneHlaAllele
-import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
-import com.hartwig.actin.trial.input.single.OneIntegerOneString
-import com.hartwig.actin.trial.input.single.OneMedicationCategory
-import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
-import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneTreatmentCategoryManyTypes
-import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
-import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
-import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInteger
-import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
-import com.hartwig.actin.trial.input.single.TwoDoubles
-import com.hartwig.actin.trial.input.single.TwoIntegers
-import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
+import com.hartwig.actin.trial.input.single.*
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.util.Locale
@@ -122,8 +96,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
-                    createOneSpecificTreatmentOneTreatmentCategoryManyTypesInput(function)
+                FunctionInput.ONE_SPECIFIC_DRUG_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
+                    createOneSpecificDrugOneTreatmentCategoryManyTypesInput(function)
                     return true
                 }
 
@@ -373,12 +347,12 @@ class FunctionInputResolver(
         )
     }
 
-    fun createOneSpecificTreatmentOneTreatmentCategoryManyTypesInput(
+    fun createOneSpecificDrugOneTreatmentCategoryManyTypesInput(
         function: EligibilityFunction
-    ): OneSpecificTreatmentOneTreatmentCategoryManyTypes {
-        assertParamConfig(function, FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_TREATMENT_CATEGORY_MANY_TYPES, 3)
-        return OneSpecificTreatmentOneTreatmentCategoryManyTypes(
-            treatment = toTreatment(parameterAsString(function, 0)),
+    ): OneSpecificDrugOneTreatmentCategoryManyTypes {
+        assertParamConfig(function, FunctionInput.ONE_SPECIFIC_DRUG_ONE_TREATMENT_CATEGORY_MANY_TYPES, 3)
+        return OneSpecificDrugOneTreatmentCategoryManyTypes(
+            drug = toDrug(parameterAsString(function, 0)),
             category = TreatmentCategoryResolver.fromString(parameterAsString(function, 1)),
             types = toTreatmentTypeSet(function.parameters[2])
         )

@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
-class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypesTest {
+class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
 
     @Test
     fun `Should fail if treatment history contains no treatments`() {

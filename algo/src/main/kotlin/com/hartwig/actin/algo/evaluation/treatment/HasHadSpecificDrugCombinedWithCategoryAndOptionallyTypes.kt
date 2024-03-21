@@ -5,13 +5,13 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 
-class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
-    private val treatment: Treatment,
+class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
+    private val drugToFind: Drug,
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>?
 ) : EvaluationFunction {
@@ -21,7 +21,7 @@ class HasHadSpecificTreatmentCombinedWithCategoryAndOptionallyTypes(
         }
 
         val treatmentDesc =
-            "combined therapy with ${treatment.display()} and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
+            "combined therapy with $drugToFind and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
 
         if (historyMatchesCategoryAndTypes(relevantHistory)) {
             return EvaluationFactory.pass("Patient has received $treatmentDesc", "Has received $treatmentDesc")
