@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager
 
 private const val IGNORE_STUDIES_TSV = "ignore_studies.tsv"
 private const val UNMAPPED_COHORTS_TSV = "unmapped_cohorts.tsv"
-private const val MEC_NOT_IN_CTC_TSV = "studies_not_in_ctc.tsv"
+private const val STUDIES_NOT_IN_TRIAL_STATUS_DATABASE_TSV = "studies_not_in_trial_status_database.tsv"
 
 class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusEntryReader) {
 
@@ -17,7 +17,7 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
             entries = entries,
             studyMETCsToIgnore = readIgnoreStudies(basePath + IGNORE_STUDIES_TSV),
             unmappedCohortIds = readUnmappedCohorts(basePath + UNMAPPED_COHORTS_TSV),
-            studiesNotInTrialStatusDatabase = readStudiesNotInCTCStudies(basePath + MEC_NOT_IN_CTC_TSV)
+            studiesNotInTrialStatusDatabase = readStudiesNotInTrialStatusDatabaseStudies(basePath + STUDIES_NOT_IN_TRIAL_STATUS_DATABASE_TSV)
         )
 
         LOGGER.info("Evaluating usage of trial status database configuration")
@@ -39,9 +39,9 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
         return unmappedCohorts
     }
 
-    private fun readStudiesNotInCTCStudies(tsv: String): Set<String> {
+    private fun readStudiesNotInTrialStatusDatabaseStudies(tsv: String): Set<String> {
         val notInCTCStudies = StudiesNotInTrialStatusDatabase.read(tsv)
-        LOGGER.info(" Read {} studies without CTC status from {}", notInCTCStudies.size, tsv)
+        LOGGER.info(" Read {} studies not in trial status database from {}", notInCTCStudies.size, tsv)
         return notInCTCStudies
     }
 
