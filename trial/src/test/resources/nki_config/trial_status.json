@@ -1,0 +1,20 @@
+[
+  {
+    "study_id": 1,
+    "study_metc": "MEC-001",
+    "study_acronym": "OPN-001",
+    "study_title": "Open trial",
+    "study_status": "OPEN",
+    "study_slots_number_available": 1,
+    "study_slots_date_update": "2024-03-18T00:00:00"
+  },
+  {
+    "study_id": 2,
+    "study_metc": "MEC-002",
+    "study_acronym": "CLS-001",
+    "study_title": "Closed trial",
+    "study_status": "CLOSED",
+    "study_slots_number_available": 0,
+    "study_slots_date_update": "2024-03-12T00:00:00"
+  }
+]

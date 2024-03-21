@@ -26,7 +26,7 @@ Along with the CTC database itself, the `ctc_config_directory` is expected to co
 - `ignore_studies.tsv`: A single-column file with studies that are present in the CTC database but ACTIN explicitly should ignore
 - `unmapped_cohorts.tsv`: A single-colum file with cohort IDs that are present in the CTC database but ACTIN explicitly doesn't map to
   internal cohorts.
-- `mec_studies_not_in_ctc.tsv`: A single-column file with studies that have a MEC ID but are not present in the CTC database, for which the manual configured status is used
+- `studies_not_in_ctc.tsv`: A single-column file with studies that have a MEC ID but are not present in the CTC database, for which the manual configured status is used
 
 The CTC database is used to resolve trial and cohorts states as described in the next section, and in addition the following checks are
 performed on the CTC database itself as well as the two additional configuration files:
@@ -42,6 +42,15 @@ performed on the CTC database itself as well as the two additional configuration
 
 An example CTC config database can be found [here](src/test/resources/ctc_config)
 
+### NKI trial database ###
+
+The NKI also provides us with updates on trial and cohort status . Their database is delivered in a json file `trial_status.json`, and otherwise 
+behaves identically to the CTC database.
+
+Given that, with the NKI json itself, the `nki_config_directory` is expected to contain the same three additional files as above.
+
+The additional checks described above for the CTC database are also performed on the NKI database.
+
 ### Configuration of trials in the trial database
 
 Trials are read from the `trial_config_directory`. The following files are expected to be present in this directory:
@@ -56,54 +65,56 @@ In case of any configuration issue, this application will crash while providing 
 
 An example trial configuration database can be found [here](src/test/resources/trial_config)
 
+Note the trial status database referred to in the configuration files is either the CTC or NKI database, depending on configuration.
+
 #### Trial Definition
 
-| Field   | Example                                                      | Notes                                                         |
-|---------|--------------------------------------------------------------|---------------------------------------------------------------|
-| trialId | ACTN 2021                                                    |                                                               |
-| open    | 1                                                            | Optional (only required in case a study isn't present in CTC) |
-| acronym | ACTIN                                                        |                                                               |
-| title   | ACTIN is a study to evaluate a new treatment decision system |                                                               |
+| Field   | Example                                                      | Notes                                                                           |
+|---------|--------------------------------------------------------------|---------------------------------------------------------------------------------|
+| trialId | ACTN 2021                                                    |                                                                                 |
+| open    | 1                                                            | Optional (only required in case a study isn't present in trial status database) |
+| acronym | ACTIN                                                        |                                                                                 |
+| title   | ACTIN is a study to evaluate a new treatment decision system |                                                                                 |
 
 The following checks are done on the level of trial definitions:
 
 - Every trial ID must be unique
 - Every file identifier generated for any trial must be unique. The file identifier is the trial ID with spaces replaced by underscores.
 
-The `open` status for a trial is resolved from the CTC trial database via taking the status of one of the cohorts of the trial.
+The `open` status for a trial is resolved from the trial status database via taking the status of one of the cohorts of the trial.
 In case the set of cohort states for a single study are inconsistent, a warning is raised, and it is assumed the trial is closed.
 
 #### Cohort Definition
 
-| Field          | Example                | Notes                                                                  |
-|----------------|------------------------|------------------------------------------------------------------------|
-| trialId        | ACTN 2021              |                                                                        |
-| cohortId       | A                      |                                                                        |
-| ctcCohortIds   | 462;463                |                                                                        | 
-| open           | 1                      | Optional (only required in case cohort is not present in CTC database) | 
-| slotsAvailable | 1                      | Optional (only required in case cohort is not present in CTC database) |
-| blacklist      | 0                      |                                                                        |
-| description    | First evaluation phase |                                                                        |
+| Field             | Example                | Notes                                                                           |
+|-------------------|------------------------|---------------------------------------------------------------------------------|
+| trialId           | ACTN 2021              |                                                                                 |
+| cohortId          | A                      |                                                                                 |
+| externalCohortIds | 462;463                |                                                                                 | 
+| open              | 1                      | Optional (only required in case cohort is not present in trial status database) | 
+| slotsAvailable    | 1                      | Optional (only required in case cohort is not present in trial status database) |
+| blacklist         | 0                      |                                                                                 |
+| description       | First evaluation phase |                                                                                 |
 
 The following checks are done on the level of cohort definitions:
 
 - Every trial ID referenced from a cohort must be defined in the trial definitions file
 - Every cohort ID must be unique within the context of a specific trial
-- The `ctcCohortIds` value needs to be one of the following:
-    - a single parent cohort ID from the CTC database.
-    - One or more children cohort IDs from the CTC database, combined via `;`
+- The `externalCohortIds` value needs to be one of the following:
+    - a single parent cohort ID from the trial status database.
+    - One or more children cohort IDs from the trial status database, combined via `;`
     - One of the following specific values, requiring manual configuring of `open` and `slotsAvailable`:
-        - `NA`: The cohort is not part of a study managed by CTC
-        - `not_in_ctc_overview_unknown_why`: The cohort is missing from CTC even though it should be present.
-        - `overruled_because_incorrect_in_ctc`: The data is wrong from CTC and configuration is overruled manually.
+        - `NA`: The cohort is not part of a study managed by trial status 
+        - `not_in_trial_status_database_overview_unknown_why`: The cohort is missing from trial status  even though it should be present.
+        - `overruled_because_incorrect_in_trial_status_database`: The data is wrong from trial status database and configuration is overruled manually.
     - One of the following specific values, in which case it is assumed the cohort is closed without slots available:
         - `wont_be_mapped_because_closed`: In case a trial is closed but still present in ACTIN's trial database.
-        - `wont_be_mapped_because_not_available`: The cohort will never be mapped by CTC since the cohort is unavailable within CTC.
+        - `wont_be_mapped_because_not_available`: The cohort will never be mapped by trial status database since the cohort is unavailable within that database.
 
-The `open` and `slotsAvailable` are resolved from the CTC database in case `ctcCohortIds` is configured as one parent cohort ID or one or
+The `open` and `slotsAvailable` are resolved from the trial status database in case `ctcCohortIds` is configured as one parent cohort ID or one or
 more child cohort IDs. The following logic is applied:
 
-- If a single parent cohort ID is configured, ACTIN reads the `open` and `slotsAvailable` status from exactly that entry in the CTC database
+- If a single parent cohort ID is configured, ACTIN reads the `open` and `slotsAvailable` status from exactly that entry in the trial status database
 - If one or more children are configured, ACTIN takes the "most lenient" option. Cohorts are more lenient if they are open and have slots
   available. An extra check is done in case the best entry is more lenient than its parent (e.g. parent cohort closed while child open).
   This check results in a warning, but it is assumed the most lenient child is still representative of the actual cohort status.

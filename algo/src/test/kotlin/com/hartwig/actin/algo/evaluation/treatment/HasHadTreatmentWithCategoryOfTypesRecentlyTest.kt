@@ -9,8 +9,8 @@ import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.Test
 
 class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
 

@@ -20,9 +20,9 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class TreatmentMatcherTest {
     private val patient = TestPatientFactory.createMinimalTestPatientRecord()
