@@ -33,7 +33,7 @@ class HasReceivedPlatinumBasedDoublet : EvaluationFunction {
 
     private fun receivedPlatinumDoublet(record: PatientRecord): Boolean {
 
-        return record.clinical.oncologicalHistory.any { entry ->
+        return record.oncologicalHistory.any { entry ->
             val chemotherapies = entry.treatments.filter { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
             chemotherapies.size == 2 && chemotherapies.any { it.types().contains(DrugType.PLATINUM_COMPOUND) }
         }
@@ -41,7 +41,7 @@ class HasReceivedPlatinumBasedDoublet : EvaluationFunction {
 
     private fun receivedPlatinumTripletOrAbove(record: PatientRecord): Boolean {
 
-        return record.clinical.oncologicalHistory.any { entry ->
+        return record.oncologicalHistory.any { entry ->
             val chemotherapies = entry.treatments.filter { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
             chemotherapies.size > 2 && chemotherapies.any { it.types().contains(DrugType.PLATINUM_COMPOUND) }
         }

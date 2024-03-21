@@ -182,8 +182,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_TUMOR_STAGE -> {
-                    createOneTumorStageInput(function)
+                FunctionInput.MANY_TUMOR_STAGES -> {
+                    createManyTumorStagesInput(function)
                     return true
                 }
 
@@ -474,9 +474,9 @@ class FunctionInputResolver(
         )
     }
 
-    fun createOneTumorStageInput(function: EligibilityFunction): TumorStage {
-        assertParamConfig(function, FunctionInput.ONE_TUMOR_STAGE, 1)
-        return TumorStage.valueOf(parameterAsString(function, 0))
+    fun createManyTumorStagesInput(function: EligibilityFunction): Set<TumorStage> {
+        assertParamConfig(function, FunctionInput.MANY_TUMOR_STAGES, 1)
+        return toStringList(function.parameters.first()).map(TumorStage::valueOf).toSet()
     }
 
     fun createOneHlaAlleleInput(function: EligibilityFunction): OneHlaAllele {

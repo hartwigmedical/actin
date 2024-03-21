@@ -58,6 +58,12 @@ data class CTCUnmappedValidationError(override val config: Int, override val mes
     }
 }
 
+data class CTCConfigValidationError(override val config: String, override val message: String): ValidationError<String> {
+    override fun configFormat(config: String): String {
+        return "trial id=${config}"
+    }
+}
+
 data class TrialDatabaseValidation(
     val inclusionCriteriaValidationErrors: Set<InclusionCriteriaValidationError>,
     val inclusionReferenceValidationErrors: Set<InclusionReferenceValidationError>,

@@ -10,7 +10,7 @@ class HasHadRecentBloodTransfusion internal constructor(private val product: Tra
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val productString = product.display().lowercase()
-        for (transfusion in record.clinical.bloodTransfusions) {
+        for (transfusion in record.bloodTransfusions) {
             if (transfusion.product.equals(product.display(), ignoreCase = true) && minDate.isBefore(transfusion.date)) {
                 return EvaluationFactory.pass(
                     "Patient has received recent blood transfusion of product $productString",

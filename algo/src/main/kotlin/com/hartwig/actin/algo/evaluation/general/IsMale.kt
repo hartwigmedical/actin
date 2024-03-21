@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.Gender
 
 class IsMale internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return when (record.clinical.patient.gender) {
+        return when (record.patient.gender) {
             Gender.MALE -> EvaluationFactory.pass("Patient is male", "Adequate gender")
             else -> EvaluationFactory.fail("Patient is not male", "Inadequate gender")
         }

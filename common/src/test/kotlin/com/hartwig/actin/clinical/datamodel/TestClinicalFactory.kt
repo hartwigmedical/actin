@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.datamodel
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
@@ -37,7 +37,7 @@ object TestClinicalFactory {
 
     fun createMinimalTestClinicalRecord(): ClinicalRecord {
         return ClinicalRecord(
-            patientId = TestDataFactory.TEST_PATIENT,
+            patientId = TestPatientFactory.TEST_PATIENT,
             patient = createTestPatientDetails(),
             tumor = TumorDetails(),
             clinicalStatus = ClinicalStatus(),

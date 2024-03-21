@@ -10,11 +10,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatment) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val targetTreatmentsToResponseMap = record.clinical.oncologicalHistory.filter {
+        val targetTreatmentsToResponseMap = record.oncologicalHistory.filter {
             it.allTreatments().any { t -> t.name.equals(treatment.name, ignoreCase = true) }
         }.groupBy { it.treatmentHistoryDetails?.bestResponse }
 
-        val treatmentsSimilarToTargetTreatment = record.clinical.oncologicalHistory.filter {
+        val treatmentsSimilarToTargetTreatment = record.oncologicalHistory.filter {
             (it.matchesTypeFromSet(treatment.types()) != false) &&
                     it.categories().intersect(treatment.categories()).isNotEmpty()
         }

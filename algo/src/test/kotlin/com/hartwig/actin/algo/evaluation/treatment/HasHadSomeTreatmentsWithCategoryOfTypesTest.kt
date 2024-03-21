@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
@@ -13,12 +14,12 @@ import org.junit.Test
 class HasHadSomeTreatmentsWithCategoryOfTypesTest {
 
     @Test
-    fun shouldFailForNoTreatments() {
+    fun `Should fail for no treatments`() {
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldFailForWrongTreatmentCategory() {
+    fun `Should fail for wrong treatment category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -27,7 +28,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
     }
 
     @Test
-    fun shouldFailForCorrectTreatmentCategoryWithWrongType() {
+    fun `Should fail for correct treatment category with wrong type`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
@@ -37,7 +38,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
     }
 
     @Test
-    fun shouldPassWhenTreatmentsWithCorrectCategoryAndTypeMeetThreshold() {
+    fun `Should pass when treatments with correct category and type meet threshold`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
@@ -46,7 +47,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
     }
 
     @Test
-    fun shouldReturnUndeterminedWhenTreatmentsWithCorrectCategoryAndNoTypeMeetThreshold() {
+    fun `Should return undetermined when treatments with correct category and no type meet threshold`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
@@ -55,8 +56,8 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
     }
 
     @Test
-    fun shouldReturnUndeterminedWhenTrialTreatmentsMeetThreshold() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+    fun `Should return undetermined when trial treatments meet threshold`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
             EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
@@ -64,9 +65,9 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
     }
 
     @Test
-    fun shouldIgnoreTrialMatchesAndFailWhenLookingForUnlikelyTrialCategories() {
+    fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
         val function = HasHadSomeTreatmentsWithCategoryOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), 2)
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )

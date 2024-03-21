@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.treatment.IneligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables

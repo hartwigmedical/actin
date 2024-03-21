@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasSufficientMeasuredCreatinineClearance : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
+        return EvaluationFactory.recoverableUndetermined(
             "Currently directly measured creatinine clearance cannot be determined", "Undetermined measured creatinine clearance"
         )
     }

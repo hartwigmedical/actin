@@ -1,11 +1,10 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import org.junit.Test
 
 class HasSufficientLVEFTest {
@@ -22,11 +21,7 @@ class HasSufficientLVEFTest {
 
     companion object {
         private fun withLVEF(lvef: Double?): PatientRecord {
-            return TestDataFactory.createMinimalTestPatientRecord().copy(
-                clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(
-                    clinicalStatus = ClinicalStatus(lvef = lvef),
-                )
-            )
+            return TestPatientFactory.createMinimalTestPatientRecord().copy(clinicalStatus = ClinicalStatus(lvef = lvef))
         }
     }
 }

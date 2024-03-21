@@ -405,15 +405,15 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one tumor stage input`() {
-        val rule = firstOfType(FunctionInput.ONE_TUMOR_STAGE)
-        val valid = create(rule, listOf("IIIA"))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+    fun `Should resolve functions with many tumor stage input`() {
+        val rule = firstOfType(FunctionInput.MANY_TUMOR_STAGES)
+        val valid = create(rule, listOf("I;IV"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue()
 
-        assertThat(resolver.createOneTumorStageInput(valid)).isEqualTo(TumorStage.IIIA)
+        assertThat(resolver.createManyTumorStagesInput(valid)).isEqualTo(setOf(TumorStage.I, TumorStage.IV))
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("IIIa")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("II", "III")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("IIIA")))!!).isTrue
+        assertThat(resolver.hasValidInputs(create(rule, listOf("II;III")))!!).isTrue
     }
 
     @Test

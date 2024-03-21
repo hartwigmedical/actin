@@ -10,7 +10,7 @@ class HasSpecificMetastasesOnly(private val hasSpecificMetastases: (TumorDetails
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDetails = record.clinical.tumor
+        val tumorDetails = record.tumor
         val hasSpecificMetastases = hasSpecificMetastases.invoke(tumorDetails) ?: return EvaluationFactory.undetermined(
             "Data regarding presence of $typeOfMetastases metastases is missing", "Missing $typeOfMetastases metastasis data"
         )
