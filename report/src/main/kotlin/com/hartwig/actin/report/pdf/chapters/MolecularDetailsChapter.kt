@@ -44,28 +44,26 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
         report.molecular?.let {
+            table.addCell(
+                Cells.createTitle("${report.molecular.type.display()} (${report.molecular.sampleId}, ${date(report.molecular.date)})")
+            )
+            val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+            val generators: MutableList<TableGenerator> = mutableListOf(
+                MolecularCharacteristicsGenerator(report.molecular, contentWidth())
+            )
             if (report.molecular.containsTumorCells) {
-                table.addCell(
-                    Cells.createTitle("${report.molecular.type.display()} (${report.molecular.sampleId}, ${date(report.molecular.date)})")
-                )
-
-                val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-                val generators: MutableList<TableGenerator> = mutableListOf(
-                    MolecularCharacteristicsGenerator(report.molecular, contentWidth())
-                )
-                if (report.molecular.containsTumorCells) {
-                    generators.add(PredictedTumorOriginGenerator(report.molecular, contentWidth()))
-                    generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, report.molecular, cohorts, contentWidth()))
+                generators.add(PredictedTumorOriginGenerator(report.molecular, contentWidth()))
+                generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, report.molecular, cohorts, contentWidth()))
+            }
+            for (i in generators.indices) {
+                val generator = generators[i]
+                table.addCell(Cells.createSubTitle(generator.title()))
+                table.addCell(Cells.create(generator.contents()))
+                if (i < generators.size - 1) {
+                    table.addCell(Cells.createEmpty())
                 }
-                for (i in generators.indices) {
-                    val generator = generators[i]
-                    table.addCell(Cells.createSubTitle(generator.title()))
-                    table.addCell(Cells.create(generator.contents()))
-                    if (i < generators.size - 1) {
-                        table.addCell(Cells.createEmpty())
-                    }
-                }
-            } else {
+            }
+            if (!report.molecular.containsTumorCells) {
                 table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy"))
             }
         } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))

@@ -31,7 +31,7 @@ object TestReportWriterApplication {
         LOGGER.info("Printing clinical record")
         ClinicalPrinter.printRecord(report.clinical)
         LOGGER.info("Printing molecular record")
-        report.molecular?.let { MolecularPrinter.printRecord(report.molecular!!) }
+        report.molecular?.let(MolecularPrinter::printRecord)
 
         val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
             LOGGER.info(

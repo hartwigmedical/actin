@@ -13,6 +13,7 @@ import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerato
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleDutchExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.treatment.EligibleExternalTrialGeneratorFunctions
+import com.hartwig.actin.report.pdf.tables.treatment.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -77,7 +78,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
 
-        val externalTrials = externalTrials(report.molecular)
+        val (dutchTrials, nonDutchTrials) = externalTrials(report.molecular)
 
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
@@ -87,8 +88,8 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
-            externalTrials.first,
-            externalTrials.second
+            dutchTrials,
+            nonDutchTrials
         )
 
         for (i in generators.indices) {
@@ -109,17 +110,15 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
                 AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
             )
+            val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
+            val otherTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
             return Pair(
-                EligibleDutchExternalTrialsGenerator(
-                    molecular.externalTrialSource,
-                    EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials),
-                    contentWidth()
-                ),
-                EligibleDutchExternalTrialsGenerator(
-                    molecular.externalTrialSource,
-                    EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials),
-                    contentWidth()
-                )
+                if (dutchTrials.isEmpty()) {
+                    EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
+                } else null,
+                if (otherTrials.isEmpty()) {
+                    EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, otherTrials, contentWidth())
+                } else null
             )
         }
     }
