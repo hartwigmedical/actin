@@ -28,7 +28,6 @@ object PatientRecordFactory {
             oncologicalHistory = clinical.oncologicalHistory,
             priorSecondPrimaries = clinical.priorSecondPrimaries,
             priorOtherConditions = clinical.priorOtherConditions,
-            priorMolecularTests = clinical.priorMolecularTests,
             complications = clinical.complications,
             labValues = clinical.labValues,
             toxicities = clinical.toxicities,
