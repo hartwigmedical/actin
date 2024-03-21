@@ -95,10 +95,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf(TreatmentCategory.CHEMOTHERAPY.display(), "CAPECITABINE;OXALIPLATIN")
             }
 
-            FunctionInput.ONE_DRUG -> {
-                listOf("CAPECITABINE")
-            }
-
             FunctionInput.MANY_DRUGS -> {
                 listOf("CAPECITABINE;OXALIPLATIN")
             }

@@ -30,7 +30,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificTreatmentCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithDrugsCreator(),
-            EligibilityRule.HAS_HAD_TREATMENT_WITH_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithSpecificDrugAsMostRecentCreator(),
+            EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_WITHIN_Y_WEEKS to hasHadCombinedTreatmentNamesWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to hasHadCombinedTreatmentNamesWithCyclesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_WITHIN_Y_WEEKS to hasHadTreatmentWithAnyDrugSinceDateCreator(),
@@ -187,9 +187,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadTreatmentWithSpecificDrugAsMostRecentCreator(): FunctionCreator {
+    private fun hasHadTreatmentWithAnyDrugAsMostRecentCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            HasHadTreatmentWithDrugAsMostRecent(functionInputResolver().createOneDrugInput(function))
+            HasHadTreatmentWithDrugAsMostRecent(functionInputResolver().createManyDrugsInput(function))
         }
     }
 

@@ -284,23 +284,6 @@ class FunctionInputResolverTest {
     }
 
     @Test
-    fun `Should resolve functions with one drug input`() {
-        val rule = firstOfType(FunctionInput.ONE_DRUG)
-        val drugName = "CAPECITABINE"
-        val valid = create(rule, listOf(drugName))
-        assertThat(resolver.hasValidInputs(valid)!!).isTrue
-
-        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
-        val expected = treatmentDatabase.findDrugByName(drugName)!!
-        assertThat(resolver.createOneDrugInput(valid)).isEqualTo(expected)
-
-        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("not a drug")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE;OXALIPLATIN")))!!).isFalse
-        assertThat(resolver.hasValidInputs(create(rule, listOf("CAPECITABINE, 2")))!!).isFalse
-    }
-
-    @Test
     fun `Should resolve functions with many drugs input`() {
         val rule = firstOfType(FunctionInput.MANY_DRUGS)
         val drugNames = listOf("CAPECITABINE", "OXALIPLATIN")
