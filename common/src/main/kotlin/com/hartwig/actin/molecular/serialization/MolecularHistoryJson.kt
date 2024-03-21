@@ -3,10 +3,10 @@ package com.hartwig.actin.molecular.serialization
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.MolecularHistoryAdapter
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonSerializer
+import com.hartwig.actin.util.json.MolecularHistoryAdapter
 import org.apache.logging.log4j.LogManager
 import java.io.BufferedWriter
 import java.io.File
