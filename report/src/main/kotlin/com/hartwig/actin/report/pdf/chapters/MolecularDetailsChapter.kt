@@ -43,17 +43,17 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
-        report.molecular?.let {
+        report.molecular?.let { molecular ->
             table.addCell(
-                Cells.createTitle("${report.molecular.type.display()} (${report.molecular.sampleId}, ${date(report.molecular.date)})")
+                Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
             val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
             val generators: MutableList<TableGenerator> = mutableListOf(
-                MolecularCharacteristicsGenerator(report.molecular, contentWidth())
+                MolecularCharacteristicsGenerator(molecular, contentWidth())
             )
-            if (report.molecular.containsTumorCells) {
-                generators.add(PredictedTumorOriginGenerator(report.molecular, contentWidth()))
-                generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, report.molecular, cohorts, contentWidth()))
+            if (molecular.containsTumorCells) {
+                generators.add(PredictedTumorOriginGenerator(molecular, contentWidth()))
+                generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, contentWidth()))
             }
             for (i in generators.indices) {
                 val generator = generators[i]
@@ -63,7 +63,7 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
                     table.addCell(Cells.createEmpty())
                 }
             }
-            if (!report.molecular.containsTumorCells) {
+            if (!molecular.containsTumorCells) {
                 table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy"))
             }
         } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))

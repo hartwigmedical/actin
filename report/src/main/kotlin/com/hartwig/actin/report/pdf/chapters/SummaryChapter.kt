@@ -78,7 +78,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
 
-        val (dutchTrials, nonDutchTrials) = externalTrials(report.molecular)
+        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.molecular)
 
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
@@ -88,8 +88,8 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
-            dutchTrials,
-            nonDutchTrials
+            dutchTrialGenerator,
+            nonDutchTrialGenerator
         )
 
         for (i in generators.indices) {
@@ -113,10 +113,10 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
             val otherTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
             return Pair(
-                if (dutchTrials.isEmpty()) {
+                if (dutchTrials.isNotEmpty()) {
                     EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
                 } else null,
-                if (otherTrials.isEmpty()) {
+                if (otherTrials.isNotEmpty()) {
                     EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, otherTrials, contentWidth())
                 } else null
             )
