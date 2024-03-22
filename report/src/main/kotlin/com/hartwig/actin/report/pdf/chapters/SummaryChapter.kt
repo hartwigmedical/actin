@@ -1,10 +1,12 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
@@ -75,42 +77,49 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-        report.molecularHistory.mostRecentWGS()?.let { molecular ->
+
+        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.molecular)
+
+        val generators = listOfNotNull(
+            PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
+            if (report.molecular?.date != null && report.molecular.date!! > LocalDate.now().minusDays(21)) {
+                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
+            } else null,
+            EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
+            dutchTrialGenerator,
+            nonDutchTrialGenerator
+        )
+
+        for (i in generators.indices) {
+            val generator = generators[i]
+            table.addCell(Cells.createTitle(generator.title()))
+            table.addCell(Cells.create(generator.contents()))
+            if (i < generators.size - 1) {
+                table.addCell(Cells.createEmpty())
+            }
+        }
+        document.add(table)
+    }
+
+    private fun externalTrials(molecular: MolecularRecord?): Pair<TableGenerator?, TableGenerator?> {
+        if (molecular == null) {
+            return Pair(null, null)
+        } else {
             val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
                 AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
             )
             val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
-            val nonDutchTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
-
-            val generators = listOfNotNull(
-                PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
-                if (molecular.date != null && molecular.date!! > LocalDate.now().minusDays(14)) {
-                    // TODO (kz) the date check on a particular history record is inconsistent with the entire history being passed in
-                    MolecularSummaryGenerator(report.clinical, report.molecularHistory, cohorts, keyWidth, valueWidth)
-                } else null,
-                EligibleApprovedTreatmentGenerator(report.clinical, molecular, contentWidth()),
-                EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
-                EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
+            val otherTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
+            return Pair(
                 if (dutchTrials.isNotEmpty()) {
                     EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
                 } else null,
-                if (nonDutchTrials.isNotEmpty()) {
-                    EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, nonDutchTrials, contentWidth())
+                if (otherTrials.isNotEmpty()) {
+                    EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, otherTrials, contentWidth())
                 } else null
             )
-
-            for (i in generators.indices) {
-                val generator = generators[i]
-                table.addCell(Cells.createTitle(generator.title()))
-                table.addCell(Cells.create(generator.contents()))
-                if (i < generators.size - 1) {
-                    table.addCell(Cells.createEmpty())
-                }
-            }
-            document.add(table)
-        } ?: run {
-            // TODO (kz) handle lack of molecular data
-            throw IllegalStateException("No molecular data available")
         }
     }
 

@@ -36,18 +36,17 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
     }
 
     private fun addMolecularDetails(document: Document) {
-        report.molecularHistory.mostRecentWGS()?.let { molecular ->
-            val keyWidth = Formats.STANDARD_KEY_WIDTH
-            val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.molecularHistory, keyWidth, contentWidth() - keyWidth - 10)
-            val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
-            document.add(priorMolecularResults)
+        val keyWidth = Formats.STANDARD_KEY_WIDTH
+        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.clinical, keyWidth, contentWidth() - keyWidth - 10)
+        val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
+        document.add(priorMolecularResults)
 
-            val table = Tables.createSingleColWithWidth(contentWidth())
-            table.addCell(Cells.createEmpty())
+        val table = Tables.createSingleColWithWidth(contentWidth())
+        table.addCell(Cells.createEmpty())
+        report.molecular?.let { molecular ->
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
-
             val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
             val generators: MutableList<TableGenerator> = mutableListOf(
                 MolecularCharacteristicsGenerator(molecular, contentWidth())
@@ -65,13 +64,9 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
                 }
             }
             if (!molecular.containsTumorCells) {
-                table.addCell(Cells.createContent("No successful WGS could be performed on the submitted biopsy"))
+                table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy"))
             }
-            document.add(table)
-        } ?: run {
-            // TODO (kz) what should report show if no WGS?
-            // TODO (kz) add section for priorMolecular
-            throw IllegalStateException("No molecular data available")
-        }
+        } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))
+        document.add(table)
     }
 }

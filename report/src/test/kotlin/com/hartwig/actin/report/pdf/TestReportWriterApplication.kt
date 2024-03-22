@@ -1,14 +1,14 @@
 package com.hartwig.actin.report.pdf
 
-import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
-import com.hartwig.actin.clinical.util.PatientRecordPrinter
+import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import org.apache.logging.log4j.LogManager
 import java.io.File
+import org.apache.logging.log4j.LogManager
 
 object TestReportWriterApplication {
 
@@ -19,17 +19,19 @@ object TestReportWriterApplication {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        val skipMolecular: Boolean = args.contains("--no-molecular")
         val writer = createProductionReportWriter(WORK_DIRECTORY)
-        val report = createTestReport()
+        val report = createTestReport(skipMolecular)
         writer.write(report)
     }
 
-    private fun createTestReport(): Report {
-        val report = TestReportFactory.createExhaustiveTestReport()
-
-        // TODO (kz) this is temporary, the Report should get a PatientRecord instead
-        val patientRecord = PatientRecordFactory.fromInputs(report.clinical, report.molecularHistory)
-        PatientRecordPrinter.printRecord(patientRecord)
+    private fun createTestReport(skipMolecular: Boolean): Report {
+        val report = if (skipMolecular) TestReportFactory.createExhaustiveTestReportWithoutMolecular() else
+            TestReportFactory.createExhaustiveTestReport()
+        LOGGER.info("Printing clinical record")
+        ClinicalPrinter.printRecord(report.clinical)
+        LOGGER.info("Printing molecular record")
+        report.molecular?.let(MolecularPrinter::printRecord)
 
         val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
             LOGGER.info(

@@ -2,16 +2,18 @@ package com.hartwig.actin.report
 
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.serialization.MolecularHistoryJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class ReporterApplication(private val config: ReporterConfig) {
 
@@ -19,6 +21,10 @@ class ReporterApplication(private val config: ReporterConfig) {
         LOGGER.info("Loading clinical record from {}", config.clinicalJson)
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
 
+        val molecular: MolecularRecord? = config.molecularJson?.let {
+            LOGGER.info("Loading molecular record from {}", config.molecularJson)
+            MolecularRecordJson.read(config.molecularJson)
+        }
         LOGGER.info("Loading molecular history from {}", config.molecularJson)
         val molecularHistory = MolecularHistoryJson.read(config.molecularJson)
 

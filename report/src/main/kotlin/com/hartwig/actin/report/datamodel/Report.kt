@@ -8,5 +8,6 @@ data class Report(
     val patientId: String,
     val clinical: ClinicalRecord,
     val molecularHistory: MolecularHistory,
+    val molecular: MolecularRecord?,
     val treatmentMatch: TreatmentMatch
 )
