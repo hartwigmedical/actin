@@ -13,32 +13,38 @@ class HasRecentlyReceivedCypXInducingMedication(
     private val termToFind: String,
     private val minStopDate: LocalDate
 ) : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypInducersReceived = selector.activeOrRecentlyStoppedWithCypInteraction(
-            record.medications, termToFind, CypInteraction.Type.INDUCER, minStopDate
-        ).map { it.name }.toSet()
+        return medicationWhenProvidedEvaluation(record) { medications ->
+            val cypInducersReceived = selector.activeOrRecentlyStoppedWithCypInteraction(
+                medications, termToFind, CypInteraction.Type.INDUCER, minStopDate
+            ).map { it.name }.toSet()
 
-        return when {
-            cypInducersReceived.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass(
-                    "Patient has recently received CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
-                    "Recent CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
-                )
-            }
+            when {
+                cypInducersReceived.isNotEmpty() -> {
+                    EvaluationFactory.recoverablePass(
+                        "Patient has recently received CYP$termToFind inducing medication: ${
+                            Format.concatLowercaseWithAnd(
+                                cypInducersReceived
+                            )
+                        }",
+                        "Recent CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
+                    )
+                }
 
-            termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient has recently received CYP$termToFind inducing medication",
-                    "Undetermined CYP$termToFind inducing medication use"
-                )
-            }
+                termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
+                    EvaluationFactory.undetermined(
+                        "Undetermined if patient has recently received CYP$termToFind inducing medication",
+                        "Undetermined CYP$termToFind inducing medication use"
+                    )
+                }
 
-            else -> {
-                EvaluationFactory.recoverableFail(
-                    "Patient has not recently received CYP$termToFind inducing medication ",
-                    "No recent CYP$termToFind inducing medication use "
-                )
+                else -> {
+                    EvaluationFactory.recoverableFail(
+                        "Patient has not recently received CYP$termToFind inducing medication ",
+                        "No recent CYP$termToFind inducing medication use "
+                    )
+                }
             }
         }
     }

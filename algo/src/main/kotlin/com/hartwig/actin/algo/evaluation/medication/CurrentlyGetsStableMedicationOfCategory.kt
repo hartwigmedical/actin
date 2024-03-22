@@ -14,39 +14,41 @@ class CurrentlyGetsStableMedicationOfCategory(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val categoryNamesToFind = categoriesToFind.keys
-        var hasFoundOnePassingCategory = false
-        for (categoryToFind in categoriesToFind) {
-            var hasActiveAndStableMedication = false
-            var referenceDosing: Medication? = null
-            val filtered =
-                selector.active(record.medications)
-                    .filter { (it.allLevels() intersect categoryToFind.value).isNotEmpty() }
-            for (medication in filtered) {
-                if (referenceDosing != null) {
-                    if (!MedicationDosage.hasMatchingDosing(medication.dosage, referenceDosing.dosage)) {
-                        hasActiveAndStableMedication = false
+        return medicationWhenProvidedEvaluation(record) { medications ->
+            val categoryNamesToFind = categoriesToFind.keys
+            var hasFoundOnePassingCategory = false
+            for (categoryToFind in categoriesToFind) {
+                var hasActiveAndStableMedication = false
+                var referenceDosing: Medication? = null
+                val filtered =
+                    selector.active(medications)
+                        .filter { (it.allLevels() intersect categoryToFind.value).isNotEmpty() }
+                for (medication in filtered) {
+                    if (referenceDosing != null) {
+                        if (!MedicationDosage.hasMatchingDosing(medication.dosage, referenceDosing.dosage)) {
+                            hasActiveAndStableMedication = false
+                        }
+                    } else {
+                        hasActiveAndStableMedication = true
+                        referenceDosing = medication
                     }
-                } else {
-                    hasActiveAndStableMedication = true
-                    referenceDosing = medication
+                }
+                if (hasActiveAndStableMedication) {
+                    hasFoundOnePassingCategory = true
                 }
             }
-            if (hasActiveAndStableMedication) {
-                hasFoundOnePassingCategory = true
-            }
-        }
 
-        return if (hasFoundOnePassingCategory) {
-            EvaluationFactory.recoverablePass(
-                "Patient gets stable dosing of medication with category " + concatLowercaseWithAnd(categoryNamesToFind),
-                "Stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind)
-            )
-        } else {
-            EvaluationFactory.recoverableFail(
-                "Patient does not get stable dosing of medication with category " + concatLowercaseWithAnd(categoryNamesToFind),
-                "No stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind)
-            )
+            if (hasFoundOnePassingCategory) {
+                EvaluationFactory.recoverablePass(
+                    "Patient gets stable dosing of medication with category " + concatLowercaseWithAnd(categoryNamesToFind),
+                    "Stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind)
+                )
+            } else {
+                EvaluationFactory.recoverableFail(
+                    "Patient does not get stable dosing of medication with category " + concatLowercaseWithAnd(categoryNamesToFind),
+                    "No stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind)
+                )
+            }
         }
     }
 }

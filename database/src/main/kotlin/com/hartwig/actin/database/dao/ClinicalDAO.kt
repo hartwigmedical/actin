@@ -22,8 +22,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
 import com.hartwig.actin.database.Tables
+import java.util.Optional
 import org.jooq.DSLContext
-import java.util.*
 
 internal class ClinicalDAO(private val context: DSLContext) {
 
@@ -65,7 +65,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
         writeBodyWeights(patientId, record.bodyWeights)
         writeVitalFunctions(patientId, record.vitalFunctions)
         writeBloodTransfusions(patientId, record.bloodTransfusions)
-        writeMedications(patientId, record.medications)
+        record.medications?.let { writeMedications(patientId, it) }
     }
 
     private fun writePatientDetails(patientId: String, patient: PatientDetails) {
@@ -228,7 +228,7 @@ internal class ClinicalDAO(private val context: DSLContext) {
                         "switchToTreatmentCycles" to switchToTreatment.cycles
                     )
                 } ?: emptyMap()
-                
+
                 val record = context.newRecord(Tables.TREATMENTHISTORYENTRY)
                 record.fromMap(valueMap + maintenanceTreatmentMap + switchToTreatmentMap)
                 record

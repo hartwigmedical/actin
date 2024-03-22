@@ -16,30 +16,32 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (minStopDate.isBefore(record.patient.registrationDate)) {
-            return EvaluationFactory.undetermined(
-                "Required stop date prior to registration date for recent medication usage evaluation of $categoryName",
-                "Recent $categoryName medication"
-            )
-        }
+        return medicationWhenProvidedEvaluation(record) { medications ->
+            if (minStopDate.isBefore(record.patient.registrationDate)) {
+                return@medicationWhenProvidedEvaluation EvaluationFactory.undetermined(
+                    "Required stop date prior to registration date for recent medication usage evaluation of $categoryName",
+                    "Recent $categoryName medication"
+                )
+            }
 
-        val medications = selector.activeOrRecentlyStopped(record.medications, minStopDate)
+            val activeOrRecentlyStopped = selector.activeOrRecentlyStopped(medications, minStopDate)
                 .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
 
-        val foundMedicationNames = medications.map { it.name }.filter { it.isNotEmpty() }
+            val foundMedicationNames = activeOrRecentlyStopped.map { it.name }.filter { it.isNotEmpty() }
 
-        return if (medications.isNotEmpty()) {
-            val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
-            EvaluationFactory.recoverablePass(
-                "Patient recently received medication$foundMedicationString which belong(s) to category '$categoryName'",
-                "Recent $categoryName medication use$foundMedicationString"
-            )
-        } else {
-            EvaluationFactory.recoverableFail(
-                "Patient has not recently received medication of category '$categoryName'",
-                "No recent $categoryName medication use"
-            )
+            if (activeOrRecentlyStopped.isNotEmpty()) {
+                val foundMedicationString =
+                    if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
+                EvaluationFactory.recoverablePass(
+                    "Patient recently received medication$foundMedicationString which belong(s) to category '$categoryName'",
+                    "Recent $categoryName medication use$foundMedicationString"
+                )
+            } else {
+                EvaluationFactory.recoverableFail(
+                    "Patient has not recently received medication of category '$categoryName'",
+                    "No recent $categoryName medication use"
+                )
+            }
         }
-
     }
 }

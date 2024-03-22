@@ -12,49 +12,51 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypMedications = record.medications.filter { medication ->
-            medication.cypInteractions
-                .any { it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR) }
-        }
-
-        val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name }.toSet()
-        val plannedCypMedications = cypMedications.filter { selector.isPlanned(it) }.map { it.name }.toSet()
-
-        return when {
-            activeCypMedications.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass(
-                    "Patient currently gets CYP$termToFind inhibiting/inducing medication: ${
-                        Format.concatLowercaseWithAnd(
-                            activeCypMedications
-                        )
-                    }",
-                    "CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(activeCypMedications)}"
-                )
+        return medicationWhenProvidedEvaluation(record) { medications ->
+            val cypMedications = medications.filter { medication ->
+                medication.cypInteractions
+                    .any { it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR) }
             }
 
-            plannedCypMedications.isNotEmpty() -> {
-                EvaluationFactory.recoverableWarn(
-                    "Patient plans to get CYP$termToFind inhibiting/inducing medication: ${
-                        Format.concatLowercaseWithAnd(
-                            plannedCypMedications
-                        )
-                    }",
-                    "Planned CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(plannedCypMedications)}"
-                )
-            }
+            val activeCypMedications = cypMedications.filter { selector.isActive(it) }.map { it.name }.toSet()
+            val plannedCypMedications = cypMedications.filter { selector.isPlanned(it) }.map { it.name }.toSet()
 
-            termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if patient currently gets CYP$termToFind inhibiting/inducing medication",
-                    "Undetermined CYP$termToFind inhibiting/inducing medication use"
-                )
-            }
+            when {
+                activeCypMedications.isNotEmpty() -> {
+                    EvaluationFactory.recoverablePass(
+                        "Patient currently gets CYP$termToFind inhibiting/inducing medication: ${
+                            Format.concatLowercaseWithAnd(
+                                activeCypMedications
+                            )
+                        }",
+                        "CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(activeCypMedications)}"
+                    )
+                }
 
-            else -> {
-                EvaluationFactory.recoverableFail(
-                    "Patient currently does not get CYP$termToFind inhibiting/inducing medication ",
-                    "No CYP$termToFind inhibiting/inducing medication use "
-                )
+                plannedCypMedications.isNotEmpty() -> {
+                    EvaluationFactory.recoverableWarn(
+                        "Patient plans to get CYP$termToFind inhibiting/inducing medication: ${
+                            Format.concatLowercaseWithAnd(
+                                plannedCypMedications
+                            )
+                        }",
+                        "Planned CYP$termToFind inhibiting/inducing medication use: ${Format.concatLowercaseWithAnd(plannedCypMedications)}"
+                    )
+                }
+
+                termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
+                    EvaluationFactory.undetermined(
+                        "Undetermined if patient currently gets CYP$termToFind inhibiting/inducing medication",
+                        "Undetermined CYP$termToFind inhibiting/inducing medication use"
+                    )
+                }
+
+                else -> {
+                    EvaluationFactory.recoverableFail(
+                        "Patient currently does not get CYP$termToFind inhibiting/inducing medication ",
+                        "No CYP$termToFind inhibiting/inducing medication use "
+                    )
+                }
             }
         }
     }

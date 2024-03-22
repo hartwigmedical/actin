@@ -20,23 +20,25 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
             )
         }
         val activePainMedications = record.medications
-            .filter {
+            ?.filter {
                 it.name.equals(SEVERE_PAIN_MEDICATION, ignoreCase = true)
                         && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
             }
-            .map { it.name }
+            ?.map { it.name }
 
-        return if (activePainMedications.isNotEmpty()) {
-            EvaluationFactory.pass(
-                "Patient receives pain medication: " + concatLowercaseWithAnd(activePainMedications) +
-                        ", potentially indicating uncontrolled tumor related pain",
-                "Receives " + concatLowercaseWithAnd(activePainMedications) + " indicating pain "
-            )
-        } else
-            EvaluationFactory.fail(
-                "Patient does not have uncontrolled tumor related pain",
-                "No potential uncontrolled tumor related pain"
-            )
+        return activePainMedications?.let {
+            if (it.isNotEmpty()) {
+                EvaluationFactory.pass(
+                    "Patient receives pain medication: " + concatLowercaseWithAnd(it) +
+                            ", potentially indicating uncontrolled tumor related pain",
+                    "Receives " + concatLowercaseWithAnd(it) + " indicating pain "
+                )
+            } else
+                EvaluationFactory.fail(
+                    "Patient does not have uncontrolled tumor related pain",
+                    "No potential uncontrolled tumor related pain"
+                )
+        } ?: EvaluationFactory.recoverableUndeterminedNoGeneral("No medication data provided")
     }
 
     companion object {

@@ -13,7 +13,7 @@ import java.time.LocalDate
 class RequiresRegularHematopoieticSupport(
     private val atcTree: AtcTree, private val minDate: LocalDate, private val maxDate: LocalDate
 ) : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
         for (transfusion in record.bloodTransfusions) {
@@ -26,19 +26,21 @@ class RequiresRegularHematopoieticSupport(
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)
         val medications = record.medications
-            .filter { activeBetweenDates(it) }
-            .filter { it.atc?.chemicalSubGroup in resolvedCategories }
-            .map { it.name }
-        return if (medications.isNotEmpty()) {
-            EvaluationFactory.pass(
-                "Patient has had medications " + concat(medications) + " " + inBetweenRange,
-                "Has received recent hematopoietic support"
-            )
-        } else
-            EvaluationFactory.fail(
-                "Patient has not received blood transfusions or hematopoietic medication $inBetweenRange",
-                "Has not received recent hematopoietic support"
-            )
+            ?.filter { activeBetweenDates(it) }
+            ?.filter { it.atc?.chemicalSubGroup in resolvedCategories }
+            ?.map { it.name }
+        return medications?.let {
+            if (it.isNotEmpty()) {
+                EvaluationFactory.pass(
+                    "Patient has had medications " + concat(it) + " " + inBetweenRange,
+                    "Has received recent hematopoietic support"
+                )
+            } else
+                EvaluationFactory.fail(
+                    "Patient has not received blood transfusions or hematopoietic medication $inBetweenRange",
+                    "Has not received recent hematopoietic support"
+                )
+        } ?: EvaluationFactory.recoverableUndeterminedNoGeneral("No medication data provided")
     }
 
     private fun activeBetweenDates(medication: Medication): Boolean {
