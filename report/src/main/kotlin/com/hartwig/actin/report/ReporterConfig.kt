@@ -9,8 +9,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
 
 data class ReporterConfig(
-    val clinicalJson: String,
-    val molecularJson: String?,
+    val patientJson: String,
     val treatmentMatchJson: String,
     val outputDirectory: String,
     val enableExtendedMode: Boolean
@@ -39,8 +38,7 @@ data class ReporterConfig(
                 LOGGER.info("Extended reporting mode has been enabled")
             }
             return ReporterConfig(
-                clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
-                molecularJson = ApplicationConfig.optionalFile(cmd, MOLECULAR_JSON),
+                patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 enableExtendedMode = enableExtendedMode
@@ -50,6 +48,7 @@ data class ReporterConfig(
         val LOGGER = LogManager.getLogger(ReporterConfig::class.java)
         const val CLINICAL_JSON = "clinical_json"
         const val MOLECULAR_JSON = "molecular_json"
+        const val PATIENT_JSON = "patient_json"
         const val TREATMENT_MATCH_JSON = "treatment_match_json"
         const val OUTPUT_DIRECTORY = "output_directory"
         const val ENABLE_EXTENDED_MODE = "enable_extended_mode"

@@ -1,9 +1,7 @@
 package com.hartwig.actin.report
 
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
-import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import org.apache.commons.cli.DefaultParser
@@ -17,18 +15,13 @@ import kotlin.system.exitProcess
 class ReporterApplication(private val config: ReporterConfig) {
 
     fun run() {
-        LOGGER.info("Loading clinical record from {}", config.clinicalJson)
-        val clinical = ClinicalRecordJson.read(config.clinicalJson)
-
-        val molecular: MolecularRecord? = config.molecularJson?.let {
-            LOGGER.info("Loading molecular record from {}", config.molecularJson)
-            MolecularRecordJson.read(config.molecularJson)
-        }
+        LOGGER.info("Loading patient record from {}", config.patientJson)
+        val patient = PatientRecordJson.read(config.patientJson)
 
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-        val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch)
+        val report = ReportFactory.fromInputs(patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, config.enableExtendedMode)
         LOGGER.info("Done!")

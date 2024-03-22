@@ -43,16 +43,16 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
     private fun addPatientDetails(document: Document) {
         val patientDetailFields = listOf(
-            "Gender: " to report.clinical.patient.gender.display(),
-            " | Birth year: " to report.clinical.patient.birthYear.toString(),
-            " | WHO: " to whoStatus(report.clinical.clinicalStatus.who)
+            "Gender: " to report.patientRecord.patient.gender.display(),
+            " | Birth year: " to report.patientRecord.patient.birthYear.toString(),
+            " | WHO: " to whoStatus(report.patientRecord.clinicalStatus.who)
         )
         addParagraphWithContent(patientDetailFields, document)
 
         val tumorDetailFields = listOf(
-            "Tumor: " to tumor(report.clinical.tumor),
-            " | Lesions: " to lesions(report.clinical.tumor),
-            " | Stage: " to stage(report.clinical.tumor)
+            "Tumor: " to tumor(report.patientRecord.tumor),
+            " | Lesions: " to lesions(report.patientRecord.tumor),
+            " | Stage: " to stage(report.patientRecord.tumor)
         )
         addParagraphWithContent(tumorDetailFields, document)
     }
@@ -78,14 +78,15 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
 
-        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.molecular)
+        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.patientRecord.molecularHistory.mostRecentWGS())
 
+        val molecular = report.patientRecord.molecularHistory.mostRecentWGS()
         val generators = listOfNotNull(
-            PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
-            if (report.molecular?.date != null && report.molecular.date!! > LocalDate.now().minusDays(21)) {
-                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
+            PatientClinicalHistoryGenerator(report.patientRecord, keyWidth, valueWidth),
+            if (molecular?.date != null && molecular.date!! > LocalDate.now().minusDays(21)) {
+                MolecularSummaryGenerator(report.patientRecord, molecular, cohorts, keyWidth, valueWidth)
             } else null,
-            EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
+            EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
             dutchTrialGenerator,

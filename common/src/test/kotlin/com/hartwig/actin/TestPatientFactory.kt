@@ -22,4 +22,11 @@ object TestPatientFactory {
             TestMolecularFactory.createProperTestMolecularHistory()
         )
     }
+
+    fun createExhaustiveTestPatientRecord(): PatientRecord {
+        return PatientRecordFactory.fromInputs(
+            TestClinicalFactory.createExhaustiveTestClinicalRecord(),
+            TestMolecularFactory.createExhaustiveTestMolecularHistory()
+        )
+    }
 }

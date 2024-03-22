@@ -37,13 +37,13 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
 
     private fun addMolecularDetails(document: Document) {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.clinical, keyWidth, contentWidth() - keyWidth - 10)
+        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.patientRecord.molecularHistory, keyWidth, contentWidth() - keyWidth - 10)
         val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
         document.add(priorMolecularResults)
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
-        report.molecular?.let { molecular ->
+        report.patientRecord.molecularHistory.mostRecentWGS()?.let { molecular ->
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
