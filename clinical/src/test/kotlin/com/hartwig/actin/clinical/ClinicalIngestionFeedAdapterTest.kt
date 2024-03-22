@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
@@ -17,8 +18,10 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.util.json.GsonSerializer
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
+import org.junit.Before
 import org.junit.Test
 
 private const val PATIENT = "ACTN01029999"
@@ -26,21 +29,12 @@ val EXPECTED_CLINICAL_RECORD: String =
     "${Resources.getResource("clinical_record").path}/$PATIENT.clinical.json"
 
 class ClinicalIngestionFeedAdapterTest {
-    @Test
-    fun `Questionnaire in feed should be of latest version`() {
-        val feed = FeedModel(
-            ClinicalFeedReader.read(FEED_DIRECTORY)
-        )
-        val versionUnderTest = QuestionnaireVersion.version(feed.latestQuestionnaireEntry(PATIENT)!!)
-        val latestVersion = QuestionnaireVersion.values().last()
+    lateinit var curationDatabase: CurationDatabaseContext
+    lateinit var victim: ClinicalIngestionFeedAdapter
 
-        assertThat(versionUnderTest).isNotNull()
-        assertThat(versionUnderTest).isEqualTo(latestVersion)
-    }
-
-    @Test
-    fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
-        val curationDatabase = CurationDatabaseContext.create(
+    @Before
+    fun setup() {
+        curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(
                 TestDoidModelFactory.createWithDoidManualConfig(
@@ -63,7 +57,7 @@ class ClinicalIngestionFeedAdapterTest {
             ),
             TestTreatmentDatabaseFactory.createProper()
         )
-        val ingestion = ClinicalIngestionFeedAdapter(
+        victim = ClinicalIngestionFeedAdapter(
             EmcClinicalFeedIngestor.create(
                 FEED_DIRECTORY,
                 CURATION_DIRECTORY,
@@ -71,11 +65,39 @@ class ClinicalIngestionFeedAdapterTest {
                 TestAtcFactory.createProperAtcModel()
             ), curationDatabase
         )
+    }
 
+    @Test
+    fun `Questionnaire in feed should be of latest version`() {
+        val feed = FeedModel(
+            ClinicalFeedReader.read(FEED_DIRECTORY)
+        )
+        val versionUnderTest = QuestionnaireVersion.version(feed.latestQuestionnaireEntry(PATIENT)!!)
+        val latestVersion = QuestionnaireVersion.values().last()
+
+        assertThat(versionUnderTest).isNotNull()
+        assertThat(versionUnderTest).isEqualTo(latestVersion)
+    }
+
+    @Test
+    fun `Output should not have changed`() {
+        val jsonMapper = ObjectMapper()
+        val ingestionResult = victim.run()
+        assertThat(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText())).isEqualTo(
+            jsonMapper.readTree(
+                ClinicalRecordJson.toJson(
+                    ingestionResult.patientResults[0].clinicalRecord
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
         val validationErrors = curationDatabase.validate()
         assertThat(validationErrors).isEmpty()
 
-        val ingestionResult = ingestion.run()
+        val ingestionResult = victim.run()
         assertThat(ingestionResult).isNotNull
         val patientResults = ingestionResult.patientResults
         assertThat(patientResults[0].status).isEqualTo(PatientIngestionStatus.PASS)
