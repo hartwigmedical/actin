@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.soc
 
+import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.clinical.util.PatientRecordPrinter
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
@@ -29,7 +29,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
         LOGGER.info("Loading patient record from from {}", config.patientJson)
         val patient = PatientRecordJson.read(config.patientJson)
-        PatientRecordPrinter.printRecord(patient)
+        PatientPrinter.printRecord(patient)
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)

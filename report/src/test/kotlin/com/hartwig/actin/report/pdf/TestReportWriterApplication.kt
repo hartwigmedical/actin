@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf
 
+import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
-import com.hartwig.actin.clinical.util.PatientRecordPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
@@ -28,7 +28,7 @@ object TestReportWriterApplication {
         val report = if (skipMolecular) TestReportFactory.createExhaustiveTestReportWithoutMolecular() else
             TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing patient record")
-        PatientRecordPrinter.printRecord(report.patientRecord)
+        PatientPrinter.printRecord(report.patientRecord)
 
         val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
             LOGGER.info(
