@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.sort.PriorMolecularTestComparator
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpretation
 import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
 import com.hartwig.actin.report.interpretation.PriorMolecularTestKey
@@ -14,17 +14,17 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
 class PriorMolecularResultGenerator(
-    private val molecularHistory: MolecularHistory,
+    private val clinical: ClinicalRecord,
     private val keyWidth: Float,
     private val valueWidth: Float
 ) {
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createSubTitle("IHC results"))
-        if (molecularHistory.allPriorMolecularTests().isEmpty()) {
+        if (clinical.priorMolecularTests.isEmpty()) {
             table.addCell(Cells.createValue("None"))
         } else {
-            val interpretation = PriorMolecularTestInterpreter.interpret(molecularHistory.allPriorMolecularTests())
+            val interpretation = PriorMolecularTestInterpreter.interpret(clinical.priorMolecularTests)
             val paragraphs = generatePriorTestParagraphs(interpretation)
             table.addCell(Cells.createValue(paragraphs))
         }

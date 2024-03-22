@@ -24,13 +24,10 @@ class ReporterApplication(private val config: ReporterConfig) {
             LOGGER.info("Loading molecular record from {}", config.molecularJson)
             MolecularRecordJson.read(config.molecularJson)
         }
-//        LOGGER.info("Loading molecular history from {}", config.molecularJson)
-//        val molecularHistory = MolecularHistoryJson.read(config.molecularJson)
 
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-//        val report = ReportFactory.fromInputs(clinical, molecularHistory, treatmentMatch)
         val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, config.enableExtendedMode)
