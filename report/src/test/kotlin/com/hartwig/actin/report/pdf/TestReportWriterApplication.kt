@@ -1,14 +1,16 @@
 package com.hartwig.actin.report.pdf
 
+import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
-import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.clinical.util.PatientRecordPrinter
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import java.io.File
 import org.apache.logging.log4j.LogManager
+import java.io.File
 
 object TestReportWriterApplication {
 
@@ -29,7 +31,9 @@ object TestReportWriterApplication {
         val report = if (skipMolecular) TestReportFactory.createExhaustiveTestReportWithoutMolecular() else
             TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing clinical record")
-        ClinicalPrinter.printRecord(report.clinical)
+//        ClinicalPrinter.printRecord(report.clinical)
+        PatientRecordPrinter.printRecord(PatientRecordFactory.fromInputs(report.clinical,
+            MolecularHistory.fromWGSandIHC(report.molecular, report.clinical.priorMolecularTests)))
         LOGGER.info("Printing molecular record")
         report.molecular?.let(MolecularPrinter::printRecord)
 

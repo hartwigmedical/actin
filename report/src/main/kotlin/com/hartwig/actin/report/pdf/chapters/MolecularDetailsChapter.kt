@@ -37,7 +37,7 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
 
     private fun addMolecularDetails(document: Document) {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.clinical, keyWidth, contentWidth() - keyWidth - 10)
+        val priorMolecularResultGenerator = PriorMolecularResultGenerator(report.molecularHistory, keyWidth, contentWidth() - keyWidth - 10)
         val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
         document.add(priorMolecularResults)
 

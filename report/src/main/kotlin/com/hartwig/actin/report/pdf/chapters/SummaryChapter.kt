@@ -83,7 +83,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
             if (report.molecular?.date != null && report.molecular.date!! > LocalDate.now().minusDays(21)) {
-                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
+                MolecularSummaryGenerator(report.clinical, report.molecularHistory, cohorts, keyWidth, valueWidth)
             } else null,
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),

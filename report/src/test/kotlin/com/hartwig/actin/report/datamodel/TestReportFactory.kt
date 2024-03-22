@@ -10,7 +10,8 @@ object TestReportFactory {
         return Report(
             patientId = TestPatientFactory.TEST_PATIENT,
             clinical = TestClinicalFactory.createMinimalTestClinicalRecord(),
-            molecularHistory = TestMolecularFactory.createMinimalTestMolecularHistory(),
+            molecular = TestMolecularFactory.createMinimalTestMolecularRecord(),
+//            molecularHistory = TestMolecularFactory.createMinimalTestMolecularHistory(),
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
         )
     }

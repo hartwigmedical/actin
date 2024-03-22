@@ -20,9 +20,9 @@ class MolecularSummaryGenerator(
 
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
-        // TODO (kz) this will blow up when no wgs in molecular history, fix!
-        if (molecularHistory.mostRecentWGS()!!.containsTumorCells) {
-            if (molecularHistory.mostRecentWGS()!!.type != ExperimentType.WHOLE_GENOME) {
+        val molecular = molecularHistory.mostRecentWGS()!!  // TODO kz fix non-null
+        if (molecular.containsTumorCells) {
+            if (molecular.type != ExperimentType.WHOLE_GENOME) {
                 LOGGER.warn("Generating WGS results for non-WGS sample")
             }
             val wgsGenerator: TableGenerator = WGSSummaryGenerator(clinical, molecularHistory, cohorts, keyWidth, valueWidth)
@@ -30,7 +30,7 @@ class MolecularSummaryGenerator(
             table.addCell(Cells.create(wgsGenerator.contents()))
         } else {
             val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
-            noRecent.addCell(Cells.createKey(molecularHistory.mostRecentWGS()!!.type.display() + " results"))
+            noRecent.addCell(Cells.createKey(molecular.type.display() + " results"))
             noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
             table.addCell(Cells.create(noRecent))
         }
