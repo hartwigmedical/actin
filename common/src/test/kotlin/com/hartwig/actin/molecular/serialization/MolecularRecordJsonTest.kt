@@ -47,6 +47,7 @@ class MolecularRecordJsonTest {
 
     private val molecularDirectory = Resources.getResource("molecular").path
     private val sampleMolecularJson = molecularDirectory + File.separator + "sample.molecular.json"
+    private val minimalMolecularJson = molecularDirectory + File.separator + "minimal.molecular.json"
     private val epsilon = 1.0E-10
 
     @Test
@@ -62,6 +63,11 @@ class MolecularRecordJsonTest {
         val exhaustive = createExhaustiveTestMolecularRecord()
         val convertedExhaustive = fromJson(toJson(exhaustive))
         assertThat(convertedExhaustive).isEqualTo(exhaustive)
+    }
+
+    @Test
+    fun `Should read minimal molecular JSON`() {
+        assertThat(read(minimalMolecularJson)).isNotNull
     }
 
     @Test
