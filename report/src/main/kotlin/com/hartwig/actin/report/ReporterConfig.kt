@@ -10,7 +10,7 @@ import org.apache.logging.log4j.core.config.Configurator
 
 data class ReporterConfig(
     val clinicalJson: String,
-    val molecularJson: String,
+    val molecularJson: String?,
     val treatmentMatchJson: String,
     val outputDirectory: String,
     val enableExtendedMode: Boolean
@@ -40,7 +40,7 @@ data class ReporterConfig(
             }
             return ReporterConfig(
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
-                molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
+                molecularJson = ApplicationConfig.optionalFile(cmd, MOLECULAR_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 enableExtendedMode = enableExtendedMode
