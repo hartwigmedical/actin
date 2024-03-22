@@ -23,10 +23,7 @@ class TestStandardOfCareApplication {
 
         LOGGER.info("Running ACTIN Test SOC Application with clinical record")
         PatientPrinter.printRecord(patient)
-
-        LOGGER.info("and molecular record")
-        MolecularPrinter.printRecord(patient.molecularHistory.mostRecentWGS()!!)  // TODO (kz) print MolecularHistory not this
-
+        
         LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
