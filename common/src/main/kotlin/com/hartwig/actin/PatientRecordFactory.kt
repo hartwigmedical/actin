@@ -38,6 +38,7 @@ object PatientRecordFactory {
             vitalFunctions = clinical.vitalFunctions,
             bloodTransfusions = clinical.bloodTransfusions,
             medications = clinical.medications,
-            molecular = molecular)
+            molecular = molecular
+        )
     }
 }

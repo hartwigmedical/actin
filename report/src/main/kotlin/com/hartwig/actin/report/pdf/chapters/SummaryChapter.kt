@@ -9,11 +9,11 @@ import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleDutchExternalTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleExternalTrialGeneratorFunctions
-import com.hartwig.actin.report.pdf.tables.treatment.EligibleOtherCountriesExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialGeneratorFunctions
+import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -82,7 +82,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
-            if (report.molecular?.date != null && report.molecular.date!! > LocalDate.now().minusDays(14)) {
+            if (report.molecular?.date != null && report.molecular.date!! > LocalDate.now().minusDays(21)) {
                 MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
             } else null,
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),

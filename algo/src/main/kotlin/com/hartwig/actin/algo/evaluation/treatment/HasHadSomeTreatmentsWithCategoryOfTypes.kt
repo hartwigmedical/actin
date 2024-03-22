@@ -13,9 +13,9 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category) {
-            it.matchesTypeFromSet(types)
-        }
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
+            record.oncologicalHistory, category, { historyEntry -> historyEntry.matchesTypeFromSet(types) }
+        )
         val typesList = concatItems(types)
         return when {
             treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {

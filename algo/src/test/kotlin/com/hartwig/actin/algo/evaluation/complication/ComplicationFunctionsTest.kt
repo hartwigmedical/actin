@@ -31,7 +31,7 @@ class ComplicationFunctionsTest {
         val base = TestPatientFactory.createMinimalTestPatientRecord()
 
         val record: PatientRecord = base.copy(
-                complications = complications, clinicalStatus = base.clinicalStatus.copy(hasComplications = true)
+            complications = complications, clinicalStatus = base.clinicalStatus.copy(hasComplications = true)
         )
 
         val filteredComplicationNames =
