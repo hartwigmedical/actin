@@ -267,7 +267,13 @@
     {
       "date": "2020-01-01T00:00:00",
       "value": 3.5,
-      "unit": "KG",
+      "unit": "Kilograms",
+      "valid": false
+    },
+    {
+      "date": "2020-02-01T00:00:00",
+      "value": 53,
+      "unit": "Kilograms",
       "valid": true
     }
   ],
