@@ -52,8 +52,8 @@ internal class TumorStageDerivationFunction private constructor(private val deri
                 tumor.hasBrainLesions to DoidConstants.BRAIN_CANCER_DOID,
                 tumor.hasLungLesions to DoidConstants.LUNG_CANCER_DOID,
                 tumor.hasBoneLesions to DoidConstants.BONE_CANCER_DOID
-            ).count {
-                evaluateMetastases(it.first, tumor, it.second, doidModel)
+            ).count { (hasLesions, doidToMatch) ->
+                evaluateMetastases(hasLesions, tumor, doidToMatch, doidModel)
             }
         }
 
