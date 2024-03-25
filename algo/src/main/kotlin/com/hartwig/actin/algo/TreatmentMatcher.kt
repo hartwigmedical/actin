@@ -28,7 +28,7 @@ class TreatmentMatcher(
 
         return TreatmentMatch(
             patientId = patient.patientId,
-            sampleId = patient.molecularHistory.mostRecentMolecularRecord()?.sampleId ?: "N/A",
+            sampleId = patient.molecularHistory.latestMolecularRecord()?.sampleId ?: "N/A",
             referenceDate = referenceDateProvider.date(),
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,

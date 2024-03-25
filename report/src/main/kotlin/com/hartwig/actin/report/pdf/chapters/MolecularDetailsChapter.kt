@@ -43,7 +43,7 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
-        report.patientRecord.molecularHistory.mostRecentMolecularRecord()?.let { molecular ->
+        report.patientRecord.molecularHistory.latestMolecularRecord()?.let { molecular ->
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )

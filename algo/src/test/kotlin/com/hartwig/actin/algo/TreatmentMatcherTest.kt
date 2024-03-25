@@ -45,7 +45,7 @@ class TreatmentMatcherTest {
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
-        sampleId = patient.molecularHistory.mostRecentMolecularRecord()?.sampleId ?: "N/A",
+        sampleId = patient.molecularHistory.latestMolecularRecord()?.sampleId ?: "N/A",
         referenceDate = LocalDate.now(),
         referenceDateIsLive = true,
         trialMatches = trialMatches,

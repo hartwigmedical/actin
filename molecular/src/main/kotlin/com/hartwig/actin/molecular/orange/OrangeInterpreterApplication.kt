@@ -55,7 +55,7 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
                 )
             }
 
-            MolecularHistory.fromInputs(molecular, clinical.priorMolecularTests)
+            MolecularHistory.fromInputs(listOf(molecular), clinical.priorMolecularTests)
         } else {
             MolecularHistory.empty()
         }

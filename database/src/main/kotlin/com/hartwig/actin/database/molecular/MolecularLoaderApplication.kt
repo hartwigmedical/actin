@@ -17,7 +17,7 @@ class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
 
         LOGGER.info("Loading patient record from {}", config.patientJson)
         val patientRecord = PatientRecordJson.read(config.patientJson)
-        val record = requireNotNull(patientRecord.molecularHistory.mostRecentMolecularRecord()) {
+        val record = requireNotNull(patientRecord.molecularHistory.latestMolecularRecord()) {
             "No WGS record found in molecular history"
         }
 

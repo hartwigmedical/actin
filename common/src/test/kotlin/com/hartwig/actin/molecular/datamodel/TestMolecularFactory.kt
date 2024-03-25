@@ -78,15 +78,15 @@ object TestMolecularFactory {
     }
 
     fun createMinimalTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(createMinimalTestMolecularRecord(), emptyList())
+        return MolecularHistory.fromInputs(listOf(createMinimalTestMolecularRecord()), emptyList())
     }
 
     fun createProperTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(createProperTestMolecularRecord(), TestClinicalFactory.createTestPriorMolecularTests())
+        return MolecularHistory.fromInputs(listOf(createProperTestMolecularRecord()), TestClinicalFactory.createTestPriorMolecularTests())
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(createExhaustiveTestMolecularRecord(), TestClinicalFactory.createTestPriorMolecularTests())
+        return MolecularHistory.fromInputs(listOf(createExhaustiveTestMolecularRecord()), TestClinicalFactory.createTestPriorMolecularTests())
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {

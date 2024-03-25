@@ -78,9 +78,9 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
 
-        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.patientRecord.molecularHistory.mostRecentMolecularRecord())
+        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.patientRecord.molecularHistory.latestMolecularRecord())
 
-        val molecular = report.patientRecord.molecularHistory.mostRecentMolecularRecord()
+        val molecular = report.patientRecord.molecularHistory.latestMolecularRecord()
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.patientRecord, keyWidth, valueWidth),
             if (molecular?.date != null && molecular.date!! > LocalDate.now().minusDays(21)) {

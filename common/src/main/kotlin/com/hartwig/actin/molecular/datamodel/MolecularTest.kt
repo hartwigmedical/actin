@@ -34,12 +34,8 @@ data class IHCMolecularTest(
 ) : MolecularTest {
 
     companion object {
-        private fun fromPriorMolecularTest(result: PriorMolecularTest): IHCMolecularTest {
+        fun fromPriorMolecularTest(result: PriorMolecularTest): IHCMolecularTest {
             return IHCMolecularTest(ExperimentType.IHC, date = null, result)
-        }
-
-        fun fromPriorMolecularTests(priorMolecularTests: List<PriorMolecularTest>): List<IHCMolecularTest> {
-            return priorMolecularTests.map { IHCMolecularTest.fromPriorMolecularTest(it) }
         }
     }
 }

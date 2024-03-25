@@ -11,10 +11,14 @@ data class MolecularHistory(
             .map { it.result as PriorMolecularTest }
     }
 
-    fun mostRecentMolecularRecord(): MolecularRecord? {
+    fun allMolecularRecords(): List<MolecularRecord> {
         return molecularTests.filter { it.type == ExperimentType.WHOLE_GENOME || it.type == ExperimentType.TARGETED }
+            .map { it.result as MolecularRecord }
+    }
+
+    fun latestMolecularRecord(): MolecularRecord? {
+        return allMolecularRecords()
             .maxByOrNull { it.date ?: LocalDate.MIN }
-            ?.result as MolecularRecord?
     }
 
     companion object {
@@ -22,13 +26,10 @@ data class MolecularHistory(
             return MolecularHistory(emptyList())
         }
 
-        fun fromInputs(molecularRecord: MolecularRecord?, priorMolecularTests: List<PriorMolecularTest>): MolecularHistory {
+        fun fromInputs(molecularRecords: List<MolecularRecord>, priorMolecularTests: List<PriorMolecularTest>): MolecularHistory {
             return MolecularHistory(
-                (if (molecularRecord != null) {
-                    listOf(WGSMolecularTest.fromMolecularRecord(molecularRecord))
-                } else {
-                    emptyList()
-                }) + IHCMolecularTest.fromPriorMolecularTests(priorMolecularTests)
+                molecularRecords.map { WGSMolecularTest.fromMolecularRecord(it) } +
+                        priorMolecularTests.map { IHCMolecularTest.fromPriorMolecularTest(it) }
             )
         }
     }
