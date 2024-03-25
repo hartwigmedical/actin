@@ -74,7 +74,7 @@ data class TreatmentMatcherConfig(
         }
 
         val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherConfig::class.java)
-        private const val PATIENT_RECORD_JSON = "patient_record_json"
+        private const val PATIENT_RECORD_JSON = "patient_json"
         private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"

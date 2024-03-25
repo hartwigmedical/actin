@@ -18,8 +18,7 @@ data class ReporterConfig(
     companion object {
         fun createOptions(): Options {
             val options = Options()
-            options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient")
-            options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient")
+            options.addOption(PATIENT_JSON, true, "File containing the patient record")
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
@@ -46,8 +45,6 @@ data class ReporterConfig(
         }
 
         val LOGGER = LogManager.getLogger(ReporterConfig::class.java)
-        const val CLINICAL_JSON = "clinical_json"
-        const val MOLECULAR_JSON = "molecular_json"
         const val PATIENT_JSON = "patient_json"
         const val TREATMENT_MATCH_JSON = "treatment_match_json"
         const val OUTPUT_DIRECTORY = "output_directory"
