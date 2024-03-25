@@ -260,4 +260,23 @@ class EhrTreatmentHistoryExtractorTest {
         )
         assertThat(result.evaluation.treatmentHistoryEntryEvaluatedInputs).containsExactly(PREVIOUS_CONDITION)
     }
+
+    @Test
+    fun `Should ignore entries when configured and curated is null`() {
+        every { nonOncologicalHistoryCuration.find(TREATMENT_NAME) } returns emptySet()
+        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(
+                ignore = true,
+                input = TREATMENT_NAME,
+                curated = null
+            )
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                treatmentHistory = listOf(TREATMENT_HISTORY),
+            )
+        )
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.treatmentHistoryEntryEvaluatedInputs).containsExactly(TREATMENT_NAME.lowercase())
+    }
 }
