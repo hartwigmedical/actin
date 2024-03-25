@@ -9,12 +9,12 @@ import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidator
 import com.hartwig.actin.trial.config.TrialConfigModel
-import com.hartwig.actin.trial.ctc.TestCTCModelFactory
 import com.hartwig.actin.trial.datamodel.Cohort
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.Trial
+import com.hartwig.actin.trial.status.TestTrialStatusConfigInterpreterFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -26,7 +26,7 @@ class TrialIngestionTest {
         assertThat(
             TrialIngestion.create(
                 TRIAL_CONFIG_DIRECTORY,
-                TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
+                TestTrialStatusConfigInterpreterFactory.createWithMinimalTestTrialStatusDatabase(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
                 TestGeneFilterFactory.createNeverValid(),
                 TreatmentDatabase(emptyMap(), emptyMap()),
@@ -42,7 +42,7 @@ class TrialIngestionTest {
                 TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase(),
                 TrialConfigDatabaseValidator(eligibilityFactory)
             ),
-            TestCTCModelFactory.createWithProperTestCTCDatabase(),
+            TestTrialStatusConfigInterpreterFactory.createWithProperTestTrialStatusDatabase(),
             eligibilityFactory
         )
         val ingestionResult = ingestion.ingestTrials()
@@ -91,7 +91,7 @@ class TrialIngestionTest {
                 ),
                 TrialConfigDatabaseValidator(eligibilityFactory)
             ),
-            TestCTCModelFactory.createWithMinimalTestCTCDatabase(),
+            TestTrialStatusConfigInterpreterFactory.createWithMinimalTestTrialStatusDatabase(),
             eligibilityFactory
         )
 
@@ -106,7 +106,7 @@ class TrialIngestionTest {
         )
         val ingestion = TrialIngestion(
             TrialConfigModel.createFromDatabase(trialConfigDatabase, TrialConfigDatabaseValidator(eligibilityFactory)),
-            TestCTCModelFactory.createWithProperTestCTCDatabase(),
+            TestTrialStatusConfigInterpreterFactory.createWithProperTestTrialStatusDatabase(),
             eligibilityFactory
         )
         assertThat(ingestion.ingestTrials().trials).isEmpty()

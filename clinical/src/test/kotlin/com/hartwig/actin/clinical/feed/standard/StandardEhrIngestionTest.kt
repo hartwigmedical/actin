@@ -62,7 +62,7 @@ class StandardEhrIngestionTest {
                 curationDatabase.treatmentHistoryEntryCuration,
                 curationDatabase.nonOncologicalHistoryCuration
             ),
-            secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
+            secondPrimaryExtractor = EhrPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
 
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(
@@ -73,7 +73,8 @@ class StandardEhrIngestionTest {
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),
             bloodTransfusionExtractor = EhrBloodTransfusionExtractor(),
-            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration)
+            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
+            dataQualityMask = DataQualityMask()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()

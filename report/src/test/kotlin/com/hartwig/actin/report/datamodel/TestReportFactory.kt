@@ -30,4 +30,12 @@ object TestReportFactory {
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         )
     }
+
+    fun createExhaustiveTestReportWithoutMolecular(): Report {
+        return createMinimalTestReport().copy(
+            clinical = TestClinicalFactory.createExhaustiveTestClinicalRecord(),
+            molecular = null,
+            treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
+        )
+    }
 }

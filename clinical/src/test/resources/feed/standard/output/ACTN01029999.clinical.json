@@ -23,13 +23,19 @@
     "stage": "IV",
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
+    "brainLesionsCount": 1,
     "hasActiveBrainLesions": null,
     "hasCnsLesions": false,
+    "cnsLesionsCount": 0,
     "hasActiveCnsLesions": null,
     "hasBoneLesions": false,
+    "boneLesionsCount": 0,
     "hasLiverLesions": false,
+    "liverLesionsCount": 0,
     "hasLungLesions": false,
+    "lungLesionsCount": 0,
     "hasLymphNodeLesions": false,
+    "lymphNodeLesionsCount": 0,
     "otherLesions": [],
     "biopsyLocation": null
   },
@@ -83,39 +89,7 @@
         "bestResponse": null,
         "stopReason": null,
         "stopReasonDetail": null,
-        "switchToTreatments": [
-          {
-            "treatment": {
-              "name": "CAPECITABINE+OXALIPLATIN",
-              "drugs": [
-                {
-                  "name": "CAPECITABINE",
-                  "drugTypes": [
-                    "ANTIMETABOLITE"
-                  ],
-                  "category": "CHEMOTHERAPY",
-                  "displayOverride": null
-                },
-                {
-                  "name": "OXALIPLATIN",
-                  "drugTypes": [
-                    "PLATINUM_COMPOUND"
-                  ],
-                  "category": "CHEMOTHERAPY",
-                  "displayOverride": null
-                }
-              ],
-              "synonyms": [],
-              "displayOverride": null,
-              "isSystemic": true,
-              "maxCycles": null,
-              "treatmentClass": "DRUG_TREATMENT"
-            },
-            "cycles": 0,
-            "startYear": 2020,
-            "startMonth": 1
-          }
-        ],
+        "switchToTreatments": [],
         "maintenanceTreatment": null,
         "toxicities": null,
         "bodyLocationCategories": null,
@@ -293,7 +267,13 @@
     {
       "date": "2020-01-01T00:00:00",
       "value": 3.5,
-      "unit": "KG",
+      "unit": "Kilograms",
+      "valid": false
+    },
+    {
+      "date": "2020-02-01T00:00:00",
+      "value": 53,
+      "unit": "Kilograms",
       "valid": true
     }
   ],
