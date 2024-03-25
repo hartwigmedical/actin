@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.NO_MEDICATION_PROVIDED
+import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.date
 import com.hartwig.actin.clinical.datamodel.Medication
@@ -26,10 +26,8 @@ class RequiresRegularHematopoieticSupport(
             }
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)
-        if (record.medications == null) {
-            return NO_MEDICATION_PROVIDED
-        }
-        val filteredMedications = record.medications!!
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val filteredMedications = medications
             .filter { activeBetweenDates(it) }
             .filter { it.atc?.chemicalSubGroup in resolvedCategories }
             .map { it.name }

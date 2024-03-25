@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.NO_MEDICATION_PROVIDED
+import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
@@ -21,10 +21,8 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
                 "Present " + concatLowercaseWithAnd(painComplications)
             )
         }
-        if (record.medications == null) {
-            return NO_MEDICATION_PROVIDED
-        }
-        val activePainMedications = record.medications!!
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val activePainMedications = medications
             .filter {
                 it.name.equals(SEVERE_PAIN_MEDICATION, ignoreCase = true)
                         && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
