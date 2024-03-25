@@ -1,7 +1,6 @@
 package com.hartwig.actin.report
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 class EnvironmentConfigurationTest {
@@ -17,7 +16,6 @@ class EnvironmentConfigurationTest {
         assertThat(EnvironmentConfiguration.createFromFile(configFilePath).report.showClinicalSummary).isFalse
     }
 
-    @Ignore
     @Test
     fun `Should use defaults for fields not provided in file`() {
         val configFilePath = EnvironmentConfigurationTest::class.java.getResource("/minimal_config.yaml")!!.path

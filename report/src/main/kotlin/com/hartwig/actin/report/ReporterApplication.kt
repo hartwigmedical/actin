@@ -28,8 +28,8 @@ class ReporterApplication(private val config: ReporterConfig) {
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-        val environmentConfig = config.configYaml?.let { EnvironmentConfiguration.createFromFile(it) } ?: EnvironmentConfiguration()
-        val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch, environmentConfig)
+        val environmentConfig = config.overrideYaml?.let { EnvironmentConfiguration.createFromFile(it) } ?: EnvironmentConfiguration()
+        val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch, environmentConfig.report)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, config.enableExtendedMode)
         LOGGER.info("Done!")
