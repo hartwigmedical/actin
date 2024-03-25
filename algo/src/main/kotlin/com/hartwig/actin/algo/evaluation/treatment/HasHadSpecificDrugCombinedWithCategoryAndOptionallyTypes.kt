@@ -25,7 +25,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
         val possiblyRelevantHistory = record.oncologicalHistory.filter { history ->
             history.allTreatments().any { (it as? DrugTreatment)?.drugs?.any {
                     drug -> drug.category == drugToFind.category && drug.name.contains("UNKNOWN", true)
-            } == true } || history.allTreatments().isEmpty() || history.isTrial
+            } == true } || history.allTreatments().isEmpty()
         }
 
         val treatmentDesc =
