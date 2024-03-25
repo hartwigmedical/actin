@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.date
 import com.hartwig.actin.clinical.datamodel.Medication
@@ -13,7 +14,7 @@ import java.time.LocalDate
 class RequiresRegularHematopoieticSupport(
     private val atcTree: AtcTree, private val minDate: LocalDate, private val maxDate: LocalDate
 ) : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val inBetweenRange = "between " + date(minDate) + " and " + date(maxDate)
         for (transfusion in record.bloodTransfusions) {
@@ -25,13 +26,14 @@ class RequiresRegularHematopoieticSupport(
             }
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)
-        val medications = record.medications
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val filteredMedications = medications
             .filter { activeBetweenDates(it) }
             .filter { it.atc?.chemicalSubGroup in resolvedCategories }
             .map { it.name }
-        return if (medications.isNotEmpty()) {
+        return if (filteredMedications.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Patient has had medications " + concat(medications) + " " + inBetweenRange,
+                "Patient has had medications " + concat(filteredMedications) + " " + inBetweenRange,
                 "Has received recent hematopoietic support"
             )
         } else

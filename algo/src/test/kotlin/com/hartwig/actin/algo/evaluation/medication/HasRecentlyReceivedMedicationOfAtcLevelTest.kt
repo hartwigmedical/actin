@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasRecentlyReceivedMedicationOfAtcLevelTest {
@@ -61,5 +63,14 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(medications))
         )
+    }
+
+    @Test
+    fun `Should be undetermined if medication is not provided`() {
+        val result = function.evaluate(
+            TestPatientFactory.createMinimalTestPatientRecord().copy(medications = null)
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertThat(result.recoverable).isTrue()
     }
 }
