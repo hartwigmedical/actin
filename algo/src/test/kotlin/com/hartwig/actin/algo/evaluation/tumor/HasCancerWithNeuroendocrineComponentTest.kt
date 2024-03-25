@@ -58,7 +58,7 @@ class HasCancerWithNeuroendocrineComponentTest {
         val base = TestPatientFactory.createMinimalTestPatientRecord()
         val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
-            molecularHistory = MolecularHistory.fromWGSandIHC(
+            molecularHistory = MolecularHistory.fromInputs(
                 baseMolecular.copy(
                     drivers = baseMolecular.drivers.copy(
                         copyNumbers = setOf(

@@ -46,7 +46,7 @@ internal object MolecularTestFactory {
 
     fun withPriorTests(priorTests: List<PriorMolecularTest>): PatientRecord {
         // TODO (kz) come up with a more general way to substitute a subtype of tests from the entire history?
-        return base.copy(molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular, priorTests))
+        return base.copy(molecularHistory = MolecularHistory.fromInputs(baseMolecular, priorTests))
     }
 
     fun withPriorTest(priorTest: PriorMolecularTest): PatientRecord {
@@ -106,7 +106,7 @@ internal object MolecularTestFactory {
     }
 
     fun withExperimentTypeAndCopyNumber(type: ExperimentType, copyNumber: CopyNumber): PatientRecord {
-        return withMolecularRecord(withDriver(copyNumber).molecularHistory.mostRecentWGS()?.copy(type = type))
+        return withMolecularRecord(withDriver(copyNumber).molecularHistory.mostRecentMolecularRecord()?.copy(type = type))
     }
 
     fun withHlaAllele(hlaAllele: HlaAllele): PatientRecord {
@@ -131,7 +131,7 @@ internal object MolecularTestFactory {
         priorTest: PriorMolecularTest
     ): PatientRecord {
         return base.copy(
-            molecularHistory = MolecularHistory.fromWGSandIHC(
+            molecularHistory = MolecularHistory.fromInputs(
                 baseMolecular.copy(type = type, containsTumorCells = containsTumorCells),
                 listOf(priorTest)
             )
@@ -262,6 +262,6 @@ internal object MolecularTestFactory {
     }
 
     private fun withMolecularRecord(molecular: MolecularRecord?): PatientRecord {
-        return base.copy(molecularHistory = MolecularHistory.fromWGSandIHC(molecular, emptyList()))
+        return base.copy(molecularHistory = MolecularHistory.fromInputs(molecular, emptyList()))
     }
 }

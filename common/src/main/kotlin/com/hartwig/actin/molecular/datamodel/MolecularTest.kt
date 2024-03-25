@@ -34,7 +34,7 @@ data class IHCMolecularTest(
 ) : MolecularTest {
 
     companion object {
-        fun fromPriorMolecularTest(result: PriorMolecularTest): IHCMolecularTest {
+        private fun fromPriorMolecularTest(result: PriorMolecularTest): IHCMolecularTest {
             return IHCMolecularTest(ExperimentType.IHC, date = null, result)
         }
 

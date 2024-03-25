@@ -25,7 +25,7 @@ internal object TumorTestFactory {
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular.copy(
+            molecularHistory = MolecularHistory.fromInputs(baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                 drivers = baseMolecular.drivers.copy(
                     copyNumbers = setOf(
@@ -49,7 +49,7 @@ internal object TumorTestFactory {
     ): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular.copy(
+            molecularHistory = MolecularHistory.fromInputs(baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                 drivers = baseMolecular.drivers.copy(
                     copyNumbers = setOf(
@@ -190,13 +190,13 @@ internal object TumorTestFactory {
     }
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
-        return base.copy(molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular.copy(type = type), emptyList()))
+        return base.copy(molecularHistory = MolecularHistory.fromInputs(baseMolecular.copy(type = type), emptyList()))
     }
 
     fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<PriorMolecularTest>, doids: Set<String>?): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            molecularHistory = MolecularHistory.fromWGSandIHC(baseMolecular, priorMolecularTests)
+            molecularHistory = MolecularHistory.fromInputs(baseMolecular, priorMolecularTests)
 
         )
     }

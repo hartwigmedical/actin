@@ -3,31 +3,15 @@ package com.hartwig.actin.molecular.datamodel
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import java.time.LocalDate
 
-private const val PD_L1 = "PD-L1"
-private const val IHC = "IHC"
-
 data class MolecularHistory(
     val molecularTests: List<MolecularTest>,
 ) {
-    // TODO (kz) do we want helpers like this or just use the list directly?
-    fun allPDL1Tests(measureToFind: String): List<PriorMolecularTest> {
-        return allIHCTests(allPriorMolecularTests()).filter { it.item == PD_L1 && measureToFind == it.measure }
-    }
-
-    fun allIHCTestsForProtein(protein: String): List<PriorMolecularTest> {
-        return allIHCTests(allPriorMolecularTests()).filter { it.item == protein }
-    }
-
-    private fun allIHCTests(priorMolecularTests: List<PriorMolecularTest>): List<PriorMolecularTest> {
-        return priorMolecularTests.filter { it.test == IHC }
-    }
-
     fun allPriorMolecularTests(): List<PriorMolecularTest> {
         return molecularTests.filter { it.type == ExperimentType.IHC }
             .map { it.result as PriorMolecularTest }
     }
 
-    fun mostRecentWGS(): MolecularRecord? {
+    fun mostRecentMolecularRecord(): MolecularRecord? {
         return molecularTests.filter { it.type == ExperimentType.WHOLE_GENOME || it.type == ExperimentType.TARGETED }
             .maxByOrNull { it.date ?: LocalDate.MIN }
             ?.result as MolecularRecord?
@@ -38,9 +22,7 @@ data class MolecularHistory(
             return MolecularHistory(emptyList())
         }
 
-        // TODO (kz) convenience constructor, but change to make it Lists of specific
-        //  molecular test subtypes? see at call sites for what looks better
-        fun fromWGSandIHC(molecularRecord: MolecularRecord?, priorMolecularTests: List<PriorMolecularTest>): MolecularHistory {
+        fun fromInputs(molecularRecord: MolecularRecord?, priorMolecularTests: List<PriorMolecularTest>): MolecularHistory {
             return MolecularHistory(
                 (if (molecularRecord != null) {
                     listOf(WGSMolecularTest.fromMolecularRecord(molecularRecord))
