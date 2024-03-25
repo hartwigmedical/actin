@@ -5,23 +5,13 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.medicationWhenProvidedEvaluation
+import com.hartwig.actin.algo.evaluation.medication.NO_MEDICATION_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
-import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.doid.DoidModel
 
 class HasContraindicationToCT internal constructor(private val doidModel: DoidModel) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return medicationWhenProvidedEvaluation(record) { medications ->
-            evaluateComplications(record, medications)
-        }
-    }
-
-    private fun evaluateComplications(
-        record: PatientRecord,
-        medications: List<Medication>
-    ): Evaluation {
         for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             for (doid in condition.doids) {
                 if (doidModel.doidWithParents(doid).contains(DoidConstants.KIDNEY_DISEASE_DOID)) {
@@ -46,7 +36,10 @@ class HasContraindicationToCT internal constructor(private val doidModel: DoidMo
                 )
             }
         }
-        for (medication in medications) {
+        if (record.medications == null) {
+            return NO_MEDICATION_PROVIDED
+        }
+        for (medication in record.medications!!) {
             if (stringCaseInsensitivelyMatchesQueryCollection(medication.name, MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
                     "Patient has a contraindication to CT due to medication " + medication.name,
