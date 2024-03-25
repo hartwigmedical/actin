@@ -48,13 +48,19 @@ private val TUMOR_DETAILS = TumorDetails(
     stage = TumorStage.IV,
     hasMeasurableDisease = true,
     hasBrainLesions = false,
+    brainLesionsCount = 0,
     hasActiveBrainLesions = null,
     hasCnsLesions = false,
+    cnsLesionsCount = 0,
     hasActiveCnsLesions = null,
     hasBoneLesions = false,
+    boneLesionsCount = 0,
     hasLiverLesions = false,
+    liverLesionsCount = 0,
     hasLungLesions = false,
+    lungLesionsCount = 0,
     hasLymphNodeLesions = false,
+    lymphNodeLesionsCount = 0,
     otherLesions = emptyList(),
     biopsyLocation = null
 )
@@ -134,6 +140,7 @@ class EhrTumorDetailsExtractorTest {
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
                 hasBrainLesions = true,
+                brainLesionsCount = 1,
                 otherLesions = listOf("other")
             )
         )

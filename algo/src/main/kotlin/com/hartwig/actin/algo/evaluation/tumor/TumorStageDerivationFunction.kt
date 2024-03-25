@@ -51,8 +51,8 @@ internal class TumorStageDerivationFunction private constructor(private val deri
                 tumor.hasBrainLesions to DoidConstants.BRAIN_CANCER_DOID,
                 tumor.hasLungLesions to DoidConstants.LUNG_CANCER_DOID,
                 tumor.hasBoneLesions to DoidConstants.BONE_CANCER_DOID
-            ).count {
-                evaluateMetastases(it.first, tumor.doids, it.second, doidModel)
+            ).count { (hasLesions, doidToMatch) ->
+                evaluateMetastases(hasLesions, tumor, doidToMatch, doidModel)
             }
         }
 
@@ -77,8 +77,21 @@ internal class TumorStageDerivationFunction private constructor(private val deri
             }
         }
 
-        private fun evaluateMetastases(hasLesions: Boolean?, tumorDoids: Set<String>?, doidToMatch: String, doidModel: DoidModel): Boolean {
-            return (hasLesions ?: false) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, doidToMatch)
+        private fun evaluateMetastases(hasLesions: Boolean?, tumor: TumorDetails, doidToMatch: String, doidModel: DoidModel): Boolean {
+            // Currently only for lung cancer multiple lesions are resolved to stage III/IV
+            return if (checkingLungMetastasesForLungCancer(doidModel, doidToMatch, tumor.doids) && tumor.lungLesionsCount != null) {
+                tumor.lungLesionsCount!! >= 2
+            } else {
+                (hasLesions ?: false) && !DoidEvaluationFunctions.isOfDoidType(doidModel, tumor.doids, doidToMatch)
+            }
+        }
+
+        private fun checkingLungMetastasesForLungCancer(doidModel: DoidModel, doidToMatch: String, tumorDoids: Set<String>?): Boolean {
+            return DoidEvaluationFunctions.isOfDoidType(
+                doidModel,
+                tumorDoids,
+                DoidConstants.LUNG_CANCER_DOID
+            ) && doidToMatch == DoidConstants.LUNG_CANCER_DOID
         }
     }
 }
