@@ -10,41 +10,40 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 class CurrentlyGetsCypXInducingMedication(private val selector: MedicationSelector, private val termToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return medicationWhenProvidedEvaluation(record) { medications ->
-            val cypInducersReceived = selector.activeWithCypInteraction(medications, termToFind, CypInteraction.Type.INDUCER)
-                .map { it.name }.toSet()
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val cypInducersReceived = selector.activeWithCypInteraction(medications, termToFind, CypInteraction.Type.INDUCER)
+            .map { it.name }.toSet()
 
-            val cypInducersPlanned = selector.plannedWithCypInteraction(medications, termToFind, CypInteraction.Type.INDUCER)
-                .map { it.name }.toSet()
+        val cypInducersPlanned = selector.plannedWithCypInteraction(medications, termToFind, CypInteraction.Type.INDUCER)
+            .map { it.name }.toSet()
 
-            when {
-                cypInducersReceived.isNotEmpty() -> {
-                    EvaluationFactory.recoverablePass(
-                        "Patient currently gets CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
-                        "CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
-                    )
-                }
+        return when {
+            cypInducersReceived.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(
+                    "Patient currently gets CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
+                    "CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
+                )
+            }
 
-                termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
-                    EvaluationFactory.undetermined(
-                        "Undetermined if patient currently gets CYP$termToFind inducing medication",
-                        "Undetermined CYP$termToFind inducing medication use"
-                    )
-                }
+            termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
+                EvaluationFactory.undetermined(
+                    "Undetermined if patient currently gets CYP$termToFind inducing medication",
+                    "Undetermined CYP$termToFind inducing medication use"
+                )
+            }
 
-                cypInducersPlanned.isNotEmpty() -> {
-                    EvaluationFactory.recoverableWarn(
-                        "Patient plans to get CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}",
-                        "Planned CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}"
-                    )
-                }
+            cypInducersPlanned.isNotEmpty() -> {
+                EvaluationFactory.recoverableWarn(
+                    "Patient plans to get CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}",
+                    "Planned CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}"
+                )
+            }
 
-                else -> {
-                    EvaluationFactory.recoverableFail(
-                        "Patient currently does not get CYP$termToFind inducing medication ",
-                        "No CYP$termToFind inducing medication use "
-                    )
-                }
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Patient currently does not get CYP$termToFind inducing medication ",
+                    "No CYP$termToFind inducing medication use "
+                )
             }
         }
     }

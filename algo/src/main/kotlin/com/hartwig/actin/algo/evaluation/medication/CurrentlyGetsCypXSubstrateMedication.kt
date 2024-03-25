@@ -10,45 +10,44 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelector, private val termToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return medicationWhenProvidedEvaluation(record) { medications ->
-            val cypSubstratesReceived =
-                selector.activeWithCypInteraction(medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val cypSubstratesReceived =
+            selector.activeWithCypInteraction(medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
 
-            val cypSubstratesPlanned =
-                selector.plannedWithCypInteraction(medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
+        val cypSubstratesPlanned =
+            selector.plannedWithCypInteraction(medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
 
-            when {
-                cypSubstratesReceived.isNotEmpty() -> {
-                    EvaluationFactory.recoverablePass(
-                        "Patient currently gets CYP$termToFind substrate medication: ${
-                            Format.concatLowercaseWithAnd(
-                                cypSubstratesReceived
-                            )
-                        }",
-                        "CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}"
-                    )
-                }
+        return when {
+            cypSubstratesReceived.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(
+                    "Patient currently gets CYP$termToFind substrate medication: ${
+                        Format.concatLowercaseWithAnd(
+                            cypSubstratesReceived
+                        )
+                    }",
+                    "CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}"
+                )
+            }
 
-                termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
-                    EvaluationFactory.undetermined(
-                        "Undetermined if patient currently gets CYP$termToFind substrate medication",
-                        "Undetermined CYP$termToFind substrate medication use"
-                    )
-                }
+            termToFind in MedicationRuleMapper.UNDETERMINED_CYP -> {
+                EvaluationFactory.undetermined(
+                    "Undetermined if patient currently gets CYP$termToFind substrate medication",
+                    "Undetermined CYP$termToFind substrate medication use"
+                )
+            }
 
-                cypSubstratesPlanned.isNotEmpty() -> {
-                    EvaluationFactory.recoverableWarn(
-                        "Patient plans to get CYP$termToFind substrate medication: ${Format.concatLowercaseWithAnd(cypSubstratesPlanned)}",
-                        "Planned CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesPlanned)}"
-                    )
-                }
+            cypSubstratesPlanned.isNotEmpty() -> {
+                EvaluationFactory.recoverableWarn(
+                    "Patient plans to get CYP$termToFind substrate medication: ${Format.concatLowercaseWithAnd(cypSubstratesPlanned)}",
+                    "Planned CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesPlanned)}"
+                )
+            }
 
-                else -> {
-                    EvaluationFactory.recoverableFail(
-                        "Patient currently does not get CYP$termToFind substrate medication ",
-                        "No CYP$termToFind substrate medication use "
-                    )
-                }
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Patient currently does not get CYP$termToFind substrate medication ",
+                    "No CYP$termToFind substrate medication use "
+                )
             }
         }
     }

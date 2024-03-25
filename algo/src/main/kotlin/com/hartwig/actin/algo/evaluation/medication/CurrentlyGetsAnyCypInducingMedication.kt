@@ -11,34 +11,33 @@ class CurrentlyGetsAnyCypInducingMedication(private val selector: MedicationSele
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return medicationWhenProvidedEvaluation(record) { medications ->
-            val cypInducersReceived =
-                selector.activeWithCypInteraction(medications, null, CypInteraction.Type.INDUCER).map { it.name }
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val cypInducersReceived =
+            selector.activeWithCypInteraction(medications, null, CypInteraction.Type.INDUCER).map { it.name }
 
-            val cypInducersPlanned =
-                selector.plannedWithCypInteraction(medications, null, CypInteraction.Type.INDUCER).map { it.name }
+        val cypInducersPlanned =
+            selector.plannedWithCypInteraction(medications, null, CypInteraction.Type.INDUCER).map { it.name }
 
-            when {
-                cypInducersReceived.isNotEmpty() -> {
-                    EvaluationFactory.recoverablePass(
-                        "Patient currently gets CYP inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
-                        "CYP inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
-                    )
-                }
+        return when {
+            cypInducersReceived.isNotEmpty() -> {
+                EvaluationFactory.recoverablePass(
+                    "Patient currently gets CYP inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
+                    "CYP inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
+                )
+            }
 
-                cypInducersPlanned.isNotEmpty() -> {
-                    EvaluationFactory.recoverableWarn(
-                        "Patient plans to get CYP inducing medication: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}",
-                        "Planned CYP inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}"
-                    )
-                }
+            cypInducersPlanned.isNotEmpty() -> {
+                EvaluationFactory.recoverableWarn(
+                    "Patient plans to get CYP inducing medication: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}",
+                    "Planned CYP inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersPlanned)}"
+                )
+            }
 
-                else -> {
-                    EvaluationFactory.recoverableFail(
-                        "Patient currently does not get CYP inducing medication ",
-                        "No CYP inducing medication use "
-                    )
-                }
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Patient currently does not get CYP inducing medication ",
+                    "No CYP inducing medication use "
+                )
             }
         }
     }
