@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
-class HasHadTreatmentWithDrugAsMostRecentTest {
+class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
 
     @Test
     fun `Should fail for empty treatment history`() {
@@ -50,7 +50,7 @@ class HasHadTreatmentWithDrugAsMostRecentTest {
     }
 
     @Test
-    fun `Should fail if history contains entry with correct treatment but unknown start date`() {
+    fun `Should evaluate to undetermined when multiple treatment entries in history of which one contains the target drug with unknown start date`() {
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(TreatmentTestFactory.drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)), startYear = null),
@@ -78,17 +78,25 @@ class HasHadTreatmentWithDrugAsMostRecentTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if most recent line is trial without drugs specified`() {
-        val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(TreatmentTestFactory.drugTreatmentNoDrugs("trial"))
-            , isTrial = true))
+    fun `Should evaluate to undetermined if most recent line is trial without a treatment specified`() {
+        val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = emptySet(), isTrial = true))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         )
     }
 
     @Test
-    fun `Should pass for therapy containing matching drug`() {
+    fun `Should evaluate to undetermined if most recent line is trial with treatment containing drug of target category`() {
+        val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.drugTreatment("Trial drug X", category = TREATMENT_CATEGORY)), isTrial = true)
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+        )
+    }
+
+    @Test
+    fun `Should pass if matching treatment is only history entry and start date is unknown`() {
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(TreatmentTestFactory.drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)))
@@ -98,10 +106,21 @@ class HasHadTreatmentWithDrugAsMostRecentTest {
         )
     }
 
+    @Test
+    fun `Should pass for therapy containing matching drug`() {
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TreatmentTestFactory.drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)), startYear = 2022)
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+        )
+    }
+
     companion object {
         private const val MATCHING_DRUG_NAME = "match"
         private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY
-        private val FUNCTION = HasHadTreatmentWithDrugAsMostRecent(
+        private val FUNCTION = HasHadTreatmentWithDrugFromSetAsMostRecent(
             setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet()))
         )
     }

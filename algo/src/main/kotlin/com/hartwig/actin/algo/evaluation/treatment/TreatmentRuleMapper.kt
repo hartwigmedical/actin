@@ -189,7 +189,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadTreatmentWithAnyDrugAsMostRecentCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            HasHadTreatmentWithDrugAsMostRecent(functionInputResolver().createManyDrugsInput(function))
+            HasHadTreatmentWithDrugFromSetAsMostRecent(functionInputResolver().createManyDrugsInput(function))
         }
     }
 
