@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.TestMedicationFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val TARGET_ATC_CODE = "L01A"
@@ -43,6 +45,17 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
     @Test
     fun `Should fail when patient plans to use medication with wrong category`() {
         assertEvaluation(EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode("wrong category")))
+    }
+
+    @Test
+    fun `Should be undetermined if medication is not provided`() {
+        val medicationNotProvided = TestPatientFactory.createMinimalTestPatientRecord().copy(medications = null)
+        val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        assertThat(alwaysPlannedResult.recoverable).isTrue()
+        val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 
     private fun patientWithMedicationHavingAnatomicalCode(atcCode: String) = MedicationTestFactory.withMedications(
