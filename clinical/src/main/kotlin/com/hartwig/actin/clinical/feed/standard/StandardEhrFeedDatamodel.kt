@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
+import com.hartwig.actin.molecular.datamodel.ExperimentType
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.Date
 
 @JacksonSerializable
 data class EhrPatientRecord(
@@ -15,6 +17,7 @@ data class EhrPatientRecord(
     val complications: List<EhrComplication> = emptyList(),
     val labValues: List<EhrLabValue> = emptyList(),
     val medications: List<EhrMedication> = emptyList(),
+    val molecularTests: List<EhrMolecularTest> = emptyList(),
     val patientDetails: EhrPatientDetail,
     val priorOtherConditions: List<EhrPriorOtherCondition> = emptyList(),
     val surgeries: List<EhrSurgery> = emptyList(),
@@ -118,6 +121,16 @@ data class EhrMedication(
     val administrationOnlyIfNeeded: Boolean?,
     val isTrial: Boolean,
     val isSelfCare: Boolean
+)
+
+@JacksonSerializable
+data class EhrMolecularTest(
+    val molecularTestType: String,
+    val geneTested: String,
+    val result: String,
+    val resultDate: LocalDate,
+    val biopsyLocation: String,
+    val biopsyDate: LocalDate
 )
 
 @JacksonSerializable

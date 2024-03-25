@@ -10,13 +10,15 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val IHC_LINE = "HER2 immunohistochemie: negative"
-private val PRIOR_MOLECULAR_TEST =
+private val PRIOR_IHC_TEST =
     PriorMolecularTest(test = "IHC", item = "HER2", measure = "negative", impliesPotentialIndeterminateStatus = true)
 private val PATHOLOGY_REPORT =
     "Microscopie:\n\test\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
-
+private val PRIOR_MOLECULAR_TEST =
+    PriorMolecularTest(test = "Archer FP Lung Target", item = "EGFR", measure = "c.2573T>G", measureDate = LocalDate.parse("2024-03-25"), impliesPotentialIndeterminateStatus = false)
 
 private val EHR_PATIENT_RECORD = createEhrPatientRecord()
 private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =
@@ -32,11 +34,11 @@ class EhrMolecularTestExtractorTest {
         every { molecularTestIhcCuration.find(IHC_LINE) } returns setOf(
             MolecularTestConfig(
                 input = IHC_LINE,
-                curated = PRIOR_MOLECULAR_TEST
+                curated = PRIOR_IHC_TEST
             )
         )
         val result = extractor.extract(EHR_PATIENT_RECORD_WITH_PATHOLOGY)
-        assertThat(result.extracted).containsExactly(PRIOR_MOLECULAR_TEST)
+        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 

@@ -14,22 +14,40 @@ class EhrMolecularTestExtractor(
     private val molecularTestCuration: CurationDatabase<MolecularTestConfig>,
 ) : EhrExtractor<List<PriorMolecularTest>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<PriorMolecularTest>> {
-        val linesWithIHC = ehrPatientRecord.tumorDetails.tumorGradeDifferentiation
-            .split("\n")
-            .filter { it.contains(IHC_STRING, ignoreCase = true) }
-        return linesWithIHC
-            .map { it.replace("\n", "").replace("\r", "") }
-            .map {
-                val curationResponse = CurationResponse.createFromConfigs(
-                    molecularTestCuration.find(it),
-                    ehrPatientRecord.patientDetails.hashedId,
-                    CurationCategory.MOLECULAR_TEST_IHC,
-                    it,
-                    "molecular test ihc"
-                )
-                ExtractionResult(listOfNotNull(curationResponse.config()?.curated), curationResponse.extractionEvaluation)
-            }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
-                ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
-            }
+        val extractedIHCTests = extractIHC(molecularTestCuration, ehrPatientRecord)
+
+        val extractedOtherMolecularTests = ExtractionResult(ehrPatientRecord.molecularTests.map {
+            PriorMolecularTest(
+                test = it.molecularTestType,
+                item = it.geneTested,
+                measure = it.result,
+                measureDate = it.resultDate,
+                impliesPotentialIndeterminateStatus = false
+            )
+        }, CurationExtractionEvaluation())
+
+        return extractedIHCTests
+        //todo merge extractedIHCTests with extractedOtherMolecularTests
+
     }
+}
+
+fun extractIHC(molecularTestCuration: CurationDatabase<MolecularTestConfig>, ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<PriorMolecularTest>> {
+    val linesWithIHC = ehrPatientRecord.tumorDetails.tumorGradeDifferentiation
+        .split("\n")
+        .filter { it.contains(IHC_STRING, ignoreCase = true) }
+    return linesWithIHC
+        .map { it.replace("\n", "").replace("\r", "") }
+        .map {
+            val curationResponse = CurationResponse.createFromConfigs(
+                molecularTestCuration.find(it),
+                ehrPatientRecord.patientDetails.hashedId,
+                CurationCategory.MOLECULAR_TEST_IHC,
+                it,
+                "molecular test ihc"
+            )
+            ExtractionResult(listOfNotNull(curationResponse.config()?.curated), curationResponse.extractionEvaluation)
+        }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, result ->
+            ExtractionResult(acc.extracted + result.extracted, acc.evaluation + result.evaluation)
+        }
 }
