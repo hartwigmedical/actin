@@ -1,17 +1,19 @@
 package com.hartwig.actin.algo.evaluation.washout
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory.medication
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class HasRecentlyReceivedTrialMedicationTest {
     private val evaluationDate = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
     private val functionActive = HasRecentlyReceivedTrialMedication(MedicationTestFactory.alwaysActive(), evaluationDate.plusDays(1))
-    
+
     @Test
     fun `Should fail when no medication`() {
         val medications = emptyList<Medication>()
@@ -51,5 +53,14 @@ class HasRecentlyReceivedTrialMedicationTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(medications))
         )
+    }
+
+    @Test
+    fun `Should be undetermined if medication is not provided`() {
+        val result = functionActive.evaluate(
+            TestPatientFactory.createMinimalTestPatientRecord().copy(medications = null)
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        Assertions.assertThat(result.recoverable).isTrue()
     }
 }

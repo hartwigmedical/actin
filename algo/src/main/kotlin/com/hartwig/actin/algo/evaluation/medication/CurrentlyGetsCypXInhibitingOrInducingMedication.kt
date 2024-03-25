@@ -12,7 +12,8 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val cypMedications = record.medications.filter { medication ->
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val cypMedications = medications.filter { medication ->
             medication.cypInteractions
                 .any { it.cyp == termToFind && (it.type == CypInteraction.Type.INDUCER || it.type == CypInteraction.Type.INHIBITOR) }
         }

@@ -13,16 +13,21 @@ class HasRecentlyReceivedCypXInducingMedication(
     private val termToFind: String,
     private val minStopDate: LocalDate
 ) : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val cypInducersReceived = selector.activeOrRecentlyStoppedWithCypInteraction(
-            record.medications, termToFind, CypInteraction.Type.INDUCER, minStopDate
+            medications, termToFind, CypInteraction.Type.INDUCER, minStopDate
         ).map { it.name }.toSet()
 
         return when {
             cypInducersReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient has recently received CYP$termToFind inducing medication: ${Format.concatLowercaseWithAnd(cypInducersReceived)}",
+                    "Patient has recently received CYP$termToFind inducing medication: ${
+                        Format.concatLowercaseWithAnd(
+                            cypInducersReceived
+                        )
+                    }",
                     "Recent CYP$termToFind inducing medication use: ${Format.concatLowercaseWithAnd(cypInducersReceived)}"
                 )
             }

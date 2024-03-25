@@ -23,13 +23,19 @@
     "stage": "IV",
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
+    "brainLesionsCount": 1,
     "hasActiveBrainLesions": null,
     "hasCnsLesions": false,
+    "cnsLesionsCount": 0,
     "hasActiveCnsLesions": null,
     "hasBoneLesions": false,
+    "boneLesionsCount": 0,
     "hasLiverLesions": false,
+    "liverLesionsCount": 0,
     "hasLungLesions": false,
+    "lungLesionsCount": 0,
     "hasLymphNodeLesions": false,
+    "lymphNodeLesionsCount": 0,
     "otherLesions": [],
     "biopsyLocation": null
   },
@@ -261,7 +267,13 @@
     {
       "date": "2020-01-01T00:00:00",
       "value": 3.5,
-      "unit": "KG",
+      "unit": "Kilograms",
+      "valid": false
+    },
+    {
+      "date": "2020-02-01T00:00:00",
+      "value": 53,
+      "unit": "Kilograms",
       "valid": true
     }
   ],
@@ -301,98 +313,5 @@
       "product": "Erytrocytes Filtered"
     }
   ],
-  "medications": [
-    {
-      "name": "METOCLOPRAMIDE TABLET 10MG",
-      "status": null,
-      "administrationRoute": "oraal",
-      "dosage": {
-        "dosageMin": 3.5,
-        "dosageMax": 3.5,
-        "dosageUnit": "piece",
-        "frequency": 3.5,
-        "frequencyUnit": "day",
-        "periodBetweenValue": 3.5,
-        "periodBetweenUnit": null,
-        "ifNeeded": true
-      },
-      "startDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "stopDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "cypInteractions": [],
-      "qtProlongatingRisk": "NONE",
-      "atc": null,
-      "isSelfCare": true,
-      "isTrialMedication": true
-    },
-    {
-      "name": "paracetamol",
-      "status": null,
-      "administrationRoute": "oraal",
-      "dosage": {
-        "dosageMin": 3.5,
-        "dosageMax": 3.5,
-        "dosageUnit": "mg",
-        "frequency": 3.5,
-        "frequencyUnit": "day",
-        "periodBetweenValue": 3.5,
-        "periodBetweenUnit": null,
-        "ifNeeded": true
-      },
-      "startDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "stopDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "cypInteractions": [
-        {
-          "type": "INHIBITOR",
-          "strength": "MODERATE",
-          "cyp": "2D6"
-        },
-        {
-          "type": "SUBSTRATE",
-          "strength": "MODERATE_SENSITIVE",
-          "cyp": "3A4"
-        }
-      ],
-      "qtProlongatingRisk": "KNOWN",
-      "atc": {
-        "anatomicalMainGroup": {
-          "code": "N",
-          "name": "NERVOUS SYSTEM"
-        },
-        "therapeuticSubGroup": {
-          "code": "N02",
-          "name": "ANALGESICS"
-        },
-        "pharmacologicalSubGroup": {
-          "code": "N02B",
-          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
-        },
-        "chemicalSubGroup": {
-          "code": "N02BE",
-          "name": "Anilides"
-        },
-        "chemicalSubstance": {
-          "code": "N02BE01",
-          "name": "paracetamol"
-        }
-      },
-      "isSelfCare": false,
-      "isTrialMedication": false
-    }
-  ]
+  "medications": null
 }

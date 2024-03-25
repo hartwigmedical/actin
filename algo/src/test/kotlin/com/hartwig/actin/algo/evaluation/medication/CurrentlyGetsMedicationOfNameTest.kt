@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CurrentlyGetsMedicationOfNameTest {
@@ -47,5 +49,16 @@ class CurrentlyGetsMedicationOfNameTest {
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 2")))
             )
         )
+    }
+
+    @Test
+    fun `Should be undetermined if medication is not provided`() {
+        val medicationNotProvided = TestPatientFactory.createMinimalTestPatientRecord().copy(medications = null)
+        val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        assertThat(alwaysPlannedResult.recoverable).isTrue()
+        val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

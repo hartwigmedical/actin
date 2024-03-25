@@ -14,7 +14,7 @@ data class EhrPatientRecord(
     val bloodTransfusions: List<EhrBloodTransfusion> = emptyList(),
     val complications: List<EhrComplication> = emptyList(),
     val labValues: List<EhrLabValue> = emptyList(),
-    val medications: List<EhrMedication> = emptyList(),
+    val medications: List<EhrMedication>? = emptyList(),
     val patientDetails: EhrPatientDetail,
     val priorOtherConditions: List<EhrPriorOtherCondition> = emptyList(),
     val surgeries: List<EhrSurgery> = emptyList(),

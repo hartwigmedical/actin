@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.othercondition.OtherConditionSelector
 import com.hartwig.actin.doid.DoidModel
@@ -35,7 +36,8 @@ class HasContraindicationToCT internal constructor(private val doidModel: DoidMo
                 )
             }
         }
-        for (medication in record.medications) {
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        for (medication in medications) {
             if (stringCaseInsensitivelyMatchesQueryCollection(medication.name, MEDICATIONS_BEING_CONTRAINDICATIONS_TO_CT)) {
                 return EvaluationFactory.pass(
                     "Patient has a contraindication to CT due to medication " + medication.name,

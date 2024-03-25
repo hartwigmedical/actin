@@ -14,13 +14,14 @@ class CurrentlyGetsStableMedicationOfCategory(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val categoryNamesToFind = categoriesToFind.keys
         var hasFoundOnePassingCategory = false
         for (categoryToFind in categoriesToFind) {
             var hasActiveAndStableMedication = false
             var referenceDosing: Medication? = null
             val filtered =
-                selector.active(record.medications)
+                selector.active(medications)
                     .filter { (it.allLevels() intersect categoryToFind.value).isNotEmpty() }
             for (medication in filtered) {
                 if (referenceDosing != null) {
