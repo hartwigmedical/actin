@@ -132,7 +132,7 @@
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "Low",
-      "drugAllergyType": "not specified"
+      "treatmentCategory": ["SUPPORTIVE_TREATMENT"]
     }
   ],
   "surgeries": [

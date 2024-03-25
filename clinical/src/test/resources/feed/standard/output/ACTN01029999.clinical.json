@@ -227,7 +227,7 @@
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "Unknown",
-      "drugTypeAllergy": ""
+      "treatmentCategory": []
     },
     {
       "name": "Nikkel",
@@ -238,7 +238,7 @@
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "Unknown",
-      "drugTypeAllergy": ""
+      "treatmentCategory": []
     }
   ],
   "surgeries": [

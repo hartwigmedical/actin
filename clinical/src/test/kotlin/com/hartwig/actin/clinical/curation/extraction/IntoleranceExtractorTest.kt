@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -23,7 +24,7 @@ private const val CURATED_MEDICATION_INTOLERANCE = "Paracetamol"
 
 private const val DOID = "1"
 
-private const val DRUG_ALLERGY_TYPE = "unspecified"
+private val TREATMENT_CATEGORY = emptySet<TreatmentCategory>()
 
 private const val ATC = "N02BE01"
 
@@ -41,14 +42,14 @@ class IntoleranceExtractorTest {
                 ignore = false,
                 name = CURATED_INTOLERANCE,
                 doids = setOf(DOID),
-                drugAllergyType = DRUG_ALLERGY_TYPE
+                treatmentCategory = TREATMENT_CATEGORY
             ),
             IntoleranceConfig(
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
                 doids = setOf(DOID),
-                drugAllergyType = DRUG_ALLERGY_TYPE
+                treatmentCategory = TREATMENT_CATEGORY
             )
         ), atcModel
     )

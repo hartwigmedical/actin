@@ -1,5 +1,7 @@
 package com.hartwig.actin.clinical.datamodel
 
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+
 data class Intolerance(
     val name: String,
     val doids: Set<String>,
@@ -9,5 +11,5 @@ data class Intolerance(
     val clinicalStatus: String,
     val verificationStatus: String,
     val criticality: String,
-    val drugAllergyType: String,
+    val treatmentCategory: Set<TreatmentCategory>,
 )

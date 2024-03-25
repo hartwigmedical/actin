@@ -1,2 +1,2 @@
-input	name	doids	drugAllergyType
-Simvastatine	Simvastatine	0060500	not specified
+input	name	doids	treatmentCategory
+Simvastatine	Simvastatine	0060500	Supportive treatment

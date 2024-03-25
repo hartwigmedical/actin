@@ -42,13 +42,25 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
         val treatments = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(TreatmentTestFactory.drugTreatment("Nivolumab", TreatmentCategory.IMMUNOTHERAPY)),
-                stopReason = StopReason.TOXICITY
+                stopReason = StopReason.PROGRESSIVE_DISEASE
             )
         )
-        val intolerance = Intolerance("Nivolumab", setOf(DoidConstants.DRUG_ALLERGY_DOID), "", setOf(""), "", "", "", "", "")
+        val intolerance = Intolerance("Nivolumab", setOf(
+            DoidConstants.DRUG_ALLERGY_DOID), "", setOf(""), "", "", "", "", setOf(TreatmentCategory.IMMUNOTHERAPY)
+        )
         val base = createMinimalTestPatientRecord()
         val record = base.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments)
         assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined with prior immunotherapy treatment with unknown stop reason`() {
+        val treatments = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(treatment(TreatmentCategory.IMMUNOTHERAPY)), stopReason = null
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatments)))
     }
 
     private fun withTreatmentHistory(treatmentHistory: List<TreatmentHistoryEntry>): PatientRecord {

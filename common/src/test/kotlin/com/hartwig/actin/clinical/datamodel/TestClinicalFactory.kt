@@ -446,7 +446,7 @@ object TestClinicalFactory {
                 criticality = "Unable-to-assess",
                 doids = emptySet(),
                 subcategories = emptySet(),
-                drugAllergyType = ""
+                treatmentCategory = emptySet()
             )
         )
     }

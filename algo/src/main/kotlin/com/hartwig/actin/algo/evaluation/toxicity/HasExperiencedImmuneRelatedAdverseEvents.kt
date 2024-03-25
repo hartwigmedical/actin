@@ -10,22 +10,22 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 class HasExperiencedImmuneRelatedAdverseEvents internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val immunotherapyTreatmentList = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.IMMUNOTHERAPY) }
-        val hasHadImmuneTherapy = immunotherapyTreatmentList.isNotEmpty()
-        val stopReasonUnknown = immunotherapyTreatmentList.all { it.treatmentHistoryDetails?.stopReason == null }
-        val hasHadImmuneTherapyWithStopReasonToxicity = immunotherapyTreatmentList.any {
-            it.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY
-        }
-        val hasImmunotherapyAllergies = record.intolerances.any { it.drugAllergyType == "Immunotherapy drug allergy" }
+        val immunotherapyTreatmentsByStopReason = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.IMMUNOTHERAPY) }
+            .groupBy { it.treatmentHistoryDetails?.stopReason }
+        val stopReasonUnknown = immunotherapyTreatmentsByStopReason.keys == setOf(null)
+        val hasHadImmunoTherapyWithStopReasonToxicity = StopReason.TOXICITY in immunotherapyTreatmentsByStopReason
+
+        val hasImmunotherapyAllergies = record.intolerances.any { TreatmentCategory.IMMUNOTHERAPY in it.treatmentCategory }
 
         return when {
-            (hasHadImmuneTherapy && (hasHadImmuneTherapyWithStopReasonToxicity || hasImmunotherapyAllergies)) -> {
+            (immunotherapyTreatmentList.isNotEmpty() && (hasHadImmunoTherapyWithStopReasonToxicity || hasImmunotherapyAllergies)) -> {
                 EvaluationFactory.warn(
                     "Patient may have experienced immunotherapy related adverse events",
                     "Probable prior immunotherapy related adverse events"
                 )
             }
 
-            (hasHadImmuneTherapy && stopReasonUnknown) -> {
+            (immunotherapyTreatmentList.isNotEmpty() && stopReasonUnknown) -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Undetermined prior immunotherapy related adverse events",
                     "Undetermined prior immunotherapy related adverse events"

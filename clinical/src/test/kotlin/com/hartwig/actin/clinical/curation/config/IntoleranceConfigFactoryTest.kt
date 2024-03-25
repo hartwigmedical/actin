@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationDatabaseReader
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestCurationFactory
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -24,13 +25,13 @@ class IntoleranceConfigFactoryTest {
                 setOf(DOID)
             )
         } returns true
-        val config = victim.create(fields, arrayOf("input", "name", DOID, "drugAllergyType"))
+        val config = victim.create(fields, arrayOf("input", "name", DOID, TreatmentCategory.IMMUNOTHERAPY.display()))
         assertThat(config.errors).isEmpty()
         assertThat(config.config.input).isEqualTo("input")
         assertThat(config.config.ignore).isFalse()
         assertThat(config.config.name).isEqualTo("name")
         assertThat(config.config.doids).containsExactly(DOID)
-        assertThat(config.config.drugAllergyType).isEqualTo("drugAllergyType")
+        assertThat(config.config.treatmentCategory).isEqualTo(setOf(TreatmentCategory.IMMUNOTHERAPY))
     }
 
     @Test
@@ -42,7 +43,7 @@ class IntoleranceConfigFactoryTest {
             )
         } returns false
         val config: ValidatedCurationConfig<IntoleranceConfig> =
-            IntoleranceConfigFactory(doidValidator).create(fields, arrayOf("input", "name", DOID, "drugAllergyType"))
+            IntoleranceConfigFactory(doidValidator).create(fields, arrayOf("input", "name", DOID, ""))
         assertThat(config.errors).containsExactly(
             CurationConfigValidationError(
                 CurationCategory.INTOLERANCE.categoryName,
