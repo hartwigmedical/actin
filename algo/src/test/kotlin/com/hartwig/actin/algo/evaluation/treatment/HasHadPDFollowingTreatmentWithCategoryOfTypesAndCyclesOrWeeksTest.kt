@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistoryEntry
@@ -16,12 +17,12 @@ import org.junit.Test
 class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
 
     @Test
-    fun shouldFailForEmptyTreatments() {
+    fun `Should fail for empty treatments`() {
         assertEvaluation(EvaluationResult.FAIL, function().evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldFailForWrongCategoryWithPD() {
+    fun `Should fail for wrong category with PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", TreatmentCategory.RADIOTHERAPY)), stopReason = StopReason.PROGRESSIVE_DISEASE
         )
@@ -29,61 +30,61 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     }
 
     @Test
-    fun shouldFailForRightCategoryAndTypeButNoPD() {
+    fun `Should fail for right category and type but no PD`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.TOXICITY, bestResponse = TreatmentResponse.MIXED)
         assertEvaluation(EvaluationResult.FAIL, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedForRightCategoryAndMissingTypeWithPD() {
+    fun `Should return undetermined for right category and missing type with PD`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)), stopReason = StopReason.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedForRightCategoryTypeAndMissingStopReason() {
+    fun `Should return undetermined for right category type and missing stop reason`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET)
         assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldPassForRightCategoryTypeAndStopReasonPD() {
+    fun `Should pass for right category type and stop reason PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.PASS, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldPassForMatchingTreatmentWhenPDIsIndicatedInBestResponse() {
+    fun `Should pass for matching treatment when PD is indicated in best response`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.PASS, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedWithTrialTreatmentEntryInHistory() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+    fun `Should return undetermined with trial treatment entry in history`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldIgnoreTrialMatchesWhenLookingForUnlikelyTrialCategories() {
+    fun `Should ignore trial matches when looking for unlikely trial categories`() {
         val function = HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC),
             null, null
         )
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedForRightCategoryTypeAndStopReasonPDWhenCyclesAreRequiredAndMissing() {
+    fun `Should return undetermined for right category type and stop reason PD when cycles are required and missing`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.UNDETERMINED, function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldFailForRightCategoryTypeAndStopReasonPDWhenCyclesAreRequiredAndInsufficient() {
+    fun `Should fail for right category type and stop reason PD when cycles are required and insufficient`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE, numCycles = 4
         )
@@ -91,7 +92,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     }
 
     @Test
-    fun shouldPassForRightCategoryTypeAndStopReasonPDWhenCyclesAreRequiredAndSufficient() {
+    fun `Should pass for right category type and stop reason PD when cycles are required and sufficient`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE, numCycles = 5
         )
@@ -99,13 +100,13 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     }
 
     @Test
-    fun shouldReturnUndeterminedForRightCategoryTypeAndStopReasonPDWhenMinWeeksRequiredAndUnknown() {
+    fun `Should return undetermined for right category type and stop reason PD when min weeks required and unknown`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.UNDETERMINED, function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldFailForRightCategoryTypeAndStopReasonPDWhenMinWeeksRequiredAndInsufficient() {
+    fun `Should fail for right category type and stop reason PD when min weeks required and insufficient`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             MATCHING_TREATMENT_SET,
             stopReason = StopReason.PROGRESSIVE_DISEASE,
@@ -118,7 +119,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     }
 
     @Test
-    fun shouldPassForRightCategoryTypeAndStopReasonPDWhenMinWeeksRequiredAndSufficient() {
+    fun `Should pass for right category type and stop reason PD when min weeks required and sufficient`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             MATCHING_TREATMENT_SET,
             stopReason = StopReason.PROGRESSIVE_DISEASE,

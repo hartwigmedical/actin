@@ -7,8 +7,8 @@ import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import org.apache.logging.log4j.LogManager
 import java.io.File
+import org.apache.logging.log4j.LogManager
 
 object TestReportWriterApplication {
 
@@ -19,17 +19,19 @@ object TestReportWriterApplication {
 
     @JvmStatic
     fun main(args: Array<String>) {
+        val skipMolecular: Boolean = args.contains("--no-molecular")
         val writer = createProductionReportWriter(WORK_DIRECTORY)
-        val report = createTestReport()
+        val report = createTestReport(skipMolecular)
         writer.write(report)
     }
 
-    private fun createTestReport(): Report {
-        val report = TestReportFactory.createExhaustiveTestReport()
+    private fun createTestReport(skipMolecular: Boolean): Report {
+        val report = if (skipMolecular) TestReportFactory.createExhaustiveTestReportWithoutMolecular() else
+            TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing clinical record")
         ClinicalPrinter.printRecord(report.clinical)
         LOGGER.info("Printing molecular record")
-        MolecularPrinter.printRecord(report.molecular)
+        report.molecular?.let(MolecularPrinter::printRecord)
 
         val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
             LOGGER.info(

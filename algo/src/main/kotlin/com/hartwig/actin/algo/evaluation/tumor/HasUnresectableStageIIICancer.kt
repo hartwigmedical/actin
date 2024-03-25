@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.TumorStage
 class HasUnresectableStageIIICancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val stage = record.clinical.tumor.stage
+        val stage = record.tumor.stage
             ?: return EvaluationFactory.undetermined(
                 "Tumor stage details are missing, if cancer is unresectable stage III cannot be determined",
                 "Undetermined unresectable stage III cancer"

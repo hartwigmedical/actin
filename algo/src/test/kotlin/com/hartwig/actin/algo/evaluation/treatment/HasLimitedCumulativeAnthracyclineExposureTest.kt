@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
@@ -81,13 +81,11 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         private fun patientRecord(
             tumorDoids: Set<String>?, priorSecondPrimaries: List<PriorSecondPrimary>, treatmentHistory: List<TreatmentHistoryEntry>
         ): PatientRecord {
-            val base = TestDataFactory.createMinimalTestPatientRecord()
+            val base = TestPatientFactory.createMinimalTestPatientRecord()
             return base.copy(
-                clinical = base.clinical.copy(
-                    tumor = base.clinical.tumor.copy(doids = tumorDoids),
-                    oncologicalHistory = treatmentHistory,
-                    priorSecondPrimaries = priorSecondPrimaries
-                )
+                tumor = base.tumor.copy(doids = tumorDoids),
+                oncologicalHistory = treatmentHistory,
+                priorSecondPrimaries = priorSecondPrimaries
             )
         }
 

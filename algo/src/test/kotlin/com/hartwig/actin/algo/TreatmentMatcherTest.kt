@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.CurrentDateProvider
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
@@ -19,12 +19,12 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class TreatmentMatcherTest {
-    private val patient = TestDataFactory.createMinimalTestPatientRecord()
+    private val patient = TestPatientFactory.createMinimalTestPatientRecord()
     private val trials = listOf(TestTrialFactory.createMinimalTestTrial())
     private val trialMatches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
     private val trialMatcher = mockk<TrialMatcher> {

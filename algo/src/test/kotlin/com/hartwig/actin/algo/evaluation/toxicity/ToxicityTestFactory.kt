@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.Toxicity
@@ -9,15 +9,15 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import java.time.LocalDate
 
 internal object ToxicityTestFactory {
-    val base = TestDataFactory.createMinimalTestPatientRecord()
+    val base = TestPatientFactory.createMinimalTestPatientRecord()
     
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(toxicities = toxicities))
+        return base.copy(toxicities = toxicities)
     }
 
     fun withToxicityThatIsAlsoComplication(toxicity: Toxicity): PatientRecord {
         val complication = Complication(name = toxicity.name, categories = emptySet(), year = null, month = null)
-        return base.copy(clinical = base.clinical.copy(toxicities = listOf(toxicity), complications = listOf(complication)))
+        return base.copy(toxicities = listOf(toxicity), complications = listOf(complication))
     }
 
     fun toxicity(
@@ -37,7 +37,7 @@ internal object ToxicityTestFactory {
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(intolerances = intolerances))
+        return base.copy(intolerances = intolerances)
     }
 
     fun intolerance(name: String = "", category: String = "", clinicalStatus: String = "", doids: Set<String> = emptySet()): Intolerance {

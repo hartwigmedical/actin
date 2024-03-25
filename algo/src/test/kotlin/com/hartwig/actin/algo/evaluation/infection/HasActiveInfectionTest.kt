@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import org.junit.Test
 
 class HasActiveInfectionTest {
@@ -21,11 +21,8 @@ class HasActiveInfectionTest {
     companion object {
         private fun withInfectionStatus(hasActiveInfection: Boolean?): PatientRecord {
             val infectionStatus = hasActiveInfection?.let { InfectionStatus(hasActiveInfection = it, description = null) }
-            val base = TestClinicalFactory.createMinimalTestClinicalRecord()
-            return TestDataFactory.createMinimalTestPatientRecord().copy(
-                clinical = base.copy(
-                    clinicalStatus = base.clinicalStatus.copy(infectionStatus = infectionStatus)
-                )
+            return TestPatientFactory.createMinimalTestPatientRecord().copy(
+                clinicalStatus = ClinicalStatus(infectionStatus = infectionStatus)
             )
         }
     }

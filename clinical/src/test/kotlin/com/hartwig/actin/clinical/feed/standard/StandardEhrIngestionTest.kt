@@ -62,7 +62,7 @@ class StandardEhrIngestionTest {
                 curationDatabase.treatmentHistoryEntryCuration,
                 curationDatabase.nonOncologicalHistoryCuration
             ),
-            secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
+            secondPrimaryExtractor = EhrPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
 
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(
@@ -73,7 +73,8 @@ class StandardEhrIngestionTest {
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),
             bloodTransfusionExtractor = EhrBloodTransfusionExtractor(),
-            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration)
+            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
+            dataQualityMask = DataQualityMask()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
@@ -81,7 +82,7 @@ class StandardEhrIngestionTest {
         assertThat(curationDatabase.validate()).isEmpty()
 
         assertThat(result.size).isEqualTo(1)
-        val patientResult = result[0]
+        val patientResult = result.first()
         assertThat(patientResult.first.clinicalRecord).isEqualTo(expected)
         assertThat(patientResult.first.status).isEqualTo(PatientIngestionStatus.WARN_CURATION_REQUIRED)
         assertThat(patientResult.first.curationResults).containsExactlyInAnyOrder(

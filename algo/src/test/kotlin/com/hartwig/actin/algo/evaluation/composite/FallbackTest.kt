@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.composite
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
@@ -14,9 +14,9 @@ class FallbackTest {
     fun canEvaluate() {
 
         val pass = Fallback(evaluationFunction(EvaluationResult.PASS), evaluationFunction(EvaluationResult.FAIL))
-        assertEvaluation(EvaluationResult.PASS, pass.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.PASS, pass.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
         val fallback = Fallback(evaluationFunction(EvaluationResult.UNDETERMINED), evaluationFunction(EvaluationResult.FAIL))
-        assertEvaluation(EvaluationResult.FAIL, fallback.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.FAIL, fallback.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
     }
 
     private fun evaluationFunction(result: EvaluationResult): EvaluationFunction {

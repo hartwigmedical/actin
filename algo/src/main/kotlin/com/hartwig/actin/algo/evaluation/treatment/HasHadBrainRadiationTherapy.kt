@@ -10,10 +10,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 class HasHadBrainRadiationTherapy : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDetails = record.clinical.tumor
+        val tumorDetails = record.tumor
         val hasPotentialBrainMetastases = tumorDetails.hasBrainLesions == true || tumorDetails.hasActiveBrainLesions == true
                 || (tumorDetails.hasCnsLesions == true && tumorDetails.hasBrainLesions == null)
-        val priorRadiotherapies = record.clinical.oncologicalHistory
+        val priorRadiotherapies = record.oncologicalHistory
             .filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
         val hasHadBrainRadiotherapy =
             priorRadiotherapies.any { it.treatmentHistoryDetails?.bodyLocationCategories?.contains(BodyLocationCategory.BRAIN) ?: false }

@@ -9,8 +9,8 @@ import com.hartwig.actin.algo.evaluation.util.Format.concat
 class CurrentlyGetsMedicationOfName(private val selector: MedicationSelector, private val termsToFind: Set<String>) : EvaluationFunction {
         
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasActiveMedicationWithName = selector.activeWithAnyTermInName(record.clinical.medications, termsToFind).isNotEmpty()
-        val hasPlannedMedicationWithName = selector.plannedWithAnyTermInName(record.clinical.medications, termsToFind).isNotEmpty()
+        val hasActiveMedicationWithName = selector.activeWithAnyTermInName(record.medications, termsToFind).isNotEmpty()
+        val hasPlannedMedicationWithName = selector.plannedWithAnyTermInName(record.medications, termsToFind).isNotEmpty()
 
         return when {
             hasActiveMedicationWithName -> {

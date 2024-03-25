@@ -13,13 +13,13 @@ class TumorStageDerivationFunctionTest {
     private val lungCancerWithNoStage = TumorDetails(doids = setOf(DoidConstants.LUNG_CANCER_DOID))
 
     @Test
-    fun `Should return empty set of derivation when no doids configured`() {
-        assertThat(derivationFunction.apply(breastCancerWithNoStage)).isEmpty()
+    fun `Should return null when no doids configured`() {
+        assertThat(derivationFunction.apply(TumorDetails(doids = null))).isNull()
     }
 
     @Test
-    fun `Should return empty set of derivation when no lesion details configured`() {
-        assertThat(derivationFunction.apply(breastCancerWithNoStage)).isEmpty()
+    fun `Should return null when no lesion details configured`() {
+        assertThat(derivationFunction.apply(breastCancerWithNoStage)).isNull()
     }
 
     @Test
@@ -50,6 +50,12 @@ class TumorStageDerivationFunctionTest {
             .containsOnly(TumorStage.IV)
         assertThat(derivationFunction.apply(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3, hasBoneLesions = true)))
             .containsOnly(TumorStage.IV)
+    }
+
+    @Test
+    fun `Should return stage III and IV when one uncategorized location`() {
+        assertThat(derivationFunction.apply(breastCancerWithNoStage.copy(otherLesions = listOf("lesion"))))
+            .containsOnly(TumorStage.III, TumorStage.IV)
     }
 
     @Test

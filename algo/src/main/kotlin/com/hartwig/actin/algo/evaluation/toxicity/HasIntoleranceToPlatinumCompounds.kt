@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 
 class HasIntoleranceToPlatinumCompounds : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val platinumAllergies = record.clinical.intolerances
+        val platinumAllergies = record.intolerances
             .filter { stringCaseInsensitivelyMatchesQueryCollection(it.name, PLATINUM_COMPOUNDS) }
             .map(Intolerance::name)
             .toSet()

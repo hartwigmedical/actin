@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasMeasurableDisease : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasMeasurableDisease = record.clinical.tumor.hasMeasurableDisease
+        val hasMeasurableDisease = record.tumor.hasMeasurableDisease
             ?: return EvaluationFactory.recoverableUndetermined(
                 "Data regarding measurable disease is missing, unknown if measurable",
                 "Undetermined measurable disease"

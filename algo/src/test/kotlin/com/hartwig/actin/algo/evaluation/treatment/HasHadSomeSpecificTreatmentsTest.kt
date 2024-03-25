@@ -11,12 +11,12 @@ import org.junit.Test
 
 class HasHadSomeSpecificTreatmentsTest {
     @Test
-    fun shouldFailForEmptyTreatments() {
+    fun `Should fail for empty treatments`() {
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldFailForWrongTreatment() {
+    fun `Should fail for wrong treatment`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("wrong", true)))
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -25,7 +25,7 @@ class HasHadSomeSpecificTreatmentsTest {
     }
 
     @Test
-    fun shouldPassForSufficientCorrectTreatments() {
+    fun `Should pass for sufficient correct treatments`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment(MATCHING_TREATMENT_NAME, true)))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
@@ -35,8 +35,8 @@ class HasHadSomeSpecificTreatmentsTest {
     }
 
     @Test
-    fun shouldReturnUndeterminedWhenTrialTreatmentsMeetThreshold() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+    fun `Should return undetermined when trial entries without treatment meet threshold`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
             EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
@@ -44,10 +44,18 @@ class HasHadSomeSpecificTreatmentsTest {
     }
 
     @Test
-    fun shouldIgnoreTrialMatchesAndFailWhenLookingForUnlikelyTrialCategories() {
+    fun `Should fail when trial treatments meet threshold`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        assertEvaluation(
+            EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+        )
+    }
+
+    @Test
+    fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
         val function =
             HasHadSomeSpecificTreatments(listOf(treatment(MATCHING_TREATMENT_NAME, false, setOf(TreatmentCategory.TRANSPLANTATION))), 2)
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
         )

@@ -10,9 +10,9 @@ import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 class CurrentlyGetsQTProlongatingMedication(private val selector: MedicationSelector) : EvaluationFunction {
         
     override fun evaluate(record: PatientRecord): Evaluation {
-        val qtMedication = record.clinical.medications.filter { it.qtProlongatingRisk != QTProlongatingRisk.NONE }
-        val activeQtMedication = qtMedication.filter(selector::isActive)
-        val plannedQtMedication = qtMedication.filter(selector::isPlanned)
+        val qtMedication = record.medications.filter { it.qtProlongatingRisk != QTProlongatingRisk.NONE }
+        val activeQtMedication = qtMedication.filter(selector::isActive).distinctBy { it.name }
+        val plannedQtMedication = qtMedication.filter(selector::isPlanned).distinctBy { it.name }
 
         return when {
             activeQtMedication.isNotEmpty() -> {
