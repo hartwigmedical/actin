@@ -18,17 +18,22 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val drugMatches = record.oncologicalHistory
-            .flatMap(TreatmentHistoryEntry::allTreatments)
-            .flatMap { (it as? DrugTreatment)?.drugs ?: emptyList() }
-            .filter { it == drugToFind }
+        val relevantHistory = record.oncologicalHistory.filter { history ->
+            history.allTreatments().any { (it as? DrugTreatment)?.drugs?.contains(drugToFind) == true }
+        }
+
+        val possiblyRelevantHistory = record.oncologicalHistory.filter { history ->
+            history.allTreatments().any { (it as? DrugTreatment)?.drugs?.any {
+                    drug -> drug.category == drugToFind.category && drug.name.contains("UNKNOWN", true)
+            } == true } || history.allTreatments().isEmpty() || history.isTrial
+        }
 
         val treatmentDesc =
             "combined therapy with $drugToFind and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
 
-        return if (containsTargetDrugAndTreatmentCombination(record.oncologicalHistory, drugMatches) == true) {
+        return if (historyMatchesCategoryAndTypes(relevantHistory)) {
             EvaluationFactory.pass("Patient has received $treatmentDesc", "Has received $treatmentDesc")
-        } else if (containsTargetDrugAndTreatmentCombination(record.oncologicalHistory, drugMatches) == null) {
+        } else if (historyMatchesCategoryAndTypes(possiblyRelevantHistory)) {
             EvaluationFactory.undetermined(
                 "Undetermined if patient may have received $treatmentDesc",
                 "Undetermined if received $treatmentDesc"
@@ -38,23 +43,13 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
         }
     }
 
-    private fun containsTargetDrugAndTreatmentCombination(treatmentHistory: List<TreatmentHistoryEntry>, drugMatches: List<Drug>): Boolean? {
-        val lookForTypes = types ?: emptySet()
-        val otherTreatments = treatmentHistory.flatMap { treatmentLine ->
-            treatmentLine.allTreatments().filterNot { treatment -> (treatment as? DrugTreatment)?.drugs?.contains(drugToFind) == true }
-        }
-        val possibleMatches = treatmentHistory.any {
-            it.treatments.any { treatment -> (treatment as? DrugTreatment)?.drugs?.contains(drugToFind) == true}
-                    && (it.treatments.any { treatment -> (treatment as? DrugTreatment)?.drugs.isNullOrEmpty() }
-                    || it.treatments.any { treatment -> treatment.categories().contains(category) && treatment.types().isEmpty() })
-        }
-        return when {
-            drugMatches.isNotEmpty()
-                    && otherTreatments.any { it.categories().contains(category) && it.types().containsAll(lookForTypes) } -> {
-                        true
-                    }
-            drugMatches.isNotEmpty() && possibleMatches -> null
-            else -> false
+    private fun historyMatchesCategoryAndTypes(treatmentHistory: List<TreatmentHistoryEntry>): Boolean {
+        return treatmentHistory.any { treatmentLine ->
+            treatmentLine.allTreatments().any { pastTreatment ->
+                val treatmentWithoutDrug = (pastTreatment as? DrugTreatment)?.let { it.copy(drugs = it.drugs - drugToFind) } ?: pastTreatment
+                treatmentWithoutDrug.categories().contains(category) && treatmentWithoutDrug.types()
+                    .containsAll(types ?: emptySet())
+            }
         }
     }
 }

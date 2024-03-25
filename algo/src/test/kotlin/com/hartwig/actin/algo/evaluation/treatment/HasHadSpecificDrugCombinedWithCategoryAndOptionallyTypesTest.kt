@@ -73,11 +73,22 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
+    @Test
+    fun `Should evaluate to undetermined if requested drug in history combined with trial without treatments configured`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(MATCHING_DRUG_TREATMENT,
+                TreatmentTestFactory.treatment("empty trial treatment", isSystemic = true)
+            ), isTrial = true
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
 
     @Test
-    fun `Should evaluate to undetermined if requested drug in history combined with trial treatment of unknown category`() {
+    fun `Should evaluate to undetermined if requested drug in history combined with trial without category configured`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(MATCHING_DRUG_TREATMENT, TreatmentTestFactory.treatment("trial treatment", true, emptySet(), emptySet())), isTrial = true
+            setOf(MATCHING_DRUG_TREATMENT,
+                TreatmentTestFactory.treatment("trial treatment no category", true, emptySet(), emptySet())
+            ), isTrial = true
         )
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet()
@@ -86,17 +97,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if requested drug in history combined with trial treatment of unknown type if type requested`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(MATCHING_DRUG_TREATMENT,
-                TreatmentTestFactory.treatment("trial treatment", true, setOf(MATCHING_CATEGORY), emptySet())
-            ), isTrial = true
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
-    }
-
-    @Test
-    fun `Should evaluate to undetermined if requested drug in history combined with treatment of correct category without types configured`() {
+    fun `Should evaluate to undetermined if requested drug in history combined with treatment of correct category without types configured if type requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(MATCHING_DRUG_TREATMENT,
                 TreatmentTestFactory.treatment("unknown type treatment", true, setOf(MATCHING_CATEGORY), emptySet())
@@ -109,10 +110,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
     fun `Should fail if types required but none match treatment history`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES)))
-        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
