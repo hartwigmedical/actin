@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
-import com.hartwig.actin.molecular.datamodel.ExperimentType
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Date
 
 @JacksonSerializable
 data class EhrPatientRecord(
