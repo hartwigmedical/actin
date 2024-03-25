@@ -33,13 +33,4 @@ class PatientRecordFactoryTest {
             )
         ).isNotNull
     }
-
-    @Test
-    fun `Should use clinical patient ID over molecular patient ID when different`() {
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(patientId = "clinical")
-        val molecular = TestMolecularFactory.createMinimalTestMolecularHistory().copy(patientId = "molecular")
-
-        val patient = PatientRecordFactory.fromInputs(clinical, molecular)
-        assertThat(patient.patientId).isEqualTo("clinical")
-    }
 }

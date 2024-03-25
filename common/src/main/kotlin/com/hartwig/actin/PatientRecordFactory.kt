@@ -11,14 +11,8 @@ object PatientRecordFactory {
 
     @JvmStatic
     fun fromInputs(clinical: ClinicalRecord, molecularHistory: MolecularHistory?): PatientRecord {
-        if (molecularHistory == null) {
+        if (molecularHistory == null || molecularHistory.molecularTests.isEmpty()) {
             LOGGER.warn("No molecular data for patient '{}'", clinical.patientId)
-        } else if (clinical.patientId != molecularHistory.patientId) {
-            LOGGER.warn(
-                "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
-                clinical.patientId,
-                molecularHistory.patientId
-            )
         }
         return PatientRecord(
             patientId = clinical.patientId,
@@ -37,7 +31,7 @@ object PatientRecordFactory {
             vitalFunctions = clinical.vitalFunctions,
             bloodTransfusions = clinical.bloodTransfusions,
             medications = clinical.medications,
-            molecularHistory = molecularHistory ?: MolecularHistory.empty(clinical.patientId)
+            molecularHistory = molecularHistory ?: MolecularHistory.empty()
         )
     }
 }

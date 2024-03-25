@@ -31,21 +31,35 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
-        LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
-        val orange = OrangeJson.getInstance().read(config.orangeJson)
-
         LOGGER.info("Loading clinical json from {}", config.clinicalJson)
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
 
-        LOGGER.info("Loading evidence database")
-        val serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion())
-        val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
-        val evidenceDatabase = loadEvidenceDatabase(config, serveRefGenomeVersion, knownEvents, clinical)
+        val molecularHistory = if (config.orangeJson != null) {
+            LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
+            val orange = OrangeJson.getInstance().read(config.orangeJson)
 
-        LOGGER.info("Interpreting ORANGE record")
-        val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
-        val molecular = EvidenceAnnotator(evidenceDatabase).annotate(OrangeInterpreter(geneFilter).interpret(orange))
-        val molecularHistory = MolecularHistory.fromWGSandIHC(molecular, clinical.priorMolecularTests)
+            LOGGER.info("Loading evidence database")
+            val serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion())
+            val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
+            val evidenceDatabase = loadEvidenceDatabase(config, serveRefGenomeVersion, knownEvents, clinical)
+
+            LOGGER.info("Interpreting ORANGE record")
+            val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
+            val molecular = EvidenceAnnotator(evidenceDatabase).annotate(OrangeInterpreter(geneFilter).interpret(orange))
+
+            if (clinical.patientId != molecular.patientId) {
+                LOGGER.warn(
+                    "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
+                    clinical.patientId,
+                    molecular.patientId
+                )
+            }
+
+            MolecularHistory.fromWGSandIHC(molecular, clinical.priorMolecularTests)
+        } else {
+            MolecularHistory.empty()
+        }
+
         MolecularHistoryPrinter.printRecord(molecularHistory)
         val patientRecord = PatientRecordFactory.fromInputs(clinical, molecularHistory)
         PatientRecordJson.write(patientRecord, config.outputDirectory)

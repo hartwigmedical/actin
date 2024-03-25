@@ -20,9 +20,9 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class TreatmentMatcherTest {
     private val patient = TestPatientFactory.createMinimalTestPatientRecord()
@@ -82,7 +82,7 @@ class TreatmentMatcherTest {
 
     @Test
     fun `Should match without molecular input`() {
-        val patientWithoutMolecular = patient.copy(molecularHistory = MolecularHistory.empty("N/A"))
+        val patientWithoutMolecular = patient.copy(molecularHistory = MolecularHistory.empty())
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }

@@ -30,7 +30,6 @@ class MolecularHistoryAdapter(private val gson: Gson) : TypeAdapter<MolecularHis
         }
 
         jsonObject.remove("molecularTests")
-        val tempMolecularHistory = gson.fromJson(jsonObject, MolecularHistory::class.java)
-        return MolecularHistory(molecularTests, tempMolecularHistory.patientId)
+        return MolecularHistory(molecularTests)
     }
 }

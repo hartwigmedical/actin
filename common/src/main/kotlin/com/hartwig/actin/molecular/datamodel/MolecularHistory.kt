@@ -8,7 +8,6 @@ private const val IHC = "IHC"
 
 data class MolecularHistory(
     val molecularTests: List<MolecularTest>,
-    val patientId: String
 ) {
     // TODO (kz) do we want helpers like this or just use the list directly?
     fun allPDL1Tests(measureToFind: String): List<PriorMolecularTest> {
@@ -35,8 +34,8 @@ data class MolecularHistory(
     }
 
     companion object {
-        fun empty(patientId: String): MolecularHistory {
-            return MolecularHistory(emptyList(), patientId)
+        fun empty(): MolecularHistory {
+            return MolecularHistory(emptyList())
         }
 
         // TODO (kz) convenience constructor, but change to make it Lists of specific
@@ -47,8 +46,7 @@ data class MolecularHistory(
                     listOf(WGSMolecularTest.fromMolecularRecord(molecularRecord))
                 } else {
                     emptyList()
-                }) + IHCMolecularTest.fromPriorMolecularTests(priorMolecularTests),
-                "N/A"  // TODO (kz) what to do here? add to arg, extract for molecular record?
+                }) + IHCMolecularTest.fromPriorMolecularTests(priorMolecularTests)
             )
         }
     }
