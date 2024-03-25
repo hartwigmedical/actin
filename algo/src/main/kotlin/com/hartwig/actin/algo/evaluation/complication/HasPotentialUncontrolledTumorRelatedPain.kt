@@ -21,10 +21,9 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
                 "Present " + concatLowercaseWithAnd(painComplications)
             )
         }
-        val activePainMedications = (record.medications ?: return MEDICATION_NOT_PROVIDED).filter {
-            it.name.equals(SEVERE_PAIN_MEDICATION, ignoreCase = true)
-                    && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
-        }.map { it.name }
+        val activePainMedications = record.medications?.filter {
+            it.name.equals(SEVERE_PAIN_MEDICATION, ignoreCase = true) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
+        }?.map { it.name } ?: return MEDICATION_NOT_PROVIDED
 
         return if (activePainMedications.isNotEmpty()) {
             EvaluationFactory.pass(
