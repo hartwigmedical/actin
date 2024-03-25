@@ -26,9 +26,8 @@ class EhrMolecularTestExtractor(
             )
         }, CurationExtractionEvaluation())
 
-        return extractedIHCTests
-        //todo merge extractedIHCTests with extractedOtherMolecularTests
-
+        return ExtractionResult(extractedIHCTests.extracted + extractedOtherMolecularTests.extracted,
+            extractedIHCTests.evaluation + extractedOtherMolecularTests.evaluation)
     }
 }
 
