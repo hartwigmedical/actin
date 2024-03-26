@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo
 
+import com.hartwig.actin.configuration.OVERRIDE_YAML_ARGUMENT
+import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
@@ -8,8 +10,6 @@ import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
-
-const val EMC_TRIAL_SOURCE = "EMC"
 
 data class TreatmentMatcherConfig(
     val clinicalJson: String,
@@ -21,7 +21,7 @@ data class TreatmentMatcherConfig(
     val extendedEfficacyJson: String,
     val outputDirectory: String,
     val runHistorically: Boolean,
-    val trialSource: String
+    val overridesYaml: String?
 ) {
 
     companion object {
@@ -47,6 +47,7 @@ data class TreatmentMatcherConfig(
                 "Hospital managing trials provided. Currently only a single hospital is supported, and defaults to EMC"
             )
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
+            options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             return options
         }
 
@@ -72,7 +73,7 @@ data class TreatmentMatcherConfig(
                 runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
-                trialSource = ApplicationConfig.optionalValue(cmd, TRIAL_SOURCE) ?: EMC_TRIAL_SOURCE
+                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
 
