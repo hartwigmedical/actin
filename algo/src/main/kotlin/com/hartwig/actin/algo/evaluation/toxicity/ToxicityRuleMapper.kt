@@ -4,10 +4,11 @@ import com.google.common.collect.Sets
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
-class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
+class ToxicityRuleMapper(resources: RuleMappingResources, val config: AlgoConfiguration) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
@@ -65,21 +66,21 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minGrade = functionInputResolver().createOneIntegerInput(function)
-            HasToxicityWithGrade(minGrade, null, Sets.newHashSet())
+            HasToxicityWithGrade(minGrade, null, Sets.newHashSet(), config)
         }
     }
 
     private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerOneStringInput(function)
-            HasToxicityWithGrade(input.integer, input.string, emptySet())
+            HasToxicityWithGrade(input.integer, input.string, emptySet(), config)
         }
     }
 
     private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerManyStringsInput(function)
-            HasToxicityWithGrade(input.integer, null, input.strings.toSet())
+            HasToxicityWithGrade(input.integer, null, input.strings.toSet(), config)
         }
     }
 }

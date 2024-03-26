@@ -12,7 +12,7 @@ import org.junit.Test
 class HasExhaustedSOCTreatmentsTest {
 
     private val recommendationEngine = mockk<RecommendationEngine>()
-    private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create() } returns recommendationEngine }
+    private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create(any()) } returns recommendationEngine }
     private val function = HasExhaustedSOCTreatments(recommendationEngineFactory)
 
     @Test

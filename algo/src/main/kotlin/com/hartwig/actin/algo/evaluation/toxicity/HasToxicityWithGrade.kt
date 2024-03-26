@@ -10,10 +10,14 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
+import com.hartwig.actin.configuration.AlgoConfiguration
 
 //TODO: In case X => 2, ignore EHR toxicities in evaluation
 class HasToxicityWithGrade internal constructor(
-    private val minGrade: Int, private val nameFilter: String?, private val ignoreFilters: Set<String>
+    private val minGrade: Int,
+    private val nameFilter: String?,
+    private val ignoreFilters: Set<String>,
+    private val config: AlgoConfiguration
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -42,7 +46,7 @@ class HasToxicityWithGrade internal constructor(
         }
         if (toxicities.isNotEmpty()) {
             val toxicityString = formatToxicities(toxicities)
-            return if (hasAtLeastOneMatchingQuestionnaireToxicity) {
+            return if (hasAtLeastOneMatchingQuestionnaireToxicity || !config.warnIfToxicitiesNotFromQuestionnaire) {
                 EvaluationFactory.recoverablePass(
                     "Patient has toxicities grade >= $minGrade$toxicityString",
                     "Has toxicities grade >= $minGrade$toxicityString"

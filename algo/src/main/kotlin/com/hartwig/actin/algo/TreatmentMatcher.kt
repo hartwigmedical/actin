@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.trial.datamodel.Trial
 
@@ -42,15 +43,15 @@ class TreatmentMatcher(
             resources: RuleMappingResources,
             trials: List<Trial>,
             efficacyEvidence: List<EfficacyEntry>,
-            trialSource: String
+            config: AlgoConfiguration
         ): TreatmentMatcher {
             return TreatmentMatcher(
-                TrialMatcher.create(resources),
-                RecommendationEngineFactory(resources).create(),
+                TrialMatcher.create(resources, config),
+                RecommendationEngineFactory(resources).create(config),
                 trials,
                 resources.referenceDateProvider,
                 EvaluatedTreatmentAnnotator.create(efficacyEvidence),
-                trialSource
+                config.trialSource
             )
         }
     }

@@ -6,15 +6,16 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.molecular.util.MolecularPrinter
-import org.apache.logging.log4j.LogManager
 import java.io.File
 import kotlin.system.exitProcess
+import org.apache.logging.log4j.LogManager
 
 class TestStandardOfCareApplication {
 
@@ -36,7 +37,7 @@ class TestStandardOfCareApplication {
 
         val recommendationEngine = RecommendationEngineFactory(
             RuleMappingResourcesTestFactory.create(doidModel, AtcTree.createFromFile(ATC_TREE_PATH), treatmentDatabase)
-        ).create()
+        ).create(EnvironmentConfiguration().algo)
 
         LOGGER.info(recommendationEngine.provideRecommendations(patient))
         val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)

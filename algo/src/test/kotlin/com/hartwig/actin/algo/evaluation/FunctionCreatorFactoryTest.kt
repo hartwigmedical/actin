@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.evaluation.FunctionCreatorFactory.create
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.ParameterizedFunctionTestFactory
@@ -13,7 +14,7 @@ class FunctionCreatorFactoryTest {
     fun everyFunctionCanBeCreated() {
         val doidTerm = "term 1"
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("doid 1", doidTerm)
-        val map = create(RuleMappingResourcesTestFactory.create(doidModel))
+        val map = create(RuleMappingResourcesTestFactory.create(doidModel), EnvironmentConfiguration().algo)
         val factory = ParameterizedFunctionTestFactory(doidTerm)
         EligibilityRule.values().forEach { rule ->
             val function = factory.create(rule)

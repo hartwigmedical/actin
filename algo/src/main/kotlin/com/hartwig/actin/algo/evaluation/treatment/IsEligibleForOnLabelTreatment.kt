@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 
 class IsEligibleForOnLabelTreatment(
     private val treatment: Treatment,
@@ -14,7 +15,7 @@ class IsEligibleForOnLabelTreatment(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val recommendationEngine = recommendationEngineFactory.create()
+        val recommendationEngine = recommendationEngineFactory.create(EnvironmentConfiguration().algo)
 
         return when {
             tumorIsCUP(record.tumor) -> {

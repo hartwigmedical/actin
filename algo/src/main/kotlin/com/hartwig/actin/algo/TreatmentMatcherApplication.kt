@@ -70,7 +70,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val overrides =
             config.overridesYaml?.let { EnvironmentConfiguration.createFromFile(config.overridesYaml) } ?: EnvironmentConfiguration()
 
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, overrides.algo.trialSource)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, overrides.algo)
             .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)

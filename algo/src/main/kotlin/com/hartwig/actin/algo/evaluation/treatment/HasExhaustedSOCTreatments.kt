@@ -5,11 +5,12 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 
 class HasExhaustedSOCTreatments(private val recommendationEngineFactory: RecommendationEngineFactory) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val recommendationEngine = recommendationEngineFactory.create()
+        val recommendationEngine = recommendationEngineFactory.create(EnvironmentConfiguration().algo)
         return when {
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
                 if (recommendationEngine.patientHasExhaustedStandardOfCare(record)) {
