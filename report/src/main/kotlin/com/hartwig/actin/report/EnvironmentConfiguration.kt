@@ -9,7 +9,10 @@ import java.io.File
 data class ReportConfiguration(
     val showClinicalSummary: Boolean = true,
     val showMolecularSummary: Boolean = true,
-    val showApprovedTreatments: Boolean = true
+    val showApprovedTreatments: Boolean = true,
+    val showOtherOncologicalHistory: Boolean = true,
+    val showPreviousPrimaryTumor: Boolean = true,
+    val showRelevantNonOncologicalHistory: Boolean = true
 )
 
 data class EnvironmentConfiguration(

@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.report.EnvironmentConfiguration
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
@@ -40,7 +41,7 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
         val bloodTransfusions = report.clinical.bloodTransfusions
 
         val generators = listOfNotNull(
-            PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
+            PatientClinicalHistoryGenerator(report.clinical, EnvironmentConfiguration().report, keyWidth, valueWidth),
             PatientCurrentDetailsGenerator(report.clinical, keyWidth, valueWidth),
             TumorDetailsGenerator(report.clinical, keyWidth, valueWidth),
             report.clinical.medications?.let {
