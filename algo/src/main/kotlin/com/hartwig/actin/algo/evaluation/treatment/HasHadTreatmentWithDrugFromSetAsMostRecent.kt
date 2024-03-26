@@ -56,12 +56,9 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
             }
 
             matchingDrugsInUnknownTreatmentLines.isNotEmpty() || matchingDrugsInMostRecentLineWithDate.isNotEmpty() -> {
-                val display =
-                    "Has received ${Format.concatItemsWithAnd(matchingDrugsInUnknownTreatmentLines)} but undetermined if most recent"
-                EvaluationFactory.undetermined(
-                    "$display (dates missing in treatment list)",
-                    display
-                )
+                val drugList = Format.concatItemsWithAnd(matchingDrugsInUnknownTreatmentLines + matchingDrugsInMostRecentLineWithDate)
+                val display = "Has received $drugList but undetermined if most recent"
+                EvaluationFactory.undetermined("$display (dates missing in treatment list)", display)
             }
 
             possibleTrialMatch -> {
