@@ -102,7 +102,6 @@ data class CurationResponse<T>(
                 CurationCategory.TOXICITY -> CurationExtractionEvaluation(toxicityEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MOLECULAR_TEST_IHC -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MOLECULAR_TEST_PDL1 -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
-                CurationCategory.MOLECULAR_TEST_OTHER -> CurationExtractionEvaluation(molecularTestEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_NAME -> CurationExtractionEvaluation(medicationNameEvaluatedInputs = evaluatedInputs)
                 CurationCategory.MEDICATION_DOSAGE -> CurationExtractionEvaluation(medicationDosageEvaluatedInputs = evaluatedInputs)
                 CurationCategory.INTOLERANCE -> CurationExtractionEvaluation(intoleranceEvaluatedInputs = evaluatedInputs)
