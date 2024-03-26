@@ -7,7 +7,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.File
 
 data class ReportConfiguration(
-    val showClinicalSummary: Boolean = true
+    val showClinicalSummary: Boolean = true,
+    val showMolecularSummary: Boolean = true,
+    val showApprovedTreatments: Boolean = true
 )
 
 data class EnvironmentConfiguration(

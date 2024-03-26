@@ -23,7 +23,6 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
-import java.time.LocalDate
 
 class SummaryChapter(private val report: Report) : ReportChapter {
 
@@ -82,10 +81,8 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
         val generators = listOfNotNull(
             if (report.config.showClinicalSummary) PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth) else null,
-            if (report.molecular?.date != null && report.molecular.date!! > LocalDate.now().minusDays(21)) {
-                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
-            } else null,
-            EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
+            if (report.config.showMolecularSummary) MolecularSummaryGenerator(report.clinical, report.molecular!!, cohorts, keyWidth, valueWidth) else null,
+            if (report.config.showApprovedTreatments) EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()) else null,
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
             dutchTrialGenerator,
