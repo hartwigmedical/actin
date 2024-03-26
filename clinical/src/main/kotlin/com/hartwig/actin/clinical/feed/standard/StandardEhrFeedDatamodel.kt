@@ -127,8 +127,6 @@ data class EhrMolecularTest(
     val geneTested: String,
     val result: String,
     val resultDate: LocalDate,
-    val biopsyLocation: String,
-    val biopsyDate: LocalDate
 )
 
 @JacksonSerializable

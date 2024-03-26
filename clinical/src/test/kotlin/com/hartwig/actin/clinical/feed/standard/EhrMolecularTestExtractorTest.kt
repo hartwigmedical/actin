@@ -19,10 +19,16 @@ private val PATHOLOGY_REPORT =
     "Microscopie:\n\test\n\nConclusie:\n\nunrelated.\r\n\r\n\r\n$IHC_LINE\n\n"
 private val PRIOR_MOLECULAR_TEST =
     PriorMolecularTest(test = "Archer FP Lung Target", item = "EGFR", measure = "c.2573T>G", measureDate = LocalDate.parse("2024-03-25"), impliesPotentialIndeterminateStatus = false)
+private val EHR_OTHER_MOLECULAR_TEST =
+    EhrMolecularTest(molecularTestType = "Archer FP Lung Target", geneTested = "EGFR", result = "c.2573T>G", resultDate = LocalDate.parse("2024-03-25"))
 
 private val EHR_PATIENT_RECORD = createEhrPatientRecord()
 private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =
     EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = PATHOLOGY_REPORT))
+private val EHR_PATIENT_RECORD_WITH_OTHER_MOLECULAR_TEST =
+    EHR_PATIENT_RECORD.copy(molecularTests = listOf(EHR_OTHER_MOLECULAR_TEST))
+private val EHR_PATIENT_RECORD_WITH_PATHOLOGY_AND_MOLECULAR =
+    EHR_PATIENT_RECORD_WITH_PATHOLOGY.copy(molecularTests = listOf(EHR_OTHER_MOLECULAR_TEST))
 
 class EhrMolecularTestExtractorTest {
 
@@ -39,6 +45,26 @@ class EhrMolecularTestExtractorTest {
         )
         val result = extractor.extract(EHR_PATIENT_RECORD_WITH_PATHOLOGY)
         assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST)
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should extract other molecular tests`() {
+        val result = extractor.extract(EHR_PATIENT_RECORD_WITH_OTHER_MOLECULAR_TEST)
+        assertThat(result.extracted).containsExactly(PRIOR_MOLECULAR_TEST)
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should be able to extract IHC and other molecular tests simultaneously`() {
+        every { molecularTestIhcCuration.find(IHC_LINE) } returns setOf(
+            MolecularTestConfig(
+                input = IHC_LINE,
+                curated = PRIOR_IHC_TEST
+            )
+        )
+        val result = extractor.extract(EHR_PATIENT_RECORD_WITH_PATHOLOGY_AND_MOLECULAR)
+        assertThat(result.extracted).containsExactly(PRIOR_IHC_TEST, PRIOR_MOLECULAR_TEST)
         assertThat(result.evaluation.warnings).isEmpty()
     }
 
