@@ -17,7 +17,6 @@ enum class CurationCategory(val categoryName: String) {
     LESION_LOCATION("Lesion Location"),
     MEDICATION_DOSAGE("Medication Dosage"),
     MEDICATION_NAME("Medication Name"),
-    MOLECULAR_TEST_OTHER("Molecular Test Other"),
     MOLECULAR_TEST_IHC("Molecular Test IHC"),
     MOLECULAR_TEST_PDL1("Molecular Test PDL1"),
     NON_ONCOLOGICAL_HISTORY("Non Oncological History"),
