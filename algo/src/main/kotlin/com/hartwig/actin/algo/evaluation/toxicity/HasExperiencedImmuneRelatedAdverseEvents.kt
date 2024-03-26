@@ -10,15 +10,14 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 class HasExperiencedImmuneRelatedAdverseEvents internal constructor() : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val immunotherapyTreatmentList = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.IMMUNOTHERAPY) }
-        val immunotherapyTreatmentsByStopReason = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.IMMUNOTHERAPY) }
-            .groupBy { it.treatmentHistoryDetails?.stopReason }
+        val immunotherapyTreatmentsByStopReason = immunotherapyTreatmentList.groupBy { it.treatmentHistoryDetails?.stopReason }
         val stopReasonUnknown = immunotherapyTreatmentsByStopReason.keys == setOf(null)
         val hasHadImmunoTherapyWithStopReasonToxicity = StopReason.TOXICITY in immunotherapyTreatmentsByStopReason
 
-        val hasImmunotherapyAllergies = record.intolerances.any { TreatmentCategory.IMMUNOTHERAPY in it.treatmentCategory }
+        val hasImmunotherapyAllergies = record.intolerances.any { it.treatmentCategories?.contains(TreatmentCategory.IMMUNOTHERAPY) == true }
 
         return when {
-            (immunotherapyTreatmentList.isNotEmpty() && (hasHadImmunoTherapyWithStopReasonToxicity || hasImmunotherapyAllergies)) -> {
+            hasHadImmunoTherapyWithStopReasonToxicity || hasImmunotherapyAllergies -> {
                 EvaluationFactory.warn(
                     "Patient may have experienced immunotherapy related adverse events",
                     "Probable prior immunotherapy related adverse events"

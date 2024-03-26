@@ -22,7 +22,7 @@ class EhrIntolerancesExtractor(private val atcModel: AtcModel, private val intol
                 criticality = it.severity,
                 doids = emptySet(),
                 subcategories = emptySet(),
-                treatmentCategory = emptySet()
+                treatmentCategories = emptySet()
             )
         }
             .map {
@@ -38,7 +38,7 @@ class EhrIntolerancesExtractor(private val atcModel: AtcModel, private val intol
                     val subcategories = if (it.category.equals("medication", ignoreCase = true)) {
                         atcModel.resolveByName(config.name.lowercase())
                     } else emptySet()
-                    it.copy(name = config.name, doids = config.doids, subcategories = subcategories, treatmentCategory = config.treatmentCategory)
+                    it.copy(name = config.name, doids = config.doids, subcategories = subcategories, treatmentCategories = config.treatmentCategories)
                 } ?: it
                 ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
             }

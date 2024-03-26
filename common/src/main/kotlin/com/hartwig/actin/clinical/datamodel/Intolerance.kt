@@ -11,5 +11,5 @@ data class Intolerance(
     val clinicalStatus: String,
     val verificationStatus: String,
     val criticality: String,
-    val treatmentCategory: Set<TreatmentCategory>,
+    val treatmentCategories: Set<TreatmentCategory>?
 )

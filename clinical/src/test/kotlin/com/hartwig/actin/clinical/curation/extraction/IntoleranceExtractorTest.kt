@@ -42,14 +42,14 @@ class IntoleranceExtractorTest {
                 ignore = false,
                 name = CURATED_INTOLERANCE,
                 doids = setOf(DOID),
-                treatmentCategory = TREATMENT_CATEGORY
+                treatmentCategories = TREATMENT_CATEGORY
             ),
             IntoleranceConfig(
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
                 doids = setOf(DOID),
-                treatmentCategory = TREATMENT_CATEGORY
+                treatmentCategories = TREATMENT_CATEGORY
             )
         ), atcModel
     )

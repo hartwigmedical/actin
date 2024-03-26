@@ -31,7 +31,7 @@ class IntoleranceConfigFactoryTest {
         assertThat(config.config.ignore).isFalse()
         assertThat(config.config.name).isEqualTo("name")
         assertThat(config.config.doids).containsExactly(DOID)
-        assertThat(config.config.treatmentCategory).isEqualTo(setOf(TreatmentCategory.IMMUNOTHERAPY))
+        assertThat(config.config.treatmentCategories).isEqualTo(setOf(TreatmentCategory.IMMUNOTHERAPY))
     }
 
     @Test
