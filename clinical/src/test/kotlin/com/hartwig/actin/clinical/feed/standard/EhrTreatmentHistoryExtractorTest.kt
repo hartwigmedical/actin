@@ -21,10 +21,6 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import java.time.LocalDate
 
-private const val TREATMENT_NAME = "treatmentName"
-
-private const val MODIFICATION_NAME = "modificationName"
-
 private const val PREVIOUS_CONDITION = "previous_condition"
 
 private val PRIOR_CONDITION = EhrPriorOtherCondition(
@@ -36,22 +32,7 @@ private val PRIOR_CONDITION = EhrPriorOtherCondition(
 private val TREATMENT = DrugTreatment("drug", drugs = emptySet())
 private val MODIFICATION_TREATMENT = DrugTreatment("modification", drugs = emptySet())
 
-private val TREATMENT_HISTORY = EhrTreatmentHistory(
-    treatmentName = TREATMENT_NAME,
-    administeredCycles = 1,
-    intendedCycles = 1,
-    startDate = LocalDate.of(2024, 2, 23),
-    administeredInStudy = false,
-    intention = "Palliative",
-    stopReason = "TOXICITY",
-    endDate = LocalDate.of(2024, 2, 27),
-    response = "COMPLETE_RESPONSE",
-    modifications = listOf(
-        EhrTreatmentModification(
-            name = MODIFICATION_NAME, administeredCycles = 2, date = LocalDate.of(2024, 2, 23)
-        )
-    )
-)
+private val TREATMENT_HISTORY = EhrTestData.createEhrTreatmentHistory()
 
 private val TREATMENT_HISTORY_ENTRY_CONFIG = TreatmentHistoryEntryConfig(
     TREATMENT_NAME,
@@ -278,5 +259,24 @@ class EhrTreatmentHistoryExtractorTest {
             )
         )
         assertThat(result.evaluation.treatmentHistoryEntryEvaluatedInputs).containsExactly(PREVIOUS_CONDITION)
+    }
+
+    @Test
+    fun `Should ignore entries when configured and curated is null`() {
+        every { nonOncologicalHistoryCuration.find(TREATMENT_NAME) } returns emptySet()
+        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(
+                ignore = true,
+                input = TREATMENT_NAME,
+                curated = null
+            )
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                treatmentHistory = listOf(TREATMENT_HISTORY),
+            )
+        )
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.treatmentHistoryEntryEvaluatedInputs).containsExactly(TREATMENT_NAME.lowercase())
     }
 }

@@ -6,12 +6,14 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class ReporterConfig(
     val clinicalJson: String,
-    val molecularJson: String,
+    val molecularJson: String?,
     val treatmentMatchJson: String,
+    val overrideYaml: String?,
     val outputDirectory: String,
     val enableExtendedMode: Boolean
 ) {
@@ -22,6 +24,7 @@ data class ReporterConfig(
             options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient")
             options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient")
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
+            options.addOption(OVERRIDE_YAML, true, "Optional file specifying configuration overrides")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
@@ -40,19 +43,21 @@ data class ReporterConfig(
             }
             return ReporterConfig(
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
-                molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
+                molecularJson = ApplicationConfig.optionalFile(cmd, MOLECULAR_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
+                overrideYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 enableExtendedMode = enableExtendedMode
             )
         }
 
-        val LOGGER = LogManager.getLogger(ReporterConfig::class.java)
-        const val CLINICAL_JSON = "clinical_json"
-        const val MOLECULAR_JSON = "molecular_json"
-        const val TREATMENT_MATCH_JSON = "treatment_match_json"
-        const val OUTPUT_DIRECTORY = "output_directory"
-        const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
-        const val LOG_DEBUG = "log_debug"
+        val LOGGER: Logger = LogManager.getLogger(ReporterConfig::class.java)
+        private const val CLINICAL_JSON = "clinical_json"
+        private const val MOLECULAR_JSON = "molecular_json"
+        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
+        private const val OVERRIDE_YAML = "override_yaml"
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
+        private const val LOG_DEBUG = "log_debug"
     }
 }

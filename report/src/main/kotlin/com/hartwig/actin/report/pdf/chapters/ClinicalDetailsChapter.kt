@@ -43,11 +43,13 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
             PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth),
             PatientCurrentDetailsGenerator(report.clinical, keyWidth, valueWidth),
             TumorDetailsGenerator(report.clinical, keyWidth, valueWidth),
-            MedicationGenerator(
-                report.clinical.medications,
-                contentWidth(),
-                MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate)
-            ),
+            report.clinical.medications?.let {
+                MedicationGenerator(
+                    it,
+                    contentWidth(),
+                    MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate)
+                )
+            },
             if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(bloodTransfusions, contentWidth())
         )
         for (i in generators.indices) {

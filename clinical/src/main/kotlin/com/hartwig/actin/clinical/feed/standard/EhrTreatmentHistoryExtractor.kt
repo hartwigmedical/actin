@@ -91,31 +91,35 @@ class EhrTreatmentHistoryExtractor(
             )
 
             treatment.config()?.let { curatedTreatment ->
-                val switchToTreatments = treatmentStages(curatedTreatment.curated?.treatments, ehrTreatmentHistory, ehrPatientRecord)
-                ExtractionResult(
-                    listOf(
-                        TreatmentHistoryEntry(
-                            startYear = ehrTreatmentHistory.startDate.year,
-                            startMonth = ehrTreatmentHistory.startDate.monthValue,
-                            intents = ehrTreatmentHistory.intention?.let { intent -> setOf(parseIntent(intent)) },
-                            treatments = curatedTreatment.curated!!.treatments,
-                            treatmentHistoryDetails = TreatmentHistoryDetails(
-                                stopYear = ehrTreatmentHistory.endDate?.year,
-                                stopMonth = ehrTreatmentHistory.endDate?.monthValue,
-                                stopReason = ehrTreatmentHistory.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
-                                bestResponse = ehrTreatmentHistory.response?.let { response -> TreatmentResponse.valueOf(response) },
-                                switchToTreatments = switchToTreatments.extracted,
-                                cycles = ehrTreatmentHistory.administeredCycles,
-                                bodyLocations = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocations,
-                                bodyLocationCategories = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocationCategories,
-                                maintenanceTreatment = curatedTreatment.curated.treatmentHistoryDetails?.maintenanceTreatment,
-                            ),
-                            isTrial = ehrTreatmentHistory.administeredInStudy,
-                            trialAcronym = curatedTreatment.curated.trialAcronym
+                if (!curatedTreatment.ignore) {
+                    val switchToTreatments = treatmentStages(curatedTreatment.curated?.treatments, ehrTreatmentHistory, ehrPatientRecord)
+                    ExtractionResult(
+                        listOf(
+                            TreatmentHistoryEntry(
+                                startYear = ehrTreatmentHistory.startDate.year,
+                                startMonth = ehrTreatmentHistory.startDate.monthValue,
+                                intents = ehrTreatmentHistory.intention?.let { intent -> setOf(parseIntent(intent)) },
+                                treatments = curatedTreatment.curated!!.treatments,
+                                treatmentHistoryDetails = TreatmentHistoryDetails(
+                                    stopYear = ehrTreatmentHistory.endDate?.year,
+                                    stopMonth = ehrTreatmentHistory.endDate?.monthValue,
+                                    stopReason = ehrTreatmentHistory.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
+                                    bestResponse = ehrTreatmentHistory.response?.let { response -> TreatmentResponse.valueOf(response) },
+                                    switchToTreatments = switchToTreatments.extracted,
+                                    cycles = ehrTreatmentHistory.administeredCycles,
+                                    bodyLocations = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocations,
+                                    bodyLocationCategories = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocationCategories,
+                                    maintenanceTreatment = curatedTreatment.curated.treatmentHistoryDetails?.maintenanceTreatment,
+                                ),
+                                isTrial = ehrTreatmentHistory.administeredInStudy,
+                                trialAcronym = curatedTreatment.curated.trialAcronym
 
-                        )
-                    ), switchToTreatments.evaluation + treatment.extractionEvaluation
-                )
+                            )
+                        ), switchToTreatments.evaluation + treatment.extractionEvaluation
+                    )
+                } else {
+                    null
+                }
             } ?: ExtractionResult(emptyList(), treatment.extractionEvaluation)
         }.fold(
             ExtractionResult(emptyList(), CurationExtractionEvaluation())

@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
@@ -14,8 +15,9 @@ class HasRecentlyReceivedCancerTherapyOfName(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val lowercaseNamesToFind = namesToFind.map { it.lowercase() }.toSet()
-        val namesFound = record.medications
+        val namesFound = medications
             .filter {
                 lowercaseNamesToFind.contains(it.name.lowercase()) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
             }

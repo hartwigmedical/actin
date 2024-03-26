@@ -36,8 +36,8 @@ import com.hartwig.actin.trial.input.single.OneHlaAllele
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
+import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
-import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInteger
@@ -122,8 +122,8 @@ class FunctionInputResolver(
                     return true
                 }
 
-                FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
-                    createOneSpecificTreatmentOneTreatmentCategoryManyTypesInput(function)
+                FunctionInput.ONE_SPECIFIC_DRUG_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
+                    createOneSpecificDrugOneTreatmentCategoryManyTypesInput(function)
                     return true
                 }
 
@@ -373,12 +373,12 @@ class FunctionInputResolver(
         )
     }
 
-    fun createOneSpecificTreatmentOneTreatmentCategoryManyTypesInput(
+    fun createOneSpecificDrugOneTreatmentCategoryManyTypesInput(
         function: EligibilityFunction
-    ): OneSpecificTreatmentOneTreatmentCategoryManyTypes {
-        assertParamConfig(function, FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_TREATMENT_CATEGORY_MANY_TYPES, 3)
-        return OneSpecificTreatmentOneTreatmentCategoryManyTypes(
-            treatment = toTreatment(parameterAsString(function, 0)),
+    ): OneSpecificDrugOneTreatmentCategoryManyTypes {
+        assertParamConfig(function, FunctionInput.ONE_SPECIFIC_DRUG_ONE_TREATMENT_CATEGORY_MANY_TYPES, 3)
+        return OneSpecificDrugOneTreatmentCategoryManyTypes(
+            drug = toDrug(parameterAsString(function, 0)),
             category = TreatmentCategoryResolver.fromString(parameterAsString(function, 1)),
             types = toTreatmentTypeSet(function.parameters[2])
         )

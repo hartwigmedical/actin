@@ -10,11 +10,12 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSelector, private val termToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val cypInhibitorsReceived =
-            selector.activeWithCypInteraction(record.medications, termToFind, CypInteraction.Type.INHIBITOR).map { it.name }
+            selector.activeWithCypInteraction(medications, termToFind, CypInteraction.Type.INHIBITOR).map { it.name }
 
         val cypInhibitorsPlanned =
-            selector.plannedWithCypInteraction(record.medications, termToFind, CypInteraction.Type.INHIBITOR).map { it.name }
+            selector.plannedWithCypInteraction(medications, termToFind, CypInteraction.Type.INHIBITOR).map { it.name }
 
         return when {
             cypInhibitorsReceived.isNotEmpty() -> {
