@@ -4,7 +4,7 @@ import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.ParseException
 import java.io.File
 import java.nio.file.Files
-import java.util.*
+import java.util.Locale
 
 object ApplicationConfig {
 

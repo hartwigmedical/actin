@@ -16,10 +16,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import java.time.LocalDate
 
 private const val PREVIOUS_CONDITION = "previous_condition"
 

@@ -71,7 +71,7 @@ class EhrTumorDetailsExtractor(
         return lesions.any { it.category == location }
     }
 
-    private fun countLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Int? {
+    private fun countLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Int {
         return lesions.count { it.category == location }
     }
 

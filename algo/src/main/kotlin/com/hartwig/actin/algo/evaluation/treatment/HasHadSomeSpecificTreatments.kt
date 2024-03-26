@@ -20,7 +20,7 @@ class HasHadSomeSpecificTreatments(private val treatments: List<Treatment>, priv
         } else 0
 
         val treatmentListing = concatItems(treatments)
-       
+
         return when {
             matchTreatments.size >= minTreatmentLines -> {
                 EvaluationFactory.pass("Has received $treatmentListing ${matchTreatments.size} times")
