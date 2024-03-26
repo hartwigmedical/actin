@@ -35,6 +35,18 @@ class IntoleranceConfigFactoryTest {
     }
 
     @Test
+    fun `Should return an empty set for the treatmentCategories property if curation input is an empty string`() {
+        every {
+            curationDoidValidator.isValidDiseaseDoidSet(
+                setOf(DOID)
+            )
+        } returns true
+        val config = victim.create(fields, arrayOf("input", "name", DOID, ""))
+        assertThat(config.errors).isEmpty()
+        assertThat(config.config.treatmentCategories).isEqualTo(emptySet<TreatmentCategory>())
+    }
+
+    @Test
     fun `Should return validation error when doids are invalid`() {
         val doidValidator: CurationDoidValidator = curationDoidValidator
         every {
