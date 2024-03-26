@@ -21,7 +21,7 @@ data class TreatmentMatcherConfig(
     val extendedEfficacyJson: String,
     val outputDirectory: String,
     val runHistorically: Boolean,
-    val overridesYaml: String
+    val overridesYaml: String?
 ) {
 
     companion object {
@@ -73,7 +73,7 @@ data class TreatmentMatcherConfig(
                 runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
-                overridesYaml = ApplicationConfig.nonOptionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
+                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
 

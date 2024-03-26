@@ -10,8 +10,10 @@ data class ReportConfiguration(
     val showClinicalSummary: Boolean = true
 )
 
+const val EMC_TRIAL_SOURCE = "EMC"
+
 data class AlgoConfiguration(
-    val trialSource: String = "EMC"
+    val trialSource: String = EMC_TRIAL_SOURCE
 )
 
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"

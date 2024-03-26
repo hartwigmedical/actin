@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.configuration.EMC_TRIAL_SOURCE
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -67,11 +68,10 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
-        val overrides = EnvironmentConfiguration.createFromFile(config.overridesYaml)
+        val overrides = config.overridesYaml?.let { EnvironmentConfiguration.createFromFile(config.overridesYaml) }
 
-        val match =
-            TreatmentMatcher.create(resources, trials, evidenceEntries, overrides.algo.trialSource)
-                .evaluateAndAnnotateMatchesForPatient(patient)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, overrides?.algo?.trialSource ?: EMC_TRIAL_SOURCE)
+            .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)

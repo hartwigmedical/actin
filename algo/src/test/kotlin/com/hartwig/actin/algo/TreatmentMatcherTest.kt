@@ -14,6 +14,7 @@ import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.configuration.EMC_TRIAL_SOURCE
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
@@ -22,8 +23,6 @@ import io.mockk.mockk
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-
-private const val EMC_TRIAL_SOURCE = "EMC"
 
 class TreatmentMatcherTest {
     private val patient = TestPatientFactory.createMinimalTestPatientRecord()
