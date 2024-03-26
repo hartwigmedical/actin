@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
@@ -24,10 +23,10 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
         val mostRecentTreatmentEntry = historyWithDates.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
 
         val drugNamesToMatch = drugsToMatch.map { drug -> drug.name.lowercase() }.toSet()
-        val matchingDrugsInMostRecentLineWithDate = mostRecentTreatmentEntry?.let { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }
-            ?: emptyList()
-        val matchingDrugsInUnknownTreatmentLines = historyWithoutDates.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }
-            .toSet()
+        val matchingDrugsInMostRecentLineWithDate =
+            mostRecentTreatmentEntry?.let { selectMatchingDrugsFromEntry(it, drugNamesToMatch) } ?: emptyList()
+        val matchingDrugsInUnknownTreatmentLines =
+            historyWithoutDates.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }.toSet()
 
         val matchingDrugsInMostRecentLine = when {
             matchingDrugsInMostRecentLineWithDate.isNotEmpty() && historyWithoutDates.isEmpty() -> matchingDrugsInMostRecentLineWithDate
@@ -35,15 +34,6 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
             else -> emptyList()
         }
 
-        val categoriesToMatch = drugsToMatch.map(Drug::category).toSet()
-        val possibleTrialMatch = (if (history.size == 1) history.first() else mostRecentTreatmentEntry)?.let { mostRecent ->
-            val mostRecentTreatments = mostRecent.allTreatments()
-            val hasUnknownDrugWithCategory = drugsFromTreatments(mostRecentTreatments).any { drug ->
-                drug.name.uppercase().startsWith(UNKNOWN_PREFIX) && drug.category in categoriesToMatch
-            }
-            mostRecent.isTrial && (mostRecentTreatments.isEmpty() || hasUnknownDrugWithCategory)
-        } ?: false
-        
         val drugsToMatchDisplay = "received ${Format.concatItemsWithOr(drugsToMatch)}"
 
         return when {
@@ -61,7 +51,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
                 EvaluationFactory.undetermined("$display (dates missing in treatment list)", display)
             }
 
-            possibleTrialMatch -> {
+            possibleTrialMatch(if (history.size == 1) history.first() else mostRecentTreatmentEntry) -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if patient has $drugsToMatchDisplay - exact drugs in recent trial unknown",
                     "Undetermined if $drugsToMatchDisplay - exact drugs in recent trial unknown"
@@ -82,6 +72,17 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
                 )
             }
         }
+    }
+
+    private fun possibleTrialMatch(mostRecentTreatmentEntry: TreatmentHistoryEntry?): Boolean {
+        return mostRecentTreatmentEntry?.let { mostRecent ->
+            val mostRecentTreatments = mostRecent.allTreatments()
+            val categoriesToMatch = drugsToMatch.map(Drug::category).toSet()
+            val hasUnknownDrugWithCategory = drugsFromTreatments(mostRecentTreatments).any { drug ->
+                drug.name.uppercase().startsWith(UNKNOWN_PREFIX) && drug.category in categoriesToMatch
+            }
+            mostRecent.isTrial && (mostRecentTreatments.isEmpty() || hasUnknownDrugWithCategory)
+        } ?: false
     }
 
     private fun drugsFromTreatments(treatments: Set<Treatment>) =
