@@ -1,5 +1,6 @@
 package com.hartwig.actin.report
 
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

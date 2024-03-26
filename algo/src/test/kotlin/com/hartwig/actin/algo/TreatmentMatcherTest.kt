@@ -19,9 +19,11 @@ import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
+
+private const val EMC_TRIAL_SOURCE = "EMC"
 
 class TreatmentMatcherTest {
     private val patient = TestPatientFactory.createMinimalTestPatientRecord()
@@ -85,11 +87,15 @@ class TreatmentMatcherTest {
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }
-        val treatmentMatcher = TreatmentMatcher(trialMatcher, recommendationEngine, trials, CurrentDateProvider(),
-            EvaluatedTreatmentAnnotator.create(evidenceEntries), EMC_TRIAL_SOURCE)
+        val treatmentMatcher = TreatmentMatcher(
+            trialMatcher, recommendationEngine, trials, CurrentDateProvider(),
+            EvaluatedTreatmentAnnotator.create(evidenceEntries), EMC_TRIAL_SOURCE
+        )
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")
 
-        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patientWithoutMolecular)).isEqualTo(expectedTreatmentMatchWithoutMolecular)
+        assertThat(treatmentMatcher.evaluateAndAnnotateMatchesForPatient(patientWithoutMolecular)).isEqualTo(
+            expectedTreatmentMatchWithoutMolecular
+        )
     }
 }

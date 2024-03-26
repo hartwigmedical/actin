@@ -3,8 +3,8 @@ package com.hartwig.actin.report.datamodel
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.report.ReportConfiguration
 
 object TestReportFactory {
     fun createMinimalTestReport(): Report {
