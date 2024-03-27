@@ -32,7 +32,8 @@ class HasSufficientLabValue(
             }
             EvaluationResult.WARN -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "$labValueString is slightly below minimum of $refString", "$labValueString slightly below min of $refString"
+                    "$labValueString is below minimum of $refString but within margin of error",
+                    "$labValueString below min of $refString but within margin of error"
                 )
             }
             EvaluationResult.UNDETERMINED -> {

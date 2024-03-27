@@ -41,8 +41,10 @@ object BloodPressureFunctions {
         return when {
             (!referenceIsMinimum && comparisonWithoutMargin > 0 && comparisonWithMargin <= 0)
                     || (referenceIsMinimum && comparisonWithoutMargin < 0 && comparisonWithMargin >= 0) -> {
-                val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
-                val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
+                val messageEnding = "$categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg" +
+                "but within margin of error"
+                val specificMessage = "Patient has median $messageEnding"
+                val generalMessage = "Median $messageEnding"
                 EvaluationFactory.recoverableUndetermined(specificMessage, generalMessage)
             }
 

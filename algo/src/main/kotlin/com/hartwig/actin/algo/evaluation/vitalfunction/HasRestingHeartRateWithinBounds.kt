@@ -36,8 +36,9 @@ class HasRestingHeartRateWithinBounds(
 
             (median.compareTo(minHeartRateWithMargin) >= 0 && median.compareTo(maxHeartRateWithMargin) <= 0) -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
-                    "Median heart rate ($median bpm) outside range"
+                    "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate" +
+                            "but within margin of error",
+                    "Median heart rate ($median bpm) outside range but within margin of error"
                 )
             }
 

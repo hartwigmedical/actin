@@ -37,10 +37,10 @@ class HasLimitedLabValue(
                 EvaluationFactory.recoverableUndetermined(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format("%.1f", convertedValue)
-                    } ${targetUnit.display()} slightly exceeds maximum of $maxValue ${targetUnit.display()}",
+                    } ${targetUnit.display()} exceeds maximum of $maxValue ${targetUnit.display()} but within margin of error",
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format("%.1f", convertedValue)
-                    } ${targetUnit.display()} slightly exceeds max of $maxValue ${targetUnit.display()}"
+                    } ${targetUnit.display()} exceeds max of $maxValue ${targetUnit.display()} but within margin of error"
                 )
             }
             EvaluationResult.UNDETERMINED -> {

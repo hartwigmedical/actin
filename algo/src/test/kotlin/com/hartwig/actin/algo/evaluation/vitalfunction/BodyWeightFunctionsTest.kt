@@ -60,8 +60,8 @@ class BodyWeightFunctionsTest {
     @Test
     fun `Should evaluate to recoverable undetermined on median weight above max but inside margin of error`() {
         val weights = listOf(
-            weight(referenceDateTime, 160.0, true),
-            weight(referenceDateTime.plusDays(1), 155.0, true)
+            weight(referenceDateTime, 151.0, true),
+            weight(referenceDateTime.plusDays(1), 152.0, true)
         )
         val evaluation = evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)

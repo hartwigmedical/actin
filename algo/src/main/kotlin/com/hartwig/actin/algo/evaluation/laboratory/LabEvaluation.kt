@@ -8,8 +8,8 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
 internal object LabEvaluation {
     val REF_LIMIT_UP_OVERRIDES = mapOf(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO.code to 1.1)
-    const val LAB_VALUE_NEGATIVE_MARGIN_OF_ERROR = 0.9
-    const val LAB_VALUE_POSITIVE_MARGIN_OF_ERROR = 1.1
+    const val LAB_VALUE_NEGATIVE_MARGIN_OF_ERROR = 0.95
+    const val LAB_VALUE_POSITIVE_MARGIN_OF_ERROR = 1.05
 
     fun evaluateVersusMinULN(labValue: LabValue, minULNFactor: Double, withMargin: Boolean): EvaluationResult {
         val refLimitUp = retrieveRefLimitUp(labValue) ?: return EvaluationResult.UNDETERMINED

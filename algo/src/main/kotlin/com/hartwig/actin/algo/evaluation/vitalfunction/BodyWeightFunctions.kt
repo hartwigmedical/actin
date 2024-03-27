@@ -37,8 +37,8 @@ object BodyWeightFunctions {
 
         val median = determineMedianBodyWeight(relevant)
         val referenceWithMargin = if (referenceIsMinimum) {
-            referenceBodyWeight * VitalFunctionRuleMapper.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
-        } else referenceBodyWeight * VitalFunctionRuleMapper.VITAL_FUNCTION_POSITIVE_MARGIN_OF_ERROR
+            referenceBodyWeight * VitalFunctionRuleMapper.BODY_WEIGHT_NEGATIVE_MARGIN_OF_ERROR
+        } else referenceBodyWeight * VitalFunctionRuleMapper.BODY_WEIGHT_POSITIVE_MARGIN_OF_ERROR
         val comparisonWithMargin = median.compareTo(referenceWithMargin)
         val comparisonWithoutMargin = median.compareTo(referenceBodyWeight)
 

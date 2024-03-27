@@ -18,7 +18,7 @@ class LabEvaluationTest {
     @Test
     fun `Should evaluate correctly versus minimum LLN with margin`() {
         assertThat(LabEvaluation.evaluateVersusMinLLN(LabTestFactory.create(), 2.0, true)).isEqualTo(EvaluationResult.UNDETERMINED)
-        val labValue = LabTestFactory.create(value = 55.0, refLimitLow = 30.0)
+        val labValue = LabTestFactory.create(value = 57.5, refLimitLow = 30.0)
         assertThat(LabEvaluation.evaluateVersusMinLLN(labValue, 2.0, true)).isEqualTo(EvaluationResult.PASS)
         assertThat(LabEvaluation.evaluateVersusMinLLN(labValue.copy(value = 50.0), 2.0, true))
             .isEqualTo(EvaluationResult.FAIL)
@@ -35,7 +35,7 @@ class LabEvaluationTest {
     @Test
     fun `Should evaluate correctly versus minimum ULN with margin`() {
         assertThat(LabEvaluation.evaluateVersusMinULN(LabTestFactory.create(), 2.0, true)).isEqualTo(EvaluationResult.UNDETERMINED)
-        val labValue = LabTestFactory.create(value = 45.0, refLimitUp = 50.0)
+        val labValue = LabTestFactory.create(value = 47.5, refLimitUp = 50.0)
         assertThat(LabEvaluation.evaluateVersusMinULN(labValue, 1.0, true)).isEqualTo(EvaluationResult.PASS)
         assertThat(LabEvaluation.evaluateVersusMinULN(labValue.copy(value = 40.0), 1.0, true)).isEqualTo(EvaluationResult.FAIL)
     }

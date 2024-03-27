@@ -82,6 +82,8 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     companion object {
         private const val BODY_WEIGHT_MAX_AGE_MONTHS = 2
         private const val VITAL_FUNCTION_MAX_AGE_MONTHS = 1
+        const val BODY_WEIGHT_NEGATIVE_MARGIN_OF_ERROR = 0.975
+        const val BODY_WEIGHT_POSITIVE_MARGIN_OF_ERROR = 1.025
         const val VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR = 0.95
         const val VITAL_FUNCTION_POSITIVE_MARGIN_OF_ERROR = 1.05
     }

@@ -20,11 +20,11 @@ class HasSufficientLabValueLLNTest {
     @Test
     fun `Should evaluate to recoverable undetermined if lab value is under requested fold of LLN but within margin of error`() {
         Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 65.0, refLimitLow = 35.0)).result
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 67.0, refLimitLow = 35.0)).result
         ).isEqualTo(EvaluationResult.UNDETERMINED)
 
         Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 65.0, refLimitLow = 35.0)).recoverable
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 67.0, refLimitLow = 35.0)).recoverable
         ).isTrue()
     }
 
