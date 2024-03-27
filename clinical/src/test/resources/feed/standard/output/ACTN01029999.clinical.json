@@ -104,8 +104,8 @@
       "year": 2020,
       "month": 1,
       "doids": [
-        "11335",
-        "5082"
+        "5082",
+        "11335"
       ],
       "category": "Other",
       "isContraindicationForTherapy": true
@@ -232,7 +232,8 @@
       "type": "unspecified",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
-      "criticality": "Unknown"
+      "criticality": "Unknown",
+      "treatmentCategories": []
     },
     {
       "name": "Nikkel",
@@ -242,7 +243,8 @@
       "type": "unspecified",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
-      "criticality": "Unknown"
+      "criticality": "Unknown",
+      "treatmentCategories": []
     }
   ],
   "surgeries": [

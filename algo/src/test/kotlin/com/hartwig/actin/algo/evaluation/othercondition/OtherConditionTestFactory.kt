@@ -49,7 +49,8 @@ internal object OtherConditionTestFactory {
             type = "",
             clinicalStatus = "",
             verificationStatus = "",
-            criticality = ""
+            criticality = "",
+            treatmentCategories = emptySet()
         )
     }
 

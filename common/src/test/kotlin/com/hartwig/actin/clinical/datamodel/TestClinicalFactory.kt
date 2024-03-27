@@ -445,7 +445,8 @@ object TestClinicalFactory {
                 verificationStatus = "Confirmed",
                 criticality = "Unable-to-assess",
                 doids = emptySet(),
-                subcategories = emptySet()
+                subcategories = emptySet(),
+                treatmentCategories = emptySet()
             )
         )
     }

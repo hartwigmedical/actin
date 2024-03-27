@@ -38,13 +38,15 @@ class IntoleranceExtractorTest {
                 input = INTOLERANCE_INPUT,
                 ignore = false,
                 name = CURATED_INTOLERANCE,
-                doids = setOf(DOID)
+                doids = setOf(DOID),
+                treatmentCategories = emptySet()
             ),
             IntoleranceConfig(
                 input = INTOLERANCE_MEDICATION_INPUT,
                 ignore = false,
                 name = CURATED_MEDICATION_INTOLERANCE,
-                doids = setOf(DOID)
+                doids = setOf(DOID),
+                treatmentCategories = emptySet()
             )
         ), atcModel
     )
