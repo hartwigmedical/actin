@@ -66,21 +66,21 @@ class ToxicityRuleMapper(resources: RuleMappingResources, val config: AlgoConfig
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minGrade = functionInputResolver().createOneIntegerInput(function)
-            HasToxicityWithGrade(minGrade, null, Sets.newHashSet(), config)
+            HasToxicityWithGrade(minGrade, null, Sets.newHashSet(), config.warnIfToxicitiesNotFromQuestionnaire)
         }
     }
 
     private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerOneStringInput(function)
-            HasToxicityWithGrade(input.integer, input.string, emptySet(), config)
+            HasToxicityWithGrade(input.integer, input.string, emptySet(), config.warnIfToxicitiesNotFromQuestionnaire)
         }
     }
 
     private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerManyStringsInput(function)
-            HasToxicityWithGrade(input.integer, null, input.strings.toSet(), config)
+            HasToxicityWithGrade(input.integer, null, input.strings.toSet(), config.warnIfToxicitiesNotFromQuestionnaire)
         }
     }
 }
