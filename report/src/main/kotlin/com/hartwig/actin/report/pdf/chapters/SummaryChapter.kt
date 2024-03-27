@@ -25,7 +25,7 @@ import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 import java.time.LocalDate
 
-class SummaryChapter(private val report: Report) : ReportChapter {
+class SummaryChapter(private val report: Report, private val localTrialThreshold: Int) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -117,7 +117,12 @@ class SummaryChapter(private val report: Report) : ReportChapter {
                     EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
                 } else null,
                 if (otherTrials.isNotEmpty()) {
-                    EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, otherTrials, contentWidth())
+                    EligibleOtherCountriesExternalTrialsGenerator(
+                        molecular.externalTrialSource,
+                        otherTrials,
+                        contentWidth(),
+                        hideContents = dutchTrials.size >= localTrialThreshold
+                    )
                 } else null
             )
         }

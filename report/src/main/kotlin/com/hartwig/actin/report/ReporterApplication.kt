@@ -31,7 +31,7 @@ class ReporterApplication(private val config: ReporterConfig) {
 
         val environmentConfig = config.overrideYaml?.let { EnvironmentConfiguration.createFromFile(it) } ?: EnvironmentConfiguration()
         val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch, environmentConfig.report)
-        val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
+        val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory, environmentConfig.report)
         writer.write(report, config.enableExtendedMode)
         LOGGER.info("Done!")
     }

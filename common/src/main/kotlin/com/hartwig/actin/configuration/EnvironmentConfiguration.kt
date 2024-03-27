@@ -7,7 +7,8 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.File
 
 data class ReportConfiguration(
-    val showClinicalSummary: Boolean = true
+    val showClinicalSummary: Boolean = true,
+    val localTrialThreshold: Int = 5
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
