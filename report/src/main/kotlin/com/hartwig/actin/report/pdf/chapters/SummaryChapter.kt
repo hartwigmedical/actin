@@ -5,6 +5,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
+import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
@@ -78,16 +79,22 @@ class SummaryChapter(private val report: Report, private val localTrialThreshold
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
 
-        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.molecular)
 
+
+        val (openCohortsWithSlots, evaluated) =
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
+        val (openCohortsWithoutSlots, _) =
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false)
+
+        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.molecular, evaluated)
         val generators = listOfNotNull(
             if (report.config.showClinicalSummary) PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth) else null,
             if (report.molecular?.date != null && report.molecular.date!! > LocalDate.now().minusDays(21)) {
                 MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
             } else null,
             EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
+            openCohortsWithSlots,
+            openCohortsWithoutSlots,
             dutchTrialGenerator,
             nonDutchTrialGenerator
         )
@@ -103,7 +110,7 @@ class SummaryChapter(private val report: Report, private val localTrialThreshold
         document.add(table)
     }
 
-    private fun externalTrials(molecular: MolecularRecord?): Pair<TableGenerator?, TableGenerator?> {
+    private fun externalTrials(molecular: MolecularRecord?, evaluated: List<EvaluatedCohort>): Pair<TableGenerator?, TableGenerator?> {
         if (molecular == null) {
             return Pair(null, null)
         } else {
@@ -119,7 +126,9 @@ class SummaryChapter(private val report: Report, private val localTrialThreshold
                 if (otherTrials.isNotEmpty()) {
                     EligibleOtherCountriesExternalTrialsGenerator(
                         molecular.externalTrialSource,
-                        otherTrials.filterKeys { !otherTrials.containsKey(it) },
+                        otherTrials.filterKeys {
+                            !otherTrials.containsKey(it) || evaluated.flatMap { e -> e.molecularEvents }.contains(it)
+                        },
                         contentWidth(),
                         hideContents = dutchTrials.size >= localTrialThreshold
                     )

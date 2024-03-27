@@ -8,7 +8,7 @@ import java.io.File
 
 data class ReportConfiguration(
     val showClinicalSummary: Boolean = true,
-    val localTrialThreshold: Int = 5
+    val localTrialThreshold: Int = 50
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
