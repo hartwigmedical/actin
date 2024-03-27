@@ -129,8 +129,7 @@ class SummaryChapter(private val report: Report, private val localTrialThreshold
                         otherTrials.filterKeys {
                             !otherTrials.containsKey(it) || evaluated.flatMap { e -> e.molecularEvents }.contains(it)
                         },
-                        contentWidth(),
-                        hideContents = dutchTrials.size >= localTrialThreshold
+                        contentWidth()
                     )
                 } else null
             )
