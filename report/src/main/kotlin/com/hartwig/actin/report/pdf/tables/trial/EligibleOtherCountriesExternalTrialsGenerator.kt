@@ -32,7 +32,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
 
         val table = Tables.createFixedWidthCols(eventWidth, titleWidth + nctWidth + countriesWidth)
 
-        if (hideContents) {
+        if (!hideContents) {
             table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Event")))
             val headerSubTable = Tables.createFixedWidthCols(titleWidth, nctWidth, countriesWidth)
             listOf("Trial title", "NCT number", "Country").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
