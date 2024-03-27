@@ -119,7 +119,7 @@ class SummaryChapter(private val report: Report, private val localTrialThreshold
                 if (otherTrials.isNotEmpty()) {
                     EligibleOtherCountriesExternalTrialsGenerator(
                         molecular.externalTrialSource,
-                        otherTrials,
+                        otherTrials.filterKeys { !otherTrials.containsKey(it) },
                         contentWidth(),
                         hideContents = dutchTrials.size >= localTrialThreshold
                     )
