@@ -59,10 +59,17 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val functionInputResolver = FunctionInputResolver(
             doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )
-        val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
         val environmentConfiguration =
             config.overridesYaml?.let { EnvironmentConfiguration.createFromFile(config.overridesYaml) } ?: EnvironmentConfiguration()
-        val recommendationEngine = RecommendationEngineFactory(resources).create(environmentConfiguration.algo)
+        val resources = RuleMappingResources(
+            referenceDateProvider,
+            doidModel,
+            functionInputResolver,
+            atcTree,
+            treatmentDatabase,
+            environmentConfiguration.algo
+        )
+        val recommendationEngine = RecommendationEngineFactory(resources).create()
 
         LOGGER.info(recommendationEngine.provideRecommendations(patient))
         val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)

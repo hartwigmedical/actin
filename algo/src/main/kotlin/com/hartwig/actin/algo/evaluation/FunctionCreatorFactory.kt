@@ -17,12 +17,11 @@ import com.hartwig.actin.algo.evaluation.treatment.TreatmentRuleMapper
 import com.hartwig.actin.algo.evaluation.tumor.TumorRuleMapper
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper
 import com.hartwig.actin.algo.evaluation.washout.WashoutRuleMapper
-import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 object FunctionCreatorFactory {
 
-    fun create(resources: RuleMappingResources, config: AlgoConfiguration): Map<EligibilityRule, FunctionCreator> {
+    fun create(resources: RuleMappingResources): Map<EligibilityRule, FunctionCreator> {
         return listOf(
             BloodTransfusionRuleMapper(resources),
             CardiacFunctionRuleMapper(resources),
@@ -36,7 +35,7 @@ object FunctionCreatorFactory {
             PreviousTumorRuleMapper(resources),
             ReproductionRuleMapper(resources),
             SurgeryRuleMapper(resources),
-            ToxicityRuleMapper(resources, config),
+            ToxicityRuleMapper(resources),
             TreatmentRuleMapper(resources),
             TumorRuleMapper(resources),
             VitalFunctionRuleMapper(resources),

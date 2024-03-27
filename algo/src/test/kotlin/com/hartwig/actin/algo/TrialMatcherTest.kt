@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
@@ -39,7 +38,7 @@ class TrialMatcherTest {
 
     companion object {
         private fun createTestEvaluationFunctionFactory(): EvaluationFunctionFactory {
-            return EvaluationFunctionFactory.create(RuleMappingResourcesTestFactory.create(), EnvironmentConfiguration().algo)
+            return EvaluationFunctionFactory.create(RuleMappingResourcesTestFactory.create())
         }
 
         private fun assertTrialMatch(trialMatch: TrialMatch) {

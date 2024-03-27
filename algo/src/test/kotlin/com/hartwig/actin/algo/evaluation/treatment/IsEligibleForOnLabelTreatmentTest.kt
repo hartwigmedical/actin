@@ -24,7 +24,7 @@ import org.junit.Test
 class IsEligibleForOnLabelTreatmentTest {
 
     private val recommendationEngine = mockk<RecommendationEngine>()
-    private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create(any()) } returns recommendationEngine }
+    private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create() } returns recommendationEngine }
     val function = IsEligibleForOnLabelTreatment(treatment("PEMBROLIZUMAB", true), recommendationEngineFactory)
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 

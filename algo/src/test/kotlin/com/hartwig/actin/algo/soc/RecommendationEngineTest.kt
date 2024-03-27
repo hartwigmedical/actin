@@ -15,7 +15,6 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
@@ -411,7 +410,7 @@ class RecommendationEngineTest {
                 doidModel = TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer"),
                 treatmentDatabase = TREATMENT_DATABASE
             )
-        ).create(EnvironmentConfiguration().algo)
+        ).create()
 
         private val CHEMO_TREATMENT_NAMES = listOf(
             "5-FU",

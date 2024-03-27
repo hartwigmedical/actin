@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.composite.WarnIf
-import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.FunctionInputResolver
@@ -48,8 +47,8 @@ class EvaluationFunctionFactory(
     }
 
     companion object {
-        fun create(resources: RuleMappingResources, config: AlgoConfiguration): EvaluationFunctionFactory {
-            return EvaluationFunctionFactory(FunctionCreatorFactory.create(resources, config), resources.functionInputResolver)
+        fun create(resources: RuleMappingResources): EvaluationFunctionFactory {
+            return EvaluationFunctionFactory(FunctionCreatorFactory.create(resources), resources.functionInputResolver)
         }
     }
 }

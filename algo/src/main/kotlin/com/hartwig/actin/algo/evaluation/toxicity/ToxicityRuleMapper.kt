@@ -4,11 +4,10 @@ import com.google.common.collect.Sets
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
-class ToxicityRuleMapper(resources: RuleMappingResources, val config: AlgoConfiguration) : RuleMapper(resources) {
+class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.HAS_INTOLERANCE_TO_NAME_X to hasIntoleranceWithSpecificNameCreator(),
@@ -66,21 +65,26 @@ class ToxicityRuleMapper(resources: RuleMappingResources, val config: AlgoConfig
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minGrade = functionInputResolver().createOneIntegerInput(function)
-            HasToxicityWithGrade(minGrade, null, Sets.newHashSet(), config.warnIfToxicitiesNotFromQuestionnaire)
+            HasToxicityWithGrade(minGrade, null, Sets.newHashSet(), resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire)
         }
     }
 
     private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerOneStringInput(function)
-            HasToxicityWithGrade(input.integer, input.string, emptySet(), config.warnIfToxicitiesNotFromQuestionnaire)
+            HasToxicityWithGrade(input.integer, input.string, emptySet(), resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire)
         }
     }
 
     private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerManyStringsInput(function)
-            HasToxicityWithGrade(input.integer, null, input.strings.toSet(), config.warnIfToxicitiesNotFromQuestionnaire)
+            HasToxicityWithGrade(
+                input.integer,
+                null,
+                input.strings.toSet(),
+                resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire
+            )
         }
     }
 }

@@ -46,8 +46,8 @@ class TreatmentMatcher(
             config: AlgoConfiguration
         ): TreatmentMatcher {
             return TreatmentMatcher(
-                TrialMatcher.create(resources, config),
-                RecommendationEngineFactory(resources).create(config),
+                TrialMatcher.create(resources),
+                RecommendationEngineFactory(resources).create(),
                 trials,
                 resources.referenceDateProvider,
                 EvaluatedTreatmentAnnotator.create(efficacyEvidence),

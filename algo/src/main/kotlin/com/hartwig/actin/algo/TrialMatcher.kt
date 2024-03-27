@@ -9,7 +9,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.sort.CohortMatchComparator
 import com.hartwig.actin.algo.sort.TrialMatchComparator
-import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.Trial
 import com.hartwig.actin.trial.sort.EligibilityComparator
@@ -46,8 +45,8 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
     }
 
     companion object {
-        fun create(resources: RuleMappingResources, config: AlgoConfiguration): TrialMatcher {
-            return TrialMatcher(EvaluationFunctionFactory.create(resources, config))
+        fun create(resources: RuleMappingResources): TrialMatcher {
+            return TrialMatcher(EvaluationFunctionFactory.create(resources))
         }
 
         fun isPotentiallyEligible(evaluations: Iterable<Evaluation>): Boolean {
