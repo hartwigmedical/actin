@@ -4,13 +4,16 @@ import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.report.ReportConfiguration
 
 object TestReportFactory {
     fun createMinimalTestReport(): Report {
         return Report(
             patientId = TestPatientFactory.TEST_PATIENT,
             patientRecord = TestPatientFactory.createMinimalTestPatientRecord(),
-            treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
+            treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
+            config = ReportConfiguration()
         )
     }
 

@@ -6,11 +6,13 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class ReporterConfig(
     val patientJson: String,
     val treatmentMatchJson: String,
+    val overrideYaml: String?,
     val outputDirectory: String,
     val enableExtendedMode: Boolean
 ) {
@@ -20,6 +22,7 @@ data class ReporterConfig(
             val options = Options()
             options.addOption(PATIENT_JSON, true, "File containing the patient record")
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
+            options.addOption(OVERRIDE_YAML, true, "Optional file specifying configuration overrides")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
@@ -39,16 +42,18 @@ data class ReporterConfig(
             return ReporterConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
+                overrideYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 enableExtendedMode = enableExtendedMode
             )
         }
 
-        val LOGGER = LogManager.getLogger(ReporterConfig::class.java)
-        const val PATIENT_JSON = "patient_json"
-        const val TREATMENT_MATCH_JSON = "treatment_match_json"
-        const val OUTPUT_DIRECTORY = "output_directory"
-        const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
-        const val LOG_DEBUG = "log_debug"
+        val LOGGER: Logger = LogManager.getLogger(ReporterConfig::class.java)
+        private const val PATIENT_JSON = "patient_json"
+        private const val TREATMENT_MATCH_JSON = "treatment_match_json"
+        private const val OVERRIDE_YAML = "override_yaml"
+        private const val OUTPUT_DIRECTORY = "output_directory"
+        private const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
+        private const val LOG_DEBUG = "log_debug"
     }
 }

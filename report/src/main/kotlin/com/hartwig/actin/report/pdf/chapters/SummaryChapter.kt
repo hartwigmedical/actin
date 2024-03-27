@@ -82,7 +82,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
         val molecular = report.patientRecord.molecularHistory.latestMolecularRecord()
         val generators = listOfNotNull(
-            PatientClinicalHistoryGenerator(report.patientRecord, keyWidth, valueWidth),
+            if (report.config.showClinicalSummary) PatientClinicalHistoryGenerator(report.patientRecord, keyWidth, valueWidth) else null,
             if (molecular?.date != null && molecular.date!! > LocalDate.now().minusDays(21)) {
                 MolecularSummaryGenerator(report.patientRecord, molecular, cohorts, keyWidth, valueWidth)
             } else null,
