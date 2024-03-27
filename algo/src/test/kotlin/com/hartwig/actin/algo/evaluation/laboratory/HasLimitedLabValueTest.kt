@@ -6,19 +6,33 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import org.assertj.core.api.Assertions
+import org.junit.Assert
 import org.junit.Test
 
 class HasLimitedLabValueTest {
 
+    private val measurement = LabMeasurement.THROMBOCYTES_ABS
+    private val function = HasLimitedLabValue(1.0, measurement, measurement.defaultUnit)
+    private val record = TestPatientFactory.createMinimalTestPatientRecord()
+
     @Test
-    fun `Should evaluate standard case`() {
-        val measurement = LabMeasurement.THROMBOCYTES_ABS
-        val function = HasLimitedLabValue(1.0, measurement, measurement.defaultUnit)
-        val record = TestPatientFactory.createMinimalTestPatientRecord()
+    fun `Should pass if lab value is under maximum value`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(record, measurement, LabTestFactory.create(measurement, 2.0))
+            EvaluationResult.PASS,
+            function.evaluate(record, measurement, LabTestFactory.create(measurement, 0.5))
         )
+    }
+
+    @Test
+    fun `Should evaluate to recoverable undetermined if lab value is above maximum value but within 10 percent error margin`() {
+        val evaluation = function.evaluate(record, measurement, LabTestFactory.create(measurement, 1.05))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        Assertions.assertThat(evaluation.recoverable).isTrue()
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if comparison can not be determined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
@@ -26,10 +40,13 @@ class HasLimitedLabValueTest {
                 LabTestFactory.create(measurement, 0.5).copy(comparator = ValueComparison.LARGER_THAN)
             )
         )
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(record, measurement, LabTestFactory.create(measurement, 0.5))
-        )
+    }
+
+    @Test
+    fun `Should fail if lab value is above maximum value and outside error margin`() {
+        val actual = function.evaluate(record, measurement, LabTestFactory.create(measurement, 2.0))
+        assertEvaluation(EvaluationResult.FAIL, actual)
+        Assert.assertTrue(actual.recoverable)
     }
 
     @Test

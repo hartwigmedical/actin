@@ -30,11 +30,23 @@ object BloodPressureFunctions {
         val categoryDisplay = category.display().lowercase()
         val relevant = VitalFunctionSelector.selectBloodPressures(record, category, minimalDate)
         if (relevant.isEmpty()) return EvaluationFactory.recoverableUndetermined("No (recent) data found for $categoryDisplay")
+
+        val referenceWithMargin = if (referenceIsMinimum) {
+            referenceBloodPressure * VitalFunctionRuleMapper.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
+        } else referenceBloodPressure * VitalFunctionRuleMapper.VITAL_FUNCTION_POSITIVE_MARGIN_OF_ERROR
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
-        val comparison = median.compareTo(referenceBloodPressure)
+        val comparisonWithMargin = median.compareTo(referenceWithMargin)
+        val comparisonWithoutMargin = median.compareTo(referenceBloodPressure)
 
         return when {
-            comparison < 0 -> {
+            (!referenceIsMinimum && comparisonWithoutMargin > 0 && comparisonWithMargin <= 0)
+                    || (referenceIsMinimum && comparisonWithoutMargin < 0 && comparisonWithMargin >= 0) -> {
+                val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
+                val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
+                EvaluationFactory.recoverableUndetermined(specificMessage, generalMessage)
+            }
+
+            comparisonWithoutMargin < 0 -> {
                 val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
                 val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
 
@@ -45,7 +57,7 @@ object BloodPressureFunctions {
                 }
             }
 
-            comparison == 0 -> {
+            comparisonWithoutMargin == 0 -> {
                 val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) " +
                         "equal to $referenceBloodPressure mmHg"
                 val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) equal to $referenceBloodPressure mmHg"

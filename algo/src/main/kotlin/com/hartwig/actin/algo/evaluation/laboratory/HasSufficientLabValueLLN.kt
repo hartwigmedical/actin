@@ -9,30 +9,35 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
 class HasSufficientLabValueLLN(private val minLLNFactor: Double) : LabEvaluationFunction {
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
-        val result = LabEvaluation.evaluateVersusMinLLN(labValue, minLLNFactor)
+        val resultWithMargin = LabEvaluation.evaluateVersusMinLLN(labValue, minLLNFactor, true)
+        val resultWithoutMargin = LabEvaluation.evaluateVersusMinLLN(labValue, minLLNFactor, false)
         val labValueString = "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${String.format("%.1f", labValue.value)}"
         val referenceString = "$minLLNFactor*LLN ($minLLNFactor*${labValue.refLimitLow})"
 
-        return when (result) {
-            EvaluationResult.FAIL -> {
+        return when {
+            resultWithMargin == EvaluationResult.FAIL -> {
                 EvaluationFactory.recoverableFail(
                     "$labValueString is below minimum of $referenceString", "$labValueString below min of $referenceString"
                 )
             }
-            EvaluationResult.UNDETERMINED -> {
+            resultWithoutMargin == EvaluationResult.FAIL -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "$labValueString is below minimum of $referenceString", "$labValueString below min of $referenceString"
+                )
+            }
+            resultWithoutMargin == EvaluationResult.UNDETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} could not be evaluated against minimum LLN",
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
                 )
             }
-            EvaluationResult.PASS -> {
+            resultWithoutMargin == EvaluationResult.PASS -> {
                 EvaluationFactory.recoverablePass(
                     "$labValueString above minimum of $referenceString", "$labValueString above min of $referenceString"
                 )
             }
-
             else -> {
-                Evaluation(result = result, recoverable = true)
+                Evaluation(result = resultWithoutMargin, recoverable = true)
             }
         }
     }

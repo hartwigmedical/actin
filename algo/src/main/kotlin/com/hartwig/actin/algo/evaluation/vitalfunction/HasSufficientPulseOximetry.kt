@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper.Companion.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import java.time.LocalDate
 
@@ -24,16 +25,27 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
         }
 
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
-        return if (median.compareTo(minMedianPulseOximetry) >= 0) {
-            EvaluationFactory.recoverablePass(
-                "Patient has median pulse oximetry exceeding $minMedianPulseOximetry",
-                "Pulse oximetry above $minMedianPulseOximetry"
-            )
-        } else {
-            EvaluationFactory.recoverableFail(
-                "Patient has median pulse oximetry ($median%) below $minMedianPulseOximetry",
-                "Median pulse oximetry ($median%) below $minMedianPulseOximetry"
-            )
+        val referenceWithMargin = minMedianPulseOximetry * VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
+
+        return when {
+            median.compareTo(minMedianPulseOximetry) >= 0 -> {
+                EvaluationFactory.recoverablePass(
+                    "Patient has median pulse oximetry exceeding $minMedianPulseOximetry",
+                    "Pulse oximetry above $minMedianPulseOximetry"
+                )
+            }
+            (median.compareTo(referenceWithMargin) >= 0) -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "Patient has median pulse oximetry ($median%) below $minMedianPulseOximetry",
+                    "Median pulse oximetry ($median%) below $minMedianPulseOximetry"
+                )
+            }
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Patient has median pulse oximetry ($median%) below $minMedianPulseOximetry",
+                    "Median pulse oximetry ($median%) below $minMedianPulseOximetry"
+                )
+            }
         }
     }
 

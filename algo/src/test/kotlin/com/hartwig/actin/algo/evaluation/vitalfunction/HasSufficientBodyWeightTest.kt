@@ -13,10 +13,10 @@ class HasSufficientBodyWeightTest {
     private val referenceDate = LocalDateTime.of(2023, 12, 2, 0, 0)
 
     @Test
-    fun `Should fail on median weight too low`() {
+    fun `Should fail on median weight too low and outside margin of error`() {
         val weights = listOf(
-            weight(referenceDate, 40.0, true),
-            weight(referenceDate.plusDays(1), 39.0, true)
+            weight(referenceDate, 30.0, true),
+            weight(referenceDate.plusDays(1), 35.0, true)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }

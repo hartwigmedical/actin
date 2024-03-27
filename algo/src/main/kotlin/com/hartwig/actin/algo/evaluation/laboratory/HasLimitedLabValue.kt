@@ -4,7 +4,8 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
+import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LAB_VALUE_POSITIVE_MARGIN_OF_ERROR
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValueWithMargin
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -19,7 +20,9 @@ class HasLimitedLabValue(
                 "Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}"
             )
 
-        return when (val result = evaluateVersusMaxValue(convertedValue, labValue.comparator, maxValue)) {
+        return when (val result =
+            evaluateVersusMaxValueWithMargin(convertedValue, labValue.comparator, maxValue, LAB_VALUE_POSITIVE_MARGIN_OF_ERROR)
+        ) {
             EvaluationResult.FAIL -> {
                 EvaluationFactory.recoverableFail(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
@@ -28,6 +31,16 @@ class HasLimitedLabValue(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
                         String.format("%.1f", convertedValue)
                     } ${targetUnit.display()} exceeds max of $maxValue ${targetUnit.display()}"
+                )
+            }
+            EvaluationResult.WARN -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
+                        String.format("%.1f", convertedValue)
+                    } ${targetUnit.display()} slightly exceeds maximum of $maxValue ${targetUnit.display()}",
+                    "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
+                        String.format("%.1f", convertedValue)
+                    } ${targetUnit.display()} slightly exceeds max of $maxValue ${targetUnit.display()}"
                 )
             }
             EvaluationResult.UNDETERMINED -> {
