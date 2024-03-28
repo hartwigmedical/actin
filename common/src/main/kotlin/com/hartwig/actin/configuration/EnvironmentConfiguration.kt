@@ -14,15 +14,16 @@ data class ReportConfiguration(
 const val EMC_TRIAL_SOURCE = "EMC"
 
 data class AlgoConfiguration(
-    val trialSource: String = EMC_TRIAL_SOURCE
+    val trialSource: String = EMC_TRIAL_SOURCE,
+    val warnIfToxicitiesNotFromQuestionnaire: Boolean = true
 )
 
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
 const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration overrides"
 
 data class EnvironmentConfiguration(
-    val report: ReportConfiguration = ReportConfiguration(),
-    val algo: AlgoConfiguration = AlgoConfiguration()
+    val algo: AlgoConfiguration = AlgoConfiguration(),
+    val report: ReportConfiguration = ReportConfiguration()
 ) {
 
     companion object {
