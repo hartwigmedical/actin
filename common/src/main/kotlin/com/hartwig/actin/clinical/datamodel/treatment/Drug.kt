@@ -16,4 +16,8 @@ data class Drug(
     override fun compareTo(other: Drug): Int {
         return name.compareTo(other.name)
     }
+
+    companion object {
+        const val UNKNOWN_PREFIX = "UNKNOWN"
+    }
 }

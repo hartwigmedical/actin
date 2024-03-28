@@ -1,5 +1,7 @@
 package com.hartwig.actin.report
 
+import com.hartwig.actin.configuration.OVERRIDE_YAML_ARGUMENT
+import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
@@ -22,7 +24,7 @@ data class ReporterConfig(
             val options = Options()
             options.addOption(PATIENT_JSON, true, "File containing the patient record")
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
-            options.addOption(OVERRIDE_YAML, true, "Optional file specifying configuration overrides")
+            options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, includes trial matching details")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
@@ -42,7 +44,7 @@ data class ReporterConfig(
             return ReporterConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
-                overrideYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML),
+                overrideYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 enableExtendedMode = enableExtendedMode
             )
@@ -51,7 +53,6 @@ data class ReporterConfig(
         val LOGGER: Logger = LogManager.getLogger(ReporterConfig::class.java)
         private const val PATIENT_JSON = "patient_json"
         private const val TREATMENT_MATCH_JSON = "treatment_match_json"
-        private const val OVERRIDE_YAML = "override_yaml"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
         private const val LOG_DEBUG = "log_debug"

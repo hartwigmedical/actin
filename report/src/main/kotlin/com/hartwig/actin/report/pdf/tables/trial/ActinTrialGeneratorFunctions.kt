@@ -26,7 +26,7 @@ object ActinTrialGeneratorFunctions {
             )
             ActinTrialContentFunctions.contentForTrialCohortList(cohortList, feedbackFunction)
                 .forEach { addContentListToTable(it.textEntries, it.deEmphasizeContent, trialSubTable) }
-            
+
             insertTrialRow(cohortList, table, trialSubTable)
         }
     }

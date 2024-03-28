@@ -48,8 +48,8 @@ import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
-import java.time.LocalDate
 import org.apache.logging.log4j.util.Strings
+import java.time.LocalDate
 
 object TestOrangeFactory {
 

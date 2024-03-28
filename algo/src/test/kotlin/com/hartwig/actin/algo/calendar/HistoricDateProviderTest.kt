@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.calendar
 
 import com.hartwig.actin.clinical.datamodel.PatientDetails
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
-import java.time.LocalDate
 import org.junit.Assert
 import org.junit.Test
+import java.time.LocalDate
 
 class HistoricDateProviderTest {
     @Test
