@@ -1,11 +1,10 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.feed.emc.FeedModel.Companion.fromFeedDirectory
-import org.junit.Assert
-import org.junit.Test
 import java.io.IOException
 import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 class FeedModelTest {
     private val model: FeedModel = TestFeedFactory.createProperTestFeedModel()
@@ -14,56 +13,52 @@ class FeedModelTest {
     @Test
     @Throws(IOException::class)
     fun `Should correctly create from feed directory`() {
-        Assert.assertNotNull(fromFeedDirectory(CLINICAL_FEED_DIRECTORY))
+        assertThat(fromFeedDirectory(FEED_DIRECTORY)).isNotNull()
     }
 
     @Test
     fun `Should be able to retrieve toxicity questionnaire entries`() {
         val toxicities = feedRecord.toxicityEntries
-        Assert.assertEquals(3, toxicities.size.toLong())
+        assertThat(toxicities.size).isEqualTo(3)
     }
 
     @Test
     fun `Should be able to determine latest questionnaire`() {
         val latest = feedRecord.latestQuestionnaireEntry
-        Assert.assertNotNull(latest)
-        Assert.assertEquals(LocalDate.of(2021, 8, 1), latest!!.authored)
+        assertThat(latest).isNotNull()
+        assertThat(latest!!.authored).isEqualTo(LocalDate.of(2021, 8, 1))
     }
 
     @Test
     fun `Should be able to retrieve unique surgery entries`() {
-        Assert.assertEquals(1, feedRecord.uniqueSurgeryEntries.size.toLong())
+        assertThat(feedRecord.uniqueSurgeryEntries.size).isEqualTo(1)
     }
 
     @Test
     fun `Should be able to retrieve medication entries`() {
-        Assert.assertNotNull(feedRecord.medicationEntries)
+        assertThat(feedRecord.medicationEntries).isNotNull()
     }
 
     @Test
     fun `Should be able to retrieve lab entries`() {
-        Assert.assertNotNull(feedRecord.labEntries)
+        assertThat(feedRecord.labEntries).isNotNull()
     }
 
     @Test
     fun `Should be able to retrieve unique vital function entries`() {
-        Assert.assertNotNull(feedRecord.uniqueVitalFunctionEntries)
-        Assert.assertEquals(3, feedRecord.uniqueVitalFunctionEntries.size.toLong())
-        Assert.assertEquals("Diastolic blood pressure", feedRecord.uniqueVitalFunctionEntries[2].componentCodeDisplay)
+        assertThat(feedRecord.uniqueVitalFunctionEntries)
+        assertThat(feedRecord.uniqueVitalFunctionEntries.size).isEqualTo(3)
+        assertThat(feedRecord.uniqueVitalFunctionEntries[2].componentCodeDisplay).isEqualTo("Diastolic blood pressure")
     }
 
     @Test
     fun `Should be able to retrieve intolerance entries`() {
-        Assert.assertNotNull(feedRecord.intoleranceEntries)
+        assertThat(feedRecord.intoleranceEntries).isNotNull()
     }
 
     @Test
     fun `Should be able to retrieve unique body weight entries`() {
-        Assert.assertNotNull(feedRecord.uniqueBodyWeightEntries)
-        Assert.assertEquals(3, feedRecord.uniqueBodyWeightEntries.size.toLong())
-    }
-
-    companion object {
-        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed/emc").path
+        assertThat(feedRecord.uniqueBodyWeightEntries).isNotNull()
+        assertThat(feedRecord.uniqueBodyWeightEntries.size).isEqualTo(3)
     }
 }

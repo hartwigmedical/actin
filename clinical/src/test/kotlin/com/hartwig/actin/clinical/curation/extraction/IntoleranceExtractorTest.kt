@@ -1,15 +1,15 @@
 package com.hartwig.actin.clinical.curation.extraction
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.WhoAtcModel
 import com.hartwig.actin.clinical.curation.CurationCategory
 import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val PATIENT_ID = "patient1"
 
@@ -29,8 +29,8 @@ private const val CANNOT_CURATE = "Cannot curate"
 
 class IntoleranceExtractorTest {
     private val atcModel = WhoAtcModel.createFromFiles(
-        Resources.getResource("atc_config/atc_tree.tsv").path,
-        Resources.getResource("atc_config/atc_overrides.tsv").path
+        resourceOnClasspath("atc_config/atc_tree.tsv"),
+        resourceOnClasspath("atc_config/atc_overrides.tsv")
     )
     private val extractor = IntoleranceExtractor(
         TestCurationFactory.curationDatabase(
