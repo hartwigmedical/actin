@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
@@ -148,11 +147,12 @@ class ClinicalIngestionFeedAdapterTest {
             )
     }
 
-    fun assertQuestionnaireInFeedIsOfLatestVersion() {
+    private fun assertQuestionnaireInFeedIsOfLatestVersion() {
         val feed = FeedModel(
             ClinicalFeedReader.read(FEED_DIRECTORY)
         )
-        val versionUnderTest = QuestionnaireVersion.version(feed.latestQuestionnaireEntry(PATIENT)!!)
+        assertThat(feed.read().size).isEqualTo(1)
+        val versionUnderTest = QuestionnaireVersion.version(feed.read()[0].latestQuestionnaireEntry!!)
         val latestVersion = QuestionnaireVersion.values().last()
 
         assertThat(versionUnderTest).isNotNull()

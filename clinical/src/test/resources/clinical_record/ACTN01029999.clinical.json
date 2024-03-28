@@ -28,12 +28,18 @@
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
     "hasActiveBrainLesions": true,
+    "brainLesionsCount": null,
     "hasCnsLesions": false,
     "hasActiveCnsLesions": null,
+    "cnsLesionsCount": null,
     "hasBoneLesions": null,
+    "boneLesionsCount": null,
     "hasLiverLesions": false,
+    "liverLesionsCount": null,
     "hasLungLesions": null,
+    "lungLesionsCount": null,
     "hasLymphNodeLesions": true,
+    "lymphNodeLesionsCount": null,
     "otherLesions": null,
     "biopsyLocation": "Lymph node"
   },
@@ -177,7 +183,7 @@
       "impliesPotentialIndeterminateStatus": false
     }
   ],
-"complications": null,
+  "complications": null,
   "labValues": [
     {
       "date": {
@@ -244,7 +250,9 @@
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "Low",
-      "treatmentCategories": ["SUPPORTIVE_TREATMENT"]
+      "treatmentCategories": [
+        "SUPPORTIVE_TREATMENT"
+      ]
     }
   ],
   "surgeries": [
