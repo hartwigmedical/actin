@@ -1,7 +1,6 @@
 package com.hartwig.actin.clinical.feed.emc
 
 import com.hartwig.actin.clinical.feed.emc.FeedModel.Companion.fromFeedDirectory
-import com.hartwig.actin.testutil.ResourceLocator
 import java.io.IOException
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +13,7 @@ class FeedModelTest {
     @Test
     @Throws(IOException::class)
     fun `Should correctly create from feed directory`() {
-        assertThat(fromFeedDirectory(ResourceLocator().onClasspath("feed/emc"))).isNotNull()
+        assertThat(fromFeedDirectory(FEED_DIRECTORY)).isNotNull()
     }
 
     @Test

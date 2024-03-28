@@ -1,8 +1,7 @@
 package com.hartwig.actin.testutil
 
-class ResourceLocator(private val requester: Any? = null) {
+class ResourceLocator() {
     fun onClasspath(relativePath: String): String {
-        val clazz = requester ?: this
-        return clazz.javaClass.getResource("/" + relativePath.removePrefix("/"))!!.path
+        return this.javaClass.getResource("/" + relativePath.removePrefix("/"))!!.path
     }
 }

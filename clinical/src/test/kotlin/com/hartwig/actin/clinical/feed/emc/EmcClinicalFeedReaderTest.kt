@@ -10,7 +10,6 @@ import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
-import com.hartwig.actin.testutil.ResourceLocator
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,7 +24,7 @@ class EmcClinicalFeedReaderTest {
     @Test
     @Throws(IOException::class)
     fun canReadFromTestDirectory() {
-        val feed = read(CLINICAL_FEED_DIRECTORY)
+        val feed = read(FEED_DIRECTORY)
         assertPatients(feed.patientEntries)
         assertQuestionnaires(feed.questionnaireEntries)
         assertSurgeries(feed.surgeryEntries)
@@ -37,7 +36,6 @@ class EmcClinicalFeedReaderTest {
     }
 
     companion object {
-        private val CLINICAL_FEED_DIRECTORY = ResourceLocator().onClasspath("feed/emc")
         private const val EPSILON = 1.0E-10
         private const val PATIENT = "ACTN01029999"
 

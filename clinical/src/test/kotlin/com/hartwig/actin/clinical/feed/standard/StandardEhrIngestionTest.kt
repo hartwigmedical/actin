@@ -15,10 +15,10 @@ import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private val INPUT_JSON = ResourceLocator().onClasspath("feed/standard/input")
+private val OUTPUT_RECORD_JSON = ResourceLocator().onClasspath("feed/standard/output/ACTN01029999.clinical.json")
+
 class StandardEhrIngestionTest {
-    private val resourceLocator = ResourceLocator()
-    private val inputJson = resourceLocator.onClasspath("feed/standard/input")
-    private val outputRecordJson = resourceLocator.onClasspath("feed/standard/output/ACTN01029999.clinical.json")
 
     @Test
     fun `Should load EHR data from json and convert to clinical record`() {
@@ -42,7 +42,7 @@ class StandardEhrIngestionTest {
             TestTreatmentDatabaseFactory.createProper()
         )
         val feed = StandardEhrIngestion(
-            directory = inputJson,
+            directory = INPUT_JSON,
             medicationExtractor = EhrMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
                 qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
@@ -75,7 +75,7 @@ class StandardEhrIngestionTest {
             molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
             dataQualityMask = DataQualityMask()
         )
-        val expected = ClinicalRecordJson.read(outputRecordJson)
+        val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
 
         assertThat(curationDatabase.validate()).isEmpty()

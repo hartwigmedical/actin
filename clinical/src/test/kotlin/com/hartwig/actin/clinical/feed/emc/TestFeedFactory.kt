@@ -16,10 +16,10 @@ import com.hartwig.actin.testutil.ResourceLocator
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+private const val TEST_SUBJECT = "ACTN-01-02-9999"
+val FEED_DIRECTORY = ResourceLocator().onClasspath("feed/emc") + "/"
 
 object TestFeedFactory {
-    private const val TEST_SUBJECT = "ACTN-01-02-9999"
-    val FEED_DIRECTORY = ResourceLocator().onClasspath("feed/emc") + "/"
 
     fun createProperTestFeedModel(): FeedModel {
         return FeedModel(createTestClinicalFeed())
