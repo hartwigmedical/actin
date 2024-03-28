@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
@@ -20,11 +20,11 @@ class GeneHasActivatingMutationTest {
     fun `Should fail for minimal patient`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionNotIgnoringCodons.evaluate(TestDataFactory.createMinimalTestPatientRecord())
+            functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionWithCodonsToIgnore.evaluate(TestDataFactory.createMinimalTestPatientRecord())
+            functionWithCodonsToIgnore.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
         )
     }
 
@@ -170,6 +170,14 @@ class GeneHasActivatingMutationTest {
             EvaluationResult.WARN,
             ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, driverLikelihood = DriverLikelihood.LOW),
             false
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when no molecular input`() {
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestPatientRecord().copy(molecular = null))
         )
     }
 

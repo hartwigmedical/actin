@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistoryEntry
@@ -13,37 +14,37 @@ import org.junit.Test
 
 class HasHadTreatmentWithCategoryButNotOfTypesTest {
     @Test
-    fun shouldFailForNoTreatments() {
+    fun `Should fail for no treatments`() {
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldFailForWrongTreatmentCategory() {
+    fun `Should fail for wrong treatment category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldFailForTreatmentWithCorrectCategoryAndIgnoreType() {
+    fun `Should fail for treatment with correct category and ignore type`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, IGNORE_TYPE_SET)))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedForTrialTreatment() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+    fun `Should return undetermined for trial treatment`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldIgnoreTrialMatchesAndFailWhenLookingForUnlikelyTrialCategories() {
+    fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
         val function = HasHadTreatmentWithCategoryButNotOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC))
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), isTrial = true)
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldPassForCorrectTreatmentCategoryWithOtherType() {
+    fun `Should pass for correct treatment category with other type`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )

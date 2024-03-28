@@ -16,7 +16,7 @@ class EhrToxicityExtractor(private val toxicityCuration: CurationDatabase<Toxici
         return ehrPatientRecord.toxicities.map { toxicity ->
             val curatedToxicity = CurationResponse.createFromConfigs(
                 toxicityCuration.find(toxicity.name),
-                ehrPatientRecord.patientDetails.hashedIdBase64(),
+                ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.TOXICITY,
                 toxicity.name,
                 "toxicity"

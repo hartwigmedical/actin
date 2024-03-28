@@ -22,9 +22,9 @@ class HasHadPriorConditionWithDoidComplicationOrToxicity internal constructor(
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidTerm = doidModel.resolveTermForDoid(doidToFind) ?: "unknown doid"
         val matchingConditions =
-            OtherConditionSelector.selectConditionsMatchingDoid(record.clinical.priorOtherConditions, doidToFind, doidModel)
+            OtherConditionSelector.selectConditionsMatchingDoid(record.priorOtherConditions, doidToFind, doidModel)
         val matchingComplications = findComplicationNamesMatchingAnyCategory(record, listOf(complicationCategoryToFind))
-        val matchingToxicities = record.clinical.toxicities.filter { toxicity ->
+        val matchingToxicities = record.toxicities.filter { toxicity ->
             (toxicity.grade ?: 0) >= 2 || (toxicity.source == ToxicitySource.QUESTIONNAIRE)
         }
             .filter { stringCaseInsensitivelyMatchesQueryCollection(toxicityCategoryToFind, it.categories) }

@@ -10,14 +10,35 @@ object PatientRecordFactory {
     private val LOGGER: Logger = LogManager.getLogger(PatientRecordFactory::class.java)
 
     @JvmStatic
-    fun fromInputs(clinical: ClinicalRecord, molecular: MolecularRecord): PatientRecord {
-        if (clinical.patientId != molecular.patientId) {
+    fun fromInputs(clinical: ClinicalRecord, molecular: MolecularRecord?): PatientRecord {
+        if (molecular == null) {
+            LOGGER.warn("No molecular data for patient '{}'", clinical.patientId)
+        } else if (clinical.patientId != molecular.patientId) {
             LOGGER.warn(
                 "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
                 clinical.patientId,
                 molecular.patientId
             )
         }
-        return PatientRecord(patientId = clinical.patientId, clinical = clinical, molecular = molecular)
+        return PatientRecord(
+            patientId = clinical.patientId,
+            patient = clinical.patient,
+            tumor = clinical.tumor,
+            clinicalStatus = clinical.clinicalStatus,
+            oncologicalHistory = clinical.oncologicalHistory,
+            priorSecondPrimaries = clinical.priorSecondPrimaries,
+            priorOtherConditions = clinical.priorOtherConditions,
+            priorMolecularTests = clinical.priorMolecularTests,
+            complications = clinical.complications,
+            labValues = clinical.labValues,
+            toxicities = clinical.toxicities,
+            intolerances = clinical.intolerances,
+            surgeries = clinical.surgeries,
+            bodyWeights = clinical.bodyWeights,
+            vitalFunctions = clinical.vitalFunctions,
+            bloodTransfusions = clinical.bloodTransfusions,
+            medications = clinical.medications,
+            molecular = molecular
+        )
     }
 }

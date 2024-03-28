@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
@@ -40,8 +40,8 @@ object TestMolecularFactory {
 
     fun createMinimalTestMolecularRecord(): MolecularRecord {
         return MolecularRecord(
-            patientId = TestDataFactory.TEST_PATIENT,
-            sampleId = TestDataFactory.TEST_SAMPLE,
+            patientId = TestPatientFactory.TEST_PATIENT,
+            sampleId = TestPatientFactory.TEST_SAMPLE,
             type = ExperimentType.WHOLE_GENOME,
             refGenomeVersion = RefGenomeVersion.V37,
             evidenceSource = "",

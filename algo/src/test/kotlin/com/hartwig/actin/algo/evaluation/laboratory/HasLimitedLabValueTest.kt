@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
@@ -14,7 +14,7 @@ class HasLimitedLabValueTest {
     fun `Should evaluate standard case`() {
         val measurement = LabMeasurement.THROMBOCYTES_ABS
         val function = HasLimitedLabValue(1.0, measurement, measurement.defaultUnit)
-        val record = TestDataFactory.createMinimalTestPatientRecord()
+        val record = TestPatientFactory.createMinimalTestPatientRecord()
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(record, measurement, LabTestFactory.create(measurement, 2.0))
@@ -36,7 +36,7 @@ class HasLimitedLabValueTest {
     fun `Should evaluate case requiring conversion`() {
         val measurement = LabMeasurement.CREATININE
         val function = HasLimitedLabValue(1.0, measurement, LabUnit.MILLIGRAMS_PER_DECILITER)
-        val record = TestDataFactory.createMinimalTestPatientRecord()
+        val record = TestPatientFactory.createMinimalTestPatientRecord()
         val targetUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MILLIGRAMS_PER_DECILITER)
         val offUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MICROMOLES_PER_LITER)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, measurement, targetUnit.copy(value = 2.0)))

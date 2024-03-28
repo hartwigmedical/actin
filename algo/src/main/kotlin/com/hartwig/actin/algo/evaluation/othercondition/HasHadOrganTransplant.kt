@@ -10,7 +10,7 @@ class HasHadOrganTransplant(private val minYear: Int?) : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasOrganTransplantWithUnknownYear = false
-        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.clinical.priorOtherConditions)) {
+        for (condition in OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)) {
             if (condition.category == ORGAN_TRANSPLANT_CATEGORY) {
                 var isPass = minYear == null
                 if (minYear != null) {

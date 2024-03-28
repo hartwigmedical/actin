@@ -1,10 +1,11 @@
 package com.hartwig.actin.util
 
-import com.google.common.io.Resources
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalDir
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalFile
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalValue
 import com.hartwig.actin.util.ApplicationConfig.optionalDir
+import com.hartwig.actin.util.ApplicationConfig.optionalFile
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
@@ -12,9 +13,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ApplicationConfigTest {
-
-    private val configDirectory = Resources.getResource("config").path
-    private val configFile = Resources.getResource("config/file.empty").path
+    private val configDirectory = resourceOnClasspath("config")
+    private val configFile = resourceOnClasspath("config/file.empty")
 
     @Test
     fun `Should retrieve directory from config`() {
@@ -92,5 +92,29 @@ class ApplicationConfigTest {
     fun `Should crash on non existing value`() {
         val cmd = DefaultParser().parse(Options(), arrayOf())
         nonOptionalValue(cmd, "does not exist")
+    }
+
+    @Test
+    fun `Should allow optional file to be unspecified`() {
+        val options = Options()
+        options.addOption("file", true, "")
+        val cmd = DefaultParser().parse(options, emptyArray())
+        assertThat(optionalFile(cmd, "file")).isEqualTo(null)
+    }
+
+    @Test(expected = ParseException::class)
+    fun `Should crash if optional file specified but does not exist`() {
+        val options = Options()
+        options.addOption("file", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-file", "does not exist"))
+        optionalFile(cmd, "file")
+    }
+
+    @Test
+    fun `Should accept optional file if exists`() {
+        val options = Options()
+        options.addOption("file", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-file", configFile))
+        assertThat(optionalFile(cmd, "file")).isEqualTo(configFile)
     }
 }

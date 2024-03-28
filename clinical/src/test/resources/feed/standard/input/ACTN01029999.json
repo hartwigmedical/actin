@@ -136,7 +136,7 @@
     }
   ],
   "patient_details": {
-    "hashed_id": "f44f6e61b16fa450e32550acf578c3185d4b98ff0fa3a65bf34a589e806b5a0d",
+    "hashed_id": "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
     "birth_year": 5,
     "gender": "Female",
     "registration_date": "2020-01-01"
@@ -262,6 +262,13 @@
       "category": "Body Weight",
       "subcategory": null,
       "value": 3.5,
+      "unit": "kilograms"
+    },
+    {
+      "date": "2020-02-01T10:10:00",
+      "category": "Body Weight",
+      "subcategory": null,
+      "value": 53,
       "unit": "kilograms"
     }
   ],

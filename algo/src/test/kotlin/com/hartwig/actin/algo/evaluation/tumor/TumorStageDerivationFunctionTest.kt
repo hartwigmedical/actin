@@ -9,23 +9,24 @@ import org.junit.Test
 
 class TumorStageDerivationFunctionTest {
     private val derivationFunction = TumorStageDerivationFunction.create(TestDoidModelFactory.createMinimalTestDoidModel())
-    private val tumorDetailsWithNoStage = TumorDetails(doids = setOf(DoidConstants.BREAST_CANCER_DOID))
+    private val breastCancerWithNoStage = TumorDetails(doids = setOf(DoidConstants.BREAST_CANCER_DOID))
+    private val lungCancerWithNoStage = TumorDetails(doids = setOf(DoidConstants.LUNG_CANCER_DOID))
 
     @Test
-    fun shouldReturnEmptySetOfDerivationWhenNoDoidsConfigured() {
-        assertThat(derivationFunction.apply(tumorDetailsWithNoStage)).isEmpty()
+    fun `Should return null when no doids configured`() {
+        assertThat(derivationFunction.apply(TumorDetails(doids = null))).isNull()
     }
 
     @Test
-    fun shouldReturnEmptySetOfDerivationWhenNoLesionDetailsConfigured() {
-        assertThat(derivationFunction.apply(tumorDetailsWithNoStage)).isEmpty()
+    fun `Should return null when no lesion details configured`() {
+        assertThat(derivationFunction.apply(breastCancerWithNoStage)).isNull()
     }
 
     @Test
-    fun shouldReturnStageIAndIIWhenNoLesions() {
+    fun `Should return stage I and II when no lesions`() {
         assertThat(
             derivationFunction.apply(
-                tumorDetailsWithNoStage.copy(
+                breastCancerWithNoStage.copy(
                     hasBoneLesions = false,
                     hasBrainLesions = false,
                     hasLiverLesions = false,
@@ -38,14 +39,28 @@ class TumorStageDerivationFunctionTest {
     }
 
     @Test
-    fun shouldReturnStageIIIAndIVWhenOneCategorizedLocation() {
-        assertThat(derivationFunction.apply(tumorDetailsWithNoStage.copy(hasLymphNodeLesions = true)))
+    fun `Should return stage III and IV when one categorized location`() {
+        assertThat(derivationFunction.apply(breastCancerWithNoStage.copy(hasLymphNodeLesions = true)))
             .containsOnly(TumorStage.III, TumorStage.IV)
     }
 
     @Test
-    fun shouldReturnStageIVWhenMultipleLesions() {
-        assertThat(derivationFunction.apply(tumorDetailsWithNoStage.copy(hasBoneLesions = true, hasBrainLesions = true)))
+    fun `Should return stage IV when multiple lesions`() {
+        assertThat(derivationFunction.apply(breastCancerWithNoStage.copy(hasBoneLesions = true, hasBrainLesions = true)))
             .containsOnly(TumorStage.IV)
+        assertThat(derivationFunction.apply(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3, hasBoneLesions = true)))
+            .containsOnly(TumorStage.IV)
+    }
+
+    @Test
+    fun `Should return stage III and IV when one uncategorized location`() {
+        assertThat(derivationFunction.apply(breastCancerWithNoStage.copy(otherLesions = listOf("lesion"))))
+            .containsOnly(TumorStage.III, TumorStage.IV)
+    }
+
+    @Test
+    fun `Should return stage III and IV when lung cancer with other lung lesions besides the primary lung cancer`() {
+        assertThat(derivationFunction.apply(lungCancerWithNoStage.copy(hasLungLesions = true, lungLesionsCount = 3)))
+            .containsOnly(TumorStage.III, TumorStage.IV)
     }
 }

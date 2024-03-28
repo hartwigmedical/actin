@@ -1,9 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -11,16 +10,16 @@ import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
     private val requiredVariantType: VariantTypeInput?
-) : EvaluationFunction {
+) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
         val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected"
         val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
 
         val (canonicalReportableVariantMatches, canonicalUnreportableVariantMatches, reportableOtherVariantMatches) =
-            record.molecular.drivers.variants.filter { it.gene == gene && allowedVariantTypes.contains(it.type) }
+            molecular.drivers.variants.filter { it.gene == gene && allowedVariantTypes.contains(it.type) }
                 .map { variant ->
                     val (reportableMatches, unreportableMatches) = listOf(variant)
                         .filter { hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon) }
@@ -44,7 +43,7 @@ class GeneHasVariantInExonRangeOfType(
                 ) { (allReportable, allUnreportable, allOther), (reportable, unreportable, other) ->
                     Triple(allReportable + reportable, allUnreportable + unreportable, allOther + other)
                 }
-        
+
         if (canonicalReportableVariantMatches.isNotEmpty()) {
             return EvaluationFactory.pass(
                 "Variant(s) $baseMessage in canonical transcript",
@@ -68,13 +67,13 @@ class GeneHasVariantInExonRangeOfType(
                 EventsWithMessages(
                     canonicalUnreportableVariantMatches,
                     "Variant(s) $baseMessage in canonical transcript but considered not reportable",
-                "Variant(s) $baseMessage but not reportable"
+                    "Variant(s) $baseMessage but not reportable"
                 ),
                 EventsWithMessages(
                     reportableOtherVariantMatches,
                     "Variant(s) $baseMessage but in non-canonical transcript",
-                "Variant(s) $baseMessage but in non-canonical transcript"
-            )
+                    "Variant(s) $baseMessage but in non-canonical transcript"
+                )
             )
         )
     }

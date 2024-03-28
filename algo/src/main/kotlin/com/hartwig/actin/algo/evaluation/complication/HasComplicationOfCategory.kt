@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 
 class HasComplicationOfCategory internal constructor(private val categoryToFind: String) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.clinical.complications == null) {
+        if (record.complications == null) {
             return undetermined()
         }
         val complicationMatches = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, listOf(categoryToFind))
@@ -43,8 +43,8 @@ class HasComplicationOfCategory internal constructor(private val categoryToFind:
         }
 
         private fun hasComplicationsWithoutCategories(record: PatientRecord): Boolean {
-            val complications = record.clinical.complications
-            return record.clinical.clinicalStatus.hasComplications == true && complications != null &&
+            val complications = record.complications
+            return record.clinicalStatus.hasComplications == true && complications != null &&
                     complications.any { ComplicationFunctions.isYesInputComplication(it) }
         }
     }

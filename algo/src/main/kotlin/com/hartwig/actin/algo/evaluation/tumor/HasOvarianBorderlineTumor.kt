@@ -10,9 +10,9 @@ import com.hartwig.actin.doid.DoidModel
 class HasOvarianBorderlineTumor (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.clinical.tumor.doids
-        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.clinical.tumor.primaryTumorType == null
-                    && record.clinical.tumor.primaryTumorSubType == null)
+        val tumorDoids = record.tumor.doids
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) || (record.tumor.primaryTumorType == null
+                    && record.tumor.primaryTumorSubType == null)
         ) {
             return EvaluationFactory.undetermined(
                 "Could not determine whether patient has ovarian borderline tumor",
@@ -20,7 +20,7 @@ class HasOvarianBorderlineTumor (private val doidModel: DoidModel) : EvaluationF
             )
         }
         val isOvarianCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.OVARIAN_CANCER_DOID)
-        val hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.clinical.tumor, OVARIAN_BORDERLINE_TYPES)
+        val hasBorderlineType = TumorTypeEvaluationFunctions.hasTumorWithType(record.tumor, OVARIAN_BORDERLINE_TYPES)
         return if (isOvarianCancer && hasBorderlineType) {
             EvaluationFactory.pass("Patient has ovarian borderline tumor", "Tumor type")
         } else

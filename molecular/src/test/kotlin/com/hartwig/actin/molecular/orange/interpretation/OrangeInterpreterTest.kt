@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -33,8 +33,8 @@ class OrangeInterpreterTest {
     fun `Should interpret proper orange record`() {
         val interpreter = createTestInterpreter()
         val record = interpreter.interpret(TestOrangeFactory.createProperTestOrangeRecord())
-        assertThat(record.patientId).isEqualTo(TestDataFactory.TEST_PATIENT)
-        assertThat(record.sampleId).isEqualTo(TestDataFactory.TEST_SAMPLE)
+        assertThat(record.patientId).isEqualTo(TestPatientFactory.TEST_PATIENT)
+        assertThat(record.sampleId).isEqualTo(TestPatientFactory.TEST_SAMPLE)
         assertThat(record.type).isEqualTo(ExperimentType.WHOLE_GENOME)
         assertThat(record.refGenomeVersion).isEqualTo(RefGenomeVersion.V37)
         assertThat(record.date).isEqualTo(LocalDate.of(2021, 5, 6))
@@ -146,6 +146,36 @@ class OrangeInterpreterTest {
         val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
                 .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
+    @Test
+    fun `Should accept empty list as scrubbed for germline disruption`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withGermlineHomozygousDisruptions(emptyList()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
+    @Test
+    fun `Should accept empty list as scrubbed for germline breakends`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withAllGermlineBreakends(emptyList()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
+    @Test
+    fun `Should accept empty list as for scrubbed germline SV`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withAllGermlineStructuralVariants(emptyList()))
         val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }

@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.medication
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.AtcLevel
 import com.hartwig.actin.clinical.datamodel.Dosage
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val CATEGORY_1 = "category 1"
@@ -33,7 +35,7 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
             CATEGORY_2 to setOf(AtcLevel(code = CATEGORY_2, name = ""))
         )
     )
-    
+
     @Test
     fun `Should fail when no medication`() {
         assertEvaluation(EvaluationResult.FAIL, oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
@@ -98,5 +100,16 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
             MedicationTestFactory.medication(dosage = fixedDosing.copy(frequencyUnit = "other"), atc = atcCategory2)
         )
         assertEvaluation(EvaluationResult.FAIL, multipleCategoriesFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+    }
+
+    @Test
+    fun `Should be undetermined if medication is not provided`() {
+        val medicationNotProvided = TestPatientFactory.createMinimalTestPatientRecord().copy(medications = null)
+        val alwaysPlannedResult = oneCategoryFunction.evaluate(medicationNotProvided)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        Assertions.assertThat(alwaysPlannedResult.recoverable).isTrue()
+        val alwaysActiveResult = multipleCategoriesFunction.evaluate(medicationNotProvided)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        Assertions.assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

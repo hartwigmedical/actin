@@ -1,19 +1,19 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.RegionType
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 
-class GeneHasUTR3Loss(private val gene: String) : EvaluationFunction {
+class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = record.molecular.drivers.variants.filter { variant ->
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
+
+        val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = molecular.drivers.variants.filter { variant ->
             variant.gene == gene && variant.canonicalImpact.effects.contains(VariantEffect.THREE_PRIME_UTR)
         }
             .fold(Triple(emptySet<String>(), emptySet<String>(), emptySet<String>())) { acc, variant ->
@@ -26,12 +26,12 @@ class GeneHasUTR3Loss(private val gene: String) : EvaluationFunction {
                 }
             }
 
-        val disruptionsIn3UTR = record.molecular.drivers.disruptions.filter { disruption ->
+        val disruptionsIn3UTR = molecular.drivers.disruptions.filter { disruption ->
             disruption.gene == gene && disruption.codingContext == CodingContext.UTR_3P && disruption.regionType == RegionType.EXONIC
         }
             .map(Disruption::event)
             .toSet()
-        
+
         if (hotspotsIn3UTR.isNotEmpty()) {
             return EvaluationFactory.pass(
                 "3' UTR hotspot mutation(s) in " + gene + " should lead to 3' UTR loss: " + concat(hotspotsIn3UTR),
@@ -64,7 +64,7 @@ class GeneHasUTR3Loss(private val gene: String) : EvaluationFunction {
                     disruptionsIn3UTR,
                     "Disruption(s) detected in 3' UTR region of $gene which may lead to 3' UTR loss: ${concat(disruptionsIn3UTR)}",
                     "Disruption(s) in 3' UTR region of $gene may lead to 3' UTR loss"
-            )
+                )
             )
         )
     }

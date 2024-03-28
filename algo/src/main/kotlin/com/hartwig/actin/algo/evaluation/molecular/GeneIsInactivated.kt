@@ -1,27 +1,26 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
-class GeneIsInactivated(private val gene: String) : EvaluationFunction {
-    
-    override fun evaluate(record: PatientRecord): Evaluation {
+class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction {
+
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()
         val inactivationEventsGainOfFunction: MutableSet<String> = mutableSetOf()
-        val evidenceSource = record.molecular.evidenceSource
+        val evidenceSource = molecular.evidenceSource
 
-        val drivers = record.molecular.drivers
+        val drivers = molecular.drivers
         sequenceOf(
             drivers.homozygousDisruptions.asSequence(),
             drivers.copyNumbers.asSequence().filter { it.type == CopyNumberType.LOSS }
@@ -47,7 +46,7 @@ class GeneIsInactivated(private val gene: String) : EvaluationFunction {
         val inactivationSubclonalVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
-        val hasHighMutationalLoad = record.molecular.characteristics.hasHighTumorMutationalLoad
+        val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
         for (variant in drivers.variants) {
             if (variant.gene == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
                 if (!variant.isReportable) {
@@ -172,8 +171,8 @@ class GeneIsInactivated(private val gene: String) : EvaluationFunction {
                     reportableNonDriverNonBiallelicVariantsOther,
                     "Potential inactivation event(s) detected for $gene: ${concat(reportableNonDriverNonBiallelicVariantsOther)}"
                             + " but event(s) are not biallelic and not of high driver likelihood",
-                "Potential inactivation event(s) " + concat(reportableNonDriverNonBiallelicVariantsOther)
-                        + " but not biallelic and no high driver likelihood"
+                    "Potential inactivation event(s) " + concat(reportableNonDriverNonBiallelicVariantsOther)
+                            + " but not biallelic and no high driver likelihood"
                 ),
                 if (eventsThatMayBeTransPhased.size > 1) {
                     EventsWithMessages(

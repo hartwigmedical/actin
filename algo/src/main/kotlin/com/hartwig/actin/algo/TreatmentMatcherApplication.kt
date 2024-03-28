@@ -2,29 +2,31 @@ package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory.create
+import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.medication.AtcTree
+import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
+import java.io.IOException
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
-import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     fun run() {
@@ -34,9 +36,12 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
         ClinicalPrinter.printRecord(clinical)
 
-        LOGGER.info("Loading molecular record from {}", config.molecularJson)
-        val molecular = MolecularRecordJson.read(config.molecularJson)
-        MolecularPrinter.printRecord(molecular)
+        val molecular = config.molecularJson?.let { molecularJson ->
+            LOGGER.info("Loading molecular record from {}", molecularJson)
+            MolecularRecordJson.read(molecularJson)
+        }
+        molecular?.let(MolecularPrinter::printRecord) ?: LOGGER.info("No molecular record provided")
+
         val patient = PatientRecordFactory.fromInputs(clinical, molecular)
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
@@ -51,18 +56,27 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
-        val referenceDateProvider = create(clinical, config.runHistorically)
+        val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
 
         // We assume we never check validity of a gene inside algo.
         val molecularInputChecker = MolecularInputChecker.createAnyGeneValid()
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-        val functionInputResolver = FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase)
-        val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
+        val functionInputResolver =
+            FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
+        val environmentConfiguration =
+            config.overridesYaml?.let { EnvironmentConfiguration.createFromFile(config.overridesYaml) } ?: EnvironmentConfiguration()
+        val resources = RuleMappingResources(
+            referenceDateProvider,
+            doidModel,
+            functionInputResolver,
+            atcTree,
+            treatmentDatabase,
+            environmentConfiguration.algo
+        )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
-
-        val match =
-            TreatmentMatcher.create(resources, trials, evidenceEntries, config.trialSource).evaluateAndAnnotateMatchesForPatient(patient)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries)
+            .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)

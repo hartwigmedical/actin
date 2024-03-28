@@ -17,7 +17,7 @@ class IsEligibleForOnLabelTreatment(
         val recommendationEngine = recommendationEngineFactory.create()
 
         return when {
-            tumorIsCUP(record.clinical.tumor) -> {
+            tumorIsCUP(record.tumor) -> {
                 EvaluationFactory.undetermined(
                     "Tumor type is CUP and eligibility for on-label treatment is therefore undetermined",
                     "Tumor type CUP hence eligibility for on-label treatment undetermined"
@@ -34,7 +34,7 @@ class IsEligibleForOnLabelTreatment(
                 }
             }
 
-            record.clinical.oncologicalHistory.isEmpty() -> {
+            record.oncologicalHistory.isEmpty() -> {
                 EvaluationFactory.undetermined(
                     "Patient has not had any prior cancer treatments and therefore undetermined eligibility for on-label treatment",
                     "Undetermined eligibility for on-label treatment"

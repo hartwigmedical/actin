@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.standard
 
-import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.CurationRequirement
 import com.hartwig.actin.clinical.CurationResult
@@ -12,12 +11,12 @@ import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-@Suppress("UnstableApiUsage")
-val INPUT_JSON: String = Resources.getResource("feed/standard/input").path
-val OUTPUT_RECORD_JSON: String = Resources.getResource("feed/standard/output/ACTN01029999.clinical.json").path
+private val INPUT_JSON = resourceOnClasspath("feed/standard/input")
+private val OUTPUT_RECORD_JSON = resourceOnClasspath("feed/standard/output/ACTN01029999.clinical.json")
 
 class StandardEhrIngestionTest {
 
@@ -65,7 +64,7 @@ class StandardEhrIngestionTest {
                 curationDatabase.treatmentHistoryEntryCuration,
                 curationDatabase.nonOncologicalHistoryCuration
             ),
-            secondPrimaryExtractor = EhrPriorPrimariesExtractor(),
+            secondPrimaryExtractor = EhrPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
 
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(
@@ -76,7 +75,8 @@ class StandardEhrIngestionTest {
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),
             bloodTransfusionExtractor = EhrBloodTransfusionExtractor(),
-            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration)
+            molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
+            dataQualityMask = DataQualityMask()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
         val result = feed.ingest()
@@ -84,7 +84,7 @@ class StandardEhrIngestionTest {
         assertThat(curationDatabase.validate()).isEmpty()
 
         assertThat(result.size).isEqualTo(1)
-        val patientResult = result[0]
+        val patientResult = result.first()
         assertThat(patientResult.first.clinicalRecord).isEqualTo(expected)
         assertThat(patientResult.first.status).isEqualTo(PatientIngestionStatus.WARN_CURATION_REQUIRED)
         assertThat(patientResult.first.curationResults).containsExactlyInAnyOrder(

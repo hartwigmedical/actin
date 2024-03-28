@@ -10,9 +10,11 @@ import org.apache.logging.log4j.core.config.Configurator
 
 data class TrialCreatorConfig(
     val ctcConfigDirectory: String?,
+    val nkiConfigDirectory: String?,
     val trialConfigDirectory: String,
     val treatmentDirectory: String,
     val doidJson: String,
+    val atcTsv: String,
     val knownGenesTsv: String,
     val outputDirectory: String
 ) {
@@ -21,9 +23,11 @@ data class TrialCreatorConfig(
         private val LOGGER: Logger = LogManager.getLogger(TrialCreatorConfig::class.java)
 
         private const val CTC_CONFIG_DIRECTORY = "ctc_config_directory"
+        private const val NKI_CONFIG_DIRECTORY = "nki_config_directory"
         private const val TRIAL_CONFIG_DIRECTORY = "trial_config_directory"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"
+        private const val ATC_TSV = "atc_tsv"
         private const val KNOWN_GENES_TSV = "known_genes_tsv"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val LOG_DEBUG = "log_debug"
@@ -31,9 +35,11 @@ data class TrialCreatorConfig(
         fun createOptions(): Options {
             val options = Options()
             options.addOption(CTC_CONFIG_DIRECTORY, true, "Directory containing the CTC (clinical trial center) config files")
+            options.addOption(NKI_CONFIG_DIRECTORY, true, "Directory containing the NKI config files")
             options.addOption(TRIAL_CONFIG_DIRECTORY, true, "Directory containing the trial config files")
             options.addOption(TREATMENT_DIRECTORY, true, "Directory containing the treatment database")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
+            options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
             options.addOption(KNOWN_GENES_TSV, true, "A TSV containing genes which are allowed as valid genes in trial config")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where treatment data will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
@@ -48,11 +54,13 @@ data class TrialCreatorConfig(
 
             return TrialCreatorConfig(
                 ctcConfigDirectory = ApplicationConfig.optionalDir(cmd, CTC_CONFIG_DIRECTORY),
+                nkiConfigDirectory = ApplicationConfig.optionalDir(cmd, NKI_CONFIG_DIRECTORY),
                 trialConfigDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_CONFIG_DIRECTORY),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 knownGenesTsv = ApplicationConfig.nonOptionalFile(cmd, KNOWN_GENES_TSV),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
         }
     }

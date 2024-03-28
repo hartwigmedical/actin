@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.serialization
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory.createMinimalTestClinicalRecord
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory.createProperTestClinicalRecord
@@ -8,13 +7,14 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.fromJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.read
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.readFromDir
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.toJson
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ClinicalRecordJsonTest {
 
-    private val clinicalDirectory = Resources.getResource("clinical" + File.separator + "records").path
+    private val clinicalDirectory = resourceOnClasspath("clinical" + File.separator + "records")
     private val clinicalJson = clinicalDirectory + File.separator + "patient.clinical.json"
 
     @Test

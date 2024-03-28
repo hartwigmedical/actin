@@ -21,10 +21,10 @@ class EhrTumorDetailsExtractor(
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
         val curatedTumorResponse = CurationResponse.createFromConfigs(
             primaryTumorConfigCurationDatabase.find(input),
-            ehrPatientRecord.patientDetails.hashedIdBase64(), CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
+            ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
         val lesionCurationResponse =
-            extractLesions(ehrPatientRecord.patientDetails.hashedIdBase64(), ehrPatientRecord.tumorDetails.lesionSite)
+            extractLesions(ehrPatientRecord.patientDetails.hashedId, ehrPatientRecord.tumorDetails.lesionSite)
         val curatedLesions = lesionCurationResponse.mapNotNull { it.config() }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         return curatedTumorResponse.config()?.let {
@@ -50,11 +50,17 @@ class EhrTumorDetailsExtractor(
         primaryTumorType = ehrPatientRecord.tumorDetails.tumorType,
         stage = ehrPatientRecord.tumorDetails.tumorStage?.let { TumorStage.valueOf(it) },
         hasBoneLesions = hasLesions(lesions, LesionLocationCategory.BONE),
+        boneLesionsCount = countLesions(lesions, LesionLocationCategory.BONE),
         hasBrainLesions = hasLesions(lesions, LesionLocationCategory.BRAIN),
+        brainLesionsCount = countLesions(lesions, LesionLocationCategory.BRAIN),
         hasLiverLesions = hasLesions(lesions, LesionLocationCategory.LIVER),
+        liverLesionsCount = countLesions(lesions, LesionLocationCategory.LIVER),
         hasLungLesions = hasLesions(lesions, LesionLocationCategory.LUNG),
+        lungLesionsCount = countLesions(lesions, LesionLocationCategory.LUNG),
         hasLymphNodeLesions = hasLesions(lesions, LesionLocationCategory.LYMPH_NODE),
+        lymphNodeLesionsCount = countLesions(lesions, LesionLocationCategory.LYMPH_NODE),
         hasCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS),
+        cnsLesionsCount = countLesions(lesions, LesionLocationCategory.CNS),
         otherLesions = lesions.filter { lesion -> lesion.ignore.not() }.filter { lesion -> lesion.category == null }
             .map { lesion -> lesion.location },
         hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
@@ -63,6 +69,10 @@ class EhrTumorDetailsExtractor(
 
     private fun hasLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Boolean {
         return lesions.any { it.category == location }
+    }
+
+    private fun countLesions(lesions: List<LesionLocationConfig>, location: LesionLocationCategory): Int {
+        return lesions.count { it.category == location }
     }
 
     private fun extractLesions(patientId: String, radiologyReport: String?): List<CurationResponse<LesionLocationConfig>> {

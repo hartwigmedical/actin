@@ -2,14 +2,15 @@ package com.hartwig.actin.clinical.feed.standard
 
 import java.time.LocalDate
 
-const val HASHED_ID_IN_HEX = "f44f6e61b16fa450e32550acf578c3185d4b98ff0fa3a65bf34a589e806b5a0d"
 const val HASHED_ID_IN_BASE64 = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0="
+const val TREATMENT_NAME = "treatmentName"
+const val MODIFICATION_NAME = "modificationName"
 
 object EhrTestData {
 
     fun createEhrPatientRecord() = EhrPatientRecord(
         patientDetails = EhrPatientDetail(
-            hashedId = HASHED_ID_IN_HEX,
+            hashedId = HASHED_ID_IN_BASE64,
             birthYear = 2024,
             gender = "FEMALE",
             registrationDate = LocalDate.of(2024, 2, 23)
@@ -30,4 +31,22 @@ object EhrTestData {
     )
 
 
+    fun createEhrTreatmentHistory() = EhrTreatmentHistory(
+        treatmentName = TREATMENT_NAME,
+        administeredCycles = 1,
+        intendedCycles = 1,
+        startDate = LocalDate.of(2024, 2, 23),
+        administeredInStudy = false,
+        intention = "Palliative",
+        stopReason = "TOXICITY",
+        endDate = LocalDate.of(2024, 2, 27),
+        response = "COMPLETE_RESPONSE",
+        modifications = listOf(
+            createEhrModification()
+        )
+    )
+
+    fun createEhrModification() = EhrTreatmentModification(
+        name = MODIFICATION_NAME, administeredCycles = 2, date = LocalDate.of(2024, 2, 23)
+    )
 }

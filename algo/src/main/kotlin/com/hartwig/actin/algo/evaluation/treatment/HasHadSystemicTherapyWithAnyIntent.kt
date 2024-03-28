@@ -19,7 +19,7 @@ class HasHadSystemicTherapyWithAnyIntent(
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val systemicTreatments = record.clinical.oncologicalHistory.filter { it.allTreatments().any(Treatment::isSystemic) }
+        val systemicTreatments = record.oncologicalHistory.filter { it.allTreatments().any(Treatment::isSystemic) }
         val matchingTreatments = intents?.let { intents ->
             systemicTreatments.groupBy { it.intents?.any { intent -> intent in intents } }
         } ?: systemicTreatments.groupBy { true }

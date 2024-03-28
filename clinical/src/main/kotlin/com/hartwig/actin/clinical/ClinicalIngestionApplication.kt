@@ -63,7 +63,10 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
 
         val ingestionResult = clinicalIngestionAdapter.run()
         LOGGER.info("Writing {} clinical records to {}", ingestionResult.patientResults.size, outputDirectory)
-        ClinicalRecordJson.write(ingestionResult.patientResults.map { it.clinicalRecord }, outputDirectory)
+        ClinicalRecordJson.write(
+            ingestionResult.patientResults.map { it.clinicalRecord },
+            outputDirectory
+        )
         LOGGER.info("Done!")
 
         writeIngestionResults(outputDirectory, ingestionResult)
@@ -80,7 +83,6 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
             }
             LOGGER.warn("Summary complete.")
         }
-
     }
 
     private fun writeIngestionResults(outputDirectory: String, results: IngestionResult) {

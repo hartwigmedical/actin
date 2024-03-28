@@ -1,10 +1,11 @@
 package com.hartwig.actin.trial.input
 
-import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
+import com.hartwig.actin.trial.datamodel.ATC_CODE_1
+import com.hartwig.actin.trial.datamodel.ATC_CODE_2
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.composite.CompositeInput
@@ -32,7 +33,7 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 }
             }
         } else {
-            createForInputs(FunctionInputMapping.RULE_INPUT_MAP[rule]!!)
+            createForInputs(rule.input!!)
         }
     }
 
@@ -78,9 +79,9 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("CAPECITABINE+OXALIPLATIN", "1")
             }
 
-            FunctionInput.ONE_SPECIFIC_TREATMENT_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
+            FunctionInput.ONE_SPECIFIC_DRUG_ONE_TREATMENT_CATEGORY_MANY_TYPES -> {
                 listOf(
-                    "CAPECITABINE+OXALIPLATIN",
+                    "CAPECITABINE",
                     TreatmentCategory.CHEMOTHERAPY.display(),
                     "${DrugType.ALKYLATING_AGENT};${DrugType.ANTIMETABOLITE}"
                 )
@@ -130,8 +131,8 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("1", "string1;string2")
             }
 
-            FunctionInput.ONE_TUMOR_STAGE -> {
-                listOf(TumorStage.I.display())
+            FunctionInput.MANY_TUMOR_STAGES -> {
+                listOf("I;II")
             }
 
             FunctionInput.ONE_HLA_ALLELE -> {
@@ -188,6 +189,22 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
 
             FunctionInput.MANY_INTENTS -> {
                 listOf(Intent.ADJUVANT.display() + ";" + Intent.NEOADJUVANT.display())
+            }
+
+            FunctionInput.ONE_MEDICATION_CATEGORY -> {
+                listOf(ATC_CODE_1)
+            }
+
+            FunctionInput.ONE_MEDICATION_CATEGORY_ONE_INTEGER -> {
+                listOf(ATC_CODE_1, "1")
+            }
+
+            FunctionInput.MANY_MEDICATION_CATEGORIES_ONE_INTEGER -> {
+                listOf("$ATC_CODE_1;$ATC_CODE_2", "1")
+            }
+
+            FunctionInput.MANY_MEDICATION_CATEGORIES_TWO_INTEGERS -> {
+                listOf("$ATC_CODE_1;$ATC_CODE_2", "1", "2")
             }
         }
     }

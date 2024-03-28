@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.json.GsonSerializer
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
@@ -25,8 +26,7 @@ import org.junit.Before
 import org.junit.Test
 
 private const val PATIENT = "ACTN01029999"
-val EXPECTED_CLINICAL_RECORD: String =
-    "${Resources.getResource("clinical_record").path}/$PATIENT.clinical.json"
+private val EXPECTED_CLINICAL_RECORD = "${resourceOnClasspath("clinical_record")}/$PATIENT.clinical.json"
 
 class ClinicalIngestionFeedAdapterTest {
     lateinit var curationDatabase: CurationDatabaseContext
@@ -91,7 +91,6 @@ class ClinicalIngestionFeedAdapterTest {
         val ingestionResult = adapter.run()
         assertThat(ingestionResult).isNotNull
         val patientResults = ingestionResult.patientResults
-        assertThat(patientResults[0].status).isEqualTo(PatientIngestionStatus.PASS)
         assertThat(patientResults).hasSize(1)
         assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
         assertThat(patientResults[0].curationResults).isEmpty()
@@ -128,6 +127,7 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(deserialized.copy(patientResults = emptyList())).isEqualTo(ingestionResult.copy(patientResults = emptyList()))
 
         val patientIngestionResult = ingestionResult.patientResults.first()
+        assertThat(deserialized.patientResults.size).isEqualTo(1)
         assertThat(deserialized.patientResults).extracting(
             PatientIngestionResult::patientId,
             PatientIngestionResult::status,

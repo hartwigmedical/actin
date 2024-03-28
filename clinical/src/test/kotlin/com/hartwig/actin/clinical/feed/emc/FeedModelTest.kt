@@ -1,96 +1,64 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.feed.emc.FeedModel.Companion.fromFeedDirectory
-import org.junit.Assert
-import org.junit.Test
 import java.io.IOException
 import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 class FeedModelTest {
+    private val model: FeedModel = TestFeedFactory.createProperTestFeedModel()
+    private val feedRecord: FeedRecord = model.read().single()
 
     @Test
     @Throws(IOException::class)
     fun `Should correctly create from feed directory`() {
-        Assert.assertNotNull(fromFeedDirectory(CLINICAL_FEED_DIRECTORY))
-    }
-
-    @Test(expected = IllegalStateException::class)
-    fun `Should crash on invalid subject`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        model.patientEntry("does not exist")
-    }
-
-    @Test
-    fun `Should be able to retrieve subjects`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        val subjects: Set<String> = model.subjects()
-        Assert.assertEquals(1, subjects.size.toLong())
-        Assert.assertTrue(subjects.contains(TestFeedFactory.TEST_SUBJECT))
-    }
-
-    @Test
-    fun `Should be able to retrieve patient entry`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        Assert.assertNotNull(model.patientEntry(TestFeedFactory.TEST_SUBJECT))
+        assertThat(fromFeedDirectory(FEED_DIRECTORY)).isNotNull()
     }
 
     @Test
     fun `Should be able to retrieve toxicity questionnaire entries`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        val toxicities = model.toxicityEntries(TestFeedFactory.TEST_SUBJECT)
-        Assert.assertEquals(3, toxicities.size.toLong())
+        val toxicities = feedRecord.toxicityEntries
+        assertThat(toxicities.size).isEqualTo(3)
     }
 
     @Test
     fun `Should be able to determine latest questionnaire`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        val latest = model.latestQuestionnaireEntry(TestFeedFactory.TEST_SUBJECT)
-        Assert.assertNotNull(latest)
-        Assert.assertEquals(LocalDate.of(2021, 8, 1), latest!!.authored)
-        Assert.assertNull(model.latestQuestionnaireEntry("Does not exist"))
+        val latest = feedRecord.latestQuestionnaireEntry
+        assertThat(latest).isNotNull()
+        assertThat(latest!!.authored).isEqualTo(LocalDate.of(2021, 8, 1))
     }
 
     @Test
     fun `Should be able to retrieve unique surgery entries`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        Assert.assertEquals(1, model.uniqueSurgeryEntries(TestFeedFactory.TEST_SUBJECT).size.toLong())
+        assertThat(feedRecord.uniqueSurgeryEntries.size).isEqualTo(1)
     }
 
     @Test
     fun `Should be able to retrieve medication entries`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        Assert.assertNotNull(model.medicationEntries(TestFeedFactory.TEST_SUBJECT))
+        assertThat(feedRecord.medicationEntries).isNotNull()
     }
 
     @Test
     fun `Should be able to retrieve lab entries`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        Assert.assertNotNull(model.labEntries(TestFeedFactory.TEST_SUBJECT))
+        assertThat(feedRecord.labEntries).isNotNull()
     }
 
     @Test
     fun `Should be able to retrieve unique vital function entries`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        Assert.assertNotNull(model.vitalFunctionEntries(TestFeedFactory.TEST_SUBJECT))
-        Assert.assertEquals(3, model.vitalFunctionEntries(TestFeedFactory.TEST_SUBJECT).size.toLong())
-        Assert.assertEquals("Diastolic blood pressure", model.vitalFunctionEntries(TestFeedFactory.TEST_SUBJECT)[2].componentCodeDisplay)
+        assertThat(feedRecord.uniqueVitalFunctionEntries)
+        assertThat(feedRecord.uniqueVitalFunctionEntries.size).isEqualTo(3)
+        assertThat(feedRecord.uniqueVitalFunctionEntries[2].componentCodeDisplay).isEqualTo("Diastolic blood pressure")
     }
 
     @Test
     fun `Should be able to retrieve intolerance entries`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        Assert.assertNotNull(model.intoleranceEntries(TestFeedFactory.TEST_SUBJECT))
+        assertThat(feedRecord.intoleranceEntries).isNotNull()
     }
 
     @Test
     fun `Should be able to retrieve unique body weight entries`() {
-        val model = TestFeedFactory.createProperTestFeedModel()
-        Assert.assertNotNull(model.uniqueBodyWeightEntries(TestFeedFactory.TEST_SUBJECT))
-        Assert.assertEquals(3, model.uniqueBodyWeightEntries(TestFeedFactory.TEST_SUBJECT).size.toLong())
-    }
-
-    companion object {
-        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed/emc").path
+        assertThat(feedRecord.uniqueBodyWeightEntries).isNotNull()
+        assertThat(feedRecord.uniqueBodyWeightEntries.size).isEqualTo(3)
     }
 }
