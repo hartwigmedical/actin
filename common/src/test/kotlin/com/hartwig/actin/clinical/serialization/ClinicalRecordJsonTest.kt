@@ -19,7 +19,6 @@ class ClinicalRecordJsonTest {
 
     @Test
     fun `Should be able to convert clinical JSON back and forth`() {
-        // TODO use proper, not minimal
         val minimal = createMinimalTestClinicalRecord()
         val convertedMinimal = fromJson(toJson(minimal))
         assertThat(convertedMinimal).isEqualTo(minimal)
@@ -47,7 +46,6 @@ class ClinicalRecordJsonTest {
     }
 
     private fun assertClinicalRecord(record: ClinicalRecord) {
-        // TODO directly compare to the "proper" record above
         assertThat(record.patientId).isEqualTo("ACTN01029999")
         assertThat(record.priorSecondPrimaries).hasSize(1)
         assertThat(record.priorOtherConditions).hasSize(1)

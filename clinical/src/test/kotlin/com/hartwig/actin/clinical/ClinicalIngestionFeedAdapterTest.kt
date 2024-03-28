@@ -30,7 +30,7 @@ val EXPECTED_CLINICAL_RECORD: String =
 
 class ClinicalIngestionFeedAdapterTest {
     lateinit var curationDatabase: CurationDatabaseContext
-    lateinit var victim: ClinicalIngestionFeedAdapter
+    private lateinit var adapter: ClinicalIngestionFeedAdapter
 
     @Before
     fun setup() {
@@ -57,7 +57,7 @@ class ClinicalIngestionFeedAdapterTest {
             ),
             TestTreatmentDatabaseFactory.createProper()
         )
-        victim = ClinicalIngestionFeedAdapter(
+        adapter = ClinicalIngestionFeedAdapter(
             EmcClinicalFeedIngestor.create(
                 FEED_DIRECTORY,
                 CURATION_DIRECTORY,
@@ -67,22 +67,11 @@ class ClinicalIngestionFeedAdapterTest {
         )
     }
 
-    @Test
-    fun `Questionnaire in feed should be of latest version`() {
-        val feed = FeedModel(
-            ClinicalFeedReader.read(FEED_DIRECTORY)
-        )
-        val versionUnderTest = QuestionnaireVersion.version(feed.latestQuestionnaireEntry(PATIENT)!!)
-        val latestVersion = QuestionnaireVersion.values().last()
-
-        assertThat(versionUnderTest).isNotNull()
-        assertThat(versionUnderTest).isEqualTo(latestVersion)
-    }
 
     @Test
     fun `Output should not have changed`() {
         val jsonMapper = ObjectMapper()
-        val ingestionResult = victim.run()
+        val ingestionResult = adapter.run()
         assertThat(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText())).isEqualTo(
             jsonMapper.readTree(
                 ClinicalRecordJson.toJson(
@@ -94,10 +83,12 @@ class ClinicalIngestionFeedAdapterTest {
 
     @Test
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
+        assertQuestionnaireInFeedIsOfLatestVersion()
+
         val validationErrors = curationDatabase.validate()
         assertThat(validationErrors).isEmpty()
 
-        val ingestionResult = victim.run()
+        val ingestionResult = adapter.run()
         assertThat(ingestionResult).isNotNull
         val patientResults = ingestionResult.patientResults
         assertThat(patientResults[0].status).isEqualTo(PatientIngestionStatus.PASS)
@@ -155,5 +146,16 @@ class ClinicalIngestionFeedAdapterTest {
                     patientIngestionResult.feedValidationWarnings
                 )
             )
+    }
+
+    fun assertQuestionnaireInFeedIsOfLatestVersion() {
+        val feed = FeedModel(
+            ClinicalFeedReader.read(FEED_DIRECTORY)
+        )
+        val versionUnderTest = QuestionnaireVersion.version(feed.latestQuestionnaireEntry(PATIENT)!!)
+        val latestVersion = QuestionnaireVersion.values().last()
+
+        assertThat(versionUnderTest).isNotNull()
+        assertThat(versionUnderTest).isEqualTo(latestVersion)
     }
 }
