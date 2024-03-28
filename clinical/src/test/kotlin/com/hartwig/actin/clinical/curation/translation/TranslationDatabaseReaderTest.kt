@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.translation
 
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

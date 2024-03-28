@@ -1,6 +1,6 @@
 package com.hartwig.actin.util
 
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalDir
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalFile
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalValue

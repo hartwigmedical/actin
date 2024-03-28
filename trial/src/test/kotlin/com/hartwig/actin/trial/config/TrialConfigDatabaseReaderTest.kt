@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.config
 
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

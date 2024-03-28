@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.status.nki
 
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.trial.status.TrialStatus
 import com.hartwig.actin.trial.status.TrialStatusEntry
 import org.assertj.core.api.Assertions.assertThat

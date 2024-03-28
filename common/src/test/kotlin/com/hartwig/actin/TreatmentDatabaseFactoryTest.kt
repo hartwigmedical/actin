@@ -1,7 +1,7 @@
 package com.hartwig.actin
 
 import com.hartwig.actin.TreatmentDatabaseFactory.createFromPath
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.nio.file.NoSuchFileException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

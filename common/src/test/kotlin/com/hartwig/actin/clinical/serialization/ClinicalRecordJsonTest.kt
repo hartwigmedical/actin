@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.fromJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.read
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.readFromDir
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson.toJson
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

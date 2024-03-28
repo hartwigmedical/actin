@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.status.config
 
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.trial.status.TrialStatus
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.TrialStatusEntry

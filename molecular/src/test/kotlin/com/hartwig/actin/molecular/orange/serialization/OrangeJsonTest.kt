@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.serialization
 
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.hmftools.datamodel.OrangeJson
 import org.junit.Assert.assertNotNull
 import org.junit.Test

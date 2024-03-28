@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.correction
 
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper.Companion.createFromCurationDirectory
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.io.IOException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

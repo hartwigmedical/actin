@@ -7,7 +7,7 @@ import com.hartwig.actin.doid.datamodel.Edge
 import com.hartwig.actin.doid.datamodel.Node
 import com.hartwig.actin.doid.datamodel.Synonym
 import com.hartwig.actin.doid.datamodel.Xref
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.time.LocalDate
 
 val CURATION_DIRECTORY: String = resourceOnClasspath("curation") + "/"

@@ -36,7 +36,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.fromJson
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.read
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.toJson
-import com.hartwig.actin.testutil.resourceOnClasspath
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.io.File
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
