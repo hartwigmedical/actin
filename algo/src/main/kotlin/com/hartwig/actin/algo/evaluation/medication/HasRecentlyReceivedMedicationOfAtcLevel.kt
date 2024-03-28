@@ -23,13 +23,15 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
             )
         }
 
-        val medications = selector.activeOrRecentlyStopped(record.medications, minStopDate)
-                .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val activeOrRecentlyStopped = selector.activeOrRecentlyStopped(medications, minStopDate)
+            .filter { (it.allLevels() intersect categoryAtcLevels).isNotEmpty() }
 
-        val foundMedicationNames = medications.map { it.name }.filter { it.isNotEmpty() }
+        val foundMedicationNames = activeOrRecentlyStopped.map { it.name }.filter { it.isNotEmpty() }
 
-        return if (medications.isNotEmpty()) {
-            val foundMedicationString = if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
+        return if (activeOrRecentlyStopped.isNotEmpty()) {
+            val foundMedicationString =
+                if (foundMedicationNames.isNotEmpty()) ": ${concatLowercaseWithAnd(foundMedicationNames)}" else ""
             EvaluationFactory.recoverablePass(
                 "Patient recently received medication$foundMedicationString which belong(s) to category '$categoryName'",
                 "Recent $categoryName medication use$foundMedicationString"
@@ -40,6 +42,5 @@ class HasRecentlyReceivedMedicationOfAtcLevel(
                 "No recent $categoryName medication use"
             )
         }
-
     }
 }

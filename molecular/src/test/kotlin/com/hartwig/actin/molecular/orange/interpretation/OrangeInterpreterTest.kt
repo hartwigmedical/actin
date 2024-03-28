@@ -17,9 +17,9 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class OrangeInterpreterTest {
 
@@ -146,6 +146,36 @@ class OrangeInterpreterTest {
         val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
             .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
                 .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
+    @Test
+    fun `Should accept empty list as scrubbed for germline disruption`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withGermlineHomozygousDisruptions(emptyList()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
+    @Test
+    fun `Should accept empty list as scrubbed for germline breakends`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withAllGermlineBreakends(emptyList()))
+        val interpreter = createTestInterpreter()
+        interpreter.interpret(record)
+    }
+
+    @Test
+    fun `Should accept empty list as for scrubbed germline SV`() {
+        val proper = TestOrangeFactory.createProperTestOrangeRecord()
+        val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
+            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
+                .withAllGermlineStructuralVariants(emptyList()))
         val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }

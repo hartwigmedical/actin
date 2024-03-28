@@ -2,6 +2,7 @@ package com.hartwig.actin.report
 
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.report.datamodel.ReportFactory
@@ -28,7 +29,8 @@ class ReporterApplication(private val config: ReporterConfig) {
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
-        val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch)
+        val environmentConfig = config.overrideYaml?.let { EnvironmentConfiguration.createFromFile(it) } ?: EnvironmentConfiguration()
+        val report = ReportFactory.fromInputs(clinical, molecular, treatmentMatch, environmentConfig.report)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, config.enableExtendedMode)
         LOGGER.info("Done!")

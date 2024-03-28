@@ -93,11 +93,11 @@ class OrangeInterpreter(private val geneFilter: GeneFilter) {
             val message = ("must be null or empty because ACTIN only accepts ORANGE output that has been "
                     + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
             val allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants()
-            check(allGermlineStructuralVariants == null) { "allGermlineStructuralVariants $message" }
+            check(allGermlineStructuralVariants.isNullOrEmpty()) { "allGermlineStructuralVariants $message" }
             val allGermlineBreakends = orange.linx().allGermlineBreakends()
-            check(allGermlineBreakends == null) { "allGermlineBreakends $message" }
+            check(allGermlineBreakends.isNullOrEmpty()) { "allGermlineBreakends $message" }
             val germlineHomozygousDisruptions = orange.linx().germlineHomozygousDisruptions()
-            check(germlineHomozygousDisruptions == null) { "germlineHomozygousDisruptions $message" }
+            check(germlineHomozygousDisruptions.isNullOrEmpty()) { "germlineHomozygousDisruptions $message" }
         }
 
         private fun throwIfAnyCuppaPredictionClassifierMissing(orange: OrangeRecord) {

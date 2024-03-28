@@ -14,7 +14,8 @@ object ActinTrialContentFunctions {
             cohorts.map(feedbackFunction).reduce { acc, set -> acc.intersect(set) }
         } else emptySet()
         val prefix = if (commonFeedback.isEmpty()) emptyList() else {
-            listOf(ContentDefinition(listOf("Applies to all cohorts below", "", concat(commonFeedback)), false))
+            val deEmphasizeContent = cohorts.all { !it.isOpen || !it.hasSlotsAvailable }
+            listOf(ContentDefinition(listOf("Applies to all cohorts below", "", concat(commonFeedback)), deEmphasizeContent))
         }
         return prefix + cohorts.map { cohort: EvaluatedCohort ->
             ContentDefinition(

@@ -16,10 +16,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import java.time.LocalDate
 
 private const val PREVIOUS_CONDITION = "previous_condition"
 
@@ -259,5 +259,24 @@ class EhrTreatmentHistoryExtractorTest {
             )
         )
         assertThat(result.evaluation.treatmentHistoryEntryEvaluatedInputs).containsExactly(PREVIOUS_CONDITION)
+    }
+
+    @Test
+    fun `Should ignore entries when configured and curated is null`() {
+        every { nonOncologicalHistoryCuration.find(TREATMENT_NAME) } returns emptySet()
+        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(
+                ignore = true,
+                input = TREATMENT_NAME,
+                curated = null
+            )
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                treatmentHistory = listOf(TREATMENT_HISTORY),
+            )
+        )
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.treatmentHistoryEntryEvaluatedInputs).containsExactly(TREATMENT_NAME.lowercase())
     }
 }

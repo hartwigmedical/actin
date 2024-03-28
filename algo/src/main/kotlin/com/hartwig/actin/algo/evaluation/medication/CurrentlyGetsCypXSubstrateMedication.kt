@@ -10,16 +10,21 @@ import com.hartwig.actin.clinical.datamodel.CypInteraction
 class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelector, private val termToFind: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
         val cypSubstratesReceived =
-            selector.activeWithCypInteraction(record.medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
+            selector.activeWithCypInteraction(medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
 
         val cypSubstratesPlanned =
-            selector.plannedWithCypInteraction(record.medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
+            selector.plannedWithCypInteraction(medications, termToFind, CypInteraction.Type.SUBSTRATE).map { it.name }
 
         return when {
             cypSubstratesReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Patient currently gets CYP$termToFind substrate medication: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}",
+                    "Patient currently gets CYP$termToFind substrate medication: ${
+                        Format.concatLowercaseWithAnd(
+                            cypSubstratesReceived
+                        )
+                    }",
                     "CYP$termToFind substrate medication use: ${Format.concatLowercaseWithAnd(cypSubstratesReceived)}"
                 )
             }
