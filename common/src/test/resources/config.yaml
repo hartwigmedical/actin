@@ -1,2 +1,4 @@
+algo:
+  warnIfToxicitiesNotFromQuestionnaire: false
 report:
   showClinicalSummary: false
