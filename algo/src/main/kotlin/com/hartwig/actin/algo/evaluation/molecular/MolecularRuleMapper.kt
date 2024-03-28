@@ -1,20 +1,17 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.composite.Or
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
-import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
             EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to anyGeneHasDriverEventWithApprovedTherapyCreator(),
-            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to hasMolecularEventInAnyGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
+            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
@@ -66,43 +63,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { AnyGeneHasDriverEventWithApprovedTherapy() }
     }
 
-    private fun hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(genesToIgnore: List<String>): EvaluationFunction {
-        val filteredVariantMap = NSCLC_SOC_TARGETABLE_VARIANTS.mapValues { (_, variants) ->
-            variants.filterNot { stringCaseInsensitivelyMatchesQueryCollection(it, genesToIgnore) }
-        }
-
-        return Or(listOf(
-            Or(filteredVariantMap["Activating variant in gene"]?.map { GeneHasActivatingMutation(it, null) } ?: emptyList()),
-            Or(filteredVariantMap["Exon skipping"]?.map {
-                val parts = it.split(" ")
-                GeneHasSpecificExonSkipping(parts.first(), parts.elementAt(2).toInt())
-            } ?: emptyList()),
-            Or(filteredVariantMap["Fusions"]?.map { HasFusionInGene(it) } ?: emptyList()),
-            Or(filteredVariantMap["Variants"]?.map {
-                val parts = it.split(" ")
-                GeneHasVariantWithProteinImpact(parts.first(), listOf(parts.elementAt(2)))
-            } ?: emptyList()),
-            Or(filteredVariantMap["Deletions"]?.map {
-                val parts = it.split(" ")
-                val exon = parts.elementAt(2).toInt()
-                GeneHasVariantInExonRangeOfType(parts.first(), exon, exon, VariantTypeInput.DELETE)
-            } ?: emptyList()),
-            Or(filteredVariantMap["Insertions"]?.map {
-                val parts = it.split(" ")
-                val exon = parts.elementAt(2).toInt()
-                GeneHasVariantInExonRangeOfType(parts.first(), exon, exon, VariantTypeInput.INSERT)
-            } ?: emptyList()))
-        )
-    }
-
-    private fun hasMolecularEventInAnyGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
-        return FunctionCreator { hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(emptyList()) }
+    private fun hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
+        return FunctionCreator { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptyList()) }
     }
 
     private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(genes.geneNames)
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.geneNames)
         }
     }
 
@@ -387,15 +355,5 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             "G724S",
             "L718X",
             "T854I",
-        )
-
-    private val NSCLC_SOC_TARGETABLE_VARIANTS =
-        mapOf(
-            "Deletions" to listOf("EGFR 19"),
-            "Insertions" to listOf("EGFR 20"),
-            "Variants with protein impact" to listOf("EGFR L858R", "BRAF V600E"),
-            "Activating variant in gene" to listOf("EGFR"),
-            "Fusions" to listOf("ROS1", "ALK", "RET", "NTRK"),
-            "Exon skipping" to listOf("MET 14")
         )
 }
