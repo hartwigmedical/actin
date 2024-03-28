@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
-import com.hartwig.actin.report.ReportConfiguration
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
