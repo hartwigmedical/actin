@@ -42,7 +42,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         } else null
 
         val chapters = listOfNotNull(
-            SummaryChapter(report, config.localTrialThreshold),
+            SummaryChapter(report),
             MolecularDetailsChapter(report),
             ClinicalDetailsChapter(report),
             TrialMatchingChapter(report, enableExtendedMode),
