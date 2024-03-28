@@ -19,14 +19,14 @@ import com.hartwig.actin.molecular.serialization.MolecularRecordJson
 import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import java.io.IOException
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.IOException
+import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     fun run() {
@@ -64,13 +64,18 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val functionInputResolver =
             FunctionInputResolver(doidModel, molecularInputChecker, treatmentDatabase, MedicationCategories.create(atcTree))
-        val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
-        val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
-
-        val overrides =
+        val environmentConfiguration =
             config.overridesYaml?.let { EnvironmentConfiguration.createFromFile(config.overridesYaml) } ?: EnvironmentConfiguration()
-
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, overrides.algo.trialSource)
+        val resources = RuleMappingResources(
+            referenceDateProvider,
+            doidModel,
+            functionInputResolver,
+            atcTree,
+            treatmentDatabase,
+            environmentConfiguration.algo
+        )
+        val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries)
             .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)

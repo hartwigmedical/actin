@@ -7,7 +7,9 @@ class RecommendationEngineFactory(private val resources: RuleMappingResources) {
 
     fun create(): RecommendationEngine {
         return RecommendationEngine(
-            resources.doidModel, TreatmentCandidateDatabase(resources.treatmentDatabase), EvaluationFunctionFactory.create(resources)
+            resources.doidModel,
+            TreatmentCandidateDatabase(resources.treatmentDatabase),
+            EvaluationFunctionFactory.create(resources)
         )
     }
 }

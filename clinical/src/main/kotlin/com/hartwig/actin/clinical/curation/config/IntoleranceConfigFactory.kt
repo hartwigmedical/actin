@@ -12,7 +12,7 @@ class IntoleranceConfigFactory(private val curationDoidValidator: CurationDoidVa
         } else {
             null to emptyList()
         }
-        val treatmentCategories = TreatmentCategoryResolver.fromStringList(parts[fields["treatmentCategory"]!!])
+        val treatmentCategories = TreatmentCategoryResolver.fromStringList(parts[fields["treatmentCategories"]!!])
         // TODO Should consider how to model "we know for certain this patient has no intolerances".
         return ValidatedCurationConfig(
             IntoleranceConfig(input = input, name = parts[fields["name"]!!], doids = doids ?: emptySet(), treatmentCategories = treatmentCategories), doidValidationErrors

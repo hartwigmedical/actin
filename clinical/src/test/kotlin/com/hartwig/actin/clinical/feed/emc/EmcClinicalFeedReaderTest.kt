@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader.read
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
@@ -11,22 +10,21 @@ import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
-import java.io.IOException
-import java.time.LocalDate
-import java.time.LocalDateTime
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.apache.logging.log4j.util.Strings
 import org.junit.Test
-
+import java.io.IOException
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class EmcClinicalFeedReaderTest {
     @Test
     @Throws(IOException::class)
     fun canReadFromTestDirectory() {
-        val feed = read(CLINICAL_FEED_DIRECTORY)
+        val feed = read(FEED_DIRECTORY)
         assertPatients(feed.patientEntries)
         assertQuestionnaires(feed.questionnaireEntries)
         assertSurgeries(feed.surgeryEntries)
@@ -38,7 +36,6 @@ class EmcClinicalFeedReaderTest {
     }
 
     companion object {
-        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed/emc").path
         private const val EPSILON = 1.0E-10
         private const val PATIENT = "ACTN01029999"
 
