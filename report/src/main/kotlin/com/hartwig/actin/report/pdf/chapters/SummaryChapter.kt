@@ -127,7 +127,7 @@ class SummaryChapter(private val report: Report, private val localTrialThreshold
                     EligibleOtherCountriesExternalTrialsGenerator(
                         molecular.externalTrialSource,
                         otherTrials.filterKeys {
-                            !otherTrials.containsKey(it) || evaluated.flatMap { e -> e.molecularEvents }.contains(it)
+                            !dutchTrials.containsKey(it) && !evaluated.flatMap { e -> e.molecularEvents }.contains(it)
                         },
                         contentWidth()
                     )
