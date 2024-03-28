@@ -12,12 +12,12 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.TestQuestionnaireFactory
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 private const val TEST_SUBJECT = "ACTN-01-02-9999"
-val FEED_DIRECTORY = ResourceLocator().onClasspath("feed/emc") + "/"
+val FEED_DIRECTORY = resourceOnClasspath("feed/emc") + "/"
 
 object TestFeedFactory {
 

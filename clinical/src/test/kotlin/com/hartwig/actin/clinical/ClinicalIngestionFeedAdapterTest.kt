@@ -12,14 +12,14 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationEr
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import com.hartwig.actin.util.json.GsonSerializer
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
 
 private const val PATIENT = "ACTN01029999"
-private val EXPECTED_CLINICAL_RECORD = "${ResourceLocator().onClasspath("clinical_record")}/$PATIENT.clinical.json"
+private val EXPECTED_CLINICAL_RECORD = "${resourceOnClasspath("clinical_record")}/$PATIENT.clinical.json"
 
 class ClinicalIngestionFeedAdapterTest {
 

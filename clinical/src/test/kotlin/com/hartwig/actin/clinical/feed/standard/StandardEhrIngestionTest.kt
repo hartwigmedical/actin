@@ -11,12 +11,12 @@ import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val INPUT_JSON = ResourceLocator().onClasspath("feed/standard/input")
-private val OUTPUT_RECORD_JSON = ResourceLocator().onClasspath("feed/standard/output/ACTN01029999.clinical.json")
+private val INPUT_JSON = resourceOnClasspath("feed/standard/input")
+private val OUTPUT_RECORD_JSON = resourceOnClasspath("feed/standard/output/ACTN01029999.clinical.json")
 
 class StandardEhrIngestionTest {
 

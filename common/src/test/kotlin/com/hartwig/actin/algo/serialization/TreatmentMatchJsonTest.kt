@@ -8,14 +8,14 @@ import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.fromJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.read
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TreatmentMatchJsonTest {
 
-    private val algoDirectory = ResourceLocator().onClasspath("algo")
+    private val algoDirectory = resourceOnClasspath("algo")
     private val treatmentMatchJson = algoDirectory + File.separator + "patient.treatment_match.json"
 
     @Test

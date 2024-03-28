@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
@@ -50,6 +50,6 @@ class TreatmentDatabaseTest {
     }
 
     private fun treatmentDatabase(): TreatmentDatabase {
-        return TreatmentDatabaseFactory.createFromPath(ResourceLocator().onClasspath("clinical"))
+        return TreatmentDatabaseFactory.createFromPath(resourceOnClasspath("clinical"))
     }
 }

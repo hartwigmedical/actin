@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.status.config
 
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import com.hartwig.actin.trial.status.TrialStatus
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.TrialStatusEntry
@@ -21,7 +21,7 @@ class TrialStatusDatabaseReaderTest {
     }
 
     companion object {
-        private val CTC_CONFIG_DIRECTORY = ResourceLocator().onClasspath("ctc_config")
+        private val CTC_CONFIG_DIRECTORY = resourceOnClasspath("ctc_config")
 
         private fun assertEntries(entries: List<TrialStatusEntry>) {
             assertThat(entries).hasSize(2)

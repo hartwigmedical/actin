@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.config
 
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -16,7 +16,7 @@ class TrialConfigDatabaseReaderTest {
     }
 
     companion object {
-        private val TRIAL_CONFIG_DIRECTORY = ResourceLocator().onClasspath("trial_config")
+        private val TRIAL_CONFIG_DIRECTORY = resourceOnClasspath("trial_config")
 
         private fun assertTrialDefinitionConfigs(configs: List<TrialDefinitionConfig>) {
             assertThat(configs).hasSize(2)

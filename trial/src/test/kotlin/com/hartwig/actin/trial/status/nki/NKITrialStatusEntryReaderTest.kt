@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.status.nki
 
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import com.hartwig.actin.trial.status.TrialStatus
 import com.hartwig.actin.trial.status.TrialStatusEntry
 import org.assertj.core.api.Assertions.assertThat
@@ -11,7 +11,7 @@ class NKITrialStatusEntryReaderTest {
     @Test
     fun `Should read all trial status from JSON`() {
         val reader = NKITrialStatusEntryReader()
-        val status = reader.read(ResourceLocator().onClasspath("nki_config"))
+        val status = reader.read(resourceOnClasspath("nki_config"))
         assertThat(status).containsExactly(
             TrialStatusEntry(
                 studyId = 1,

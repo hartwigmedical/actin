@@ -7,13 +7,13 @@ import com.hartwig.actin.doid.datamodel.Edge
 import com.hartwig.actin.doid.datamodel.Node
 import com.hartwig.actin.doid.datamodel.Synonym
 import com.hartwig.actin.doid.datamodel.Xref
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DoidJsonTest {
 
-    private val doidExampleFileJson = ResourceLocator().onClasspath("doid/example_doid.json")
+    private val doidExampleFileJson = resourceOnClasspath("doid/example_doid.json")
 
     @Test
     fun `Should extract doid from URL`() {

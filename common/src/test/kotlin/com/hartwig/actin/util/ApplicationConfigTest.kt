@@ -1,6 +1,6 @@
 package com.hartwig.actin.util
 
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalDir
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalFile
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalValue
@@ -13,9 +13,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ApplicationConfigTest {
-    private val locator = ResourceLocator()
-    private val configDirectory = locator.onClasspath("config")
-    private val configFile = locator.onClasspath("config/file.empty")
+    private val configDirectory = resourceOnClasspath("config")
+    private val configFile = resourceOnClasspath("config/file.empty")
 
     @Test
     fun `Should retrieve directory from config`() {

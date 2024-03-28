@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.serialization
 
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import com.hartwig.actin.trial.datamodel.Cohort
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
@@ -15,7 +15,7 @@ import org.junit.Test
 
 class TrialJsonTest {
 
-    private val trialDirectory = ResourceLocator().onClasspath("treatment")
+    private val trialDirectory = resourceOnClasspath("treatment")
 
     @Test
     fun `Should convert to and from JSON`() {

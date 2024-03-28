@@ -3,14 +3,14 @@ package com.hartwig.actin.clinical.curation
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import java.time.LocalDate
 
-val CURATION_DIRECTORY: String = ResourceLocator().onClasspath("curation") + "/"
+val CURATION_DIRECTORY: String = resourceOnClasspath("curation") + "/"
 
 object TestCurationFactory {
 
-    fun curationHeaders(tsv: String) = CurationConfigFile.readTsv(ResourceLocator().onClasspath("curation") + "/" + tsv).second
+    fun curationHeaders(tsv: String) = CurationConfigFile.readTsv(CURATION_DIRECTORY + tsv).second
 
     fun emptyQuestionnaire(): Questionnaire {
         return Questionnaire(

@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.curation.CurationWarning
 import com.hartwig.actin.clinical.curation.TestCurationFactory
 import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.feed.emc.intolerance.IntoleranceEntry
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -28,10 +28,9 @@ private const val ATC = "N02BE01"
 private const val CANNOT_CURATE = "Cannot curate"
 
 class IntoleranceExtractorTest {
-    private val resourceLocator = ResourceLocator()
     private val atcModel = WhoAtcModel.createFromFiles(
-        resourceLocator.onClasspath("atc_config/atc_tree.tsv"),
-        resourceLocator.onClasspath("atc_config/atc_overrides.tsv")
+        resourceOnClasspath("atc_config/atc_tree.tsv"),
+        resourceOnClasspath("atc_config/atc_overrides.tsv")
     )
     private val extractor = IntoleranceExtractor(
         TestCurationFactory.curationDatabase(

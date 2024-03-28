@@ -36,7 +36,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.fromJson
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.read
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.toJson
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import java.io.File
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
@@ -45,7 +45,7 @@ import org.junit.Test
 
 class MolecularRecordJsonTest {
 
-    private val molecularDirectory = ResourceLocator().onClasspath("molecular")
+    private val molecularDirectory = resourceOnClasspath("molecular")
     private val sampleMolecularJson = molecularDirectory + File.separator + "sample.molecular.json"
     private val minimalMolecularJson = molecularDirectory + File.separator + "minimal.molecular.json"
     private val epsilon = 1.0E-10

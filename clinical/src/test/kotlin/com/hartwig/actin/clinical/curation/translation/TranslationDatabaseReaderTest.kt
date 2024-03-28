@@ -1,7 +1,7 @@
 package com.hartwig.actin.clinical.curation.translation
 
 import com.hartwig.actin.clinical.curation.CurationCategory
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -20,6 +20,6 @@ class TranslationDatabaseReaderTest {
     }
 
     companion object {
-        private val CURATION_DIRECTORY = ResourceLocator().onClasspath("curation/")
+        private val CURATION_DIRECTORY = resourceOnClasspath("curation/")
     }
 }

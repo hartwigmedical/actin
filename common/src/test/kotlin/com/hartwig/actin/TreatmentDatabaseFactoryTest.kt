@@ -1,18 +1,17 @@
 package com.hartwig.actin
 
 import com.hartwig.actin.TreatmentDatabaseFactory.createFromPath
-import com.hartwig.actin.testutil.ResourceLocator
+import com.hartwig.actin.testutil.resourceOnClasspath
 import java.nio.file.NoSuchFileException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class TreatmentDatabaseFactoryTest {
-    private val resourceLocator = ResourceLocator()
 
     @Test
     fun `Should create database from directory`() {
-        val treatmentDatabase = createFromPath(resourceLocator.onClasspath("clinical"))
+        val treatmentDatabase = createFromPath(resourceOnClasspath("clinical"))
         assertThat(treatmentDatabase).isNotNull()
         assertThat(treatmentDatabase.findTreatmentByName("Capecitabine+Oxaliplatin")).isNotNull()
         assertThat(treatmentDatabase.findTreatmentByName("CAPECITABINE AND OXALIPLATIN")).isNotNull()
@@ -20,7 +19,7 @@ class TreatmentDatabaseFactoryTest {
 
     @Test
     fun `Should throw exception on create when files are missing`() {
-        assertThatThrownBy { createFromPath(resourceLocator.onClasspath("molecular")) }
+        assertThatThrownBy { createFromPath(resourceOnClasspath("molecular")) }
             .isInstanceOf(NoSuchFileException::class.java)
     }
 }
