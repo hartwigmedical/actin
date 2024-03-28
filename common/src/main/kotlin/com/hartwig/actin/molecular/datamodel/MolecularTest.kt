@@ -8,17 +8,17 @@ import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import java.time.LocalDate
 
-interface MolecularTest {
+interface MolecularTest<T> {
     val type: ExperimentType
     val date: LocalDate?
-    val result: Any
+    val result: T
 }
 
 data class WGSMolecularTest(
     override val type: ExperimentType,
     override val date: LocalDate?,
     override val result: MolecularRecord
-) : MolecularTest {
+) : MolecularTest<MolecularRecord> {
 
     companion object {
         fun fromMolecularRecord(result: MolecularRecord): WGSMolecularTest {
@@ -31,7 +31,7 @@ data class IHCMolecularTest(
     override val type: ExperimentType,
     override val date: LocalDate?,
     override val result: PriorMolecularTest
-) : MolecularTest {
+) : MolecularTest<PriorMolecularTest> {
 
     companion object {
         fun fromPriorMolecularTest(result: PriorMolecularTest): IHCMolecularTest {
@@ -40,12 +40,19 @@ data class IHCMolecularTest(
     }
 }
 
-class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>() {
-    override fun write(out: JsonWriter, value: MolecularTest?) {
-        gson.toJson(gson.toJsonTree(value), out)
+class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*>>() {
+
+    override fun write(out: JsonWriter, value: MolecularTest<*>?) {
+        if (value == null) {
+            out.nullValue()
+            return
+        }
+
+        val jsonObject = gson.toJsonTree(value).asJsonObject
+        gson.toJson(jsonObject, out)
     }
 
-    override fun read(input: JsonReader): MolecularTest? {
+    override fun read(input: JsonReader): MolecularTest<*>? {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
         val type = jsonObject.get("type").asString
 

@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
-import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.actin.util.json.MolecularHistoryAdapter
 import com.hartwig.actin.util.json.TreatmentAdapter
 import org.apache.logging.log4j.LogManager
@@ -36,10 +35,18 @@ object PatientRecordJson {
     }
 
     fun toJson(patientRecord: PatientRecord): String {
-        return GsonSerializer.create().toJson(patientRecord)
+        return gsonBuilder()
+            .create()
+            .toJson(patientRecord)
     }
 
     fun fromJson(json: String): PatientRecord {
+        return gsonBuilder()
+            .create()
+            .fromJson(json, PatientRecord::class.java)
+    }
+
+    private fun gsonBuilder(): GsonBuilder {
         val gsonBuilder = GsonBuilder()
         return gsonBuilder.serializeNulls()
             .enableComplexMapKeySerialization()
@@ -47,7 +54,5 @@ object PatientRecordJson {
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(MolecularHistory::class.java, MolecularHistoryAdapter(gsonBuilder.create()))
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter(gsonBuilder.create()))
-            .create()
-            .fromJson(json, PatientRecord::class.java)
     }
 }

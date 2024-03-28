@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import java.time.LocalDate
 
 data class MolecularHistory(
-    val molecularTests: List<MolecularTest>,
+    val molecularTests: List<MolecularTest<*>>,
 ) {
     fun allPriorMolecularTests(): List<PriorMolecularTest> {
         return molecularTests.filter { it.type == ExperimentType.IHC }
