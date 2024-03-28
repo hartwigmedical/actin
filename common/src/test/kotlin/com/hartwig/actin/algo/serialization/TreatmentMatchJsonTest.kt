@@ -15,7 +15,7 @@ import org.junit.Test
 
 class TreatmentMatchJsonTest {
 
-    private val algoDirectory = ResourceLocator(this).onClasspath("algo")
+    private val algoDirectory = ResourceLocator().onClasspath("algo")
     private val treatmentMatchJson = algoDirectory + File.separator + "patient.treatment_match.json"
 
     @Test

@@ -113,7 +113,7 @@ class TrialIngestionTest {
     }
 
     companion object {
-        private val TRIAL_CONFIG_DIRECTORY = ResourceLocator(this).onClasspath("trial_config")
+        private val TRIAL_CONFIG_DIRECTORY = ResourceLocator().onClasspath("trial_config")
 
         private fun findTrial(trials: List<Trial>, trialId: String): Trial {
             return trials.firstOrNull { it.identification.trialId == trialId }

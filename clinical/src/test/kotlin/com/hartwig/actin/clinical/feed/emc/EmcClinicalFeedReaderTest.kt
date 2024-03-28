@@ -37,7 +37,7 @@ class EmcClinicalFeedReaderTest {
     }
 
     companion object {
-        private val CLINICAL_FEED_DIRECTORY = ResourceLocator(this).onClasspath("feed/emc")
+        private val CLINICAL_FEED_DIRECTORY = ResourceLocator().onClasspath("feed/emc")
         private const val EPSILON = 1.0E-10
         private const val PATIENT = "ACTN01029999"
 

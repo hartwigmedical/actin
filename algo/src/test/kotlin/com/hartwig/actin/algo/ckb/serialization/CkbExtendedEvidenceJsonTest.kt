@@ -10,7 +10,7 @@ class CkbExtendedEvidenceJsonTest {
 
     @Test
     fun `Can read example extended efficacy database json file`() {
-        val exampleJson = ResourceLocator(this).onClasspath("ckb/example_extended_evidence.json")
+        val exampleJson = ResourceLocator().onClasspath("ckb/example_extended_evidence.json")
         val entries: List<CkbExtendedEvidenceEntry> = CkbExtendedEvidenceJson.read(exampleJson)
         val proper = CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase()
 

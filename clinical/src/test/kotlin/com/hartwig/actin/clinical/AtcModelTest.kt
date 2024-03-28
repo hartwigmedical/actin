@@ -78,7 +78,7 @@ class AtcModelTest {
     }
 
     private fun createAtcModel(): WhoAtcModel {
-        val resourceLocator = ResourceLocator(this)
+        val resourceLocator = ResourceLocator()
         return WhoAtcModel.createFromFiles(
             resourceLocator.onClasspath("atc_config/atc_tree.tsv"),
             resourceLocator.onClasspath("atc_config/atc_overrides.tsv")

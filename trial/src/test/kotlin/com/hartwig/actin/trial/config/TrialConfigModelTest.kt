@@ -45,6 +45,6 @@ class TrialConfigModelTest {
     }
 
     companion object {
-        private val TRIAL_CONFIG_DIRECTORY = ResourceLocator(this).onClasspath("trial_config")
+        private val TRIAL_CONFIG_DIRECTORY = ResourceLocator().onClasspath("trial_config")
     }
 }

@@ -21,7 +21,7 @@ import org.junit.Test
 private const val PATIENT = "ACTN01029999"
 
 class ClinicalIngestionFeedAdapterTest {
-    private val expectedClinicalRecord = "${ResourceLocator(this).onClasspath("clinical_record")}/$PATIENT.clinical.json"
+    private val expectedClinicalRecord = "${ResourceLocator().onClasspath("clinical_record")}/$PATIENT.clinical.json"
 
     @Test
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {

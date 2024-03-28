@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 
 object TestFeedFactory {
     private const val TEST_SUBJECT = "ACTN-01-02-9999"
-    val FEED_DIRECTORY = ResourceLocator(this).onClasspath("feed/emc") + "/"
+    val FEED_DIRECTORY = ResourceLocator().onClasspath("feed/emc") + "/"
 
     fun createProperTestFeedModel(): FeedModel {
         return FeedModel(createTestClinicalFeed())

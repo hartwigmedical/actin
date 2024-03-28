@@ -15,7 +15,7 @@ import org.junit.Test
 
 class TrialJsonTest {
 
-    private val trialDirectory = ResourceLocator(this).onClasspath("treatment")
+    private val trialDirectory = ResourceLocator().onClasspath("treatment")
 
     @Test
     fun `Should convert to and from JSON`() {

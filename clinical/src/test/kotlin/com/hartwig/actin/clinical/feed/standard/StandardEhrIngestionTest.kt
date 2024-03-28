@@ -16,8 +16,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class StandardEhrIngestionTest {
-    private val inputJson = ResourceLocator(this).onClasspath("feed/standard/input")
-    private val outputRecordJson = ResourceLocator(this).onClasspath("feed/standard/output/ACTN01029999.clinical.json")
+    private val resourceLocator = ResourceLocator()
+    private val inputJson = resourceLocator.onClasspath("feed/standard/input")
+    private val outputRecordJson = resourceLocator.onClasspath("feed/standard/output/ACTN01029999.clinical.json")
 
     @Test
     fun `Should load EHR data from json and convert to clinical record`() {

@@ -14,7 +14,7 @@ class FeedModelTest {
     @Test
     @Throws(IOException::class)
     fun `Should correctly create from feed directory`() {
-        assertThat(fromFeedDirectory(ResourceLocator(this).onClasspath("feed/emc"))).isNotNull()
+        assertThat(fromFeedDirectory(ResourceLocator().onClasspath("feed/emc"))).isNotNull()
     }
 
     @Test

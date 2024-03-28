@@ -13,7 +13,7 @@ class QuestionnaireCorrectionTest {
             listOf("a problematic, incorrect entry", "an entry with a bunch of issues").map(TestQuestionnaireFactory::entryWithText)
 
         val questionnaireRawEntryMapper = QuestionnaireRawEntryMapper.createFromCurationDirectory(
-            ResourceLocator(this).onClasspath("curation")
+            ResourceLocator().onClasspath("curation")
         )
 
         assertThat(QuestionnaireCorrection.correctQuestionnaires(questionnaireEntries, questionnaireRawEntryMapper)).isEqualTo(

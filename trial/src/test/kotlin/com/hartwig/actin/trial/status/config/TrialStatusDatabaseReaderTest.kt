@@ -21,7 +21,7 @@ class TrialStatusDatabaseReaderTest {
     }
 
     companion object {
-        private val CTC_CONFIG_DIRECTORY = ResourceLocator(this).onClasspath("ctc_config")
+        private val CTC_CONFIG_DIRECTORY = ResourceLocator().onClasspath("ctc_config")
 
         private fun assertEntries(entries: List<TrialStatusEntry>) {
             assertThat(entries).hasSize(2)

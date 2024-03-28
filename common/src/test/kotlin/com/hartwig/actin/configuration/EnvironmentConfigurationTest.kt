@@ -5,7 +5,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EnvironmentConfigurationTest {
-    private val locateResource = ResourceLocator(this)
+    private val locateResource = ResourceLocator()
 
     @Test
     fun `Should create with default values`() {

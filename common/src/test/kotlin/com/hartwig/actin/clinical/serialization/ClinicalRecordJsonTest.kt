@@ -14,7 +14,7 @@ import org.junit.Test
 
 class ClinicalRecordJsonTest {
 
-    private val clinicalDirectory = ResourceLocator(this).onClasspath("clinical" + File.separator + "records")
+    private val clinicalDirectory = ResourceLocator().onClasspath("clinical" + File.separator + "records")
     private val clinicalJson = clinicalDirectory + File.separator + "patient.clinical.json"
 
     @Test

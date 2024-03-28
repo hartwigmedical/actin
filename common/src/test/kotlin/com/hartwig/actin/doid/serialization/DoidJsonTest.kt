@@ -13,7 +13,7 @@ import org.junit.Test
 
 class DoidJsonTest {
 
-    private val doidExampleFileJson = ResourceLocator(this).onClasspath("doid/example_doid.json")
+    private val doidExampleFileJson = ResourceLocator().onClasspath("doid/example_doid.json")
 
     @Test
     fun `Should extract doid from URL`() {

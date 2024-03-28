@@ -11,7 +11,7 @@ class NKITrialStatusEntryReaderTest {
     @Test
     fun `Should read all trial status from JSON`() {
         val reader = NKITrialStatusEntryReader()
-        val status = reader.read(ResourceLocator(this).onClasspath("nki_config"))
+        val status = reader.read(ResourceLocator().onClasspath("nki_config"))
         assertThat(status).containsExactly(
             TrialStatusEntry(
                 studyId = 1,

@@ -10,7 +10,7 @@ val CURATION_DIRECTORY: String = ResourceLocator().onClasspath("curation") + "/"
 
 object TestCurationFactory {
 
-    fun curationHeaders(tsv: String) = CurationConfigFile.readTsv(ResourceLocator(this).onClasspath("curation") + "/" + tsv).second
+    fun curationHeaders(tsv: String) = CurationConfigFile.readTsv(ResourceLocator().onClasspath("curation") + "/" + tsv).second
 
     fun emptyQuestionnaire(): Questionnaire {
         return Questionnaire(

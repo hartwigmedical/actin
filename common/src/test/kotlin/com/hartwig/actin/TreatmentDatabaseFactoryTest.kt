@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class TreatmentDatabaseFactoryTest {
-    private val resourceLocator = ResourceLocator(this)
+    private val resourceLocator = ResourceLocator()
 
     @Test
     fun `Should create database from directory`() {

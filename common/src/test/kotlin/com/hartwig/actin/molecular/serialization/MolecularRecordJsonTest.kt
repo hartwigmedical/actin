@@ -45,7 +45,7 @@ import org.junit.Test
 
 class MolecularRecordJsonTest {
 
-    private val molecularDirectory = ResourceLocator(this).onClasspath("molecular")
+    private val molecularDirectory = ResourceLocator().onClasspath("molecular")
     private val sampleMolecularJson = molecularDirectory + File.separator + "sample.molecular.json"
     private val minimalMolecularJson = molecularDirectory + File.separator + "minimal.molecular.json"
     private val epsilon = 1.0E-10

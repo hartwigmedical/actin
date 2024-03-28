@@ -13,6 +13,6 @@ class OrangeJsonTest {
     }
 
     companion object {
-        private val REAL_ORANGE_JSON = ResourceLocator(this).onClasspath("serialization/real.v3.0.0.orange.json")
+        private val REAL_ORANGE_JSON = ResourceLocator().onClasspath("serialization/real.v3.0.0.orange.json")
     }
 }

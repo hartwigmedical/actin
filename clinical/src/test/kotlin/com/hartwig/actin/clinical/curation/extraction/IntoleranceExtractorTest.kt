@@ -28,7 +28,7 @@ private const val ATC = "N02BE01"
 private const val CANNOT_CURATE = "Cannot curate"
 
 class IntoleranceExtractorTest {
-    private val resourceLocator = ResourceLocator(this)
+    private val resourceLocator = ResourceLocator()
     private val atcModel = WhoAtcModel.createFromFiles(
         resourceLocator.onClasspath("atc_config/atc_tree.tsv"),
         resourceLocator.onClasspath("atc_config/atc_overrides.tsv")

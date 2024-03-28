@@ -16,7 +16,7 @@ class TrialConfigDatabaseReaderTest {
     }
 
     companion object {
-        private val TRIAL_CONFIG_DIRECTORY = ResourceLocator(this).onClasspath("trial_config")
+        private val TRIAL_CONFIG_DIRECTORY = ResourceLocator().onClasspath("trial_config")
 
         private fun assertTrialDefinitionConfigs(configs: List<TrialDefinitionConfig>) {
             assertThat(configs).hasSize(2)

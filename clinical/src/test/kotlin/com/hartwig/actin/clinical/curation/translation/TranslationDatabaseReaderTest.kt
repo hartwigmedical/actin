@@ -20,6 +20,6 @@ class TranslationDatabaseReaderTest {
     }
 
     companion object {
-        private val CURATION_DIRECTORY = ResourceLocator(this).onClasspath("curation/")
+        private val CURATION_DIRECTORY = ResourceLocator().onClasspath("curation/")
     }
 }

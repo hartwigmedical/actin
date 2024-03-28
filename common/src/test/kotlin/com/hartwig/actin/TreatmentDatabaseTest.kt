@@ -50,6 +50,6 @@ class TreatmentDatabaseTest {
     }
 
     private fun treatmentDatabase(): TreatmentDatabase {
-        return TreatmentDatabaseFactory.createFromPath(ResourceLocator(this).onClasspath("clinical"))
+        return TreatmentDatabaseFactory.createFromPath(ResourceLocator().onClasspath("clinical"))
     }
 }
