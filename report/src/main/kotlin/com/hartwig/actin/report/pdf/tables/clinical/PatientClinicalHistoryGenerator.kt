@@ -21,7 +21,7 @@ import com.itextpdf.layout.element.BlockElement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
-class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, private val config: ReportConfiguration, private val keyWidth: Float, private val valueWidth: Float) :
+class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, private val config: ReportConfiguration, private val showDetails: Boolean, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
     override fun title(): String {
         return "Clinical summary"
@@ -31,15 +31,13 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         val table = createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(createKey("Relevant systemic treatment history"))
         table.addCell(create(tableOrNone(relevantSystemicPreTreatmentHistoryTable(record))))
-        if (config.showOtherOncologicalHistory) {
+        if (config.showOtherOncologicalHistoryInSummary || showDetails) {
             table.addCell(createKey("Relevant other oncological history"))
             table.addCell(create(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))))
         }
-        if (config.showPreviousPrimaryTumor) {
-            table.addCell(createKey("Previous primary tumor"))
-            table.addCell(create(tableOrNone(secondPrimaryHistoryTable(record))))
-        }
-        if (config.showRelevantNonOncologicalHistory) {
+        table.addCell(createKey("Previous primary tumor"))
+        table.addCell(create(tableOrNone(secondPrimaryHistoryTable(record))))
+        if (config.showRelevantNonOncologicalHistoryInSummary || showDetails) {
             table.addCell(createKey("Relevant non-oncological history"))
             table.addCell(create(tableOrNone(relevantNonOncologicalHistoryTable(record))))
         }
