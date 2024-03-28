@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
@@ -14,8 +13,8 @@ import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -27,7 +26,7 @@ import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 import java.time.LocalDate
 
-class SummaryChapter(private val report: Report) : ReportChapter {
+class SummaryChapter(private val report: Report, private val externalTrialSummarizer: ExternalTrialSummarizer) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -118,35 +117,21 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
                 AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
             )
-            val hospitalTrialMolecularEvents = evaluated.flatMap { e -> e.molecularEvents }.toSet()
-            val dutchTrials = filteredMolecularEvents(
-                hospitalTrialMolecularEvents,
-                EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
-            )
-            val dutchTrialMolecularEvents = dutchTrials.keys
-            val otherTrials = filteredMolecularEvents(
-                hospitalTrialMolecularEvents + dutchTrialMolecularEvents,
-                EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
-            )
+            val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, evaluated)
             return Pair(
-                if (dutchTrials.isNotEmpty()) {
-                    EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
+                if (externalTrialSummary.dutchTrials.isNotEmpty()) {
+                    EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, externalTrialSummary.dutchTrials, contentWidth())
                 } else null,
-                if (otherTrials.isNotEmpty()) {
+                if (externalTrialSummary.otherCountryTrials.isNotEmpty()) {
                     EligibleOtherCountriesExternalTrialsGenerator(
                         molecular.externalTrialSource,
-                        otherTrials,
+                        externalTrialSummary.otherCountryTrials,
                         contentWidth()
                     )
                 } else null
             )
         }
     }
-
-    private fun filteredMolecularEvents(
-        molecularTargetsAlreadyIncluded: Set<String>,
-        trials: Map<String, Iterable<ExternalTrial>>
-    ) = trials.filter { !molecularTargetsAlreadyIncluded.contains(it.key) }
 
     companion object {
         private fun whoStatus(who: Int?): String {
