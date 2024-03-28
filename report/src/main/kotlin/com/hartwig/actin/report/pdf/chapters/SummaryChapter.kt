@@ -80,12 +80,14 @@ class SummaryChapter(private val report: Report) : ReportChapter {
 
         val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.molecular)
 
+        val showMolecular = report.config.showMolecularSummary && report.molecular?.date?.let { it > LocalDate.now().minusDays(21) } == true
         val generators = listOfNotNull(
-            if (report.config.showClinicalSummary) PatientClinicalHistoryGenerator(report.clinical, keyWidth, valueWidth) else null,
-            if (report.molecular?.date != null && report.molecular.date!! > LocalDate.now().minusDays(21)) {
-                MolecularSummaryGenerator(report.clinical, report.molecular, cohorts, keyWidth, valueWidth)
-            } else null,
-            EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()),
+            if (report.config.showClinicalSummary)
+                PatientClinicalHistoryGenerator(report.clinical, report.config, false, keyWidth, valueWidth) else null,
+            if (showMolecular)
+                report.molecular?.let { MolecularSummaryGenerator(report.clinical, it, cohorts, keyWidth, valueWidth) } else null,
+            if (report.config.showApprovedTreatmentsInSummary)
+                EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()) else null,
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
             dutchTrialGenerator,

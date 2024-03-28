@@ -8,6 +8,10 @@ import java.io.File
 
 data class ReportConfiguration(
     val showClinicalSummary: Boolean = true,
+    val showMolecularSummary: Boolean = true,
+    val showOtherOncologicalHistoryInSummary: Boolean = true,
+    val showRelevantNonOncologicalHistoryInSummary: Boolean = true,
+    val showApprovedTreatmentsInSummary: Boolean = true
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
