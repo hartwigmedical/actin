@@ -10,37 +10,36 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 class HasLimitedLabValueULN(private val maxULNFactor: Double) : LabEvaluationFunction {
     
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
-        val resultWithMargin = LabEvaluation.evaluateVersusMaxULN(labValue, maxULNFactor, true)
-        val resultWithoutMargin = LabEvaluation.evaluateVersusMaxULN(labValue, maxULNFactor, false)
+        val result = LabEvaluation.evaluateVersusMaxULN(labValue, maxULNFactor)
 
         val labValueString = "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${String.format("%.1f", labValue.value)}"
         val referenceString = "$maxULNFactor*ULN ($maxULNFactor*${labValue.refLimitUp})"
 
         return when {
-            resultWithMargin == EvaluationResult.FAIL -> {
+            result == EvaluationResult.FAIL -> {
                 EvaluationFactory.recoverableFail(
                     "$labValueString exceeds maximum of $referenceString", "$labValueString exceeds max of $referenceString"
                 )
             }
-            resultWithoutMargin == EvaluationResult.FAIL -> {
+            result == EvaluationResult.WARN -> {
                 EvaluationFactory.recoverableUndetermined(
                     "$labValueString exceeds maximum of $referenceString", "$labValueString exceeds max of $referenceString"
                 )
             }
-            resultWithoutMargin == EvaluationResult.UNDETERMINED -> {
+            result == EvaluationResult.UNDETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} could not be evaluated against maximum ULN",
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
                 )
             }
-            resultWithoutMargin == EvaluationResult.PASS -> {
+            result == EvaluationResult.PASS -> {
                 EvaluationFactory.recoverablePass(
                     "$labValueString below maximum of $referenceString", "$labValueString below max of $referenceString"
                 )
             }
 
             else -> {
-                Evaluation(result = resultWithoutMargin, recoverable = true)
+                Evaluation(result = result, recoverable = true)
             }
         }
     }

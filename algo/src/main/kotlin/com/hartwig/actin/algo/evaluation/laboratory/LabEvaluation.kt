@@ -2,8 +2,6 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 
@@ -12,35 +10,22 @@ internal object LabEvaluation {
     const val LAB_VALUE_NEGATIVE_MARGIN_OF_ERROR = 0.95
     const val LAB_VALUE_POSITIVE_MARGIN_OF_ERROR = 1.05
 
-    fun evaluateVersusMinULN(labValue: LabValue, minULNFactor: Double, withMargin: Boolean): EvaluationResult {
+    fun evaluateVersusMinULN(labValue: LabValue, minULNFactor: Double): EvaluationResult {
         val refLimitUp = retrieveRefLimitUp(labValue) ?: return EvaluationResult.UNDETERMINED
         val minValue = refLimitUp * minULNFactor
-        return if (withMargin) {
-            evaluateVersusMinValueWithMargin(labValue.value, labValue.comparator, minValue)
-        } else {
-            evaluateVersusMinValue(labValue.value, labValue.comparator, minValue)
-        }
-
+        return evaluateVersusMinValueWithMargin(labValue.value, labValue.comparator, minValue)
     }
 
-    fun evaluateVersusMinLLN(labValue: LabValue, minLLNFactor: Double, withMargin: Boolean): EvaluationResult {
+    fun evaluateVersusMinLLN(labValue: LabValue, minLLNFactor: Double): EvaluationResult {
         val refLimitLow = labValue.refLimitLow ?: return EvaluationResult.UNDETERMINED
         val minValue = refLimitLow * minLLNFactor
-        return if (withMargin) {
-            evaluateVersusMinValueWithMargin(labValue.value, labValue.comparator, minValue)
-        } else {
-            evaluateVersusMinValue(labValue.value, labValue.comparator, minValue)
-        }
+        return evaluateVersusMinValueWithMargin(labValue.value, labValue.comparator, minValue)
     }
 
-    fun evaluateVersusMaxULN(labValue: LabValue, maxULNFactor: Double, withMargin: Boolean): EvaluationResult {
+    fun evaluateVersusMaxULN(labValue: LabValue, maxULNFactor: Double): EvaluationResult {
         val refLimitUp = retrieveRefLimitUp(labValue) ?: return EvaluationResult.UNDETERMINED
         val maxValue = refLimitUp * maxULNFactor
-        return if (withMargin) {
-            evaluateVersusMaxValueWithMargin(labValue.value, labValue.comparator, maxValue)
-        } else {
-            evaluateVersusMaxValue(labValue.value, labValue.comparator, maxValue)
-        }
+        return evaluateVersusMaxValueWithMargin(labValue.value, labValue.comparator, maxValue)
     }
 
     fun evaluateVersusMinValueWithMargin(
