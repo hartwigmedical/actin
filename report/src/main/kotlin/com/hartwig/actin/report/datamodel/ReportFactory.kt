@@ -3,7 +3,6 @@ package com.hartwig.actin.report.datamodel
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.report.ReportConfiguration
 import org.apache.logging.log4j.LogManager
 
 object ReportFactory {
