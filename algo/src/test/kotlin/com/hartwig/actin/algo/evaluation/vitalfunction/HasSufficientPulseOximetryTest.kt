@@ -54,7 +54,7 @@ class HasSufficientPulseOximetryTest {
     }
 
     @Test
-    fun `Should pass when median SpO2 is below reference value but within margin of error`() {
+    fun `Should evaluate to undetermined when median SpO2 is below reference value but within margin of error`() {
         val pulseOximetries = listOf(
             pulseOximetry(referenceDateTime, 88.0),
             pulseOximetry(referenceDateTime.plusDays(1), 89.0),

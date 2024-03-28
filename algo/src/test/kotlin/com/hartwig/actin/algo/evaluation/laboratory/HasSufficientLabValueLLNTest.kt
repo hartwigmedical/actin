@@ -3,6 +3,8 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import org.assertj.core.api.AbstractBooleanAssert
+import org.assertj.core.api.AbstractComparableAssert
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -12,42 +14,38 @@ class HasSufficientLabValueLLNTest {
     private val record = TestPatientFactory.createMinimalTestPatientRecord()
     @Test
     fun `Should pass when lab value is above requested fold of LLN`() {
-        Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 80.0, refLimitLow = 35.0)).result
-        ).isEqualTo(EvaluationResult.PASS)
+        assertUndetermined(80.0, 35.0, EvaluationResult.PASS)
     }
 
     @Test
     fun `Should evaluate to recoverable undetermined if lab value is under requested fold of LLN but within margin of error`() {
-        Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 67.0, refLimitLow = 35.0)).result
-        ).isEqualTo(EvaluationResult.UNDETERMINED)
-
-        Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 67.0, refLimitLow = 35.0)).recoverable
-        ).isTrue()
+        assertUndetermined(67.0, 35.0, EvaluationResult.UNDETERMINED)
+        assertRecoverable(67.0, 35.0)
     }
 
     @Test
     fun `Should evaluate to undetermined if comparison to LLN cannot be made due to missing reference limit`() {
-        Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 80.0)).result
-        ).isEqualTo(EvaluationResult.UNDETERMINED)
-
-        Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 80.0)).recoverable
-        ).isTrue()
+        assertUndetermined(80.0, null, EvaluationResult.UNDETERMINED)
+        assertRecoverable(80.0, null)
     }
 
     @Test
     fun `Should fail if lab value is under requested fold of LLN and outside margin of error`() {
-        Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 50.0, refLimitLow = 35.0)).result
-        ).isEqualTo(EvaluationResult.FAIL)
+        assertUndetermined(50.0, 35.0, EvaluationResult.FAIL)
+        assertRecoverable(50.0, 35.0)
+    }
 
-        Assertions.assertThat(
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 50.0, refLimitLow = 35.0)).recoverable
-        ).isTrue()
+    private fun assertUndetermined(
+        labValue: Double, referenceLimitLow: Double?, result: EvaluationResult): AbstractComparableAssert<*, *> {
+        val evaluation =
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value =  labValue, refLimitLow = referenceLimitLow))
+        return Assertions.assertThat(evaluation.result).isEqualTo(result)
+    }
 
+    private fun assertRecoverable(
+        labValue: Double, referenceLimitLow: Double?): AbstractBooleanAssert<*> {
+        val evaluation =
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value =  labValue, refLimitLow = referenceLimitLow))
+        return Assertions.assertThat(evaluation.recoverable).isTrue()
     }
 }

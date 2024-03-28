@@ -4,8 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LAB_VALUE_NEGATIVE_MARGIN_OF_ERROR
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValueWithMargin
+import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMinValueWithMargin
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -18,7 +17,7 @@ class HasSufficientLabValue(
             ?: return EvaluationFactory.recoverableUndetermined(
                 "Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}"
             )
-        val result = evaluateVersusMinValueWithMargin(convertedValue, labValue.comparator, minValue, LAB_VALUE_NEGATIVE_MARGIN_OF_ERROR)
+        val result = evaluateVersusMinValueWithMargin(convertedValue, labValue.comparator, minValue)
         val labValueString = "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
             String.format("%.1f", convertedValue)
         } ${targetUnit.display()}"

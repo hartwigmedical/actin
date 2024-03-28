@@ -26,22 +26,20 @@ class HasRestingHeartRateWithinBounds(
         val minHeartRateWithMargin = minMedianRestingHeartRate * VitalFunctionRuleMapper.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
         val maxHeartRateWithMargin = maxMedianRestingHeartRate * VitalFunctionRuleMapper.VITAL_FUNCTION_POSITIVE_MARGIN_OF_ERROR
 
-        return when {
-            (median.compareTo(minMedianRestingHeartRate) >= 0 && median.compareTo(maxMedianRestingHeartRate) <= 0) -> {
+        return when (median) {
+            in minMedianRestingHeartRate..maxMedianRestingHeartRate -> {
                 EvaluationFactory.recoverablePass(
                     "Patient has median heart rate of $median bpm - thus between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
                     "Median heart rate ($median bpm) within range"
                 )
             }
-
-            (median.compareTo(minHeartRateWithMargin) >= 0 && median.compareTo(maxHeartRateWithMargin) <= 0) -> {
+            in minHeartRateWithMargin..maxHeartRateWithMargin -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate" +
                             "but within margin of error",
                     "Median heart rate ($median bpm) outside range but within margin of error"
                 )
             }
-
             else -> {
                 EvaluationFactory.recoverableFail(
                     "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",

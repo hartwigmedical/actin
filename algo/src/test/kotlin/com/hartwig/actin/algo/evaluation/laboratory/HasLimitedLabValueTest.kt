@@ -32,7 +32,7 @@ class HasLimitedLabValueTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if comparison can not be determined`() {
+    fun `Should evaluate to undetermined if exact value is unknown due to comparator in lab value`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(

@@ -31,35 +31,27 @@ object BloodPressureFunctions {
         val relevant = VitalFunctionSelector.selectBloodPressures(record, category, minimalDate)
         if (relevant.isEmpty()) return EvaluationFactory.recoverableUndetermined("No (recent) data found for $categoryDisplay")
 
-        val referenceWithMargin = if (referenceIsMinimum) {
-            referenceBloodPressure * VitalFunctionRuleMapper.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
-        } else referenceBloodPressure * VitalFunctionRuleMapper.VITAL_FUNCTION_POSITIVE_MARGIN_OF_ERROR
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
-        val comparisonWithMargin = median.compareTo(referenceWithMargin)
-        val comparisonWithoutMargin = median.compareTo(referenceBloodPressure)
+        val comparison = median.compareTo(referenceBloodPressure)
 
         return when {
-            (!referenceIsMinimum && comparisonWithoutMargin > 0 && comparisonWithMargin <= 0)
-                    || (referenceIsMinimum && comparisonWithoutMargin < 0 && comparisonWithMargin >= 0) -> {
-                val messageEnding = "$categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg" +
-                "but within margin of error"
-                val specificMessage = "Patient has median $messageEnding"
-                val generalMessage = "Median $messageEnding"
-                EvaluationFactory.recoverableUndetermined(specificMessage, generalMessage)
-            }
-
-            comparisonWithoutMargin < 0 -> {
+            comparison < 0 -> {
                 val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
                 val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) below $referenceBloodPressure mmHg"
-
+                val marginOfErrorMsg = " but within margin of error"
                 if (referenceIsMinimum) {
-                    EvaluationFactory.recoverableFail(specificMessage, generalMessage)
+                    val referenceWithMargin = referenceBloodPressure * VitalFunctionRuleMapper.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
+                    if (median >= referenceWithMargin) {
+                        EvaluationFactory.recoverableUndetermined(specificMessage + marginOfErrorMsg, generalMessage + marginOfErrorMsg)
+                    } else {
+                        EvaluationFactory.recoverableFail(specificMessage, generalMessage)
+                    }
                 } else {
                     EvaluationFactory.recoverablePass(specificMessage, generalMessage)
                 }
             }
 
-            comparisonWithoutMargin == 0 -> {
+            comparison == 0 -> {
                 val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) " +
                         "equal to $referenceBloodPressure mmHg"
                 val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) equal to $referenceBloodPressure mmHg"
@@ -70,11 +62,16 @@ object BloodPressureFunctions {
             else -> {
                 val specificMessage = "Patient has median $categoryDisplay (${median.roundToInt()} mmHg) above $referenceBloodPressure mmHg"
                 val generalMessage = "Median $categoryDisplay (${median.roundToInt()} mmHg) above $referenceBloodPressure mmHg"
-
-                if (referenceIsMinimum) {
-                    EvaluationFactory.recoverablePass(specificMessage, generalMessage)
+                val marginOfErrorMsg = " but within margin of error"
+                if (!referenceIsMinimum) {
+                    val referenceWithMargin = referenceBloodPressure * VitalFunctionRuleMapper.VITAL_FUNCTION_POSITIVE_MARGIN_OF_ERROR
+                    if (median <= referenceWithMargin) {
+                        EvaluationFactory.recoverableUndetermined(specificMessage + marginOfErrorMsg, generalMessage + marginOfErrorMsg)
+                    } else {
+                        EvaluationFactory.recoverableFail(specificMessage, generalMessage)
+                    }
                 } else {
-                    EvaluationFactory.recoverableFail(specificMessage, generalMessage)
+                    EvaluationFactory.recoverablePass(specificMessage, generalMessage)
                 }
             }
         }

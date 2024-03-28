@@ -15,32 +15,6 @@ object ValueComparison {
         }
         return if (value.compareTo(minValue) >= 0) EvaluationResult.PASS else EvaluationResult.FAIL
     }
-    private fun evaluateVersusValueWithMargin(
-        value: Double, comparator: String?, valueToCompareTo: Double, isMinValue: Boolean, margin: Double
-    ): EvaluationResult {
-        if (!canBeDetermined(value, comparator, valueToCompareTo)) {
-            return EvaluationResult.UNDETERMINED
-        }
-        val valueWithMargin = valueToCompareTo * margin
-
-        return when {
-            (isMinValue && value.compareTo(valueToCompareTo) >= 0) || (!isMinValue && value.compareTo(valueToCompareTo) <= 0) -> EvaluationResult.PASS
-            (isMinValue && value.compareTo(valueWithMargin) >=0) || (!isMinValue && value.compareTo(valueWithMargin) <=0) -> EvaluationResult.WARN
-            else -> EvaluationResult.FAIL
-        }
-    }
-
-    fun evaluateVersusMinValueWithMargin(
-        value: Double, comparator: String?, minValue: Double, margin: Double
-    ): EvaluationResult {
-        return evaluateVersusValueWithMargin(value, comparator, minValue, true, margin)
-    }
-
-    fun evaluateVersusMaxValueWithMargin(
-        value: Double, comparator: String?, maxValue: Double, margin: Double
-    ): EvaluationResult {
-        return evaluateVersusValueWithMargin(value, comparator, maxValue, false, margin)
-    }
 
     fun evaluateVersusMaxValue(value: Double, comparator: String?, maxValue: Double): EvaluationResult {
         if (!canBeDetermined(value, comparator, maxValue)) {

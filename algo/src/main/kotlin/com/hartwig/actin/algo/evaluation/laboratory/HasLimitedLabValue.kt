@@ -4,8 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LAB_VALUE_POSITIVE_MARGIN_OF_ERROR
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValueWithMargin
+import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMaxValueWithMargin
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -21,7 +20,7 @@ class HasLimitedLabValue(
             )
 
         return when (val result =
-            evaluateVersusMaxValueWithMargin(convertedValue, labValue.comparator, maxValue, LAB_VALUE_POSITIVE_MARGIN_OF_ERROR)
+            evaluateVersusMaxValueWithMargin(convertedValue, labValue.comparator, maxValue)
         ) {
             EvaluationResult.FAIL -> {
                 EvaluationFactory.recoverableFail(
