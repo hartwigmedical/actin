@@ -1,11 +1,11 @@
 package com.hartwig.actin.configuration
 
-import com.hartwig.actin.testutil.LocateResource
+import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EnvironmentConfigurationTest {
-    private val locateResource: LocateResource = LocateResource(this)
+    private val locateResource = ResourceLocator(this)
 
     @Test
     fun `Should create with default values`() {

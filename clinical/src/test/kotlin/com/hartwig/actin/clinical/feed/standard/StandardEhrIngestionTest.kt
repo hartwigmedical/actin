@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.standard
 
-import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.CurationRequirement
 import com.hartwig.actin.clinical.CurationResult
@@ -12,14 +11,13 @@ import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-@Suppress("UnstableApiUsage")
-val INPUT_JSON: String = Resources.getResource("feed/standard/input").path
-val OUTPUT_RECORD_JSON: String = Resources.getResource("feed/standard/output/ACTN01029999.clinical.json").path
-
 class StandardEhrIngestionTest {
+    private val inputJson = ResourceLocator(this).onClasspath("feed/standard/input")
+    private val outputRecordJson = ResourceLocator(this).onClasspath("feed/standard/output/ACTN01029999.clinical.json")
 
     @Test
     fun `Should load EHR data from json and convert to clinical record`() {
@@ -43,7 +41,7 @@ class StandardEhrIngestionTest {
             TestTreatmentDatabaseFactory.createProper()
         )
         val feed = StandardEhrIngestion(
-            directory = INPUT_JSON,
+            directory = inputJson,
             medicationExtractor = EhrMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
                 qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
@@ -76,7 +74,7 @@ class StandardEhrIngestionTest {
             molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
             dataQualityMask = DataQualityMask()
         )
-        val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)
+        val expected = ClinicalRecordJson.read(outputRecordJson)
         val result = feed.ingest()
 
         assertThat(curationDatabase.validate()).isEmpty()

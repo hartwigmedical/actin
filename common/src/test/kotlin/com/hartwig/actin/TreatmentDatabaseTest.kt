@@ -1,11 +1,11 @@
 package com.hartwig.actin
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
@@ -15,7 +15,7 @@ class TreatmentDatabaseTest {
     @Test
     fun `Should find existing treatment by name`() {
         assertThat(treatmentDatabase().findTreatmentByName("nonexistent")).isNull()
-        
+
         val treatment = treatmentDatabase().findTreatmentByName("Capecitabine+Oxaliplatin")
         assertThat(treatment).isNotNull()
         assertThat(treatment!!.categories()).containsExactly(TreatmentCategory.CHEMOTHERAPY)
@@ -50,6 +50,6 @@ class TreatmentDatabaseTest {
     }
 
     private fun treatmentDatabase(): TreatmentDatabase {
-        return TreatmentDatabaseFactory.createFromPath(Resources.getResource("clinical").path)
+        return TreatmentDatabaseFactory.createFromPath(ResourceLocator(this).onClasspath("clinical"))
     }
 }

@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
@@ -13,13 +12,15 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.TestQuestionnaireFactory
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
+import com.hartwig.actin.testutil.ResourceLocator
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-val FEED_DIRECTORY: String = Resources.getResource("feed/emc").path + "/"
 
 object TestFeedFactory {
-    const val TEST_SUBJECT = "ACTN-01-02-9999"
+    private const val TEST_SUBJECT = "ACTN-01-02-9999"
+    val FEED_DIRECTORY = ResourceLocator(this).onClasspath("feed/emc") + "/"
+
     fun createProperTestFeedModel(): FeedModel {
         return FeedModel(createTestClinicalFeed())
     }

@@ -75,7 +75,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             environmentConfiguration.algo
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, environmentConfiguration.algo)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries)
             .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)

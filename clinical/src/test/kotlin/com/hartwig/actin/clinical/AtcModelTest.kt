@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.ANATOMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL
 import com.hartwig.actin.clinical.curation.CHEMICAL_SUBSTANCE
@@ -8,6 +7,7 @@ import com.hartwig.actin.clinical.curation.FULL_ATC_CODE
 import com.hartwig.actin.clinical.curation.PHARMACOLOGICAL
 import com.hartwig.actin.clinical.curation.THERAPEUTIC
 import com.hartwig.actin.clinical.datamodel.AtcLevel
+import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -77,8 +77,11 @@ class AtcModelTest {
         assertThat(result).isNullOrEmpty()
     }
 
-    private fun createAtcModel() = WhoAtcModel.createFromFiles(
-        Resources.getResource("atc_config/atc_tree.tsv").path,
-        Resources.getResource("atc_config/atc_overrides.tsv").path
-    )
+    private fun createAtcModel(): WhoAtcModel {
+        val resourceLocator = ResourceLocator(this)
+        return WhoAtcModel.createFromFiles(
+            resourceLocator.onClasspath("atc_config/atc_tree.tsv"),
+            resourceLocator.onClasspath("atc_config/atc_overrides.tsv")
+        )
+    }
 }

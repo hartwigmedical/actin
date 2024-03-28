@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.serialization
 
 import com.google.common.collect.Sets
-import com.google.common.io.Resources
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.createExhaustiveTestMolecularRecord
@@ -37,15 +36,16 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.fromJson
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.read
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.toJson
+import com.hartwig.actin.testutil.ResourceLocator
+import java.io.File
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
-import java.io.File
-import java.time.LocalDate
 
 class MolecularRecordJsonTest {
 
-    private val molecularDirectory = Resources.getResource("molecular").path
+    private val molecularDirectory = ResourceLocator(this).onClasspath("molecular")
     private val sampleMolecularJson = molecularDirectory + File.separator + "sample.molecular.json"
     private val minimalMolecularJson = molecularDirectory + File.separator + "minimal.molecular.json"
     private val epsilon = 1.0E-10

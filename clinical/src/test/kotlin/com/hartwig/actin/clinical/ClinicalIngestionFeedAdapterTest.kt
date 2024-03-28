@@ -1,28 +1,27 @@
 package com.hartwig.actin.clinical
 
-import com.google.common.io.Resources
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
-import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
 import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
+import com.hartwig.actin.clinical.feed.emc.TestFeedFactory
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
+import com.hartwig.actin.testutil.ResourceLocator
 import com.hartwig.actin.util.json.GsonSerializer
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Test
 
 private const val PATIENT = "ACTN01029999"
-val EXPECTED_CLINICAL_RECORD: String =
-    "${Resources.getResource("clinical_record").path}/$PATIENT.clinical.json"
 
 class ClinicalIngestionFeedAdapterTest {
+    private val expectedClinicalRecord = "${ResourceLocator(this).onClasspath("clinical_record")}/$PATIENT.clinical.json"
 
     @Test
     fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
@@ -48,7 +47,7 @@ class ClinicalIngestionFeedAdapterTest {
         )
         val ingestion = ClinicalIngestionFeedAdapter(
             EmcClinicalFeedIngestor.create(
-                FEED_DIRECTORY,
+                TestFeedFactory.FEED_DIRECTORY,
                 CURATION_DIRECTORY,
                 curationDatabase,
                 TestAtcFactory.createProperAtcModel()
@@ -64,7 +63,7 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(patientResults).hasSize(1)
         assertThat(patientResults[0].patientId).isEqualTo(PATIENT)
         assertThat(patientResults[0].curationResults).isEmpty()
-        assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(EXPECTED_CLINICAL_RECORD))
+        assertThat(patientResults[0].clinicalRecord).isEqualTo(ClinicalRecordJson.read(expectedClinicalRecord))
         assertThat(patientResults[0].questionnaireCurationErrors)
             .containsExactly(QuestionnaireCurationError(PATIENT, "Unrecognized questionnaire option: 'Probably'"))
         assertThat(patientResults[0].feedValidationWarnings).containsExactly(

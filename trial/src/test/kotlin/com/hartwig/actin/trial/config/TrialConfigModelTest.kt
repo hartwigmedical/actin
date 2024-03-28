@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.config
 
-import com.google.common.io.Resources
+import com.hartwig.actin.testutil.ResourceLocator
 import com.hartwig.actin.trial.TestTrialData
 import com.hartwig.actin.trial.interpretation.TestEligibilityFactoryFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -45,6 +45,6 @@ class TrialConfigModelTest {
     }
 
     companion object {
-        private val TRIAL_CONFIG_DIRECTORY = Resources.getResource("trial_config").path
+        private val TRIAL_CONFIG_DIRECTORY = ResourceLocator(this).onClasspath("trial_config")
     }
 }

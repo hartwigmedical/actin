@@ -1,6 +1,5 @@
 package com.hartwig.actin.doid.serialization
 
-import com.google.common.io.Resources
 import com.hartwig.actin.doid.datamodel.BasicPropertyValue
 import com.hartwig.actin.doid.datamodel.Definition
 import com.hartwig.actin.doid.datamodel.DoidEntry
@@ -8,12 +7,13 @@ import com.hartwig.actin.doid.datamodel.Edge
 import com.hartwig.actin.doid.datamodel.Node
 import com.hartwig.actin.doid.datamodel.Synonym
 import com.hartwig.actin.doid.datamodel.Xref
+import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DoidJsonTest {
 
-    private val doidExampleFileJson = Resources.getResource("doid/example_doid.json").path
+    private val doidExampleFileJson = ResourceLocator(this).onClasspath("doid/example_doid.json")
 
     @Test
     fun `Should extract doid from URL`() {

@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.feed.emc
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader.read
 import com.hartwig.actin.clinical.feed.emc.bodyweight.BodyWeightEntry
@@ -11,6 +10,7 @@ import com.hartwig.actin.clinical.feed.emc.patient.PatientEntry
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireEntry
 import com.hartwig.actin.clinical.feed.emc.surgery.SurgeryEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
+import com.hartwig.actin.testutil.ResourceLocator
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,7 +20,6 @@ import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.apache.logging.log4j.util.Strings
 import org.junit.Test
-
 
 class EmcClinicalFeedReaderTest {
     @Test
@@ -38,7 +37,7 @@ class EmcClinicalFeedReaderTest {
     }
 
     companion object {
-        private val CLINICAL_FEED_DIRECTORY = Resources.getResource("feed/emc").path
+        private val CLINICAL_FEED_DIRECTORY = ResourceLocator(this).onClasspath("feed/emc")
         private const val EPSILON = 1.0E-10
         private const val PATIENT = "ACTN01029999"
 

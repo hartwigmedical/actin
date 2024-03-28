@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.serialization
 
-import com.google.common.io.Resources
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
@@ -9,13 +8,14 @@ import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.fromJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.read
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
+import com.hartwig.actin.testutil.ResourceLocator
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.File
 
 class TreatmentMatchJsonTest {
 
-    private val algoDirectory = Resources.getResource("algo").path
+    private val algoDirectory = ResourceLocator(this).onClasspath("algo")
     private val treatmentMatchJson = algoDirectory + File.separator + "patient.treatment_match.json"
 
     @Test
