@@ -26,6 +26,8 @@ class ExternalTrialSummarizerTest {
             externalTrialSummarizer.summarize(externalEligibleTrials, emptyList())
         assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(TMB_TARGET)
         assertThat(externalTrialSummary.otherCountryTrials).containsOnlyKeys(EGFR_TARGET)
+        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(0)
     }
 
     @Test
@@ -38,6 +40,8 @@ class ExternalTrialSummarizerTest {
             externalTrialSummarizer.summarize(externalEligibleTrials, listOf(evaluatedCohortTMB()))
         assertThat(externalTrialSummary.dutchTrials).isEmpty()
         assertThat(externalTrialSummary.otherCountryTrials).isEmpty()
+        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(1)
+        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(1)
     }
 
     @Test
@@ -50,10 +54,12 @@ class ExternalTrialSummarizerTest {
             externalTrialSummarizer.summarize(externalEligibleTrials, emptyList())
         assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(TMB_TARGET)
         assertThat(externalTrialSummary.otherCountryTrials).isEmpty()
+        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(1)
     }
 
     @Test
-    fun `Should filter when trial has multiple targets and one does not overlap`() {
+    fun `Should not filter when trial has multiple targets and one does not overlap`() {
         val externalEligibleTrials =
             mapOf(
                 TMB_TARGET to listOf(TRIAL_1, TRIAL_2),
@@ -63,6 +69,8 @@ class ExternalTrialSummarizerTest {
             externalTrialSummarizer.summarize(externalEligibleTrials, emptyList())
         assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(TMB_TARGET)
         assertThat(externalTrialSummary.otherCountryTrials).containsOnlyKeys(EGFR_TARGET)
+        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(0)
     }
 
     @Test
@@ -75,6 +83,8 @@ class ExternalTrialSummarizerTest {
             ExternalTrialSummarizer(false).summarize(externalEligibleTrials, listOf(evaluatedCohortTMB()))
         assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(TMB_TARGET)
         assertThat(externalTrialSummary.otherCountryTrials).containsOnlyKeys(TMB_TARGET)
+        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(0)
     }
 
     private fun evaluatedCohortTMB() =

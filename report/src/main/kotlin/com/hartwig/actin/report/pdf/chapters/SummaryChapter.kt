@@ -120,13 +120,19 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
             val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, evaluated)
             return Pair(
                 if (externalTrialSummary.dutchTrials.isNotEmpty()) {
-                    EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, externalTrialSummary.dutchTrials, contentWidth())
+                    EligibleDutchExternalTrialsGenerator(
+                        molecular.externalTrialSource,
+                        externalTrialSummary.dutchTrials,
+                        contentWidth(),
+                        externalTrialSummary.dutchTrialsFiltered
+                    )
                 } else null,
                 if (externalTrialSummary.otherCountryTrials.isNotEmpty()) {
                     EligibleOtherCountriesExternalTrialsGenerator(
                         molecular.externalTrialSource,
                         externalTrialSummary.otherCountryTrials,
-                        contentWidth()
+                        contentWidth(),
+                        externalTrialSummary.otherCountryTrialsFiltered
                     )
                 } else null
             )

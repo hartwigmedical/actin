@@ -13,7 +13,7 @@ class EligibleOtherCountriesExternalTrialsGenerator(
     private val source: String,
     private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
     private val width: Float,
-    private val hideContents: Boolean = false
+    private val filteredCount: Int
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
@@ -32,36 +32,35 @@ class EligibleOtherCountriesExternalTrialsGenerator(
 
         val table = Tables.createFixedWidthCols(eventWidth, titleWidth + nctWidth + countriesWidth)
 
-        if (!hideContents) {
-            table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Event")))
-            val headerSubTable = Tables.createFixedWidthCols(titleWidth, nctWidth, countriesWidth)
-            listOf("Trial title", "NCT number", "Country").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
-            table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
+        table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Event")))
+        val headerSubTable = Tables.createFixedWidthCols(titleWidth, nctWidth, countriesWidth)
+        listOf("Trial title", "NCT number", "Country").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
+        table.addHeaderCell(Cells.createContentNoBorder(headerSubTable))
 
-            externalTrialsPerEvent.forEach { (event, externalTrials) ->
-                val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth, countriesWidth)
-                externalTrials.forEach { externalTrial ->
-                    subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(externalTrial.title)))
-                    subTable.addCell(
-                        Cells.createContentNoBorder(externalTrial.nctId)
-                            .setAction(PdfAction.createURI(externalTrial.url))
-                            .addStyle(Styles.urlStyle())
-                    )
-                    subTable.addCell(Cells.createContentNoBorder(externalTrial.countries.joinToString { it.display() }))
-                }
-                table.addCell(Cells.createContent(event))
-                EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
+        externalTrialsPerEvent.forEach { (event, externalTrials) ->
+            val subTable = Tables.createFixedWidthCols(titleWidth, nctWidth, countriesWidth)
+            externalTrials.forEach { externalTrial ->
+                subTable.addCell(Cells.createContentNoBorder(EligibleExternalTrialGeneratorFunctions.shortenTitle(externalTrial.title)))
+                subTable.addCell(
+                    Cells.createContentNoBorder(externalTrial.nctId)
+                        .setAction(PdfAction.createURI(externalTrial.url))
+                        .addStyle(Styles.urlStyle())
+                )
+                subTable.addCell(Cells.createContentNoBorder(externalTrial.countries.joinToString { it.display() }))
             }
+            table.addCell(Cells.createContent(event))
+            EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
+        }
 
-            table.addCell(Cells.createSpanningSubNote(String.format("Currently only Belgian and German trials are supported"), table))
-        } else {
+        table.addCell(Cells.createSpanningSubNote(String.format("Currently only Belgian and German trials are supported"), table))
+        if (filteredCount > 0)
             table.addCell(
                 Cells.createSpanningSubNote(
-                    "Trials outside the Netherlands are hidden due to options within Netherlands. See extended report for details of these trials",
+                    "($filteredCount) trials were filtered out due to overlapping molecular targets. See extended report for all matches.",
                     table
                 )
             )
-        }
+
 
         return makeWrapping(table)
     }

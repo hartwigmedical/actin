@@ -10,7 +10,10 @@ import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EligibleDutchExternalTrialsGenerator(
-    private val source: String, private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, private val width: Float
+    private val source: String,
+    private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
+    private val width: Float,
+    private val filteredCount: Int
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
@@ -40,6 +43,13 @@ class EligibleDutchExternalTrialsGenerator(
             table.addCell(Cells.createContent(event))
             EligibleExternalTrialGeneratorFunctions.insertRow(table, subTable)
         }
+        if (filteredCount > 0)
+            table.addCell(
+                Cells.createSpanningSubNote(
+                    "($filteredCount) trials were filtered out due to overlapping molecular targets. See extended report for all matches.",
+                    table
+                )
+            )
 
         return makeWrapping(table)
     }
