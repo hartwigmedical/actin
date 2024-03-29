@@ -1,31 +1,39 @@
 package com.hartwig.actin.clinical
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.feed.emc.ClinicalFeedReader
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
 import com.hartwig.actin.clinical.feed.emc.FEED_DIRECTORY
+import com.hartwig.actin.clinical.feed.emc.FeedModel
 import com.hartwig.actin.clinical.feed.emc.FeedValidationWarning
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireCurationError
+import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireVersion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.json.GsonSerializer
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
+import org.junit.Before
 import org.junit.Test
 
 private const val PATIENT = "ACTN01029999"
 private val EXPECTED_CLINICAL_RECORD = "${resourceOnClasspath("clinical_record")}/$PATIENT.clinical.json"
 
 class ClinicalIngestionFeedAdapterTest {
+    lateinit var curationDatabase: CurationDatabaseContext
+    private lateinit var adapter: ClinicalIngestionFeedAdapter
 
-    @Test
-    fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
-        val curationDatabase = CurationDatabaseContext.create(
+    @Before
+    fun setup() {
+        curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
             CurationDoidValidator(
                 TestDoidModelFactory.createWithDoidManualConfig(
@@ -36,16 +44,19 @@ class ClinicalIngestionFeedAdapterTest {
                             "2513" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "10286" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                            "0050933" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
                             "5082" to CurationDoidValidator.DISEASE_DOID,
                             "11335" to CurationDoidValidator.DISEASE_DOID,
-                            "0060500" to CurationDoidValidator.DISEASE_DOID
+                            "0060500" to CurationDoidValidator.DISEASE_DOID,
+                            "0081062" to CurationDoidValidator.DISEASE_DOID
                         )
                     )
                 )
             ),
             TestTreatmentDatabaseFactory.createProper()
         )
-        val ingestion = ClinicalIngestionFeedAdapter(
+        adapter = ClinicalIngestionFeedAdapter(
             EmcClinicalFeedIngestor.create(
                 FEED_DIRECTORY,
                 CURATION_DIRECTORY,
@@ -53,11 +64,30 @@ class ClinicalIngestionFeedAdapterTest {
                 TestAtcFactory.createProperAtcModel()
             ), curationDatabase
         )
+    }
+
+
+    @Test
+    fun `Output should not have changed`() {
+        val jsonMapper = ObjectMapper()
+        val ingestionResult = adapter.run()
+        assertThat(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText())).isEqualTo(
+            jsonMapper.readTree(
+                ClinicalRecordJson.toJson(
+                    ingestionResult.patientResults[0].clinicalRecord
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should run ingestion from proper curation and feed files, read from filesystem`() {
+        assertQuestionnaireInFeedIsOfLatestVersion()
 
         val validationErrors = curationDatabase.validate()
         assertThat(validationErrors).isEmpty()
 
-        val ingestionResult = ingestion.run()
+        val ingestionResult = adapter.run()
         assertThat(ingestionResult).isNotNull
         val patientResults = ingestionResult.patientResults
         assertThat(patientResults).hasSize(1)
@@ -76,13 +106,16 @@ class ClinicalIngestionFeedAdapterTest {
         assertThat(ingestionResult.unusedConfigs).containsExactlyInAnyOrder(
             UnusedCurationConfig(categoryName = "Oncological History", input = "capecitabine and oxi"),
             UnusedCurationConfig(categoryName = "Primary Tumor", input = "long | metastase adenocarcinoom"),
+            UnusedCurationConfig(categoryName = "Primary Tumor", input = "carcinoma | unknown"),
             UnusedCurationConfig(categoryName = "Non Oncological History", input = "pijn bij maligne neoplasma van longen"),
+            UnusedCurationConfig(categoryName = "Non Oncological History", input = "sarcoidose"),
             UnusedCurationConfig(categoryName = "Complication", input = "overige"),
             UnusedCurationConfig(categoryName = "Lesion Location", input = "brain"),
             UnusedCurationConfig(categoryName = "Toxicity", input = "dysphagia"),
+            UnusedCurationConfig(categoryName = "Toxicity", input = "neuropathy gr3"),
             UnusedCurationConfig(categoryName = "Molecular Test IHC", input = "immunohistochemie erbb2 3+"),
             UnusedCurationConfig(categoryName = "Molecular Test PDL1", input = "cps pd l1 > 20"),
-            UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk")
+            UnusedCurationConfig(categoryName = "Dosage Unit Translation", input = "stuk"),
         )
 
         val gson = GsonSerializer.create()
@@ -112,5 +145,17 @@ class ClinicalIngestionFeedAdapterTest {
                     patientIngestionResult.feedValidationWarnings
                 )
             )
+    }
+
+    private fun assertQuestionnaireInFeedIsOfLatestVersion() {
+        val feed = FeedModel(
+            ClinicalFeedReader.read(FEED_DIRECTORY)
+        )
+        assertThat(feed.read().size).isEqualTo(1)
+        val versionUnderTest = QuestionnaireVersion.version(feed.read()[0].latestQuestionnaireEntry!!)
+        val latestVersion = QuestionnaireVersion.values().last()
+
+        assertThat(versionUnderTest).isNotNull()
+        assertThat(versionUnderTest).isEqualTo(latestVersion)
     }
 }
