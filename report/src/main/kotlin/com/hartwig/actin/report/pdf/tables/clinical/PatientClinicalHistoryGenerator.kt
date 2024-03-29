@@ -96,13 +96,9 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        val anyEntryHasDate = record.priorOtherConditions.any { priorOtherCondition ->
-            toDateString(priorOtherCondition.year, priorOtherCondition.month) != null
-        }
-
         record.priorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
             val dateString = toDateString(priorOtherCondition.year, priorOtherCondition.month)
-            if (anyEntryHasDate) {
+            if (record.priorOtherConditions.any { toDateString(it.year, it.month) != null }) {
                 table.addCell(createSingleTableEntry(dateString?: DATE_UNKNOWN))
                 table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)))
             } else {
