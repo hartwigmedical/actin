@@ -4,9 +4,9 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.vitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.junit.Test
 
 class HasLimitedBloodPressureTest {
 

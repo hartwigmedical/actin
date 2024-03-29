@@ -2,9 +2,9 @@ package com.hartwig.actin.clinical.correction
 
 import com.hartwig.actin.clinical.correction.QuestionnaireRawEntryMapper.Companion.createFromCurationDirectory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.io.IOException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.IOException
 
 class QuestionnaireRawEntryMapperTest {
     @Test

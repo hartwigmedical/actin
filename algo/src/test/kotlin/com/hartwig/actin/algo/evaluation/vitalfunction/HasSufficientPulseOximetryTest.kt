@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.vitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.junit.Test
 
 class HasSufficientPulseOximetryTest {
     private val referenceDateTime = LocalDateTime.of(2023, 12, 2, 0, 0)
