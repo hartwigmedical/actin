@@ -10,6 +10,7 @@ object CohortStatusResolver {
         configuredCohortIds: CohortDefinitionConfig
     ): CohortStatusInterpretation {
         val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
+
         val (matches, missingCohortErrors) = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 
         if (!hasValidTrialStatusDatabaseMatches(matches)) {
@@ -28,6 +29,26 @@ object CohortStatusResolver {
         return matches.size == nonNullMatches.size && (isSingleParent(nonNullMatches) || isListOfChildren(nonNullMatches))
     }
 
+    private fun collectAncestorsFor(entry: TrialStatusEntry, entriesByCohortId: Map<Int, TrialStatusEntry>): List<Int> {
+        val ancestors = ArrayList<Int>()
+        var currentEntry: TrialStatusEntry = entry
+        while (currentEntry.cohortParentId != null) {
+            ancestors.add(currentEntry.cohortParentId!!)
+            currentEntry = entriesByCohortId[currentEntry.cohortParentId]!!
+        }
+        return ancestors
+    }
+
+    private fun findCommonAncestor(matches: List<TrialStatusEntry>, entriesByCohortId: Map<Int, TrialStatusEntry>): Int? {
+        val allAncestors: List<List<Int>> = matches.map { match -> collectAncestorsFor(match, entriesByCohortId) }
+        allAncestors[0].forEach {
+            if (allAncestors.all { pedigree -> pedigree.contains(it) }) {
+                return it
+            }
+        }
+        return null
+    }
+
     private fun interpretValidMatches(
         matches: List<TrialStatusEntry>,
         entriesByCohortId: Map<Int, TrialStatusEntry>
@@ -38,21 +59,29 @@ object CohortStatusResolver {
             val statuses = matches.map(::fromEntry)
             val statusValidationErrors = statuses.map { it.second }.flatten()
             val bestChildEntry = statuses.map { it.first }.maxWith(InterpretedCohortStatusComparator())
+            val commonAncestorId = findCommonAncestor(matches, entriesByCohortId)
+            val emptyResponse: List<TrialStatusDatabaseValidationError> = emptyList()
+            val multipleParentValidationErrors: List<TrialStatusDatabaseValidationError> = commonAncestorId?.let { emptyResponse } ?: run {
+                matches.map {
+                    TrialStatusDatabaseValidationError(
+                        it,
+                        "Multiple parents found for single set of children"
+                    )
+                }
+            }
             val firstParentId = matches[0].cohortParentId
-            val multipleParentValidationErrors = matches.find { it.cohortParentId != firstParentId }
-                ?.let { TrialStatusDatabaseValidationError(it, "Multiple parents found for single set of children") }
             val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!).first
             val closedParentOpenChildValidationError = if (bestChildEntry.open && !parentEntry.open) {
                 TrialStatusDatabaseValidationError(
                     matches[0],
-                    "Best child from IDs '${matches.map { it.cohortId }}' is open while parent with ID '$firstParentId' is closed"
+                    "Best child from IDs '${matches.map { it.cohortId }}' is open while parent with ID '$commonAncestorId' is closed"
                 )
             } else null
 
             val noSlotsParentHasSlotsChildValidationError = if (bestChildEntry.slotsAvailable && !parentEntry.slotsAvailable) {
                 TrialStatusDatabaseValidationError(
                     matches[0],
-                    "Best child from IDs '${matches.map { it.cohortId }}' has slots available while parent with ID '$firstParentId' has no slots available",
+                    "Best child from IDs '${matches.map { it.cohortId }}' has slots available while parent with ID '$commonAncestorId' has no slots available",
                 )
             } else null
             return bestChildEntry to (statusValidationErrors + multipleParentValidationErrors + closedParentOpenChildValidationError + noSlotsParentHasSlotsChildValidationError).filterNotNull()

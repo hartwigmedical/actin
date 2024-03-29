@@ -92,45 +92,78 @@ class CohortStatusResolverTest {
 
     @Test
     fun `Should return validation errors when invalid cohort IDs configured for cohort`() {
-        val config = cohortDefinitionConfig(8)
+        val config = cohortDefinitionConfig(DOES_NOT_EXIST_COHORT_ID)
         val (_, cohortValidation, _) = CohortStatusResolver.resolve(
             entries,
             config
         )
         assertThat(cohortValidation).containsExactly(
-            CohortDefinitionValidationError(config = config, message = "Could not find trial status database entry with cohort ID '8'"),
+            CohortDefinitionValidationError(
+                config = config,
+                message = "Could not find trial status database entry with cohort ID '$DOES_NOT_EXIST_COHORT_ID'"
+            ),
             CohortDefinitionValidationError(config = config, message = "Invalid cohort IDs configured for cohort")
         )
     }
 
     @Test
-    fun `Should return validation error when multiple parents found for single set of children`() {
-        val config = cohortDefinitionConfig(3, 4)
-        val wrongParent = TestTrialStatusDatabaseEntryFactory.createEntry(4, 2, TrialStatus.OPEN, 1)
+    fun `Should return validation error for each parent when multiple unrelated parents found for single set of children`() {
+        val config = cohortDefinitionConfig(CHILD_OPEN_WITH_SLOTS_COHORT_ID, CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID)
+        val wrongParent = TestTrialStatusDatabaseEntryFactory.createEntry(
+            CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID,
+            PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID,
+            TrialStatus.OPEN,
+            1
+        )
+        val correctParent = TestTrialStatusDatabaseEntryFactory.createEntry(
+            CHILD_OPEN_WITH_SLOTS_COHORT_ID,
+            PARENT_1_OPEN_WITH_SLOTS_COHORT_ID,
+            TrialStatus.OPEN,
+            1
+        )
         val (_, _, trialStatusDatabaseValidation) = CohortStatusResolver.resolve(
             listOf(
-                TestTrialStatusDatabaseEntryFactory.createEntry(1, null, TrialStatus.OPEN, 1),
-                TestTrialStatusDatabaseEntryFactory.createEntry(2, null, TrialStatus.OPEN, 1),
-                TestTrialStatusDatabaseEntryFactory.createEntry(3, 1, TrialStatus.OPEN, 1),
+                TestTrialStatusDatabaseEntryFactory.createEntry(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, null, TrialStatus.OPEN, 1),
+                TestTrialStatusDatabaseEntryFactory.createEntry(PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID, null, TrialStatus.OPEN, 1),
+                correctParent,
                 wrongParent
             ),
             config
         )
-        assertThat(trialStatusDatabaseValidation).containsExactly(
+        val message = "Multiple parents found for single set of children"
+        assertThat(trialStatusDatabaseValidation).containsExactlyInAnyOrder(
             TrialStatusDatabaseValidationError(
                 config = wrongParent,
-                message = "Multiple parents found for single set of children"
+                message = message
+            ),
+            TrialStatusDatabaseValidationError(
+                config = correctParent,
+                message = message
             ),
         )
     }
 
     @Test
+    fun `Should not return validation errors if multiple parents all have the same ancestor`() {
+        val config = cohortDefinitionConfig(GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID, CHILD_OF_GRANDPARENT_OPEN_WITH_SLOTS_COHORT_ID)
+        val statusInterpretation = CohortStatusResolver.resolve(entries, config)
+        assertThatStatus(statusInterpretation, true, true)
+        assertThat(statusInterpretation.ctcDatabaseValidationErrors).isEmpty()
+        assertThat(statusInterpretation.cohortDefinitionErrors).isEmpty()
+    }
+
+    @Test
     fun `Should return validation error when best child is open while parent is closed`() {
-        val config = cohortDefinitionConfig(2)
-        val child = TestTrialStatusDatabaseEntryFactory.createEntry(2, 1, TrialStatus.OPEN, 1)
+        val config = cohortDefinitionConfig(PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID)
+        val child = TestTrialStatusDatabaseEntryFactory.createEntry(
+            PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID,
+            PARENT_1_OPEN_WITH_SLOTS_COHORT_ID,
+            TrialStatus.OPEN,
+            1
+        )
         val (_, _, trialStatusDatabaseValidation) = CohortStatusResolver.resolve(
             listOf(
-                TestTrialStatusDatabaseEntryFactory.createEntry(1, null, TrialStatus.CLOSED, 1),
+                TestTrialStatusDatabaseEntryFactory.createEntry(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, null, TrialStatus.CLOSED, 1),
                 child,
             ),
             config
@@ -138,18 +171,23 @@ class CohortStatusResolverTest {
         assertThat(trialStatusDatabaseValidation).containsExactly(
             TrialStatusDatabaseValidationError(
                 config = child,
-                message = "Best child from IDs '[2]' is open while parent with ID '1' is closed"
+                message = "Best child from IDs '[$PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID]' is open while parent with ID '$PARENT_1_OPEN_WITH_SLOTS_COHORT_ID' is closed"
             ),
         )
     }
 
     @Test
     fun `Should return validation error when best child from has slots available while parent has no slots available`() {
-        val config = cohortDefinitionConfig(2)
-        val child = TestTrialStatusDatabaseEntryFactory.createEntry(2, 1, TrialStatus.OPEN, 1)
+        val config = cohortDefinitionConfig(PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID)
+        val child = TestTrialStatusDatabaseEntryFactory.createEntry(
+            PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID,
+            PARENT_1_OPEN_WITH_SLOTS_COHORT_ID,
+            TrialStatus.OPEN,
+            1
+        )
         val (_, _, trialDatabaseValidation) = CohortStatusResolver.resolve(
             listOf(
-                TestTrialStatusDatabaseEntryFactory.createEntry(1, null, TrialStatus.OPEN, 0),
+                TestTrialStatusDatabaseEntryFactory.createEntry(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, null, TrialStatus.OPEN, 0),
                 child,
             ),
             config
@@ -157,15 +195,15 @@ class CohortStatusResolverTest {
         assertThat(trialDatabaseValidation).containsExactly(
             TrialStatusDatabaseValidationError(
                 config = child,
-                message = "Best child from IDs '[2]' has slots available while parent with ID '1' has no slots available"
+                message = "Best child from IDs '[$PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID]' has slots available while parent with ID '$PARENT_1_OPEN_WITH_SLOTS_COHORT_ID' has no slots available"
             ),
         )
     }
 
     @Test
     fun `Should return validation error when no cohort status available in trial status database for cohort`() {
-        val config = cohortDefinitionConfig(1)
-        val noStatus = TestTrialStatusDatabaseEntryFactory.createEntry(1, null, null, 0)
+        val config = cohortDefinitionConfig(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID)
+        val noStatus = TestTrialStatusDatabaseEntryFactory.createEntry(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, null, null, 0)
         val (_, _, trialDatabaseValidation) = CohortStatusResolver.resolve(
             listOf(
                 noStatus,
@@ -182,8 +220,9 @@ class CohortStatusResolverTest {
 
     @Test
     fun `Should return validation error when uninterpretable cohort status`() {
-        val config = cohortDefinitionConfig(1)
-        val uninterpretable = TestTrialStatusDatabaseEntryFactory.createEntry(1, null, TrialStatus.UNINTERPRETABLE, 0)
+        val config = cohortDefinitionConfig(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID)
+        val uninterpretable =
+            TestTrialStatusDatabaseEntryFactory.createEntry(PARENT_1_OPEN_WITH_SLOTS_COHORT_ID, null, TrialStatus.UNINTERPRETABLE, 0)
         val (_, _, trialStatusDatabaseValidation) = CohortStatusResolver.resolve(
             listOf(
                 uninterpretable,
@@ -238,6 +277,10 @@ class CohortStatusResolverTest {
         private const val ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID = 6
         private const val CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID = 6
         private const val DOES_NOT_EXIST_COHORT_ID = 7
+        private const val GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = 8
+        private const val PARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = 9
+        private const val GRANDPARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = 10
+        private const val CHILD_OF_GRANDPARENT_OPEN_WITH_SLOTS_COHORT_ID = 11
 
         private fun createTestEntries(): List<TrialStatusEntry> {
             val parentOpenWithSlots =
@@ -279,6 +322,34 @@ class CohortStatusResolverTest {
                     TrialStatus.OPEN,
                     1
                 )
+            val grandchildOpenWithSlots =
+                TestTrialStatusDatabaseEntryFactory.createEntry(
+                    GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID,
+                    PARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID,
+                    TrialStatus.OPEN,
+                    1
+                )
+            val parentOfGrandchildOpenWithSlots =
+                TestTrialStatusDatabaseEntryFactory.createEntry(
+                    PARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID,
+                    GRANDPARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID,
+                    TrialStatus.OPEN,
+                    1
+                )
+            val grandparentOpenWithSlots =
+                TestTrialStatusDatabaseEntryFactory.createEntry(
+                    GRANDPARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID,
+                    null,
+                    TrialStatus.OPEN,
+                    1
+                )
+            val childOfGrandparentWithOpenSlots =
+                TestTrialStatusDatabaseEntryFactory.createEntry(
+                    CHILD_OF_GRANDPARENT_OPEN_WITH_SLOTS_COHORT_ID,
+                    GRANDPARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID,
+                    TrialStatus.OPEN,
+                    1
+                )
 
             return listOf(
                 parentOpenWithSlots,
@@ -287,7 +358,11 @@ class CohortStatusResolverTest {
                 childOpenWithoutSlots,
                 childClosedWithoutSlots,
                 anotherChildOpenWithSlots,
-                childForParent2OpenWithSlots
+                childForParent2OpenWithSlots,
+                grandchildOpenWithSlots,
+                parentOfGrandchildOpenWithSlots,
+                grandparentOpenWithSlots,
+                childOfGrandparentWithOpenSlots
             )
         }
     }
