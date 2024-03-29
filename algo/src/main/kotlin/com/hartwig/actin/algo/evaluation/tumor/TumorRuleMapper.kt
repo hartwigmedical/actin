@@ -117,7 +117,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasKnownSCLCTransformationCreator(): FunctionCreator {
-        return FunctionCreator { HasKnownSCLCTransformation() }
+        return FunctionCreator { HasKnownSCLCTransformation(doidModel()) }
     }
 
     private fun hasNonSquamousNSCLCCreator(): FunctionCreator {
