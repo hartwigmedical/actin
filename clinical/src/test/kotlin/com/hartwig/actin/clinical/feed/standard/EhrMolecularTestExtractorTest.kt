@@ -20,15 +20,15 @@ private val PATHOLOGY_REPORT =
 private val PRIOR_MOLECULAR_TEST =
     PriorMolecularTest(test = "Archer FP Lung Target", item = "EGFR", measure = "c.2573T>G", measureDate = LocalDate.parse("2024-03-25"), impliesPotentialIndeterminateStatus = false)
 private val EHR_OTHER_MOLECULAR_TEST =
-    EhrMolecularTest(molecularTestType = "Archer FP Lung Target", geneTested = "EGFR", result = "c.2573T>G", resultDate = LocalDate.parse("2024-03-25"))
+    EhrMolecularTest(type = "Archer FP Lung Target", measure = "EGFR", result = "c.2573T>G", resultDate = LocalDate.parse("2024-03-25"))
 
 private val EHR_PATIENT_RECORD = createEhrPatientRecord()
 private val EHR_PATIENT_RECORD_WITH_PATHOLOGY =
     EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = PATHOLOGY_REPORT))
 private val EHR_PATIENT_RECORD_WITH_OTHER_MOLECULAR_TEST =
-    EHR_PATIENT_RECORD.copy(molecularTests = listOf(EHR_OTHER_MOLECULAR_TEST))
+    EHR_PATIENT_RECORD.copy(molecularTestHistory = listOf(EHR_OTHER_MOLECULAR_TEST))
 private val EHR_PATIENT_RECORD_WITH_PATHOLOGY_AND_MOLECULAR =
-    EHR_PATIENT_RECORD_WITH_PATHOLOGY.copy(molecularTests = listOf(EHR_OTHER_MOLECULAR_TEST))
+    EHR_PATIENT_RECORD_WITH_PATHOLOGY.copy(molecularTestHistory = listOf(EHR_OTHER_MOLECULAR_TEST))
 
 class EhrMolecularTestExtractorTest {
 

@@ -116,10 +116,26 @@
       "test": "IHC",
       "item": "ERBB2",
       "measure": null,
+      "measureDate": null,
       "scoreText": null,
       "scoreValuePrefix": null,
       "scoreValue": 3.0,
       "scoreValueUnit": "+",
+      "impliesPotentialIndeterminateStatus": false
+    },
+    {
+      "test": "Archer FP Lung Target",
+      "item": "EGFR",
+      "measure": "c.2573T>G",
+      "measureDate": {
+        "year": 2024,
+        "month": 3,
+        "day": 25
+      },
+      "scoreText": null,
+      "scoreValuePrefix": null,
+      "scoreValue": null,
+      "scoreValueUnit": null,
       "impliesPotentialIndeterminateStatus": false
     }
   ],

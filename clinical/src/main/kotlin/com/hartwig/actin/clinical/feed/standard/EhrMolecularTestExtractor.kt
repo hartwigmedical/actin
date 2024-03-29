@@ -16,10 +16,10 @@ class EhrMolecularTestExtractor(
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<PriorMolecularTest>> {
         val extractedIHCTests = extractIHC(molecularTestCuration, ehrPatientRecord)
 
-        val extractedOtherMolecularTests = ehrPatientRecord.molecularTests.map {
+        val extractedOtherMolecularTests = ehrPatientRecord.molecularTestHistory.map {
             PriorMolecularTest(
-                test = it.molecularTestType,
-                item = it.geneTested,
+                test = it.type,
+                item = it.measure,
                 measure = it.result,
                 measureDate = it.resultDate,
                 impliesPotentialIndeterminateStatus = false
