@@ -43,7 +43,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         } else null
 
         val chapters = listOfNotNull(
-            SummaryChapter(report, ExternalTrialSummarizer(config.hideTrialsWithOverlappingMolecularTargets)),
+            SummaryChapter(report, ExternalTrialSummarizer(config.filterTrialsWithOverlappingMolecularTargetsInSummary)),
             MolecularDetailsChapter(report),
             ClinicalDetailsChapter(report),
             TrialMatchingChapter(report, enableExtendedMode),

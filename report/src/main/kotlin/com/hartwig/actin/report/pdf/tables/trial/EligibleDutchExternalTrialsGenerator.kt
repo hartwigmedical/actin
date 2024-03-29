@@ -46,7 +46,7 @@ class EligibleDutchExternalTrialsGenerator(
         if (filteredCount > 0)
             table.addCell(
                 Cells.createSpanningSubNote(
-                    "($filteredCount) trials were filtered out due to overlapping molecular targets. See extended report for all matches.",
+                    "$filteredCount trials were filtered out due to overlapping molecular targets. See extended report for all matches.",
                     table
                 )
             )

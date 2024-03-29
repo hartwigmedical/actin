@@ -8,7 +8,7 @@ import java.io.File
 
 data class ReportConfiguration(
     val showClinicalSummary: Boolean = true,
-    val hideTrialsWithOverlappingMolecularTargets: Boolean = false
+    val filterTrialsWithOverlappingMolecularTargetsInSummary: Boolean = false
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
