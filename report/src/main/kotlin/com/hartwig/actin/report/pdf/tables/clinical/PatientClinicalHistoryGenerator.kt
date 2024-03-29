@@ -103,8 +103,8 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
 
         record.priorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
             val dateString = toDateString(priorOtherCondition.year, priorOtherCondition.month)
-            if (dateString != null) {
-                table.addCell(createSingleTableEntry(dateString))
+            if (record.priorOtherConditions.any { toDateString(it.year, it.month) != null }) {
+                table.addCell(createSingleTableEntry(dateString?: DATE_UNKNOWN))
                 table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)))
             } else {
                 table.addCell(createSpanningTableEntry(toPriorOtherConditionString(priorOtherCondition), table))
