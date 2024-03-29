@@ -79,8 +79,6 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
 
-
-
         val (openCohortsWithSlots, evaluated) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
         val (openCohortsWithoutSlots, _) =

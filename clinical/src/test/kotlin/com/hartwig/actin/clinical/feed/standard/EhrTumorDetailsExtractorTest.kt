@@ -32,7 +32,8 @@ private const val CONCLUSION_3 = "conclusion 3"
 
 private const val CONCLUSION_4 = "conclusion 4"
 
-private const val RADIOLOGY_REPORT = "Conclusie:\n" +
+private const val RADIOLOGY_REPORT = "Prior to conclusion:\n" +
+        "Conclusie:\n" +
         "$CONCLUSION_1.\n" +
         "$CONCLUSION_2.\n" +
         "\r\n\n\nHersenen radiologie rapport:\n" +
