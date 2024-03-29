@@ -1,2 +1,3 @@
 input	test	item	measure	scoreText	scoreValuePrefix	scoreValue	scoreValueUnit	impliesPotentialIndeterminateStatus
 CPS PD L1 > 20		PD-L1	CPS	xxx	>	20		0
+positive		PD-L1		Positive				0

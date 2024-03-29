@@ -5,10 +5,15 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.File
+import org.apache.logging.log4j.LogManager
 
 data class ReportConfiguration(
     val showClinicalSummary: Boolean = true,
-    val filterTrialsWithOverlappingMolecularTargetsInSummary: Boolean = false
+    val filterTrialsWithOverlappingMolecularTargetsInSummary: Boolean = false,
+    val showMolecularSummary: Boolean = true,
+    val showOtherOncologicalHistoryInSummary: Boolean = true,
+    val showRelevantNonOncologicalHistoryInSummary: Boolean = true,
+    val showApprovedTreatmentsInSummary: Boolean = true
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
@@ -27,12 +32,16 @@ data class EnvironmentConfiguration(
 ) {
 
     companion object {
+        private val LOGGER = LogManager.getLogger(EnvironmentConfiguration::class.java)
 
         fun createFromFile(filePath: String): EnvironmentConfiguration {
             val mapper = ObjectMapper(YAMLFactory())
             mapper.registerModules(KotlinModule.Builder().configure(KotlinFeature.NullIsSameAsDefault, true).build())
             mapper.findAndRegisterModules()
-            return mapper.readValue(File(filePath), EnvironmentConfiguration::class.java)
+
+            val configuration = mapper.readValue(File(filePath), EnvironmentConfiguration::class.java)
+            LOGGER.info("Loaded environment configuration from file $filePath:\n$configuration")
+            return configuration
         }
     }
 }

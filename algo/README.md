@@ -450,10 +450,8 @@ Notes:
 
 - For all lab values, the most recent available lab value (up to 90 days old) is evaluated.
 - If the most recent lab value is within the requested range but more than 30 days old, the evaluation resolves to `WARN` instead of `PASS`
-- If the most recent lab value is out of the requested range, the second-last lab value is evaluated.
-    - In case that a second-last lab value is available, less than 90 days old and within requested range, the evaluation resolves to `WARN`
-      .
-    - In case there is no applicable second-last value, or this value is also out of requested range, the evaluation resolves to `FAIL`.
+- If the most recent lab value is out of the requested range but inside the margin of error (10%), the evaluation resolves to `(recoverable) UNDETERMINED `
+- If the most recent lab value is out of the requested range and outside the margin of error, the evaluation resolves to `FAIL`.
 
 ##### Rules related to other conditions
 
@@ -668,6 +666,9 @@ Note for all TOXICITY rules:
 | HAS_BODY_WEIGHT_OF_AT_LEAST_X          | bodyWeight > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median body weight (in kg) => X               |
 | HAS_BODY_WEIGHT_OF_AT_MOST_X           | bodyWeight > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median body weight (in kg) <= X               |
 | HAS_BMI_OF_AT_MOST_X                   | Patient BMI estimate from body weight <= X for patients between 1.5 and 2.0 m                                                                                                       |
+
+Notes:
+- If the vital function measurement is below the requested minimum value or above the requested maximum value, the evaluation resolves to `(recoverable) UNDETERMINED` if the deviation is within the 5 percent margin of error and to `FAIL` otherwise.
 
 ##### Rules related to blood transfusions
 
