@@ -27,12 +27,12 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(private val genes
         return when {
             anyPass -> {
                 EvaluationFactory.pass(
-                    "Patient has a reportable molecular event with SOC targeted therapy for NSCLC available",
-                    "Has molecular event with SOC targeted therapy for NSCLC available"
+                    "Patient has a molecular event with SOC targeted therapy in NSCLC",
+                    "Has molecular event with SOC therapy in NSCLC"
                 )
             } else -> {
                 EvaluationFactory.fail(
-                    "Does not have a molecular event with SOC targeted therapy for NSCLC available"
+                    "Does not have a molecular event with SOC therapy in NSCLC"
                 )
             }
         }
@@ -82,7 +82,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(private val genes
                 "Insertions" to listOf("EGFR 20"),
                 "Variants with protein impact" to listOf("EGFR L858R", "BRAF V600E"),
                 "Activating variant in gene" to listOf("EGFR"),
-                "Fusions" to listOf("ROS1", "ALK", "RET", "NTRK"),
+                "Fusions" to listOf("ROS1", "ALK", "RET", "NTRK1", "NTRK2", "NTRK3"),
                 "Exon skipping" to listOf("MET 14")
             )
     }
