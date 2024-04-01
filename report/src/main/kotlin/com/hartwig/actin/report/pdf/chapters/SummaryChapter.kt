@@ -5,6 +5,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
+import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
@@ -12,8 +13,8 @@ import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleExternalTrialGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -25,7 +26,7 @@ import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 import java.time.LocalDate
 
-class SummaryChapter(private val report: Report) : ReportChapter {
+class SummaryChapter(private val report: Report, private val externalTrialSummarizer: ExternalTrialSummarizer) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -78,17 +79,23 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val valueWidth = contentWidth() - keyWidth
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
 
-        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.patientRecord.molecularHistory.latestMolecularRecord())
+        val (openCohortsWithSlots, evaluated) =
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
+        val (openCohortsWithoutSlots, _) =
+            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false)
 
         val molecular = report.patientRecord.molecularHistory.latestMolecularRecord()
+        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(molecular, evaluated)
+        val showMolecular = report.config.showMolecularSummary && molecular?.date?.let { it > LocalDate.now().minusDays(21) } == true
         val generators = listOfNotNull(
-            if (report.config.showClinicalSummary) PatientClinicalHistoryGenerator(report.patientRecord, keyWidth, valueWidth) else null,
-            if (molecular?.date != null && molecular.date!! > LocalDate.now().minusDays(21)) {
-                MolecularSummaryGenerator(report.patientRecord, molecular, cohorts, keyWidth, valueWidth)
-            } else null,
-            EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth()),
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true),
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false),
+            if (report.config.showClinicalSummary)
+                PatientClinicalHistoryGenerator(report.patientRecord, report.config, false, keyWidth, valueWidth) else null,
+            if (showMolecular)
+                molecular.let { MolecularSummaryGenerator(report.patientRecord, it, cohorts, keyWidth, valueWidth) } else null,
+            if (report.config.showApprovedTreatmentsInSummary)
+                EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth()) else null,
+            openCohortsWithSlots,
+            openCohortsWithoutSlots,
             dutchTrialGenerator,
             nonDutchTrialGenerator
         )
@@ -104,21 +111,30 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         document.add(table)
     }
 
-    private fun externalTrials(molecular: MolecularRecord?): Pair<TableGenerator?, TableGenerator?> {
+    private fun externalTrials(molecular: MolecularRecord?, evaluated: List<EvaluatedCohort>): Pair<TableGenerator?, TableGenerator?> {
         if (molecular == null) {
             return Pair(null, null)
         } else {
             val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
                 AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
             )
-            val dutchTrials = EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
-            val otherTrials = EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
+            val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, evaluated)
             return Pair(
-                if (dutchTrials.isNotEmpty()) {
-                    EligibleDutchExternalTrialsGenerator(molecular.externalTrialSource, dutchTrials, contentWidth())
+                if (externalTrialSummary.dutchTrials.isNotEmpty()) {
+                    EligibleDutchExternalTrialsGenerator(
+                        molecular.externalTrialSource,
+                        externalTrialSummary.dutchTrials,
+                        contentWidth(),
+                        externalTrialSummary.dutchTrialsFiltered
+                    )
                 } else null,
-                if (otherTrials.isNotEmpty()) {
-                    EligibleOtherCountriesExternalTrialsGenerator(molecular.externalTrialSource, otherTrials, contentWidth())
+                if (externalTrialSummary.otherCountryTrials.isNotEmpty()) {
+                    EligibleOtherCountriesExternalTrialsGenerator(
+                        molecular.externalTrialSource,
+                        externalTrialSummary.otherCountryTrials,
+                        contentWidth(),
+                        externalTrialSummary.otherCountryTrialsFiltered
+                    )
                 } else null
             )
         }

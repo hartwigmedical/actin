@@ -7,9 +7,9 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evalu
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.weight
 import com.hartwig.actin.clinical.datamodel.BodyWeight
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class BodyWeightFunctionsTest {
 
@@ -46,15 +46,26 @@ class BodyWeightFunctionsTest {
 
 
     @Test
-    fun `Should fail on median weight above max`() {
+    fun `Should fail on median weight above max and outside margin of error`() {
         val weights = listOf(
-            weight(referenceDateTime, 148.0, true),
-            weight(referenceDateTime.plusDays(1), 155.0, true)
+            weight(referenceDateTime, 160.0, true),
+            weight(referenceDateTime.plusDays(1), 175.0, true)
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
         )
+    }
+
+    @Test
+    fun `Should evaluate to recoverable undetermined on median weight above max but inside margin of error`() {
+        val weights = listOf(
+            weight(referenceDateTime, 151.0, true),
+            weight(referenceDateTime.plusDays(1), 152.0, true)
+        )
+        val evaluation = evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
@@ -82,15 +93,26 @@ class BodyWeightFunctionsTest {
     }
 
     @Test
-    fun `Should fail on median weight below min`() {
+    fun `Should fail on median weight below min and outside margin of error`() {
         val weights = listOf(
-            weight(referenceDateTime, 41.0, true),
-            weight(referenceDateTime.plusDays(1), 38.0, true)
+            weight(referenceDateTime, 35.0, true),
+            weight(referenceDateTime.plusDays(1), 30.0, true)
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
         )
+    }
+
+    @Test
+    fun `Should evaluate to recoverable undetermined on median weight below min but inside margin of error`() {
+        val weights = listOf(
+            weight(referenceDateTime, 38.0, true),
+            weight(referenceDateTime.plusDays(1), 40.0, true)
+        )
+        val evaluation = evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test

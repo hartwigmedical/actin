@@ -26,10 +26,10 @@ import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.Test
-import java.time.LocalDate
 
 class RecommendationEngineTest {
 
@@ -258,7 +258,8 @@ class RecommendationEngineTest {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MOLECULAR_RECORD_WITH_OTHER_BRAF_MUTATION, "rectum"
         )
-        val expectedAdditionalTherapies = listOf(CETUXIMAB, PANITUMUMAB, IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
+        val expectedAdditionalTherapies =
+            listOf(CETUXIMAB, PANITUMUMAB, IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
 
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalTherapies)
@@ -284,7 +285,8 @@ class RecommendationEngineTest {
         val thirdLinePatientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MOLECULAR_RECORD_WITH_BRAF_V600E
         )
-        val expectedAdditionalCandidates = listOf(ENCORAFENIB_CETUXIMAB, IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
+        val expectedAdditionalCandidates =
+            listOf(ENCORAFENIB_CETUXIMAB, IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
         assertThat(thirdLinePatientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalCandidates)
     }

@@ -3,11 +3,12 @@ package com.hartwig.actin.report.pdf
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import org.apache.logging.log4j.LogManager
 import java.io.File
+import org.apache.logging.log4j.LogManager
 
 object TestReportWriterApplication {
 
@@ -19,7 +20,7 @@ object TestReportWriterApplication {
     @JvmStatic
     fun main(args: Array<String>) {
         val skipMolecular: Boolean = args.contains("--no-molecular")
-        val writer = createProductionReportWriter(WORK_DIRECTORY)
+        val writer = createProductionReportWriter(WORK_DIRECTORY, ReportConfiguration())
         val report = createTestReport(skipMolecular)
         writer.write(report)
     }

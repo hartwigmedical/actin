@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
@@ -20,7 +21,7 @@ import com.itextpdf.layout.element.BlockElement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
-class PatientClinicalHistoryGenerator(private val record: PatientRecord, private val keyWidth: Float, private val valueWidth: Float) :
+class PatientClinicalHistoryGenerator(private val record: PatientRecord, private val config: ReportConfiguration, private val showDetails: Boolean, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
     override fun title(): String {
         return "Clinical summary"
@@ -30,12 +31,16 @@ class PatientClinicalHistoryGenerator(private val record: PatientRecord, private
         val table = createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(createKey("Relevant systemic treatment history"))
         table.addCell(create(tableOrNone(relevantSystemicPreTreatmentHistoryTable(record))))
-        table.addCell(createKey("Relevant other oncological history"))
-        table.addCell(create(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))))
+        if (config.showOtherOncologicalHistoryInSummary || showDetails) {
+            table.addCell(createKey("Relevant other oncological history"))
+            table.addCell(create(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))))
+        }
         table.addCell(createKey("Previous primary tumor"))
         table.addCell(create(tableOrNone(secondPrimaryHistoryTable(record))))
-        table.addCell(createKey("Relevant non-oncological history"))
-        table.addCell(create(tableOrNone(relevantNonOncologicalHistoryTable(record))))
+        if (config.showRelevantNonOncologicalHistoryInSummary || showDetails) {
+            table.addCell(createKey("Relevant non-oncological history"))
+            table.addCell(create(tableOrNone(relevantNonOncologicalHistoryTable(record))))
+        }
         return table
     }
 
@@ -98,8 +103,8 @@ class PatientClinicalHistoryGenerator(private val record: PatientRecord, private
 
         record.priorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
             val dateString = toDateString(priorOtherCondition.year, priorOtherCondition.month)
-            if (dateString != null) {
-                table.addCell(createSingleTableEntry(dateString))
+            if (record.priorOtherConditions.any { toDateString(it.year, it.month) != null }) {
+                table.addCell(createSingleTableEntry(dateString?: DATE_UNKNOWN))
                 table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)))
             } else {
                 table.addCell(createSpanningTableEntry(toPriorOtherConditionString(priorOtherCondition), table))

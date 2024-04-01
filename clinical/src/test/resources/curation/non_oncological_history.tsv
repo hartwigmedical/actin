@@ -1,3 +1,4 @@
 input	name	year	month	doids	category	isLVEF	lvefValue	isContraindicationForTherapy
 sarcoidose	Liver cirrhosis and sarcoidosis	2019	7	5082;11335	Liver disease			0
 pijn bij maligne neoplasma van longen	Pain			5082;11335	Other			1
+diabetes	diabetes			0081062				0

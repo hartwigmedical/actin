@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class HasMolecularEventWithTargetedTherapyForNSCLCAvailable(geneToIgnore: String?) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
+        return EvaluationFactory.recoverableUndetermined(
             "Molecular events in genes with approved therapy for NSCLC are currently not determined",
             "Undetermined if there are molecular events with approved therapy for NSCLC"
         )

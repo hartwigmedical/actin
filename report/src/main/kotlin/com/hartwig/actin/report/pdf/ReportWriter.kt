@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf
 
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
@@ -7,6 +8,7 @@ import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.util.Constants
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.util.Paths
@@ -19,11 +21,11 @@ import com.itextpdf.kernel.pdf.WriterProperties
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.properties.AreaBreakType
-import org.apache.logging.log4j.LogManager
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import org.apache.logging.log4j.LogManager
 
-class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?) {
+class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?, private val config: ReportConfiguration) {
     @Throws(IOException::class)
     fun write(report: Report) {
         write(report, false)
@@ -41,7 +43,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         } else null
 
         val chapters = listOfNotNull(
-            SummaryChapter(report),
+            SummaryChapter(report, ExternalTrialSummarizer(config.filterTrialsWithOverlappingMolecularTargetsInSummary)),
             MolecularDetailsChapter(report),
             ClinicalDetailsChapter(report),
             TrialMatchingChapter(report, enableExtendedMode),

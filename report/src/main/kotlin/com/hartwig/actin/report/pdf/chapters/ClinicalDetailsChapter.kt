@@ -40,7 +40,7 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
         val bloodTransfusions = report.patientRecord.bloodTransfusions
 
         val generators = listOfNotNull(
-            PatientClinicalHistoryGenerator(report.patientRecord, keyWidth, valueWidth),
+            PatientClinicalHistoryGenerator(report.patientRecord, report.config, true, keyWidth, valueWidth),
             PatientCurrentDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
             TumorDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
             report.patientRecord.medications?.let {

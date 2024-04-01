@@ -11,9 +11,8 @@ import org.apache.logging.log4j.core.config.Configurator
 
 data class StandardOfCareConfig(
     val patientJson: String, val doidJson: String, val atcTsv: String, val treatmentDirectory: String,
-    val runHistorically: Boolean
+    val runHistorically: Boolean, val overridesYaml: String?
 ) {
-
     companion object {
         fun createOptions(): Options {
             val options = Options()
@@ -26,6 +25,7 @@ data class StandardOfCareConfig(
                 false,
                 "If set, runs the algo with a date just after the original patient registration date"
             )
+            options.addOption(OVERRIDES_YAML, true, "Path to optional configuration overrides YAML file")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
         }
@@ -45,7 +45,8 @@ data class StandardOfCareConfig(
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 runHistorically = runHistorically,
-                atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV)
+                atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
+                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDES_YAML)
             )
         }
 
@@ -56,5 +57,6 @@ data class StandardOfCareConfig(
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val RUN_HISTORICALLY = "run_historically"
         private const val LOG_DEBUG = "log_debug"
+        private const val OVERRIDES_YAML = "overrides_yaml"
     }
 }

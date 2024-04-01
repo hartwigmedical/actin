@@ -10,7 +10,10 @@ import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EligibleOtherCountriesExternalTrialsGenerator(
-    private val source: String, private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, private val width: Float
+    private val source: String,
+    private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
+    private val width: Float,
+    private val filteredCount: Int
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
@@ -21,12 +24,14 @@ class EligibleOtherCountriesExternalTrialsGenerator(
     }
 
     override fun contents(): Table {
+
         val eventWidth = (0.9 * width / 5).toFloat()
         val titleWidth = (2.6 * width / 5).toFloat()
         val nctWidth = (0.7 * width / 5).toFloat()
         val countriesWidth = (0.8 * width / 5).toFloat()
 
         val table = Tables.createFixedWidthCols(eventWidth, titleWidth + nctWidth + countriesWidth)
+
         table.addHeaderCell(Cells.createContentNoBorder(Cells.createHeader("Event")))
         val headerSubTable = Tables.createFixedWidthCols(titleWidth, nctWidth, countriesWidth)
         listOf("Trial title", "NCT number", "Country").forEach { headerSubTable.addHeaderCell(Cells.createHeader(it)) }
@@ -48,6 +53,14 @@ class EligibleOtherCountriesExternalTrialsGenerator(
         }
 
         table.addCell(Cells.createSpanningSubNote(String.format("Currently only Belgian and German trials are supported"), table))
+        if (filteredCount > 0)
+            table.addCell(
+                Cells.createSpanningSubNote(
+                    "$filteredCount trials were filtered out due to overlapping molecular targets. See extended report for all matches.",
+                    table
+                )
+            )
+
 
         return makeWrapping(table)
     }
