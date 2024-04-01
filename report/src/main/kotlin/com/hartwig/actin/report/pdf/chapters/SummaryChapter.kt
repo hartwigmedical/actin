@@ -91,7 +91,7 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
             if (report.config.showClinicalSummary)
                 PatientClinicalHistoryGenerator(report.patientRecord, report.config, false, keyWidth, valueWidth) else null,
             if (showMolecular)
-                molecular.let { MolecularSummaryGenerator(report.patientRecord, it, cohorts, keyWidth, valueWidth) } else null,
+                molecular?.let { MolecularSummaryGenerator(report.patientRecord, it, cohorts, keyWidth, valueWidth) } else null,
             if (report.config.showApprovedTreatmentsInSummary)
                 EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth()) else null,
             openCohortsWithSlots,
