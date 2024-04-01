@@ -107,7 +107,7 @@ class CohortStatusResolverTest {
     }
 
     @Test
-    fun `Should return validation error for each parent when multiple unrelated parents found for single set of children`() {
+    fun `Should return validation error for each ancestor when multiple unrelated ancestors found for single set of children`() {
         val config = cohortDefinitionConfig(CHILD_OPEN_WITH_SLOTS_COHORT_ID, CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID)
         val wrongParent = TestTrialStatusDatabaseEntryFactory.createEntry(
             CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID,
@@ -130,7 +130,7 @@ class CohortStatusResolverTest {
             ),
             config
         )
-        val message = "Multiple parents found for single set of children"
+        val message = "No common ancestor cohort found for cohorts"
         assertThat(trialStatusDatabaseValidation).containsExactlyInAnyOrder(
             TrialStatusDatabaseValidationError(
                 config = wrongParent,
@@ -144,7 +144,7 @@ class CohortStatusResolverTest {
     }
 
     @Test
-    fun `Should not return validation errors if multiple parents all have the same ancestor`() {
+    fun `Should not return validation errors if multiple cohorts have a common ancestor`() {
         val config = cohortDefinitionConfig(GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID, CHILD_OF_GRANDPARENT_OPEN_WITH_SLOTS_COHORT_ID)
         val statusInterpretation = CohortStatusResolver.resolve(entries, config)
         assertThatStatus(statusInterpretation, true, true)

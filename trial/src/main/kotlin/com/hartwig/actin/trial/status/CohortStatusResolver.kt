@@ -65,7 +65,7 @@ object CohortStatusResolver {
                 matches.map {
                     TrialStatusDatabaseValidationError(
                         it,
-                        "Multiple parents found for single set of children"
+                        "No common ancestor cohort found for cohorts"
                     )
                 }
             }
@@ -74,14 +74,14 @@ object CohortStatusResolver {
             val closedParentOpenChildValidationError = if (bestChildEntry.open && !parentEntry.open) {
                 TrialStatusDatabaseValidationError(
                     matches[0],
-                    "Best child from IDs '${matches.map { it.cohortId }}' is open while parent with ID '$commonAncestorId' is closed"
+                    "Best child from IDs '${matches.map { it.cohortId }}' is open while parent with ID '$firstParentId' is closed"
                 )
             } else null
 
             val noSlotsParentHasSlotsChildValidationError = if (bestChildEntry.slotsAvailable && !parentEntry.slotsAvailable) {
                 TrialStatusDatabaseValidationError(
                     matches[0],
-                    "Best child from IDs '${matches.map { it.cohortId }}' has slots available while parent with ID '$commonAncestorId' has no slots available",
+                    "Best child from IDs '${matches.map { it.cohortId }}' has slots available while parent with ID '$firstParentId' has no slots available",
                 )
             } else null
             return bestChildEntry to (statusValidationErrors + multipleParentValidationErrors + closedParentOpenChildValidationError + noSlotsParentHasSlotsChildValidationError).filterNotNull()
