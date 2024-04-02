@@ -6,62 +6,73 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(private val genesToIgnore: List<String>): EvaluationFunction {
 
-    //TODO: include handling of warn evaluations of all nested evaluation rules below
     override fun evaluate(record: PatientRecord): Evaluation {
         val filteredVariantMap = targetableEventInNSCLCMap.mapValues { (_, variants) ->
             variants.filterNot { ValueComparison.stringCaseInsensitivelyMatchesQueryCollection(it.gene, genesToIgnore) }
         }
 
-        val evaluations = filteredVariantMap.map { evaluateEvent(it.key, filteredVariantMap, record) }.flatMap { it ?: emptyList() }
-        val passingVariants = evaluations.filter { it.second?.result == EvaluationResult.PASS }.map { it.first }
-        val anyPass = passingVariants.isNotEmpty()
+        val eventToEvaluationList = filteredVariantMap
+            .map { eventToEvaluationFunction(it.key, filteredVariantMap) }.flatMap { it ?: emptyList() }
+        val evaluationFunctions = eventToEvaluationList.map { it.second }
+
+        val passGeneralMessages = createMessage(record, evaluationFunctions, isSpecific = false, EvaluationResult.PASS)
+        val passSpecificMessages = createMessage(record, evaluationFunctions, isSpecific = true, EvaluationResult.PASS)
+        val warnGeneralMessages = createMessage(record, evaluationFunctions, isSpecific = false, EvaluationResult.WARN)
+        val warnSpecificMessages = createMessage(record, evaluationFunctions, isSpecific = true, EvaluationResult.WARN)
+        val failGeneralMessages = createMessage(record, evaluationFunctions, isSpecific = false, EvaluationResult.FAIL)
+        val failSpecificMessages = createMessage(record, evaluationFunctions, isSpecific = true, EvaluationResult.FAIL)
 
         return when {
-            anyPass -> {
-                val variantString = passingVariants
-                    .joinToString(", ") { it.gene + (if (it.property.isNotEmpty()) " " else "") + it.property }
-                EvaluationFactory.pass(
-                    "Patient has molecular event(s) with SOC targeted therapy in NSCLC ($variantString)",
-                    "Has molecular event(s) with SOC therapy in NSCLC ($variantString)"
-                )
-            } else -> {
-                EvaluationFactory.fail(
-                    "Does not have a molecular event with SOC therapy in NSCLC"
-                )
+            passGeneralMessages.isNotEmpty() || passSpecificMessages.isNotEmpty() -> {
+                EvaluationFactory.pass(passSpecificMessages, passGeneralMessages)
             }
+            warnGeneralMessages.isNotEmpty() || warnSpecificMessages.isNotEmpty() -> {
+                EvaluationFactory.warn(warnSpecificMessages, warnGeneralMessages)
+            } else -> EvaluationFactory.fail(failSpecificMessages, failGeneralMessages)
         }
     }
 
-    private fun evaluateEvent(
-        eventType: EventType, variantPropertyPairMap:  Map<EventType, List<VariantPropertyPair>>, record: PatientRecord): List<Pair<VariantPropertyPair, Evaluation?>>? {
-        return variantPropertyPairMap[eventType]?.map { event ->
-            val molecularRecord = record.molecular
-            val evaluation = when (eventType) {
-                EventType.ACTIVATING_VARIANT_IN_GENE -> molecularRecord?.let { GeneHasActivatingMutation(event.gene, null).evaluate(it) }
-                EventType.EXON_SKIPPING -> {
-                    molecularRecord?.let { GeneHasSpecificExonSkipping(event.gene, event.property.toInt()).evaluate(it) }
-                }
 
-                EventType.FUSIONS -> molecularRecord?.let { HasFusionInGene(event.gene).evaluate(it) }
-                EventType.VARIANTS_WITH_PROTEIN_IMPACT -> {
-                    molecularRecord?.let { GeneHasVariantWithProteinImpact(event.gene, listOf(event.property)).evaluate(it) }
-                }
 
+    private fun eventToEvaluationFunction(
+        eventType: EventType, eventMap:  Map<EventType, List<VariantPropertyPair>>): List<Pair<VariantPropertyPair, EvaluationFunction>>? {
+        return eventMap[eventType]?.map { event ->
+            val evaluationFunction = when (eventType) {
+                EventType.ACTIVATING_VARIANT_IN_GENE -> GeneHasActivatingMutation(event.gene, null)
+                EventType.EXON_SKIPPING -> GeneHasSpecificExonSkipping(event.gene, event.property.toInt())
+                EventType.FUSIONS -> HasFusionInGene(event.gene)
+                EventType.VARIANTS_WITH_PROTEIN_IMPACT -> GeneHasVariantWithProteinImpact(event.gene, listOf(event.property))
                 EventType.DELETIONS, EventType.INSERTIONS -> {
-                    molecularRecord?.let {
-                        val exon = event.property.toInt()
-                        GeneHasVariantInExonRangeOfType(event.gene, exon, exon,
-                            if (eventType == EventType.DELETIONS) VariantTypeInput.DELETE else VariantTypeInput.INSERT
-                        ).evaluate(it)
+                    val exon = event.property.toInt()
+                    GeneHasVariantInExonRangeOfType(event.gene, exon, exon,
+                        if (eventType == EventType.DELETIONS) VariantTypeInput.DELETE else VariantTypeInput.INSERT
+                    )
                     }
                 }
+            event to evaluationFunction
+        }
+    }
+
+    private fun createMessage(
+        record: PatientRecord, evaluationFunctions: List<EvaluationFunction>, isSpecific: Boolean, resultType: EvaluationResult
+    ): String {
+        val evaluations = Or(evaluationFunctions).evaluate(record)
+        return when (resultType) {
+            EvaluationResult.PASS -> {
+                (if (isSpecific) evaluations.passSpecificMessages else evaluations.passGeneralMessages).joinToString(", ")
             }
-            event to evaluation
+            EvaluationResult.WARN -> {
+                (if (isSpecific) evaluations.warnSpecificMessages else evaluations.warnGeneralMessages).joinToString(", ")
+            }
+            else -> {
+                (if (isSpecific) evaluations.failSpecificMessages else evaluations.failGeneralMessages).joinToString(", ")
+            }
         }
     }
 

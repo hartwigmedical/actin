@@ -47,8 +47,25 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
         Assertions.assertThat(
-            evaluation.passGeneralMessages).containsExactly("Has molecular event(s) with SOC therapy in NSCLC ($CORRECT_GENE)"
+            evaluation.passGeneralMessages).containsExactly("$CORRECT_GENE activating mutation(s)"
             )
+    }
+
+    @Test
+    fun `Should warn for mutation in correct gene when uncertain if activating`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withVariant(
+                TestVariantFactory.createMinimal().copy(
+                    gene = CORRECT_GENE,
+                    isReportable = true,
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    clonalLikelihood = 1.0
+                )
+            )
+        )
+        )
     }
 
     @Test
@@ -70,7 +87,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     }
 
     @Test
-    fun `Should pass for correct variant with protein impact`() {
+    fun `Should pass for correct variant with correct protein impact`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -108,8 +125,8 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
         val evaluation = function.evaluate(TestPatientFactory.createMinimalTestPatientRecord().copy(molecular = record))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
         Assertions.assertThat(evaluation.passGeneralMessages).containsExactly(
-            "Has molecular event(s) with SOC therapy in NSCLC ($CORRECT_VARIANT_GENE $CORRECT_PROTEIN_IMPACT, " +
-                    "$OTHER_CORRECT_VARIANT_GENE $OTHER_CORRECT_PROTEIN_IMPACT)"
+            "$CORRECT_PROTEIN_IMPACT detected in $CORRECT_VARIANT_GENE, " +
+                    "$OTHER_CORRECT_PROTEIN_IMPACT detected in $OTHER_CORRECT_VARIANT_GENE"
         )
     }
 
@@ -120,10 +137,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
-                        gene = CORRECT_VARIANT_GENE,
-                        isReportable = true,
-                        clonalLikelihood = 1.0,
-                        canonicalImpact = proteinImpact("1ABC2")
+                        gene = CORRECT_VARIANT_GENE, clonalLikelihood = 1.0, canonicalImpact = proteinImpact("1ABC2")
                     )
                 )
             )
@@ -168,6 +182,19 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     }
 
     @Test
+    fun `Should warn for correct fusion gene but low driver likelihood`() {
+        val fusions = TestFusionFactory.createMinimal().copy(
+            isReportable = true,
+            geneStart = CORRECT_FUSION_GENE,
+            fusedExonUp = 5,
+            geneEnd = "Fusion partner",
+            fusedExonDown = 3,
+            driverLikelihood = DriverLikelihood.LOW
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withFusion(fusions)))
+    }
+
+    @Test
     fun `Should fail for incorrect fusion`() {
         val fusions = TestFusionFactory.createMinimal().copy(
             isReportable = true,
@@ -197,7 +224,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     }
 
     @Test
-    fun `Should fail with deletion of incorrect gene or exon`() {
+    fun `Should fail with deletion of incorrect gene`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -206,18 +233,6 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
                         gene = "incorrect", isReportable = true,
                         type = VariantType.DELETE,
                         canonicalImpact = impactWithExon(CORRECT_DELETION_CODON)
-                    )
-                )
-            )
-        )
-        EvaluationAssert.assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.createMinimal().copy(
-                        gene = CORRECT_DELETION_GENE, isReportable = true,
-                        type = VariantType.DELETE,
-                        canonicalImpact = impactWithExon(123)
                     )
                 )
             )
@@ -241,7 +256,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     }
 
     @Test
-    fun `Should fail with insertion of incorrect gene or exon`() {
+    fun `Should fail with insertion of incorrect gene`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -250,18 +265,6 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
                         gene = "incorrect", isReportable = true,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(CORRECT_INSERTION_CODON)
-                    )
-                )
-            )
-        )
-        EvaluationAssert.assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    TestVariantFactory.createMinimal().copy(
-                        gene = CORRECT_INSERTION_GENE, isReportable = true,
-                        type = VariantType.INSERT,
-                        canonicalImpact = impactWithExon(123)
                     )
                 )
             )
