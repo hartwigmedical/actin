@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -11,7 +10,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class EligibleApprovedTreatmentGenerator(
-    private val clinical: ClinicalRecord, private val molecular: MolecularRecord?,
+    private val patientRecord: PatientRecord,
     private val width: Float
 ) : TableGenerator {
 
@@ -22,7 +21,8 @@ class EligibleApprovedTreatmentGenerator(
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(width)
         table.addHeaderCell(Cells.createHeader("Treatment"))
-        val isCUP = TumorDetailsInterpreter.isCUP(clinical.tumor)
+        val isCUP = TumorDetailsInterpreter.isCUP(patientRecord.tumor)
+        val molecular = patientRecord.molecularHistory.latestMolecularRecord()
         val hasConfidentPrediction =
             molecular?.let { TumorOriginInterpreter.hasConfidentPrediction(molecular.characteristics.predictedTumorOrigin) } ?: false
         if (isCUP && hasConfidentPrediction) {

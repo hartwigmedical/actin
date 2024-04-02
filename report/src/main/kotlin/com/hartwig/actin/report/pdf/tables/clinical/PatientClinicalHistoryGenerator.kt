@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
@@ -22,7 +22,7 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
 class PatientClinicalHistoryGenerator(
-    private val record: ClinicalRecord,
+    private val record: PatientRecord,
     private val config: ReportConfiguration,
     private val showDetails: Boolean,
     private val keyWidth: Float,
@@ -62,11 +62,11 @@ class PatientClinicalHistoryGenerator(
         return table
     }
 
-    private fun relevantSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
+    private fun relevantSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
         return treatmentHistoryTable(record.oncologicalHistory, true)
     }
 
-    private fun relevantNonSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
+    private fun relevantNonSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
         return treatmentHistoryTable(record.oncologicalHistory, false)
     }
 
@@ -93,7 +93,7 @@ class PatientClinicalHistoryGenerator(
         return treatmentHistoryEntry.allTreatments().any { it.isSystemic }
     }
 
-    private fun secondPrimaryHistoryTable(record: ClinicalRecord): Table {
+    private fun secondPrimaryHistoryTable(record: PatientRecord): Table {
         val table: Table = createSingleColumnTable(valueWidth)
 
         record.priorSecondPrimaries.sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
@@ -102,7 +102,7 @@ class PatientClinicalHistoryGenerator(
         return table
     }
 
-    private fun relevantNonOncologicalHistoryTable(record: ClinicalRecord): Table {
+    private fun relevantNonOncologicalHistoryTable(record: PatientRecord): Table {
         val dateWidth = valueWidth / 5
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
@@ -196,10 +196,10 @@ class PatientClinicalHistoryGenerator(
                 else -> tumorLocation
             }
             val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear, priorSecondPrimary.diagnosedMonth)
-                    ?.let { "diagnosed $it, " } ?: ""
+                ?.let { "diagnosed $it, " } ?: ""
 
             val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear, priorSecondPrimary.lastTreatmentMonth)
-                    ?.let { "last treatment $it, " } ?: ""
+                ?.let { "last treatment $it, " } ?: ""
 
             val status = when (priorSecondPrimary.status) {
                 TumorStatus.ACTIVE -> "considered active"

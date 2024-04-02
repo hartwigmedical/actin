@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxV
 class HasLimitedPDL1ByIHC(private val measure: String, private val maxPDL1: Double) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val pdl1Tests = PriorMolecularTestFunctions.allPDL1Tests(record.priorMolecularTests, measure)
+        val pdl1Tests = PriorMolecularTestFunctions.allPDL1Tests(record.molecularHistory.allPriorMolecularTests(), measure)
         for (ihcTest in pdl1Tests) {
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {

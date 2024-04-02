@@ -11,7 +11,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class MolecularPrinter(private val printer: DatamodelPrinter) {
+class MolecularRecordPrinter(private val printer: DatamodelPrinter) {
 
     fun print(record: MolecularRecord) {
         printer.print("Sample: " + record.sampleId)
@@ -45,7 +45,7 @@ class MolecularPrinter(private val printer: DatamodelPrinter) {
 
         @JvmStatic
         fun printRecord(record: MolecularRecord) {
-            MolecularPrinter(withDefaultIndentation()).print(record)
+            MolecularRecordPrinter(withDefaultIndentation()).print(record)
         }
 
         private fun formatDate(date: LocalDate?): String {
@@ -75,9 +75,11 @@ class MolecularPrinter(private val printer: DatamodelPrinter) {
                 null -> {
                     "Unknown"
                 }
+
                 true -> {
                     "Yes"
                 }
+
                 else -> {
                     "No"
                 }

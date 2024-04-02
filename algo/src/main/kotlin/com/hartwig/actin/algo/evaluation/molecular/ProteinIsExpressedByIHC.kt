@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 class ProteinIsExpressedByIHC internal constructor(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ihcTests = PriorMolecularTestFunctions.allIHCTestsForProtein(record.priorMolecularTests, protein)
+        val ihcTests = PriorMolecularTestFunctions.allIHCTestsForProtein(record.molecularHistory.allPriorMolecularTests(), protein)
 
         return when {
             ihcTests.any { ihcTest -> ihcTest.scoreText?.lowercase() == "positive" || testScoredAboveZero(ihcTest) } -> {

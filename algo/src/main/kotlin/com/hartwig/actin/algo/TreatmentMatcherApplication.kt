@@ -1,48 +1,37 @@
 package com.hartwig.actin.algo
 
-import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.PatientPrinter
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
-import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
-import com.hartwig.actin.clinical.util.ClinicalPrinter
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson
-import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
-import java.io.IOException
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.IOException
+import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
-        LOGGER.info("Loading clinical record from {}", config.clinicalJson)
-        val clinical = ClinicalRecordJson.read(config.clinicalJson)
-        ClinicalPrinter.printRecord(clinical)
-
-        val molecular = config.molecularJson?.let { molecularJson ->
-            LOGGER.info("Loading molecular record from {}", molecularJson)
-            MolecularRecordJson.read(molecularJson)
-        }
-        molecular?.let(MolecularPrinter::printRecord) ?: LOGGER.info("No molecular record provided")
-
-        val patient = PatientRecordFactory.fromInputs(clinical, molecular)
+        LOGGER.info("Loading patient record from {}", config.patientRecordJson)
+        val patient = PatientRecordJson.read(config.patientRecordJson)
+        PatientPrinter.printRecord(patient)
 
         LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
         val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)

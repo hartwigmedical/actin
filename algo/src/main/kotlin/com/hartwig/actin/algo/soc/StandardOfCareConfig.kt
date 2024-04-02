@@ -10,14 +10,13 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class StandardOfCareConfig(
-    val clinicalJson: String, val molecularJson: String, val doidJson: String, val atcTsv: String, val treatmentDirectory: String,
+    val patientJson: String, val doidJson: String, val atcTsv: String, val treatmentDirectory: String,
     val runHistorically: Boolean, val overridesYaml: String?
 ) {
     companion object {
         fun createOptions(): Options {
             val options = Options()
-            options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient")
-            options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient")
+            options.addOption(PATIENT_JSON, true, "File containing the patient record")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree")
             options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
             options.addOption(TREATMENT_DIRECTORY, true, "Path to treatment data directory")
@@ -42,8 +41,7 @@ data class StandardOfCareConfig(
                 LOGGER.info("Configured to run in historic mode")
             }
             return StandardOfCareConfig(
-                clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
-                molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
+                patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 runHistorically = runHistorically,
@@ -53,8 +51,7 @@ data class StandardOfCareConfig(
         }
 
         private val LOGGER: Logger = LogManager.getLogger(StandardOfCareConfig::class)
-        private const val CLINICAL_JSON = "clinical_json"
-        private const val MOLECULAR_JSON = "molecular_json"
+        private const val PATIENT_JSON = "patient_json"
         private const val DOID_JSON = "doid_json"
         private const val ATC_TSV = "atc_tsv"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
