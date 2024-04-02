@@ -79,8 +79,9 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
             return Formats.valueOrDefault(listOfNotNull(questionnaireSummary, ehrSummary).joinToString("; "), "None")
         }
 
-        private fun formatToxicities(filteredEhrToxicities: List<Toxicity>) =
-            filteredEhrToxicities.joinToString(Formats.COMMA_SEPARATOR) { it.name + (it.grade?.let { grade -> " ($grade)" } ?: "") }
+        private fun formatToxicities(filteredToxicities: List<Toxicity>) =
+            filteredToxicities.map { it.name + (it.grade?.let { grade -> " ($grade)" } ?: "") }.toSet()
+                .joinToString(Formats.COMMA_SEPARATOR)
 
         private fun filterUncuratedToxicities(toxicities: List<Toxicity>): List<Toxicity> {
             return toxicities.filter { (it.grade ?: -1) >= 2 }
