@@ -74,6 +74,23 @@ class ExternalTrialSummarizerTest {
     }
 
     @Test
+    fun `Should handle trials with combined targets`() {
+        val combinedTarget = "$TMB_TARGET,\n$EGFR_TARGET"
+        val externalEligibleTrials =
+            mapOf(
+                combinedTarget to listOf(TRIAL_1, TRIAL_2),
+                EGFR_TARGET to listOf(TRIAL_2)
+            )
+        val externalTrialSummary =
+            externalTrialSummarizer.summarize(externalEligibleTrials, emptyList())
+        assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(combinedTarget)
+        assertThat(externalTrialSummary.otherCountryTrials).isEmpty()
+        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(1)
+    }
+
+
+    @Test
     fun `Should disable filtering when toggle is disabled`() {
         val externalEligibleTrials =
             mapOf(
