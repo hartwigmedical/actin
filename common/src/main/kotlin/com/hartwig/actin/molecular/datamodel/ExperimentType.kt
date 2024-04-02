@@ -4,7 +4,8 @@ import com.hartwig.actin.Displayable
 
 enum class ExperimentType(private val display: String) : Displayable {
     TARGETED("Panel analysis"),
-    WHOLE_GENOME("WGS");
+    WHOLE_GENOME("WGS"),
+    IHC("IHC");
 
 
     override fun display(): String {

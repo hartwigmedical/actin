@@ -119,7 +119,7 @@ object TestClinicalFactory {
             who = 1,
             infectionStatus = InfectionStatus(hasActiveInfection = false, description = null),
             ecg = ECG(hasSigAberrationLatestECG = false, aberrationDescription = null, jtcMeasure = null, qtcfMeasure = null)
-        ) 
+        )
     }
 
     private fun drug(name: String, drugType: DrugType, category: TreatmentCategory): Drug {
@@ -294,7 +294,7 @@ object TestClinicalFactory {
         )
     }
 
-    private fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
+    fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
         return listOf(
             PriorMolecularTest(
                 test = "",

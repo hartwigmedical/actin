@@ -12,8 +12,7 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class ReporterConfig(
-    val clinicalJson: String,
-    val molecularJson: String?,
+    val patientJson: String,
     val treatmentMatchJson: String,
     val overrideYaml: String?,
     val outputDirectory: String,
@@ -23,8 +22,7 @@ data class ReporterConfig(
     companion object {
         fun createOptions(): Options {
             val options = Options()
-            options.addOption(CLINICAL_JSON, true, "File containing the clinical record of the patient")
-            options.addOption(MOLECULAR_JSON, true, "File containing the most recent molecular record of the patient")
+            options.addOption(PATIENT_JSON, true, "File containing the patient record")
             options.addOption(TREATMENT_MATCH_JSON, true, "File containing all available treatments, matched to the patient")
             options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the report will be written to")
@@ -44,8 +42,7 @@ data class ReporterConfig(
                 LOGGER.info("Extended reporting mode has been enabled")
             }
             return ReporterConfig(
-                clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
-                molecularJson = ApplicationConfig.optionalFile(cmd, MOLECULAR_JSON),
+                patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
                 overrideYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
@@ -54,8 +51,7 @@ data class ReporterConfig(
         }
 
         val LOGGER: Logger = LogManager.getLogger(ReporterConfig::class.java)
-        private const val CLINICAL_JSON = "clinical_json"
-        private const val MOLECULAR_JSON = "molecular_json"
+        private const val PATIENT_JSON = "patient_json"
         private const val TREATMENT_MATCH_JSON = "treatment_match_json"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val ENABLE_EXTENDED_MODE = "enable_extended_mode"

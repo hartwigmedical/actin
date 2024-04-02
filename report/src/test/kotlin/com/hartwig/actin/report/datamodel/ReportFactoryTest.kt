@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.datamodel
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.configuration.ReportConfiguration
@@ -13,16 +14,14 @@ class ReportFactoryTest {
     fun `Should create report from test data`() {
         assertThat(
             fromInputs(
-                TestClinicalFactory.createMinimalTestClinicalRecord(),
-                TestMolecularFactory.createMinimalTestMolecularRecord(),
+                TestPatientFactory.createMinimalTestPatientRecord(),
                 TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
                 ReportConfiguration()
             )
         ).isNotNull
         assertThat(
             fromInputs(
-                TestClinicalFactory.createProperTestClinicalRecord(),
-                TestMolecularFactory.createProperTestMolecularRecord(),
+                TestPatientFactory.createProperTestPatientRecord(),
                 TestTreatmentMatchFactory.createProperTreatmentMatch(),
                 ReportConfiguration()
             )
@@ -31,9 +30,8 @@ class ReportFactoryTest {
 
     @Test
     fun `Should use clinical patient ID on mismatch`() {
-        val clinical = TestClinicalFactory.createMinimalTestClinicalRecord().copy(patientId = "clinical")
-        val molecular = TestMolecularFactory.createMinimalTestMolecularRecord()
+        val patient = TestPatientFactory.createMinimalTestPatientRecord().copy(patientId = "clinical")
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(patientId = "treatment-match")
-        assertThat(fromInputs(clinical, molecular, treatmentMatch, ReportConfiguration()).patientId).isEqualTo("clinical")
+        assertThat(fromInputs(patient, treatmentMatch, ReportConfiguration()).patientId).isEqualTo("clinical")
     }
 }

@@ -43,16 +43,16 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
 
     private fun addPatientDetails(document: Document) {
         val patientDetailFields = listOf(
-            "Gender: " to report.clinical.patient.gender.display(),
-            " | Birth year: " to report.clinical.patient.birthYear.toString(),
-            " | WHO: " to whoStatus(report.clinical.clinicalStatus.who)
+            "Gender: " to report.patientRecord.patient.gender.display(),
+            " | Birth year: " to report.patientRecord.patient.birthYear.toString(),
+            " | WHO: " to whoStatus(report.patientRecord.clinicalStatus.who)
         )
         addParagraphWithContent(patientDetailFields, document)
 
         val tumorDetailFields = listOf(
-            "Tumor: " to tumor(report.clinical.tumor),
-            " | Lesions: " to lesions(report.clinical.tumor),
-            " | Stage: " to stage(report.clinical.tumor)
+            "Tumor: " to tumor(report.patientRecord.tumor),
+            " | Lesions: " to lesions(report.patientRecord.tumor),
+            " | Stage: " to stage(report.patientRecord.tumor)
         )
         addParagraphWithContent(tumorDetailFields, document)
     }
@@ -83,14 +83,15 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
         val (openCohortsWithoutSlots, _) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false)
 
-        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.molecular, evaluated)
+        val molecular = report.patientRecord.molecularHistory.latestMolecularRecord()
+        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(molecular, evaluated)
         val generators = listOfNotNull(
             if (report.config.showClinicalSummary)
-                PatientClinicalHistoryGenerator(report.clinical, report.config, false, keyWidth, valueWidth) else null,
+                PatientClinicalHistoryGenerator(report.patientRecord, report.config, false, keyWidth, valueWidth) else null,
             if (report.config.showMolecularSummary)
-                report.molecular?.let { MolecularSummaryGenerator(report.clinical, it, cohorts, keyWidth, valueWidth) } else null,
+                molecular?.let { MolecularSummaryGenerator(report.patientRecord, it, cohorts, keyWidth, valueWidth) } else null,
             if (report.config.showApprovedTreatmentsInSummary)
-                EligibleApprovedTreatmentGenerator(report.clinical, report.molecular, contentWidth()) else null,
+                EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth()) else null,
             openCohortsWithSlots,
             openCohortsWithoutSlots,
             dutchTrialGenerator,

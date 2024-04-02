@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
@@ -18,7 +18,7 @@ import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
 
 class WGSSummaryGenerator(
-    private val clinical: ClinicalRecord, private val molecular: MolecularRecord,
+    private val patientRecord: PatientRecord, private val molecular: MolecularRecord,
     cohorts: List<EvaluatedCohort>, private val keyWidth: Float, private val valueWidth: Float
 ) : TableGenerator {
     private val summarizer: MolecularDriversSummarizer
@@ -32,7 +32,7 @@ class WGSSummaryGenerator(
             ApplicationConfig.LOCALE,
             "%s of %s (%s)",
             molecular.type.display(),
-            clinical.patientId,
+            patientRecord.patientId,
             date(molecular.date)
         )
     }
@@ -73,7 +73,7 @@ class WGSSummaryGenerator(
     }
 
     private fun biopsySummary(): Cell {
-        val biopsyLocation = clinical.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN
+        val biopsyLocation = patientRecord.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN
         val purity = molecular.characteristics.purity
         return if (purity != null) {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())

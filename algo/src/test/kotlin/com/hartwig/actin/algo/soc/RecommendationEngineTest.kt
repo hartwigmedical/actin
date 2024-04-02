@@ -16,6 +16,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -485,7 +486,7 @@ class RecommendationEngineTest {
             val patientRecord = MINIMAL_PATIENT_RECORD.copy(
                 tumor = tumorDetails,
                 oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
-                molecular = molecularRecord
+                molecularHistory = MolecularHistory.fromInputs(listOf(molecularRecord), emptyList())
             )
             return patientRecord
         }

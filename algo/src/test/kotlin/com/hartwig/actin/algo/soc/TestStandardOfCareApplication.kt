@@ -11,10 +11,9 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
-import com.hartwig.actin.molecular.util.MolecularPrinter
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import kotlin.system.exitProcess
-import org.apache.logging.log4j.LogManager
 
 class TestStandardOfCareApplication {
 
@@ -23,9 +22,6 @@ class TestStandardOfCareApplication {
 
         LOGGER.info("Running ACTIN Test SOC Application with clinical record")
         PatientPrinter.printRecord(patient)
-
-        LOGGER.info("and molecular record")
-        MolecularPrinter.printRecord(patient.molecular!!)
 
         LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH)

@@ -37,13 +37,13 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth - 10
-        val bloodTransfusions = report.clinical.bloodTransfusions
+        val bloodTransfusions = report.patientRecord.bloodTransfusions
 
         val generators = listOfNotNull(
-            PatientClinicalHistoryGenerator(report.clinical, report.config, true, keyWidth, valueWidth),
-            PatientCurrentDetailsGenerator(report.clinical, keyWidth, valueWidth),
-            TumorDetailsGenerator(report.clinical, keyWidth, valueWidth),
-            report.clinical.medications?.let {
+            PatientClinicalHistoryGenerator(report.patientRecord, report.config, true, keyWidth, valueWidth),
+            PatientCurrentDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
+            TumorDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
+            report.patientRecord.medications?.let {
                 MedicationGenerator(
                     it,
                     contentWidth(),

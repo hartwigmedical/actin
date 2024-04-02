@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
@@ -57,14 +58,16 @@ class HasCancerWithNeuroendocrineComponentTest {
         val base = TestPatientFactory.createMinimalTestPatientRecord()
         val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
-            molecular = baseMolecular.copy(
-                drivers = baseMolecular.drivers.copy(
-                    copyNumbers = setOf(
-                        TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, isReportable = true, gene = "TP53")
-                    ),
-                    homozygousDisruptions = setOf(TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1"))
-                )
-            )
+            molecularHistory = MolecularHistory.fromInputs(
+                listOf(baseMolecular.copy(
+                    drivers = baseMolecular.drivers.copy(
+                        copyNumbers = setOf(
+                            TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, isReportable = true, gene = "TP53")
+                        ),
+                        homozygousDisruptions = setOf(TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1"))
+                    )
+                )),
+                emptyList())
         )
     }
 }
