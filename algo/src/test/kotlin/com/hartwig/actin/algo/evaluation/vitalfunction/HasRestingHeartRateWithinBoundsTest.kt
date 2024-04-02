@@ -4,9 +4,9 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.junit.Test
 
 class HasRestingHeartRateWithinBoundsTest {
 
@@ -27,6 +27,15 @@ class HasRestingHeartRateWithinBoundsTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined when median heart rate outside reference values but within margin of error`() {
+        val heartRates = listOf(
+            heartRate(referenceDateTime, 80.0),
+            heartRate(referenceDateTime.plusDays(1), 85.0)
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+    }
+
+    @Test
     fun `Should pass when median heart rate within reference values`() {
         val heartRates = listOf(
             heartRate(referenceDateTime, 70.0),
@@ -37,10 +46,10 @@ class HasRestingHeartRateWithinBoundsTest {
     }
 
     @Test
-    fun `Should fail when median heart rate outside reference values`() {
+    fun `Should fail when median heart rate outside reference values and outside margin of error`() {
         val heartRates = listOf(
-            heartRate(referenceDateTime, 80.0),
-            heartRate(referenceDateTime.plusDays(1), 85.0),
+            heartRate(referenceDateTime, 90.0),
+            heartRate(referenceDateTime.plusDays(1), 95.0),
             heartRate(referenceDateTime.plusDays(2), 90.0)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
@@ -51,7 +60,7 @@ class HasRestingHeartRateWithinBoundsTest {
         val heartRates = listOf(
             heartRate(referenceDateTime.minusMonths(1), 70.0),
             heartRate(referenceDateTime.minusMonths(1), 70.0),
-            heartRate(referenceDateTime, 85.0)
+            heartRate(referenceDateTime, 95.0)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
     }

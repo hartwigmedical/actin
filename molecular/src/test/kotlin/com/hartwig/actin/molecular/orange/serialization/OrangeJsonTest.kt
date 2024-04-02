@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.serialization
 
-import com.google.common.io.Resources
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.hmftools.datamodel.OrangeJson
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -13,6 +13,6 @@ class OrangeJsonTest {
     }
 
     companion object {
-        private val REAL_ORANGE_JSON = Resources.getResource("serialization/real.v3.0.0.orange.json").path
+        private val REAL_ORANGE_JSON = resourceOnClasspath("serialization/real.v3.0.0.orange.json")
     }
 }

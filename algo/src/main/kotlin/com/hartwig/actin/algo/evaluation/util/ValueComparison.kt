@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.util
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+
 object ValueComparison {
 
     const val LARGER_THAN = ">"

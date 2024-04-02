@@ -42,17 +42,6 @@ class LabMeasurementEvaluator(
         }
         
         val evaluation = function.evaluate(record, measurement, mostRecent!!)
-        if (evaluation.result == EvaluationResult.FAIL) {
-            val secondMostRecent = interpretation.secondMostRecentValue(measurement)
-            if (isValid(secondMostRecent, measurement)) {
-                val secondEvaluation = function.evaluate(record, measurement, secondMostRecent!!)
-                if (secondEvaluation.result == EvaluationResult.PASS) {
-                    return EvaluationFactory.recoverableWarn(
-                        "Latest measurement fails for ${measurement.display()}, but second-latest succeeded"
-                    )
-                }
-            }
-        }
 
         return if (evaluation.result == EvaluationResult.PASS && !mostRecent.date.isAfter(minPassDate)) {
             Evaluation(
