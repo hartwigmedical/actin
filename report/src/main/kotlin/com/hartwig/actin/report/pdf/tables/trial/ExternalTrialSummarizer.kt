@@ -23,7 +23,7 @@ class ExternalTrialSummarizer(private val filterOverlappingMolecularTargets: Boo
             EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
         )
         val (otherTrials, otherTrialsFiltered) = filteredMolecularEvents(
-            hospitalTrialMolecularEvents + dutchTrials.keys,
+            hospitalTrialMolecularEvents + splitMolecularEvents(dutchTrials.keys),
             EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
         )
         return ExternalTrialSummary(dutchTrials, dutchTrialsFiltered, otherTrials, otherTrialsFiltered)
@@ -34,10 +34,15 @@ class ExternalTrialSummarizer(private val filterOverlappingMolecularTargets: Boo
         trials: Map<String, Iterable<ExternalTrial>>
     ): Pair<Map<String, Iterable<ExternalTrial>>, Int> {
         val filtered =
-            if (filterOverlappingMolecularTargets) trials.filter { !molecularTargetsAlreadyIncluded.contains(it.key) } else trials
+            if (filterOverlappingMolecularTargets) trials.filterNot {
+                splitMolecularEvents(setOf(it.key)).all { mt -> molecularTargetsAlreadyIncluded.contains(mt) }
+            } else trials
         return filtered to uniqueTrialCount(trials) - uniqueTrialCount(filtered)
     }
 
     private fun uniqueTrialCount(trials: Map<String, Iterable<ExternalTrial>>) =
         trials.flatMap { it.value }.toSet().size
+
+    private fun splitMolecularEvents(molecularEvents: Set<String>) =
+        molecularEvents.map { it.split(",") }.flatten().map { it.trim() }.toSet()
 }
