@@ -121,7 +121,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
             val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let { toDateString(it.stopYear, it.stopMonth) }
 
             return when {
-                startString != null && stopString != null -> "$startString-$stopString"
+                startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString
                 startString != null -> startString
                 stopString != null -> "?-$stopString"
                 else -> DATE_UNKNOWN
