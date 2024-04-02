@@ -14,9 +14,11 @@ import org.junit.Test
 
 private const val YEAR = 2020
 private const val MONTH = 5
+private const val CORRECT_LOCATION = "Brain"
 
 class HasRecentlyReceivedRadiotherapyTest {
     private val function = HasRecentlyReceivedRadiotherapy(YEAR, MONTH)
+    private val functionWithLocation = HasRecentlyReceivedRadiotherapy(YEAR, MONTH, CORRECT_LOCATION)
     private val radiotherapy = Radiotherapy(name = "")
 
 
@@ -32,9 +34,9 @@ class HasRecentlyReceivedRadiotherapyTest {
     }
 
     @Test
-    fun `Should pass with right category but no date`() {
+    fun `Should evaluate to undetermined with right category but no date`() {
         val rightCategoryNoDate = radiotherapy()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(rightCategoryNoDate)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(rightCategoryNoDate)))
     }
 
     @Test
@@ -61,12 +63,43 @@ class HasRecentlyReceivedRadiotherapyTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYearAndMonth)))
     }
 
-    private fun radiotherapy(startYear: Int? = null, startMonth: Int? = null): TreatmentHistoryEntry {
-        return treatmentHistoryEntry(radiotherapy, startYear, startMonth)
+    @Test
+    fun `Should pass with correct body location and within requested weeks`(){
+        val correctLocationAndTimeframe = radiotherapy(YEAR, MONTH, setOf(CORRECT_LOCATION))
+        assertEvaluation(EvaluationResult.PASS, functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationAndTimeframe)))
     }
 
-    private fun treatmentHistoryEntry(treatment: Treatment, startYear: Int? = null, startMonth: Int? = null): TreatmentHistoryEntry {
-        return TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(treatment), startYear = startYear, startMonth = startMonth)
+    @Test
+    fun `Should fail with wrong body location and within requested weeks`(){
+        val wrongLocationAndCorrectTimeframe = radiotherapy(YEAR, MONTH, setOf("Wrong location"))
+        assertEvaluation(EvaluationResult.FAIL, functionWithLocation.evaluate(withTreatmentHistoryEntry(wrongLocationAndCorrectTimeframe)))
+    }
+
+    @Test
+    fun `Should return undetermined with unknown body location and within requested weeks`(){
+        val unknownLocationAndCorrectTimeframe = radiotherapy(YEAR, MONTH, null)
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+            functionWithLocation.evaluate(withTreatmentHistoryEntry(unknownLocationAndCorrectTimeframe))
+        )
+    }
+
+    @Test
+    fun `Should return undetermined with correct body location but unknown date`(){
+        val correctLocationButUnknownDate = radiotherapy(null, null, setOf(CORRECT_LOCATION))
+        assertEvaluation(EvaluationResult.UNDETERMINED,
+            functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationButUnknownDate))
+        )
+    }
+
+    private fun radiotherapy(
+        startYear: Int? = null, startMonth: Int? = null, location: Set<String>? = null): TreatmentHistoryEntry {
+        return treatmentHistoryEntry(radiotherapy, startYear, startMonth, location)
+    }
+
+    private fun treatmentHistoryEntry(
+        treatment: Treatment, startYear: Int? = null, startMonth: Int? = null, location: Set<String>? = null): TreatmentHistoryEntry {
+        return TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(treatment), startYear = startYear, startMonth = startMonth, bodyLocations = location)
     }
 
     private fun withTreatmentHistoryEntry(treatment: TreatmentHistoryEntry): PatientRecord {
