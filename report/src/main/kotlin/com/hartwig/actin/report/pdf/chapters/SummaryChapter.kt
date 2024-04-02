@@ -85,7 +85,6 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
 
         val molecular = report.patientRecord.molecularHistory.latestMolecularRecord()
         val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(molecular, evaluated)
-        val showMolecular = report.config.showMolecularSummary && molecular?.date?.let { it > LocalDate.now().minusDays(21) } == true
         val generators = listOfNotNull(
             if (report.config.showClinicalSummary)
                 PatientClinicalHistoryGenerator(report.patientRecord, report.config, false, keyWidth, valueWidth) else null,
