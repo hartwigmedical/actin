@@ -34,8 +34,8 @@ data class OrangeInterpreterConfig(
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
             return OrangeInterpreterConfig(
-                orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
-                serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
+                orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
+                serveDirectory = ApplicationConfig.optionalDir(cmd, SERVE_DIRECTORY),
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
