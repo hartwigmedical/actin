@@ -21,8 +21,14 @@ import com.itextpdf.layout.element.BlockElement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
-class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, private val config: ReportConfiguration, private val showDetails: Boolean, private val keyWidth: Float, private val valueWidth: Float) :
-    TableGenerator {
+class PatientClinicalHistoryGenerator(
+    private val record: ClinicalRecord,
+    private val config: ReportConfiguration,
+    private val showDetails: Boolean,
+    private val keyWidth: Float,
+    private val valueWidth: Float
+) : TableGenerator {
+    
     override fun title(): String {
         return "Clinical summary"
     }

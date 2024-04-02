@@ -85,8 +85,7 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
 
         val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.molecular, evaluated)
         val generators = listOfNotNull(
-            if (report.config.showClinicalSummary)
-                PatientClinicalHistoryGenerator(report.clinical, report.config, false, keyWidth, valueWidth) else null,
+            PatientClinicalHistoryGenerator(report.clinical, report.config, false, keyWidth, valueWidth),
             if (report.config.showMolecularSummary)
                 report.molecular?.let { MolecularSummaryGenerator(report.clinical, it, cohorts, keyWidth, valueWidth) } else null,
             if (report.config.showApprovedTreatmentsInSummary)
