@@ -22,7 +22,7 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?)
             val treatmentDisplay = "${categoryDisplay}(treatment(s): ${treatmentHistory.joinToString(", ") { it.treatmentDisplay() }})"
             EvaluationFactory.pass(
                     "Patient has had prior cancer treatment $treatmentDisplay",
-                    "Had had any cancer treatment $treatmentDisplay"
+                    "Had received prior cancer treatment(s)"
                 )
         }
     }

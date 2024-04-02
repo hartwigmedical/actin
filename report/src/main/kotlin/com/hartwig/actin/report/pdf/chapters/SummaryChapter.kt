@@ -24,7 +24,6 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
-import java.time.LocalDate
 
 class SummaryChapter(private val report: Report, private val externalTrialSummarizer: ExternalTrialSummarizer) : ReportChapter {
 
@@ -90,7 +89,7 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
         val generators = listOfNotNull(
             if (report.config.showClinicalSummary)
                 PatientClinicalHistoryGenerator(report.patientRecord, report.config, false, keyWidth, valueWidth) else null,
-            if (showMolecular)
+            if (report.config.showMolecularSummary)
                 molecular?.let { MolecularSummaryGenerator(report.patientRecord, it, cohorts, keyWidth, valueWidth) } else null,
             if (report.config.showApprovedTreatmentsInSummary)
                 EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth()) else null,
