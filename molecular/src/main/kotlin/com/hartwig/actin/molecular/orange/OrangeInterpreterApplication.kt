@@ -35,13 +35,17 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
 
         val molecularHistory = if (config.orangeJson != null) {
+            if (config.serveDirectory == null) {
+                throw IllegalArgumentException("SERVE directory must be provided when interpreting ORANGE record!")
+            }
+
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
             val orange = OrangeJson.getInstance().read(config.orangeJson)
 
             LOGGER.info("Loading evidence database")
             val serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion())
             val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
-            val evidenceDatabase = loadEvidenceDatabase(config, serveRefGenomeVersion, knownEvents, clinical)
+            val evidenceDatabase = loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
@@ -73,10 +77,10 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
         private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
 
         private fun loadEvidenceDatabase(
-            config: OrangeInterpreterConfig, serveRefGenomeVersion: RefGenome,
+            serveDirectory: String, doidJson: String, serveRefGenomeVersion: RefGenome,
             knownEvents: KnownEvents, clinical: ClinicalRecord
         ): EvidenceDatabase {
-            val actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
+            val actionableEvents = ActionableEventsLoader.readFromDir(serveDirectory, serveRefGenomeVersion)
 
             val tumorDoids = clinical.tumor.doids.orEmpty().toSet()
             if (tumorDoids.isEmpty()) {
@@ -85,8 +89,8 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
                 LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
             }
 
-            LOGGER.info("Loading DOID tree from {}", config.doidJson)
-            val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
+            LOGGER.info("Loading DOID tree from {}", doidJson)
+            val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
 
             LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
             return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)

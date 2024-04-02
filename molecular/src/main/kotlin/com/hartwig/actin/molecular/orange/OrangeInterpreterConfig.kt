@@ -10,7 +10,7 @@ import org.apache.logging.log4j.core.config.Configurator
 
 data class OrangeInterpreterConfig(
     val orangeJson: String?,
-    val serveDirectory: String,
+    val serveDirectory: String?,
     val clinicalJson: String,
     val doidJson: String,
     val outputDirectory: String
