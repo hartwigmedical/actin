@@ -4,6 +4,7 @@ import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.CohortDefinitionValidationError
 
 object CohortStatusResolver {
+
     fun resolve(
         entries: List<TrialStatusEntry>,
         configuredCohortIds: CohortDefinitionConfig
@@ -28,7 +29,7 @@ object CohortStatusResolver {
         return matches.size == nonNullMatches.size && (isSingleParent(nonNullMatches) || isListOfChildren(nonNullMatches))
     }
 
-    private fun collectAncestorsFor(
+    private tailrec fun collectAncestorsFor(
         entry: TrialStatusEntry, entriesByCohortId: Map<Int, TrialStatusEntry>, knownAncestorIds: List<Int> = emptyList()
     ): List<Int> {
         if (entry.cohortParentId == null) {
