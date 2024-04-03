@@ -8,7 +8,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class ProteinIsWildTypeByIHC(private val protein: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val allIHCTestsForProtein = PriorMolecularTestFunctions.allIHCTestsForProtein(record.molecularHistory.allPriorMolecularTests(), protein)
+        val allIHCTestsForProtein =
+            PriorMolecularTestFunctions.allIHCTestsForProtein(record.molecularHistory.allPriorMolecularTests(), protein)
         val hasOnlyWildTypeResults = allIHCTestsForProtein.isNotEmpty() && allIHCTestsForProtein.all { test ->
             WILD_TYPE_QUERY_STRINGS.any { it.equals(test.scoreText, ignoreCase = true) }
         }

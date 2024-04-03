@@ -59,15 +59,20 @@ class HasCancerWithNeuroendocrineComponentTest {
         val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
             molecularHistory = MolecularHistory.fromInputs(
-                listOf(baseMolecular.copy(
-                    drivers = baseMolecular.drivers.copy(
-                        copyNumbers = setOf(
-                            TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, isReportable = true, gene = "TP53")
-                        ),
-                        homozygousDisruptions = setOf(TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1"))
+                listOf(
+                    baseMolecular.copy(
+                        drivers = baseMolecular.drivers.copy(
+                            copyNumbers = setOf(
+                                TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, isReportable = true, gene = "TP53")
+                            ),
+                            homozygousDisruptions = setOf(
+                                TestHomozygousDisruptionFactory.createMinimal().copy(isReportable = true, gene = "RB1")
+                            )
+                        )
                     )
-                )),
-                emptyList())
+                ),
+                emptyList()
+            )
         )
     }
 }

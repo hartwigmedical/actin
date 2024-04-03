@@ -25,7 +25,9 @@ internal object TumorTestFactory {
     fun withDoidsAndAmplification(doids: Set<String>, amplifiedGene: String): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            molecularHistory = MolecularHistory.fromInputs(listOf(baseMolecular.copy(
+            molecularHistory = MolecularHistory.fromInputs(
+                listOf(
+                    baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                 drivers = baseMolecular.drivers.copy(
                     copyNumbers = setOf(
@@ -40,7 +42,9 @@ internal object TumorTestFactory {
                         )
                     )
                 )
-            )), emptyList())
+                    )
+                ), emptyList()
+            )
         )
     }
 
@@ -49,7 +53,9 @@ internal object TumorTestFactory {
     ): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
-            molecularHistory = MolecularHistory.fromInputs(listOf(baseMolecular.copy(
+            molecularHistory = MolecularHistory.fromInputs(
+                listOf(
+                    baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                 drivers = baseMolecular.drivers.copy(
                     copyNumbers = setOf(
@@ -64,8 +70,10 @@ internal object TumorTestFactory {
                         )
                     )
                 )
-            )),
-                priorMolecularTests)
+                    )
+                ),
+                priorMolecularTests
+            )
         )
     }
 

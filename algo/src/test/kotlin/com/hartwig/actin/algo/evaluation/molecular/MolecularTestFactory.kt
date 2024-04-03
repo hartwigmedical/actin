@@ -22,7 +22,6 @@ internal object MolecularTestFactory {
 
     private val base = TestPatientFactory.createMinimalTestPatientRecord()
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
-    private val basePriorMolecular = emptyList<PriorMolecularTest>()
 
     fun priorMolecularTest(
         test: String = "",
