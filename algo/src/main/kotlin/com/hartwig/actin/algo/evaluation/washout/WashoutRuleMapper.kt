@@ -26,6 +26,7 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS to hasRecentlyReceivedTrialMedicationCreator(),
             EligibilityRule.HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS_Y_HALF_LIVES to hasRecentlyReceivedTrialMedicationHalfLifeCreator(),
             EligibilityRule.HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS to hasRecentlyReceivedRadiotherapyCreator(),
+            EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X_WITHIN_Y_WEEKS to hasRecentlyReceivedRadiotherapyToSomeBodyLocationCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS to hasRecentlyReceivedAnyCancerTherapyCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS to hasRecentlyReceivedAnyCancerTherapyButSomeCreator(),
             EligibilityRule.HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES to hasRecentlyReceivedAnyCancerTherapyWithHalfLifeCreator(),
@@ -93,7 +94,15 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.toLong().minus(2))
-            HasRecentlyReceivedRadiotherapy(maxStopDate.year, maxStopDate.monthValue)
+            HasRecentlyReceivedRadiotherapy(maxStopDate.year, maxStopDate.monthValue, null)
+        }
+    }
+
+    private fun hasRecentlyReceivedRadiotherapyToSomeBodyLocationCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneStringOneIntegerInput(function)
+            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong().minus(2))
+            HasRecentlyReceivedRadiotherapy(maxStopDate.year, maxStopDate.monthValue, input.string)
         }
     }
 
