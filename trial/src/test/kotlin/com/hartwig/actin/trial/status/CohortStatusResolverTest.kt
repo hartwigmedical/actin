@@ -130,16 +130,11 @@ class CohortStatusResolverTest {
             ),
             config
         )
-        val message = "No common ancestor cohort found for cohorts"
         assertThat(trialStatusDatabaseValidation).containsExactlyInAnyOrder(
             TrialStatusDatabaseValidationError(
-                config = wrongParent,
-                message = message
-            ),
-            TrialStatusDatabaseValidationError(
                 config = correctParent,
-                message = message
-            ),
+                message = "No common ancestor cohort found for cohorts [3, 4]"
+            )
         )
     }
 

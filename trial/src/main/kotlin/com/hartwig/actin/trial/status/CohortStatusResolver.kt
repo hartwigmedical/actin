@@ -4,7 +4,6 @@ import com.hartwig.actin.trial.config.CohortDefinitionConfig
 import com.hartwig.actin.trial.config.CohortDefinitionValidationError
 
 object CohortStatusResolver {
-
     fun resolve(
         entries: List<TrialStatusEntry>,
         configuredCohortIds: CohortDefinitionConfig
@@ -29,24 +28,19 @@ object CohortStatusResolver {
         return matches.size == nonNullMatches.size && (isSingleParent(nonNullMatches) || isListOfChildren(nonNullMatches))
     }
 
-    private fun collectAncestorsFor(entry: TrialStatusEntry, entriesByCohortId: Map<Int, TrialStatusEntry>): List<Int> {
-        val ancestors = ArrayList<Int>()
-        var currentEntry: TrialStatusEntry = entry
-        while (currentEntry.cohortParentId != null) {
-            ancestors.add(currentEntry.cohortParentId!!)
-            currentEntry = entriesByCohortId[currentEntry.cohortParentId]!!
+    private fun collectAncestorsFor(
+        entry: TrialStatusEntry, entriesByCohortId: Map<Int, TrialStatusEntry>, knownAncestorIds: List<Int> = emptyList()
+    ): List<Int> {
+        if (entry.cohortParentId == null) {
+            return knownAncestorIds
         }
-        return ancestors
+        return collectAncestorsFor(entriesByCohortId[entry.cohortParentId]!!, entriesByCohortId, knownAncestorIds + entry.cohortParentId)
     }
 
     private fun findCommonAncestor(matches: List<TrialStatusEntry>, entriesByCohortId: Map<Int, TrialStatusEntry>): Int? {
-        val allAncestors: List<List<Int>> = matches.map { match -> collectAncestorsFor(match, entriesByCohortId) }
-        allAncestors[0].forEach {
-            if (allAncestors.all { pedigree -> pedigree.contains(it) }) {
-                return it
-            }
-        }
-        return null
+        val firstPedigree = collectAncestorsFor(matches.first(), entriesByCohortId)
+        val pedigrees: List<Set<Int>> = matches.drop(1).map { match -> collectAncestorsFor(match, entriesByCohortId).toSet() }
+        return firstPedigree.find { ancestor -> pedigrees.all { pedigree -> pedigree.contains(ancestor) } }
     }
 
     private fun interpretValidMatches(
@@ -60,15 +54,14 @@ object CohortStatusResolver {
             val statusValidationErrors = statuses.map { it.second }.flatten()
             val bestChildEntry = statuses.map { it.first }.maxWith(InterpretedCohortStatusComparator())
             val commonAncestorId = findCommonAncestor(matches, entriesByCohortId)
-            val emptyResponse: List<TrialStatusDatabaseValidationError> = emptyList()
-            val multipleParentValidationErrors: List<TrialStatusDatabaseValidationError> = commonAncestorId?.let { emptyResponse } ?: run {
-                matches.map {
+            val multipleParentValidationErrors: List<TrialStatusDatabaseValidationError> = if (commonAncestorId == null) {
+                listOf(
                     TrialStatusDatabaseValidationError(
-                        it,
-                        "No common ancestor cohort found for cohorts"
+                        matches.first(),
+                        "No common ancestor cohort found for cohorts [${matches.mapNotNull(TrialStatusEntry::cohortId).joinToString(", ")}]"
                     )
-                }
-            }
+                )
+            } else emptyList()
             val firstParentId = matches[0].cohortParentId
             val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!).first
             val closedParentOpenChildValidationError = if (bestChildEntry.open && !parentEntry.open) {
