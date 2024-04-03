@@ -10,8 +10,12 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinV
 class HasSufficientPDL1ByIHC internal constructor(private val measure: String, private val minPDL1: Double) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val pdl1Tests = PriorMolecularTestFunctions.allPDL1Tests(record.molecularHistory.allPriorMolecularTests(), measure)
-        for (ihcTest in pdl1Tests) {
+        val priorMolecularTests = record.molecularHistory.allPriorMolecularTests()
+        val pdl1TestsWithRequestedMeasurement =
+            PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure)
+        val pdl1Tests = PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests)
+
+        for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {
                 val evaluation = evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minPDL1)
@@ -23,9 +27,13 @@ class HasSufficientPDL1ByIHC internal constructor(private val measure: String, p
                 }
             }
         }
-        return if (pdl1Tests.isNotEmpty()) {
+        return if (pdl1TestsWithRequestedMeasurement.isNotEmpty()) {
             EvaluationFactory.fail(
                 "No PD-L1 IHC test found where level exceeds desired level of $minPDL1", "PD-L1 expression below $minPDL1"
+            )
+        } else if (pdl1Tests.isNotEmpty()) {
+            EvaluationFactory.fail(
+                "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
             )
         } else {
             EvaluationFactory.fail("No test result found; PD-L1 has not been tested by IHC", "PD-L1 expression not tested by IHC")

@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val MEASURE = "measure"
@@ -20,6 +21,17 @@ class HasSufficientPDL1ByIHCTest {
     @Test
     fun `Should fail when no test contains result`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(listOf(pdl1Test))))
+    }
+
+    @Test
+    fun `Should fail with specific message when molecular history only contains tests with other measure types `() {
+        val molecular = listOf(
+            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "wrong"),
+            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "other wrong")
+        )
+        val evaluation = function.evaluate(MolecularTestFactory.withPriorTests(molecular))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        Assertions.assertThat(evaluation.failGeneralMessages).containsExactly("PD-L1 tests not in correct unit ($MEASURE)")
     }
 
     @Test

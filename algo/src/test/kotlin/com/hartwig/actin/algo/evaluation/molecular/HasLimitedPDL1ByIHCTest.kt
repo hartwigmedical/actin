@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 private const val MEASURE = "measure"
@@ -33,6 +34,17 @@ class HasLimitedPDL1ByIHCTest {
     fun `Should fail when test value has non-matching prefix`() {
         val priorTests = listOf(pdl1Test.copy(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 1.0))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)))
+    }
+
+    @Test
+    fun `Should fail with specific message when molecular history only contains tests with other measure types `() {
+        val molecular = listOf(
+            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "wrong"),
+            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "other wrong")
+        )
+        val evaluation = function.evaluate(MolecularTestFactory.withPriorTests(molecular))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        Assertions.assertThat(evaluation.failGeneralMessages).containsExactly("PD-L1 tests not in correct unit ($MEASURE)")
     }
 
     @Test
