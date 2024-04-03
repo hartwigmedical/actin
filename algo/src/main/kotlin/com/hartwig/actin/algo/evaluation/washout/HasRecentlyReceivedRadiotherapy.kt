@@ -30,8 +30,8 @@ class HasRecentlyReceivedRadiotherapy(
             }
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == null } -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Patient has received radiotherapy but undetermined if target location was $requestedLocation - assuming not",
-                    "Undetermined recent $requestedLocation radiation therapy - assuming none"
+                    "Patient has received radiotherapy but undetermined if target location was $requestedLocation",
+                    "Undetermined recent $requestedLocation radiation therapy"
                 )
             }
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == null } -> {
