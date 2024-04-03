@@ -5,28 +5,26 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
+private const val DPYD_GENE = "DPYD"
+
 class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val pharmaco = molecular.pharmaco
-        val geneDPYD = "DPYD"
 
-        if (pharmaco.none { it.gene == geneDPYD }) {
+        if (pharmaco.none { it.gene == DPYD_GENE }) {
             return EvaluationFactory.recoverableUndetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
         }
 
-        val containsUnexpectedHaplotypeFunction = containsUnexpectedHaplotypeFunction(pharmaco, geneDPYD)
-        val isHomozygousDeficient = isHomozygousDeficient(pharmaco, geneDPYD)
-
         return when {
-            (containsUnexpectedHaplotypeFunction) -> {
+            containsUnexpectedHaplotypeFunction(pharmaco) -> {
                 EvaluationFactory.recoverableUndetermined(
                     "DPYD haplotype function cannot be determined due to unexpected haplotype function",
                     "DPYD haplotype function undetermined"
                 )
             }
 
-            (isHomozygousDeficient) -> {
+            isHomozygousDeficient(pharmaco) -> {
                 EvaluationFactory.pass("Patient is homozygous DPYD deficient", inclusionEvents = setOf("DPYD deficient"))
             }
 
@@ -36,23 +34,16 @@ class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFu
         }
     }
 
-    private fun containsUnexpectedHaplotypeFunction(pharmaco: Set<PharmacoEntry>, gene: String): Boolean {
-        for (pharmacoEntry in pharmaco) {
-            if (pharmacoEntry.gene == gene && pharmacoEntry.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions}) {
-                return true
-            }
+    private fun containsUnexpectedHaplotypeFunction(pharmaco: Set<PharmacoEntry>): Boolean {
+        return pharmaco.any { pharmacoEntry ->
+            pharmacoEntry.gene == DPYD_GENE && pharmacoEntry.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions }
         }
-        return false
     }
 
-
-    private fun isHomozygousDeficient(pharmaco: Set<PharmacoEntry>, gene: String): Boolean {
-        for (pharmacoEntry in pharmaco) {
-            if (pharmacoEntry.gene == gene && pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }) {
-                return false
-            }
+    private fun isHomozygousDeficient(pharmaco: Set<PharmacoEntry>): Boolean {
+        return pharmaco.none { pharmacoEntry ->
+            pharmacoEntry.gene == DPYD_GENE && pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }
         }
-        return true
     }
 
     private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
