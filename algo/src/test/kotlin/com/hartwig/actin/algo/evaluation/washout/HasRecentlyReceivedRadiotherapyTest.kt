@@ -34,8 +34,8 @@ class HasRecentlyReceivedRadiotherapyTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined with right category but no date`() {
-        val rightCategoryNoDate = radiotherapy()
+    fun `Should evaluate to undetermined with right category but no date or location`() {
+        val rightCategoryNoDate = radiotherapy(null, null, null)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(rightCategoryNoDate)))
     }
 

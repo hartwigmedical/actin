@@ -13,44 +13,53 @@ class HasRecentlyReceivedRadiotherapy(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val radiotherapyEvaluations = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
-            .map { entry -> evaluateRadiotherapyEntry(entry)
-        }
+            .map(::evaluateRadiotherapyEntry).toSet()
         val bodyLocationMessage = "to body location $requestedLocation "
-        val weekEvaluation = radiotherapyEvaluations.map { it.first }
-        val locationEvaluation = radiotherapyEvaluations.map { it.second }
 
-        return if (radiotherapyEvaluations.any { weekEvaluation.any { it == true } && locationEvaluation.any { it == true } }) {
-            EvaluationFactory.pass(
-                "Patient has recently received radiotherapy $bodyLocationMessage- pay attention to washout period",
-                "Has recently received radiotherapy $bodyLocationMessage- pay attention to washout period"
-            )
-        } else if (weekEvaluation.any { it == null } && locationEvaluation.all { it == true }) {
-            EvaluationFactory.undetermined(
-                "Has received prior radiotherapy with unknown date - if recent: pay attention to washout period",
-                "Has received prior radiotherapy with unknown date - pay attention to washout period")
-        } else if (weekEvaluation.any { it == true } && locationEvaluation.any { it == null }) {
-            EvaluationFactory.recoverableUndetermined(
-                "Patient has received radiotherapy but undetermined if target location was $requestedLocation - assuming not",
-                "Undetermined recent $requestedLocation radiation therapy - assuming none")
-        } else {
-            EvaluationFactory.fail("Patient has not recently received radiotherapy $bodyLocationMessage",
-                "No recent radiotherapy $bodyLocationMessage")
+        return when {
+            radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == true } -> {
+                EvaluationFactory.pass(
+                    "Patient has recently received radiotherapy $bodyLocationMessage- pay attention to washout period",
+                    "Has recently received radiotherapy $bodyLocationMessage- pay attention to washout period"
+                )
+            }
+            radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == true } -> {
+                EvaluationFactory.undetermined(
+                    "Has received prior radiotherapy $bodyLocationMessage" + "with unknown date - if recent: pay attention to washout period",
+                    "Has received prior radiotherapy $bodyLocationMessage" + "with unknown date - pay attention to washout period")
+            }
+            radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == null } -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "Patient has received radiotherapy but undetermined if target location was $requestedLocation - assuming not",
+                    "Undetermined recent $requestedLocation radiation therapy - assuming none"
+                )
+            }
+            radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == null } -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "Patient has received prior radiotherapy but undetermined if recent (date unknown) and if $bodyLocationMessage",
+                    "Has received prior radiotherapy but undetermined if recent (date unknown) and if $bodyLocationMessage"
+                )
+            }
+            else -> {
+                EvaluationFactory.fail("Patient has not recently received radiotherapy $bodyLocationMessage",
+                    "No recent radiotherapy $bodyLocationMessage")
+            }
         }
     }
 
     private fun evaluateRadiotherapyEntry(entry: TreatmentHistoryEntry): Pair<Boolean?, Boolean?> {
-        val withinWeeks = entry.startYear?.let { year ->
+        val rightTime = entry.startYear?.let { year ->
             val month = entry.startMonth
             year >= referenceYear && (month == null || (month >= referenceMonth ||
                     YearMonth.of(year, month).isAfter(YearMonth.of(referenceYear, referenceMonth))))
         }
 
-        val toBodyLocation = if (requestedLocation != null) {
+        val rightPlace = if (requestedLocation != null) {
             entry.treatmentHistoryDetails?.bodyLocations?.any { location ->
                 location.lowercase().contains(requestedLocation.lowercase())
             }
         } else true
 
-        return Pair(withinWeeks, toBodyLocation)
+        return Pair(rightTime, rightPlace)
     }
 }
