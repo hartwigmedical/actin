@@ -91,6 +91,11 @@ class HasNotReceivedAnyCancerTreatmentSinceDateTest {
                     treatments = listOf(immunotherapyTreatment),
                     stopYear = recentDate.year,
                     stopMonth = recentDate.monthValue
+                ),
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    treatments = listOf(immunotherapyTreatment),
+                    stopYear = recentDate.year,
+                    stopMonth = recentDate.monthValue
                 )
             )
         )
