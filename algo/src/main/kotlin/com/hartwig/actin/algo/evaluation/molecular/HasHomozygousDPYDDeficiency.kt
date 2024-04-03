@@ -10,9 +10,9 @@ private const val DPYD_GENE = "DPYD"
 class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val pharmaco = molecular.pharmaco
+        val pharmaco = molecular.pharmaco.filter { it.gene == DPYD_GENE }
 
-        if (pharmaco.none { it.gene == DPYD_GENE }) {
+        if (pharmaco.isEmpty()) {
             return EvaluationFactory.recoverableUndetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
         }
 
@@ -34,13 +34,13 @@ class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFu
         }
     }
 
-    private fun containsUnexpectedHaplotypeFunction(pharmaco: Set<PharmacoEntry>): Boolean {
+    private fun containsUnexpectedHaplotypeFunction(pharmaco: List<PharmacoEntry>): Boolean {
         return pharmaco.any { pharmacoEntry ->
             pharmacoEntry.gene == DPYD_GENE && pharmacoEntry.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions }
         }
     }
 
-    private fun isHomozygousDeficient(pharmaco: Set<PharmacoEntry>): Boolean {
+    private fun isHomozygousDeficient(pharmaco: List<PharmacoEntry>): Boolean {
         return pharmaco.none { pharmacoEntry ->
             pharmacoEntry.gene == DPYD_GENE && pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }
         }
