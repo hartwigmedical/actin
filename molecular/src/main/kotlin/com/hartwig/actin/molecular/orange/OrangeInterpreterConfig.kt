@@ -10,7 +10,7 @@ import org.apache.logging.log4j.core.config.Configurator
 
 data class OrangeInterpreterConfig(
     val orangeJson: String?,
-    val serveDirectory: String,
+    val serveDirectory: String?,
     val clinicalJson: String,
     val doidJson: String,
     val outputDirectory: String
@@ -35,7 +35,7 @@ data class OrangeInterpreterConfig(
             }
             return OrangeInterpreterConfig(
                 orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
-                serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
+                serveDirectory = ApplicationConfig.optionalDir(cmd, SERVE_DIRECTORY),
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
