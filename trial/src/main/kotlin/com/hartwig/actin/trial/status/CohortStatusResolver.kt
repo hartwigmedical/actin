@@ -10,6 +10,7 @@ object CohortStatusResolver {
         configuredCohortIds: CohortDefinitionConfig
     ): CohortStatusInterpretation {
         val entriesByCohortId = entries.filter { it.cohortId != null }.associateBy { it.cohortId!!.toInt() }
+
         val (matches, missingCohortErrors) = findEntriesByCohortIds(entriesByCohortId, configuredCohortIds)
 
         if (!hasValidTrialStatusDatabaseMatches(matches)) {
@@ -28,6 +29,21 @@ object CohortStatusResolver {
         return matches.size == nonNullMatches.size && (isSingleParent(nonNullMatches) || isListOfChildren(nonNullMatches))
     }
 
+    private tailrec fun collectAncestorsFor(
+        entry: TrialStatusEntry, entriesByCohortId: Map<Int, TrialStatusEntry>, knownAncestorIds: List<Int> = emptyList()
+    ): List<Int> {
+        if (entry.cohortParentId == null) {
+            return knownAncestorIds
+        }
+        return collectAncestorsFor(entriesByCohortId[entry.cohortParentId]!!, entriesByCohortId, knownAncestorIds + entry.cohortParentId)
+    }
+
+    private fun findCommonAncestor(matches: List<TrialStatusEntry>, entriesByCohortId: Map<Int, TrialStatusEntry>): Int? {
+        val firstPedigree = collectAncestorsFor(matches.first(), entriesByCohortId)
+        val pedigrees: List<Set<Int>> = matches.drop(1).map { match -> collectAncestorsFor(match, entriesByCohortId).toSet() }
+        return firstPedigree.find { ancestor -> pedigrees.all { pedigree -> pedigree.contains(ancestor) } }
+    }
+
     private fun interpretValidMatches(
         matches: List<TrialStatusEntry>,
         entriesByCohortId: Map<Int, TrialStatusEntry>
@@ -38,9 +54,16 @@ object CohortStatusResolver {
             val statuses = matches.map(::fromEntry)
             val statusValidationErrors = statuses.map { it.second }.flatten()
             val bestChildEntry = statuses.map { it.first }.maxWith(InterpretedCohortStatusComparator())
+            val commonAncestorId = findCommonAncestor(matches, entriesByCohortId)
+            val multipleParentValidationErrors: List<TrialStatusDatabaseValidationError> = if (commonAncestorId == null) {
+                listOf(
+                    TrialStatusDatabaseValidationError(
+                        matches.first(),
+                        "No common ancestor cohort found for cohorts [${matches.mapNotNull(TrialStatusEntry::cohortId).joinToString(", ")}]"
+                    )
+                )
+            } else emptyList()
             val firstParentId = matches[0].cohortParentId
-            val multipleParentValidationErrors = matches.find { it.cohortParentId != firstParentId }
-                ?.let { TrialStatusDatabaseValidationError(it, "Multiple parents found for single set of children") }
             val parentEntry = fromEntry(entriesByCohortId[firstParentId]!!).first
             val closedParentOpenChildValidationError = if (bestChildEntry.open && !parentEntry.open) {
                 TrialStatusDatabaseValidationError(
