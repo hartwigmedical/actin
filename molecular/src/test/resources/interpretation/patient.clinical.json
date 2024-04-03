@@ -2,17 +2,18 @@
   "patientId": "ACTN01029999",
   "patient": {
     "gender": "MALE",
-    "birthYear": 1960,
+    "birthYear": 1950,
     "registrationDate": {
-      "year": 2021,
-      "month": 6,
-      "day": 1
+      "year": 2024,
+      "month": 3,
+      "day": 19
     },
     "questionnaireDate": {
-      "year": 2021,
-      "month": 8,
-      "day": 1
-    }
+      "year": 2024,
+      "month": 3,
+      "day": 24
+    },
+    "otherMolecularPatientId": null
   },
   "tumor": {
     "primaryTumorLocation": null,
@@ -21,311 +22,43 @@
     "primaryTumorSubType": null,
     "primaryTumorExtraDetails": null,
     "doids": null,
-    "stage": "III",
-    "hasMeasurableDisease": true,
+    "stage": null,
+    "hasMeasurableDisease": null,
     "hasBrainLesions": null,
+    "brainLesionsCount": null,
     "hasActiveBrainLesions": null,
     "hasCnsLesions": null,
+    "cnsLesionsCount": null,
     "hasActiveCnsLesions": null,
-    "hasBoneLesions": false,
-    "hasLiverLesions": false,
-    "hasLungLesions": false,
-    "hasLymphNodeLesions": false,
-    "otherLesions": [
-      "Lymph node"
-    ],
-    "biopsyLocation": "Lymph node"
+    "hasBoneLesions": null,
+    "boneLesionsCount": null,
+    "hasLiverLesions": null,
+    "liverLesionsCount": null,
+    "hasLungLesions": null,
+    "lungLesionsCount": null,
+    "hasLymphNodeLesions": null,
+    "lymphNodeLesionsCount": null,
+    "otherLesions": null,
+    "biopsyLocation": null
   },
   "clinicalStatus": {
-    "who": 0,
-    "infectionStatus": {
-      "hasActiveInfection": false,
-      "description": ""
-    },
-    "ecg": {
-      "hasSigAberrationLatestECG": false,
-      "aberrationDescription": "",
-      "qtcfValue": null,
-      "qtcfUnit": null
-    },
-    "lvef": null
+    "who": null,
+    "infectionStatus": null,
+    "ecg": null,
+    "lvef": null,
+    "hasComplications": null
   },
-  "treatmentHistory": [
-    {
-      "treatments": [
-        {
-          "name": "CAPECITABINE",
-          "synonyms": [],
-          "drugs": [
-            {
-              "name": "CAPECITABINE",
-              "drugTypes": [
-                "ANTIMETABOLITE",
-                "FLUOROPYRIMIDINE"
-              ],
-              "category": "CHEMOTHERAPY",
-              "displayOverride": null
-            }
-          ],
-          "maxCycles": null,
-          "isSystemic": true,
-          "treatmentClass": "DRUG_TREATMENT"
-        }
-      ],
-      "startYear": 2019,
-      "startMonth": 3,
-      "intents": null,
-      "isTrial": false,
-      "trialAcronym": null,
-      "treatmentHistoryDetails": {
-        "stopYear": 2020,
-        "stopMonth": null,
-        "ongoingAsOf": null,
-        "cycles": null,
-        "bestResponse": "PROGRESSIVE_DISEASE",
-        "stopReason": "TOXICITY",
-        "stopReasonDetail": null,
-        "toxicities": null,
-        "bodyLocationCategories": null,
-        "bodyLocations": null
-      }
-    }
-  ],
-  "priorSecondPrimaries": [
-    {
-      "tumorLocation": "Skin",
-      "tumorSubLocation": "",
-      "tumorType": "Melanoma",
-      "tumorSubType": "",
-      "doids": [
-        "162"
-      ],
-      "diagnosedYear": 2015,
-      "diagnosedMonth": null,
-      "treatmentHistory": "Surgery",
-      "lastTreatmentYear": 2016,
-      "lastTreatmentMonth": null,
-      "isActive": false,
-      "status": "ACTIVE"
-    }
-  ],
-  "priorOtherConditions": [
-    {
-      "name": "Liver cirrhosis",
-      "year": null,
-      "month": null,
-      "doids": [
-        "11335",
-        "5082"
-      ],
-      "category": "Liver disease",
-      "isContraindicationForTherapy": false
-    }
-  ],
-  "priorMolecularTests": [
-    {
-      "test": "IHC",
-      "item": "ERBB2",
-      "measure": null,
-      "scoreText": null,
-      "scoreValuePrefix": null,
-      "scoreValue": 3,
-      "scoreValueUnit": "+",
-      "impliesPotentialIndeterminateStatus": false
-    }
-  ],
-  "complications": [
-    {
-      "name": "Nausea",
-      "categories": [
-        "Other"
-      ],
-      "year": 2020,
-      "month": null
-    }
-  ],
-  "labValues": [
-    {
-      "date": {
-        "year": 2020,
-        "month": 8,
-        "day": 8
-      },
-      "code": "Code1",
-      "name": "Code 1",
-      "comparator": "",
-      "value": 11,
-      "unit": "NONE",
-      "refLimitLow": null,
-      "refLimitUp": null,
-      "isOutsideRef": null
-    },
-    {
-      "date": {
-        "year": 2020,
-        "month": 8,
-        "day": 8
-      },
-      "code": "Code2",
-      "name": "Code 2",
-      "comparator": "",
-      "value": 8.8,
-      "unit": "MILLIMOLES_PER_LITER",
-      "refLimitLow": 4,
-      "refLimitUp": 6.1,
-      "isOutsideRef": true
-    }
-  ],
-  "toxicities": [
-    {
-      "name": "Neuropathy",
-      "categories": [
-        "Neuropathy"
-      ],
-      "evaluatedDate": {
-        "year": 2019,
-        "month": 4,
-        "day": 4
-      },
-      "source": "QUESTIONNAIRE",
-      "grade": 3
-    },
-    {
-      "name": "Hand skin reaction",
-      "categories": [],
-      "evaluatedDate": {
-        "year": 2020,
-        "month": 3,
-        "day": 3
-      },
-      "source": "EHR",
-      "grade": 1
-    }
-  ],
-  "intolerances": [
-    {
-      "name": "Drug",
-      "doids": [
-        "123"
-      ],
-      "category": "medication",
-      "subcategories": [
-        "Drug category"
-      ],
-      "type": "allergy",
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "low"
-    },
-    {
-      "name": "Condition",
-      "doids": [],
-      "category": "environment",
-      "subcategories": [],
-      "type": "allergy",
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "unable-to-assess"
-    }
-  ],
-  "surgeries": [
-    {
-      "endDate": {
-        "year": 2012,
-        "month": 10,
-        "day": 10
-      },
-      "status": "PLANNED"
-    }
-  ],
-  "bodyWeights": [
-    {
-      "date": "2020-06-18T00:00:00",
-      "value": 70,
-      "unit": "kilogram"
-    }
-  ],
-  "vitalFunctions": [
-    {
-      "date": "2020-06-15T00:00:00",
-      "category": "HEART_RATE",
-      "subcategory": "",
-      "value": 120,
-      "unit": "per minute"
-    }
-  ],
-  "bloodTransfusions": [
-    {
-      "date": {
-        "year": 2018,
-        "month": 1,
-        "day": 1
-      },
-      "product": "white blood cells"
-    }
-  ],
-  "medications": [
-    {
-      "name": "Medication 1",
-      "categories": [],
-      "status": "ON_HOLD",
-      "administrationRoute": "oral",
-      "dosage": {
-        "dosageMin": 10,
-        "dosageMax": 20,
-        "dosageUnit": "mg",
-        "frequency": 1,
-        "frequencyUnit": "day",
-        "ifNeeded": false
-      },
-      "startDate": {
-        "year": 2018,
-        "month": 1,
-        "day": 1
-      },
-      "stopDate": {
-        "year": 2018,
-        "month": 2,
-        "day": 1
-      },
-      "cypInteractions": [
-        {
-          "cyp": "2A6",
-          "strength": "WEAK",
-          "type": "INDUCER"
-        }
-      ],
-      "qtProlongatingRisk": "NONE",
-      "isSelfCare": false,
-      "isTrialMedication": false
-    },
-    {
-      "name": "Medication 2",
-      "categories": [],
-      "status": "UNKNOWN",
-      "administrationRoute": null,
-      "dosage": {
-        "dosageMin": null,
-        "dosageMax": null,
-        "dosageUnit": null,
-        "frequency": null,
-        "frequencyUnit": null,
-        "ifNeeded": null
-      },
-      "startDate": {
-        "year": 2019,
-        "month": 5,
-        "day": 25
-      },
-      "stopDate": {
-        "year": 2019,
-        "month": 6,
-        "day": 25
-      },
-      "cypInteractions": [],
-      "qtProlongatingRisk": "KNOWN",
-      "isSelfCare": false,
-      "isTrialMedication": false
-    }
-  ]
+  "oncologicalHistory": [],
+  "priorSecondPrimaries": [],
+  "priorOtherConditions": [],
+  "priorMolecularTests": [],
+  "complications": null,
+  "labValues": [],
+  "toxicities": [],
+  "intolerances": [],
+  "surgeries": [],
+  "bodyWeights": [],
+  "vitalFunctions": [],
+  "bloodTransfusions": [],
+  "medications": []
 }
