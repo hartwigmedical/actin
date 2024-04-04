@@ -11,6 +11,8 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
+private const val CONCLUSIE_ = "Conclusie:"
+
 class EhrTumorDetailsExtractor(
     private val primaryTumorConfigCurationDatabase: CurationDatabase<PrimaryTumorConfig>,
     private val lesionCurationDatabase: CurationDatabase<LesionLocationConfig>
@@ -76,16 +78,20 @@ class EhrTumorDetailsExtractor(
     }
 
     private fun extractLesions(patientId: String, radiologyReport: String?): List<CurationResponse<LesionLocationConfig>> {
-        return radiologyReport?.substringAfter("Conclusie:")?.substringBefore("\r\n\n\n")?.split("\n")
-            ?.filter { it.isNotBlank() }?.map { line -> line.substringBeforeLast(".") }?.map { line ->
-                CurationResponse.createFromConfigs(
-                    lesionCurationDatabase.find(line),
-                    patientId,
-                    CurationCategory.LESION_LOCATION,
-                    line,
-                    "lesion",
-                    true
-                )
-            } ?: emptyList()
+        return radiologyReport?.substringAfter(CONCLUSIE_)?.split(CONCLUSIE_)?.flatMap { section ->
+            section.substringBefore("\r\n\n\n").split("\n")
+                .filter { it.isNotBlank() }
+                .map { line -> line.substringBeforeLast(".") }
+                .map { line ->
+                    CurationResponse.createFromConfigs(
+                        lesionCurationDatabase.find(line),
+                        patientId,
+                        CurationCategory.LESION_LOCATION,
+                        line,
+                        "lesion",
+                        true
+                    )
+                }
+        } ?: emptyList()
     }
 }

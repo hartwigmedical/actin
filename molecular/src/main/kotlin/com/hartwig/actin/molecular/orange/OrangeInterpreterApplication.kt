@@ -1,14 +1,17 @@
 package com.hartwig.actin.molecular.orange
 
+import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.PatientRecordJson
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson
-import com.hartwig.actin.molecular.util.MolecularPrinter
+import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ActionableEventsLoader
@@ -28,19 +31,42 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
-        LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
-        val orange = OrangeJson.getInstance().read(config.orangeJson)
+        LOGGER.info("Loading clinical json from {}", config.clinicalJson)
+        val clinical = ClinicalRecordJson.read(config.clinicalJson)
 
-        LOGGER.info("Loading evidence database")
-        val serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion())
-        val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
-        val evidenceDatabase = loadEvidenceDatabase(config, serveRefGenomeVersion, knownEvents)
+        val molecularHistory = if (config.orangeJson != null) {
+            if (config.serveDirectory == null) {
+                throw IllegalArgumentException("SERVE directory must be provided when interpreting ORANGE record!")
+            }
 
-        LOGGER.info("Interpreting ORANGE record")
-        val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
-        val molecular = EvidenceAnnotator(evidenceDatabase).annotate(OrangeInterpreter(geneFilter).interpret(orange))
-        MolecularPrinter.printRecord(molecular)
-        MolecularRecordJson.write(molecular, config.outputDirectory)
+            LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
+            val orange = OrangeJson.getInstance().read(config.orangeJson)
+
+            LOGGER.info("Loading evidence database")
+            val serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion())
+            val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
+            val evidenceDatabase = loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
+
+            LOGGER.info("Interpreting ORANGE record")
+            val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
+            val molecular = EvidenceAnnotator(evidenceDatabase).annotate(OrangeInterpreter(geneFilter).interpret(orange))
+
+            if (clinical.patientId != molecular.patientId) {
+                LOGGER.warn(
+                    "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
+                    clinical.patientId,
+                    molecular.patientId
+                )
+            }
+
+            MolecularHistory.fromInputs(listOf(molecular), clinical.priorMolecularTests)
+        } else {
+            MolecularHistory.empty()
+        }
+
+        MolecularHistoryPrinter.printRecord(molecularHistory)
+        val patientRecord = PatientRecordFactory.fromInputs(clinical, molecularHistory)
+        PatientRecordJson.write(patientRecord, config.outputDirectory)
 
         LOGGER.info("Done!")
     }
@@ -51,13 +77,11 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
         private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
 
         private fun loadEvidenceDatabase(
-            config: OrangeInterpreterConfig, serveRefGenomeVersion: RefGenome,
-            knownEvents: KnownEvents
+            serveDirectory: String, doidJson: String, serveRefGenomeVersion: RefGenome,
+            knownEvents: KnownEvents, clinical: ClinicalRecord
         ): EvidenceDatabase {
-            val actionableEvents = ActionableEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
+            val actionableEvents = ActionableEventsLoader.readFromDir(serveDirectory, serveRefGenomeVersion)
 
-            LOGGER.info("Loading clinical json from {}", config.clinicalJson)
-            val clinical = ClinicalRecordJson.read(config.clinicalJson)
             val tumorDoids = clinical.tumor.doids.orEmpty().toSet()
             if (tumorDoids.isEmpty()) {
                 LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId)
@@ -65,8 +89,8 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
                 LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
             }
 
-            LOGGER.info("Loading DOID tree from {}", config.doidJson)
-            val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
+            LOGGER.info("Loading DOID tree from {}", doidJson)
+            val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
 
             LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
             return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)

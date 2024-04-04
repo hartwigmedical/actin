@@ -9,8 +9,8 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class OrangeInterpreterConfig(
-    val orangeJson: String,
-    val serveDirectory: String,
+    val orangeJson: String?,
+    val serveDirectory: String?,
     val clinicalJson: String,
     val doidJson: String,
     val outputDirectory: String
@@ -34,8 +34,8 @@ data class OrangeInterpreterConfig(
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
             return OrangeInterpreterConfig(
-                orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
-                serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
+                orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
+                serveDirectory = ApplicationConfig.optionalDir(cmd, SERVE_DIRECTORY),
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)

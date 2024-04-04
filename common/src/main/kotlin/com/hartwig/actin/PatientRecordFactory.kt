@@ -1,7 +1,7 @@
 package com.hartwig.actin
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -10,15 +10,9 @@ object PatientRecordFactory {
     private val LOGGER: Logger = LogManager.getLogger(PatientRecordFactory::class.java)
 
     @JvmStatic
-    fun fromInputs(clinical: ClinicalRecord, molecular: MolecularRecord?): PatientRecord {
-        if (molecular == null) {
+    fun fromInputs(clinical: ClinicalRecord, molecularHistory: MolecularHistory?): PatientRecord {
+        if (molecularHistory == null || molecularHistory.molecularTests.isEmpty()) {
             LOGGER.warn("No molecular data for patient '{}'", clinical.patientId)
-        } else if (clinical.patientId != molecular.patientId) {
-            LOGGER.warn(
-                "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
-                clinical.patientId,
-                molecular.patientId
-            )
         }
         return PatientRecord(
             patientId = clinical.patientId,
@@ -28,7 +22,6 @@ object PatientRecordFactory {
             oncologicalHistory = clinical.oncologicalHistory,
             priorSecondPrimaries = clinical.priorSecondPrimaries,
             priorOtherConditions = clinical.priorOtherConditions,
-            priorMolecularTests = clinical.priorMolecularTests,
             complications = clinical.complications,
             labValues = clinical.labValues,
             toxicities = clinical.toxicities,
@@ -38,7 +31,7 @@ object PatientRecordFactory {
             vitalFunctions = clinical.vitalFunctions,
             bloodTransfusions = clinical.bloodTransfusions,
             medications = clinical.medications,
-            molecular = molecular
+            molecularHistory = molecularHistory ?: MolecularHistory.empty()
         )
     }
 }

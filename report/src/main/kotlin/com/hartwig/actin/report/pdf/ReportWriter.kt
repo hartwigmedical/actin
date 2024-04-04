@@ -7,6 +7,7 @@ import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.util.Constants
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.util.Paths
@@ -32,6 +33,8 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
     @Synchronized
     @Throws(IOException::class)
     fun write(report: Report, enableExtendedMode: Boolean) {
+        LOGGER.info("Building report for patient ${report.patientId} with configuration ${report.config}")
+        
         LOGGER.debug("Initializing output styles")
         Styles.initialize()
 
@@ -41,7 +44,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         } else null
 
         val chapters = listOfNotNull(
-            SummaryChapter(report),
+            SummaryChapter(report, ExternalTrialSummarizer(report.config.filterTrialsWithOverlappingMolecularTargetsInSummary)),
             MolecularDetailsChapter(report),
             ClinicalDetailsChapter(report),
             TrialMatchingChapter(report, enableExtendedMode),

@@ -8,9 +8,10 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.ev
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMinimumBloodPressure
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.assertj.core.api.Assertions
+import org.junit.Test
 
 class BloodPressureFunctionsTest {
 
@@ -39,10 +40,10 @@ class BloodPressureFunctionsTest {
     }
 
     @Test
-    fun `Should fail when median systolic blood pressure under minimum`() {
+    fun `Should fail when median systolic blood pressure under minimum and outside margin`() {
         val bloodPressures = listOf(
-            systolic(referenceDateTime, 85.0),
-            systolic(referenceDateTime, 105.0)
+            systolic(referenceDateTime, 75.0),
+            systolic(referenceDateTime, 85.0)
         )
 
         assertEvaluation(EvaluationResult.FAIL,
@@ -56,10 +57,10 @@ class BloodPressureFunctionsTest {
     }
 
     @Test
-    fun `Should fail when median diastolic blood pressure under minimum`() {
+    fun `Should fail when median diastolic blood pressure under minimum and outside margin`() {
         val bloodPressures = listOf(
             diastolic(referenceDateTime, 65.0),
-            diastolic(referenceDateTime.plusDays(1), 90.0)
+            diastolic(referenceDateTime.plusDays(1), 70.0)
         )
 
         assertEvaluation(
@@ -71,6 +72,32 @@ class BloodPressureFunctionsTest {
                 minimumValidDate
             )
         )
+    }
+
+    @Test
+    fun `Should evaluate to recoverable undetermined when median systolic blood pressure under minimum but within margin of error`() {
+        val bloodPressures = listOf(
+            systolic(referenceDateTime, 90.0),
+            systolic(referenceDateTime.plusDays(1), 100.0)
+        )
+        val evaluation = evaluatePatientMinimumBloodPressure(
+            VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100, minimumValidDate
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        Assertions.assertThat(evaluation.recoverable).isTrue()
+    }
+
+    @Test
+    fun `Should evaluate to recoverable undetermined when median systolic blood pressure above maximum but within margin of error`() {
+        val bloodPressures = listOf(
+            systolic(referenceDateTime, 110.0),
+            systolic(referenceDateTime.plusDays(1), 140.0)
+        )
+        val evaluation = evaluatePatientMaximumBloodPressure(
+            VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 120, minimumValidDate
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        Assertions.assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
@@ -110,10 +137,10 @@ class BloodPressureFunctionsTest {
     }
 
     @Test
-    fun `Should fail when median diastolic blood pressure above maximum`() {
+    fun `Should fail when median diastolic blood pressure above maximum and outside margin`() {
         val bloodPressures = listOf(
-            diastolic(referenceDateTime, 110.0),
-            diastolic(referenceDateTime.plusDays(1), 95.0)
+            diastolic(referenceDateTime, 125.0),
+            diastolic(referenceDateTime.plusDays(1), 100.0)
         )
 
         assertEvaluation(

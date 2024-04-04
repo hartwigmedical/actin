@@ -23,16 +23,29 @@ class HasRestingHeartRateWithinBounds(
         }
 
         val median = VitalFunctionFunctions.determineMedianValue(relevant)
-        return if (median.compareTo(minMedianRestingHeartRate) >= 0 && median.compareTo(maxMedianRestingHeartRate) <= 0) {
-            EvaluationFactory.recoverablePass(
-                "Patient has median heart rate of $median bpm - thus between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
-                "Median heart rate ($median bpm) within range"
-            )
-        } else {
-            EvaluationFactory.recoverableFail(
-                "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
-                "Median heart rate ($median bpm) outside range"
-            )
+        val minHeartRateWithMargin = minMedianRestingHeartRate * VitalFunctionRuleMapper.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
+        val maxHeartRateWithMargin = maxMedianRestingHeartRate * VitalFunctionRuleMapper.VITAL_FUNCTION_POSITIVE_MARGIN_OF_ERROR
+
+        return when (median) {
+            in minMedianRestingHeartRate..maxMedianRestingHeartRate -> {
+                EvaluationFactory.recoverablePass(
+                    "Patient has median heart rate of $median bpm - thus between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
+                    "Median heart rate ($median bpm) within range"
+                )
+            }
+            in minHeartRateWithMargin..maxHeartRateWithMargin -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate" +
+                            "but within margin of error",
+                    "Median heart rate ($median bpm) outside range but within margin of error"
+                )
+            }
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",
+                    "Median heart rate ($median bpm) outside range"
+                )
+            }
         }
     }
 

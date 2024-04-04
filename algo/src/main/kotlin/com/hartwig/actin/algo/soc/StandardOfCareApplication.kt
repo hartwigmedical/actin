@@ -1,23 +1,18 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.PatientPrinter
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
-import com.hartwig.actin.clinical.util.ClinicalPrinter
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.molecular.serialization.MolecularRecordJson
-import com.hartwig.actin.molecular.util.MolecularPrinter
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -33,15 +28,9 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
-        LOGGER.info("Loading clinical record from {}", config.clinicalJson)
-        val clinical: ClinicalRecord = ClinicalRecordJson.read(config.clinicalJson)
-        ClinicalPrinter.printRecord(clinical)
-
-        LOGGER.info("Loading molecular record from {}", config.molecularJson)
-        val molecular: MolecularRecord = MolecularRecordJson.read(config.molecularJson)
-        MolecularPrinter.printRecord(molecular)
-
-        val patient: PatientRecord = PatientRecordFactory.fromInputs(clinical, molecular)
+        LOGGER.info("Loading patient record from from {}", config.patientJson)
+        val patient = PatientRecordJson.read(config.patientJson)
+        PatientPrinter.printRecord(patient)
 
         LOGGER.info("Loading DOID tree from {}", config.doidJson)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
@@ -58,7 +47,16 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val functionInputResolver = FunctionInputResolver(
             doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )
-        val resources = RuleMappingResources(referenceDateProvider, doidModel, functionInputResolver, atcTree, treatmentDatabase)
+        val environmentConfiguration =
+            config.overridesYaml?.let { EnvironmentConfiguration.createFromFile(config.overridesYaml) } ?: EnvironmentConfiguration()
+        val resources = RuleMappingResources(
+            referenceDateProvider,
+            doidModel,
+            functionInputResolver,
+            atcTree,
+            treatmentDatabase,
+            environmentConfiguration.algo
+        )
         val recommendationEngine = RecommendationEngineFactory(resources).create()
 
         LOGGER.info(recommendationEngine.provideRecommendations(patient))

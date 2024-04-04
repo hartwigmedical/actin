@@ -47,7 +47,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 
             else -> {
                 EvaluationFactory.fail(
-                    "Has not received $typesList ${category.display()} treatment"
+                    "Has not had recent $typesList ${category.display()} treatment"
                 )
             }
         }

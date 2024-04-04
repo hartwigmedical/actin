@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
+import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
@@ -20,8 +21,14 @@ import com.itextpdf.layout.element.BlockElement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
-class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) :
-    TableGenerator {
+class PatientClinicalHistoryGenerator(
+    private val record: PatientRecord,
+    private val config: ReportConfiguration,
+    private val showDetails: Boolean,
+    private val keyWidth: Float,
+    private val valueWidth: Float
+) : TableGenerator {
+    
     override fun title(): String {
         return "Clinical summary"
     }
@@ -30,12 +37,16 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         val table = createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(createKey("Relevant systemic treatment history"))
         table.addCell(create(tableOrNone(relevantSystemicPreTreatmentHistoryTable(record))))
-        table.addCell(createKey("Relevant other oncological history"))
-        table.addCell(create(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))))
+        if (config.showOtherOncologicalHistoryInSummary || showDetails) {
+            table.addCell(createKey("Relevant other oncological history"))
+            table.addCell(create(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))))
+        }
         table.addCell(createKey("Previous primary tumor"))
         table.addCell(create(tableOrNone(secondPrimaryHistoryTable(record))))
-        table.addCell(createKey("Relevant non-oncological history"))
-        table.addCell(create(tableOrNone(relevantNonOncologicalHistoryTable(record))))
+        if (config.showRelevantNonOncologicalHistoryInSummary || showDetails) {
+            table.addCell(createKey("Relevant non-oncological history"))
+            table.addCell(create(tableOrNone(relevantNonOncologicalHistoryTable(record))))
+        }
         return table
     }
 
@@ -51,11 +62,11 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         return table
     }
 
-    private fun relevantSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
+    private fun relevantSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
         return treatmentHistoryTable(record.oncologicalHistory, true)
     }
 
-    private fun relevantNonSystemicPreTreatmentHistoryTable(record: ClinicalRecord): Table {
+    private fun relevantNonSystemicPreTreatmentHistoryTable(record: PatientRecord): Table {
         return treatmentHistoryTable(record.oncologicalHistory, false)
     }
 
@@ -82,7 +93,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         return treatmentHistoryEntry.allTreatments().any { it.isSystemic }
     }
 
-    private fun secondPrimaryHistoryTable(record: ClinicalRecord): Table {
+    private fun secondPrimaryHistoryTable(record: PatientRecord): Table {
         val table: Table = createSingleColumnTable(valueWidth)
 
         record.priorSecondPrimaries.sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
@@ -91,15 +102,15 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
         return table
     }
 
-    private fun relevantNonOncologicalHistoryTable(record: ClinicalRecord): Table {
+    private fun relevantNonOncologicalHistoryTable(record: PatientRecord): Table {
         val dateWidth = valueWidth / 5
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
         record.priorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
             val dateString = toDateString(priorOtherCondition.year, priorOtherCondition.month)
-            if (dateString != null) {
-                table.addCell(createSingleTableEntry(dateString))
+            if (record.priorOtherConditions.any { toDateString(it.year, it.month) != null }) {
+                table.addCell(createSingleTableEntry(dateString?: DATE_UNKNOWN))
                 table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)))
             } else {
                 table.addCell(createSpanningTableEntry(toPriorOtherConditionString(priorOtherCondition), table))
@@ -116,7 +127,7 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
             val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let { toDateString(it.stopYear, it.stopMonth) }
 
             return when {
-                startString != null && stopString != null -> "$startString-$stopString"
+                startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString
                 startString != null -> startString
                 stopString != null -> "?-$stopString"
                 else -> DATE_UNKNOWN
@@ -185,10 +196,10 @@ class PatientClinicalHistoryGenerator(private val record: ClinicalRecord, privat
                 else -> tumorLocation
             }
             val dateAdditionDiagnosis: String = toDateString(priorSecondPrimary.diagnosedYear, priorSecondPrimary.diagnosedMonth)
-                    ?.let { "diagnosed $it, " } ?: ""
+                ?.let { "diagnosed $it, " } ?: ""
 
             val dateAdditionLastTreatment = toDateString(priorSecondPrimary.lastTreatmentYear, priorSecondPrimary.lastTreatmentMonth)
-                    ?.let { "last treatment $it, " } ?: ""
+                ?.let { "last treatment $it, " } ?: ""
 
             val status = when (priorSecondPrimary.status) {
                 TumorStatus.ACTIVE -> "considered active"

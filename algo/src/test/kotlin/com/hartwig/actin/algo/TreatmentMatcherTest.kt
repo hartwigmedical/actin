@@ -15,14 +15,15 @@ import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.configuration.EMC_TRIAL_SOURCE
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class TreatmentMatcherTest {
     private val patient = TestPatientFactory.createMinimalTestPatientRecord()
@@ -45,7 +46,7 @@ class TreatmentMatcherTest {
     )
     private val expectedTreatmentMatch = TreatmentMatch(
         patientId = patient.patientId,
-        sampleId = patient.molecular?.sampleId ?: "N/A",
+        sampleId = patient.molecularHistory.latestMolecularRecord()?.sampleId ?: "N/A",
         referenceDate = LocalDate.now(),
         referenceDateIsLive = true,
         trialMatches = trialMatches,
@@ -82,7 +83,7 @@ class TreatmentMatcherTest {
 
     @Test
     fun `Should match without molecular input`() {
-        val patientWithoutMolecular = patient.copy(molecular = null)
+        val patientWithoutMolecular = patient.copy(molecularHistory = MolecularHistory.empty())
         val trialMatcher = mockk<TrialMatcher> {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }
