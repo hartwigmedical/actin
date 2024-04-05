@@ -137,6 +137,21 @@
       "scoreValue": null,
       "scoreValueUnit": null,
       "impliesPotentialIndeterminateStatus": false
+    },
+    {
+      "test": "Archer FP Lung Target",
+      "item": null,
+      "measure": "GEEN fusie(s) aangetoond",
+      "measureDate": {
+        "year": 2020,
+        "month": 12,
+        "day": 3
+      },
+      "scoreText": null,
+      "scoreValuePrefix": null,
+      "scoreValue": null,
+      "scoreValueUnit": null,
+      "impliesPotentialIndeterminateStatus": false
     }
   ],
   "complications": [

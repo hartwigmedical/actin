@@ -124,7 +124,7 @@ data class EhrMedication(
 @JacksonSerializable
 data class EhrMolecularTest(
     val type: String,
-    val measure: String,
+    val measure: String?,
     val result: String,
     val resultDate: LocalDate,
 )

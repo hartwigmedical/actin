@@ -149,6 +149,14 @@
       "result_date": "2024-03-25",
       "biopsy_location": "lymfklier*biopt*metastase adenocarcinoom*long",
       "biopsy_date": "2024-03-03"
+    },
+    {
+      "type": "Archer FP Lung Target",
+      "measure": null,
+      "result": "GEEN fusie(s) aangetoond",
+      "result_date": "2020-12-03",
+      "biopsy_location": "Long",
+      "biopsy_date": "2020-11-12"
     }
   ],
   "prior_other_conditions": [

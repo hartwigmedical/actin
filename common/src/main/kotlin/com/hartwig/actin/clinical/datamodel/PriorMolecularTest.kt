@@ -4,7 +4,7 @@ import java.time.LocalDate
 
 data class PriorMolecularTest(
     val test: String,
-    val item: String,
+    val item: String? = null,
     val measure: String? = null,
     val measureDate: LocalDate? = null,
     val scoreText: String? = null,
