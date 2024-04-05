@@ -10,7 +10,7 @@ import org.junit.Test
 class PriorMolecularTestFunctionsTest {
 
     @Test
-    fun `Should filter prior molecular tests`() {
+    fun `Should filter prior molecular tests for PDL1`() {
         val test1 = priorMolecularTest(test = "Archer", item = "PD-L1")
         val test2 = priorMolecularTest(test = "IHC", item = "PD-L1")
         val test3 = priorMolecularTest(test = "IHC", item = "PD-L1")
