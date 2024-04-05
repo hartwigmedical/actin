@@ -28,7 +28,7 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String) : EvaluationFuncti
 
     private fun hasUGT1A1Type(pharmaco: Set<PharmacoEntry>, hapolotypeToFind: String): Boolean {
         for (pharmacoEntry in pharmaco) {
-            if (pharmacoEntry.gene == "UGT1A1" && pharmacoEntry.haplotypes.any { it.name == hapolotypeToFind }) {
+            if (pharmacoEntry.gene == "UGT1A1" && pharmacoEntry.haplotypes.any { it.name.lowercase() == hapolotypeToFind.lowercase() }) {
                 return true
             }
         }

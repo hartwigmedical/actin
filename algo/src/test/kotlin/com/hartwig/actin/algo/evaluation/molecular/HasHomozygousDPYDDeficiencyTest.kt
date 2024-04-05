@@ -11,12 +11,42 @@ class HasHomozygousDPYDDeficiencyTest {
     private val function = HasHomozygousDPYDDeficiency()
 
     @Test
+    fun `Should return undetermined if patient has no DPYD pharmacology details`() {
+        EvaluationAssert.assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                MolecularTestFactory.withHaplotype(
+                    PharmacoEntry(gene = "UGT1A1", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal Function")))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should return undetermined if patient has unexpected DPYD type function`() {
+        EvaluationAssert.assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                MolecularTestFactory.withHaplotype(
+                    PharmacoEntry(
+                        gene = "DPYD",
+                        haplotypes = setOf(
+                            Haplotype(name = "*1_HET", function = "Normal Function"),
+                            Haplotype(name = "*1_HET", function = "Unexpected Function")
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should pass if patient has homozygous DPYD haplotypes with reduced function`() {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Reduced function")))
+                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Reduced Function")))
                 )
             )
         )
@@ -31,8 +61,8 @@ class HasHomozygousDPYDDeficiencyTest {
                     PharmacoEntry(
                         gene = "DPYD",
                         haplotypes = setOf(
-                            Haplotype(name = "*1_HET", function = "Reduced function"),
-                            Haplotype(name = "*1_HET", function = "Reduced function")
+                            Haplotype(name = "*1_HET", function = "Reduced Function"),
+                            Haplotype(name = "*1_HET", function = "No Function")
                         )
                     )
                 )
@@ -49,8 +79,8 @@ class HasHomozygousDPYDDeficiencyTest {
                     PharmacoEntry(
                         gene = "DPYD",
                         haplotypes = setOf(
-                            Haplotype(name = "*1_HET", function = "Normal function"),
-                            Haplotype(name = "*1_HET", function = "Reduced function")
+                            Haplotype(name = "*1_HET", function = "Normal Function"),
+                            Haplotype(name = "*1_HET", function = "Reduced Function")
                         )
                     )
                 )
@@ -64,22 +94,9 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")))
+                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal Function")))
                 )
             )
         )
     }
-
-    @Test
-    fun `Should return undetermined if patient has no DPYD type information`() {
-        EvaluationAssert.assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                MolecularTestFactory.withHaplotype(
-                    PharmacoEntry(gene = "UGT1A1", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")))
-                )
-            )
-        )
-    }
-
 }

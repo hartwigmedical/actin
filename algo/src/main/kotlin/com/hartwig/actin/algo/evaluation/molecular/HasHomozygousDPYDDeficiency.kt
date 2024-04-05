@@ -6,31 +6,46 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
+private const val DPYD_GENE = "DPYD"
+
 class HasHomozygousDPYDDeficiency internal constructor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val pharmaco = record.molecular.pharmaco
+        val pharmaco = record.molecular.pharmaco.filter { it.gene == DPYD_GENE }
 
-        if (pharmaco.none { it.gene == "DPYD" }) {
+        if (pharmaco.isEmpty()) {
             return EvaluationFactory.recoverableUndetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
         }
 
-        val isHomozygousDeficient = isHomozygousDeficient(pharmaco)
+        return when {
+            containsUnexpectedHaplotypeFunction(pharmaco) -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "DPYD haplotype function cannot be determined due to unexpected haplotype function",
+                    "DPYD haplotype function undetermined"
+                )
+            }
 
-        return if (isHomozygousDeficient) {
-            EvaluationFactory.pass("Patient is homozygous DPYD deficient", inclusionEvents = setOf("DPYD deficient"))
-        } else
-            EvaluationFactory.fail("Patient is not homozygous DPYD deficient")
-    }
+            isHomozygousDeficient(pharmaco) -> {
+                EvaluationFactory.pass("Patient is homozygous DPYD deficient", inclusionEvents = setOf("DPYD deficient"))
+            }
 
-    private fun isHomozygousDeficient(pharmaco: Set<PharmacoEntry>): Boolean {
-        for (pharmacoEntry in pharmaco) {
-            if (pharmacoEntry.gene == "DPYD" && pharmacoEntry.haplotypes.any { it.function == "Normal function" }) {
-                return false
+            else -> {
+                EvaluationFactory.fail("Patient is not homozygous DPYD deficient")
             }
         }
-        return true
     }
+
+    private fun containsUnexpectedHaplotypeFunction(pharmaco: List<PharmacoEntry>): Boolean {
+        return pharmaco.any { pharmacoEntry ->
+            pharmacoEntry.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions }
+        }
+    }
+
+    private fun isHomozygousDeficient(pharmaco: List<PharmacoEntry>): Boolean {
+        return pharmaco.none { pharmacoEntry ->
+            pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }
+        }
+    }
+
+    private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
 }
-
-
