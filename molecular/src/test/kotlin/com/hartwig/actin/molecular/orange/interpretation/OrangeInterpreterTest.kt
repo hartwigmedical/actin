@@ -5,10 +5,13 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
+import com.hartwig.actin.molecular.orange.OrangeInterpreterApplication
+import com.hartwig.actin.molecular.orange.OrangeInterpreterConfig
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
+import com.hartwig.actin.testutil.ResourceLocator
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
@@ -18,6 +21,7 @@ import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import java.time.LocalDate
 
@@ -180,6 +184,21 @@ class OrangeInterpreterTest {
         interpreter.interpret(record)
     }
 
+    @Test
+    fun `Should fail if no serve db provided when molecular is present`() {
+        val config = OrangeInterpreterConfig(
+            orangeJson = ORANGE_JSON,
+            serveDirectory = null,
+            clinicalJson = CLINICAL_JSON,
+            doidJson = DOID_JSON,
+            outputDirectory = "output"
+        )
+        val application = OrangeInterpreterApplication(config)
+        assertThatThrownBy { application.run() }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("SERVE directory must be provided when interpreting ORANGE record!")
+    }
+
     companion object {
         private fun orangeRecordWithQCStatus(status: PurpleQCStatus): OrangeRecord {
             return orangeRecordWithQCStatuses(setOf(status))
@@ -196,5 +215,9 @@ class OrangeInterpreterTest {
         private fun createTestInterpreter(): OrangeInterpreter {
             return OrangeInterpreter(TestGeneFilterFactory.createAlwaysValid())
         }
+
+        private val ORANGE_JSON = ResourceLocator.resourceOnClasspath("serialization/real.v3.0.0.orange.json")
+        private val CLINICAL_JSON = ResourceLocator.resourceOnClasspath("interpretation/patient.clinical.json")
+        private val DOID_JSON = ResourceLocator.resourceOnClasspath("interpretation/example_doid.json")
     }
 }

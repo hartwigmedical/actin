@@ -1,12 +1,12 @@
 package com.hartwig.actin.clinical.curation
 
-import com.google.common.io.Resources
 import com.hartwig.actin.clinical.curation.config.CurationConfig
 import com.hartwig.actin.clinical.curation.config.CurationConfigFile
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.time.LocalDate
 
-val CURATION_DIRECTORY: String = Resources.getResource("curation").path + "/"
+val CURATION_DIRECTORY: String = resourceOnClasspath("curation") + "/"
 
 object TestCurationFactory {
 

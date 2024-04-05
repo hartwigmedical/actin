@@ -1,11 +1,11 @@
 package com.hartwig.actin.trial.interpretation
 
-import com.google.common.io.Resources
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.trial.config.TestTrialConfigDatabaseFactory
 import com.hartwig.actin.trial.config.TrialConfigDatabaseValidator
 import com.hartwig.actin.trial.config.TrialConfigModel
@@ -113,7 +113,7 @@ class TrialIngestionTest {
     }
 
     companion object {
-        private val TRIAL_CONFIG_DIRECTORY = Resources.getResource("trial_config").path
+        private val TRIAL_CONFIG_DIRECTORY = resourceOnClasspath("trial_config")
 
         private fun findTrial(trials: List<Trial>, trialId: String): Trial {
             return trials.firstOrNull { it.identification.trialId == trialId }

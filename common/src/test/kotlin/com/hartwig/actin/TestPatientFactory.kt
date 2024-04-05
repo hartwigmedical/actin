@@ -12,14 +12,21 @@ object TestPatientFactory {
         // TODO (KD): Consider supporting an even more minimal patient record with null molecular
         return PatientRecordFactory.fromInputs(
             TestClinicalFactory.createMinimalTestClinicalRecord(),
-            TestMolecularFactory.createMinimalTestMolecularRecord()
+            TestMolecularFactory.createMinimalTestMolecularHistory()
         )
     }
 
     fun createProperTestPatientRecord(): PatientRecord {
         return PatientRecordFactory.fromInputs(
             TestClinicalFactory.createProperTestClinicalRecord(),
-            TestMolecularFactory.createProperTestMolecularRecord()
+            TestMolecularFactory.createProperTestMolecularHistory()
+        )
+    }
+
+    fun createExhaustiveTestPatientRecord(): PatientRecord {
+        return PatientRecordFactory.fromInputs(
+            TestClinicalFactory.createExhaustiveTestClinicalRecord(),
+            TestMolecularFactory.createExhaustiveTestMolecularHistory()
         )
     }
 }

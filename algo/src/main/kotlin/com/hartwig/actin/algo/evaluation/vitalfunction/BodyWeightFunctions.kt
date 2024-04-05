@@ -36,11 +36,22 @@ object BodyWeightFunctions {
             }
 
         val median = determineMedianBodyWeight(relevant)
-        val comparison = median.compareTo(referenceBodyWeight)
+        val referenceWithMargin = if (referenceIsMinimum) {
+            referenceBodyWeight * VitalFunctionRuleMapper.BODY_WEIGHT_NEGATIVE_MARGIN_OF_ERROR
+        } else referenceBodyWeight * VitalFunctionRuleMapper.BODY_WEIGHT_POSITIVE_MARGIN_OF_ERROR
+        val comparisonWithMargin = median.compareTo(referenceWithMargin)
+        val comparisonWithoutMargin = median.compareTo(referenceBodyWeight)
 
         return when {
 
-            comparison < 0 -> {
+            (!referenceIsMinimum && comparisonWithoutMargin > 0 && comparisonWithMargin <= 0)
+                    || (referenceIsMinimum && comparisonWithoutMargin < 0 && comparisonWithMargin >= 0) -> {
+                val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
+                val generalMessage = "Median body weight ($median kg) below $referenceBodyWeight kg"
+                EvaluationFactory.recoverableUndetermined(specificMessage, generalMessage)
+                    }
+
+            comparisonWithoutMargin < 0 -> {
                 val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
                 val generalMessage = "Median body weight ($median kg) below $referenceBodyWeight kg"
                 if (referenceIsMinimum) {
@@ -50,7 +61,7 @@ object BodyWeightFunctions {
                 }
             }
 
-            comparison == 0 -> {
+            comparisonWithoutMargin == 0 -> {
                 val specificMessage = "Patient median body weight ($median kg) is equal to $referenceBodyWeight kg"
                 val generalMessage = "Median body weight ($median kg) equal to $referenceBodyWeight kg"
 

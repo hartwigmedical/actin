@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.datamodel.ECGMeasure
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.Surgery
@@ -13,7 +13,7 @@ import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private val keyWidth: Float, private val valueWidth: Float) :
+class PatientCurrentDetailsGenerator(private val record: PatientRecord, private val keyWidth: Float, private val valueWidth: Float) :
     TableGenerator {
     override fun title(): String {
         return "Patient current details (" + date(record.patient.questionnaireDate) + ")"
@@ -66,7 +66,7 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
             table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value!!.toDouble())).toString() + " " + measure.unit)
         }
 
-        private fun unresolvedToxicities(record: ClinicalRecord): String {
+        private fun unresolvedToxicities(record: PatientRecord): String {
             val (questionnaireToxicities, ehrToxicities) = record.toxicities
                 .partition { it.source == ToxicitySource.QUESTIONNAIRE }
 
@@ -79,8 +79,9 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
             return Formats.valueOrDefault(listOfNotNull(questionnaireSummary, ehrSummary).joinToString("; "), "None")
         }
 
-        private fun formatToxicities(filteredEhrToxicities: List<Toxicity>) =
-            filteredEhrToxicities.joinToString(Formats.COMMA_SEPARATOR) { it.name + (it.grade?.let { grade -> " ($grade)" } ?: "") }
+        private fun formatToxicities(filteredToxicities: List<Toxicity>) =
+            filteredToxicities.map { it.name + (it.grade?.let { grade -> " ($grade)" } ?: "") }.toSet()
+                .joinToString(Formats.COMMA_SEPARATOR)
 
         private fun filterUncuratedToxicities(toxicities: List<Toxicity>): List<Toxicity> {
             return toxicities.filter { (it.grade ?: -1) >= 2 }
@@ -88,7 +89,7 @@ class PatientCurrentDetailsGenerator(private val record: ClinicalRecord, private
                 .map { (_, toxicitiesWithName) -> toxicitiesWithName.maxBy { it.evaluatedDate } }
         }
 
-        private fun complications(record: ClinicalRecord): String {
+        private fun complications(record: PatientRecord): String {
             val complications = record.complications
             val hasComplications = record.clinicalStatus.hasComplications == true
             if (complications == null) {

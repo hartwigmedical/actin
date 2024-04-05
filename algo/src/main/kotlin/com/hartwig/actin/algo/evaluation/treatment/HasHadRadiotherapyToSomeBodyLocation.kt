@@ -27,9 +27,9 @@ class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String) : E
             }
 
             priorRadiotherapies.any { it.treatmentHistoryDetails?.bodyLocations == null } -> {
-                EvaluationFactory.undetermined(
-                    "Patient has received radiotherapy but undetermined if target location was $bodyLocation",
-                    "Undetermined prior $bodyLocation radiation therapy"
+                EvaluationFactory.recoverableUndetermined(
+                    "Patient has received radiotherapy but undetermined if target location was $bodyLocation - assuming not",
+                    "Undetermined prior $bodyLocation radiation therapy - assuming none"
                 )
             }
 

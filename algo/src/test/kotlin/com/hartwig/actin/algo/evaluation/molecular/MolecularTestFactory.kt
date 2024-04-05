@@ -4,7 +4,9 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
@@ -19,7 +21,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 internal object MolecularTestFactory {
 
     private val base = TestPatientFactory.createMinimalTestPatientRecord()
-    private val baseMolecular = base.molecular as MolecularRecord
+    private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
 
     fun priorMolecularTest(
         test: String = "",
@@ -42,7 +44,7 @@ internal object MolecularTestFactory {
     }
 
     fun withPriorTests(priorTests: List<PriorMolecularTest>): PatientRecord {
-        return base.copy(priorMolecularTests = priorTests)
+        return base.copy(molecularHistory = MolecularHistory.fromInputs(listOf(baseMolecular), priorTests))
     }
 
     fun withPriorTest(priorTest: PriorMolecularTest): PatientRecord {
@@ -102,7 +104,7 @@ internal object MolecularTestFactory {
     }
 
     fun withExperimentTypeAndCopyNumber(type: ExperimentType, copyNumber: CopyNumber): PatientRecord {
-        return withMolecularRecord(withDriver(copyNumber).molecular?.copy(type = type))
+        return withMolecularRecord(withDriver(copyNumber).molecularHistory.latestMolecularRecord()?.copy(type = type))
     }
 
     fun withHlaAllele(hlaAllele: HlaAllele): PatientRecord {
@@ -127,8 +129,10 @@ internal object MolecularTestFactory {
         priorTest: PriorMolecularTest
     ): PatientRecord {
         return base.copy(
-            molecular = baseMolecular.copy(type = type, containsTumorCells = containsTumorCells),
-            priorMolecularTests = listOf(priorTest)
+            molecularHistory = MolecularHistory.fromInputs(
+                listOf(baseMolecular.copy(type = type, containsTumorCells = containsTumorCells)),
+                listOf(priorTest)
+            )
         )
     }
 
@@ -256,6 +260,6 @@ internal object MolecularTestFactory {
     }
 
     private fun withMolecularRecord(molecular: MolecularRecord?): PatientRecord {
-        return base.copy(molecular = molecular)
+        return base.copy(molecularHistory = MolecularHistory.fromInputs(listOfNotNull(molecular), emptyList()))
     }
 }

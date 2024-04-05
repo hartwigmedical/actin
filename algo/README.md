@@ -450,10 +450,8 @@ Notes:
 
 - For all lab values, the most recent available lab value (up to 90 days old) is evaluated.
 - If the most recent lab value is within the requested range but more than 30 days old, the evaluation resolves to `WARN` instead of `PASS`
-- If the most recent lab value is out of the requested range, the second-last lab value is evaluated.
-    - In case that a second-last lab value is available, less than 90 days old and within requested range, the evaluation resolves to `WARN`
-      .
-    - In case there is no applicable second-last value, or this value is also out of requested range, the evaluation resolves to `FAIL`.
+- If the most recent lab value is out of the requested range but inside the margin of error (10%), the evaluation resolves to `(recoverable) UNDETERMINED `
+- If the most recent lab value is out of the requested range and outside the margin of error, the evaluation resolves to `FAIL`.
 
 ##### Rules related to other conditions
 
@@ -594,6 +592,7 @@ Other antianemic preparations: ATC level code equal to "B03X" <br>
 | HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS                                       | Medication > isTrialMedication is true; and active OR stopDate within X weeks                                                                                                                                                                                                                                              |
 | HAS_RECEIVED_TRIAL_MEDICATION_WITHIN_X_WEEKS_Y_HALF_LIVES                          | Medication > isTrialMedication is true; active X weeks prior to evaluation and Y half lives                                                                                                                                                                                                                                |
 | HAS_RECEIVED_RADIOTHERAPY_WITHIN_X_WEEKS                                           | Radiotherapy in treatment history when: 1] no date provided; 2] in case only a year is provided then in case of current year; 3] in case year+month is provided then in case of current year and current month                                                                                                             |                                                                                                      |
+| HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X_WITHIN_Y_WEEKS                             | Radiotherapy in treatment history with body location X and within the requested timeframe (only year compared to reference if month not provided in history).                                                                                                                                                              | `UNDETERMINED` if the year is unknown or if any entries have an unknown body location                |
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS                                | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3] and active X weeks prior to evaluation date                                 | Does not include radiotherapy or surgery, these are separate rules.                                  |
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS              | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3], excluding ATC codes equal to X OR if X present in 3] use derived ATC codes | Does not include radiotherapy or surgery, these are separate rules.                                  |
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES                   | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3] and active X weeks prior to evaluation date                                 | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules. |
@@ -668,6 +667,9 @@ Note for all TOXICITY rules:
 | HAS_BODY_WEIGHT_OF_AT_LEAST_X          | bodyWeight > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median body weight (in kg) => X               |
 | HAS_BODY_WEIGHT_OF_AT_MOST_X           | bodyWeight > Include median of up to 5 different days (most recent value within a month, other values within 2 months), with over all median body weight (in kg) <= X               |
 | HAS_BMI_OF_AT_MOST_X                   | Patient BMI estimate from body weight <= X for patients between 1.5 and 2.0 m                                                                                                       |
+
+Notes:
+- If the vital function measurement is below the requested minimum value or above the requested maximum value, the evaluation resolves to `(recoverable) UNDETERMINED` if the deviation is within the 5 percent margin of error and to `FAIL` otherwise.
 
 ##### Rules related to blood transfusions
 
