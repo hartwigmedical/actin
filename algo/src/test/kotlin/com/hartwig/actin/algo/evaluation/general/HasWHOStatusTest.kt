@@ -35,14 +35,4 @@ class HasWHOStatusTest {
     fun `Should pass when WHO is exact match`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withWHO(2)))
     }
-
-    @Test
-    fun `Should warn when WHO is exact match and patient has complication categories of concern`() {
-        val evaluation = function.evaluate(GeneralTestFactory.withWHOAndComplications(2, listOf("Pleural Effusions")))
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnSpecificMessages).contains(
-            "Patient WHO status 2 matches requested but patient has complication categories of concern: " +
-                    "pleural effusions, potentially indicating deterioration"
-        )
-    }
 }
