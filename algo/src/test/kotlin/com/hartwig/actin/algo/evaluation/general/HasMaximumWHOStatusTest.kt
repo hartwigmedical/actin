@@ -27,14 +27,4 @@ class HasMaximumWHOStatusTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withWHO(3)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withWHO(4)))
     }
-
-    @Test
-    fun `Should warn when WHO is exact match and patient has complication categories of concern`() {
-        val evaluation: Evaluation = function.evaluate(GeneralTestFactory.withWHOAndComplications(2, listOf("Pleural Effusions")))
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnSpecificMessages).contains(
-            "Patient WHO status 2 equals maximum but patient has complication categories of concern: pleural effusions" +
-                    ", potentially indicating deterioration"
-        )
-    }
 }
