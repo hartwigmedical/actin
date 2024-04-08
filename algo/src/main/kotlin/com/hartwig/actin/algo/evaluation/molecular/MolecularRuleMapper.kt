@@ -64,13 +64,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
-        return FunctionCreator { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptyList()) }
+        return FunctionCreator { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet()) }
     }
 
     private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.geneNames)
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(genes.geneNames.toSet())
         }
     }
 

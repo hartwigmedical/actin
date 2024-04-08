@@ -3,14 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
-import com.hartwig.actin.algo.evaluation.molecular.HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable.Companion.EventType.DELETIONS
-import com.hartwig.actin.algo.evaluation.molecular.HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable.Companion.EventType.INSERTIONS
-import com.hartwig.actin.algo.evaluation.molecular.HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable.Companion.EventType.ACTIVATING_VARIANT_IN_GENE
-import com.hartwig.actin.algo.evaluation.molecular.HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable.Companion.EventType.FUSIONS
-import com.hartwig.actin.algo.evaluation.molecular.HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable.Companion.EventType.EXON_SKIPPING
-import com.hartwig.actin.algo.evaluation.molecular.HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable.Companion.EventType.VARIANTS_WITH_PROTEIN_IMPACT
-import com.hartwig.actin.algo.evaluation.molecular.HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable.Companion.EventType
-import com.hartwig.actin.algo.evaluation.molecular.HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable.Companion.targetableEventInNSCLCMap
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
@@ -25,7 +17,7 @@ import org.junit.Test
 
 class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
 
-    private val function = HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptyList())
+    private val function = HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet())
 
     @Test
     fun `Should fail when molecular record is empty`() {
@@ -46,9 +38,24 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        Assertions.assertThat(
-            evaluation.passGeneralMessages).containsExactly("$CORRECT_GENE activating mutation(s)"
+        Assertions.assertThat(evaluation.passGeneralMessages).containsExactly("$CORRECT_GENE activating mutation(s)")
+    }
+
+    @Test
+    fun `Should fail if activating mutation is in correct gene but this gene is in geneToIgnore`(){
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL,
+            HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(setOf(CORRECT_GENE)).evaluate(
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = CORRECT_GENE,
+                        isReportable = true,
+                        driverLikelihood = DriverLikelihood.HIGH,
+                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                        clonalLikelihood = 1.0
+                    )
+                )
             )
+        )
     }
 
     @Test
@@ -124,9 +131,11 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
         )
         val evaluation = function.evaluate(TestPatientFactory.createMinimalTestPatientRecord().copy(molecular = record))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        Assertions.assertThat(evaluation.passGeneralMessages).containsExactly(
-            "$CORRECT_PROTEIN_IMPACT detected in $CORRECT_VARIANT_GENE, " +
-                    "$OTHER_CORRECT_PROTEIN_IMPACT detected in $OTHER_CORRECT_VARIANT_GENE"
+        Assertions.assertThat(evaluation.passGeneralMessages).isEqualTo(
+            setOf(
+                "$CORRECT_PROTEIN_IMPACT detected in $CORRECT_VARIANT_GENE",
+                "$OTHER_CORRECT_PROTEIN_IMPACT detected in $OTHER_CORRECT_VARIANT_GENE"
+            )
         )
     }
 
@@ -277,22 +286,17 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 
     companion object {
-        private val CORRECT_GENE = getFirstGeneAndProperty(ACTIVATING_VARIANT_IN_GENE).first
-        private val CORRECT_VARIANT_GENE = getFirstGeneAndProperty(VARIANTS_WITH_PROTEIN_IMPACT).first
-        private val CORRECT_PROTEIN_IMPACT = getFirstGeneAndProperty(VARIANTS_WITH_PROTEIN_IMPACT).second
-        private val OTHER_CORRECT_VARIANT_GENE = targetableEventInNSCLCMap[VARIANTS_WITH_PROTEIN_IMPACT]!!.elementAt(1).gene
-        private val OTHER_CORRECT_PROTEIN_IMPACT = targetableEventInNSCLCMap[VARIANTS_WITH_PROTEIN_IMPACT]!!.elementAt(1).property
-        private val CORRECT_EXON_SKIPPING_GENE = getFirstGeneAndProperty(EXON_SKIPPING).first
-        private val CORRECT_EXON_SKIPPING_EXON = getFirstGeneAndProperty(EXON_SKIPPING).second.toInt()
-        private val CORRECT_FUSION_GENE = getFirstGeneAndProperty(FUSIONS).first
-        private val CORRECT_DELETION_GENE = getFirstGeneAndProperty(DELETIONS).first
-        private val CORRECT_DELETION_CODON = getFirstGeneAndProperty(DELETIONS).second.toInt()
-        private val CORRECT_INSERTION_GENE = getFirstGeneAndProperty(INSERTIONS).first
-        private val CORRECT_INSERTION_CODON = getFirstGeneAndProperty(INSERTIONS).second.toInt()
-
-        private fun getFirstGeneAndProperty(eventType: EventType): Pair<String, String> {
-            val firstInMap = targetableEventInNSCLCMap[eventType]!!.first()
-            return Pair(firstInMap.gene, firstInMap.property)
-        }
+        private val CORRECT_GENE = "EGFR"
+        private val CORRECT_VARIANT_GENE = "EGFR"
+        private val CORRECT_PROTEIN_IMPACT = "L858R"
+        private val OTHER_CORRECT_VARIANT_GENE = "BRAF"
+        private val OTHER_CORRECT_PROTEIN_IMPACT = "V600E"
+        private val CORRECT_EXON_SKIPPING_GENE = "MET"
+        private val CORRECT_EXON_SKIPPING_EXON = 14
+        private val CORRECT_FUSION_GENE = "ALK"
+        private val CORRECT_DELETION_GENE = "EGFR"
+        private val CORRECT_DELETION_CODON = 19
+        private val CORRECT_INSERTION_GENE = "EGFR"
+        private val CORRECT_INSERTION_CODON = 20
     }
 }
