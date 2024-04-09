@@ -205,7 +205,7 @@ class PatientClinicalHistoryGenerator(
                 TumorStatus.ACTIVE -> "considered active"
                 TumorStatus.INACTIVE -> "considered non-active"
                 TumorStatus.EXPECTATIVE -> "considered expectative"
-                TumorStatus.UNKNOWN -> "unknown"
+                TumorStatus.UNKNOWN -> "unknown if active"
             }
             return "$tumorDetails ($dateAdditionDiagnosis$dateAdditionLastTreatment$status)"
         }
