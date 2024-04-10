@@ -12,20 +12,21 @@ import org.junit.Test
 private const val COMPLICATION_NAME = "complication"
 private val EHR_START_DATE = LocalDate.of(2023, 6, 15)
 private val CURATED_COMPLICATION = Complication(COMPLICATION_NAME, emptySet(), EHR_START_DATE.year, EHR_START_DATE.monthValue)
-private val CURATION_DB = mockk<CurationDatabase<ComplicationConfig>> {
-    every { find(any()) }.returns(
-        setOf(
-            ComplicationConfig(
-                "input",
-                false,
-                false,
-                curated = CURATED_COMPLICATION
-            )
-        )
-    )
-}
 
 class EhrComplicationExtractorTest {
+    private val curationDb = mockk<CurationDatabase<ComplicationConfig>> {
+        every { find(any()) }.returns(
+            setOf(
+                ComplicationConfig(
+                    "input",
+                    false,
+                    false,
+                    curated = CURATED_COMPLICATION
+                )
+            )
+        )
+    }
+
     @Test
     fun `Should extract complication with end date`() {
         assertExtractionResult(
@@ -44,13 +45,14 @@ class EhrComplicationExtractorTest {
         )
     }
 
-    fun assertExtractionResult(ehrComplication: EhrComplication) {
+    private fun assertExtractionResult(ehrComplication: EhrComplication): Complication {
         val ehrPatientRecord = EhrTestData.createEhrPatientRecord().copy(complications = listOf(ehrComplication))
-        val result = EhrComplicationExtractor(CURATION_DB).extract(ehrPatientRecord)
+        val result = EhrComplicationExtractor(curationDb).extract(ehrPatientRecord)
         assertThat(result.extracted.size).isEqualTo(1)
         val extracted = result.extracted[0]
-        assertThat(extracted.name).isEqualTo("complication")
+        assertThat(extracted.name).isEqualTo(COMPLICATION_NAME)
         assertThat(extracted.year).isEqualTo(EHR_START_DATE.year)
         assertThat(extracted.month).isEqualTo(EHR_START_DATE.monthValue)
+        return extracted
     }
 }
