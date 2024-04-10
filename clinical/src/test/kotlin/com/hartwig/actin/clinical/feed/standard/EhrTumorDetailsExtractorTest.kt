@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -41,7 +42,6 @@ private const val RADIOLOGY_REPORT = "Prior to conclusion:\n" +
         "$CONCLUSION_3.\n" +
         "$CONCLUSION_4.\n" +
         "\r\n\n\nanother radiologie rapport:\n"
-
 
 private val TUMOR_DETAILS = TumorDetails(
     primaryTumorLocation = TUMOR_LOCATION,
@@ -79,10 +79,19 @@ private val CURATION_CONFIG = PrimaryTumorConfig(
     primaryTumorSubLocation = TUMOR_SUB_LOCATION,
 )
 
+private val UNUSED_DATE = LocalDate.of(2024, 4, 10)
+
+private val EHR_PRIOR_OTHER_CONDITION = EhrPriorOtherCondition(
+    name = PRIOR_CONDITION_INPUT,
+    startDate = UNUSED_DATE
+)
+
 class EhrTumorDetailsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
-    private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>>()
+    private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
+        every { find(any()) } returns emptySet()
+    }
     private val extractor = EhrTumorDetailsExtractor(tumorCuration, lesionCuration)
 
     @Test
@@ -115,14 +124,7 @@ class EhrTumorDetailsExtractorTest {
 
     @Test
     fun `Should curate lesions from the radiology report in lesion site`() {
-        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
-        every { lesionCuration.find(CONCLUSION_1) } returns setOf(
-            LesionLocationConfig(
-                input = CONCLUSION_1,
-                location = "brain",
-                category = LesionLocationCategory.BRAIN
-            )
-        )
+        setupLesionCuration(CONCLUSION_1)
         every { lesionCuration.find(CONCLUSION_2) } returns setOf(
             LesionLocationConfig(
                 input = CONCLUSION_2,
@@ -154,6 +156,61 @@ class EhrTumorDetailsExtractorTest {
                 CurationCategory.LESION_LOCATION,
                 CONCLUSION_3,
                 "Could not find lesion config for input 'conclusion 3'",
+            )
+        )
+    }
+
+    @Test
+    fun `Should curate lesions from prior conditions but ignore any curation warnings`() {
+        setupLesionCuration(PRIOR_CONDITION_INPUT)
+        val result =
+            extractor.extract(
+                EHR_PATIENT_RECORD.copy(
+                    priorOtherConditions = listOf(
+                        EHR_PRIOR_OTHER_CONDITION,
+                        EHR_PRIOR_OTHER_CONDITION.copy(name = "another prior condition")
+                    )
+                )
+            )
+        assertThat(result.extracted).isEqualTo(
+            TUMOR_DETAILS.copy(
+                hasBrainLesions = true,
+                brainLesionsCount = 1
+            )
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(PRIOR_CONDITION_INPUT)
+    }
+
+    @Test
+    fun `Should curate lesions from treatment history but ignore any curation warnings`() {
+        setupLesionCuration(TREATMENT_HISTORY_INPUT)
+        val result =
+            extractor.extract(
+                EHR_PATIENT_RECORD.copy(
+                    treatmentHistory = listOf(
+                        EhrTestData.createEhrTreatmentHistory().copy(treatmentName = TREATMENT_HISTORY_INPUT),
+                        EhrTestData.createEhrTreatmentHistory().copy(treatmentName = "another treatment history")
+                    )
+                )
+            )
+        assertThat(result.extracted).isEqualTo(
+            TUMOR_DETAILS.copy(
+                hasBrainLesions = true,
+                brainLesionsCount = 1
+            )
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(TREATMENT_HISTORY_INPUT)
+    }
+
+    private fun setupLesionCuration(input: String) {
+        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
+        every { lesionCuration.find(input) } returns setOf(
+            LesionLocationConfig(
+                input = PRIOR_CONDITION_INPUT,
+                location = "brain",
+                category = LesionLocationCategory.BRAIN
             )
         )
     }
