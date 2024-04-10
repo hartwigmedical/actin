@@ -88,4 +88,19 @@ class EhrPriorPrimariesExtractorTest {
         assertThat(result.extracted).isEmpty()
         assertThat(result.evaluation.warnings).isEmpty()
     }
+
+    @Test
+    fun `Should always use diagnosis year and month from feed, even when in curation data `() {
+        every { secondPrimaryConfigCurationDatabase.find(INPUT) } returns setOf(
+            SecondPrimaryConfig(
+                ignore = false,
+                input = INPUT,
+                curated = PRIOR_SECOND_PRIMARY.copy(diagnosedYear = 2023, diagnosedMonth = 1)
+            )
+        )
+        val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).containsExactly(PRIOR_SECOND_PRIMARY.copy(diagnosedMonth = 2, diagnosedYear = 2024))
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(INPUT)))
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
 }
