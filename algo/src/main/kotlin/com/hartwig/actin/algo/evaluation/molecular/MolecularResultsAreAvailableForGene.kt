@@ -36,7 +36,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             }
         }
 
-        val (indeterminatePriorTestsForGene, passPriorTestsForGene) = record.molecularHistory.allPriorMolecularTests()
+        val (indeterminatePriorTestsForGene, passPriorTestsForGene) = record.molecularHistory.allIHCTests()
             .filter { it.item == gene }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 

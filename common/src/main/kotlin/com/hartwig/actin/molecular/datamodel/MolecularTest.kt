@@ -14,6 +14,34 @@ interface MolecularTest<T> {
     val result: T
 }
 
+class MolecularTestFactory {
+    companion object {
+        fun classify(result: PriorMolecularTest): ExperimentType {
+            return when (result.test) {
+                "IHC" -> ExperimentType.IHC
+
+                "" -> if (result.item == "PD-L1") {
+                    ExperimentType.IHC
+                } else {
+                    ExperimentType.OTHER
+                }
+
+                else -> ExperimentType.OTHER
+            }
+        }
+
+        fun fromPriorMolecular(tests: List<PriorMolecularTest>): List<MolecularTest<*>> {
+            return tests.groupBy { classify(it) }
+                .flatMap { (type, results) ->
+                    when (type) {
+                        ExperimentType.IHC -> results.map { IHCMolecularTest.fromPriorMolecularTest(it) }
+                        else -> results.map { OtherPriorMolecularTest.fromPriorMolecularTest(it) }
+                    }
+                }
+        }
+    }
+}
+
 data class WGSMolecularTest(
     override val type: ExperimentType,
     override val date: LocalDate?,
@@ -40,6 +68,20 @@ data class IHCMolecularTest(
     }
 }
 
+data class OtherPriorMolecularTest(
+    override val type: ExperimentType,
+    override val date: LocalDate?,
+    override val result: PriorMolecularTest
+) : MolecularTest<PriorMolecularTest> {
+
+    companion object {
+        fun fromPriorMolecularTest(result: PriorMolecularTest): OtherPriorMolecularTest {
+            return OtherPriorMolecularTest(ExperimentType.OTHER, date = null, result)
+        }
+    }
+}
+
+
 class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*>>() {
 
     override fun write(out: JsonWriter, value: MolecularTest<*>?) {
@@ -60,6 +102,7 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*
             ExperimentType.WHOLE_GENOME.toString() -> gson.fromJson(jsonObject, WGSMolecularTest::class.java)
             ExperimentType.TARGETED.toString() -> gson.fromJson(jsonObject, WGSMolecularTest::class.java)
             ExperimentType.IHC.toString() -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
+            ExperimentType.OTHER.toString() -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
             else -> throw IllegalArgumentException("Unknown molecular test type: $type")
         }
     }

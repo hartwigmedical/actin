@@ -6,7 +6,7 @@ import java.time.LocalDate
 data class MolecularHistory(
     val molecularTests: List<MolecularTest<*>>,
 ) {
-    fun allPriorMolecularTests(): List<PriorMolecularTest> {
+    fun allIHCTests(): List<PriorMolecularTest> {
         return molecularTests.filter { it.type == ExperimentType.IHC }
             .map { it.result as PriorMolecularTest }
     }
@@ -29,7 +29,7 @@ data class MolecularHistory(
         fun fromInputs(molecularRecords: List<MolecularRecord>, priorMolecularTests: List<PriorMolecularTest>): MolecularHistory {
             return MolecularHistory(
                 molecularRecords.map { WGSMolecularTest.fromMolecularRecord(it) } +
-                        priorMolecularTests.map { IHCMolecularTest.fromPriorMolecularTest(it) }
+                        MolecularTestFactory.fromPriorMolecular(priorMolecularTests)
             )
         }
     }
