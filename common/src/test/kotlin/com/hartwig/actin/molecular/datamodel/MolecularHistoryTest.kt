@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -95,5 +96,20 @@ class MolecularHistoryTest {
         assertThat(molecularTests.filter { it.type == ExperimentType.IHC }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.ARCHER }).hasSize(1)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
+    }
+
+    @Test
+    fun `Should return latest archer panel when multiple exist`() {
+
+        val emptyPanel = ArcherPanel(null, emptyList(), emptyList())
+
+        val archerPanels = listOf(
+            emptyPanel,
+            emptyPanel.copy(date = LocalDate.of(2024, 1, 1)),
+            emptyPanel.copy(date = LocalDate.of(2023, 1, 1)),
+        )
+
+        val molecularHistory = MolecularHistory(archerPanels.map { ArcherMolecularTest(ExperimentType.ARCHER, it.date, it) })
+        assertThat(molecularHistory.latestArcherPanel()?.date).isEqualTo(LocalDate.of(2024, 1, 1))
     }
 }

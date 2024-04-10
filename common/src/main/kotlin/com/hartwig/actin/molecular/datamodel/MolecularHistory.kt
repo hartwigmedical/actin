@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
 import java.time.LocalDate
 
 data class MolecularHistory(
@@ -14,6 +15,16 @@ data class MolecularHistory(
     fun allMolecularRecords(): List<MolecularRecord> {
         return molecularTests.filter { it.type == ExperimentType.WHOLE_GENOME || it.type == ExperimentType.TARGETED }
             .map { it.result as MolecularRecord }
+    }
+
+    fun allArcherPanels(): List<ArcherPanel> {
+        return molecularTests.filter { it.type == ExperimentType.ARCHER }
+            .map { it.result as ArcherPanel }
+    }
+
+    fun latestArcherPanel(): ArcherPanel? {
+        return allArcherPanels()
+            .maxByOrNull { it.date ?: LocalDate.MIN }
     }
 
     fun latestMolecularRecord(): MolecularRecord? {
