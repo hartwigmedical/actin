@@ -283,6 +283,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     private fun proteinImpact(hgvsProteinImpact: String): TranscriptImpact {
         return TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = hgvsProteinImpact)
     }
+    
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 
     companion object {
