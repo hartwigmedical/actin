@@ -96,7 +96,7 @@ class PatientClinicalHistoryGenerator(
     private fun secondPrimaryHistoryTable(record: PatientRecord): Table {
         val table: Table = createSingleColumnTable(valueWidth)
 
-        record.priorSecondPrimaries.sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
+        record.priorSecondPrimaries.distinct().sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
             .forEach { table.addCell(createSingleTableEntry(toSecondPrimaryString(it))) }
 
         return table
@@ -183,7 +183,7 @@ class PatientClinicalHistoryGenerator(
         }
 
         private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {
-            val tumorLocation = priorSecondPrimary.tumorLocation
+            val tumorLocation = priorSecondPrimary.tumorLocation + priorSecondPrimary.tumorSubLocation.let { " ($it)" }
             val tumorDetails = when {
                 priorSecondPrimary.tumorSubType.isNotEmpty() -> {
                     tumorLocation + " " + priorSecondPrimary.tumorSubType.lowercase()
