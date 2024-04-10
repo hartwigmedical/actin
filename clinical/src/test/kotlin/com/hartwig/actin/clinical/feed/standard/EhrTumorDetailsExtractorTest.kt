@@ -79,6 +79,13 @@ private val CURATION_CONFIG = PrimaryTumorConfig(
     primaryTumorSubLocation = TUMOR_SUB_LOCATION,
 )
 
+private val UNUSED_DATE = LocalDate.of(2024, 4, 10)
+
+private val EHR_PRIOR_OTHER_CONDITION = EhrPriorOtherCondition(
+    name = PRIOR_CONDITION_INPUT,
+    startDate = UNUSED_DATE
+)
+
 class EhrTumorDetailsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
@@ -160,14 +167,8 @@ class EhrTumorDetailsExtractorTest {
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
                     priorOtherConditions = listOf(
-                        EhrPriorOtherCondition(
-                            name = PRIOR_CONDITION_INPUT,
-                            startDate = LocalDate.of(2024, 4, 10)
-                        ),
-                        EhrPriorOtherCondition(
-                            name = "another prior condition",
-                            startDate = LocalDate.of(2024, 4, 10)
-                        )
+                        EHR_PRIOR_OTHER_CONDITION,
+                        EHR_PRIOR_OTHER_CONDITION.copy(name = "another prior condition")
                     )
                 )
             )

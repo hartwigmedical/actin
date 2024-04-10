@@ -27,12 +27,14 @@ private val PRIOR_SECOND_PRIMARY = PriorSecondPrimary(
     treatmentHistory = ""
 )
 
+private val DIAGNOSIS_DATE = LocalDate.of(2024, 2, 23)
+
 private val EHR_PRIOR_PRIMARY = EhrPriorPrimary(
     tumorLocation = LOCATION,
     tumorType = TYPE,
     status = "ACTIVE",
-    diagnosisDate = LocalDate.of(2024, 2, 23),
-    statusDate = LocalDate.of(2024, 2, 23)
+    diagnosisDate = DIAGNOSIS_DATE,
+    statusDate = DIAGNOSIS_DATE
 )
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
@@ -40,6 +42,8 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
 )
 
 private const val PRIOR_PRIMARY_INPUT = "location | type"
+private val UNUSED_DATE = LocalDate.of(2023, 1, 1)
+private val EHR_PRIOR_OTHER_CONDITION = EhrPriorOtherCondition(name = PRIOR_CONDITION_INPUT, startDate = UNUSED_DATE)
 
 class EhrPriorPrimariesExtractorTest {
 
@@ -104,8 +108,8 @@ class EhrPriorPrimariesExtractorTest {
             EHR_PATIENT_RECORD.copy(
                 priorPrimaries = emptyList(),
                 priorOtherConditions = listOf(
-                    EhrPriorOtherCondition(name = PRIOR_CONDITION_INPUT, startDate = LocalDate.of(2024, 4, 10)),
-                    EhrPriorOtherCondition(name = "another prior condition", startDate = LocalDate.of(2024, 4, 10))
+                    EHR_PRIOR_OTHER_CONDITION,
+                    EHR_PRIOR_OTHER_CONDITION.copy(name = "another prior condition")
                 )
             )
         )
