@@ -163,6 +163,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     // Rules related to previous primary tumors
     HAS_ACTIVE_SECOND_MALIGNANCY(FunctionInput.NONE),
     HAS_HISTORY_OF_SECOND_MALIGNANCY(FunctionInput.NONE),
+    HAS_HISTORY_OF_SECOND_MALIGNANCY_IGNORING_DOID_TERMS_X(FunctionInput.MANY_DOID_TERMS),
     HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X(FunctionInput.ONE_DOID_TERM),
     HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS(FunctionInput.ONE_INTEGER),
 

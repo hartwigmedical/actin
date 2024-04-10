@@ -242,6 +242,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.MANY_DOID_TERMS -> {
+                    createManyDoidTermsInput(function)
+                    return true
+                }
+
                 FunctionInput.ONE_RECEPTOR_TYPE -> {
                     createOneReceptorTypeInput(function)
                     return true
@@ -582,6 +587,11 @@ class FunctionInputResolver(
             doidTerm = doidString,
             integer = parameterAsInt(function, 1)
         )
+    }
+
+    fun createManyDoidTermsInput(function: EligibilityFunction): List<String> {
+        assertParamConfig(function, FunctionInput.MANY_DOID_TERMS, 1)
+        return toStringList(function.parameters.first())
     }
 
     fun createOneReceptorTypeInput(function: EligibilityFunction): ReceptorType {
