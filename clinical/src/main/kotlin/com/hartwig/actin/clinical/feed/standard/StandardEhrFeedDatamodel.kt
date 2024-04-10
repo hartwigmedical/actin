@@ -86,7 +86,7 @@ data class EhrComplication(
     val name: String,
     val categories: List<String> = emptyList(),
     val startDate: LocalDate,
-    val endDate: LocalDate
+    val endDate: LocalDate?
 )
 
 @JacksonSerializable
