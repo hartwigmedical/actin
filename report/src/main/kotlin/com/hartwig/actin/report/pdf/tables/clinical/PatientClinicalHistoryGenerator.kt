@@ -96,7 +96,7 @@ class PatientClinicalHistoryGenerator(
     private fun secondPrimaryHistoryTable(record: PatientRecord): Table {
         val table: Table = createSingleColumnTable(valueWidth)
 
-        record.priorSecondPrimaries.toSet().sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
+        record.priorSecondPrimaries.distinct().sortedWith(PriorSecondPrimaryDiagnosedDateComparator())
             .forEach { table.addCell(createSingleTableEntry(toSecondPrimaryString(it))) }
 
         return table
