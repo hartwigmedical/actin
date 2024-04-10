@@ -6,6 +6,8 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.archer.Variant
 import java.time.LocalDate
 
 interface MolecularTest<T> {
@@ -18,14 +20,9 @@ class MolecularTestFactory {
     companion object {
         fun classify(result: PriorMolecularTest): ExperimentType {
             return when (result.test) {
+                "Archer FP Lung Target" -> ExperimentType.ARCHER
                 "IHC" -> ExperimentType.IHC
-
-                "" -> if (result.item == "PD-L1") {
-                    ExperimentType.IHC
-                } else {
-                    ExperimentType.OTHER
-                }
-
+                "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
                 else -> ExperimentType.OTHER
             }
         }
@@ -35,6 +32,7 @@ class MolecularTestFactory {
                 .flatMap { (type, results) ->
                     when (type) {
                         ExperimentType.IHC -> results.map { IHCMolecularTest.fromPriorMolecularTest(it) }
+                        ExperimentType.ARCHER -> ArcherMolecularTest.fromPriorMolecularTests(results)
                         else -> results.map { OtherPriorMolecularTest.fromPriorMolecularTest(it) }
                     }
                 }
@@ -68,6 +66,24 @@ data class IHCMolecularTest(
     }
 }
 
+data class ArcherMolecularTest(
+    override val type: ExperimentType,
+    override val date: LocalDate?,
+    override val result: ArcherPanel
+) : MolecularTest<ArcherPanel> {
+
+    companion object {
+        fun fromPriorMolecularTests(results: List<PriorMolecularTest>): List<ArcherMolecularTest> {
+            // TODO safety assertion on test type and date consistency (date to be added in ACTIN-703)?
+            val variants = results.mapNotNull { result ->
+                Variant(gene = result.item, hgvsCodingImpact = result.measure ?: "")
+            }
+            return listOf(ArcherMolecularTest(ExperimentType.ARCHER, date = null,
+                result = ArcherPanel(null, variants, fusions = emptyList())))
+        }
+    }
+}
+
 data class OtherPriorMolecularTest(
     override val type: ExperimentType,
     override val date: LocalDate?,
@@ -80,7 +96,6 @@ data class OtherPriorMolecularTest(
         }
     }
 }
-
 
 class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*>>() {
 

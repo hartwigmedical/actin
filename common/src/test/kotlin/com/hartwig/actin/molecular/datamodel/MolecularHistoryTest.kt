@@ -72,15 +72,28 @@ class MolecularHistoryTest {
     }
 
     @Test
+    fun `Should classify Archer tests`() {
+        assertThat(MolecularTestFactory.classify(
+            PriorMolecularTest("Archer FP Lung Target", item = "gene", impliesPotentialIndeterminateStatus = false))
+        ).isEqualTo(ExperimentType.ARCHER)
+    }
+
+    @Test
     fun `Should convert all prior molecular tests`() {
         val priorMolecularTests = listOf(
             PriorMolecularTest("IHC", item = "protein1", impliesPotentialIndeterminateStatus = false),
             PriorMolecularTest("IHC", item = "protein2", impliesPotentialIndeterminateStatus = false),
+            // TODO (kz) add no fusions found input when ACTIN-703 merged
+//            PriorMolecularTest("Archer FP Lung Target", item = null, measure = "GEEN fusie(s) aangetoond", impliesPotentialIndeterminateStatus = false),
+            PriorMolecularTest("Archer FP Lung Target", item = "EGFR", measure = "c.1A>T", impliesPotentialIndeterminateStatus = false),
+            PriorMolecularTest("Archer FP Lung Target", item = "EGFR", measure = "c.5G>C", impliesPotentialIndeterminateStatus = false),
             PriorMolecularTest("Future-Panel", item = "gene", impliesPotentialIndeterminateStatus = false),
         )
 
         val molecularTests = MolecularTestFactory.fromPriorMolecular(priorMolecularTests)
+        assertThat(molecularTests).hasSize(4)
         assertThat(molecularTests.filter { it.type == ExperimentType.IHC }).hasSize(2)
+        assertThat(molecularTests.filter { it.type == ExperimentType.ARCHER }).hasSize(1)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
     }
 }
