@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasHistoryOfCongestiveHeartFailureWithNYHA internal constructor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
+        return EvaluationFactory.recoverableUndetermined(
             "Currently undetermined if patient has history of congestive heart failure with NYHA class",
             "Undetermined congestive heart failure"
         )
