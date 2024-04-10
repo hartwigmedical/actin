@@ -62,7 +62,12 @@ class EhrPriorPrimariesExtractorTest {
             )
         )
         val result = extractor.extract(EHR_PATIENT_RECORD)
-        assertThat(result.extracted).containsExactly(PRIOR_SECOND_PRIMARY.copy(diagnosedMonth = 2, diagnosedYear = 2024))
+        assertThat(result.extracted).containsExactly(
+            PRIOR_SECOND_PRIMARY.copy(
+                diagnosedMonth = DIAGNOSIS_DATE.monthValue,
+                diagnosedYear = DIAGNOSIS_DATE.year
+            )
+        )
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -151,7 +156,12 @@ class EhrPriorPrimariesExtractorTest {
             )
         )
         val result = extractor.extract(EHR_PATIENT_RECORD)
-        assertThat(result.extracted).containsExactly(PRIOR_SECOND_PRIMARY.copy(diagnosedMonth = 2, diagnosedYear = 2024))
+        assertThat(result.extracted).containsExactly(
+            PRIOR_SECOND_PRIMARY.copy(
+                diagnosedMonth = DIAGNOSIS_DATE.monthValue,
+                diagnosedYear = DIAGNOSIS_DATE.year
+            )
+        )
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }

@@ -80,26 +80,18 @@ class EhrTumorDetailsExtractor(
     private fun extractLesions(patientRecord: EhrPatientRecord): List<CurationResponse<LesionLocationConfig>> {
         val patientId = patientRecord.patientDetails.hashedId
         val lesionsFromRadiologyReport = fromRadiologyReport(patientRecord.tumorDetails.lesionSite, patientId)
-        val lesionsFromPriorOtherConditions = fromPriorOtherConditions(patientId, patientRecord.priorOtherConditions)
-        val lesionsFromTreatmentHistory = fromTreatmentHistory(patientId, patientRecord.treatmentHistory)
+        val lesionsFromPriorOtherConditions = extractFromSecondarySource(patientId, patientRecord.priorOtherConditions) { it.name }
+        val lesionsFromTreatmentHistory = extractFromSecondarySource(patientId, patientRecord.treatmentHistory) { it.treatmentName }
         return lesionsFromRadiologyReport + lesionsFromPriorOtherConditions + lesionsFromTreatmentHistory
     }
 
-    private fun fromTreatmentHistory(
+    private fun <T> extractFromSecondarySource(
         patientId: String,
-        treatmentHistory: List<EhrTreatmentHistory>
+        sourceList: List<T>,
+        inputAccessor: (T) -> String
     ): List<CurationResponse<LesionLocationConfig>> {
-        return treatmentHistory.map { treatment ->
-            lesionCurationResponse(patientId, treatment.treatmentName)
-        }.filter { it.config() != null }
-    }
-
-    private fun fromPriorOtherConditions(
-        patientId: String,
-        priorOtherConditions: List<EhrPriorOtherCondition>
-    ): List<CurationResponse<LesionLocationConfig>> {
-        return priorOtherConditions.map { condition ->
-            lesionCurationResponse(patientId, condition.name)
+        return sourceList.map {
+            lesionCurationResponse(patientId, inputAccessor.invoke(it))
         }.filter { it.config() != null }
     }
 

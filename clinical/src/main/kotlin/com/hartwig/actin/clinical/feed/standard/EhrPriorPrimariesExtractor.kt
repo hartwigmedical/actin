@@ -34,25 +34,26 @@ class EhrPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatab
 
     private fun <T> extractFromSecondarySource(
         ehrPatientRecord: EhrPatientRecord,
-        target: List<T>,
-        input: (T) -> String
+        sourceList: List<T>,
+        inputAccessor: (T) -> String
     ): List<ExtractionResult<List<PriorSecondPrimary>>> {
-        return target.map {
-            curationResponse(ehrPatientRecord.patientDetails.hashedId, input.invoke(it))
-        }.mapNotNull {
-            it.config()?.curated?.let { priorSecondPrimary ->
-                ExtractionResult(
-                    listOf(priorSecondPrimary),
-                    it.extractionEvaluation
-                )
-            }
+        return sourceList.map {
+            curate(ehrPatientRecord.patientDetails.hashedId, inputAccessor.invoke(it))
         }
+            .mapNotNull {
+                it.config()?.curated?.let { priorSecondPrimary ->
+                    ExtractionResult(
+                        listOf(priorSecondPrimary),
+                        it.extractionEvaluation
+                    )
+                }
+            }
     }
 
     private fun fromPriorPrimaries(ehrPatientRecord: EhrPatientRecord): List<ExtractionResult<List<PriorSecondPrimary>>> =
         ehrPatientRecord.priorPrimaries.map {
             val input = "${it.tumorLocation} | ${it.tumorType}"
-            val curatedPriorPrimary = curationResponse(ehrPatientRecord.patientDetails.hashedId, input)
+            val curatedPriorPrimary = curate(ehrPatientRecord.patientDetails.hashedId, input)
             ExtractionResult(listOfNotNull(curatedPriorPrimary.config()?.let { secondPrimaryConfig ->
                 if (secondPrimaryConfig.ignore) {
                     null
@@ -62,7 +63,7 @@ class EhrPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatab
             }), curatedPriorPrimary.extractionEvaluation)
         }
 
-    private fun curationResponse(
+    private fun curate(
         patientId: String,
         input: String
     ) = CurationResponse.createFromConfigs(
