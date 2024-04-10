@@ -5,6 +5,8 @@ import java.time.LocalDate
 const val HASHED_ID_IN_BASE64 = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0="
 const val TREATMENT_NAME = "treatmentName"
 const val MODIFICATION_NAME = "modificationName"
+const val PRIOR_CONDITION_INPUT = "prior condition"
+const val TREATMENT_HISTORY_INPUT = "treatment name"
 
 object EhrTestData {
 

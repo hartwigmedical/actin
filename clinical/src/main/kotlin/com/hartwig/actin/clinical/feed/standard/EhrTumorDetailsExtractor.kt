@@ -26,7 +26,7 @@ class EhrTumorDetailsExtractor(
             ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
         val lesionCurationResponse =
-            extractLesions(ehrPatientRecord.patientDetails.hashedId, ehrPatientRecord.tumorDetails.lesionSite)
+            extractLesions(ehrPatientRecord)
         val curatedLesions = lesionCurationResponse.mapNotNull { it.config() }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         return curatedTumorResponse.config()?.let {
@@ -77,21 +77,54 @@ class EhrTumorDetailsExtractor(
         return lesions.count { it.category == location }
     }
 
-    private fun extractLesions(patientId: String, radiologyReport: String?): List<CurationResponse<LesionLocationConfig>> {
+    private fun extractLesions(patientRecord: EhrPatientRecord): List<CurationResponse<LesionLocationConfig>> {
+        val patientId = patientRecord.patientDetails.hashedId
+        val lesionsFromRadiologyReport = fromRadiologyReport(patientRecord.tumorDetails.lesionSite, patientId)
+        val lesionsFromPriorOtherConditions = fromPriorOtherConditions(patientId, patientRecord.priorOtherConditions)
+        val lesionsFromTreatmentHistory = fromTreatmentHistory(patientId, patientRecord.treatmentHistory)
+        return lesionsFromRadiologyReport + lesionsFromPriorOtherConditions + lesionsFromTreatmentHistory
+    }
+
+    private fun fromTreatmentHistory(
+        patientId: String,
+        treatmentHistory: List<EhrTreatmentHistory>
+    ): List<CurationResponse<LesionLocationConfig>> {
+        return treatmentHistory.map { treatment ->
+            lesionCurationResponse(patientId, treatment.treatmentName)
+        }.filter { it.config() != null }
+    }
+
+    private fun fromPriorOtherConditions(
+        patientId: String,
+        priorOtherConditions: List<EhrPriorOtherCondition>
+    ): List<CurationResponse<LesionLocationConfig>> {
+        return priorOtherConditions.map { condition ->
+            lesionCurationResponse(patientId, condition.name)
+        }.filter { it.config() != null }
+    }
+
+    private fun fromRadiologyReport(
+        radiologyReport: String?,
+        patientId: String
+    ): List<CurationResponse<LesionLocationConfig>> {
         return radiologyReport?.substringAfter(CONCLUSIE_)?.split(CONCLUSIE_)?.flatMap { section ->
             section.substringBefore("\r\n\n\n").split("\n")
                 .filter { it.isNotBlank() }
                 .map { line -> line.substringBeforeLast(".") }
                 .map { line ->
-                    CurationResponse.createFromConfigs(
-                        lesionCurationDatabase.find(line),
-                        patientId,
-                        CurationCategory.LESION_LOCATION,
-                        line,
-                        "lesion",
-                        true
-                    )
+                    lesionCurationResponse(patientId, line)
                 }
         } ?: emptyList()
     }
+
+    private fun lesionCurationResponse(
+        patientId: String, input: String
+    ) = CurationResponse.createFromConfigs(
+        lesionCurationDatabase.find(input),
+        patientId,
+        CurationCategory.LESION_LOCATION,
+        input,
+        "lesion",
+        true
+    )
 }
