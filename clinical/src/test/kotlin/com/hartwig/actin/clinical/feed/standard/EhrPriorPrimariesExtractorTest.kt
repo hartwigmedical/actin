@@ -9,9 +9,9 @@ import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val LOCATION = "location"
 private const val TYPE = "type"
@@ -20,8 +20,8 @@ private val PRIOR_SECOND_PRIMARY = PriorSecondPrimary(
     tumorLocation = LOCATION,
     tumorType = TYPE,
     status = TumorStatus.ACTIVE,
-    diagnosedYear = 2024,
-    diagnosedMonth = 2,
+    diagnosedYear = null,
+    diagnosedMonth = null,
     tumorSubLocation = "",
     tumorSubType = "",
     treatmentHistory = ""
@@ -56,7 +56,7 @@ class EhrPriorPrimariesExtractorTest {
             )
         )
         val result = extractor.extract(EHR_PATIENT_RECORD)
-        assertThat(result.extracted).containsExactly(PRIOR_SECOND_PRIMARY)
+        assertThat(result.extracted).containsExactly(PRIOR_SECOND_PRIMARY.copy(diagnosedMonth = 2, diagnosedYear = 2024))
         assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
@@ -86,6 +86,21 @@ class EhrPriorPrimariesExtractorTest {
         )
         val result = extractor.extract(EHR_PATIENT_RECORD)
         assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should always use diagnosis year and month from feed, even when in curation data `() {
+        every { secondPrimaryConfigCurationDatabase.find(INPUT) } returns setOf(
+            SecondPrimaryConfig(
+                ignore = false,
+                input = INPUT,
+                curated = PRIOR_SECOND_PRIMARY.copy(diagnosedYear = 2023, diagnosedMonth = 1)
+            )
+        )
+        val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).containsExactly(PRIOR_SECOND_PRIMARY.copy(diagnosedMonth = 2, diagnosedYear = 2024))
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(INPUT)))
         assertThat(result.evaluation.warnings).isEmpty()
     }
 }

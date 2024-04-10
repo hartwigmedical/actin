@@ -24,7 +24,7 @@ class EhrPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatab
                 if (secondPrimaryConfig.ignore) {
                     null
                 } else {
-                    secondPrimaryConfig.curated
+                    secondPrimaryConfig.curated?.copy(diagnosedMonth = it.diagnosisDate?.monthValue, diagnosedYear = it.diagnosisDate?.year)
                 }
             }), curatedPriorPrimary.extractionEvaluation)
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
