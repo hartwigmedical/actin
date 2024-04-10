@@ -15,7 +15,7 @@ private val CURATED_COMPLICATION = Complication(COMPLICATION_NAME, emptySet(), E
 
 class EhrComplicationExtractorTest {
     private val curationDb = mockk<CurationDatabase<ComplicationConfig>> {
-        every { find(any()) }.returns(
+        every { find(COMPLICATION_NAME) }.returns(
             setOf(
                 ComplicationConfig(
                     "input",
