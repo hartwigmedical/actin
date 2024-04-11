@@ -1,0 +1,16 @@
+[
+  {
+    "name": "CAPECITABINE",
+    "drugTypes": [
+      "ANTIMETABOLITE"
+    ],
+    "category": "CHEMOTHERAPY"
+  },
+  {
+    "name": "OXALIPLATIN",
+    "drugTypes": [
+      "NONEXISTENT_TYPE"
+    ],
+    "category": "CHEMOTHERAPY"
+  }
+]

@@ -7,9 +7,14 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.datamodel.treatment.OtherTreatmentType
+import com.hartwig.actin.clinical.datamodel.treatment.RadiotherapyType
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
 import com.hartwig.actin.util.json.Json.integer
+import com.hartwig.actin.util.json.StrictEnumDeserializer
 import java.lang.reflect.Type
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -30,6 +35,10 @@ object ClinicalGsonDeserializer {
             .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
+            .registerTypeAdapter(DrugType::class.java, StrictEnumDeserializer(DrugType::class.java))
+            .registerTypeAdapter(OtherTreatmentType::class.java, StrictEnumDeserializer(OtherTreatmentType::class.java))
+            .registerTypeAdapter(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))
+            .registerTypeAdapter(TreatmentCategory::class.java, StrictEnumDeserializer(TreatmentCategory::class.java))
     }
 
     private class LocalDateAdapter : JsonDeserializer<LocalDate?> {
