@@ -24,6 +24,8 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     EGFR_CKD_EPI("CKD-EPIeGFR", "estimated GFR (CKD-EPI)", LabUnit.MILLILITERS_PER_MINUTE),
     EGFR_MDRD("MDRDeGFR", "estimated GFR (MDRD)", LabUnit.NONE),
     FREE_T4("FT4", "free T4", LabUnit.PICOMOLES_PER_LITER),
+    FREE_T3("FT3", "free T3", LabUnit.PICOMOLES_PER_LITER),
+    BOUND_T3("T3_atel", "bound T3", LabUnit.NANOMOLES_PER_LITER),
     HCG_AND_BETA_HCG("HCG", "HCG", LabUnit.INTERNATIONAL_UNITS_PER_LITER),
     HEMOGLOBIN("Hb", "hemoglobin", LabUnit.MILLIMOLES_PER_LITER),
     INTERNATIONAL_NORMALIZED_RATIO("INR", "INR", LabUnit.NONE),
@@ -48,7 +50,8 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     TOTAL_BILIRUBIN("TBIL", "total bilirubin", LabUnit.MICROMOLES_PER_LITER),
     TOTAL_PROTEIN_URINE("TE_U", "total urine protein", LabUnit.GRAMS_PER_LITER),
     TRIGLYCERIDE("TG", "triglycerides", LabUnit.MILLIMOLES_PER_LITER),
-    TROPONIN_I_T("HSTNT", "troponin I and T", LabUnit.NANOGRAMS_PER_LITER);
+    TROPONIN_I_T("HSTNT", "troponin I and T", LabUnit.NANOGRAMS_PER_LITER),
+    THYROID_STIMULATING_HORMONE("TSH_atel", "TSH", LabUnit.MILLIUNITS_PER_LITER);
 
     override fun display(): String {
         return display
