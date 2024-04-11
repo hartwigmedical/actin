@@ -26,7 +26,7 @@ class EhrTumorDetailsExtractor(
             ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
         val lesionCurationResponse =
-            extractLesions(ehrPatientRecord.patientDetails.hashedId, ehrPatientRecord.tumorDetails.lesionSite)
+            extractLesions(ehrPatientRecord)
         val curatedLesions = lesionCurationResponse.mapNotNull { it.config() }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         return curatedTumorResponse.config()?.let {
@@ -77,21 +77,46 @@ class EhrTumorDetailsExtractor(
         return lesions.count { it.category == location }
     }
 
-    private fun extractLesions(patientId: String, radiologyReport: String?): List<CurationResponse<LesionLocationConfig>> {
+    private fun extractLesions(patientRecord: EhrPatientRecord): List<CurationResponse<LesionLocationConfig>> {
+        val patientId = patientRecord.patientDetails.hashedId
+        val lesionsFromRadiologyReport = fromRadiologyReport(patientRecord.tumorDetails.lesionSite, patientId)
+        val lesionsFromPriorOtherConditions = extractFromSecondarySource(patientId, patientRecord.priorOtherConditions) { it.name }
+        val lesionsFromTreatmentHistory = extractFromSecondarySource(patientId, patientRecord.treatmentHistory) { it.treatmentName }
+        return lesionsFromRadiologyReport + lesionsFromPriorOtherConditions + lesionsFromTreatmentHistory
+    }
+
+    private fun <T> extractFromSecondarySource(
+        patientId: String,
+        sourceList: List<T>,
+        inputAccessor: (T) -> String
+    ): List<CurationResponse<LesionLocationConfig>> {
+        return sourceList.map {
+            lesionCurationResponse(patientId, inputAccessor.invoke(it))
+        }.filter { it.config() != null }
+    }
+
+    private fun fromRadiologyReport(
+        radiologyReport: String?,
+        patientId: String
+    ): List<CurationResponse<LesionLocationConfig>> {
         return radiologyReport?.substringAfter(CONCLUSIE_)?.split(CONCLUSIE_)?.flatMap { section ->
             section.substringBefore("\r\n\n\n").split("\n")
                 .filter { it.isNotBlank() }
                 .map { line -> line.substringBeforeLast(".") }
                 .map { line ->
-                    CurationResponse.createFromConfigs(
-                        lesionCurationDatabase.find(line),
-                        patientId,
-                        CurationCategory.LESION_LOCATION,
-                        line,
-                        "lesion",
-                        true
-                    )
+                    lesionCurationResponse(patientId, line)
                 }
         } ?: emptyList()
     }
+
+    private fun lesionCurationResponse(
+        patientId: String, input: String
+    ) = CurationResponse.createFromConfigs(
+        lesionCurationDatabase.find(input),
+        patientId,
+        CurationCategory.LESION_LOCATION,
+        input,
+        "lesion",
+        true
+    )
 }

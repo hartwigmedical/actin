@@ -10,7 +10,7 @@ class MolecularResultsAreAvailableForPromoterOfGene(private val gene: String) : 
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val (indeterminatePriorTests, validPriorTests) = record.molecularHistory.allIHCTests()
-            .filter { it.item.contains(gene) && it.item.lowercase().contains(PROMOTER) }
+            .filter { it.item?.contains(gene) ?: false && it.item?.lowercase()?.contains(PROMOTER) ?: false }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
         if (validPriorTests.isNotEmpty()) {
