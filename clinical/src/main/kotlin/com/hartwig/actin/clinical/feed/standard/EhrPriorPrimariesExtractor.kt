@@ -40,13 +40,12 @@ class EhrPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatab
         return sourceList.map {
             curate(ehrPatientRecord.patientDetails.hashedId, inputAccessor.invoke(it))
         }
-            .mapNotNull {
-                it.config()?.curated?.let { priorSecondPrimary ->
-                    ExtractionResult(
-                        listOf(priorSecondPrimary),
-                        it.extractionEvaluation
-                    )
-                }
+            .filter { it.configs.isNotEmpty() }
+            .map {
+                ExtractionResult(
+                    it.configs.mapNotNull { c -> c.curated },
+                    it.extractionEvaluation
+                )
             }
     }
 
@@ -71,6 +70,7 @@ class EhrPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatab
         patientId,
         CurationCategory.SECOND_PRIMARY,
         input,
-        "prior primary"
+        "prior primary",
+        false
     )
 }
