@@ -12,7 +12,10 @@ class IsEligibleForLocalLiverTreatment(private val doidModel: DoidModel) : Evalu
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasLiverLesions = record.tumor.hasLiverLesions
-        val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, record.tumor.doids)
+        val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(
+            doidModel,
+            record.tumor.doids
+        )
         val hasLiverCancer = DoidConstants.LIVER_CANCER_DOID in expandedDoidSet
 
         return when {

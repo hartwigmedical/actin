@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.feed.standard.tumor.EhrTumorDetailsExtractor
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate

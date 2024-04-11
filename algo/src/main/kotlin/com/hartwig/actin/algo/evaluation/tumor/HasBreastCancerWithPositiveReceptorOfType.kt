@@ -15,7 +15,10 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
-        val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
+        val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(
+            doidModel,
+            tumorDoids
+        )
         val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
         val targetPriorMolecularTests = record.molecularHistory.allPriorMolecularTests().filter { it.item == receptorType.display() }
         val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])

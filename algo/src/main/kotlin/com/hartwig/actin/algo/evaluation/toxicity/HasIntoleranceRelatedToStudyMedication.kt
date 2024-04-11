@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 
 class HasIntoleranceRelatedToStudyMedication : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val allergies = record.intolerances
             .filter { it.clinicalStatus.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true) }

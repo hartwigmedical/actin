@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
+import com.hartwig.actin.clinical.feed.standard.tumor.EhrTumorDetailsExtractor
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors

@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.doid.DoidModel
 
-class HasMeasurableDiseaseRecist (private val doidModel: DoidModel) : EvaluationFunction {
+class HasMeasurableDiseaseRecist(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasMeasurableDisease = record.tumor.hasMeasurableDisease ?: return EvaluationFactory.recoverableUndetermined(

@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensit
 import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 
-internal object DoidEvaluationFunctions {
+object DoidEvaluationFunctions {
 
     private val LOGGER = LogManager.getLogger(DoidEvaluationFunctions::class.java)
     fun hasConfiguredDoids(tumorDoids: Set<String>?): Boolean {

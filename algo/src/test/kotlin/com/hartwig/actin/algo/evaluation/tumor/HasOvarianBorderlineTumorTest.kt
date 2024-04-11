@@ -9,7 +9,7 @@ import org.junit.Test
 class HasOvarianBorderlineTumorTest {
     private val function = HasOvarianBorderlineTumor(TestDoidModelFactory.createMinimalTestDoidModel())
     private val targetedType = HasOvarianBorderlineTumor.OVARIAN_BORDERLINE_TYPES.iterator().next()
-    
+
     @Test
     fun canEvaluate() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))

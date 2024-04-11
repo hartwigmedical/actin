@@ -16,7 +16,7 @@ class HasLongQTSyndromeTest {
     fun `Should fail with no conditions`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditions(emptyList())))
     }
-    
+
     @Test
     fun `Should fail with other condition`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withPriorOtherConditionsWithDoid("wrong doid")))

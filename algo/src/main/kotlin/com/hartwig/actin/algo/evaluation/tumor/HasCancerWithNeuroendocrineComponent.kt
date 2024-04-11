@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsInactivatedForPatient
 import com.hartwig.actin.doid.DoidModel
 
-class HasCancerWithNeuroendocrineComponent (private val doidModel: DoidModel) : EvaluationFunction {
+class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids

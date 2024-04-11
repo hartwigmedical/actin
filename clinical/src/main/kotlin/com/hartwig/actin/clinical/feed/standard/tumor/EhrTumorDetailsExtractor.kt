@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.standard
+package com.hartwig.actin.clinical.feed.standard.tumor
 
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.CurationCategory
@@ -10,6 +10,8 @@ import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.feed.standard.EhrExtractor
+import com.hartwig.actin.clinical.feed.standard.EhrPatientRecord
 
 private const val CONCLUSIE_ = "Conclusie:"
 
