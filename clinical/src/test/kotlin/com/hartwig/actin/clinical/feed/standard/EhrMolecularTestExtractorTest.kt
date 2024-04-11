@@ -28,7 +28,7 @@ class EhrMolecularTestExtractorTest {
     private val extractor = EhrMolecularTestExtractor(molecularTestIhcCuration)
 
     @Test
-    fun `Should deal properly with missing differentiation`() {
+    fun `Should return no molecular test configs when tumor differentiation is null`() {
         val noDifferentiation =
             EHR_PATIENT_RECORD.copy(tumorDetails = EHR_PATIENT_RECORD.tumorDetails.copy(tumorGradeDifferentiation = null))
         val result = extractor.extract(noDifferentiation)
