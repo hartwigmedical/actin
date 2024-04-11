@@ -13,6 +13,8 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
 import com.hartwig.actin.clinical.feed.standard.tumor.EhrTumorDetailsExtractor
+import com.hartwig.actin.clinical.feed.standard.tumor.TumorStageDeriver
+import com.hartwig.actin.doid.DoidModel
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
@@ -128,7 +130,8 @@ class StandardEhrIngestion(
         fun create(
             directory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel
+            atcModel: AtcModel,
+            doidModel: DoidModel
         ) = StandardEhrIngestion(
             directory,
             EhrMedicationExtractor(
@@ -152,13 +155,15 @@ class StandardEhrIngestion(
                 curationDatabaseContext.nonOncologicalHistoryCuration
             ),
             EhrClinicalStatusExtractor(),
-            EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration),
+            EhrTumorDetailsExtractor(
+                curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration,
+                TumorStageDeriver.create(doidModel)
+            ),
             EhrPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor(),
             EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             DataQualityMask()
         )
-
     }
 }

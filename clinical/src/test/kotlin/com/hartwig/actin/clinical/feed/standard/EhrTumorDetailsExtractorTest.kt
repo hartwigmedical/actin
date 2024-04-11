@@ -9,8 +9,10 @@ import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.feed.standard.tumor.EhrTumorDetailsExtractor
+import com.hartwig.actin.clinical.feed.standard.tumor.TumorStageDeriver
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -93,7 +95,10 @@ class EhrTumorDetailsExtractorTest {
     private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
         every { find(any()) } returns emptySet()
     }
-    private val extractor = EhrTumorDetailsExtractor(tumorCuration, lesionCuration)
+    private val tumorStageDeriver = mockk<TumorStageDeriver> {
+        every { derive(any()) } returns null
+    }
+    private val extractor = EhrTumorDetailsExtractor(tumorCuration, lesionCuration, tumorStageDeriver)
 
     @Test
     fun `Should curate primary tumor and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {
@@ -121,6 +126,21 @@ class EhrTumorDetailsExtractorTest {
                 "Could not find primary tumor config for input 'tumorLocation | tumorType'",
             )
         )
+    }
+
+    @Test
+    fun `Should not attempt to derive stages when no curation found`() {
+        every { tumorCuration.find("tumorLocation | tumorType") } returns emptySet()
+        extractor.extract(EHR_PATIENT_RECORD)
+        verify(exactly = 0) { tumorStageDeriver.derive(any()) }
+    }
+
+    @Test
+    fun `Should call deriver to derive stages when tumor details have been curated`() {
+        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
+        every { tumorStageDeriver.derive(any()) } returns setOf(TumorStage.II)
+        val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted.derivedStages).isEqualTo(setOf(TumorStage.II))
     }
 
     @Test

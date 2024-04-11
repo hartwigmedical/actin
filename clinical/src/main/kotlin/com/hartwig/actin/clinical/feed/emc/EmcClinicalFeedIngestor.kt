@@ -37,6 +37,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
+import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 
 class EmcClinicalFeedIngestor(
@@ -209,7 +210,8 @@ class EmcClinicalFeedIngestor(
             feedDirectory: String,
             curationDirectory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel
+            atcModel: AtcModel,
+            doidModel: DoidModel
         ) = EmcClinicalFeedIngestor(
             feed = FeedModel(
                 ClinicalFeedReader.read(feedDirectory).copy(

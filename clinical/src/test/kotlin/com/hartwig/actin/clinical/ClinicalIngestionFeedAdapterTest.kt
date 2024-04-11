@@ -33,27 +33,26 @@ class ClinicalIngestionFeedAdapterTest {
 
     @Before
     fun setup() {
+        val testDoidModel = TestDoidModelFactory.createWithDoidManualConfig(
+            DoidManualConfig(
+                emptySet(),
+                emptySet(),
+                mapOf(
+                    "2513" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "10286" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "0050933" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "5082" to CurationDoidValidator.DISEASE_DOID,
+                    "11335" to CurationDoidValidator.DISEASE_DOID,
+                    "0060500" to CurationDoidValidator.DISEASE_DOID,
+                    "0081062" to CurationDoidValidator.DISEASE_DOID
+                )
+            )
+        )
         curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
-            CurationDoidValidator(
-                TestDoidModelFactory.createWithDoidManualConfig(
-                    DoidManualConfig(
-                        emptySet(),
-                        emptySet(),
-                        mapOf(
-                            "2513" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "10286" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "0050933" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "5082" to CurationDoidValidator.DISEASE_DOID,
-                            "11335" to CurationDoidValidator.DISEASE_DOID,
-                            "0060500" to CurationDoidValidator.DISEASE_DOID,
-                            "0081062" to CurationDoidValidator.DISEASE_DOID
-                        )
-                    )
-                )
-            ),
+            CurationDoidValidator(testDoidModel),
             TestTreatmentDatabaseFactory.createProper()
         )
         adapter = ClinicalIngestionFeedAdapter(
@@ -61,7 +60,8 @@ class ClinicalIngestionFeedAdapterTest {
                 FEED_DIRECTORY,
                 CURATION_DIRECTORY,
                 curationDatabase,
-                TestAtcFactory.createProperAtcModel()
+                TestAtcFactory.createProperAtcModel(),
+                testDoidModel,
             ), curationDatabase
         )
     }
@@ -71,13 +71,13 @@ class ClinicalIngestionFeedAdapterTest {
     fun `Output should not have changed`() {
         val jsonMapper = ObjectMapper()
         val ingestionResult = adapter.run()
-        assertThat(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText())).isEqualTo(
+        assertThat(
             jsonMapper.readTree(
                 ClinicalRecordJson.toJson(
                     ingestionResult.patientResults[0].clinicalRecord
                 )
             )
-        )
+        ).isEqualTo(jsonMapper.readTree(File(EXPECTED_CLINICAL_RECORD).readText()))
     }
 
     @Test
