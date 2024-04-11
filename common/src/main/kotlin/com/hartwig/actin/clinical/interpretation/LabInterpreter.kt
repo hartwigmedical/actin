@@ -9,7 +9,12 @@ object LabInterpreter {
         LabMeasurement.LYMPHOCYTES_ABS_EDM to LabMeasurement.LYMPHOCYTES_ABS_EDA,
         LabMeasurement.NEUTROPHILS_ABS_EDA to LabMeasurement.NEUTROPHILS_ABS,
         LabMeasurement.PROTHROMBIN_TIME_POCT to LabMeasurement.PROTHROMBIN_TIME,
-        LabMeasurement.THROMBOCYTES_ABS_M to LabMeasurement.THROMBOCYTES_ABS
+        LabMeasurement.THROMBOCYTES_ABS_M to LabMeasurement.THROMBOCYTES_ABS,
+        LabMeasurement.BOUND_T3_ATEL to LabMeasurement.BOUND_T3,
+        LabMeasurement.FREE_T3_ATEL to LabMeasurement.FREE_T3,
+        LabMeasurement.FREE_T4_ATEL to LabMeasurement.FREE_T4,
+        LabMeasurement.THYROID_STIMULATING_HORMONE_ATEL_SCREENING to LabMeasurement.THYROID_STIMULATING_HORMONE,
+        LabMeasurement.THYROID_STIMULATING_HORMONE_ATEL to LabMeasurement.THYROID_STIMULATING_HORMONE
     )
     
     fun interpret(labValues: List<LabValue>): LabInterpretation {
