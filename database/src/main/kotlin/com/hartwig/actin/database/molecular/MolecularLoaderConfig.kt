@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.core.config.Configurator
 
 data class MolecularLoaderConfig(
-    val molecularJson: String,
+    val patientJson: String,
     override val dbUser: String,
     override val dbPass: String,
     override val dbUrl: String,
@@ -18,7 +18,7 @@ data class MolecularLoaderConfig(
     companion object {
         fun createOptions(): Options {
             val options = Options()
-            options.addOption(MOLECULAR_JSON, true, "Path of the molecular json to load up")
+            options.addOption(PATIENT_JSON, true, "Path of the patient json to load up")
             options.addOption(DB_USER, true, "Database username")
             options.addOption(DB_PASS, true, "Database password")
             options.addOption(DB_URL, true, "Database url")
@@ -32,7 +32,7 @@ data class MolecularLoaderConfig(
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
             return MolecularLoaderConfig(
-                molecularJson = ApplicationConfig.nonOptionalFile(cmd, MOLECULAR_JSON),
+                patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 dbUser = ApplicationConfig.nonOptionalValue(cmd, DB_USER),
                 dbPass = ApplicationConfig.nonOptionalValue(cmd, DB_PASS),
                 dbUrl = ApplicationConfig.nonOptionalValue(cmd, DB_URL)
@@ -40,7 +40,7 @@ data class MolecularLoaderConfig(
         }
 
         private val LOGGER = LogManager.getLogger(MolecularLoaderConfig::class.java)
-        private const val MOLECULAR_JSON = "molecular_json"
+        private const val PATIENT_JSON = "patient_json"
         private const val DB_USER = "db_user"
         private const val DB_PASS = "db_pass"
         private const val DB_URL = "db_url"

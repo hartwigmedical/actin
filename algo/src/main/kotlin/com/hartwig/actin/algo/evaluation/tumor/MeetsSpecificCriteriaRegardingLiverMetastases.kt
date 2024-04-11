@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class MeetsSpecificCriteriaRegardingLiverMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasLiverMetastases = record.clinical.tumor.hasLiverLesions
+        val hasLiverMetastases = record.tumor.hasLiverLesions
             ?: return EvaluationFactory.undetermined(
                 "Unknown if patient has liver lesions hence undetermined if study specific criteria regarding liver metastases are met",
                 "Undetermined if study specific criteria regarding liver metastases are met"

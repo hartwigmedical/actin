@@ -34,7 +34,7 @@ object ProgressiveDiseaseFunctions {
     }
 
     fun evaluateTreatmentHistory(record: PatientRecord, drugsToMatch: Set<Drug>): TreatmentHistoryEvaluation {
-        val treatmentHistory = record.clinical.oncologicalHistory
+        val treatmentHistory = record.oncologicalHistory
 
         val allowTrialMatches = drugsToMatch.map(Drug::category).all(TrialFunctions::categoryAllowsTrialMatches)
 

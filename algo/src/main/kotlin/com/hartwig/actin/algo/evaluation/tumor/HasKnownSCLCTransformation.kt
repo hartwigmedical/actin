@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasKnownSCLCTransformation : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
+        return EvaluationFactory.recoverableUndetermined(
             "Currently undetermined if transformation to small cell lung cancer has occurred",
             "Undetermined if transformation to small cell lung cancer"
         )

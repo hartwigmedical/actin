@@ -26,7 +26,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA to hasSecondaryGlioblastomaCreator(),
             EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasCytologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasHistologicalDocumentationOfTumorTypeCreator(),
-            EligibilityRule.HAS_STAGE_X to hasTumorStageCreator(),
+            EligibilityRule.HAS_ANY_STAGE_X to hasAnyTumorStageCreator(),
             EligibilityRule.HAS_LOCALLY_ADVANCED_CANCER to hasLocallyAdvancedCancerCreator(),
             EligibilityRule.HAS_METASTATIC_CANCER to hasMetastaticCancerCreator(),
             EligibilityRule.HAS_UNRESECTABLE_CANCER to hasUnresectableCancerCreator(),
@@ -148,10 +148,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return FunctionCreator { HasHistologicalDocumentationOfTumorType() }
     }
 
-    private fun hasTumorStageCreator(): FunctionCreator {
+    private fun hasAnyTumorStageCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val stageToMatch = functionInputResolver().createOneTumorStageInput(function)
-            HasTumorStage(TumorStageDerivationFunction.create(doidModel()), stageToMatch)
+            val stagesToMatch = functionInputResolver().createManyTumorStagesInput(function)
+            HasTumorStage(TumorStageDerivationFunction.create(doidModel()), stagesToMatch)
         }
     }
 

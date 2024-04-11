@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
@@ -17,7 +17,7 @@ class LabMeasurementEvaluatorTest {
     fun `Should evaluate`() {
         val measurement = LabMeasurement.ALBUMIN
         val function = LabMeasurementEvaluator(measurement, passingLabEvaluationFunction, ALWAYS_VALID_DATE, ALWAYS_VALID_DATE)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
         val labValue: LabValue = LabTestFactory.create(measurement, date = TEST_DATE)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)))
     }
@@ -40,37 +40,6 @@ class LabMeasurementEvaluatorTest {
         assertEvaluation(EvaluationResult.WARN, function.evaluate(LabTestFactory.withLabValue(warnDate)))
     }
 
-    @Test
-    fun `Should fallback to second most recent`() {
-        val measurement = LabMeasurement.ALBUMIN
-        val values = listOf(
-            LabTestFactory.create(measurement, date = TEST_DATE),
-            LabTestFactory.create(measurement, date = TEST_DATE.minusDays(1))
-        )
-        val record = LabTestFactory.withLabValues(values)
-        val functionPass = LabMeasurementEvaluator(
-            measurement,
-            firstFailAndRestWithParam(EvaluationResult.PASS),
-            ALWAYS_VALID_DATE,
-            ALWAYS_VALID_DATE
-        )
-        assertEvaluation(EvaluationResult.WARN, functionPass.evaluate(record))
-        val functionFail = LabMeasurementEvaluator(
-            measurement,
-            firstFailAndRestWithParam(EvaluationResult.FAIL),
-            ALWAYS_VALID_DATE,
-            ALWAYS_VALID_DATE
-        )
-        assertEvaluation(EvaluationResult.FAIL, functionFail.evaluate(record))
-        val functionUndetermined = LabMeasurementEvaluator(
-            measurement,
-            firstFailAndRestWithParam(EvaluationResult.UNDETERMINED),
-            ALWAYS_VALID_DATE,
-            ALWAYS_VALID_DATE
-        )
-        assertEvaluation(EvaluationResult.FAIL, functionUndetermined.evaluate(record))
-    }
-
     companion object {
         private val TEST_DATE = LocalDate.of(2020, 4, 20)
         private val ALWAYS_VALID_DATE = TEST_DATE.minusDays(2)
@@ -78,14 +47,6 @@ class LabMeasurementEvaluatorTest {
         private val passingLabEvaluationFunction: LabEvaluationFunction = object : LabEvaluationFunction {
             override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
                 return EvaluationTestFactory.withResult(EvaluationResult.PASS)
-            }
-        }
-
-        private fun firstFailAndRestWithParam(defaultEvaluation: EvaluationResult): LabEvaluationFunction {
-            return object : LabEvaluationFunction {
-                override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
-                    return EvaluationTestFactory.withResult(if (labValue.date == TEST_DATE) EvaluationResult.FAIL else defaultEvaluation)
-                }
             }
         }
     }

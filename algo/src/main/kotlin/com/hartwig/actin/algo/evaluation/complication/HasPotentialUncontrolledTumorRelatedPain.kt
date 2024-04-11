@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
@@ -11,6 +12,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val interpreter: MedicationStatusInterpreter) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
+
         val painComplications = ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, listOf(SEVERE_PAIN_COMPLICATION))
         if (painComplications.isNotEmpty()) {
             return EvaluationFactory.pass(
@@ -19,12 +21,9 @@ class HasPotentialUncontrolledTumorRelatedPain internal constructor(private val 
                 "Present " + concatLowercaseWithAnd(painComplications)
             )
         }
-        val activePainMedications = record.clinical.medications
-            .filter {
-                it.name.equals(SEVERE_PAIN_MEDICATION, ignoreCase = true)
-                        && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
-            }
-            .map { it.name }
+        val activePainMedications = record.medications?.filter {
+            it.name.equals(SEVERE_PAIN_MEDICATION, ignoreCase = true) && interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE
+        }?.map { it.name } ?: return MEDICATION_NOT_PROVIDED
 
         return if (activePainMedications.isNotEmpty()) {
             EvaluationFactory.pass(

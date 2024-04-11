@@ -18,8 +18,8 @@ class HasLeptomeningealDisease internal constructor() : EvaluationFunction {
                 "Patient has complication " + concat(leptomeningealComplications), "Present " + concat(leptomeningealComplications)
             )
         }
-        val hasCnsLesions = record.clinical.tumor.hasCnsLesions
-        val otherLesions = record.clinical.tumor.otherLesions
+        val hasCnsLesions = record.tumor.hasCnsLesions
+        val otherLesions = record.tumor.otherLesions
         val potentialMeningealLesions = if (hasCnsLesions != null && otherLesions != null && hasCnsLesions) {
             otherLesions.filter { isPotentialLeptomeningealLesion(it) }.toSet()
         } else emptySet()

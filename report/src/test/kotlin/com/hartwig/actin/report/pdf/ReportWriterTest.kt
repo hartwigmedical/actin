@@ -9,16 +9,7 @@ class ReportWriterTest {
     @Test
     @Throws(IOException::class)
     fun canGenerateInMemoryTrialReports() {
-        val memoryWriter = ReportWriterFactory.createInMemoryTrialReportWriter()
-        memoryWriter.write(TestReportFactory.createMinimalTestReport())
-        memoryWriter.write(TestReportFactory.createProperTestReport())
-        memoryWriter.write(TestReportFactory.createExhaustiveTestReport())
-    }
-
-    @Test
-    @Throws(IOException::class)
-    fun canGenerateInMemoryCRCReports() {
-        val memoryWriter = ReportWriterFactory.createInMemoryCRCReportWriter()
+        val memoryWriter = ReportWriterFactory.createInMemoryReportWriter()
         memoryWriter.write(TestReportFactory.createMinimalTestReport())
         memoryWriter.write(TestReportFactory.createProperTestReport())
         memoryWriter.write(TestReportFactory.createExhaustiveTestReport())

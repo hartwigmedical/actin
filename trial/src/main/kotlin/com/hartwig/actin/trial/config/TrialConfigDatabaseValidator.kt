@@ -1,11 +1,5 @@
 package com.hartwig.actin.trial.config
 
-import com.hartwig.actin.trial.CohortDefinitionValidationError
-import com.hartwig.actin.trial.InclusionCriteriaValidationError
-import com.hartwig.actin.trial.InclusionReferenceValidationError
-import com.hartwig.actin.trial.TrialDatabaseValidation
-import com.hartwig.actin.trial.TrialDefinitionValidationError
-import com.hartwig.actin.trial.UnusedRuleToKeepError
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
 import com.hartwig.actin.trial.serialization.TrialJson

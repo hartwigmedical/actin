@@ -5,7 +5,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.input.ParameterizedFunctionTestFactory
 import com.hartwig.actin.trial.input.composite.CompositeRules
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class FunctionCreatorFactoryTest {
@@ -19,8 +19,8 @@ class FunctionCreatorFactoryTest {
             val function = factory.create(rule)
             if (!CompositeRules.isComposite(rule)) {
                 val creator = map[rule]
-                Assert.assertNotNull("$rule has no creator configured", creator)
-                Assert.assertNotNull("$rule creator could not create function", creator!!.create(function))
+                assertThat(creator).isNotNull
+                assertThat(creator!!.create(function)).isNotNull
             }
         }
     }

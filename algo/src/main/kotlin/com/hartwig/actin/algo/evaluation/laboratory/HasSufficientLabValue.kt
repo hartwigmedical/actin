@@ -2,9 +2,8 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
+import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMinValueWithMargin
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -17,33 +16,37 @@ class HasSufficientLabValue(
             ?: return EvaluationFactory.recoverableUndetermined(
                 "Could not convert value for ${labMeasurement.display()} to ${targetUnit.display()}"
             )
-        val result = evaluateVersusMinValue(convertedValue, labValue.comparator, minValue)
         val labValueString = "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
             String.format("%.1f", convertedValue)
         } ${targetUnit.display()}"
         val refString = "$minValue ${targetUnit.display()}"
 
-        return when (result) {
-            EvaluationResult.FAIL -> {
+        return when (evaluateVersusMinValueWithMargin(convertedValue, labValue.comparator, minValue)) {
+            LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
                 EvaluationFactory.recoverableFail(
                     "$labValueString is below minimum of $refString", "$labValueString below min of $refString"
                 )
             }
-            EvaluationResult.UNDETERMINED -> {
+
+            LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
+                EvaluationFactory.recoverableUndetermined(
+                    "$labValueString is below minimum of $refString but within margin of error",
+                    "$labValueString below min of $refString but within margin of error"
+                )
+            }
+
+            LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} sufficiency could not be evaluated",
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
                 )
             }
-            EvaluationResult.PASS -> {
+
+            LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
                 EvaluationFactory.recoverablePass(
                     "$labValueString exceeds minimum of $refString",
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${targetUnit.display()} exceeds min of $refString"
                 )
-            }
-
-            else -> {
-                Evaluation(result = result, recoverable = true)
             }
         }
     }

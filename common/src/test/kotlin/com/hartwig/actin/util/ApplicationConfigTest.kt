@@ -1,27 +1,27 @@
 package com.hartwig.actin.util
 
-import com.google.common.io.Resources
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalDir
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalFile
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalValue
 import com.hartwig.actin.util.ApplicationConfig.optionalDir
+import com.hartwig.actin.util.ApplicationConfig.optionalFile
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val CONFIG_DIRECTORY = Resources.getResource("config").path
-private val CONFIG_FILE = Resources.getResource("config/file.empty").path
-
 class ApplicationConfigTest {
+    private val configDirectory = resourceOnClasspath("config")
+    private val configFile = resourceOnClasspath("config/file.empty")
 
     @Test
     fun `Should retrieve directory from config`() {
         val options = Options()
         options.addOption("directory", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_DIRECTORY))
-        assertThat(nonOptionalDir(cmd, "directory")).isEqualTo(CONFIG_DIRECTORY)
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", configDirectory))
+        assertThat(nonOptionalDir(cmd, "directory")).isEqualTo(configDirectory)
     }
 
     @Test(expected = ParseException::class)
@@ -52,7 +52,7 @@ class ApplicationConfigTest {
     fun `Should crash when optional directory points to file`() {
         val options = Options()
         options.addOption("directory", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_FILE))
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", configFile))
         optionalDir(cmd, "directory")
     }
 
@@ -60,7 +60,7 @@ class ApplicationConfigTest {
     fun `Should return existing optional directory`() {
         val options = Options()
         options.addOption("directory", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-directory", CONFIG_DIRECTORY))
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", configDirectory))
         optionalDir(cmd, "directory")
     }
 
@@ -68,8 +68,8 @@ class ApplicationConfigTest {
     fun `Should retrieve file from config`() {
         val options = Options()
         options.addOption("file", true, "")
-        val cmd = DefaultParser().parse(options, arrayOf("-file", CONFIG_FILE))
-        assertThat(nonOptionalFile(cmd, "file")).isEqualTo(CONFIG_FILE)
+        val cmd = DefaultParser().parse(options, arrayOf("-file", configFile))
+        assertThat(nonOptionalFile(cmd, "file")).isEqualTo(configFile)
     }
 
     @Test(expected = ParseException::class)
@@ -92,5 +92,29 @@ class ApplicationConfigTest {
     fun `Should crash on non existing value`() {
         val cmd = DefaultParser().parse(Options(), arrayOf())
         nonOptionalValue(cmd, "does not exist")
+    }
+
+    @Test
+    fun `Should allow optional file to be unspecified`() {
+        val options = Options()
+        options.addOption("file", true, "")
+        val cmd = DefaultParser().parse(options, emptyArray())
+        assertThat(optionalFile(cmd, "file")).isEqualTo(null)
+    }
+
+    @Test(expected = ParseException::class)
+    fun `Should crash if optional file specified but does not exist`() {
+        val options = Options()
+        options.addOption("file", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-file", "does not exist"))
+        optionalFile(cmd, "file")
+    }
+
+    @Test
+    fun `Should accept optional file if exists`() {
+        val options = Options()
+        options.addOption("file", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-file", configFile))
+        assertThat(optionalFile(cmd, "file")).isEqualTo(configFile)
     }
 }

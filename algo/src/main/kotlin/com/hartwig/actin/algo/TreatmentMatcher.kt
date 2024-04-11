@@ -28,7 +28,7 @@ class TreatmentMatcher(
 
         return TreatmentMatch(
             patientId = patient.patientId,
-            sampleId = patient.molecular.sampleId,
+            sampleId = patient.molecularHistory.latestMolecularRecord()?.sampleId ?: "N/A",
             referenceDate = referenceDateProvider.date(),
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,
@@ -41,8 +41,7 @@ class TreatmentMatcher(
         fun create(
             resources: RuleMappingResources,
             trials: List<Trial>,
-            efficacyEvidence: List<EfficacyEntry>,
-            trialSource: String
+            efficacyEvidence: List<EfficacyEntry>
         ): TreatmentMatcher {
             return TreatmentMatcher(
                 TrialMatcher.create(resources),
@@ -50,7 +49,7 @@ class TreatmentMatcher(
                 trials,
                 resources.referenceDateProvider,
                 EvaluatedTreatmentAnnotator.create(efficacyEvidence),
-                trialSource
+                resources.algoConfiguration.trialSource
             )
         }
     }

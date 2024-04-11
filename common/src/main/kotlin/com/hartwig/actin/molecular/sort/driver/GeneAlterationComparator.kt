@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.sort.driver
 import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration
 
 class GeneAlterationComparator : Comparator<GeneAlteration> {
+
     private val comparator = Comparator.comparing(GeneAlteration::gene)
         .thenComparing({ it.geneRole.toString() }, String::compareTo)
         .thenComparing({ it.proteinEffect.toString() }, String::compareTo)

@@ -1,22 +1,37 @@
 package com.hartwig.actin
 
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 object PatientRecordFactory {
+
     private val LOGGER: Logger = LogManager.getLogger(PatientRecordFactory::class.java)
 
     @JvmStatic
-    fun fromInputs(clinical: ClinicalRecord, molecular: MolecularRecord): PatientRecord {
-        if (clinical.patientId != molecular.patientId) {
-            LOGGER.warn(
-                "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
-                clinical.patientId,
-                molecular.patientId
-            )
+    fun fromInputs(clinical: ClinicalRecord, molecularHistory: MolecularHistory?): PatientRecord {
+        if (molecularHistory == null || molecularHistory.molecularTests.isEmpty()) {
+            LOGGER.warn("No molecular data for patient '{}'", clinical.patientId)
         }
-        return PatientRecord(patientId = clinical.patientId, clinical = clinical, molecular = molecular)
+        return PatientRecord(
+            patientId = clinical.patientId,
+            patient = clinical.patient,
+            tumor = clinical.tumor,
+            clinicalStatus = clinical.clinicalStatus,
+            oncologicalHistory = clinical.oncologicalHistory,
+            priorSecondPrimaries = clinical.priorSecondPrimaries,
+            priorOtherConditions = clinical.priorOtherConditions,
+            complications = clinical.complications,
+            labValues = clinical.labValues,
+            toxicities = clinical.toxicities,
+            intolerances = clinical.intolerances,
+            surgeries = clinical.surgeries,
+            bodyWeights = clinical.bodyWeights,
+            vitalFunctions = clinical.vitalFunctions,
+            bloodTransfusions = clinical.bloodTransfusions,
+            medications = clinical.medications,
+            molecularHistory = molecularHistory ?: MolecularHistory.empty()
+        )
     }
 }

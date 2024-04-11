@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.filter
 
 object TestGeneFilterFactory {
+
     fun createAlwaysValid(): GeneFilter {
         return AlwaysValidFilter()
     }

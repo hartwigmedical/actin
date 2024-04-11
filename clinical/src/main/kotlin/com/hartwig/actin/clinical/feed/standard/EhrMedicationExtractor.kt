@@ -15,10 +15,10 @@ class EhrMedicationExtractor(
     private val atcModel: AtcModel,
     private val qtProlongatingRiskCuration: CurationDatabase<QTProlongatingConfig>,
     private val cypInteractionCuration: CurationDatabase<CypInteractionConfig>
-) : EhrExtractor<List<Medication>> {
+) : EhrExtractor<List<Medication>?> {
 
-    override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Medication>> {
-        return ExtractionResult(ehrPatientRecord.medications.map {
+    override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Medication>?> {
+        return ExtractionResult(ehrPatientRecord.medications?.map {
             val atcClassification = if (!it.isTrial && !it.isSelfCare) atcModel.resolveByCode(it.atcCode, "") else null
             val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
             Medication(

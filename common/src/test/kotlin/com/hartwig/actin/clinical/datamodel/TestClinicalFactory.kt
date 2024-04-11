@@ -1,6 +1,6 @@
 package com.hartwig.actin.clinical.datamodel
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
@@ -17,6 +17,7 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import java.time.LocalDateTime
 
 object TestClinicalFactory {
+
     private val NOW = LocalDateTime.now()
     private val TODAY = NOW.toLocalDate()
     private const val DAYS_SINCE_QUESTIONNAIRE = 10
@@ -36,7 +37,7 @@ object TestClinicalFactory {
 
     fun createMinimalTestClinicalRecord(): ClinicalRecord {
         return ClinicalRecord(
-            patientId = TestDataFactory.TEST_PATIENT,
+            patientId = TestPatientFactory.TEST_PATIENT,
             patient = createTestPatientDetails(),
             tumor = TumorDetails(),
             clinicalStatus = ClinicalStatus(),
@@ -118,7 +119,7 @@ object TestClinicalFactory {
             who = 1,
             infectionStatus = InfectionStatus(hasActiveInfection = false, description = null),
             ecg = ECG(hasSigAberrationLatestECG = false, aberrationDescription = null, jtcMeasure = null, qtcfMeasure = null)
-        ) 
+        )
     }
 
     private fun drug(name: String, drugType: DrugType, category: TreatmentCategory): Drug {
@@ -293,7 +294,7 @@ object TestClinicalFactory {
         )
     }
 
-    private fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
+    fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
         return listOf(
             PriorMolecularTest(
                 test = "",
@@ -444,7 +445,8 @@ object TestClinicalFactory {
                 verificationStatus = "Confirmed",
                 criticality = "Unable-to-assess",
                 doids = emptySet(),
-                subcategories = emptySet()
+                subcategories = emptySet(),
+                treatmentCategories = emptySet()
             )
         )
     }

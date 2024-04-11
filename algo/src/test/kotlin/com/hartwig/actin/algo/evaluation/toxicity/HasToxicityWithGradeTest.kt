@@ -11,7 +11,7 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun canEvaluateGradeOnly() {
-        val function = HasToxicityWithGrade(2, null, emptySet())
+        val function = function()
         val toxicities: MutableList<Toxicity> = mutableListOf()
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
         toxicities.add(ToxicityTestFactory.toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 1))
@@ -26,9 +26,9 @@ class HasToxicityWithGradeTest {
     fun canEvaluateQuestionnaireToxicityWithoutGrade() {
         val toxicities: MutableList<Toxicity> = mutableListOf()
         toxicities.add(ToxicityTestFactory.toxicity(source = ToxicitySource.QUESTIONNAIRE))
-        val match = HasToxicityWithGrade(HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE, null, emptySet())
+        val match = function()
         assertEvaluation(EvaluationResult.PASS, match.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
-        val noMatch = HasToxicityWithGrade(HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 1, null, emptySet())
+        val noMatch = function(minGrade = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE + 1)
         assertEvaluation(EvaluationResult.UNDETERMINED, noMatch.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
         toxicities.add(
             ToxicityTestFactory.toxicity(
@@ -40,7 +40,7 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun canIgnoreToxicities() {
-        val function = HasToxicityWithGrade(2, null, setOf("ignore"))
+        val function = function(ignoreFilters = setOf("ignore"))
         val toxicities: MutableList<Toxicity> = mutableListOf()
         toxicities.add(ToxicityTestFactory.toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "ignore me please"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
@@ -50,7 +50,7 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun canFilterOnSpecificToxicity() {
-        val function = HasToxicityWithGrade(2, "specific", emptySet())
+        val function = function(nameFilter = "specific")
         val toxicities: MutableList<Toxicity> = mutableListOf()
         toxicities.add(ToxicityTestFactory.toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "something random"))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
@@ -60,7 +60,7 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun picksOnlyMostRecentEHRToxicities() {
-        val function = HasToxicityWithGrade(2, null, emptySet())
+        val function = function()
         val toxicities: MutableList<Toxicity> = mutableListOf()
         toxicities.add(
             ToxicityTestFactory.toxicity(
@@ -93,7 +93,7 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun ignoresEHRToxicitiesThatAreAlsoComplications() {
-        val function = HasToxicityWithGrade(2, null, emptySet())
+        val function = function()
         val questionnaireToxicity: Toxicity = ToxicityTestFactory.toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2)
         assertEvaluation(
             EvaluationResult.PASS,
@@ -101,5 +101,42 @@ class HasToxicityWithGradeTest {
         )
         val ehrToxicity: Toxicity = ToxicityTestFactory.toxicity(source = ToxicitySource.EHR, grade = 2)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ToxicityTestFactory.withToxicityThatIsAlsoComplication(ehrToxicity)))
+    }
+
+    @Test
+    fun returnsRecoverableWarnWhenQuestionnaireIsNotSource() {
+        val function = function()
+        val toxicities = listOf(
+            ToxicityTestFactory.toxicity(
+                source = ToxicitySource.EHR,
+                grade = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE,
+                name = "toxicity 1",
+                evaluatedDate = LocalDate.of(2020, 1, 1)
+            )
+        )
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
+    }
+
+    @Test
+    fun returnsRecoverablePassWhenQuestionnaireIsNotSourceButConfiguredNotToWarn() {
+        val function = function(warnIfToxicitiesNotFromQuestionnaire = false)
+        val toxicities = listOf(
+            ToxicityTestFactory.toxicity(
+                source = ToxicitySource.EHR,
+                grade = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE,
+                name = "toxicity 1",
+                evaluatedDate = LocalDate.of(2020, 1, 1)
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(ToxicityTestFactory.withToxicities(toxicities)))
+    }
+
+    private fun function(
+        minGrade: Int = HasToxicityWithGrade.DEFAULT_QUESTIONNAIRE_GRADE,
+        nameFilter: String? = null,
+        ignoreFilters: Set<String> = emptySet(),
+        warnIfToxicitiesNotFromQuestionnaire: Boolean = true
+    ): HasToxicityWithGrade {
+        return HasToxicityWithGrade(minGrade, nameFilter, ignoreFilters, warnIfToxicitiesNotFromQuestionnaire)
     }
 }

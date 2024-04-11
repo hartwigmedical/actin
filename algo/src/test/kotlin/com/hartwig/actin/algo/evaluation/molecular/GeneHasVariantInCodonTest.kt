@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
@@ -17,7 +17,7 @@ class GeneHasVariantInCodonTest {
     
     @Test
     fun `Should fail when gene not present`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
     }
 
     @Test

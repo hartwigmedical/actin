@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEv
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryTrialGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -37,17 +37,19 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth - 10
-        val bloodTransfusions = report.clinical.bloodTransfusions
+        val bloodTransfusions = report.patientRecord.bloodTransfusions
 
         val generators = listOfNotNull(
-            PatientClinicalHistoryTrialGenerator(report.clinical, keyWidth, valueWidth),
-            PatientCurrentDetailsGenerator(report.clinical, keyWidth, valueWidth),
-            TumorDetailsGenerator(report.clinical, keyWidth, valueWidth),
-            MedicationGenerator(
-                report.clinical.medications,
-                contentWidth(),
-                MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate)
-            ),
+            PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth),
+            PatientCurrentDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
+            TumorDetailsGenerator(report.patientRecord, keyWidth, valueWidth),
+            report.patientRecord.medications?.let {
+                MedicationGenerator(
+                    it,
+                    contentWidth(),
+                    MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate)
+                )
+            },
             if (bloodTransfusions.isEmpty()) null else BloodTransfusionGenerator(bloodTransfusions, contentWidth())
         )
         for (i in generators.indices) {

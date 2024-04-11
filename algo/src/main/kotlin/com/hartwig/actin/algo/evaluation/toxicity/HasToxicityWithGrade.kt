@@ -7,14 +7,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
 
 //TODO: In case X => 2, ignore EHR toxicities in evaluation
 class HasToxicityWithGrade internal constructor(
-    private val minGrade: Int, private val nameFilter: String?, private val ignoreFilters: Set<String>
+    private val minGrade: Int,
+    private val nameFilter: String?,
+    private val ignoreFilters: Set<String>,
+    private val warnIfToxicitiesNotFromQuestionnaire: Boolean
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -22,7 +24,7 @@ class HasToxicityWithGrade internal constructor(
         var hasAtLeastOneMatchingQuestionnaireToxicity = false
         val unresolvableToxicities: MutableSet<String> = Sets.newHashSet()
         val toxicities: MutableSet<String> = Sets.newHashSet()
-        for (toxicity in selectRelevantToxicities(record.clinical)) {
+        for (toxicity in selectRelevantToxicities(record.toxicities, record.complications)) {
             val grade = if (toxicity.grade == null && toxicity.source == ToxicitySource.QUESTIONNAIRE) {
                 if (minGrade > DEFAULT_QUESTIONNAIRE_GRADE) {
                     hasUnresolvableQuestionnaireToxicities = true
@@ -43,7 +45,7 @@ class HasToxicityWithGrade internal constructor(
         }
         if (toxicities.isNotEmpty()) {
             val toxicityString = formatToxicities(toxicities)
-            return if (hasAtLeastOneMatchingQuestionnaireToxicity) {
+            return if (hasAtLeastOneMatchingQuestionnaireToxicity || !warnIfToxicitiesNotFromQuestionnaire) {
                 EvaluationFactory.recoverablePass(
                     "Patient has toxicities grade >= $minGrade$toxicityString",
                     "Has toxicities grade >= $minGrade$toxicityString"
@@ -66,10 +68,10 @@ class HasToxicityWithGrade internal constructor(
         )
     }
 
-    private fun selectRelevantToxicities(clinical: ClinicalRecord): List<Toxicity> {
-        val withoutOutdatedEHRToxicities = dropOutdatedEHRToxicities(clinical.toxicities)
+    private fun selectRelevantToxicities(toxicities: List<Toxicity>, complications: List<Complication>?): List<Toxicity> {
+        val withoutOutdatedEHRToxicities = dropOutdatedEHRToxicities(toxicities)
         val withoutEHRToxicitiesThatAreComplications =
-            dropEHRToxicitiesThatAreComplications(withoutOutdatedEHRToxicities, clinical.complications)
+            dropEHRToxicitiesThatAreComplications(withoutOutdatedEHRToxicities, complications)
         return applyIgnoreFilters(withoutEHRToxicitiesThatAreComplications, ignoreFilters)
     }
 

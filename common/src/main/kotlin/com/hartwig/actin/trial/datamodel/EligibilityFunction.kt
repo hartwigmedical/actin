@@ -1,6 +1,9 @@
 package com.hartwig.actin.trial.datamodel
 
-data class EligibilityFunction(val rule: EligibilityRule, val parameters: List<Any> = emptyList()) : Comparable<EligibilityFunction> {
+data class EligibilityFunction(
+    val rule: EligibilityRule,
+    val parameters: List<Any> = emptyList()
+) : Comparable<EligibilityFunction> {
 
     override fun compareTo(other: EligibilityFunction): Int {
         return Comparator.comparing(EligibilityFunction::rule)

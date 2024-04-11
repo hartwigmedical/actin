@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.CohortMatch
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
@@ -18,7 +18,7 @@ class TrialMatcherTest {
 
     @Test
     fun `Should match trials on proper test data`() {
-        val patient = TestDataFactory.createProperTestPatientRecord()
+        val patient = TestPatientFactory.createProperTestPatientRecord()
         val trial = TestTrialFactory.createProperTestTrial()
         val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
         val matches = matcher.determineEligibility(patient, listOf(trial))

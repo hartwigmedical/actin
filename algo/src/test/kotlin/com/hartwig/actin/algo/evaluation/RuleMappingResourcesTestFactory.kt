@@ -4,9 +4,10 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
-import com.hartwig.actin.algo.evaluation.medication.AtcTree
+import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.trial.datamodel.TestFunctionInputResolverFactory
 
 object RuleMappingResourcesTestFactory {
@@ -23,7 +24,8 @@ object RuleMappingResourcesTestFactory {
             doidModel = doidModel,
             functionInputResolver = functionInputResolver,
             atcTree = atcTree,
-            treatmentDatabase = treatmentDatabase
+            treatmentDatabase = treatmentDatabase,
+            algoConfiguration = AlgoConfiguration()
         )
     }
 }

@@ -10,15 +10,20 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecular.type == ExperimentType.WHOLE_GENOME && record.molecular.containsTumorCells) {
+        if (record.molecularHistory.latestMolecularRecord() == null) {
+            return EvaluationFactory.undetermined("No molecular data", "No molecular data")
+        }
+
+        val molecular = record.molecularHistory.latestMolecularRecord()!!
+        if (molecular.type == ExperimentType.WHOLE_GENOME && molecular.containsTumorCells) {
             return EvaluationFactory.pass(
                 "WGS has successfully been performed so molecular results are available for gene $gene",
                 "WGS results available for $gene"
             )
         }
 
-        if (record.molecular.type == ExperimentType.TARGETED && record.molecular.containsTumorCells) {
-            val geneIsTested = record.molecular.drivers.copyNumbers
+        if (molecular.type == ExperimentType.TARGETED && molecular.containsTumorCells) {
+            val geneIsTested = molecular.drivers.copyNumbers
                 .any { it.gene == gene }
             return if (geneIsTested) {
                 EvaluationFactory.pass(
@@ -31,7 +36,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             }
         }
 
-        val (indeterminatePriorTestsForGene, passPriorTestsForGene) = record.clinical.priorMolecularTests
+        val (indeterminatePriorTestsForGene, passPriorTestsForGene) = record.molecularHistory.allPriorMolecularTests()
             .filter { it.item == gene }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
@@ -41,14 +46,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
                     "$gene tested before")
             }
 
-            record.molecular.type == ExperimentType.WHOLE_GENOME && !record.molecular.containsTumorCells -> {
+            molecular.type == ExperimentType.WHOLE_GENOME && !molecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had WGS but biopsy contained no tumor cells",
                     "WGS performed containing $gene, but sample purity was too low"
                 )
             }
 
-            record.molecular.type == ExperimentType.TARGETED && !record.molecular.containsTumorCells -> {
+            molecular.type == ExperimentType.TARGETED && !molecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had OncoAct tumor NGS panel but biopsy contained too little tumor cells",
                     "OncoAct tumor NGS panel performed containing $gene, but sample purity was too low"

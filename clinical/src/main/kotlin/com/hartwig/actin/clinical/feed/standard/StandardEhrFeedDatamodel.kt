@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.hartwig.actin.clinical.feed.JacksonSerializable
 import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 @JacksonSerializable
 data class EhrPatientRecord(
@@ -16,7 +14,8 @@ data class EhrPatientRecord(
     val bloodTransfusions: List<EhrBloodTransfusion> = emptyList(),
     val complications: List<EhrComplication> = emptyList(),
     val labValues: List<EhrLabValue> = emptyList(),
-    val medications: List<EhrMedication> = emptyList(),
+    val medications: List<EhrMedication>? = emptyList(),
+    val molecularTestHistory: List<EhrMolecularTest> = emptyList(),
     val patientDetails: EhrPatientDetail,
     val priorOtherConditions: List<EhrPriorOtherCondition> = emptyList(),
     val surgeries: List<EhrSurgery> = emptyList(),
@@ -88,7 +87,7 @@ data class EhrComplication(
     val name: String,
     val categories: List<String> = emptyList(),
     val startDate: LocalDate,
-    val endDate: LocalDate
+    val endDate: LocalDate?
 )
 
 @JacksonSerializable
@@ -122,14 +121,13 @@ data class EhrMedication(
     val isSelfCare: Boolean
 )
 
-private const val CHUNK_SIZE_HEX_BYTE = 2
-private const val HEX_BASE = 16
-@OptIn(ExperimentalEncodingApi::class)
-fun String.toBase64(): String {
-    return Base64.Default.encode(this.chunked(CHUNK_SIZE_HEX_BYTE)
-        .map { it.toInt(HEX_BASE).toByte() }
-        .toByteArray())
-}
+@JacksonSerializable
+data class EhrMolecularTest(
+    val type: String,
+    val measure: String?,
+    val result: String,
+    val resultDate: LocalDate,
+)
 
 @JacksonSerializable
 data class EhrPatientDetail(
@@ -137,11 +135,7 @@ data class EhrPatientDetail(
     val gender: String,
     val registrationDate: LocalDate,
     val hashedId: String
-) {
-    fun hashedIdBase64(): String {
-        return hashedId.toBase64()
-    }
-}
+)
 
 enum class EhrGender {
     MALE, FEMALE, OTHER
@@ -245,7 +239,7 @@ data class EhrTumorDetail(
     val diagnosisDate: LocalDate,
     val tumorLocation: String,
     val tumorType: String,
-    val tumorGradeDifferentiation: String,
+    val tumorGradeDifferentiation: String?,
     val tumorStage: String? = null,
     val tumorStageDate: LocalDate? = null,
     val measurableDisease: Boolean? = null,

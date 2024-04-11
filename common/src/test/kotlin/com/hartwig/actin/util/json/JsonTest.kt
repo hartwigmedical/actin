@@ -18,8 +18,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class JsonTest {
+
     @Test
-    fun canExtractObjects() {
+    fun `Should extract objects`() {
         val obj = JsonObject()
         assertThat(optionalObject(obj, "object")).isNull()
 
@@ -29,7 +30,7 @@ class JsonTest {
     }
 
     @Test
-    fun canExtractArrays() {
+    fun `Should extract arrays`() {
         val obj = JsonObject()
         assertThat(optionalArray(obj, "array1")).isNull()
 
@@ -39,7 +40,7 @@ class JsonTest {
     }
 
     @Test
-    fun canExtractStringLists() {
+    fun `Should extract string lists`() {
         val obj = JsonObject()
         obj.addProperty("nullable", null as String?)
         assertThat(optionalStringList(obj, "array1")).isNull()
@@ -53,7 +54,7 @@ class JsonTest {
     }
 
     @Test
-    fun canExtractStrings() {
+    fun `Should extract strings`() {
         val obj = JsonObject()
         assertThat(optionalString(obj, "string")).isNull()
 
@@ -63,14 +64,14 @@ class JsonTest {
     }
 
     @Test
-    fun canExtractIntegers() {
+    fun `Should extract integers`() {
         val obj = JsonObject()
         obj.addProperty("integer", 8)
         assertThat(integer(obj, "integer")).isEqualTo(8)
     }
 
     @Test
-    fun canExtractBooleans() {
+    fun `Should extract booleans`() {
         val obj = JsonObject()
         assertThat(optionalBool(obj, "bool")).isNull()
         obj.addProperty("nullable", null as String?)

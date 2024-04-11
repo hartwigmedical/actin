@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.composite
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
@@ -115,7 +115,7 @@ class OrTest {
     }
 
     companion object {
-        private val TEST_PATIENT: PatientRecord = TestDataFactory.createProperTestPatientRecord()
+        private val TEST_PATIENT: PatientRecord = TestPatientFactory.createProperTestPatientRecord()
         private fun combineWithPass(function: EvaluationFunction): Evaluation {
             return evaluate(TestEvaluationFunctionFactory.pass(), function)
         }

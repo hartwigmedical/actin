@@ -1,25 +1,38 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import org.assertj.core.api.Assertions
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HasSufficientLabValueTest {
 
+    private val measurement = LabMeasurement.THROMBOCYTES_ABS
+    private val function = HasSufficientLabValue(200.0, measurement, measurement.defaultUnit)
+    private val record = TestPatientFactory.createMinimalTestPatientRecord()
+
     @Test
-    fun canEvaluate() {
-        val measurement = LabMeasurement.THROMBOCYTES_ABS
-        val function = HasSufficientLabValue(200.0, measurement, measurement.defaultUnit)
-        val record = TestDataFactory.createMinimalTestPatientRecord()
+    fun `Should pass if lab value is above minimal value`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record, measurement, LabTestFactory.create(measurement, 300.0))
         )
+    }
+
+    @Test
+    fun `Should evaluate to recoverable undetermined if lab value is under minimal value but within 10 percent error margin`() {
+        val evaluation = function.evaluate(record, measurement, LabTestFactory.create(measurement, 190.0))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        Assertions.assertThat(evaluation.recoverable).isTrue()
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if comparison can not be determined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
@@ -27,16 +40,20 @@ class HasSufficientLabValueTest {
                 LabTestFactory.create(measurement, 300.0).copy(comparator = ValueComparison.SMALLER_THAN)
             )
         )
+    }
+
+    @Test
+    fun `Should fail if lab value is below minimal value and outside error margin`() {
         val actual = function.evaluate(record, measurement, LabTestFactory.create(measurement, 100.0))
         assertEvaluation(EvaluationResult.FAIL, actual)
         assertTrue(actual.recoverable)
     }
 
     @Test
-    fun canEvaluateCaseRequiringConversion() {
+    fun `Should correctly evaluate case requiring conversion`() {
         val measurement = LabMeasurement.HEMOGLOBIN
         val function = HasSufficientLabValue(7.5, measurement, LabUnit.MILLIMOLES_PER_LITER)
-        val record = TestDataFactory.createMinimalTestPatientRecord()
+        val record = TestPatientFactory.createMinimalTestPatientRecord()
         val targetUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MILLIMOLES_PER_LITER)
         val offUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.GRAMS_PER_DECILITER)
 

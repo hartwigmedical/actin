@@ -23,13 +23,19 @@
     "stage": "IV",
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
+    "brainLesionsCount": 1,
     "hasActiveBrainLesions": null,
     "hasCnsLesions": false,
+    "cnsLesionsCount": 0,
     "hasActiveCnsLesions": null,
     "hasBoneLesions": false,
+    "boneLesionsCount": 0,
     "hasLiverLesions": false,
+    "liverLesionsCount": 0,
     "hasLungLesions": false,
+    "lungLesionsCount": 0,
     "hasLymphNodeLesions": false,
+    "lymphNodeLesionsCount": 0,
     "otherLesions": [],
     "biopsyLocation": null
   },
@@ -83,39 +89,7 @@
         "bestResponse": null,
         "stopReason": null,
         "stopReasonDetail": null,
-        "switchToTreatments": [
-          {
-            "treatment": {
-              "name": "CAPECITABINE+OXALIPLATIN",
-              "drugs": [
-                {
-                  "name": "CAPECITABINE",
-                  "drugTypes": [
-                    "ANTIMETABOLITE"
-                  ],
-                  "category": "CHEMOTHERAPY",
-                  "displayOverride": null
-                },
-                {
-                  "name": "OXALIPLATIN",
-                  "drugTypes": [
-                    "PLATINUM_COMPOUND"
-                  ],
-                  "category": "CHEMOTHERAPY",
-                  "displayOverride": null
-                }
-              ],
-              "synonyms": [],
-              "displayOverride": null,
-              "isSystemic": true,
-              "maxCycles": null,
-              "treatmentClass": "DRUG_TREATMENT"
-            },
-            "cycles": 0,
-            "startYear": 2020,
-            "startMonth": 1
-          }
-        ],
+        "switchToTreatments": [],
         "maintenanceTreatment": null,
         "toxicities": null,
         "bodyLocationCategories": null,
@@ -130,8 +104,8 @@
       "year": 2020,
       "month": 1,
       "doids": [
-        "11335",
-        "5082"
+        "5082",
+        "11335"
       ],
       "category": "Other",
       "isContraindicationForTherapy": true
@@ -142,10 +116,41 @@
       "test": "IHC",
       "item": "ERBB2",
       "measure": null,
+      "measureDate": null,
       "scoreText": null,
       "scoreValuePrefix": null,
       "scoreValue": 3.0,
       "scoreValueUnit": "+",
+      "impliesPotentialIndeterminateStatus": false
+    },
+    {
+      "test": "Archer FP Lung Target",
+      "item": "EGFR",
+      "measure": "c.2573T>G",
+      "measureDate": {
+        "year": 2024,
+        "month": 3,
+        "day": 25
+      },
+      "scoreText": null,
+      "scoreValuePrefix": null,
+      "scoreValue": null,
+      "scoreValueUnit": null,
+      "impliesPotentialIndeterminateStatus": false
+    },
+    {
+      "test": "Archer FP Lung Target",
+      "item": null,
+      "measure": "GEEN fusie(s) aangetoond",
+      "measureDate": {
+        "year": 2020,
+        "month": 12,
+        "day": 3
+      },
+      "scoreText": null,
+      "scoreValuePrefix": null,
+      "scoreValue": null,
+      "scoreValueUnit": null,
       "impliesPotentialIndeterminateStatus": false
     }
   ],
@@ -258,7 +263,8 @@
       "type": "unspecified",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
-      "criticality": "Unknown"
+      "criticality": "Unknown",
+      "treatmentCategories": []
     },
     {
       "name": "Nikkel",
@@ -268,7 +274,8 @@
       "type": "unspecified",
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
-      "criticality": "Unknown"
+      "criticality": "Unknown",
+      "treatmentCategories": []
     }
   ],
   "surgeries": [
@@ -293,7 +300,13 @@
     {
       "date": "2020-01-01T00:00:00",
       "value": 3.5,
-      "unit": "KG",
+      "unit": "Kilograms",
+      "valid": false
+    },
+    {
+      "date": "2020-02-01T00:00:00",
+      "value": 53,
+      "unit": "Kilograms",
       "valid": true
     }
   ],
@@ -333,98 +346,5 @@
       "product": "Erytrocytes Filtered"
     }
   ],
-  "medications": [
-    {
-      "name": "METOCLOPRAMIDE TABLET 10MG",
-      "status": null,
-      "administrationRoute": "oraal",
-      "dosage": {
-        "dosageMin": 3.5,
-        "dosageMax": 3.5,
-        "dosageUnit": "piece",
-        "frequency": 3.5,
-        "frequencyUnit": "day",
-        "periodBetweenValue": 3.5,
-        "periodBetweenUnit": null,
-        "ifNeeded": true
-      },
-      "startDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "stopDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "cypInteractions": [],
-      "qtProlongatingRisk": "UNKNOWN",
-      "atc": null,
-      "isSelfCare": true,
-      "isTrialMedication": true
-    },
-    {
-      "name": "paracetamol",
-      "status": null,
-      "administrationRoute": "oraal",
-      "dosage": {
-        "dosageMin": 3.5,
-        "dosageMax": 3.5,
-        "dosageUnit": "mg",
-        "frequency": 3.5,
-        "frequencyUnit": "day",
-        "periodBetweenValue": 3.5,
-        "periodBetweenUnit": null,
-        "ifNeeded": true
-      },
-      "startDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "stopDate": {
-        "year": 2020,
-        "month": 1,
-        "day": 1
-      },
-      "cypInteractions": [
-        {
-          "type": "INHIBITOR",
-          "strength": "MODERATE",
-          "cyp": "2D6"
-        },
-        {
-          "type": "SUBSTRATE",
-          "strength": "MODERATE_SENSITIVE",
-          "cyp": "3A4"
-        }
-      ],
-      "qtProlongatingRisk": "KNOWN",
-      "atc": {
-        "anatomicalMainGroup": {
-          "code": "N",
-          "name": "NERVOUS SYSTEM"
-        },
-        "therapeuticSubGroup": {
-          "code": "N02",
-          "name": "ANALGESICS"
-        },
-        "pharmacologicalSubGroup": {
-          "code": "N02B",
-          "name": "OTHER ANALGESICS AND ANTIPYRETICS"
-        },
-        "chemicalSubGroup": {
-          "code": "N02BE",
-          "name": "Anilides"
-        },
-        "chemicalSubstance": {
-          "code": "N02BE01",
-          "name": "paracetamol"
-        }
-      },
-      "isSelfCare": false,
-      "isTrialMedication": false
-    }
-  ]
+  "medications": null
 }

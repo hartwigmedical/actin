@@ -57,6 +57,12 @@ class FeedStringDeserializer : JsonDeserializer<String>() {
     }
 }
 
+class FeedSubjectDeserializer : JsonDeserializer<String>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): String {
+        return p.text.replace("-".toRegex(), "")
+    }
+}
+
 data class FeedResult<T : FeedEntry>(
     val entry: T, val validation: FeedValidation
 )

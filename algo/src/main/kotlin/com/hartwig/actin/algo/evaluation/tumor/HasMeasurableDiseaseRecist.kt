@@ -10,13 +10,13 @@ import com.hartwig.actin.doid.DoidModel
 class HasMeasurableDiseaseRecist (private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasMeasurableDisease = record.clinical.tumor.hasMeasurableDisease ?: return EvaluationFactory.recoverableUndetermined(
+        val hasMeasurableDisease = record.tumor.hasMeasurableDisease ?: return EvaluationFactory.recoverableUndetermined(
             "Data regarding measurable disease is missing, unknown if measurable by RECIST", "Undetermined RECIST measurable disease"
         )
 
         return if (hasMeasurableDisease && DoidEvaluationFunctions.isOfAtLeastOneDoidType(
                 doidModel,
-                record.clinical.tumor.doids,
+                record.tumor.doids,
                 NON_RECIST_TUMOR_DOIDS
             )
         ) {

@@ -1,17 +1,18 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
 private const val DPYD_GENE = "DPYD"
 
-class HasHomozygousDPYDDeficiency internal constructor() : EvaluationFunction {
+private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val pharmaco = record.molecular.pharmaco.filter { it.gene == DPYD_GENE }
+class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
+
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
+        val pharmaco = molecular.pharmaco.filter { it.gene == DPYD_GENE }
 
         if (pharmaco.isEmpty()) {
             return EvaluationFactory.recoverableUndetermined("DPYD haplotype is undetermined", "DPYD haplotype undetermined")
@@ -46,6 +47,4 @@ class HasHomozygousDPYDDeficiency internal constructor() : EvaluationFunction {
             pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }
         }
     }
-
-    private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
 }

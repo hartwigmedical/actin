@@ -12,7 +12,7 @@ class HasHadLimitedTreatmentsWithCategory(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical.oncologicalHistory, category)
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category)
 
         return when {
             treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines -> {

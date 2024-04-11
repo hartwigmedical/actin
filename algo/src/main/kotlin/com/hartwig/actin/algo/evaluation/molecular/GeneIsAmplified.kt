@@ -1,16 +1,15 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
-class GeneIsAmplified(private val gene: String) : EvaluationFunction {
-    
-    override fun evaluate(record: PatientRecord): Evaluation {
-        val ploidy = record.molecular.characteristics.ploidy
+class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
+
+    override fun evaluate(molecular: MolecularRecord): Evaluation {
+        val ploidy = molecular.characteristics.ploidy
             ?: return EvaluationFactory.fail(
                 "Cannot determine amplification for gene $gene without ploidy", "Undetermined amplification for $gene"
             )
@@ -20,9 +19,9 @@ class GeneIsAmplified(private val gene: String) : EvaluationFunction {
         val ampsOnNonOncogenes: MutableSet<String> = mutableSetOf()
         val ampsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val ampsThatAreNearCutoff: MutableSet<String> = mutableSetOf()
-        val evidenceSource = record.molecular.evidenceSource
+        val evidenceSource = molecular.evidenceSource
 
-        for (copyNumber in record.molecular.drivers.copyNumbers) {
+        for (copyNumber in molecular.drivers.copyNumbers) {
             if (copyNumber.gene == gene) {
                 val relativeMinCopies = copyNumber.minCopies / ploidy
                 val relativeMaxCopies = copyNumber.maxCopies / ploidy

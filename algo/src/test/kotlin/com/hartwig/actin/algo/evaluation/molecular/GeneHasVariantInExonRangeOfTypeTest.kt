@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
@@ -20,7 +20,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should fail when gene not present`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestDataFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
     }
 
     @Test
@@ -154,7 +154,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     fun `Should evaluate for all variant input types`() {
         for (input in VariantTypeInput.values()) {
             val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, input)
-            assertThat(function.evaluate(TestDataFactory.createMinimalTestPatientRecord())).isNotNull()
+            assertThat(function.evaluate(TestPatientFactory.createMinimalTestPatientRecord())).isNotNull()
         }
     }
 

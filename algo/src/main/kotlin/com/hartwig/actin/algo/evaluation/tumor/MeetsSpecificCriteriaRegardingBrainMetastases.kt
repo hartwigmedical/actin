@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasBrainMetastases = record.clinical.tumor.hasBrainLesions
-        val hasActiveBrainMetastases = record.clinical.tumor.hasActiveBrainLesions
-        val hasCNSLesions = record.clinical.tumor.hasCnsLesions
+        val hasBrainMetastases = record.tumor.hasBrainLesions
+        val hasActiveBrainMetastases = record.tumor.hasActiveBrainLesions
+        val hasCNSLesions = record.tumor.hasCnsLesions
 
         // We assume that if a patient has active brain metastases, hasBrainMetastases is allowed to be (theoretically) null/false
         return if (hasActiveBrainMetastases == true) {

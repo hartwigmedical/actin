@@ -8,19 +8,19 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasKnownActiveCnsMetastases : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val hasCnsMetastases = record.clinical.tumor.hasCnsLesions
+        val hasCnsMetastases = record.tumor.hasCnsLesions
         // If a patient's active CNS lesion status is unknown, set to false if patient is known to have no CNS metastases
-        val hasActiveCnsLesions = record.clinical.tumor.hasActiveCnsLesions ?: if (hasCnsMetastases == false) false else null
+        val hasActiveCnsLesions = record.tumor.hasActiveCnsLesions ?: if (hasCnsMetastases == false) false else null
 
-        val hasBrainMetastases = record.clinical.tumor.hasBrainLesions
+        val hasBrainMetastases = record.tumor.hasBrainLesions
         // If a patient's active brain metastases status is unknown, set to false if patient is known to have no brain metastases
-        val hasActiveBrainMetastases = record.clinical.tumor.hasActiveBrainLesions ?: if (hasBrainMetastases == false) false else null
+        val hasActiveBrainMetastases = record.tumor.hasActiveBrainLesions ?: if (hasBrainMetastases == false) false else null
 
         if (hasActiveCnsLesions == null && hasActiveBrainMetastases == null) {
             return if (hasCnsMetastases == true || hasBrainMetastases == true) {
                 EvaluationFactory.undetermined(
                     "CNS metastases in history but data regarding active CNS metastases is missing - assuming there are none",
-                    "CNS metastases ‘active’ status missing - assuming inactive"
+                    "CNS metastases present but unknown if active (data missing)"
                 )
             } else {
                 EvaluationFactory.recoverableUndetermined(

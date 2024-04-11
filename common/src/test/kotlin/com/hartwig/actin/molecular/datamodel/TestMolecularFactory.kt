@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
@@ -34,13 +35,14 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 object TestMolecularFactory {
+
     private val TODAY: LocalDate = LocalDate.now()
     private const val DAYS_SINCE_MOLECULAR_ANALYSIS = 5
 
     fun createMinimalTestMolecularRecord(): MolecularRecord {
         return MolecularRecord(
-            patientId = TestDataFactory.TEST_PATIENT,
-            sampleId = TestDataFactory.TEST_SAMPLE,
+            patientId = TestPatientFactory.TEST_PATIENT,
+            sampleId = TestPatientFactory.TEST_SAMPLE,
             type = ExperimentType.WHOLE_GENOME,
             refGenomeVersion = RefGenomeVersion.V37,
             evidenceSource = "",
@@ -72,6 +74,21 @@ object TestMolecularFactory {
         return createProperTestMolecularRecord().copy(
             characteristics = createExhaustiveTestCharacteristics(),
             drivers = createExhaustiveTestDrivers()
+        )
+    }
+
+    fun createMinimalTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory.fromInputs(listOf(createMinimalTestMolecularRecord()), emptyList())
+    }
+
+    fun createProperTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory.fromInputs(listOf(createProperTestMolecularRecord()), TestClinicalFactory.createTestPriorMolecularTests())
+    }
+
+    fun createExhaustiveTestMolecularHistory(): MolecularHistory {
+        return MolecularHistory.fromInputs(
+            listOf(createExhaustiveTestMolecularRecord()),
+            TestClinicalFactory.createTestPriorMolecularTests()
         )
     }
 
@@ -185,7 +202,7 @@ object TestMolecularFactory {
                                     + "for Participants With Advanced Solid Tumor (acronym)",
                             countries = setOf(Country.BELGIUM, Country.GERMANY),
                             url = "https://clinicaltrials.gov/study/NCT00000002",
-                            nctId = "NCT00000002"
+                            nctId = "NCT00000020"
                         )
                     ),
                     gene = "PTEN",

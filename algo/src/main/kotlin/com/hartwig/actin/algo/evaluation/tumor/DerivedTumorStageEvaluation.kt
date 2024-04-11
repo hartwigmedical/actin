@@ -11,8 +11,7 @@ internal object DerivedTumorStageEvaluation {
     }
 
     private fun worstEvaluation(derived: Map<TumorStage, Evaluation>): Evaluation {
-        return derived.values
-            .minWith { e1: Evaluation, e2: Evaluation -> if (e1 == e2) 0 else if (e1.result.isWorseThan(e2.result)) -1 else 1 }
+        return derived.values.minBy(Evaluation::result)
     }
 
     private fun allSpecificMessagesFrom(derived: Map<TumorStage, Evaluation>, worstEvaluation: Evaluation): String {

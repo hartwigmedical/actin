@@ -1,5 +1,9 @@
 package com.hartwig.actin.clinical.feed.standard
 
+import com.hartwig.actin.clinical.curation.CurationCategory
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.CurationWarning
+import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
@@ -9,52 +13,164 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
+private const val BRAIN_LOCATION = "brain"
+private const val TYPE = "type"
+
+private val BRAIN_PRIOR_SECOND_PRIMARY = PriorSecondPrimary(
+    tumorLocation = BRAIN_LOCATION,
+    tumorType = TYPE,
+    status = TumorStatus.ACTIVE,
+    diagnosedYear = null,
+    diagnosedMonth = null,
+    tumorSubLocation = "",
+    tumorSubType = "",
+    treatmentHistory = ""
+)
+
+private val DIAGNOSIS_DATE = LocalDate.of(2024, 2, 23)
+
+private val EHR_PRIOR_PRIMARY = EhrPriorPrimary(
+    tumorLocation = BRAIN_LOCATION,
+    tumorType = TYPE,
+    status = "ACTIVE",
+    diagnosisDate = DIAGNOSIS_DATE,
+    statusDate = DIAGNOSIS_DATE
+)
+
+private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
+    priorPrimaries = listOf(EHR_PRIOR_PRIMARY)
+)
+
+private const val PRIOR_PRIMARY_INPUT = "$BRAIN_LOCATION | $TYPE"
+private val UNUSED_DATE = LocalDate.of(2023, 1, 1)
+private val EHR_PRIOR_OTHER_CONDITION = EhrPriorOtherCondition(name = PRIOR_CONDITION_INPUT, startDate = UNUSED_DATE)
+
+private val SECOND_PRIMARY_CONFIG = SecondPrimaryConfig(
+    ignore = false,
+    input = TREATMENT_HISTORY_INPUT,
+    curated = BRAIN_PRIOR_SECOND_PRIMARY
+)
+
+private val LUNG_PRIOR_SECOND_PRIMARY = BRAIN_PRIOR_SECOND_PRIMARY.copy(tumorLocation = "lung")
+
 class EhrPriorPrimariesExtractorTest {
 
+    private val secondPrimaryConfigCurationDatabase = mockk<CurationDatabase<SecondPrimaryConfig>> {
+        every { find(any()) } returns emptySet()
+    }
+    private val extractor = EhrPriorPrimariesExtractor(secondPrimaryConfigCurationDatabase)
+
     @Test
-    fun `Should extract prior primary`() {
-        val extractor = EhrPriorPrimariesExtractor()
-        val ehrPatientRecord = mockk<EhrPatientRecord>()
-        every { ehrPatientRecord.priorPrimaries } returns listOf(
-            ehrPriorPrimary()
+    fun `Should curate and extract prior primary`() {
+        every { secondPrimaryConfigCurationDatabase.find(PRIOR_PRIMARY_INPUT) } returns setOf(
+            SecondPrimaryConfig(
+                ignore = false,
+                input = PRIOR_PRIMARY_INPUT,
+                curated = BRAIN_PRIOR_SECOND_PRIMARY
+            )
         )
-        val result = extractor.extract(ehrPatientRecord)
+        val result = extractor.extract(EHR_PATIENT_RECORD)
         assertThat(result.extracted).containsExactly(
-            priorSecondPrimary()
+            BRAIN_PRIOR_SECOND_PRIMARY.copy(
+                diagnosedMonth = DIAGNOSIS_DATE.monthValue,
+                diagnosedYear = DIAGNOSIS_DATE.year
+            )
         )
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation())
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
+        assertThat(result.evaluation.warnings).isEmpty()
     }
 
     @Test
-    fun `Should default tumor status to UNKNOWN when null`() {
-        val extractor = EhrPriorPrimariesExtractor()
-        val ehrPatientRecord = mockk<EhrPatientRecord>()
-        every { ehrPatientRecord.priorPrimaries } returns listOf(
-            ehrPriorPrimary().copy(status = null)
+    fun `Should return curation warning when input not found`() {
+        every { secondPrimaryConfigCurationDatabase.find(PRIOR_PRIMARY_INPUT) } returns emptySet()
+        val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).containsExactly(
+            CurationWarning(
+                patientId = "9E9uYbFvpFDjJVCs9XjDGF1LmP8Po6Zb80pYnoBrWg0=",
+                category = CurationCategory.SECOND_PRIMARY,
+                feedInput = PRIOR_PRIMARY_INPUT,
+                message = "Could not find prior primary config for input '$PRIOR_PRIMARY_INPUT'"
+            )
         )
-        val result = extractor.extract(ehrPatientRecord)
-        assertThat(result.extracted).containsExactly(
-            priorSecondPrimary().copy(status = TumorStatus.UNKNOWN)
-        )
-        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation())
     }
 
-    private fun ehrPriorPrimary() = EhrPriorPrimary(
-        tumorLocation = "location",
-        tumorType = "type",
-        status = "ACTIVE",
-        diagnosisDate = LocalDate.of(2024, 2, 23),
-        statusDate = LocalDate.of(2024, 2, 23)
-    )
+    @Test
+    fun `Should ignore primaries when configured in curation`() {
+        every { secondPrimaryConfigCurationDatabase.find(PRIOR_PRIMARY_INPUT) } returns setOf(
+            SecondPrimaryConfig(
+                ignore = true,
+                input = PRIOR_PRIMARY_INPUT
+            )
+        )
+        val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).isEmpty()
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
 
-    private fun priorSecondPrimary() = PriorSecondPrimary(
-        tumorLocation = "location",
-        tumorType = "type",
-        status = TumorStatus.ACTIVE,
-        diagnosedYear = 2024,
-        diagnosedMonth = 2,
-        tumorSubLocation = "",
-        tumorSubType = "",
-        treatmentHistory = ""
-    )
+    @Test
+    fun `Should curate and extract prior primaries from prior conditions, supporting multiple configs per input, ignoring warnings`() {
+        every { secondPrimaryConfigCurationDatabase.find(PRIOR_CONDITION_INPUT) } returns setOf(
+            SECOND_PRIMARY_CONFIG.copy(input = PRIOR_CONDITION_INPUT),
+            SECOND_PRIMARY_CONFIG.copy(
+                input = PRIOR_CONDITION_INPUT,
+                curated = LUNG_PRIOR_SECOND_PRIMARY
+            )
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                priorPrimaries = emptyList(),
+                priorOtherConditions = listOf(
+                    EHR_PRIOR_OTHER_CONDITION,
+                    EHR_PRIOR_OTHER_CONDITION.copy(name = "another prior condition")
+                )
+            )
+        )
+        assertThat(result.extracted).containsExactly(BRAIN_PRIOR_SECOND_PRIMARY, LUNG_PRIOR_SECOND_PRIMARY)
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_CONDITION_INPUT)))
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should curate and extract prior primaries from treatment history but ignore curation warnings, supporting multiple configs per input, ignoring warnings`() {
+        every { secondPrimaryConfigCurationDatabase.find(TREATMENT_HISTORY_INPUT) } returns setOf(
+            SECOND_PRIMARY_CONFIG.copy(input = TREATMENT_HISTORY_INPUT),
+            SECOND_PRIMARY_CONFIG.copy(
+                input = TREATMENT_HISTORY_INPUT,
+                curated = LUNG_PRIOR_SECOND_PRIMARY
+            )
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                priorPrimaries = emptyList(),
+                treatmentHistory = listOf(
+                    EhrTestData.createEhrTreatmentHistory().copy(treatmentName = TREATMENT_HISTORY_INPUT),
+                    EhrTestData.createEhrTreatmentHistory().copy(treatmentName = "another treatment")
+                )
+            )
+        )
+        assertThat(result.extracted).containsExactly(BRAIN_PRIOR_SECOND_PRIMARY, LUNG_PRIOR_SECOND_PRIMARY)
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(TREATMENT_HISTORY_INPUT)))
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should always use diagnosis year and month from feed, even when in curation data `() {
+        every { secondPrimaryConfigCurationDatabase.find(PRIOR_PRIMARY_INPUT) } returns setOf(
+            SecondPrimaryConfig(
+                ignore = false,
+                input = PRIOR_PRIMARY_INPUT,
+                curated = BRAIN_PRIOR_SECOND_PRIMARY.copy(diagnosedYear = 2023, diagnosedMonth = 1)
+            )
+        )
+        val result = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(result.extracted).containsExactly(
+            BRAIN_PRIOR_SECOND_PRIMARY.copy(
+                diagnosedMonth = DIAGNOSIS_DATE.monthValue,
+                diagnosedYear = DIAGNOSIS_DATE.year
+            )
+        )
+        assertThat(result.evaluation).isEqualTo(CurationExtractionEvaluation(secondPrimaryEvaluatedInputs = setOf(PRIOR_PRIMARY_INPUT)))
+        assertThat(result.evaluation.warnings).isEmpty()
+    }
 }

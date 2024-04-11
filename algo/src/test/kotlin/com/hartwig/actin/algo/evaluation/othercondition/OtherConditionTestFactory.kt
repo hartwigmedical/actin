@@ -1,7 +1,8 @@
 package com.hartwig.actin.algo.evaluation.othercondition
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.Medication
@@ -11,14 +12,14 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import java.time.LocalDate
 
 internal object OtherConditionTestFactory {
-    private val base = TestDataFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestPatientRecord()
     
     fun withPriorOtherCondition(condition: PriorOtherCondition): PatientRecord {
         return withPriorOtherConditions(listOf(condition))
     }
 
     fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(priorOtherConditions = conditions))
+        return base.copy(priorOtherConditions = conditions)
     }
 
     fun priorOtherCondition(
@@ -48,7 +49,8 @@ internal object OtherConditionTestFactory {
             type = "",
             clinicalStatus = "",
             verificationStatus = "",
-            criticality = ""
+            criticality = "",
+            treatmentCategories = emptySet()
         )
     }
 
@@ -67,22 +69,22 @@ internal object OtherConditionTestFactory {
     }
 
     fun withComplications(complications: List<Complication>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(complications = complications))
+        return base.copy(complications = complications)
     }
 
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(toxicities = toxicities))
+        return base.copy(toxicities = toxicities)
     }
 
     fun withIntolerances(intolerances: List<Intolerance>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(intolerances = intolerances))
+        return base.copy(intolerances = intolerances)
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(medications = medications))
+        return base.copy(medications = medications)
     }
 
     fun withWHO(who: Int?): PatientRecord {
-        return base.copy(clinical = base.clinical.copy(clinicalStatus = base.clinical.clinicalStatus.copy(who = who)))
+        return base.copy(clinicalStatus = ClinicalStatus(who = who))
     }
 }

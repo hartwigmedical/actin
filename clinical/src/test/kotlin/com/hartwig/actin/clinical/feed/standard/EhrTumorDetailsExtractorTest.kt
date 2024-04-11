@@ -12,6 +12,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord()
 private const val TUMOR_LOCATION = "tumorLocation"
@@ -32,12 +33,15 @@ private const val CONCLUSION_3 = "conclusion 3"
 
 private const val CONCLUSION_4 = "conclusion 4"
 
-private const val RADIOLOGY_REPORT = "Conclusie:\n" +
+private const val RADIOLOGY_REPORT = "Prior to conclusion:\n" +
+        "Conclusie:\n" +
         "$CONCLUSION_1.\n" +
         "$CONCLUSION_2.\n" +
+        "\r\n\n\nHersenen radiologie rapport:\n" +
+        "Conclusie:\n" +
         "$CONCLUSION_3.\n" +
         "$CONCLUSION_4.\n" +
-        "\r\n\n\nHersenen radiologie rapport:"
+        "\r\n\n\nanother radiologie rapport:\n"
 
 private val TUMOR_DETAILS = TumorDetails(
     primaryTumorLocation = TUMOR_LOCATION,
@@ -48,13 +52,19 @@ private val TUMOR_DETAILS = TumorDetails(
     stage = TumorStage.IV,
     hasMeasurableDisease = true,
     hasBrainLesions = false,
+    brainLesionsCount = 0,
     hasActiveBrainLesions = null,
     hasCnsLesions = false,
+    cnsLesionsCount = 0,
     hasActiveCnsLesions = null,
     hasBoneLesions = false,
+    boneLesionsCount = 0,
     hasLiverLesions = false,
+    liverLesionsCount = 0,
     hasLungLesions = false,
+    lungLesionsCount = 0,
     hasLymphNodeLesions = false,
+    lymphNodeLesionsCount = 0,
     otherLesions = emptyList(),
     biopsyLocation = null
 )
@@ -69,10 +79,34 @@ private val CURATION_CONFIG = PrimaryTumorConfig(
     primaryTumorSubLocation = TUMOR_SUB_LOCATION,
 )
 
-class EhrTumorDetailsExtractorTest {
+private val UNUSED_DATE = LocalDate.of(2024, 4, 10)
+
+private val EHR_PRIOR_OTHER_CONDITION = EhrPriorOtherCondition(
+    name = PRIOR_CONDITION_INPUT,
+    startDate = UNUSED_DATE
+)
+
+private val BRAIN_LESION_LOCATION_CONFIG = LesionLocationConfig(
+    input = PRIOR_CONDITION_INPUT,
+    location = "brain",
+    category = LesionLocationCategory.BRAIN
+)
+
+private val LUNG_LESION_LOCATION_CONFIG = BRAIN_LESION_LOCATION_CONFIG.copy(location = "lung", category = LesionLocationCategory.LUNG)
+
+private val BRAIN_AND_LUNG_LESION_TUMOR_DETAILS = TUMOR_DETAILS.copy(
+    hasBrainLesions = true,
+    brainLesionsCount = 1,
+    hasLungLesions = true,
+    lungLesionsCount = 1
+)
+
+class EhrTumorDetafilsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
-    private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>>()
+    private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
+        every { find(any()) } returns emptySet()
+    }
     private val extractor = EhrTumorDetailsExtractor(tumorCuration, lesionCuration)
 
     @Test
@@ -95,7 +129,7 @@ class EhrTumorDetailsExtractorTest {
         )
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
-                EHR_PATIENT_RECORD.patientDetails.hashedIdBase64(),
+                EHR_PATIENT_RECORD.patientDetails.hashedId,
                 CurationCategory.PRIMARY_TUMOR,
                 "tumorLocation | tumorType",
                 "Could not find primary tumor config for input 'tumorLocation | tumorType'",
@@ -105,13 +139,8 @@ class EhrTumorDetailsExtractorTest {
 
     @Test
     fun `Should curate lesions from the radiology report in lesion site`() {
-        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
-        every { lesionCuration.find(CONCLUSION_1) } returns setOf(
-            LesionLocationConfig(
-                input = CONCLUSION_1,
-                location = "brain",
-                category = LesionLocationCategory.BRAIN
-            )
+        setupLesionCuration(
+            CONCLUSION_1, BRAIN_LESION_LOCATION_CONFIG
         )
         every { lesionCuration.find(CONCLUSION_2) } returns setOf(
             LesionLocationConfig(
@@ -134,16 +163,62 @@ class EhrTumorDetailsExtractorTest {
         assertThat(result.extracted).isEqualTo(
             TUMOR_DETAILS.copy(
                 hasBrainLesions = true,
+                brainLesionsCount = 1,
                 otherLesions = listOf("other")
             )
         )
         assertThat(result.evaluation.warnings).containsExactly(
             CurationWarning(
-                EHR_PATIENT_RECORD.patientDetails.hashedIdBase64(),
+                EHR_PATIENT_RECORD.patientDetails.hashedId,
                 CurationCategory.LESION_LOCATION,
                 CONCLUSION_3,
                 "Could not find lesion config for input 'conclusion 3'",
             )
         )
+    }
+
+    @Test
+    fun `Should curate lesions from prior conditions, supporting multiple configs per input, but ignore any curation warnings`() {
+        setupLesionCuration(
+            PRIOR_CONDITION_INPUT, BRAIN_LESION_LOCATION_CONFIG, LUNG_LESION_LOCATION_CONFIG
+        )
+        val result =
+            extractor.extract(
+                EHR_PATIENT_RECORD.copy(
+                    priorOtherConditions = listOf(
+                        EHR_PRIOR_OTHER_CONDITION,
+                        EHR_PRIOR_OTHER_CONDITION.copy(name = "another prior condition")
+                    )
+                )
+            )
+        assertThat(result.extracted).isEqualTo(BRAIN_AND_LUNG_LESION_TUMOR_DETAILS)
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(PRIOR_CONDITION_INPUT)
+    }
+
+    @Test
+    fun `Should curate lesions from treatment history, supporting multiple configs per input, but ignore any curation warnings`() {
+        setupLesionCuration(
+            TREATMENT_HISTORY_INPUT,
+            BRAIN_LESION_LOCATION_CONFIG,
+            LUNG_LESION_LOCATION_CONFIG
+        )
+        val result =
+            extractor.extract(
+                EHR_PATIENT_RECORD.copy(
+                    treatmentHistory = listOf(
+                        EhrTestData.createEhrTreatmentHistory().copy(treatmentName = TREATMENT_HISTORY_INPUT),
+                        EhrTestData.createEhrTreatmentHistory().copy(treatmentName = "another treatment history")
+                    )
+                )
+            )
+        assertThat(result.extracted).isEqualTo(BRAIN_AND_LUNG_LESION_TUMOR_DETAILS)
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(TREATMENT_HISTORY_INPUT)
+    }
+
+    private fun setupLesionCuration(input: String, vararg lesionLocationConfig: LesionLocationConfig) {
+        every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
+        every { lesionCuration.find(input) } returns lesionLocationConfig.toSet()
     }
 }

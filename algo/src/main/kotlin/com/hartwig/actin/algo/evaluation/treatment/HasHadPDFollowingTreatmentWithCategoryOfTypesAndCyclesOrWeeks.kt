@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
+import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverableUndetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.DateComparison.minWeeksBetweenDates
@@ -17,8 +18,8 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentEvaluations = record.clinical.oncologicalHistory.map { treatmentHistoryEntry ->
-            val isTrial = TrialFunctions.treatmentMayMatchCategoryAsTrial(treatmentHistoryEntry, category)
+        val treatmentEvaluations = record.oncologicalHistory.map { treatmentHistoryEntry ->
+            val mayMatchAsTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, category)
             val categoryMatches = treatmentHistoryEntry.categories().contains(category)
 
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
@@ -38,7 +39,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 
                 PDFollowingTreatmentEvaluation.create(
                     hadTreatment = true,
-                    hadTrial = isTrial,
+                    hadTrial = mayMatchAsTrial,
                     hadPD = treatmentResultedInPD,
                     hadCyclesOrWeeks = meetsMinCycles && meetsMinWeeks,
                     hadUnclearCycles = minCycles != null && cycles == null,
@@ -46,7 +47,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 )
             } ?: PDFollowingTreatmentEvaluation.create(
                 hadTreatment = if (categoryMatches && !treatmentHistoryEntry.hasTypeConfigured()) null else false,
-                hadTrial = isTrial
+                hadTrial = mayMatchAsTrial
             )
         }
             .toSet()
@@ -77,15 +78,18 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                undetermined(" but uncertain if there has been PD")
+                val messageEnd = "received ${treatment()} but uncertain if there has been PD"
+                recoverableUndetermined("Patient has $messageEnd", "Has $messageEnd")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
-                undetermined(" but uncertain if there has been PD & unknown nr of cycles")
+                val messageEnd = "received ${treatment()} but uncertain if there has been PD & unknown nr of cycles"
+                recoverableUndetermined("Patient has $messageEnd", "Has $messageEnd")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                undetermined(" but uncertain if there has been PD & unclear nr of weeks")
+                val messageEnd = "received ${treatment()} but uncertain if there has been PD & unclear nr of weeks"
+                recoverableUndetermined("Patient has $messageEnd", "Has $messageEnd")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {

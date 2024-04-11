@@ -12,17 +12,17 @@ class PriorMolecularTestComparatorTest {
         val test2 = withItem("TP53")
         val test3 = withItem("ZZZ")
         val test4 = withItem("CK20")
-        val sorted = listOf(test1, test2, test3, test4).sortedWith(PriorMolecularTestComparator())
+        val test5 = withItem(null)
+        val sorted = listOf(test1, test2, test3, test4, test5).sortedWith(PriorMolecularTestComparator())
 
-        assertThat(sorted[0]).isEqualTo(test4)
-        assertThat(sorted[1]).isEqualTo(test2)
-        assertThat(sorted[2].item).isEqualTo("ZZZ")
+        assertThat(sorted[0]).isEqualTo(test5)
+        assertThat(sorted[1]).isEqualTo(test4)
+        assertThat(sorted[2]).isEqualTo(test2)
         assertThat(sorted[3].item).isEqualTo("ZZZ")
+        assertThat(sorted[4].item).isEqualTo("ZZZ")
     }
 
-    companion object {
-        private fun withItem(item: String): PriorMolecularTest {
-            return PriorMolecularTest(item = item, test = "", impliesPotentialIndeterminateStatus = false)
-        }
+    private fun withItem(item: String?): PriorMolecularTest {
+        return PriorMolecularTest(item = item, test = "", impliesPotentialIndeterminateStatus = false)
     }
 }

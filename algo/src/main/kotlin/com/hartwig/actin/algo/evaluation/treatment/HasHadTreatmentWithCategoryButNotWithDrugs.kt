@@ -15,12 +15,17 @@ class HasHadTreatmentWithCategoryButNotWithDrugs(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentSummary =
-            TreatmentSummaryForCategory.createForTreatmentHistory(record.clinical.oncologicalHistory, category) { entry ->
-                entry.allTreatments().none { (it as? DrugTreatment)?.drugs?.intersect(ignoreDrugs)?.isNotEmpty() == true }
-            }
+        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
+            record.oncologicalHistory,
+            category,
+            { historyEntry ->
+                historyEntry.allTreatments().none { (it as? DrugTreatment)?.drugs?.intersect(ignoreDrugs)?.isNotEmpty() == true }
+            },
+            { treatment -> (treatment as? DrugTreatment)?.drugs.isNullOrEmpty() }
+        )
 
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
+
         return when {
             treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass("Has received ${category.display()} ignoring $ignoreDrugsList")
 

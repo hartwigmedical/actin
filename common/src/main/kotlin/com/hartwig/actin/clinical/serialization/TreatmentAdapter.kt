@@ -11,7 +11,6 @@ import java.lang.reflect.Type
 
 class TreatmentAdapter : JsonDeserializer<Treatment?> {
 
-    @Throws(JsonParseException::class)
     override fun deserialize(jsonElement: JsonElement, type: Type, context: JsonDeserializationContext): Treatment? {
         return try {
             if (jsonElement.isJsonNull) null else {

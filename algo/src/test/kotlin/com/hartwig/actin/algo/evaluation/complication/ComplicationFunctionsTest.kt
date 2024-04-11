@@ -1,22 +1,24 @@
 package com.hartwig.actin.algo.evaluation.complication
 
 import com.hartwig.actin.PatientRecord
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.evaluation.complication.ComplicationTestFactory.complication
-import com.hartwig.actin.algo.evaluation.general.WHOFunctions.COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class ComplicationFunctionsTest {
 
+    private val COMPLICATION_CATEGORY: List<String> =
+        mutableListOf("Ascites", "Pleural effusion", "Pericardial effusion", "Pain", "Spinal cord compression")
+
     @Test
     fun `Should return empty for category search when complications are null`() {
-        val record: PatientRecord = TestDataFactory.createMinimalTestPatientRecord()
+        val record: PatientRecord = TestPatientFactory.createMinimalTestPatientRecord()
         val filteredComplicationNames =
-            ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
+            ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, COMPLICATION_CATEGORY)
         assertThat(filteredComplicationNames).isEmpty()
         val filteredComplicationCategories =
-            ComplicationFunctions.findComplicationCategoriesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
+            ComplicationFunctions.findComplicationCategoriesMatchingAnyCategory(record, COMPLICATION_CATEGORY)
         assertThat(filteredComplicationCategories).isEmpty()
     }
 
@@ -28,22 +30,20 @@ class ComplicationFunctionsTest {
             complication(name = "second matching", categories = setOf("chronic pain issues", "nothing"))
         )
 
-        val base = TestDataFactory.createMinimalTestPatientRecord()
+        val base = TestPatientFactory.createMinimalTestPatientRecord()
 
         val record: PatientRecord = base.copy(
-            clinical = base.clinical.copy(
-                complications = complications, clinicalStatus = base.clinical.clinicalStatus.copy(hasComplications = true)
-            )
+            complications = complications, clinicalStatus = base.clinicalStatus.copy(hasComplications = true)
         )
 
         val filteredComplicationNames =
-            ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
+            ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, COMPLICATION_CATEGORY)
         assertThat(filteredComplicationNames).hasSize(2)
         assertThat(filteredComplicationNames).contains("first matching")
         assertThat(filteredComplicationNames).contains("second matching")
         
         val filteredComplicationCategories =
-            ComplicationFunctions.findComplicationCategoriesMatchingAnyCategory(record, COMPLICATION_CATEGORIES_AFFECTING_WHO_STATUS)
+            ComplicationFunctions.findComplicationCategoriesMatchingAnyCategory(record, COMPLICATION_CATEGORY)
         assertThat(filteredComplicationCategories).hasSize(3)
         assertThat(filteredComplicationCategories).contains("the ascites category")
         assertThat(filteredComplicationCategories).contains("Pleural Effusions")

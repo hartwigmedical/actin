@@ -1,8 +1,9 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
+import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.treatment.EfficacyEvidenceDetailsGenerator
+import com.hartwig.actin.report.pdf.tables.soc.EfficacyEvidenceDetailsGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
@@ -10,7 +11,7 @@ import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 
-class EfficacyEvidenceDetailsChapter(private val socMatches: List<AnnotatedTreatmentMatch>?) : ReportChapter {
+class EfficacyEvidenceDetailsChapter(private val report: Report) : ReportChapter {
     override fun name(): String {
         return "SOC literature details"
     }
@@ -29,6 +30,7 @@ class EfficacyEvidenceDetailsChapter(private val socMatches: List<AnnotatedTreat
     }
 
     private fun addEfficacyEvidenceDetails(document: Document) {
+        val socMatches = report.treatmentMatch.standardOfCareMatches?.filter(AnnotatedTreatmentMatch::eligible)
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generators: MutableList<TableGenerator> = mutableListOf()
         val allAnnotations = socMatches?.flatMap { it.annotations } ?: emptyList()

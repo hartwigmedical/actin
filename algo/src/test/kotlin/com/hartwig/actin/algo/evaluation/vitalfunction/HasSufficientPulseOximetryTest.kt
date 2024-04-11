@@ -29,7 +29,7 @@ class HasSufficientPulseOximetryTest {
         val pulseOximetries = listOf(
             pulseOximetry(referenceDateTime.minusMonths(3), 92.0),
             pulseOximetry(referenceDateTime.minusMonths(2), 92.0),
-            pulseOximetry(referenceDateTime, 89.0)
+            pulseOximetry(referenceDateTime, 84.0)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }
@@ -54,10 +54,19 @@ class HasSufficientPulseOximetryTest {
     }
 
     @Test
-    fun `Should fail when median SpO2 is below reference value`() {
+    fun `Should evaluate to undetermined when median SpO2 is below reference value but within margin of error`() {
         val pulseOximetries = listOf(
-            pulseOximetry(referenceDateTime, 89.0),
-            pulseOximetry(referenceDateTime.plusDays(1), 89.0)
+            pulseOximetry(referenceDateTime, 88.0),
+            pulseOximetry(referenceDateTime.plusDays(1), 89.0),
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+    }
+
+    @Test
+    fun `Should fail when median SpO2 is below reference value and outside margin of error`() {
+        val pulseOximetries = listOf(
+            pulseOximetry(referenceDateTime, 84.0),
+            pulseOximetry(referenceDateTime.plusDays(1), 84.0)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
     }

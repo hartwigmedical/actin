@@ -10,9 +10,9 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?)
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentHistory =
             if (categoryToIgnore == null) {
-                record.clinical.oncologicalHistory
+                record.oncologicalHistory
             } else {
-                record.clinical.oncologicalHistory.filterNot { it.categories().contains(categoryToIgnore) }
+                record.oncologicalHistory.filterNot { it.categories().contains(categoryToIgnore) }
             }
 
         return if (treatmentHistory.isEmpty()) {
@@ -22,7 +22,7 @@ class HasHadAnyCancerTreatment(private val categoryToIgnore: TreatmentCategory?)
             val treatmentDisplay = "${categoryDisplay}(treatment(s): ${treatmentHistory.joinToString(", ") { it.treatmentDisplay() }})"
             EvaluationFactory.pass(
                     "Patient has had prior cancer treatment $treatmentDisplay",
-                    "Had had any cancer treatment $treatmentDisplay"
+                "Had received prior cancer treatment(s)"
                 )
         }
     }

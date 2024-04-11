@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.datamodel
 
-import com.hartwig.actin.TestDataFactory
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
 import com.hartwig.actin.trial.datamodel.CohortMetadata
@@ -16,8 +16,8 @@ object TestTreatmentMatchFactory {
 
     fun createMinimalTreatmentMatch(): TreatmentMatch {
         return TreatmentMatch(
-            patientId = TestDataFactory.TEST_PATIENT,
-            sampleId = TestDataFactory.TEST_SAMPLE,
+            patientId = TestPatientFactory.TEST_PATIENT,
+            sampleId = TestPatientFactory.TEST_SAMPLE,
             trialSource = "EMC",
             referenceDate = LocalDate.of(2021, 8, 2),
             referenceDateIsLive = true,
@@ -36,7 +36,8 @@ object TestTreatmentMatchFactory {
                     trialId = "Test Trial 1",
                     open = true,
                     acronym = "TEST-1",
-                    title = "Example test trial 1"
+                    title = "Example test trial 1",
+                    nctId = "NCT00000010"
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),
@@ -47,7 +48,8 @@ object TestTreatmentMatchFactory {
                     trialId = "Test Trial 2",
                     open = true,
                     acronym = "TEST-2",
-                    title = "Example test trial 2"
+                    title = "Example test trial 2",
+                    nctId = "NCT00000002"
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),
