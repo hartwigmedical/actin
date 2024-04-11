@@ -152,6 +152,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     STEROID(TreatmentCategory.SUPPORTIVE_TREATMENT),
     TAXANE(TreatmentCategory.CHEMOTHERAPY),
     THYMIDINE_PHOSPHORYLASE_INHIBITOR(TreatmentCategory.CHEMOTHERAPY),
+    TLR_AGONIST(TreatmentCategory.IMMUNOTHERAPY, "TLR agonist"),
     TOPO1_INHIBITOR(TreatmentCategory.CHEMOTHERAPY, "TOPO1 inhibitor"),
     TOPO2_INHIBITOR(TreatmentCategory.CHEMOTHERAPY, "TOPO2 inhibitor"),
     TRK_RECEPTOR_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "TRK receptor inhibitor"),
