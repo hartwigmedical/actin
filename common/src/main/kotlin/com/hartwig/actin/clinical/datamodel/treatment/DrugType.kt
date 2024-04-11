@@ -132,6 +132,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     PDGFRA_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "PDGFRA inhibitor"),
     PDGFRA_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "PDGFRA TKI"),
     PDGFRB_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "PDGFRB inhibitor"),
+    PDGFRB_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "PDGFRB TKI"),
     PIK3CA_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "PIK3CA inhibitor"),
     PLATINUM_COMPOUND(TreatmentCategory.CHEMOTHERAPY),
     PROGESTIN(TreatmentCategory.HORMONE_THERAPY),
