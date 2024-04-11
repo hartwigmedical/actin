@@ -74,12 +74,22 @@ data class ArcherMolecularTest(
 
     companion object {
         fun fromPriorMolecularTests(results: List<PriorMolecularTest>): List<ArcherMolecularTest> {
-            // TODO safety assertion on test type and date consistency (date to be added in ACTIN-703)?
-            val variants = results.mapNotNull { result ->
-                Variant(gene = result.item, hgvsCodingImpact = result.measure ?: "")
+            val groups = results
+                .filter { it.test == "Archer FP Lung Target" }
+                .groupBy { it.measureDate }
+
+            return groups.map { (date, results) ->
+                val variants = results.mapNotNull { result ->
+                    result.item?.let { item ->
+                        Variant(gene = item, hgvsCodingImpact = result.measure ?: "")
+                    }
+                }
+
+                // TODO (kz): we haven't seen an example of fusions in the data yet,
+                //  figure out how they are represented and add them here when we do
+                ArcherMolecularTest(ExperimentType.ARCHER, date = date,
+                    result = ArcherPanel(date, variants, fusions = emptyList()))
             }
-            return listOf(ArcherMolecularTest(ExperimentType.ARCHER, date = null,
-                result = ArcherPanel(null, variants, fusions = emptyList())))
         }
     }
 }
