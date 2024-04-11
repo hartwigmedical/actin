@@ -19,7 +19,7 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<L
                 val warning = CurationWarning(
                     patientId = patientId,
                     category = CurationCategory.LABORATORY_TRANSLATION,
-                    feedInput = input.code,
+                    feedInput = "$trimmedName | ${input.code}",
                     message = "Could not find laboratory translation for lab value with code '${input.code}' and name '$trimmedName'"
                 )
                 ExtractionResult(emptyList(), CurationExtractionEvaluation(warnings = setOf(warning)))
@@ -39,6 +39,7 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<L
     }
 
     companion object {
-        fun create(curationDatabaseContext: CurationDatabaseContext) = LabValueExtractor(laboratoryTranslation = curationDatabaseContext.laboratoryTranslation)
+        fun create(curationDatabaseContext: CurationDatabaseContext) =
+            LabValueExtractor(laboratoryTranslation = curationDatabaseContext.laboratoryTranslation)
     }
 }

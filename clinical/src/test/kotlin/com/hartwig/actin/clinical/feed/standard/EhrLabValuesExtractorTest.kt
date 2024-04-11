@@ -9,19 +9,19 @@ import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import io.mockk.every
 import io.mockk.mockk
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 
 private const val LAB_CODE = "HGB"
-
-private val LAB_IDENTIFIERS = LaboratoryIdentifiers(LAB_CODE, "Hemoglobie")
+private const val LAB_NAME = "Hemoglobie"
+private val LAB_IDENTIFIERS = LaboratoryIdentifiers(LAB_CODE, LAB_NAME)
 private const val HEMOGLOBIN_TRANSLATED = "Hemoglobin"
 
 private val EHR_LAB_VALUE = EhrLabValue(
     evaluationTime = LocalDateTime.of(2024, 2, 28, 0, 0),
-    measure = "Hemoglobie",
+    measure = LAB_NAME,
     measureCode = LAB_CODE,
     value = 12.0,
     unit = "g/dL",
@@ -93,8 +93,8 @@ class EhrLabValuesExtractorTest {
             CurationWarning(
                 patientId = HASHED_ID_IN_BASE64,
                 category = CurationCategory.LABORATORY_TRANSLATION,
-                feedInput = LAB_CODE,
-                message = "Could not find laboratory translation for lab value with code 'HGB' and name 'Hemoglobie'"
+                feedInput = "$LAB_NAME | $LAB_CODE",
+                message = "Could not find laboratory translation for lab value with code '$LAB_CODE' and name '$LAB_NAME'"
             )
         )
     }
