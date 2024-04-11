@@ -15,6 +15,7 @@ data class EhrPatientRecord(
     val complications: List<EhrComplication> = emptyList(),
     val labValues: List<EhrLabValue> = emptyList(),
     val medications: List<EhrMedication>? = emptyList(),
+    val molecularTestHistory: List<EhrMolecularTest> = emptyList(),
     val patientDetails: EhrPatientDetail,
     val priorOtherConditions: List<EhrPriorOtherCondition> = emptyList(),
     val surgeries: List<EhrSurgery> = emptyList(),
@@ -118,6 +119,14 @@ data class EhrMedication(
     val administrationOnlyIfNeeded: Boolean?,
     val isTrial: Boolean,
     val isSelfCare: Boolean
+)
+
+@JacksonSerializable
+data class EhrMolecularTest(
+    val type: String,
+    val measure: String?,
+    val result: String,
+    val resultDate: LocalDate,
 )
 
 @JacksonSerializable
