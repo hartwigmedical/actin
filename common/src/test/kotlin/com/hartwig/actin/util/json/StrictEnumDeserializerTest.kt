@@ -15,7 +15,7 @@ class StrictEnumDeserializerTest {
 
     @Test
     fun `Should deserialize valid enum value`() {
-        assertThat(gson.fromJson(JsonPrimitive("BRACHYTHERAPY"), RadiotherapyType::class.java))
+        assertThat(gson.fromJson(JsonPrimitive("Brachytherapy"), RadiotherapyType::class.java))
             .isEqualTo(RadiotherapyType.BRACHYTHERAPY)
     }
 
