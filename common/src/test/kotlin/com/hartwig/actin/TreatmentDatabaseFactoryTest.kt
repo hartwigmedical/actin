@@ -11,7 +11,7 @@ class TreatmentDatabaseFactoryTest {
 
     @Test
     fun `Should create database from directory`() {
-        val treatmentDatabase = createFromPath(resourceOnClasspath("clinical"))
+        val treatmentDatabase = createFromPath(resourceOnClasspath("clinical/treatment_db"))
         assertThat(treatmentDatabase).isNotNull()
         assertThat(treatmentDatabase.findTreatmentByName("Capecitabine+Oxaliplatin")).isNotNull()
         assertThat(treatmentDatabase.findTreatmentByName("CAPECITABINE AND OXALIPLATIN")).isNotNull()
@@ -21,5 +21,11 @@ class TreatmentDatabaseFactoryTest {
     fun `Should throw exception on create when files are missing`() {
         assertThatThrownBy { createFromPath(resourceOnClasspath("molecular")) }
             .isInstanceOf(NoSuchFileException::class.java)
+    }
+
+    @Test
+    fun `Should throw exception on create when invalid type provided in file`() {
+        assertThatThrownBy { createFromPath(resourceOnClasspath("clinical/treatment_db_invalid")) }
+            .isInstanceOf(IllegalArgumentException::class.java)
     }
 }

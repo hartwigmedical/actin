@@ -147,6 +147,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ROS1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ROS1 inhibitor"),
     ROS1_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "ROS1 TKI"),
     SHP2_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "SHP2 inhibitor"),
+    SOMATOSTATIN_ANALOGUE(TreatmentCategory.SUPPORTIVE_TREATMENT),
     SMO_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "SMO inhibitor"),
     SOS1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "SOS1 inhibitor"),
     SRC_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "SRC inhibitor"),
