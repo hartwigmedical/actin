@@ -7,21 +7,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 
-class HasAvailableHPVStatus : EvaluationFunction {
+class HasKnownHPVStatus : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecularHistory.latestMolecularRecord() == null) {
-            return EvaluationFactory.undetermined("HPV status not available (no molecular data)", "Undetermined HPV status (no molecular data)")
-        }
-
-        val molecular = record.molecularHistory.latestMolecularRecord()!!
-
         val (indeterminatePriorTestsForHPV, passPriorTestsForHPV) = record.molecularHistory.allPriorMolecularTests()
             .filter { (it.item?.contains("HPV") ?: false) }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
+        val molecularRecords = record.molecularHistory.allMolecularRecords()
+
         return when {
-            molecular.type == ExperimentType.WHOLE_GENOME && molecular.containsTumorCells -> {
+            molecularRecords.any { it.type == ExperimentType.WHOLE_GENOME && it.containsTumorCells } -> {
                 return EvaluationFactory.pass(
                     "WGS has successfully been performed so molecular results are available for HPV",
                     "WGS results available for HPV"
@@ -33,7 +29,7 @@ class HasAvailableHPVStatus : EvaluationFunction {
                     "HPV result available")
             }
 
-            molecular.type == ExperimentType.WHOLE_GENOME -> {
+            molecularRecords.any { it.type == ExperimentType.WHOLE_GENOME } -> {
                 EvaluationFactory.undetermined(
                     "Undetermined HPV status due to low purity in WGS",
                     "Undetermined HPV status due to low purity in WGS"
@@ -45,6 +41,10 @@ class HasAvailableHPVStatus : EvaluationFunction {
                     "HPV has been tested in a prior molecular test but with indeterminate status",
                     "HPV tested before but indeterminate status"
                 )
+            }
+
+            record.molecularHistory.allMolecularRecords().isEmpty() -> {
+                EvaluationFactory.undetermined("HPV status not available (no molecular data)", "Undetermined HPV status (no molecular data)")
             }
 
             else -> {

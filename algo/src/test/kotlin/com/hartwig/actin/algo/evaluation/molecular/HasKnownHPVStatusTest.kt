@@ -1,13 +1,15 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import org.junit.Test
 
-class HasAvailableHPVStatusTest{
+class HasKnownHPVStatusTest{
 
-    private val function = HasAvailableHPVStatus()
+    private val function = HasKnownHPVStatus()
 
     @Test
     fun `Should pass when WGS test contains sufficient tumor cells`() {
@@ -48,8 +50,10 @@ class HasAvailableHPVStatusTest{
 
     @Test
     fun `Should pass if no WGS performed but correct test is in priorMolecularTest`() {
-        val record = MolecularTestFactory.withPriorTest(MolecularTestFactory.priorMolecularTest(
-                test = "IHC", item = "HPV", impliesIndeterminate = false)
+        val record = TestPatientFactory.createMinimalTestPatientRecord().copy(
+            molecularHistory = MolecularHistory.fromInputs(emptyList(),
+                listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "HPV", impliesIndeterminate = false))
+            )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
@@ -59,10 +63,10 @@ class HasAvailableHPVStatusTest{
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-                    ExperimentType.WHOLE_GENOME,
-                    false,
-                    MolecularTestFactory.priorMolecularTest(item = "Something", impliesIndeterminate = false)
+                TestPatientFactory.createMinimalTestPatientRecord().copy(
+                    molecularHistory = MolecularHistory.fromInputs(emptyList(),
+                        listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something", impliesIndeterminate = false))
+                    )
                 )
             )
         )
