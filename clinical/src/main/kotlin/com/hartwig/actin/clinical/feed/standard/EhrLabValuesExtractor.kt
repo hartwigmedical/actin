@@ -18,7 +18,7 @@ class EhrLabValuesExtractor(private val labTranslation: TranslationDatabase<Labo
                 val warning = CurationWarning(
                     patientId = ehrPatientRecord.patientDetails.hashedId,
                     category = CurationCategory.LABORATORY_TRANSLATION,
-                    feedInput = it.measureCode,
+                    feedInput = "${it.measure} | ${it.measureCode}",
                     message = "Could not find laboratory translation for lab value with code '${it.measureCode}' and name '${it.measure}'"
                 )
                 ExtractionResult(
