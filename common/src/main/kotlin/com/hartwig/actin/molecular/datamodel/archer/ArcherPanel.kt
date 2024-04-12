@@ -6,8 +6,8 @@ val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK", "NRG
 
 data class ArcherPanel(
     val date: LocalDate?,
-    val variants: List<Variant>,
-    val fusions: List<Fusion>,
+    val variants: List<ArcherVariant>,
+    val fusions: List<ArcherFusion>,
 ) {
 
     fun genesWithNoImpact(): Set<String> {

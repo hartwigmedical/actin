@@ -7,7 +7,7 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.archer.Variant
+import com.hartwig.actin.molecular.datamodel.archer.ArcherVariant
 import java.time.LocalDate
 
 interface MolecularTest<T> {
@@ -74,22 +74,21 @@ data class ArcherMolecularTest(
 
     companion object {
         fun fromPriorMolecularTests(results: List<PriorMolecularTest>): List<ArcherMolecularTest> {
-            val groups = results
-                .filter { it.test == "Archer FP Lung Target" }
+            return results.filter { it.test == "Archer FP Lung Target" }
                 .groupBy { it.measureDate }
-
-            return groups.map { (date, results) ->
-                val variants = results.mapNotNull { result ->
-                    result.item?.let { item ->
-                        Variant(gene = item, hgvsCodingImpact = result.measure ?: "")
+                .map { (date, results) ->
+                    val variants = results.mapNotNull { result ->
+                        result.item?.let { item ->
+                            ArcherVariant(gene = item, hgvsCodingImpact = result.measure
+                                ?: throw IllegalArgumentException("Expected measure with hgvs variant but was null for item $item"))
+                        }
                     }
-                }
 
-                // TODO (kz): we haven't seen an example of fusions in the data yet,
-                //  figure out how they are represented and add them here when we do
-                ArcherMolecularTest(ExperimentType.ARCHER, date = date,
-                    result = ArcherPanel(date, variants, fusions = emptyList()))
-            }
+                    // TODO (kz): we haven't seen an example of fusions in the data yet,
+                    //  figure out how they are represented and add them here when we do
+                    ArcherMolecularTest(ExperimentType.ARCHER, date = date,
+                        result = ArcherPanel(date, variants, fusions = emptyList()))
+                }
         }
     }
 }

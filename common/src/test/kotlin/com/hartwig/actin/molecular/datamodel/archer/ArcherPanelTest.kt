@@ -11,10 +11,10 @@ class ArcherPanelTest {
         val archerPanel = ArcherPanel(
             date = LocalDate.of(2021, 1, 1),
             variants = listOf(
-                Variant("ALK", "c.1A>T"),
+                ArcherVariant("ALK", "c.1A>T"),
             ),
             fusions = listOf(
-                Fusion("RET", "MET"),
+                ArcherFusion("RET", "MET"),
             )
         )
 

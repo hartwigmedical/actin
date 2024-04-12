@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.archer
 
-class Variant(
+class ArcherVariant(
     val gene: String,
     val hgvsCodingImpact: String
 )
