@@ -9,7 +9,7 @@ class PatientRecordJsonTest {
 
     @Test
     fun `Should be able to read and write Patient Record to JSON`() {
-        val patientRecord = TestPatientFactory.createProperTestPatientRecord()
+        val patientRecord = TestPatientFactory.createExhaustiveTestPatientRecord()
         val convertedPatientRecord = fromJson(toJson(patientRecord))
         assertThat(convertedPatientRecord).isEqualTo(patientRecord)
     }
