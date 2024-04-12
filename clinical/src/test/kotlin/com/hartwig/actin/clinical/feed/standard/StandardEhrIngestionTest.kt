@@ -114,23 +114,23 @@ class StandardEhrIngestionTest {
                 categoryName = "Laboratory Translation",
                 requirements = listOf(
                     CurationRequirement(
-                        feedInput = "Neutrof. granulocyten | dc_NeutrGran",
+                        feedInput = "dc_NeutrGran | Neutrof. granulocyten",
                         message = "Could not find laboratory translation for lab value with code 'dc_NeutrGran' and name 'Neutrof. granulocyten'"
                     ),
                     CurationRequirement(
-                        feedInput = "O2-Saturatie gemeten | bg_O2Sgem",
+                        feedInput = "bg_O2Sgem | O2-Saturatie gemeten",
                         message = "Could not find laboratory translation for lab value with code 'bg_O2Sgem' and name 'O2-Saturatie gemeten'"
                     ),
                     CurationRequirement(
-                        feedInput = "Trombocyten | Plt",
+                        feedInput = "Plt | Trombocyten",
                         message = "Could not find laboratory translation for lab value with code 'Plt' and name 'Trombocyten'"
                     ),
                     CurationRequirement(
-                        feedInput = "Lymfocyten | dc_Lymfo",
+                        feedInput = "dc_Lymfo | Lymfocyten",
                         message = "Could not find laboratory translation for lab value with code 'dc_Lymfo' and name 'Lymfocyten'"
                     ),
                     CurationRequirement(
-                        feedInput = "Hemoglobine | Hb",
+                        feedInput = "Hb | Hemoglobine",
                         message = "Could not find laboratory translation for lab value with code 'Hb' and name 'Hemoglobine'"
                     )
                 ),

@@ -93,7 +93,7 @@ class EhrLabValuesExtractorTest {
             CurationWarning(
                 patientId = HASHED_ID_IN_BASE64,
                 category = CurationCategory.LABORATORY_TRANSLATION,
-                feedInput = "$LAB_NAME | $LAB_CODE",
+                feedInput = "$LAB_CODE | $LAB_NAME",
                 message = "Could not find laboratory translation for lab value with code '$LAB_CODE' and name '$LAB_NAME'"
             )
         )

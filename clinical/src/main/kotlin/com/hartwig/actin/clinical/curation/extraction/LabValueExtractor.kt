@@ -19,7 +19,7 @@ class LabValueExtractor(private val laboratoryTranslation: TranslationDatabase<L
                 val warning = CurationWarning(
                     patientId = patientId,
                     category = CurationCategory.LABORATORY_TRANSLATION,
-                    feedInput = "$trimmedName | ${input.code}",
+                    feedInput = "${input.code} | $trimmedName",
                     message = "Could not find laboratory translation for lab value with code '${input.code}' and name '$trimmedName'"
                 )
                 ExtractionResult(emptyList(), CurationExtractionEvaluation(warnings = setOf(warning)))

@@ -61,7 +61,7 @@ class LabValueExtractorTest {
             CurationWarning(
                 PATIENT_ID,
                 CurationCategory.LABORATORY_TRANSLATION,
-                "$CANNOT_CURATE_NAME | $CANNOT_CURATE_CODE",
+                "$CANNOT_CURATE_CODE | $CANNOT_CURATE_NAME",
                 "Could not find laboratory translation for lab value with code '$CANNOT_CURATE_CODE' and name '$CANNOT_CURATE_NAME'"
             )
         )
