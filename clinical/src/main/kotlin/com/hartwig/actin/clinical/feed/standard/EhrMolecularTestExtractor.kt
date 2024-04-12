@@ -26,15 +26,20 @@ class EhrMolecularTestExtractor(
             )
         }
 
-        return ExtractionResult(extractedIHCTests.extracted + extractedOtherMolecularTests,
-            extractedIHCTests.evaluation + CurationExtractionEvaluation())
+        return ExtractionResult(
+            extractedIHCTests.extracted + extractedOtherMolecularTests,
+            extractedIHCTests.evaluation + CurationExtractionEvaluation()
+        )
     }
 }
 
-fun extractIHC(molecularTestCuration: CurationDatabase<MolecularTestConfig>, ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<PriorMolecularTest>> {
+fun extractIHC(
+    molecularTestCuration: CurationDatabase<MolecularTestConfig>,
+    ehrPatientRecord: EhrPatientRecord
+): ExtractionResult<List<PriorMolecularTest>> {
     val linesWithIHC = ehrPatientRecord.tumorDetails.tumorGradeDifferentiation
-        .split("\n")
-        .filter { it.contains(IHC_STRING, ignoreCase = true) }
+        ?.split("\n")
+        ?.filter { it.contains(IHC_STRING, ignoreCase = true) } ?: emptyList()
     return linesWithIHC
         .map { it.replace("\n", "").replace("\r", "") }
         .map {
