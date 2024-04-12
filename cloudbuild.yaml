@@ -9,32 +9,32 @@ steps:
     args: [ '-T 1C deploy --batch-mode' ]
 
   - id: 'Build and push the molecular image with tag'
-    name: 'eu.gcr.io/hmf-build/docker-tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag:1.6.4-beta.1'
     dir: 'molecular'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular', '$TAG_NAME', 'Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
 
   - id: 'Build and push the trial image with tag'
-    name: 'eu.gcr.io/hmf-build/docker-tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag:1.6.4-beta.1'
     dir: 'trial'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-trial', '$TAG_NAME', 'Dockerfile','--build-arg', 'VERSION=$TAG_NAME' ]
 
   - id: 'Build and push the algo image with tag'
-    name: 'eu.gcr.io/hmf-build/docker-tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag:1.6.4-beta.1'
     dir: 'algo'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-algo', '$TAG_NAME', 'Dockerfile','--build-arg', 'VERSION=$TAG_NAME' ]
 
   - id: 'Build and push the report image with tag'
-    name: 'eu.gcr.io/hmf-build/docker-tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag:1.6.4-beta.1'
     dir: 'report'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-report', '$TAG_NAME', 'report.Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
 
   - id: 'Build and push the evaluation image with tag'
-    name: 'eu.gcr.io/hmf-build/docker-tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag:1.6.4-beta.1'
     dir: 'report'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-evaluation', '$TAG_NAME', 'evaluation.Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
 
   - id: 'Build and push the clinical image with tag'
-    name: 'eu.gcr.io/hmf-build/docker-tag'
+    name: 'eu.gcr.io/hmf-build/docker-tag:1.6.4-beta.1'
     dir: 'clinical'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-clinical', '$TAG_NAME', 'Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
 
