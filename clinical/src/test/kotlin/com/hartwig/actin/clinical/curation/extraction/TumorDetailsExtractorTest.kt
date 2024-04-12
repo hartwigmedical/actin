@@ -9,6 +9,10 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -27,6 +31,10 @@ private const val BIOPSY_LOCATION_INPUT = "Biopsy location input"
 
 class TumorDetailsExtractorTest {
 
+    private val tumorStageDeriver = mockk<TumorStageDeriver> {
+        every { derive(any()) } returns null
+    }
+
     @Test
     fun `Should curate tumor with location only`() {
         val (curatedWithoutType, evaluation) = TumorDetailsExtractor(
@@ -41,7 +49,8 @@ class TumorDetailsExtractorTest {
                     primaryTumorExtraDetails = "",
                     doids = emptySet()
                 )
-            )
+            ),
+            tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
         assertThat(curatedWithoutType.primaryTumorLocation).isEqualTo(CURATED_LOCATION)
         assertThat(curatedWithoutType.primaryTumorType).isEmpty()
@@ -63,7 +72,8 @@ class TumorDetailsExtractorTest {
                     primaryTumorExtraDetails = "",
                     doids = emptySet()
                 )
-            )
+            ),
+            tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, null, TUMOR_TYPE_INPUT)
         assertThat(curatedWithoutLocation.primaryTumorLocation).isEmpty()
         assertThat(curatedWithoutLocation.primaryTumorType).isEqualTo(CURATED_TUMOR_TYPE)
@@ -74,7 +84,7 @@ class TumorDetailsExtractorTest {
     @Test
     fun `Should null tumor that does not exist`() {
         val (missing, evaluation) = TumorDetailsExtractor(
-            TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase()
+            TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase(), tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, CANNOT_CURATE, CANNOT_CURATE)
         assertThat(missing.primaryTumorLocation).isNull()
         assertThat(missing.primaryTumorType).isNull()
@@ -94,7 +104,7 @@ class TumorDetailsExtractorTest {
     fun `Should not override lesion locations for unknown biopsies and lesions`() {
         val questionnaire = emptyQuestionnaire().copy(biopsyLocation = BIOPSY_LOCATION_INPUT, otherLesions = listOf(CANNOT_CURATE))
         val (tumorDetails, evaluation) = TumorDetailsExtractor(
-            TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase()
+            TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase(), tumorStageDeriver
         ).extract(PATIENT_ID, questionnaire)
         assertThat(tumorDetails).isEqualTo(TumorDetails(otherLesions = emptyList()))
         assertThat(evaluation.warnings).containsExactlyInAnyOrder(
@@ -126,7 +136,8 @@ class TumorDetailsExtractorTest {
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
                     lesionLocationConfig(LesionLocationCategory.LIVER)
-                ), TestCurationFactory.curationDatabase()
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
             ), questionnaire, expected
         )
     }
@@ -136,12 +147,13 @@ class TumorDetailsExtractorTest {
         assertThat(baseTumor.hasLiverLesions).isNull()
         val questionnaire = emptyQuestionnaire().copy(biopsyLocation = locationLesionInput(LesionLocationCategory.LIVER))
         val expected = TumorDetails(biopsyLocation = curatedLocationLesionInput(LesionLocationCategory.LIVER), hasLiverLesions = true)
-                
+
         assertTumorExtraction(
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
                     lesionLocationConfig(LesionLocationCategory.LIVER)
-                ), TestCurationFactory.curationDatabase()
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
             ), questionnaire, expected
         )
     }
@@ -155,7 +167,8 @@ class TumorDetailsExtractorTest {
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
                     lesionLocationConfig(LesionLocationCategory.CNS)
-                ), TestCurationFactory.curationDatabase()
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
             ), questionnaire, expected
         )
     }
@@ -169,7 +182,8 @@ class TumorDetailsExtractorTest {
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
                     lesionLocationConfig(LesionLocationCategory.BRAIN)
-                ), TestCurationFactory.curationDatabase()
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
             ), questionnaire, expected
         )
     }
@@ -185,7 +199,8 @@ class TumorDetailsExtractorTest {
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
                     lesionLocationConfig(LesionLocationCategory.LYMPH_NODE)
-                ), TestCurationFactory.curationDatabase()
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
             ), questionnaire, expected
         )
     }
@@ -199,22 +214,19 @@ class TumorDetailsExtractorTest {
             TumorDetailsExtractor(
                 TestCurationFactory.curationDatabase(
                     lesionLocationConfig(LesionLocationCategory.BONE)
-                ), TestCurationFactory.curationDatabase()
+                ), TestCurationFactory.curationDatabase(),
+                tumorStageDeriver
             ), questionnaire, expected
         )
     }
 
-    private fun assertTumorExtraction(extractor: TumorDetailsExtractor, questionnaire: Questionnaire, expected: TumorDetails) {
-        val (tumorDetails, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
-        assertThat(tumorDetails).isEqualTo(expected)
-        assertThat(evaluation.warnings).isEmpty()
-    }
 
     @Test
     fun `Should curate other lesions`() {
         val extractor = TumorDetailsExtractor(
             TestCurationFactory.curationDatabase(lesionLocationConfig(LesionLocationCategory.LYMPH_NODE)),
-            TestCurationFactory.curationDatabase()
+            TestCurationFactory.curationDatabase(),
+            tumorStageDeriver
         )
         val lesions = listOf(locationLesionInput(category = LesionLocationCategory.LYMPH_NODE), CANNOT_CURATE)
         val (curatedLesions, evaluation) = extractor
@@ -234,12 +246,48 @@ class TumorDetailsExtractorTest {
         assertThat(evaluation.lesionLocationEvaluatedInputs).isEqualTo(lesions.map(String::lowercase).toSet())
     }
 
+    @Test
+    fun `Should not attempt to derive stages when no curation found`() {
+        TumorDetailsExtractor(
+            TestCurationFactory.curationDatabase(lesionLocationConfig(LesionLocationCategory.LYMPH_NODE)),
+            TestCurationFactory.curationDatabase(),
+            tumorStageDeriver
+        ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
+        verify(exactly = 0) { tumorStageDeriver.derive(any()) }
+    }
+
+    @Test
+    fun `Should call deriver to derive stages when tumor details have been curated`() {
+        TumorDetailsExtractor(
+            TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase(
+                PrimaryTumorConfig(
+                    input = "$TUMOR_LOCATION_INPUT |",
+                    ignore = false,
+                    primaryTumorType = "",
+                    primaryTumorLocation = CURATED_LOCATION,
+                    primaryTumorSubType = "",
+                    primaryTumorSubLocation = "",
+                    primaryTumorExtraDetails = "",
+                    doids = emptySet()
+                )
+            ),
+            tumorStageDeriver
+        ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
+        verify { tumorStageDeriver.derive(any()) }
+    }
+
     private fun lesionLocationConfig(category: LesionLocationCategory) = LesionLocationConfig(
         input = locationLesionInput(category),
         ignore = false,
         location = curatedLocationLesionInput(category),
         category
     )
+
+    private fun assertTumorExtraction(extractor: TumorDetailsExtractor, questionnaire: Questionnaire, expected: TumorDetails) {
+        val (tumorDetails, evaluation) = extractor.extract(PATIENT_ID, questionnaire)
+        assertThat(tumorDetails).isEqualTo(expected)
+        assertThat(evaluation.warnings).isEmpty()
+    }
 
     private fun locationLesionInput(category: LesionLocationCategory): String {
         return "${category.name.lowercase()} lesion input"

@@ -1,4 +1,4 @@
-package com.hartwig.actin.clinical.feed.standard.tumor
+package com.hartwig.actin.clinical.feed.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
