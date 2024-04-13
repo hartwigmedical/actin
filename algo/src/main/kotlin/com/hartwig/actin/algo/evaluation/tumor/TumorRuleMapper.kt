@@ -151,27 +151,27 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasAnyTumorStageCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val stagesToMatch = functionInputResolver().createManyTumorStagesInput(function)
-            HasTumorStage(TumorStageDerivationFunction.create(doidModel()), stagesToMatch)
+            HasTumorStage(stagesToMatch)
         }
     }
 
     private fun hasLocallyAdvancedCancerCreator(): FunctionCreator {
         return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()), HasLocallyAdvancedCancer())
+            DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer())
         }
     }
 
     private fun hasMetastaticCancerCreator(): FunctionCreator {
         return FunctionCreator {
             DerivedTumorStageEvaluationFunction(
-                TumorStageDerivationFunction.create(doidModel()), HasMetastaticCancer(doidModel())
+                HasMetastaticCancer(doidModel())
             )
         }
     }
 
     private fun hasUnresectableCancerCreator(): FunctionCreator {
         return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()), HasUnresectableCancer())
+            DerivedTumorStageEvaluationFunction(HasUnresectableCancer())
         }
     }
 
@@ -181,25 +181,19 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {
         return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(TumorStageDerivationFunction.create(doidModel()), HasUnresectableStageIIICancer())
+            DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer())
         }
     }
 
     private fun hasRecurrentCancerCreator(): FunctionCreator {
         return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(
-                TumorStageDerivationFunction.create(doidModel()),
-                HasRecurrentCancer()
-            )
+            DerivedTumorStageEvaluationFunction(HasRecurrentCancer())
         }
     }
 
     private fun hasIncurableCancerCreator(): FunctionCreator {
         return FunctionCreator {
-            DerivedTumorStageEvaluationFunction(
-                TumorStageDerivationFunction.create(doidModel()),
-                HasIncurableCancer()
-            )
+            DerivedTumorStageEvaluationFunction(HasIncurableCancer())
         }
     }
 

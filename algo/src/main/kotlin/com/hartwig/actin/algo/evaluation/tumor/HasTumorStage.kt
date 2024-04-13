@@ -9,15 +9,13 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
-class HasTumorStage internal constructor(
-    private val tumorStageDerivationFunction: TumorStageDerivationFunction, private val stagesToMatch: Set<TumorStage>
-) : EvaluationFunction {
+class HasTumorStage internal constructor(private val stagesToMatch: Set<TumorStage>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (stagesToMatch.isEmpty()) throw IllegalStateException("No stages to match configured")
         val stage = record.tumor.stage
         if (stage == null) {
-            val derivedStages = tumorStageDerivationFunction.apply(record.tumor)?.toSet()
+            val derivedStages = record.tumor.derivedStages
             return if (derivedStages?.size == 1) {
                 evaluateWithStage(derivedStages.iterator().next())
             } else if (derivedStages?.map { evaluateWithStage(it) }?.all { it.result == EvaluationResult.PASS } == true) {
@@ -34,8 +32,10 @@ class HasTumorStage internal constructor(
                     "Unknown if tumor stage is $stageMessage (data missing) - $derivedStageMessage"
                 )
             } else {
-                fail("No tumor stage details present but based on lesions requested stage cannot be met",
-                    "Tumor stage unknown but requested stage not met based on lesions")
+                fail(
+                    "No tumor stage details present but based on lesions requested stage cannot be met",
+                    "Tumor stage unknown but requested stage not met based on lesions"
+                )
             }
         }
         return evaluateWithStage(stage)
