@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 class HasKnownHPVStatus : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTestsForHPV, conclusivePriorTestsForHPV) = record.molecularHistory.allPriorMolecularTests()
+        val (indeterminatePriorTestsForHPV, conclusivePriorTestsForHPV) = record.molecularHistory.allIHCTests()
             .filter { (it.item?.contains("HPV") ?: false) }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
