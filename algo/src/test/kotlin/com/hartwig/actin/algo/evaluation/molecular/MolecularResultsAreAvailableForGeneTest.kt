@@ -115,7 +115,7 @@ class MolecularResultsAreAvailableForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.WHOLE_GENOME,
                     false,
-                    MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = false)
+                    MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false)
                 )
             )
         )

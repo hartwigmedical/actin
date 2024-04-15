@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinV
 class HasSufficientPDL1ByIHC internal constructor(private val measure: String, private val minPDL1: Double) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorMolecularTests = record.molecularHistory.allPriorMolecularTests()
+        val priorMolecularTests = record.molecularHistory.allIHCTests()
         val pdl1TestsWithRequestedMeasurement =
             PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure)
 
