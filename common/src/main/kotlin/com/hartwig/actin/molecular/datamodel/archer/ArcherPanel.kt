@@ -14,4 +14,8 @@ data class ArcherPanel(
         val genes = variants.map { it.gene }.toSet() + fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
         return ARCHER_ALWAYS_TESTED_GENES - genes
     }
+
+    fun testedGenes(): Set<String> {
+        return variants.map { it.gene }.toSet() + fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet() + ARCHER_ALWAYS_TESTED_GENES
+    }
 }
