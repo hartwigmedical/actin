@@ -1,15 +1,7 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
-import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
-import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
-import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
-import com.hartwig.actin.report.pdf.chapters.SummaryChapter
-import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
-import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
-import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.util.Constants
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.util.Paths
@@ -41,31 +33,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         LOGGER.debug("Initializing output styles")
         Styles.initialize()
 
-        val (includeEfficacyEvidenceDetailsChapter, includeTrialMatchingDetailsChapter) = when {
-            !enableExtendedMode -> {
-                Pair(false, false)
-            }
-
-            report.config.showEfficacy -> {
-                LOGGER.info("Including SOC literature details")
-                Pair(true, false)
-            }
-
-            else -> {
-                LOGGER.info("Including trial matching details")
-                Pair(false, true)
-            }
-        }
-
-        val chapters = listOf(
-            SummaryChapter(report, ExternalTrialSummarizer(report.config.filterTrialsWithOverlappingMolecularTargetsInSummary)) to true,
-            MolecularDetailsChapter(report) to report.config.includeMolecularChapter,
-            EfficacyEvidenceChapter(report) to report.config.showEfficacy,
-            ClinicalDetailsChapter(report) to true,
-            EfficacyEvidenceDetailsChapter(report) to includeEfficacyEvidenceDetailsChapter,
-            TrialMatchingChapter(report, enableExtendedMode) to true,
-            TrialMatchingDetailsChapter(report) to includeTrialMatchingDetailsChapter
-        ).mapNotNull { (chapter, include) -> if (include) chapter else null }
+        val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
         writePdfChapters(report.patientId, chapters, enableExtendedMode)
     }
 

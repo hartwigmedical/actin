@@ -43,13 +43,16 @@ data class EnvironmentConfiguration(
     companion object {
         private val LOGGER = LogManager.getLogger(EnvironmentConfiguration::class.java)
 
-        fun createFromFile(filePath: String, profile: String? = null): EnvironmentConfiguration {
-            val configProfile = profile?.let { ConfigurationProfile.valueOf(it) } ?: ConfigurationProfile.STANDARD
-            val mapper = ObjectMapper(YAMLFactory())
-            mapper.registerModules(KotlinModule.Builder().configure(KotlinFeature.NullIsSameAsDefault, true).build())
-            mapper.findAndRegisterModules()
+        fun create(filePath: String?, profile: String? = null): EnvironmentConfiguration {
+            val rawConfig = filePath?.let {
+                val mapper = ObjectMapper(YAMLFactory())
+                mapper.registerModules(KotlinModule.Builder().configure(KotlinFeature.NullIsSameAsDefault, true).build())
+                mapper.findAndRegisterModules()
+                mapper.readValue(File(filePath), EnvironmentConfiguration::class.java)
+            } ?: EnvironmentConfiguration()
 
-            val rawConfig = mapper.readValue(File(filePath), EnvironmentConfiguration::class.java)
+            val configProfile = profile?.let(ConfigurationProfile::valueOf) ?: ConfigurationProfile.STANDARD
+
             val configuration = when (configProfile) {
                 ConfigurationProfile.CRC -> rawConfig.copy(
                     report = rawConfig.report.copy(

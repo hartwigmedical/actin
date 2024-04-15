@@ -11,7 +11,7 @@ import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 
-class EfficacyEvidenceDetailsChapter(private val report: Report) : ReportChapter {
+class EfficacyEvidenceDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
     override fun name(): String {
         return "SOC literature details"
     }
@@ -23,10 +23,6 @@ class EfficacyEvidenceDetailsChapter(private val report: Report) : ReportChapter
     override fun render(document: Document) {
         addChapterTitle(document)
         addEfficacyEvidenceDetails(document)
-    }
-
-    private fun addChapterTitle(document: Document) {
-        document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
     }
 
     private fun addEfficacyEvidenceDetails(document: Document) {
