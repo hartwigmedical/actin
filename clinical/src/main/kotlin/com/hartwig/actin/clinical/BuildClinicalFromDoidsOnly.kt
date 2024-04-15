@@ -42,8 +42,7 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
                     gender = Gender.FEMALE,
                     birthYear = LocalDate.now().year,
                     registrationDate = LocalDate.now(),
-                    questionnaireDate = null,
-                    otherMolecularPatientId = null
+                    questionnaireDate = null
                 ),
                 tumor = TumorDetails(doids = doids),
                 clinicalStatus = ClinicalStatus(),

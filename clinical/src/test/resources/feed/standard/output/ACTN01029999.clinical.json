@@ -8,8 +8,7 @@
       "month": 1,
       "day": 1
     },
-    "questionnaireDate": null,
-    "otherMolecularPatientId": null
+    "questionnaireDate": null
   },
   "tumor": {
     "primaryTumorLocation": "Lung",
