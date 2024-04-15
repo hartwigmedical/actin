@@ -8,6 +8,8 @@ import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.GenericPanelType
 import java.time.LocalDate
 
 interface MolecularTest<T> {
@@ -23,6 +25,7 @@ class MolecularTestFactory {
                 "Archer FP Lung Target" -> ExperimentType.ARCHER
                 "IHC" -> ExperimentType.IHC
                 "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
+                "AvL Panel" -> ExperimentType.GENERIC_PANEL
                 else -> ExperimentType.OTHER
             }
         }
@@ -33,6 +36,7 @@ class MolecularTestFactory {
                     when (type) {
                         ExperimentType.IHC -> results.map { IHCMolecularTest.fromPriorMolecularTest(it) }
                         ExperimentType.ARCHER -> ArcherMolecularTest.fromPriorMolecularTests(results)
+                        ExperimentType.GENERIC_PANEL -> GenericPanelMolecularTest.fromPriorMolecularTest(results)
                         else -> results.map { OtherPriorMolecularTest.fromPriorMolecularTest(it) }
                     }
                 }
@@ -88,6 +92,23 @@ data class ArcherMolecularTest(
                     //  figure out how they are represented and add them here when we do
                     ArcherMolecularTest(ExperimentType.ARCHER, date = date,
                         result = ArcherPanel(date, variants, fusions = emptyList()))
+                }
+        }
+    }
+}
+
+data class GenericPanelMolecularTest(
+    override val type: ExperimentType,
+    override val date: LocalDate?,
+    override val result: GenericPanel
+) : MolecularTest<GenericPanel> {
+
+    companion object {
+        fun fromPriorMolecularTest(results: List<PriorMolecularTest>): List<GenericPanelMolecularTest> {
+            return results.filter { it.test == "AvL Panel" }
+                .groupBy { it.measureDate }
+                .map { (date, results) ->
+                    GenericPanelMolecularTest(ExperimentType.GENERIC_PANEL, date = date, result = GenericPanel(GenericPanelType.AVL, date))
                 }
         }
     }
