@@ -359,8 +359,9 @@ _Liver function_
 | HAS_ALP_ULN_OF_AT_LEAST_X                             | Alkaline phosphatase (ALP) => X*ULN                         |                                                                                     |
 | HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X                  | Total Bilirubin (TBIL) <= X*ULN                             |                                                                                     |
 | HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X           | Total Bilirubin (TBIL) in umol/L <= X                       |                                                                                     |
-| HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                 | Direct Bilirubin (DBIL) <= X*ULN                            |                                                                                     |
+| HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                 | Direct Bilirubin (DBIL) <= X*ULN                            | Direct Bilirubin = Conjugated bilirubin                                             |
 | HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X | Direct Bilirubin (DBIL) / Total Bilirubin (TBIL) * 100 <= X |                                                                                     |
+| HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X               | Currently resolves to `UNDETERMINED`                        | Indirect Bilirubin = Unconjugated bilirubin                                         |
 
 _Kidney function_
 
@@ -567,23 +568,24 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 
 1] anatomicalMainGroup, therapeuticSubGroup, pharmacologicalSubGroup OR chemicalSubGroup
 
-2] Medication category list:<br>
-Systemic antibiotics: ATC level code equal to "A07A", "G01AA", "R02AB", "L01D", "J01", "J02" or "J04" <br>
-Anticoagulants: ATC level code equal to "B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF" or "B01AX" <br>
-Antiinflammatory and antirheumatic products: ATC level code equal to "M01" <br>
-Antineoplastic agents: ATC level code equal to "L01" <br>
-Platelet aggregation inhibitors: ATC level code equal to "B01AC" <br>
-Antiepileptics: ATC level code equal to "N03" <br>
-Azole medication: ATC level code equal to "A07AC", "D01AC", "G01AF", "G01BF", "G01AG", "J02AC" or "J02AB" <br>
-Bisphosphonates: ATC level code equal to "M05BA" or "M05BB" <br>
-Bone resorptive medication: ATC level code equal to "M05B" or "H05" <br>
-Colony stimulating factors: ATC level code equal to "L03AA" <br>
-Systemic corticosteroids: ATC level code equal to "H02" or "M01BA" <br>
-Coumarin derivative medication: ATC level code equal to "B01AA" <br>
-Gonadorelin medication: ATC level code equal to "H01CC", "H01CA", "G03XA" or "L02AE" <br>
-Immunosuppressants: ATC level code equal to "L04" <br>
-Immunostimulants: ATC level code equal to "L03" <br>
-Other antianemic preparations: ATC level code equal to "B03X" <br>
+2] Medication category list (with corresponding ATC level codes between brackets): <br>
+Anticoagulants ("B01AA", "B01AB", "B01AC", "B01AD", "B01AE", "B01AF" or "B01AX") <br>
+Antiepileptics ("N03") <br>
+Antiinflammatory and antirheumatic products ("M01") <br>
+Antineoplastic agents ("L01") <br>
+Azole ("A07AC", "D01AC", "G01AF", "G01BF", "G01AG", "J02AC" or "J02AB") <br>
+Bisphosphonates ("M05BA" or "M05BB") <br>
+Bone resorptive ("M05B" or "H05") <br>
+Colony stimulating factors ("L03AA") <br>
+Coumarin derivative ("B01AA") <br>
+Gonadorelin ("H01CC", "H01CA", "G03XA" or "L02AE") <br>
+Immunostimulants ("L03") <br>
+Immunosuppressants ("L04") <br>
+Other antianemic preparations ("B03X") <br>
+Platelet aggregation inhibitors ("B01AC") <br>
+RANKL targeting agents ("M05BX04") <br>
+Systemic antibiotics ("A07A", "G01AA", "R02AB", "L01D", "J01", "J02" or "J04") <br>
+Systemic corticosteroids ("H02" or "M01BA") <br>
 
 ##### Rules related to washout period
 
@@ -602,14 +604,14 @@ Other antianemic preparations: ATC level code equal to "B03X" <br>
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_WITHIN_X_WEEKS_Y_HALF_LIVES                   | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3] and active X weeks prior to evaluation date                                 | Half-lives is currently ignored. Does not include radiotherapy or surgery, these are separate rules. |
 | HAS_RECEIVED_ANY_ANTI_CANCER_THERAPY_EXCL_CATEGORIES_X_WITHIN_Y_WEEKS_Z_HALF_LIVES | Medication > atc.<atcLevel>.code equal to <category> where <atcLevel> is a level defined above in 1] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived from "Gonadorelin" using the table below in 3], excluding ATC codes equal to X OR if X present in 3] use derived ATC codes | Half-lives currently ignored. Does not include radiotherapy or surgery, these are separate rules.    |
 
-3] Cancer therapy list:<br>
-Chemotherapy: ATC level code equal to "L01XA", "L01BC", "L01CD" or "L01A" <br>
-Immunotherapy: ATC level code equal to "L01FF" or "L01FX04" (Ipilimumab) <br>
-PARP inhibitors: ATC level code equal to "L01XK" <br>
-Gonadorelin: ATC level code equal to "H01CC", "H01CA", "G03XA" or "L02AE" <br>
-Hypomethylating agents: ATC level code equal to "L01BC07" (Azacitidine) or "L01BC08" (Decitabine) <br>
-Monoclonal antibodies and antibody drug conjugates: ATC level code equal to "L01F" <br>
-Endocrine therapy: ATC level code equal to "L02" <br>
+3] Cancer therapy list (with corresponding ATC level codes between brackets): <br>
+Chemotherapy ("L01XA", "L01BC", "L01CD" or "L01A") <br>
+Endocrine therapy ("L02") <br>
+Gonadorelin ("H01CC", "H01CA", "G03XA" or "L02AE") <br>
+Hypomethylating agents ("L01BC07" (Azacitidine) or "L01BC08" (Decitabine)) <br>
+Immunotherapy ("L01FF" or "L01FX04" (Ipilimumab)) <br>
+Monoclonal antibodies and antibody drug conjugates ("L01F") <br>
+PARP inhibitors ("L01XK") <br>
 
 Note that for all configured nr of weeks, 2 weeks are subtracted from the latest medication date, since these weeks will pass by anyway.
 
