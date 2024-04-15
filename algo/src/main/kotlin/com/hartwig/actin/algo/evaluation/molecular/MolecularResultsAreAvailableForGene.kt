@@ -6,23 +6,25 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 
 class MolecularResultsAreAvailableForGene(private val gene: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        if (record.molecularHistory.latestMolecularRecord() == null) {
+
+        if (!record.molecularHistory.hasMolecularData()) {
             return EvaluationFactory.undetermined("No molecular data", "No molecular data")
         }
 
-        val molecular = record.molecularHistory.latestMolecularRecord()!!
-        if (molecular.type == ExperimentType.WHOLE_GENOME && molecular.containsTumorCells) {
+        val molecular = record.molecularHistory.latestMolecularRecord()
+        if (molecular != null && molecular.type == ExperimentType.WHOLE_GENOME && molecular.containsTumorCells) {
             return EvaluationFactory.pass(
                 "WGS has successfully been performed so molecular results are available for gene $gene",
                 "WGS results available for $gene"
             )
         }
 
-        if (molecular.type == ExperimentType.TARGETED && molecular.containsTumorCells) {
+        if (molecular != null && molecular.type == ExperimentType.TARGETED && molecular.containsTumorCells) {
             val geneIsTested = molecular.drivers.copyNumbers
                 .any { it.gene == gene }
             return if (geneIsTested) {
@@ -36,6 +38,20 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             }
         }
 
+        if (isGeneTestedInArcher(record.molecularHistory)) {
+            return EvaluationFactory.pass(
+                "Archer panel has been performed and molecular results are available for gene $gene",
+                "Archer panel results available for $gene"
+            )
+        }
+
+        if (isGeneTestedInGenericPanel(record.molecularHistory)) {
+            return EvaluationFactory.pass(
+                "Panel has been performed and molecular results are available for gene $gene",
+                "Panel results available for $gene"
+            )
+        }
+
         val (indeterminatePriorTestsForGene, passPriorTestsForGene) = record.molecularHistory.allIHCTests()
             .filter { it.item == gene }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
@@ -46,14 +62,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
                     "$gene tested before")
             }
 
-            molecular.type == ExperimentType.WHOLE_GENOME && !molecular.containsTumorCells -> {
+            molecular != null && molecular.type == ExperimentType.WHOLE_GENOME && !molecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had WGS but biopsy contained no tumor cells",
                     "WGS performed containing $gene, but sample purity was too low"
                 )
             }
 
-            molecular.type == ExperimentType.TARGETED && !molecular.containsTumorCells -> {
+            molecular != null && molecular.type == ExperimentType.TARGETED && !molecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had OncoAct tumor NGS panel but biopsy contained too little tumor cells",
                     "OncoAct tumor NGS panel performed containing $gene, but sample purity was too low"
@@ -71,5 +87,13 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
                 EvaluationFactory.fail("$gene has not been tested", "$gene not tested")
             }
         }
+    }
+
+    private fun isGeneTestedInArcher(molecularHistory: MolecularHistory): Boolean {
+        return molecularHistory.allArcherPanels().any { gene in it.testedGenes() }
+    }
+
+    private fun isGeneTestedInGenericPanel(molecularHistory: MolecularHistory): Boolean {
+        return molecularHistory.allGenericPanels().any { gene in it.testedGenes() }
     }
 }

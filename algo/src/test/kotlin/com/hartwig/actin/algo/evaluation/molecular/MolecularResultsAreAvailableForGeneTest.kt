@@ -134,4 +134,66 @@ class MolecularResultsAreAvailableForGeneTest {
             )
         )
     }
+
+    @Test
+    fun `Should pass for gene that is always tested in Archer panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            MolecularResultsAreAvailableForGene("ALK")
+                .evaluate(
+                    MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                        listOf(MolecularTestFactory.archerPriorMolecularNoFusionsFoundRecord())
+                    )
+                )
+        )
+    }
+
+    @Test
+    fun `Should pass if gene is explicitly tested in Archer panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(MolecularTestFactory.archerPriorMolecularVariantRecord("gene 1", "c.1A>T"))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail for Archer if gene is not tested in panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(MolecularTestFactory.archerPriorMolecularVariantRecord("gene 2", "c.1A>T"))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass for gene that is always tested in generic panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            MolecularResultsAreAvailableForGene("EGFR")
+                .evaluate(
+                    MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                        listOf(MolecularTestFactory.avlPanelPriorMolecularNoMutationsFoundRecord())
+                    )
+                )
+        )
+    }
+
+    @Test
+    fun `Should fail for generic panel if gene is not tested in panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(MolecularTestFactory.avlPanelPriorMolecularNoMutationsFoundRecord())
+                )
+            )
+        )
+    }
 }

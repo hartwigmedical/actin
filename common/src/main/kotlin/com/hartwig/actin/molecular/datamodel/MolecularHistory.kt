@@ -39,7 +39,7 @@ data class MolecularHistory(
     }
 
     fun hasMolecularData(): Boolean {
-        return allMolecularRecords().isNotEmpty()
+        return molecularTests.isNotEmpty()
     }
 
     companion object {
