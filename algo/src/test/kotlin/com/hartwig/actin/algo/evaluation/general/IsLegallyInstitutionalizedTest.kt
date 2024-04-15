@@ -11,7 +11,7 @@ class IsLegallyInstitutionalizedTest {
     fun canEvaluate() {
         val function = IsLegallyInstitutionalized()
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

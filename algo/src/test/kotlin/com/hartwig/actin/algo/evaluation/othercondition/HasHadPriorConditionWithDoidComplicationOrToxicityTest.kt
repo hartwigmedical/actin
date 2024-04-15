@@ -24,7 +24,7 @@ class HasHadPriorConditionWithDoidComplicationOrToxicityTest {
         TestDoidModelFactory.createWithOneDoidAndTerm(DOID, DOID_TERM), DOID, COMPLICATION_CATEGORY, TOXICITY_CATEGORY
     )
 
-    private val minimalPatient = TestPatientFactory.createMinimalTestPatientRecord()
+    private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     private val complication = OtherConditionTestFactory.complication(
         categories = setOf(COMPLICATION_CATEGORY),

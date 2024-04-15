@@ -12,7 +12,7 @@ class IsNotEligibleForCurativeTreatmentTest {
         val function = IsNotEligibleForCurativeTreatment()
         assertEvaluation(
             EvaluationResult.NOT_EVALUATED,
-            function.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

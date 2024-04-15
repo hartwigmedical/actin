@@ -7,7 +7,7 @@ import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Medication
 
 internal object ComplicationTestFactory {
-    private val base = TestPatientFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
     fun complication(name: String = "", categories: Set<String> = emptySet()): Complication {
         return Complication(name = name, categories = categories, year = null, month = null)

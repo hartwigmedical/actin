@@ -20,7 +20,7 @@ class GeneIsWildTypeTest {
 
     @Test
     fun `Should evaluate variants`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -64,7 +64,7 @@ class GeneIsWildTypeTest {
 
     @Test
     fun `Should evaluate copy numbers`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -93,7 +93,7 @@ class GeneIsWildTypeTest {
 
     @Test
     fun `Should evaluate homozygous disruptions`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -137,7 +137,7 @@ class GeneIsWildTypeTest {
 
     @Test
     fun `Should evaluate disruptions`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -181,7 +181,7 @@ class GeneIsWildTypeTest {
 
     @Test
     fun `Should evaluate fusions`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(

@@ -10,6 +10,6 @@ class CanAdhereToAttenuatedVaccineUseTest {
     @Test
     fun canEvaluate() {
         val function = CanAdhereToAttenuatedVaccineUse()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

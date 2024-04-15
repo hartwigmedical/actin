@@ -9,6 +9,6 @@ class HasHadIntratumoralInjectionTreatmentTest {
     @Test
     fun canEvaluate() {
         val function = HasHadIntratumoralInjectionTreatment()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

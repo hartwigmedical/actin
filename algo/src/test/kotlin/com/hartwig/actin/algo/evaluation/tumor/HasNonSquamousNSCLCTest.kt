@@ -12,7 +12,7 @@ class HasNonSquamousNSCLCTest {
     @Test
     fun `Should return undetermined when no tumor doids configured`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function().evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            EvaluationResult.UNDETERMINED, function().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 

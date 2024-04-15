@@ -21,7 +21,7 @@ class HasSufficientLVEFTest {
 
     companion object {
         private fun withLVEF(lvef: Double?): PatientRecord {
-            return TestPatientFactory.createMinimalTestPatientRecord().copy(clinicalStatus = ClinicalStatus(lvef = lvef))
+            return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(clinicalStatus = ClinicalStatus(lvef = lvef))
         }
     }
 }

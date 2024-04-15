@@ -14,7 +14,7 @@ class HasSufficientLabValueTest {
 
     private val measurement = LabMeasurement.THROMBOCYTES_ABS
     private val function = HasSufficientLabValue(200.0, measurement, measurement.defaultUnit)
-    private val record = TestPatientFactory.createMinimalTestPatientRecord()
+    private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test
     fun `Should pass if lab value is above minimal value`() {
@@ -53,7 +53,7 @@ class HasSufficientLabValueTest {
     fun `Should correctly evaluate case requiring conversion`() {
         val measurement = LabMeasurement.HEMOGLOBIN
         val function = HasSufficientLabValue(7.5, measurement, LabUnit.MILLIMOLES_PER_LITER)
-        val record = TestPatientFactory.createMinimalTestPatientRecord()
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val targetUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MILLIMOLES_PER_LITER)
         val offUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.GRAMS_PER_DECILITER)
 

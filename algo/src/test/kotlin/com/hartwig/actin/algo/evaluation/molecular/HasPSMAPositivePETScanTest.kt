@@ -10,6 +10,6 @@ class HasPSMAPositivePETScanTest {
     @Test
     fun canEvaluate() {
         val function = HasPSMAPositivePETScan()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

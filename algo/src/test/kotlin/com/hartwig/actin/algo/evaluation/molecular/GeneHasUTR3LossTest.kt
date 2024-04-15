@@ -19,7 +19,7 @@ class GeneHasUTR3LossTest {
     @Test
     fun canEvaluate() {
         val function = GeneHasUTR3Loss(TARGET_GENE)
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.createMinimal().copy(gene = TARGET_GENE)))

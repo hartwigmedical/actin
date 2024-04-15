@@ -12,7 +12,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import java.time.LocalDate
 
 internal object OtherConditionTestFactory {
-    private val base = TestPatientFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
     fun withPriorOtherCondition(condition: PriorOtherCondition): PatientRecord {
         return withPriorOtherConditions(listOf(condition))

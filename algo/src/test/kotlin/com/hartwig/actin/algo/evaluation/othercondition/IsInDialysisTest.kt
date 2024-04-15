@@ -10,6 +10,6 @@ class IsInDialysisTest {
     @Test
     fun canEvaluate() {
         val function = IsInDialysis()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

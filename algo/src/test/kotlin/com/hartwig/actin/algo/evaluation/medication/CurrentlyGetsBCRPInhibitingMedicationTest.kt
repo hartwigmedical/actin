@@ -10,6 +10,6 @@ class CurrentlyGetsBCRPInhibitingMedicationTest {
     @Test
     fun canEvaluate() {
         val function = CurrentlyGetsBCRPInhibitingMedication()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }
