@@ -3,6 +3,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
@@ -154,7 +157,7 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                        listOf(MolecularTestFactory.archerPriorMolecularNoFusionsFoundRecord())
+                        listOf(archerPriorMolecularNoFusionsFoundRecord())
                     )
                 )
         )
@@ -166,7 +169,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(MolecularTestFactory.archerPriorMolecularVariantRecord("gene 1", "c.1A>T"))
+                    listOf(archerPriorMolecularVariantRecord("gene 1", "c.1A>T"))
                 )
             )
         )
@@ -178,7 +181,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(MolecularTestFactory.archerPriorMolecularVariantRecord("gene 2", "c.1A>T"))
+                    listOf(archerPriorMolecularVariantRecord("gene 2", "c.1A>T"))
                 )
             )
         )
@@ -191,7 +194,7 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("EGFR")
                 .evaluate(
                     MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                        listOf(MolecularTestFactory.avlPanelPriorMolecularNoMutationsFoundRecord())
+                        listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
                     )
                 )
         )
@@ -203,7 +206,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(MolecularTestFactory.avlPanelPriorMolecularNoMutationsFoundRecord())
+                    listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
                 )
             )
         )

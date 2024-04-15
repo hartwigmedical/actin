@@ -1,6 +1,9 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -95,17 +98,17 @@ class MolecularHistoryTest {
         )
 
         val archerGroup1Tests = listOf(
-            PriorMolecularTest("Archer FP Lung Target", item = null, measure = "GEEN fusie(s) aangetoond", impliesPotentialIndeterminateStatus = false),
-            PriorMolecularTest("Archer FP Lung Target", item = "gene", measure = "c.1A>T", impliesPotentialIndeterminateStatus = false),
-            PriorMolecularTest("Archer FP Lung Target", item = "gene", measure = "c.5G>C", impliesPotentialIndeterminateStatus = false)
+            archerPriorMolecularNoFusionsFoundRecord(),
+            archerPriorMolecularVariantRecord("gene", "c.1A>T"),
+            archerPriorMolecularVariantRecord("gene", "c.5G>C")
         )
 
         val archerGroup2Tests = listOf(
-            PriorMolecularTest("Archer FP Lung Target", measureDate = LocalDate.of(2020, 1, 1), item = "gene", measure = "c.5G>C", impliesPotentialIndeterminateStatus = false),
+            archerPriorMolecularVariantRecord("gene", "c.5G>C", LocalDate.of(2020, 1, 1))
         )
 
         val genericPanelTests = listOf(
-            PriorMolecularTest("AvL Panel", item = null, measure = "GEEN mutaties aangetoond met behulp van het AVL Panel", impliesPotentialIndeterminateStatus = false),
+            avlPanelPriorMolecularNoMutationsFoundRecord(),
         )
 
         val otherTests = listOf(

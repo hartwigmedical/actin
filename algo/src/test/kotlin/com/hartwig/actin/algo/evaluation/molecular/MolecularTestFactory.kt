@@ -43,28 +43,6 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun archerPriorMolecularVariantRecord(gene: String?, hgvs: String?): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "Archer FP Lung Target",
-            item = gene,
-            measure = hgvs,
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
-    fun archerPriorMolecularNoFusionsFoundRecord(): PriorMolecularTest {
-        return archerPriorMolecularVariantRecord(null, "GEEN fusie(s) aangetoond")
-    }
-
-    fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "AvL Panel",
-            item = null,
-            measure = "GEEN mutaties aangetoond met behulp van het AVL Panel",
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
     fun withPriorTests(priorTests: List<PriorMolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory.fromInputs(listOf(baseMolecular), priorTests))
     }
