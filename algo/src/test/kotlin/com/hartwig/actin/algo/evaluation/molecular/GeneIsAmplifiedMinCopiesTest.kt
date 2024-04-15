@@ -24,7 +24,7 @@ class GeneIsAmplifiedMinCopiesTest {
 
     @Test
     fun canEvaluate() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
 
         assertMolecularEvaluation(
             EvaluationResult.FAIL,

@@ -9,6 +9,6 @@ class HasHistologicalDocumentationOfTumorTypeTest {
     @Test
     fun canEvaluate() {
         val function = HasHistologicalDocumentationOfTumorType()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

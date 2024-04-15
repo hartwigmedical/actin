@@ -12,7 +12,7 @@ class IsNotParticipatingInAnotherTrialTest {
         val function = IsNotParticipatingInAnotherTrial()
         assertEvaluation(
             EvaluationResult.NOT_EVALUATED,
-            function.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

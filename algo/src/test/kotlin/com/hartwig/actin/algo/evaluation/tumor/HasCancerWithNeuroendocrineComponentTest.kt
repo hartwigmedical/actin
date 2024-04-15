@@ -55,7 +55,7 @@ class HasCancerWithNeuroendocrineComponentTest {
     }
 
     private fun createWithNeuroendocrineProfile(): PatientRecord {
-        val base = TestPatientFactory.createMinimalTestPatientRecord()
+        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
             molecularHistory = MolecularHistory.fromInputs(

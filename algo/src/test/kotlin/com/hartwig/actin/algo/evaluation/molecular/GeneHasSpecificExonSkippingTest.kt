@@ -16,7 +16,7 @@ class GeneHasSpecificExonSkippingTest {
     @Test
     fun canEvaluate() {
         val function = GeneHasSpecificExonSkipping("gene A", 2)
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         val spliceVariant: Variant = TestVariantFactory.createMinimal().copy(
             gene = "gene A",
             isReportable = true,

@@ -14,7 +14,7 @@ import org.junit.Test
 
 class DerivedTumorStageEvaluationFunctionTest {
     private val properTestPatientRecord = TestPatientFactory.createProperTestPatientRecord()
-    private val minimalTestPatientRecord = TestPatientFactory.createMinimalTestPatientRecord()
+    private val minimalTestPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val tumorStageDerivationFunction: TumorStageDerivationFunction = mockk()
     private val evaluationFunction: EvaluationFunction = mockk()
     private val derivedFunction = DerivedTumorStageEvaluationFunction(tumorStageDerivationFunction, evaluationFunction)

@@ -14,7 +14,7 @@ class HasLimitedLabValueTest {
 
     private val measurement = LabMeasurement.THROMBOCYTES_ABS
     private val function = HasLimitedLabValue(1.0, measurement, measurement.defaultUnit)
-    private val record = TestPatientFactory.createMinimalTestPatientRecord()
+    private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test
     fun `Should pass if lab value is under maximum value`() {
@@ -53,7 +53,7 @@ class HasLimitedLabValueTest {
     fun `Should evaluate case requiring conversion`() {
         val measurement = LabMeasurement.CREATININE
         val function = HasLimitedLabValue(1.0, measurement, LabUnit.MILLIGRAMS_PER_DECILITER)
-        val record = TestPatientFactory.createMinimalTestPatientRecord()
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val targetUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MILLIGRAMS_PER_DECILITER)
         val offUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MICROMOLES_PER_LITER)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record, measurement, targetUnit.copy(value = 2.0)))

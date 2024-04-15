@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 class HasKnownHPVStatus : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTestsForHPV, passPriorTestsForHPV) = record.molecularHistory.allPriorMolecularTests()
+        val (indeterminatePriorTestsForHPV, conclusivePriorTestsForHPV) = record.molecularHistory.allPriorMolecularTests()
             .filter { (it.item?.contains("HPV") ?: false) }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
@@ -24,7 +24,7 @@ class HasKnownHPVStatus : EvaluationFunction {
                 )
             }
 
-            passPriorTestsForHPV.isNotEmpty() -> {
+            conclusivePriorTestsForHPV.isNotEmpty() -> {
                 EvaluationFactory.pass("HPV has been tested in a prior molecular test",
                     "HPV result available")
             }

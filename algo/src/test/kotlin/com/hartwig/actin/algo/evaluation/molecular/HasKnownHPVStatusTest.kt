@@ -50,7 +50,7 @@ class HasKnownHPVStatusTest{
 
     @Test
     fun `Should pass if no WGS performed but correct test is in priorMolecularTest`() {
-        val record = TestPatientFactory.createMinimalTestPatientRecord().copy(
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             molecularHistory = MolecularHistory.fromInputs(emptyList(),
                 listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "HPV", impliesIndeterminate = false))
             )
@@ -63,7 +63,7 @@ class HasKnownHPVStatusTest{
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TestPatientFactory.createMinimalTestPatientRecord().copy(
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                     molecularHistory = MolecularHistory.fromInputs(emptyList(),
                         listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something", impliesIndeterminate = false))
                     )

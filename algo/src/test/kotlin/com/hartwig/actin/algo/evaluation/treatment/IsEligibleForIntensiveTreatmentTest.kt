@@ -11,7 +11,7 @@ class IsEligibleForIntensiveTreatmentTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            IsEligibleForIntensiveTreatment().evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            IsEligibleForIntensiveTreatment().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

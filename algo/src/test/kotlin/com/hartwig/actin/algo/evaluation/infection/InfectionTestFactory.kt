@@ -10,7 +10,7 @@ internal object InfectionTestFactory {
     }
 
     fun withPriorOtherConditions(conditions: List<PriorOtherCondition>): PatientRecord {
-        return TestPatientFactory.createMinimalTestPatientRecord().copy(priorOtherConditions = conditions)
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(priorOtherConditions = conditions)
     }
 
     fun priorOtherCondition(name: String = "", doids: Set<String> = emptySet()): PriorOtherCondition {

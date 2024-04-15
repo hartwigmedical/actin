@@ -13,7 +13,7 @@ class ComplicationFunctionsTest {
 
     @Test
     fun `Should return empty for category search when complications are null`() {
-        val record: PatientRecord = TestPatientFactory.createMinimalTestPatientRecord()
+        val record: PatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val filteredComplicationNames =
             ComplicationFunctions.findComplicationNamesMatchingAnyCategory(record, COMPLICATION_CATEGORY)
         assertThat(filteredComplicationNames).isEmpty()
@@ -30,7 +30,7 @@ class ComplicationFunctionsTest {
             complication(name = "second matching", categories = setOf("chronic pain issues", "nothing"))
         )
 
-        val base = TestPatientFactory.createMinimalTestPatientRecord()
+        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
         val record: PatientRecord = base.copy(
             complications = complications, clinicalStatus = base.clinicalStatus.copy(hasComplications = true)
