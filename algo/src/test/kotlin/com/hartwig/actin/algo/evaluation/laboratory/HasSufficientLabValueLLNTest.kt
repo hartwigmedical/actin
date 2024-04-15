@@ -9,9 +9,8 @@ import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class HasSufficientLabValueLLNTest {
-
     private val function = HasSufficientLabValueLLN(2.0)
-    private val record = TestPatientFactory.createMinimalTestPatientRecord()
+    private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test
     fun `Should pass when lab value is above requested fold of LLN`() {

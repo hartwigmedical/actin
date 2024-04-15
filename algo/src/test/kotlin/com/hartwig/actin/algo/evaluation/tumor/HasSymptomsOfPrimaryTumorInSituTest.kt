@@ -11,7 +11,7 @@ class HasSymptomsOfPrimaryTumorInSituTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasSymptomsOfPrimaryTumorInSitu().evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            HasSymptomsOfPrimaryTumorInSitu().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

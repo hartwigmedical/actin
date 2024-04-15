@@ -24,17 +24,17 @@ internal object GeneralTestFactory {
 
     fun withWHOAndComplications(who: Int, complicationCategories: Iterable<String>): PatientRecord {
         val complication = Complication(name = "", categories = complicationCategories.toSet(), year = null, month = null)
-        return TestPatientFactory.createMinimalTestPatientRecord().copy(
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             clinicalStatus = ClinicalStatus(who = who),
             complications = listOf(complication),
         )
     }
 
     private fun withPatientDetails(patientDetails: PatientDetails): PatientRecord {
-        return TestPatientFactory.createMinimalTestPatientRecord().copy(patient = patientDetails)
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(patient = patientDetails)
     }
 
     private fun withClinicalStatus(clinicalStatus: ClinicalStatus): PatientRecord {
-        return TestPatientFactory.createMinimalTestPatientRecord().copy(clinicalStatus = clinicalStatus)
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(clinicalStatus = clinicalStatus)
     }
 }

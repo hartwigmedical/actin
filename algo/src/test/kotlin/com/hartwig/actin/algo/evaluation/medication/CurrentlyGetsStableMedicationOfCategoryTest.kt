@@ -104,7 +104,7 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
 
     @Test
     fun `Should be undetermined if medication is not provided`() {
-        val medicationNotProvided = TestPatientFactory.createMinimalTestPatientRecord().copy(medications = null)
+        val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = oneCategoryFunction.evaluate(medicationNotProvided)
         assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
         Assertions.assertThat(alwaysPlannedResult.recoverable).isTrue()

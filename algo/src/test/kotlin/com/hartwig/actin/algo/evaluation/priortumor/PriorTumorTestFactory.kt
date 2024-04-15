@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 
 internal object PriorTumorTestFactory {
-    val base = TestPatientFactory.createMinimalTestPatientRecord()
+    val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     fun priorSecondPrimary(
         doid: String? = null,

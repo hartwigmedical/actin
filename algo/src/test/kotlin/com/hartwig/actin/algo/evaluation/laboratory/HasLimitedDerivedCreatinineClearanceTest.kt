@@ -99,7 +99,7 @@ class HasLimitedDerivedCreatinineClearanceTest {
     }
 
     private fun create(gender: Gender, labValues: List<LabValue>, bodyWeights: List<BodyWeight>): PatientRecord {
-        val base = TestPatientFactory.createMinimalTestPatientRecord()
+        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         return base.copy(
             patient = base.patient.copy(birthYear = BIRTH_YEAR, gender = gender),
             labValues = labValues,

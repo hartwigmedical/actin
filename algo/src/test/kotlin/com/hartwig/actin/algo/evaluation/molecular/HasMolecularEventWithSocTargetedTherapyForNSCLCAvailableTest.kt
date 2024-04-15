@@ -22,7 +22,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     @Test
     fun `Should fail when molecular record is empty`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 
     @Test
@@ -133,7 +133,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             drivers = MolecularDrivers(variants = variants, emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
         )
         val evaluation = function.evaluate(
-            TestPatientFactory.createMinimalTestPatientRecord().copy(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                 molecularHistory = MolecularHistory.fromInputs(listOf(record), emptyList())
             )
         )

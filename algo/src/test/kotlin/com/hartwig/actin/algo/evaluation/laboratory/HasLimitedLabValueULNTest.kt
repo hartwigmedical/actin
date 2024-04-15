@@ -10,7 +10,7 @@ import org.junit.Test
 class HasLimitedLabValueULNTest {
 
     private val function = HasLimitedLabValueULN(1.2)
-    private val record = TestPatientFactory.createMinimalTestPatientRecord()
+    private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test
     fun `Should pass when lab value is under requested fold of ULN`() {

@@ -26,7 +26,7 @@ import org.junit.Test
 import java.time.LocalDate
 
 class TreatmentMatcherTest {
-    private val patient = TestPatientFactory.createMinimalTestPatientRecord()
+    private val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val trials = listOf(TestTrialFactory.createMinimalTestTrial())
     private val trialMatches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
     private val trialMatcher = mockk<TrialMatcher> {

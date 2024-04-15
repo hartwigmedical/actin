@@ -20,7 +20,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should fail when gene not present`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 
     @Test
@@ -154,7 +154,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     fun `Should evaluate for all variant input types`() {
         for (input in VariantTypeInput.values()) {
             val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, input)
-            assertThat(function.evaluate(TestPatientFactory.createMinimalTestPatientRecord())).isNotNull()
+            assertThat(function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())).isNotNull()
         }
     }
 

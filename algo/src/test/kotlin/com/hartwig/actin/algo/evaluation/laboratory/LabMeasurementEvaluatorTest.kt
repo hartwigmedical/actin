@@ -17,7 +17,7 @@ class LabMeasurementEvaluatorTest {
     fun `Should evaluate`() {
         val measurement = LabMeasurement.ALBUMIN
         val function = LabMeasurementEvaluator(measurement, passingLabEvaluationFunction, ALWAYS_VALID_DATE, ALWAYS_VALID_DATE)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         val labValue: LabValue = LabTestFactory.create(measurement, date = TEST_DATE)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(LabTestFactory.withLabValue(labValue)))
     }

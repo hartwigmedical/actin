@@ -10,7 +10,7 @@ object TestReportFactory {
     fun createMinimalTestReport(): Report {
         return Report(
             patientId = TestPatientFactory.TEST_PATIENT,
-            patientRecord = TestPatientFactory.createMinimalTestPatientRecord(),
+            patientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord(),
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch(),
             config = ReportConfiguration()
         )

@@ -12,7 +12,7 @@ class HasSufficientLifeExpectancyTest {
         val function = HasSufficientLifeExpectancy()
         EvaluationAssert.assertEvaluation(
             EvaluationResult.NOT_EVALUATED,
-            function.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

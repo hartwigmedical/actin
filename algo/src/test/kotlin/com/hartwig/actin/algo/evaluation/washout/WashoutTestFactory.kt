@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import java.time.LocalDate
 
 internal object WashoutTestFactory {
-    private val base = TestPatientFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
     fun activeFromDate(referenceDate: LocalDate): MedicationStatusInterpreter {
         return object : MedicationStatusInterpreter {

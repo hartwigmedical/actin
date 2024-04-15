@@ -29,7 +29,7 @@ class HasLimitedBilirubinPercentageOfTotalTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TestPatientFactory.createMinimalTestPatientRecord(),
+                TestPatientFactory.createMinimalTestWGSPatientRecord(),
                 LabMeasurement.DIRECT_BILIRUBIN,
                 LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN)
             )
@@ -48,7 +48,7 @@ class HasLimitedBilirubinPercentageOfTotalTest {
     fun crashOnWrongInputLabValue() {
         val function = HasLimitedBilirubinPercentageOfTotal(50.0, LocalDate.of(2020, 3, 3))
         function.evaluate(
-            TestPatientFactory.createMinimalTestPatientRecord(),
+            TestPatientFactory.createMinimalTestWGSPatientRecord(),
             LabMeasurement.ALBUMIN,
             LabTestFactory.create(LabMeasurement.ALBUMIN)
         )

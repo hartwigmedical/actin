@@ -8,7 +8,7 @@ class ReferenceDateProviderFactoryTest {
 
     @Test
     fun canCreateAllFlavors() {
-        val patient = TestPatientFactory.createMinimalTestPatientRecord()
+        val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
         val provider1 = ReferenceDateProviderFactory.create(patient, true)
         Assert.assertNotNull(provider1.date())
