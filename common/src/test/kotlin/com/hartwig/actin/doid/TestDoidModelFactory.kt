@@ -14,12 +14,11 @@ object TestDoidModelFactory {
         return create(mapOf(child to listOf(parent)))
     }
 
-    fun createWithOneParentChildAndTerms(parentDoidToTerm: Map<String, String>, childDoidToTerm: Map<String, String>): DoidModel {
+    fun createWithParentChildAndTermPerDoidMaps(childToParentMap: Map<String, String>, doidToTermMap: Map<String, String>): DoidModel {
         return create(
-            childToParentsMap = mapOf(childDoidToTerm.keys.first() to listOf(parentDoidToTerm.keys.first())),
-            termPerDoidMap = mapOf(childDoidToTerm.keys.first() to childDoidToTerm.values.first(),
-                parentDoidToTerm.keys.first() to parentDoidToTerm.values.first()
-            )
+            childToParentsMap = childToParentMap.mapValues { listOf(it.value) },
+            termPerDoidMap = doidToTermMap,
+            doidPerLowerCaseTermMap = doidToTermMap.mapValues { it.value.lowercase() }.entries.associate { (key, value) -> value to key }
         )
     }
 
