@@ -108,7 +108,7 @@ class MolecularResultsAreAvailableForGeneTest {
     }
 
     @Test
-    fun `Should pass if no WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
+    fun `Should pass if no successful WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -116,6 +116,18 @@ class MolecularResultsAreAvailableForGeneTest {
                     ExperimentType.WHOLE_GENOME,
                     false,
                     MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass if no WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
                 )
             )
         )
