@@ -6,10 +6,10 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.archer.ArcherVariant
-import com.hartwig.actin.molecular.datamodel.panel.GenericPanel
-import com.hartwig.actin.molecular.datamodel.panel.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import java.time.LocalDate
 
 interface MolecularTest<T> {
@@ -23,9 +23,9 @@ class MolecularTestFactory {
         fun classify(result: PriorMolecularTest): ExperimentType {
             return when (result.test) {
                 "Archer FP Lung Target" -> ExperimentType.ARCHER
+                "AvL Panel" -> ExperimentType.GENERIC_PANEL
                 "IHC" -> ExperimentType.IHC
                 "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
-                "AvL Panel" -> ExperimentType.GENERIC_PANEL
                 else -> ExperimentType.OTHER
             }
         }

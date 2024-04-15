@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate

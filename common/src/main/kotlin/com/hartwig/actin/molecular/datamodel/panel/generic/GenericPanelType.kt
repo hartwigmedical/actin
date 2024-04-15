@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.panel
+package com.hartwig.actin.molecular.datamodel.panel.generic
 
 import com.hartwig.actin.Displayable
 
