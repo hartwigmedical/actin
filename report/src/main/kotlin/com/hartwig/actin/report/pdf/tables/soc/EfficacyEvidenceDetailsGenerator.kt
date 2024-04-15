@@ -8,7 +8,6 @@ import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
-import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
 class EfficacyEvidenceDetailsGenerator(
@@ -23,15 +22,18 @@ class EfficacyEvidenceDetailsGenerator(
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(width)
         val patientPopulations = annotation.trialReferences.first().patientPopulations //currently always 1
-        sequenceOf(
+        val subTables = listOf(
             createTrialInformation(),
             createPatientCharacteristics(patientPopulations),
             createPrimaryEndpoints(patientPopulations),
             createSecondaryEndpoints(patientPopulations)
         )
-            .flatMap { sequenceOf(it, Paragraph("")) }
-            .drop(1)
-            .forEach { table.addCell(Cells.create(it)) }
+        subTables.forEachIndexed { i, subTable ->
+            table.addCell(Cells.create(subTable))
+            if (i < subTables.size - 1) {
+                table.addCell(Cells.createEmpty())
+            }
+        }
         
         return table
     }
