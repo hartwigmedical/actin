@@ -12,6 +12,7 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -258,6 +259,8 @@ class TumorDetailsExtractorTest {
 
     @Test
     fun `Should call deriver to derive stages when tumor details have been curated`() {
+        val tumorDetails = slot<TumorDetails>()
+
         TumorDetailsExtractor(
             TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase(
                 PrimaryTumorConfig(
@@ -273,7 +276,9 @@ class TumorDetailsExtractorTest {
             ),
             tumorStageDeriver
         ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
-        verify { tumorStageDeriver.derive(any()) }
+        verify { tumorStageDeriver.derive(capture(tumorDetails)) }
+        assertThat(tumorDetails).isNotNull
+        assertThat(tumorDetails.captured.primaryTumorLocation).isEqualTo(CURATED_LOCATION)
     }
 
     private fun lesionLocationConfig(category: LesionLocationCategory) = LesionLocationConfig(

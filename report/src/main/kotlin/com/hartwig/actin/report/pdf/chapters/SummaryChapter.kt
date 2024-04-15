@@ -49,11 +49,11 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
         )
         addParagraphWithContent(patientDetailFields, document)
 
-        val stageSummary = stageSummary(report.patientRecord.tumor)
+        val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOf(
             "Tumor: " to tumor(report.patientRecord.tumor),
             " | Lesions: " to lesions(report.patientRecord.tumor),
-            " | $stageSummary.first: " to stageSummary.second
+            " | $stageTitle: " to stages
         )
         addParagraphWithContent(tumorDetailFields, document)
     }
@@ -169,12 +169,16 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
 
         private fun stageSummary(tumor: TumorDetails): Pair<String, String> {
             val knownStage = "Stage"
-            return tumor.stage?.let {
-                Pair(knownStage, tumor.stage!!.display())
-            } ?: run {
-                if (!tumor.derivedStages.isNullOrEmpty()) {
-                    Pair("Derived stage based on locations", tumor.derivedStages!!.first().display())
-                } else {
+            return when {
+                tumor.stage != null -> {
+                    Pair(knownStage, tumor.stage!!.display())
+                }
+
+                !tumor.derivedStages.isNullOrEmpty() -> {
+                    Pair("Derived stage(s)", tumor.derivedStages!!.sorted().joinToString(", ") { it.display() })
+                }
+
+                else -> {
                     Pair(knownStage, "Unknown")
                 }
             }
