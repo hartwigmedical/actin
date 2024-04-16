@@ -78,7 +78,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
 
             indeterminatePriorIHCTestsForGene.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "$gene has been tested in a prior molecular test but with indeterminate status",
+                    "$gene has been tested in a prior IHC test but with indeterminate status",
                     "$gene tested before but indeterminate status"
                 )
             }
