@@ -47,6 +47,10 @@ internal object MolecularTestFactory {
         return base.copy(molecularHistory = MolecularHistory.fromInputs(listOf(baseMolecular), priorTests))
     }
 
+    fun withPriorTestsAndNoOrangeMolecular(priorTests: List<PriorMolecularTest>): PatientRecord {
+        return base.copy(molecularHistory = MolecularHistory.fromInputs(emptyList(), priorTests))
+    }
+
     fun withPriorTest(priorTest: PriorMolecularTest): PatientRecord {
         return withPriorTests(listOf(priorTest))
     }

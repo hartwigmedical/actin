@@ -1,12 +1,14 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import java.time.LocalDate
 
 data class MolecularHistory(
     val molecularTests: List<MolecularTest<*>>,
 ) {
-    fun allPriorMolecularTests(): List<PriorMolecularTest> {
+    fun allIHCTests(): List<PriorMolecularTest> {
         return molecularTests.filter { it.type == ExperimentType.IHC }
             .map { it.result as PriorMolecularTest }
     }
@@ -16,9 +18,28 @@ data class MolecularHistory(
             .map { it.result as MolecularRecord }
     }
 
+    fun allArcherPanels(): List<ArcherPanel> {
+        return molecularTests.filter { it.type == ExperimentType.ARCHER }
+            .map { it.result as ArcherPanel }
+    }
+
+    fun latestArcherPanel(): ArcherPanel? {
+        return allArcherPanels()
+            .maxByOrNull { it.date ?: LocalDate.MIN }
+    }
+
+    fun allGenericPanels(): List<GenericPanel> {
+        return molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }
+            .map { it.result as GenericPanel }
+    }
+
     fun latestMolecularRecord(): MolecularRecord? {
         return allMolecularRecords()
             .maxByOrNull { it.date ?: LocalDate.MIN }
+    }
+
+    fun hasMolecularData(): Boolean {
+        return molecularTests.isNotEmpty()
     }
 
     companion object {
@@ -29,7 +50,7 @@ data class MolecularHistory(
         fun fromInputs(molecularRecords: List<MolecularRecord>, priorMolecularTests: List<PriorMolecularTest>): MolecularHistory {
             return MolecularHistory(
                 molecularRecords.map { WGSMolecularTest.fromMolecularRecord(it) } +
-                        priorMolecularTests.map { IHCMolecularTest.fromPriorMolecularTest(it) }
+                        MolecularTestFactory.fromPriorMolecular(priorMolecularTests)
             )
         }
     }

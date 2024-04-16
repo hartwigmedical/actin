@@ -7,9 +7,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 
 class MolecularResultsAreAvailableForPromoterOfGene(private val gene: String) : EvaluationFunction {
-    
+
     override fun evaluate(record: PatientRecord): Evaluation {
-        val (indeterminatePriorTests, validPriorTests) = record.molecularHistory.allPriorMolecularTests()
+        val (indeterminatePriorTests, validPriorTests) = record.molecularHistory.allIHCTests()
             .filter { it.item?.contains(gene) ?: false && it.item?.lowercase()?.contains(PROMOTER) ?: false }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 

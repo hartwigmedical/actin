@@ -21,7 +21,7 @@ class PriorMolecularResultGenerator(
     fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createSubTitle("IHC results"))
-        molecularHistory.allPriorMolecularTests().let { priorMolecularTests ->
+        molecularHistory.allIHCTests().let { priorMolecularTests ->
             if (priorMolecularTests.isEmpty()) {
                 table.addCell(Cells.createValue("None"))
             } else {
