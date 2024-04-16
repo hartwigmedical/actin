@@ -341,7 +341,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun referralPriorMolecularFusionRecord(geneStart: String, geneEnd: String): PriorMolecularTest {
+    fun freetextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): PriorMolecularTest {
         return PriorMolecularTest(
             test = "Freetext",
             item = "$geneStart::$geneEnd",

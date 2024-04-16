@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.referralPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
@@ -219,7 +219,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(referralPriorMolecularFusionRecord("gene 1", "gene 2")
+                    listOf(freetextPriorMolecularFusionRecord("gene 1", "gene 2")
                     )
                 )
             )
@@ -232,7 +232,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(referralPriorMolecularFusionRecord("gene 2", "gene 3")
+                    listOf(freetextPriorMolecularFusionRecord("gene 2", "gene 3")
                     )
                 )
             )

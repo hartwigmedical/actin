@@ -1,52 +1,73 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
-class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
+class HasFusionInGene(private val gene: String) : EvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        if (!record.molecularHistory.hasMolecularData()) {
+            return EvaluationFactory.undetermined("No molecular data", "No molecular data")
+        }
+
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodOther: MutableSet<String> = mutableSetOf()
         val unreportableFusionsWithGainOfFunction: MutableSet<String> = mutableSetOf()
-        val evidenceSource = molecular.evidenceSource
 
-        for (fusion in molecular.drivers.fusions) {
-            val isAllowedDriverType =
-                (fusion.geneStart == gene && fusion.geneStart == fusion.geneEnd) ||
-                        (fusion.geneStart == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType)) ||
-                        (fusion.geneEnd == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_3.contains(fusion.driverType))
-            if (isAllowedDriverType) {
-                val isGainOfFunction =
-                    (fusion.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION ||
-                            fusion.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
-                if (fusion.isReportable) {
-                    val hasNoEffect =
-                        (fusion.proteinEffect == ProteinEffect.NO_EFFECT || fusion.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED)
-                    if (fusion.driverLikelihood != DriverLikelihood.HIGH) {
-                        if (isGainOfFunction) {
-                            fusionsWithNoHighDriverLikelihoodWithGainOfFunction.add(fusion.event)
+        val (matchingFusionsInPanels, isGeneTestedInPanel) = findMatchingFusionsInPanels(record.molecularHistory)
+        val molecular = record.molecularHistory.latestMolecularRecord()
+
+        var potentialWarnEvaluation: Evaluation? = null
+        if (molecular != null) {
+            val evidenceSource = molecular.evidenceSource
+
+            for (fusion in molecular.drivers.fusions) {
+                val isAllowedDriverType =
+                    (fusion.geneStart == gene && fusion.geneStart == fusion.geneEnd) ||
+                            (fusion.geneStart == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_5.contains(fusion.driverType)) ||
+                            (fusion.geneEnd == gene && ALLOWED_DRIVER_TYPES_FOR_GENE_3.contains(fusion.driverType))
+                if (isAllowedDriverType) {
+                    val isGainOfFunction =
+                        (fusion.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION ||
+                                fusion.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
+                    if (fusion.isReportable) {
+                        val hasNoEffect =
+                            (fusion.proteinEffect == ProteinEffect.NO_EFFECT || fusion.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED)
+                        if (fusion.driverLikelihood != DriverLikelihood.HIGH) {
+                            if (isGainOfFunction) {
+                                fusionsWithNoHighDriverLikelihoodWithGainOfFunction.add(fusion.event)
+                            } else {
+                                fusionsWithNoHighDriverLikelihoodOther.add(fusion.event)
+                            }
+                        } else if (hasNoEffect) {
+                            fusionsWithNoEffect.add(fusion.event)
                         } else {
-                            fusionsWithNoHighDriverLikelihoodOther.add(fusion.event)
+                            matchingFusions.add(fusion.event)
                         }
-                    } else if (hasNoEffect) {
-                        fusionsWithNoEffect.add(fusion.event)
                     } else {
-                        matchingFusions.add(fusion.event)
-                    }
-                } else {
-                    if (isGainOfFunction) {
-                        unreportableFusionsWithGainOfFunction.add(fusion.event)
+                        if (isGainOfFunction) {
+                            unreportableFusionsWithGainOfFunction.add(fusion.event)
+                        }
                     }
                 }
             }
+
+            potentialWarnEvaluation = evaluatePotentialWarns(
+                fusionsWithNoEffect,
+                fusionsWithNoHighDriverLikelihoodWithGainOfFunction,
+                fusionsWithNoHighDriverLikelihoodOther,
+                unreportableFusionsWithGainOfFunction,
+                evidenceSource
+            )
         }
 
         if (matchingFusions.isNotEmpty()) {
@@ -57,15 +78,19 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
             )
         }
 
-        val potentialWarnEvaluation = evaluatePotentialWarns(
-            fusionsWithNoEffect,
-            fusionsWithNoHighDriverLikelihoodWithGainOfFunction,
-            fusionsWithNoHighDriverLikelihoodOther,
-            unreportableFusionsWithGainOfFunction,
-            evidenceSource
-        )
+        if (matchingFusionsInPanels.isNotEmpty()) {
+            return EvaluationFactory.pass(
+                "Fusion(s) ${concat(matchingFusionsInPanels)} detected in gene $gene in panel(s)",
+                "Fusion(s) detected in gene $gene",
+                inclusionEvents = matchingFusionsInPanels
+            )
+        }
 
-        return potentialWarnEvaluation ?: EvaluationFactory.fail("No fusion detected with gene $gene", "No fusion in gene $gene")
+        return potentialWarnEvaluation ?: if (!isGeneTestedInPanel && molecular == null) {
+            return EvaluationFactory.undetermined("No molecular data", "No molecular data")
+        } else {
+            EvaluationFactory.fail("No fusion detected with gene $gene", "No fusion in gene $gene")
+        }
     }
 
     private fun evaluatePotentialWarns(
@@ -102,6 +127,21 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
                 )
             )
         )
+    }
+
+    private fun findMatchingFusionsInPanels(molecularHistory: MolecularHistory): Pair<Set<String>, Boolean> {
+        // TODO (kz): add Archer here when it models fusions
+        val matchedFusion = molecularHistory.allGenericPanels()
+            .flatMap { panel ->
+                panel.fusions.filter { fusion ->
+                    fusion.geneStart == gene || fusion.geneEnd == gene
+                }.map { fusion ->
+                    "${fusion.geneStart} - ${fusion.geneEnd} fusion"
+                }
+            }.toSet()
+
+        val isGeneTested = molecularHistory.allGenericPanels().any { gene in it.testedGenes() }
+        return Pair(matchedFusion, isGeneTested)
     }
 
     companion object {

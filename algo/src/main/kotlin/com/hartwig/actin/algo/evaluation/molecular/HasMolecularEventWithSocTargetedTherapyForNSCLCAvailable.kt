@@ -6,14 +6,14 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
-class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(private val genesToIgnore: Set<String>): EvaluationFunction {
+class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(private val genesToIgnore: Set<String>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationFunctions = createEvaluationFunctions(genesToIgnore)
         return Or(evaluationFunctions).evaluate(record)
     }
 
-    private fun createEvaluationFunctions(genesToIgnore: Set<String>): List <MolecularEvaluationFunction> =
+    private fun createEvaluationFunctions(genesToIgnore: Set<String>): List<EvaluationFunction> =
         listOf(
             listOf(Triple("EGFR", "19", VariantTypeInput.DELETE), Triple("EGFR", "20", VariantTypeInput.INSERT))
                 .map { (gene, exon, variantType) -> gene to GeneHasVariantInExonRangeOfType(gene, exon.toInt(), exon.toInt(), variantType) },

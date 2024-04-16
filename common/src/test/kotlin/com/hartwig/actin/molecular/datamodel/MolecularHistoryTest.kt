@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.referralPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -117,7 +117,7 @@ class MolecularHistoryTest {
 
         val genericPanelTests = listOf(
             avlPanelPriorMolecularNoMutationsFoundRecord(),
-            referralPriorMolecularFusionRecord("geneUp", "geneDown")
+            freetextPriorMolecularFusionRecord("geneUp", "geneDown")
         )
 
         val otherTests = listOf(
