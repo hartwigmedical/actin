@@ -58,7 +58,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
 
         return when {
             passPriorIHCTestsForGene.isNotEmpty() -> {
-                EvaluationFactory.pass("$gene has been tested in a prior molecular test",
+                EvaluationFactory.pass("$gene has been tested in a prior IHC test",
                     "$gene tested before")
             }
 
