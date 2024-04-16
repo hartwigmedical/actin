@@ -52,7 +52,7 @@ class DerivedTumorStageEvaluationFunctionTest {
     }
 
     @Test
-    fun `Should evaluate pass when multiple derived and at least one passes`() {
+    fun `Should evaluate undetermined when multiple derived and at least one passes`() {
         every {
             evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
         } returns EvaluationTestFactory.withResult(EvaluationResult.PASS)

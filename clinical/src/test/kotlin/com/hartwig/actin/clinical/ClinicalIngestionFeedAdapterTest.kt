@@ -66,7 +66,6 @@ class ClinicalIngestionFeedAdapterTest {
         )
     }
 
-
     @Test
     fun `Output should not have changed`() {
         val jsonMapper = ObjectMapper()

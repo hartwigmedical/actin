@@ -14,13 +14,7 @@ class HasHadPriorConditionWithDoidsFromSet(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val conditions = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .filter {
-                DoidEvaluationFunctions.isOfAtLeastOneDoidType(
-                    doidModel,
-                    it.doids,
-                    doidsToFind
-                )
-            }.map { it.name }
+            .filter { DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, it.doids, doidsToFind) }.map { it.name }
 
         return if (conditions.isNotEmpty()) {
             EvaluationFactory.pass(

@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
-class HasTumorStage internal constructor(private val stagesToMatch: Set<TumorStage>) : EvaluationFunction {
+class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (stagesToMatch.isEmpty()) throw IllegalStateException("No stages to match configured")

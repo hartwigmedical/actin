@@ -248,21 +248,14 @@ class TumorDetailsExtractorTest {
     }
 
     @Test
-    fun `Should not attempt to derive stages when no curation found`() {
-        TumorDetailsExtractor(
-            TestCurationFactory.curationDatabase(lesionLocationConfig(LesionLocationCategory.LYMPH_NODE)),
-            TestCurationFactory.curationDatabase(),
-            tumorStageDeriver
-        ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
-        verify(exactly = 0) { tumorStageDeriver.derive(any()) }
-    }
-
-    @Test
-    fun `Should call deriver to derive stages when tumor details have been curated`() {
+    fun `Should call deriver to derive stages`() {
         val tumorDetails = slot<TumorDetails>()
+        val questionnaire = emptyQuestionnaire().copy(otherLesions = listOf(locationLesionInput(LesionLocationCategory.BRAIN)))
 
         TumorDetailsExtractor(
-            TestCurationFactory.curationDatabase(), TestCurationFactory.curationDatabase(
+            TestCurationFactory.curationDatabase(
+                lesionLocationConfig(LesionLocationCategory.BONE)
+            ), TestCurationFactory.curationDatabase(
                 PrimaryTumorConfig(
                     input = "$TUMOR_LOCATION_INPUT |",
                     ignore = false,
@@ -275,10 +268,9 @@ class TumorDetailsExtractorTest {
                 )
             ),
             tumorStageDeriver
-        ).curateTumorDetails(PATIENT_ID, TUMOR_LOCATION_INPUT, null)
+        ).extract(PATIENT_ID, questionnaire)
         verify { tumorStageDeriver.derive(capture(tumorDetails)) }
         assertThat(tumorDetails).isNotNull
-        assertThat(tumorDetails.captured.primaryTumorLocation).isEqualTo(CURATED_LOCATION)
     }
 
     private fun lesionLocationConfig(category: LesionLocationCategory) = LesionLocationConfig(

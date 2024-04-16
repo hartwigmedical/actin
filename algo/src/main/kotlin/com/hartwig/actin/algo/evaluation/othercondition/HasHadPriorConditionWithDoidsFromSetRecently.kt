@@ -21,13 +21,7 @@ class HasHadPriorConditionWithDoidsFromSetRecently(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingConditionSummary = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
-            .filter {
-                DoidEvaluationFunctions.isOfAtLeastOneDoidType(
-                    doidModel,
-                    it.doids,
-                    doidsToFind
-                )
-            }
+            .filter { DoidEvaluationFunctions.isOfAtLeastOneDoidType(doidModel, it.doids, doidsToFind) }
             .groupBy {
                 val isAfter = DateComparison.isAfterDate(minDate, it.year, it.month)
                 when {

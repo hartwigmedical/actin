@@ -7,7 +7,7 @@ import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class HasTumorStageTest {
-    val hasTumorStage = HasTumorStage(setOf(TumorStage.III))
+    private val hasTumorStage = HasTumorStage(setOf(TumorStage.III))
 
     @Test
     fun `Should throw an exception when the set of stages to match is empty`() {
@@ -32,21 +32,15 @@ class HasTumorStageTest {
     }
 
     @Test
-    fun `Should pass when one stage of set to match passes`() {
-        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IIIB))
-        assertEvaluation(
-            EvaluationResult.PASS,
-            HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord)
-        )
+    fun `Should pass when all derived stages are members of a stage to match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIIA, TumorStage.IIIB))
+        assertEvaluation(EvaluationResult.PASS, HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
     }
 
     @Test
-    fun `Should pass when all stages of set to match pass`() {
+    fun `Should pass when all derived stages pass individually`() {
         val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IV))
-        assertEvaluation(
-            EvaluationResult.PASS,
-            HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord)
-        )
+        assertEvaluation(EvaluationResult.PASS, HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
     }
 
     @Test

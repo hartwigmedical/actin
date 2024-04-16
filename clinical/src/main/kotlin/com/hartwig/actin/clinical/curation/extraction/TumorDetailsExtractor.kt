@@ -56,8 +56,12 @@ class TumorDetailsExtractor(
             hasLymphNodeLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.LYMPH_NODE),
             otherLesions = curatedOtherLesions
         )
+        val tumorDetailsWithDerivedStages = tumorDetails.copy(derivedStages = tumorStageDeriver.derive(tumorDetails))
 
-        return ExtractionResult(tumorDetails, otherLesionsResult + tumorExtractionResult + biopsyCuration?.extractionEvaluation)
+        return ExtractionResult(
+            tumorDetailsWithDerivedStages,
+            otherLesionsResult + tumorExtractionResult + biopsyCuration?.extractionEvaluation
+        )
     }
 
     fun curateTumorDetails(
@@ -78,7 +82,7 @@ class TumorDetailsExtractor(
         )
 
         val tumor = primaryTumorCuration.config()?.let {
-            val curatedDetails = TumorDetails(
+            TumorDetails(
                 primaryTumorLocation = it.primaryTumorLocation,
                 primaryTumorSubLocation = it.primaryTumorSubLocation,
                 primaryTumorType = it.primaryTumorType,
@@ -86,7 +90,6 @@ class TumorDetailsExtractor(
                 primaryTumorExtraDetails = it.primaryTumorExtraDetails,
                 doids = it.doids
             )
-            curatedDetails.copy(derivedStages = tumorStageDeriver.derive(curatedDetails))
         } ?: TumorDetails()
         return Pair(tumor, primaryTumorCuration.extractionEvaluation)
     }
