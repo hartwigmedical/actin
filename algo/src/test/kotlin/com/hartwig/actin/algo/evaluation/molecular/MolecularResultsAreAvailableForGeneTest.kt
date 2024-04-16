@@ -226,6 +226,7 @@ class MolecularResultsAreAvailableForGeneTest {
         )
     }
 
+    @Test
     fun `Should fail for gene not in fusion curated from free text`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
