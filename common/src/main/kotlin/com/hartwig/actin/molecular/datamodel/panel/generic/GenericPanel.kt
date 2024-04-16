@@ -12,6 +12,7 @@ data class GenericPanel(
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
-        return GENERIC_PANEL_ALWAYS_TESTED_GENES
+        return fusions.map { it.geneStart }.toSet() + fusions.map { it.geneEnd }.toSet() +
+                if (panelName == GenericPanelType.REFERRAL) emptySet() else GENERIC_PANEL_ALWAYS_TESTED_GENES
     }
 }
