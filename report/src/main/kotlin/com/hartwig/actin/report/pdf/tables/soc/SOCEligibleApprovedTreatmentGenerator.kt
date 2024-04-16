@@ -1,9 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
-import com.hartwig.actin.efficacy.AnalysisGroup
+import com.hartwig.actin.efficacy.EfficacyEntry
+import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.addEndPointsToTable
+import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.analysisGroupForPopulation
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
@@ -29,74 +32,39 @@ class SOCEligibleApprovedTreatmentGenerator(
         table.addHeaderCell(Cells.createHeader("Treatment"))
         table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
         table.addHeaderCell(Cells.createHeader("Personalized PFS prediction"))
-        treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
+        treatments.sortedByDescending { it.annotations.size }.forEach { treatment: AnnotatedTreatmentMatch ->
             table.addCell(Cells.createContentBold(treatment.treatmentCandidate.treatment.name))
             if (treatment.annotations.isEmpty()) {
                 table.addCell(Cells.createContent("No literature efficacy evidence available yet"))
             } else {
-                val subtable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
-                for (annotation in treatment.annotations) {
-                    for (trialReference in annotation.trialReferences) {
-                        for (patientPopulation in trialReference.patientPopulations) {
-                            if (patientPopulation.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true)) {
-                                val analysisGroup: AnalysisGroup? = if (patientPopulation.analysisGroups.count() == 1) {
-                                    patientPopulation.analysisGroups.first()
-                                } else {
-                                    patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
-                                }
-                                subtable.addCell(Cells.createEmpty())
-                                subtable.addCell(
-                                    Cells.createTitle(annotation.acronym)
-                                        .setAction(PdfAction.createURI(annotation.trialReferences.first().url))
-                                        .addStyle(Styles.urlStyle())
-                                )
-                                subtable.addCell(Cells.createValue("PFS: "))
-                                if (analysisGroup != null) {
-                                    for (primaryEndPoint in analysisGroup.endPoints) {
-                                        if (primaryEndPoint.name == "Median Progression-Free Survival") {
-                                            if (primaryEndPoint.value != null) {
-                                                subtable.addCell(
-                                                    Cells.createKey(
-                                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
-                                                            ?: "NA") + ")"
-                                                    )
-                                                )
-                                            } else {
-                                                subtable.addCell(Cells.createKey("NE"))
-                                            }
-                                        }
-                                    }
-                                }
-
-                                subtable.addCell(Cells.createValue("OS: "))
-                                if (analysisGroup != null) {
-                                    for (primaryEndPoint in analysisGroup.endPoints) {
-                                        if (primaryEndPoint.name == "Median Overall Survival") {
-                                            if (primaryEndPoint.value != null) {
-                                                subtable.addCell(
-                                                    Cells.createKey(
-                                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit
-                                                            ?: "NA") + ")"
-                                                    )
-                                                )
-                                            } else {
-                                                subtable.addCell(Cells.createKey("NE"))
-                                            }
-                                        }
-                                    }
-                                }
-                                subtable.addCell(Cells.createValue(" "))
-                                subtable.addCell(Cells.createValue(" "))
-                            }
-                        }
-                    }
-                }
-                table.addCell(Cells.createContent(subtable))
+                val subTable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
+                treatment.annotations.forEach { annotation -> addTreatmentAnnotationToTable(annotation, treatment, subTable) }
+                table.addCell(Cells.createContent(subTable))
             }
             table.addCell(Cells.createContent("Not evaluated yet"))
         }
         return table
+    }
+
+    private fun addTreatmentAnnotationToTable(annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch, subTable: Table) {
+        annotation.trialReferences.flatMap(TrialReference::patientPopulations)
+            .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
+            .forEach { patientPopulation ->
+                val analysisGroup = analysisGroupForPopulation(patientPopulation)
+                subTable.addCell(Cells.createEmpty())
+                subTable.addCell(
+                    Cells.createTitle(annotation.acronym)
+                        .setAction(PdfAction.createURI(annotation.trialReferences.first().url))
+                        .addStyle(Styles.urlStyle())
+                )
+                subTable.addCell(Cells.createValue("PFS: "))
+                addEndPointsToTable(analysisGroup, "Median Progression-Free Survival", subTable)
+
+                subTable.addCell(Cells.createValue("OS: "))
+                addEndPointsToTable(analysisGroup, "Median Overall Survival", subTable)
+
+                subTable.addCell(Cells.createValue(" "))
+                subTable.addCell(Cells.createValue(" "))
+            }
     }
 }

@@ -34,4 +34,14 @@ data class PatientPopulation(
     val priorTherapies: String?,
     val patientsPerRace: Map<String, Int>?,
     val patientsPerRegion: Map<String, Int>?,
-)
+) {
+
+    fun formatMetastaticSites(): String? = patientsPerMetastaticSites?.entries?.joinToString(", ") { (key, value) ->
+        "$key: ${value.value} (${value.percentage}%)"
+    }
+
+    fun formatTumorLocation(separator: String): String? =
+        patientsPerPrimaryTumorLocation?.entries?.joinToString(separator) { (key, value) ->
+            "${key.replaceFirstChar(Char::uppercase)}: $value"
+        }
+}

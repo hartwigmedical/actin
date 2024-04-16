@@ -1,11 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
-import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.addEndPointsToTable
+import com.hartwig.actin.report.pdf.tables.soc.SOCGeneratorFunctions.analysisGroupForPopulation
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
@@ -49,24 +50,21 @@ class EfficacyEvidenceGenerator(
     }
 
     private fun createOneLiteraturePart(
-        width: Float,
-        annotation: EfficacyEntry,
-        trialReference: TrialReference,
-        treatment: AnnotatedTreatmentMatch
+        width: Float, annotation: EfficacyEntry, trialReference: TrialReference, treatment: AnnotatedTreatmentMatch
     ): Table {
-        val subtable = Tables.createSingleColWithWidth(width / 2)
-        val subsubtables: MutableList<Table> = mutableListOf()
-        subsubtables.add(createTrialHeader(annotation))
-        subsubtables.add(createPatientCharacteristics(trialReference, treatment))
-        subsubtables.add(createEndpoints(trialReference, treatment))
-        for (i in subsubtables.indices) {
-            val subsubtable = subsubtables[i]
-            subtable.addCell(Cells.create(subsubtable))
-            if (i < subsubtables.size - 1) {
-                subtable.addCell(Cells.createEmpty())
+        val subTable = Tables.createSingleColWithWidth(width / 2)
+        val nestedTables = listOf(
+            createTrialHeader(annotation),
+            createPatientCharacteristics(trialReference, treatment),
+            createEndpoints(trialReference, treatment)
+        )
+        nestedTables.forEachIndexed { i, nestedTable ->
+            subTable.addCell(Cells.create(nestedTable))
+            if (i < nestedTables.size - 1) {
+                subTable.addCell(Cells.createEmpty())
             }
         }
-        return subtable
+        return subTable
     }
 
     private fun createTrialHeader(annotation: EfficacyEntry): Table {
@@ -81,29 +79,19 @@ class EfficacyEvidenceGenerator(
 
     private fun createPatientCharacteristics(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(100f, 150f).setWidth(400f)
-        for (patientPopulation in trialReference.patientPopulations) {
-            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name.equals(
-                    treatment.treatmentCandidate.treatment.name,
-                    true
+        trialReference.patientPopulations.filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
+            .forEach { patientPopulation ->
+                listOf<Pair<String, (PatientPopulation) -> String?>>(
+                    "WHO/ECOG" to SOCGeneratorFunctions::createWhoString,
+                    "Primary tumor location" to { it.formatTumorLocation(", ") },
+                    "Mutations" to PatientPopulation::mutations,
+                    "Metastatic sites" to PatientPopulation::formatMetastaticSites,
+                    "Previous systemic therapy" to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
+                    "Prior therapies" to PatientPopulation::priorTherapies
                 )
-            ) {
-                table.addCell(Cells.createContent("WHO/ECOG"))
-                table.addCell(Cells.createContent(createWhoString(patientPopulation)))
-                table.addCell(Cells.createContent("Primary tumor location"))
-                table.addCell(Cells.createContent(patientPopulation.patientsPerPrimaryTumorLocation?.entries?.joinToString(", ") { "${it.key.replaceFirstChar { word -> word.uppercase() }}: ${it.value}" }
-                    ?: "NA"))
-                table.addCell(Cells.createContent("Mutations"))
-                table.addCell(Cells.createContent(patientPopulation.mutations ?: "NA"))
-                table.addCell(Cells.createContent("Metastatic sites"))
-                table.addCell(Cells.createContent(patientPopulation.patientsPerMetastaticSites?.entries?.joinToString(", ") { it.key + ": " + it.value.value + " (" + it.value.percentage + "%)" }
-                    ?: "NA"))
-                table.addCell(Cells.createContent("Previous systemic therapy"))
-                table.addCell(Cells.createContent((patientPopulation.priorSystemicTherapy ?: "NA") + "/" + patientPopulation.numberOfPatients))
-                table.addCell(Cells.createContent("Prior therapies"))
-                table.addCell(Cells.createContent(patientPopulation.priorTherapies ?: "NA"))
-
+                    .flatMap { (characteristic, extractAsString) -> listOf(characteristic, extractAsString(patientPopulation) ?: NA) }
+                    .forEach { table.addCell(Cells.createContent(it)) }
             }
-        }
 //        table.addCell(
 //            Cells.createSpanningSubNote(
 //                "This patient matches all patient characteristics of the treatment group, except for age (68 years)",
@@ -113,70 +101,18 @@ class EfficacyEvidenceGenerator(
         return table
     }
 
-    private fun createWhoString(patientPopulation: PatientPopulation): String {
-        val strings = mutableSetOf<String>()
-        with(patientPopulation) {
-            patientsWithWho0?.let { strings.add("0: $it") }
-            patientsWithWho0to1?.let { strings.add("0-1: $it") }
-            patientsWithWho1?.let { strings.add("1: $it") }
-            patientsWithWho1to2?.let { strings.add("1-2: $it") }
-            patientsWithWho2?.let { strings.add("2: $it") }
-            patientsWithWho3?.let { strings.add("3: $it") }
-            patientsWithWho4?.let { strings.add("4: $it") }
-        }
-        return strings.joinToString(", ")
-    }
-
     private fun createEndpoints(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(100f, 250f).setWidth(350f)
-        for (patientPopulation in trialReference.patientPopulations) {
-            if (!patientPopulation.treatment?.name.isNullOrEmpty() && patientPopulation.treatment?.name.equals(
-                    treatment.treatmentCandidate.treatment.name,
-                    true
-                )
-            ) {
-                val analysisGroup: AnalysisGroup? = if (patientPopulation.analysisGroups.count() == 1) {
-                    patientPopulation.analysisGroups.first()
-                } else {
-                    patientPopulation.analysisGroups.find { it.nPatients == patientPopulation.numberOfPatients } // If there are multiple analysis groups, for now, take analysis group which evaluates all patients, not a subset
-                }
+        trialReference.patientPopulations
+            .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
+            .forEach { patientPopulation ->
+                val analysisGroup = analysisGroupForPopulation(patientPopulation)
                 table.addCell(Cells.createValue("Median PFS: "))
-                if (analysisGroup != null) {
-                    for (primaryEndPoint in analysisGroup.endPoints) {
-                        if (primaryEndPoint.name == "Median Progression-Free Survival") {
-                            if (primaryEndPoint.value != null) {
-                                table.addCell(
-                                    Cells.createKey(
-                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
-                                    )
-                                )
-                            } else {
-                                table.addCell(Cells.createKey("NE"))
-                            }
-                        }
-                    }
-                }
+                addEndPointsToTable(analysisGroup, "Median Progression-Free Survival", table)
 
                 table.addCell(Cells.createValue("Median OS: "))
-                if (analysisGroup != null) {
-                    for (primaryEndPoint in analysisGroup.endPoints) {
-                        if (primaryEndPoint.name == "Median Overall Survival") {
-                            if (primaryEndPoint.value != null) {
-                                table.addCell(
-                                    Cells.createKey(
-                                        primaryEndPoint.value.toString() + " " + primaryEndPoint.unitOfMeasure.display() + " (95% CI: " + (primaryEndPoint.confidenceInterval?.lowerLimit
-                                            ?: "NA") + "-" + (primaryEndPoint.confidenceInterval?.upperLimit ?: "NA") + ")"
-                                    )
-                                )
-                            } else {
-                                table.addCell(Cells.createKey("NE"))
-                            }
-                        }
-                    }
-                }
+                addEndPointsToTable(analysisGroup, "Median Overall Survival", table)
             }
-        }
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.createEmpty())
         return table
