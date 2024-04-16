@@ -46,7 +46,6 @@ class EhrMolecularTestExtractor(
     private fun extractFromTumorDifferentiation(ehrPatientRecord: EhrPatientRecord): List<ExtractionResult<List<PriorMolecularTest>>> =
         ehrPatientRecord.tumorDetails.tumorGradeDifferentiation?.split("\n")?.asSequence()
             ?.map { it.trim() }
-            ?.filterNot { it.endsWith(":") }
             ?.filterNot { it.contains(IHC_STRING, ignoreCase = true) }
             ?.map { curateFromSecondarySource(it, ehrPatientRecord) }
             ?.filter {
