@@ -52,12 +52,12 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             )
         }
 
-        val (indeterminatePriorIHCTestsForGene, passPriorIHCTestsForGene) = record.molecularHistory.allIHCTests()
+        val (indeterminatePriorIHCTestsForGene, conclusivePriorIHCTestsForGene) = record.molecularHistory.allIHCTests()
             .filter { it.item == gene }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
         return when {
-            passPriorIHCTestsForGene.isNotEmpty() -> {
+            conclusivePriorIHCTestsForGene.isNotEmpty() -> {
                 EvaluationFactory.pass("$gene has been tested in a prior IHC test",
                     "$gene tested before")
             }
