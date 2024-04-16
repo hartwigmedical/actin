@@ -28,28 +28,23 @@ class PatientClinicalHistoryWithOverviewGenerator(
         val supertable = Tables.createSingleColWithWidth(700f)
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth)
-        clinicalSummaryTable.addCell(createKey("Gender"))
-        clinicalSummaryTable.addCell(createValue(record.patient.gender.display()))
-        clinicalSummaryTable.addCell(createKey("Birth year"))
-        clinicalSummaryTable.addCell(createValue(record.patient.birthYear.toString()))
-        clinicalSummaryTable.addCell(createKey("WHO"))
-        clinicalSummaryTable.addCell(createValue(whoStatus(record.clinicalStatus.who)))
-        clinicalSummaryTable.addCell(createKey("Tumor"))
-        clinicalSummaryTable.addCell(createValue(tumor(record.tumor)))
-        clinicalSummaryTable.addCell(createKey("Lesions"))
-        clinicalSummaryTable.addCell(createValue(lesions(record.tumor)))
-        clinicalSummaryTable.addCell(createKey("Stage"))
-        clinicalSummaryTable.addCell(createValue(stage(record.tumor)))
-        clinicalSummaryTable.addCell(createKey("Measurable disease (RECIST)"))
-        clinicalSummaryTable.addCell(createValue(measurableDisease(record.tumor)))
-        clinicalSummaryTable.addCell(createKey("DPYD"))
-        clinicalSummaryTable.addCell(createValue(createPeachSummaryForGene(pharmaco, "DPYD")))
-        clinicalSummaryTable.addCell(createKey("UGT1A1"))
-        clinicalSummaryTable.addCell(createValue(createPeachSummaryForGene(pharmaco, "UGT1A1")))
+        listOf(
+            "Gender" to record.patient.gender.display(),
+            "Birth year" to record.patient.birthYear.toString(),
+            "WHO" to whoStatus(record.clinicalStatus.who),
+            "Tumor" to tumor(record.tumor),
+            "Lesions" to lesions(record.tumor),
+            "Stage" to stage(record.tumor),
+            "Measurable disease (RECIST)" to measurableDisease(record.tumor),
+            "DPYD" to createPeachSummaryForGene(pharmaco, "DPYD"),
+            "UGT1A1" to createPeachSummaryForGene(pharmaco, "UGT1A1"),
+            "\n" to "\n"
+        ).forEach { (key, value) ->
+            clinicalSummaryTable.addCell(createKey(key))
+            clinicalSummaryTable.addCell(createValue(value))
+        }
 
         val clinicalHistoryTable = createFixedWidthCols(keyWidth, valueWidth)
-        clinicalHistoryTable.addCell(createKey("\n"))
-        clinicalHistoryTable.addCell(createValue("\n"))
         PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth).contentsAsList().forEach(clinicalHistoryTable::addCell)
         clinicalHistoryTable.addCell(createKey("Recent molecular results"))
         val molecularRecord = record.molecularHistory.latestMolecularRecord()

@@ -9,21 +9,18 @@ const val NA = "NA"
 
 object SOCGeneratorFunctions {
 
-    fun addEndPointsToTable(
-        analysisGroup: AnalysisGroup?, endPointName: String, subTable: Table
-    ) {
-        analysisGroup?.endPoints?.filter { it.name == endPointName }?.forEach { primaryEndPoint ->
-            if (primaryEndPoint.value != null) {
-                val ciLower = primaryEndPoint.confidenceInterval?.lowerLimit ?: "NA"
-                val ciUpper = primaryEndPoint.confidenceInterval?.upperLimit ?: "NA"
-                subTable.addCell(
-                    Cells.createKey(
-                        "${primaryEndPoint.value.toString()} ${primaryEndPoint.unitOfMeasure.display()} (95% CI: $ciLower-$ciUpper)"
-                    )
+    fun addEndPointsToTable(analysisGroup: AnalysisGroup?, endPointName: String, subTable: Table) {
+        val primaryEndPoint = analysisGroup?.endPoints?.find { it.name == endPointName }
+        if (primaryEndPoint?.value != null) {
+            val ciLower = primaryEndPoint.confidenceInterval?.lowerLimit ?: "NA"
+            val ciUpper = primaryEndPoint.confidenceInterval?.upperLimit ?: "NA"
+            subTable.addCell(
+                Cells.createKey(
+                    "${primaryEndPoint.value.toString()} ${primaryEndPoint.unitOfMeasure.display()} (95% CI: $ciLower-$ciUpper)"
                 )
-            } else {
-                subTable.addCell(Cells.createKey("NE"))
-            }
+            )
+        } else {
+            subTable.addCell(Cells.createKey("NE"))
         }
     }
 
