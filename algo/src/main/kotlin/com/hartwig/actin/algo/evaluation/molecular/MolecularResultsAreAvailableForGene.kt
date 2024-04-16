@@ -38,14 +38,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
             }
         }
 
-        if (isGeneTestedInArcher(record.molecularHistory)) {
+        if (isGeneTestedInPanel(ExperimentType.ARCHER, record.molecularHistory)) {
             return EvaluationFactory.pass(
                 "Archer panel has been performed and molecular results are available for gene $gene",
                 "Archer panel results available for $gene"
             )
         }
 
-        if (isGeneTestedInGenericPanel(record.molecularHistory)) {
+        if (isGeneTestedInPanel(ExperimentType.GENERIC_PANEL, record.molecularHistory)) {
             return EvaluationFactory.pass(
                 "Panel has been performed and molecular results are available for gene $gene",
                 "Panel results available for $gene"
@@ -89,11 +89,11 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
         }
     }
 
-    private fun isGeneTestedInArcher(molecularHistory: MolecularHistory): Boolean {
-        return molecularHistory.allArcherPanels().any { gene in it.testedGenes() }
-    }
-
-    private fun isGeneTestedInGenericPanel(molecularHistory: MolecularHistory): Boolean {
-        return molecularHistory.allGenericPanels().any { gene in it.testedGenes() }
+    private fun isGeneTestedInPanel(type: ExperimentType, molecularHistory: MolecularHistory): Boolean {
+        return when (type) {
+            ExperimentType.ARCHER -> molecularHistory.allArcherPanels().any { gene in it.testedGenes() }
+            ExperimentType.GENERIC_PANEL -> molecularHistory.allGenericPanels().any { gene in it.testedGenes() }
+            else -> throw IllegalStateException("Unexpected experiment type $type")
+        }
     }
 }
