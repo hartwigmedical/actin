@@ -11,7 +11,7 @@ class CanGiveAdequateInformedConsentTest {
         val function = CanGiveAdequateInformedConsent()
         EvaluationAssert.assertEvaluation(
             EvaluationResult.NOT_EVALUATED,
-            function.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

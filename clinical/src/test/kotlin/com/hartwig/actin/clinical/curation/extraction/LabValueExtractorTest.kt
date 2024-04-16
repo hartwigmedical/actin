@@ -7,14 +7,15 @@ import com.hartwig.actin.clinical.curation.translation.Translation
 import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val PATIENT_ID = "patient1"
 private const val LAB_CODE_INPUT = "Lab code input"
 private const val LAB_NAME_INPUT = "Lab name input"
-private const val CANNOT_CURATE = "Cannot curate"
+private const val CANNOT_CURATE_NAME = "Cannot curate"
+private const val CANNOT_CURATE_CODE = "Cannot curate"
 
 private val LAB_TRANSLATION_INPUTS = LaboratoryIdentifiers(
     LAB_CODE_INPUT,
@@ -50,7 +51,7 @@ class LabValueExtractorTest {
             unit = LabUnit.NONE,
             isOutsideRef = false
         )
-        val rawValues = listOf(labValue, labValue.copy(code = CANNOT_CURATE, name = CANNOT_CURATE))
+        val rawValues = listOf(labValue, labValue.copy(code = CANNOT_CURATE_CODE, name = CANNOT_CURATE_NAME))
         val (extractedValues, evaluation) = extractor.extract(PATIENT_ID, rawValues)
         assertThat(extractedValues).hasSize(1)
         assertThat(extractedValues[0].code).isEqualTo(LAB_CODE_TRANSLATED)
@@ -60,8 +61,8 @@ class LabValueExtractorTest {
             CurationWarning(
                 PATIENT_ID,
                 CurationCategory.LABORATORY_TRANSLATION,
-                CANNOT_CURATE,
-                "Could not find laboratory translation for lab value with code '$CANNOT_CURATE' and name '$CANNOT_CURATE'"
+                "$CANNOT_CURATE_CODE | $CANNOT_CURATE_NAME",
+                "Could not find laboratory translation for lab value with code '$CANNOT_CURATE_CODE' and name '$CANNOT_CURATE_NAME'"
             )
         )
     }

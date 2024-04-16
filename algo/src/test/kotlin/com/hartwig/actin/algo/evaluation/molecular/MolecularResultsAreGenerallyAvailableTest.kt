@@ -10,6 +10,6 @@ class MolecularResultsAreGenerallyAvailableTest {
     @Test
     fun canEvaluate() {
         val function = MolecularResultsAreGenerallyAvailable()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

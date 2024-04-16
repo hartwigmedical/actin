@@ -65,7 +65,7 @@ class TestStandardOfCareApplication {
         private val ATC_TREE_PATH = listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)
 
         private fun patient(): PatientRecord {
-            val base = TestPatientFactory.createMinimalTestPatientRecord()
+            val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
             return base.copy(
                 tumor = base.tumor.copy(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
             )

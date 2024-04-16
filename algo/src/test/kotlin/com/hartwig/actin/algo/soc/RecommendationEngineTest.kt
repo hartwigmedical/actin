@@ -424,7 +424,7 @@ class RecommendationEngineTest {
             FOLFOX
         )
 
-        private val MINIMAL_PATIENT_RECORD = TestPatientFactory.createMinimalTestPatientRecord()
+        private val MINIMAL_PATIENT_RECORD = TestPatientFactory.createMinimalTestWGSPatientRecord()
         private val MINIMAL_CRC_PATIENT_RECORD = MINIMAL_PATIENT_RECORD.copy(
             tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
         )

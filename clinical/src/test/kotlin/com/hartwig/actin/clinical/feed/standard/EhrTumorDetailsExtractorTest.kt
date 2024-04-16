@@ -88,7 +88,22 @@ private val EHR_PRIOR_OTHER_CONDITION = EhrPriorOtherCondition(
     startDate = UNUSED_DATE
 )
 
-class EhrTumorDetailsExtractorTest {
+private val BRAIN_LESION_LOCATION_CONFIG = LesionLocationConfig(
+    input = PRIOR_CONDITION_INPUT,
+    location = "brain",
+    category = LesionLocationCategory.BRAIN
+)
+
+private val LUNG_LESION_LOCATION_CONFIG = BRAIN_LESION_LOCATION_CONFIG.copy(location = "lung", category = LesionLocationCategory.LUNG)
+
+private val BRAIN_AND_LUNG_LESION_TUMOR_DETAILS = TUMOR_DETAILS.copy(
+    hasBrainLesions = true,
+    brainLesionsCount = 1,
+    hasLungLesions = true,
+    lungLesionsCount = 1
+)
+
+class EhrTumorDetafilsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
     private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
@@ -144,7 +159,9 @@ class EhrTumorDetailsExtractorTest {
 
     @Test
     fun `Should curate lesions from the radiology report in lesion site`() {
-        setupLesionCuration(CONCLUSION_1)
+        setupLesionCuration(
+            CONCLUSION_1, BRAIN_LESION_LOCATION_CONFIG
+        )
         every { lesionCuration.find(CONCLUSION_2) } returns setOf(
             LesionLocationConfig(
                 input = CONCLUSION_2,
@@ -181,8 +198,10 @@ class EhrTumorDetailsExtractorTest {
     }
 
     @Test
-    fun `Should curate lesions from prior conditions but ignore any curation warnings`() {
-        setupLesionCuration(PRIOR_CONDITION_INPUT)
+    fun `Should curate lesions from prior conditions, supporting multiple configs per input, but ignore any curation warnings`() {
+        setupLesionCuration(
+            PRIOR_CONDITION_INPUT, BRAIN_LESION_LOCATION_CONFIG, LUNG_LESION_LOCATION_CONFIG
+        )
         val result =
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
@@ -192,19 +211,18 @@ class EhrTumorDetailsExtractorTest {
                     )
                 )
             )
-        assertThat(result.extracted).isEqualTo(
-            TUMOR_DETAILS.copy(
-                hasBrainLesions = true,
-                brainLesionsCount = 1
-            )
-        )
+        assertThat(result.extracted).isEqualTo(BRAIN_AND_LUNG_LESION_TUMOR_DETAILS)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(PRIOR_CONDITION_INPUT)
     }
 
     @Test
-    fun `Should curate lesions from treatment history but ignore any curation warnings`() {
-        setupLesionCuration(TREATMENT_HISTORY_INPUT)
+    fun `Should curate lesions from treatment history, supporting multiple configs per input, but ignore any curation warnings`() {
+        setupLesionCuration(
+            TREATMENT_HISTORY_INPUT,
+            BRAIN_LESION_LOCATION_CONFIG,
+            LUNG_LESION_LOCATION_CONFIG
+        )
         val result =
             extractor.extract(
                 EHR_PATIENT_RECORD.copy(
@@ -214,24 +232,13 @@ class EhrTumorDetailsExtractorTest {
                     )
                 )
             )
-        assertThat(result.extracted).isEqualTo(
-            TUMOR_DETAILS.copy(
-                hasBrainLesions = true,
-                brainLesionsCount = 1
-            )
-        )
+        assertThat(result.extracted).isEqualTo(BRAIN_AND_LUNG_LESION_TUMOR_DETAILS)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.evaluation.lesionLocationEvaluatedInputs).containsExactly(TREATMENT_HISTORY_INPUT)
     }
 
-    private fun setupLesionCuration(input: String) {
+    private fun setupLesionCuration(input: String, vararg lesionLocationConfig: LesionLocationConfig) {
         every { tumorCuration.find("tumorLocation | tumorType") } returns setOf(CURATION_CONFIG)
-        every { lesionCuration.find(input) } returns setOf(
-            LesionLocationConfig(
-                input = PRIOR_CONDITION_INPUT,
-                location = "brain",
-                category = LesionLocationCategory.BRAIN
-            )
-        )
+        every { lesionCuration.find(input) } returns lesionLocationConfig.toSet()
     }
 }

@@ -107,7 +107,7 @@ class HasContraindicationToCTTest {
     @Test
     fun `Should be undetermined if medication is not provided`() {
         val result = function.evaluate(
-            TestPatientFactory.createMinimalTestPatientRecord().copy(medications = null)
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
         assertThat(result.recoverable).isTrue()

@@ -9,6 +9,6 @@ class MeetsCovid19InfectionRequirementsTest {
     @Test
     fun canEvaluate() {
         val function = MeetsCovid19InfectionRequirements()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

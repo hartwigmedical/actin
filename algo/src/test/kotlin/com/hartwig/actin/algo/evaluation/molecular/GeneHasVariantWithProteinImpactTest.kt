@@ -17,7 +17,7 @@ class GeneHasVariantWithProteinImpactTest {
     
     @Test
     fun `Should fail when gene not present`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 
     @Test

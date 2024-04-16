@@ -3,6 +3,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
@@ -108,14 +111,26 @@ class MolecularResultsAreAvailableForGeneTest {
     }
 
     @Test
-    fun `Should pass if no WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
+    fun `Should pass if no successful WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.WHOLE_GENOME,
                     false,
-                    MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = false)
+                    MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass if no WGS or oncopanel has been performed but gene is in priorMolecularTest`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
                 )
             )
         )
@@ -130,6 +145,68 @@ class MolecularResultsAreAvailableForGeneTest {
                     ExperimentType.WHOLE_GENOME,
                     false,
                     MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass for gene that is always tested in Archer panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            MolecularResultsAreAvailableForGene("ALK")
+                .evaluate(
+                    MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                        listOf(archerPriorMolecularNoFusionsFoundRecord())
+                    )
+                )
+        )
+    }
+
+    @Test
+    fun `Should pass if gene is explicitly tested in Archer panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(archerPriorMolecularVariantRecord("gene 1", "c.1A>T"))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail for Archer if gene is not tested in panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(archerPriorMolecularVariantRecord("gene 2", "c.1A>T"))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass for gene that is always tested in generic panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            MolecularResultsAreAvailableForGene("EGFR")
+                .evaluate(
+                    MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                        listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
+                    )
+                )
+        )
+    }
+
+    @Test
+    fun `Should fail for generic panel if gene is not tested in panel`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
                 )
             )
         )

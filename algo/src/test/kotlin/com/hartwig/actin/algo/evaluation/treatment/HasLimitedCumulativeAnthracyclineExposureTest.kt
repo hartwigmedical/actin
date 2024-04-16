@@ -81,7 +81,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         private fun patientRecord(
             tumorDoids: Set<String>?, priorSecondPrimaries: List<PriorSecondPrimary>, treatmentHistory: List<TreatmentHistoryEntry>
         ): PatientRecord {
-            val base = TestPatientFactory.createMinimalTestPatientRecord()
+            val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
             return base.copy(
                 tumor = base.tumor.copy(doids = tumorDoids),
                 oncologicalHistory = treatmentHistory,

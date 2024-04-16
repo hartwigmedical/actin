@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import java.time.LocalDate
 
 internal object ToxicityTestFactory {
-    val base = TestPatientFactory.createMinimalTestPatientRecord()
+    val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     
     fun withToxicities(toxicities: List<Toxicity>): PatientRecord {
         return base.copy(toxicities = toxicities)

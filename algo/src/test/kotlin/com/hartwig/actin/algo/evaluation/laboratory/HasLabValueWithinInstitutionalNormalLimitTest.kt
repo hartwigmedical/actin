@@ -12,7 +12,7 @@ class HasLabValueWithinInstitutionalNormalLimitTest {
     @Test
     fun canEvaluate() {
         val function = HasLabValueWithinInstitutionalNormalLimit()
-        val record = TestPatientFactory.createMinimalTestPatientRecord()
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = 0.0))

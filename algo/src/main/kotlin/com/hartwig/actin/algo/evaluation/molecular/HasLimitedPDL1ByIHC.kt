@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxV
 class HasLimitedPDL1ByIHC(private val measure: String, private val maxPDL1: Double) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val priorMolecularTests = record.molecularHistory.allPriorMolecularTests()
+        val priorMolecularTests = record.molecularHistory.allIHCTests()
         val pdl1TestsWithRequestedMeasurement =
             PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure)
 
@@ -32,7 +32,7 @@ class HasLimitedPDL1ByIHC(private val measure: String, private val maxPDL1: Doub
             )
         } else if (PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty()) {
             EvaluationFactory.fail(
-            "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
+                "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
             )
         } else {
             EvaluationFactory.fail(

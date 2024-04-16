@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
@@ -314,6 +315,29 @@ object TestMolecularFactory {
                 integrations = 3,
                 isReliable = true,
             )
+        )
+    }
+
+    fun archerPriorMolecularVariantRecord(gene: String?, hgvs: String?, date: LocalDate? = null): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = "Archer FP Lung Target",
+            item = gene,
+            measure = hgvs,
+            measureDate = date,
+            impliesPotentialIndeterminateStatus = false
+        )
+    }
+
+    fun archerPriorMolecularNoFusionsFoundRecord(date: LocalDate? = null): PriorMolecularTest {
+        return archerPriorMolecularVariantRecord(null, "GEEN fusie(s) aangetoond", date)
+    }
+
+    fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = "AvL Panel",
+            item = null,
+            measure = "GEEN mutaties aangetoond met behulp van het AVL Panel",
+            impliesPotentialIndeterminateStatus = false
         )
     }
 }

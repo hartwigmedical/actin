@@ -13,7 +13,7 @@ import org.junit.Test
 class HasLeftSidedColorectalTumorTest {
     @Test
     fun shouldReturnUndeterminedWhenNoTumorDoidsConfigured() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 
     @Test

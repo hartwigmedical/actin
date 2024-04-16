@@ -21,7 +21,7 @@ class HasActiveInfectionTest {
     companion object {
         private fun withInfectionStatus(hasActiveInfection: Boolean?): PatientRecord {
             val infectionStatus = hasActiveInfection?.let { InfectionStatus(hasActiveInfection = it, description = null) }
-            return TestPatientFactory.createMinimalTestPatientRecord().copy(
+            return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                 clinicalStatus = ClinicalStatus(infectionStatus = infectionStatus)
             )
         }

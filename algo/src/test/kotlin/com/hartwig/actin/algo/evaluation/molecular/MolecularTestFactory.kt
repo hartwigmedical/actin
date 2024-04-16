@@ -20,7 +20,7 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
 
-    private val base = TestPatientFactory.createMinimalTestPatientRecord()
+    private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
 
     fun priorMolecularTest(
@@ -45,6 +45,10 @@ internal object MolecularTestFactory {
 
     fun withPriorTests(priorTests: List<PriorMolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory.fromInputs(listOf(baseMolecular), priorTests))
+    }
+
+    fun withPriorTestsAndNoOrangeMolecular(priorTests: List<PriorMolecularTest>): PatientRecord {
+        return base.copy(molecularHistory = MolecularHistory.fromInputs(emptyList(), priorTests))
     }
 
     fun withPriorTest(priorTest: PriorMolecularTest): PatientRecord {

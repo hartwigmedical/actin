@@ -30,7 +30,7 @@ internal object MedicationTestFactory {
     }
 
     fun withMedications(medications: List<Medication>): PatientRecord {
-        return TestPatientFactory.createMinimalTestPatientRecord().copy(medications = medications)
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = medications)
     }
 
     fun withCypInteraction(cyp: String, type: CypInteraction.Type, strength: CypInteraction.Strength): PatientRecord {

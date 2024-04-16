@@ -28,7 +28,7 @@ class EhrTumorDetailsExtractor(
         )
         val lesionCurationResponse =
             extractLesions(ehrPatientRecord)
-        val curatedLesions = lesionCurationResponse.mapNotNull { it.config() }
+        val curatedLesions = lesionCurationResponse.flatMap { it.configs }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         return curatedTumorResponse.config()?.let {
             val curatedTumorDetails = tumorDetailsFromEhr.copy(
@@ -94,7 +94,7 @@ class EhrTumorDetailsExtractor(
     ): List<CurationResponse<LesionLocationConfig>> {
         return sourceList.map {
             lesionCurationResponse(patientId, inputAccessor.invoke(it))
-        }.filter { it.config() != null }
+        }.filter { it.configs.isNotEmpty() }
     }
 
     private fun fromRadiologyReport(
@@ -119,6 +119,6 @@ class EhrTumorDetailsExtractor(
         CurationCategory.LESION_LOCATION,
         input,
         "lesion",
-        true
+        false
     )
 }

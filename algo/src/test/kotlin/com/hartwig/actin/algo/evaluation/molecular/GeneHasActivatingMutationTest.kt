@@ -21,11 +21,11 @@ class GeneHasActivatingMutationTest {
     fun `Should fail for minimal patient`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionWithCodonsToIgnore.evaluate(TestPatientFactory.createMinimalTestPatientRecord())
+            functionWithCodonsToIgnore.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 
@@ -179,7 +179,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             functionNotIgnoringCodons.evaluate(
-                TestPatientFactory.createMinimalTestPatientRecord().copy(molecularHistory = MolecularHistory.empty())
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularHistory = MolecularHistory.empty())
             )
         )
     }

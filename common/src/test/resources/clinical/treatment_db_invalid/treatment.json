@@ -1,0 +1,16 @@
+[
+  {
+    "name": "CAPECITABINE+OXALIPLATIN",
+    "treatmentClass": "DRUG_TREATMENT",
+    "synonyms": [
+      "CAPECITABINE AND OXALIPLATIN",
+      "CAPOX"
+    ],
+    "isSystemic": true,
+    "drugs": [
+      "CAPECITABINE",
+      "OXALIPLATIN"
+    ],
+    "maxCycles": null
+  }
+]

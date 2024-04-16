@@ -9,6 +9,6 @@ class CanUseAdequateAnticonceptionTest {
     @Test
     fun canEvaluate() {
         val function = CanUseAdequateAnticonception()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestPatientRecord()))
+        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }
