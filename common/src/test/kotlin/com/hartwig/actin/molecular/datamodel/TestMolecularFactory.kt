@@ -340,4 +340,12 @@ object TestMolecularFactory {
             impliesPotentialIndeterminateStatus = false
         )
     }
+
+    fun referralPriorMolecularFusionRecord(geneStart: String, geneEnd: String): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = "Referral",
+            item = "$geneStart::$geneEnd",
+            impliesPotentialIndeterminateStatus = false
+        )
+    }
 }

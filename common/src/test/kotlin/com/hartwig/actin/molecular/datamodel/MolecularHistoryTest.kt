@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.referralPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -90,6 +91,13 @@ class MolecularHistoryTest {
     }
 
     @Test
+    fun `Should classify Referral Panels`() {
+        assertThat(MolecularTestFactory.classify(
+            PriorMolecularTest("Referral", impliesPotentialIndeterminateStatus = false))
+        ).isEqualTo(ExperimentType.GENERIC_PANEL)
+    }
+
+    @Test
     fun `Should convert all prior molecular tests`() {
 
         val IHCTests = listOf(
@@ -109,6 +117,7 @@ class MolecularHistoryTest {
 
         val genericPanelTests = listOf(
             avlPanelPriorMolecularNoMutationsFoundRecord(),
+            referralPriorMolecularFusionRecord("geneUp", "geneDown")
         )
 
         val otherTests = listOf(
@@ -119,10 +128,10 @@ class MolecularHistoryTest {
         val priorMolecularTests = IHCTests + archerGroup1Tests + archerGroup2Tests + genericPanelTests + otherTests
 
         val molecularTests = MolecularTestFactory.fromPriorMolecular(priorMolecularTests)
-        assertThat(molecularTests).hasSize(6)
+        assertThat(molecularTests).hasSize(7)
         assertThat(molecularTests.filter { it.type == ExperimentType.IHC }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.ARCHER }).hasSize(2)
-        assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(1)
+        assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
     }
 

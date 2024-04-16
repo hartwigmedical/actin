@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import java.time.LocalDate
@@ -24,6 +25,7 @@ class MolecularTestFactory {
             return when (result.test) {
                 "Archer FP Lung Target" -> ExperimentType.ARCHER
                 "AvL Panel" -> ExperimentType.GENERIC_PANEL
+                "Referral" -> ExperimentType.GENERIC_PANEL
                 "IHC" -> ExperimentType.IHC
                 "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
                 else -> ExperimentType.OTHER
@@ -105,11 +107,32 @@ data class GenericPanelMolecularTest(
 
     companion object {
         fun fromPriorMolecularTest(results: List<PriorMolecularTest>): List<GenericPanelMolecularTest> {
-            return results.filter { it.test == "AvL Panel" }
-                .groupBy { it.measureDate }
+            return results.groupBy { it.test }.flatMap { (test, results) -> fromTestGroup(results, classify(test)) }
+        }
+
+        private fun fromTestGroup(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
+            return results.groupBy { it.measureDate }
                 .map { (date, results) ->
-                    GenericPanelMolecularTest(ExperimentType.GENERIC_PANEL, date = date, result = GenericPanel(GenericPanelType.AVL, date))
+                    val fusion = results.mapNotNull { it.item?.let { item -> parseFusion(item) } }
+                    GenericPanelMolecularTest(ExperimentType.GENERIC_PANEL, date = date, result = GenericPanel(type, date, fusion))
                 }
+        }
+
+        fun parseFusion(text: String): GenericFusion {
+            val parts = text.trim().split("::")
+            if (parts.size != 2) {
+                throw IllegalArgumentException("Expected two parts in fusion but got ${parts.size} for $text")
+            }
+
+            return GenericFusion(parts[0], parts[1])
+        }
+
+        private fun classify(type: String?): GenericPanelType {
+            return when (type) {
+                "AvL Panel" -> GenericPanelType.AVL
+                "Referral" -> GenericPanelType.REFERRAL
+                else -> throw IllegalArgumentException("Unknown generic panel type: $type")
+            }
         }
     }
 }
