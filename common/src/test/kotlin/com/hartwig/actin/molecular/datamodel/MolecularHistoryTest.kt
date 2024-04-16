@@ -91,9 +91,9 @@ class MolecularHistoryTest {
     }
 
     @Test
-    fun `Should classify Referral Panels`() {
+    fun `Should classify Free text curated Panels`() {
         assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest("Referral", impliesPotentialIndeterminateStatus = false))
+            PriorMolecularTest("Freetext", impliesPotentialIndeterminateStatus = false))
         ).isEqualTo(ExperimentType.GENERIC_PANEL)
     }
 

@@ -25,7 +25,7 @@ class MolecularTestFactory {
             return when (result.test) {
                 "Archer FP Lung Target" -> ExperimentType.ARCHER
                 "AvL Panel" -> ExperimentType.GENERIC_PANEL
-                "Referral" -> ExperimentType.GENERIC_PANEL
+                "Freetext" -> ExperimentType.GENERIC_PANEL
                 "IHC" -> ExperimentType.IHC
                 "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
                 else -> ExperimentType.OTHER
@@ -130,7 +130,7 @@ data class GenericPanelMolecularTest(
         private fun classify(type: String?): GenericPanelType {
             return when (type) {
                 "AvL Panel" -> GenericPanelType.AVL
-                "Referral" -> GenericPanelType.REFERRAL
+                "Freetext" -> GenericPanelType.FREE_TEXT
                 else -> throw IllegalArgumentException("Unknown generic panel type: $type")
             }
         }
