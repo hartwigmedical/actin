@@ -5,15 +5,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
-class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest{
+private const val matchDoid = "match doid"
+private const val matchTerm = "match term"
+private const val parentDoid = "parent doid"
+private const val parentTerm = "parent term"
 
-    private val matchDoid = "match doid"
-    private val matchTerm = "match term"
-    private val parentDoid = "parent doid"
-    private val parentTerm = "parent term"
+class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
+
     private val doidModel = TestDoidModelFactory.createWithParentChildAndTermPerDoidMaps(
         mapOf(matchDoid to parentDoid),
-        mapOf(matchDoid to matchTerm, parentDoid to parentTerm))
+        mapOf(matchDoid to matchTerm, parentDoid to parentTerm)
+    )
     private val function = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, listOf(matchTerm))
 
     @Test
@@ -38,6 +40,5 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest{
     fun `Should pass when prior tumors present in history with doid term not to ignore`(){
         val priorTumors = listOf(PriorTumorTestFactory.priorSecondPrimary(doid = "other"))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
-        println(function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)).passSpecificMessages)
     }
 }

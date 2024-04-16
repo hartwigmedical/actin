@@ -18,7 +18,7 @@ object TestDoidModelFactory {
         return create(
             childToParentsMap = childToParentMap.mapValues { listOf(it.value) },
             termPerDoidMap = doidToTermMap,
-            doidPerLowerCaseTermMap = doidToTermMap.mapValues { it.value.lowercase() }.entries.associate { (key, value) -> value to key }
+            doidPerLowerCaseTermMap = doidToTermMap.entries.associate { (doid, term) -> term.lowercase() to doid }
         )
     }
 
