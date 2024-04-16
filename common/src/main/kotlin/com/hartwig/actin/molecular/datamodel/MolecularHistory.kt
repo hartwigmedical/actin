@@ -1,7 +1,8 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import java.time.LocalDate
 
 data class MolecularHistory(
@@ -27,9 +28,18 @@ data class MolecularHistory(
             .maxByOrNull { it.date ?: LocalDate.MIN }
     }
 
+    fun allGenericPanels(): List<GenericPanel> {
+        return molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }
+            .map { it.result as GenericPanel }
+    }
+
     fun latestMolecularRecord(): MolecularRecord? {
         return allMolecularRecords()
             .maxByOrNull { it.date ?: LocalDate.MIN }
+    }
+
+    fun hasMolecularData(): Boolean {
+        return molecularTests.isNotEmpty()
     }
 
     companion object {

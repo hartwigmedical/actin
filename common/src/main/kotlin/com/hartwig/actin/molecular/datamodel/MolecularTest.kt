@@ -6,8 +6,10 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import java.time.LocalDate
 
 interface MolecularTest<T> {
@@ -21,6 +23,7 @@ class MolecularTestFactory {
         fun classify(result: PriorMolecularTest): ExperimentType {
             return when (result.test) {
                 "Archer FP Lung Target" -> ExperimentType.ARCHER
+                "AvL Panel" -> ExperimentType.GENERIC_PANEL
                 "IHC" -> ExperimentType.IHC
                 "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
                 else -> ExperimentType.OTHER
@@ -33,6 +36,7 @@ class MolecularTestFactory {
                     when (type) {
                         ExperimentType.IHC -> results.map { IHCMolecularTest.fromPriorMolecularTest(it) }
                         ExperimentType.ARCHER -> ArcherMolecularTest.fromPriorMolecularTests(results)
+                        ExperimentType.GENERIC_PANEL -> GenericPanelMolecularTest.fromPriorMolecularTest(results)
                         else -> results.map { OtherPriorMolecularTest.fromPriorMolecularTest(it) }
                     }
                 }
@@ -93,6 +97,23 @@ data class ArcherMolecularTest(
     }
 }
 
+data class GenericPanelMolecularTest(
+    override val type: ExperimentType,
+    override val date: LocalDate?,
+    override val result: GenericPanel
+) : MolecularTest<GenericPanel> {
+
+    companion object {
+        fun fromPriorMolecularTest(results: List<PriorMolecularTest>): List<GenericPanelMolecularTest> {
+            return results.filter { it.test == "AvL Panel" }
+                .groupBy { it.measureDate }
+                .map { (date, results) ->
+                    GenericPanelMolecularTest(ExperimentType.GENERIC_PANEL, date = date, result = GenericPanel(GenericPanelType.AVL, date))
+                }
+        }
+    }
+}
+
 data class OtherPriorMolecularTest(
     override val type: ExperimentType,
     override val date: LocalDate?,
@@ -127,6 +148,7 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*
             ExperimentType.TARGETED.toString() -> gson.fromJson(jsonObject, WGSMolecularTest::class.java)
             ExperimentType.IHC.toString() -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
             ExperimentType.ARCHER.toString() -> gson.fromJson(jsonObject, ArcherMolecularTest::class.java)
+            ExperimentType.GENERIC_PANEL.toString() -> gson.fromJson(jsonObject, GenericPanelMolecularTest::class.java)
             ExperimentType.OTHER.toString() -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
             else -> throw IllegalArgumentException("Unknown molecular test type: $type")
         }

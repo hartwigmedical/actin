@@ -1,7 +1,10 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -80,21 +83,46 @@ class MolecularHistoryTest {
     }
 
     @Test
+    fun `Should classify AvL Panels`() {
+        assertThat(MolecularTestFactory.classify(
+            PriorMolecularTest("AvL Panel", impliesPotentialIndeterminateStatus = false))
+        ).isEqualTo(ExperimentType.GENERIC_PANEL)
+    }
+
+    @Test
     fun `Should convert all prior molecular tests`() {
-        val priorMolecularTests = listOf(
+
+        val IHCTests = listOf(
             PriorMolecularTest("IHC", item = "protein1", impliesPotentialIndeterminateStatus = false),
             PriorMolecularTest("IHC", item = "protein2", impliesPotentialIndeterminateStatus = false),
-            PriorMolecularTest("Archer FP Lung Target", item = null, measure = "GEEN fusie(s) aangetoond", impliesPotentialIndeterminateStatus = false),
-            PriorMolecularTest("Archer FP Lung Target", item = "gene", measure = "c.1A>T", impliesPotentialIndeterminateStatus = false),
-            PriorMolecularTest("Archer FP Lung Target", item = "gene", measure = "c.5G>C", impliesPotentialIndeterminateStatus = false),
-            PriorMolecularTest("Archer FP Lung Target", measureDate = LocalDate.of(2020, 1, 1), item = "gene", measure = "c.5G>C", impliesPotentialIndeterminateStatus = false),
-            PriorMolecularTest("Future-Panel", item = "gene", impliesPotentialIndeterminateStatus = false),
         )
 
+        val archerGroup1Tests = listOf(
+            archerPriorMolecularNoFusionsFoundRecord(),
+            archerPriorMolecularVariantRecord("gene", "c.1A>T"),
+            archerPriorMolecularVariantRecord("gene", "c.5G>C")
+        )
+
+        val archerGroup2Tests = listOf(
+            archerPriorMolecularVariantRecord("gene", "c.5G>C", LocalDate.of(2020, 1, 1))
+        )
+
+        val genericPanelTests = listOf(
+            avlPanelPriorMolecularNoMutationsFoundRecord(),
+        )
+
+        val otherTests = listOf(
+            PriorMolecularTest("Future-Panel", item = "gene", impliesPotentialIndeterminateStatus = false)
+        )
+
+
+        val priorMolecularTests = IHCTests + archerGroup1Tests + archerGroup2Tests + genericPanelTests + otherTests
+
         val molecularTests = MolecularTestFactory.fromPriorMolecular(priorMolecularTests)
-        assertThat(molecularTests).hasSize(5)
+        assertThat(molecularTests).hasSize(6)
         assertThat(molecularTests.filter { it.type == ExperimentType.IHC }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.ARCHER }).hasSize(2)
+        assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(1)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
     }
 
