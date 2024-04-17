@@ -4,7 +4,6 @@ import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
@@ -34,6 +33,10 @@ const val OXALIPLATIN = "OXALIPLATIN"
 const val PANITUMUMAB = "PANITUMUMAB"
 const val PEMBROLIZUMAB = "PEMBROLIZUMAB"
 private const val RECENT_TREATMENT_THRESHOLD_WEEKS = "26"
+
+private val drugExclusionExceptions = setOf(FLUOROURACIL, CAPECITABINE, FOLINIC_ACID)
+private val antiEgfrDrugs = setOf(CETUXIMAB, PANITUMUMAB)
+private val mutuallyExclusiveMonotherapies = setOf(CAPECITABINE, FLUOROURACIL)
 
 class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
 
@@ -79,70 +82,85 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
         val treatment = treatmentDatabase.findTreatmentByName(treatmentName)
             ?: throw IllegalArgumentException("Unknown treatment name: $treatmentName")
         val treatmentLineFunctions = if (treatmentLines.isEmpty()) emptySet() else setOf(eligibleForTreatmentLines(treatmentLines))
+        val (drugBasedEligibility, drugBasedCriteriaForRequirement) = drugBasedExclusionsForTreatment(treatment as DrugTreatment)
         return TreatmentCandidate(
             treatment = treatment,
             optional = optional,
-            eligibilityFunctions = treatmentLineFunctions + drugBasedExclusionsForTreatment(treatment)
+            eligibilityFunctions = treatmentLineFunctions + drugBasedEligibility,
+            additionalCriteriaForRequirement = drugBasedCriteriaForRequirement
         )
     }
 
-    private fun drugBasedExclusionsForTreatment(treatment: Treatment): EligibilityFunction {
-        val mutuallyExclusiveMonotherapies = setOf(CAPECITABINE, FLUOROURACIL)
+    private fun drugBasedExclusionsForTreatment(treatment: DrugTreatment): Pair<Set<EligibilityFunction>, Set<EligibilityFunction>> {
         if (treatment.name in mutuallyExclusiveMonotherapies) {
-            return EligibilityFunction(EligibilityRule.AND, mutuallyExclusiveMonotherapies.map(::eligibleIfTreatmentNotInHistory))
+            return Pair(
+                mutuallyExclusiveMonotherapies.map(::eligibleIfTreatmentNotInRecentHistoryOrWithPD).toSet(),
+                setOf(eligibleIfDrugsNotInHistory(mutuallyExclusiveMonotherapies))
+            )
         }
-        
-        val treatmentDrugs = (treatment as DrugTreatment).drugs.map(Drug::name).toSet()
-        val additionalDrugsToExclude = if (treatmentDrugs.intersect(antiEgfrDrugs).isEmpty()) emptyList() else antiEgfrDrugs
-        val drugExclusionRule = eligibleIfDrugsNotInHistory(treatmentDrugs - drugExclusionExceptions + additionalDrugsToExclude)
 
-        return if (treatmentDrugs.intersect(drugExclusionExceptions).isEmpty()) drugExclusionRule else {
-            appendSpecificTreatmentExclusion(drugExclusionRule, treatment)
-        }
+        val treatmentDrugs = treatment.drugs.map(Drug::name).toSet()
+        val additionalDrugsToExclude = if (treatmentDrugs.intersect(antiEgfrDrugs).isEmpty()) emptyList() else antiEgfrDrugs
+        val drugsToExclude = treatmentDrugs - drugExclusionExceptions + additionalDrugsToExclude
+        val treatmentToExclude = if (treatmentDrugs.intersect(drugExclusionExceptions).isNotEmpty()) treatment.name else null
+
+        val drugExclusionRules = setOfNotNull(
+            eligibleIfDrugsNotInRecentHistoryOrWithPD(drugsToExclude),
+            treatmentToExclude?.let(::eligibleIfTreatmentNotInRecentHistoryOrWithPD)
+        )
+        val drugCriteriaForRequirement = setOfNotNull(
+            eligibleIfDrugsNotInHistory(drugsToExclude),
+            treatmentToExclude?.let(::eligibleIfTreatmentNotInHistory)
+        )
+        return Pair(drugExclusionRules, drugCriteriaForRequirement)
     }
 
-    private fun appendSpecificTreatmentExclusion(
-        drugExclusionRule: EligibilityFunction,
-        treatment: Treatment
-    ) = eligibilityFunction(EligibilityRule.AND, drugExclusionRule, eligibleIfTreatmentNotInHistory(treatment.name))
-
-    companion object {
-        private val drugExclusionExceptions = setOf(FLUOROURACIL, CAPECITABINE, FOLINIC_ACID)
-        private val antiEgfrDrugs = setOf(CETUXIMAB, PANITUMUMAB)
-
-        private fun eligibleIfDrugsNotInHistory(drugNames: Iterable<String>): EligibilityFunction {
-            val drugParameter = drugNames.joinToString(";")
-            return eligibilityFunction(
-                EligibilityRule.NOT,
+    private fun eligibleIfDrugsNotInRecentHistoryOrWithPD(drugNames: Iterable<String>): EligibilityFunction {
+        val drugParameter = drugNames.joinToString(";")
+        return eligibilityFunction(
+            EligibilityRule.NOT,
+            eligibilityFunction(
+                EligibilityRule.OR,
                 eligibilityFunction(
-                    EligibilityRule.OR,
-                    eligibilityFunction(
-                        EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_WITHIN_Y_WEEKS, drugParameter, RECENT_TREATMENT_THRESHOLD_WEEKS
-                    ),
-                    eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X, drugParameter),
-                )
+                    EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_WITHIN_Y_WEEKS, drugParameter, RECENT_TREATMENT_THRESHOLD_WEEKS
+                ),
+                eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X, drugParameter),
             )
-        }
+        )
+    }
 
-        private fun eligibleIfTreatmentNotInHistory(treatmentName: String): EligibilityFunction {
-            return eligibilityFunction(
-                EligibilityRule.NOT,
+    private fun eligibleIfDrugsNotInHistory(drugNames: Iterable<String>): EligibilityFunction {
+        return eligibilityFunction(
+            EligibilityRule.NOT,
+            eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X, drugNames.joinToString(";"))
+        )
+    }
+
+    private fun eligibleIfTreatmentNotInRecentHistoryOrWithPD(treatmentName: String): EligibilityFunction {
+        return eligibilityFunction(
+            EligibilityRule.NOT,
+            eligibilityFunction(
+                EligibilityRule.OR,
                 eligibilityFunction(
-                    EligibilityRule.OR,
-                    eligibilityFunction(
-                        EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, treatmentName, RECENT_TREATMENT_THRESHOLD_WEEKS
-                    ),
-                    eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatmentName)
-                )
+                    EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, treatmentName, RECENT_TREATMENT_THRESHOLD_WEEKS
+                ),
+                eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatmentName)
             )
-        }
+        )
+    }
 
-        private fun eligibleForTreatmentLines(lines: Set<Int>): EligibilityFunction {
-            return eligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X, lines.joinToString(";"))
-        }
+    private fun eligibleIfTreatmentNotInHistory(treatmentName: String): EligibilityFunction {
+        return eligibilityFunction(
+            EligibilityRule.NOT,
+            eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, treatmentName)
+        )
+    }
 
-        private fun eligibilityFunction(rule: EligibilityRule, vararg parameters: Any): EligibilityFunction {
-            return EligibilityFunction(rule = rule, parameters = listOf(*parameters))
-        }
+    private fun eligibleForTreatmentLines(lines: Set<Int>): EligibilityFunction {
+        return eligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X, lines.joinToString(";"))
+    }
+
+    private fun eligibilityFunction(rule: EligibilityRule, vararg parameters: Any): EligibilityFunction {
+        return EligibilityFunction(rule = rule, parameters = listOf(*parameters))
     }
 }

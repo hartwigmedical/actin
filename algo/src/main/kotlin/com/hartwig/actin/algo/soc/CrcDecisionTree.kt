@@ -41,14 +41,9 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
     )
 
     private val socExhaustedTree = DecisionTree(
-        decision = EligibilityFunction(
-            EligibilityRule.AND, listOf(
-                EligibilityFunction(EligibilityRule.HAS_EXHAUSTED_SOC_TREATMENTS, emptyList()),
-                EligibilityFunction(EligibilityRule.OR, listOf("NTRK1", "NTRK2", "NTRK3").map {
-                    EligibilityFunction(EligibilityRule.FUSION_IN_GENE_X, listOf(it))
-                })
-            )
-        ),
+        decision = EligibilityFunction(EligibilityRule.OR, listOf("NTRK1", "NTRK2", "NTRK3").map {
+            EligibilityFunction(EligibilityRule.FUSION_IN_GENE_X, listOf(it))
+        }),
         trueBranch = DecisionTreeLeaf(listOf(ENTRECTINIB, LAROTRECTINIB).map(treatmentCandidateDatabase::treatmentCandidate)),
         falseBranch = DecisionTreeLeaf(emptyList())
     )
