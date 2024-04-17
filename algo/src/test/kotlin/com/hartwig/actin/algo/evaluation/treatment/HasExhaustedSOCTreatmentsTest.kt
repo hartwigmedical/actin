@@ -39,6 +39,7 @@ class HasExhaustedSOCTreatmentsTest {
     fun `Should fail when patient is known to have not exhausted SOC`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns true
         every { recommendationEngine.patientHasExhaustedStandardOfCare(any()) } returns false
+        every { recommendationEngine.provideRecommendations(any()) } returns ""
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
     }
 }
