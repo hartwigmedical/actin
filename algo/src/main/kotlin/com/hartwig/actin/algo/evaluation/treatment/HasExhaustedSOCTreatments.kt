@@ -15,7 +15,9 @@ class HasExhaustedSOCTreatments(private val recommendationEngineFactory: Recomme
                 if (recommendationEngine.patientHasExhaustedStandardOfCare(record)) {
                     EvaluationFactory.pass("Patient has exhausted SOC")
                 } else {
-                    EvaluationFactory.fail("Patient has not exhausted SOC")
+                    EvaluationFactory.fail(
+                        "Patient has not exhausted SOC (remaining options: ${recommendationEngine.provideRecommendations(record)})"
+                    )
                 }
             }
 
