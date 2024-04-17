@@ -37,6 +37,8 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
+import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 
 class EmcClinicalFeedIngestor(
@@ -209,7 +211,8 @@ class EmcClinicalFeedIngestor(
             feedDirectory: String,
             curationDirectory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel
+            atcModel: AtcModel,
+            doidModel: DoidModel
         ) = EmcClinicalFeedIngestor(
             feed = FeedModel(
                 ClinicalFeedReader.read(feedDirectory).copy(
@@ -219,7 +222,7 @@ class EmcClinicalFeedIngestor(
                     )
                 )
             ),
-            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext),
+            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext, TumorStageDeriver.create(doidModel)),
             complicationsExtractor = ComplicationsExtractor.create(curationDatabaseContext),
             clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),
             oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
@@ -230,7 +233,7 @@ class EmcClinicalFeedIngestor(
             toxicityExtractor = ToxicityExtractor.create(curationDatabaseContext),
             intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext, atcModel),
             medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel),
-            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext)
+            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
         )
 
         const val BODY_WEIGHT_MIN = 20.0

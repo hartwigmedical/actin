@@ -8,6 +8,7 @@ data class TumorDetails(
     val primaryTumorExtraDetails: String? = null,
     val doids: Set<String>? = null,
     val stage: TumorStage? = null,
+    val derivedStages: Set<TumorStage>? = null,
     val hasMeasurableDisease: Boolean? = null,
     val hasBrainLesions: Boolean? = null,
     val brainLesionsCount: Int? = null,

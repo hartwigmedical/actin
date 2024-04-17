@@ -1,13 +1,14 @@
-package com.hartwig.actin.algo.evaluation.tumor
+package com.hartwig.actin.clinical.feed.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.doid.DoidModel
 import java.util.function.Predicate
 
-internal class TumorStageDerivationFunction private constructor(private val derivationRules: Map<Predicate<TumorDetails>, Set<TumorStage>>) {
-    fun apply(tumor: TumorDetails): Set<TumorStage>? {
+class TumorStageDeriver private constructor(private val derivationRules: Map<Predicate<TumorDetails>, Set<TumorStage>>) {
+    fun derive(tumor: TumorDetails): Set<TumorStage>? {
         return if (DoidEvaluationFunctions.hasConfiguredDoids(tumor.doids) && hasNoTumorStage(tumor)) {
             derivationRules.entries.firstOrNull { it.key.test(tumor) }
                 ?.value
@@ -17,8 +18,8 @@ internal class TumorStageDerivationFunction private constructor(private val deri
     }
 
     companion object {
-        fun create(doidModel: DoidModel): TumorStageDerivationFunction {
-            return TumorStageDerivationFunction(
+        fun create(doidModel: DoidModel): TumorStageDeriver {
+            return TumorStageDeriver(
                 linkedMapOf(
                     hasAtLeastCategorizedLesions(2, doidModel) to setOf(TumorStage.IV),
                     hasExactlyCategorizedLesions(1, doidModel).or(hasUncategorizedLesions()) to setOf(TumorStage.III, TumorStage.IV),

@@ -10,14 +10,15 @@ import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 
 private const val CONCLUSIE_ = "Conclusie:"
 
 class EhrTumorDetailsExtractor(
     private val primaryTumorConfigCurationDatabase: CurationDatabase<PrimaryTumorConfig>,
-    private val lesionCurationDatabase: CurationDatabase<LesionLocationConfig>
+    private val lesionCurationDatabase: CurationDatabase<LesionLocationConfig>,
+    private val tumorStageDeriver: TumorStageDeriver
 ) : EhrExtractor<TumorDetails> {
-
 
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<TumorDetails> {
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"
@@ -30,14 +31,15 @@ class EhrTumorDetailsExtractor(
         val curatedLesions = lesionCurationResponse.flatMap { it.configs }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         return curatedTumorResponse.config()?.let {
+            val curatedTumorDetails = tumorDetailsFromEhr.copy(
+                primaryTumorLocation = it.primaryTumorLocation,
+                primaryTumorType = it.primaryTumorType,
+                primaryTumorSubLocation = it.primaryTumorSubLocation,
+                primaryTumorSubType = it.primaryTumorSubType,
+                doids = it.doids
+            )
             ExtractionResult(
-                tumorDetailsFromEhr.copy(
-                    primaryTumorLocation = it.primaryTumorLocation,
-                    primaryTumorType = it.primaryTumorType,
-                    primaryTumorSubLocation = it.primaryTumorSubLocation,
-                    primaryTumorSubType = it.primaryTumorSubType,
-                    doids = it.doids
-                ),
+                curatedTumorDetails.copy(derivedStages = tumorStageDeriver.derive(curatedTumorDetails)),
                 curatedTumorResponse.extractionEvaluation + lesionCurationResponse.map { l -> l.extractionEvaluation }
                     .fold(CurationExtractionEvaluation()) { acc, extractionEvaluation -> acc + extractionEvaluation }
             )

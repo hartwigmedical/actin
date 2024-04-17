@@ -11,11 +11,13 @@ import com.hartwig.actin.clinical.curation.config.PrimaryTumorConfig
 import com.hartwig.actin.clinical.curation.datamodel.LesionLocationCategory
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
+import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import org.apache.logging.log4j.LogManager
 
 class TumorDetailsExtractor(
     private val lesionLocationCuration: CurationDatabase<LesionLocationConfig>,
-    private val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>
+    private val primaryTumorCuration: CurationDatabase<PrimaryTumorConfig>,
+    private val tumorStageDeriver: TumorStageDeriver
 ) {
 
     private val logger = LogManager.getLogger(TumorDetailsExtractor::class.java)
@@ -54,8 +56,12 @@ class TumorDetailsExtractor(
             hasLymphNodeLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.LYMPH_NODE),
             otherLesions = curatedOtherLesions
         )
+        val tumorDetailsWithDerivedStages = tumorDetails.copy(derivedStages = tumorStageDeriver.derive(tumorDetails))
 
-        return ExtractionResult(tumorDetails, otherLesionsResult + tumorExtractionResult + biopsyCuration?.extractionEvaluation)
+        return ExtractionResult(
+            tumorDetailsWithDerivedStages,
+            otherLesionsResult + tumorExtractionResult + biopsyCuration?.extractionEvaluation
+        )
     }
 
     fun curateTumorDetails(
@@ -65,7 +71,7 @@ class TumorDetailsExtractor(
     ): Pair<TumorDetails, CurationExtractionEvaluation> {
         val inputPrimaryTumor = tumorInput(inputTumorLocation, inputTumorType)?.lowercase()
             ?: return Pair(TumorDetails(), CurationExtractionEvaluation())
-            
+
         val primaryTumorCuration = CurationResponse.createFromConfigs(
             primaryTumorCuration.find(inputPrimaryTumor),
             patientId,
@@ -132,9 +138,10 @@ class TumorDetailsExtractor(
     }
 
     companion object {
-        fun create(curationDatabaseContext: CurationDatabaseContext) = TumorDetailsExtractor(
+        fun create(curationDatabaseContext: CurationDatabaseContext, tumorStageDeriver: TumorStageDeriver) = TumorDetailsExtractor(
             primaryTumorCuration = curationDatabaseContext.primaryTumorCuration,
-            lesionLocationCuration = curationDatabaseContext.lesionLocationCuration
+            lesionLocationCuration = curationDatabaseContext.lesionLocationCuration,
+            tumorStageDeriver = tumorStageDeriver
         )
     }
 }
