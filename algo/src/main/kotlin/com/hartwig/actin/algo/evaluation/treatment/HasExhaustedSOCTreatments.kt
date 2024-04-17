@@ -12,11 +12,13 @@ class HasExhaustedSOCTreatments(private val recommendationEngineFactory: Recomme
         val recommendationEngine = recommendationEngineFactory.create()
         return when {
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
-                if (recommendationEngine.patientHasExhaustedStandardOfCare(record)) {
+                val remainingNonOptionalTreatments = recommendationEngine.determineRequiredTreatments(record)
+                    .joinToString(", ") { it.treatmentCandidate.treatment.name.lowercase() }
+                if (remainingNonOptionalTreatments.isEmpty()) {
                     EvaluationFactory.pass("Patient has exhausted SOC")
                 } else {
                     EvaluationFactory.fail(
-                        "Patient has not exhausted SOC (remaining options: ${recommendationEngine.provideRecommendations(record)})"
+                        "Patient has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
                     )
                 }
             }
