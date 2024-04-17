@@ -38,10 +38,9 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
             }
 
             hasSuspectPriorTumorWithSuspectTreatmentHistory -> {
-                EvaluationFactory.undetermined(
-                    "Patient has had a prior tumor that is associated with potential anthracycline chemotherapy",
-                    "Undetermined (dosage of) anthracycline exposure"
-                )
+                val message = "Undetermined if prior anthracycline exposure within permitted limit " +
+                        "(prior tumor in history associated with anthracycline chemotherapy)"
+                EvaluationFactory.undetermined(message, message)
             }
 
             else -> {
