@@ -572,6 +572,18 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with many doid terms input`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithTwoDoidsAndTerms(listOf("doid 1", "doid 2"), listOf("term 1", "term 2"))
+        val rule = firstOfType(FunctionInput.MANY_DOID_TERMS)
+        val valid = create(rule, listOf("term 1;term 2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        assertThat(resolver.createManyDoidTermsInput(valid)).isEqualTo(listOf("term 1", "term 2"))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("doid 1", "doid 2")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one receptor type input`() {
         val rule = firstOfType(FunctionInput.ONE_RECEPTOR_TYPE)
         val valid = create(rule, listOf("ER"))

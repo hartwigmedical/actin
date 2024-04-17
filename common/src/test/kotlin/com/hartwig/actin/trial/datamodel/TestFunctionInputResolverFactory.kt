@@ -27,6 +27,10 @@ object TestFunctionInputResolverFactory {
         return createResolverWithDoidModel(TestDoidModelFactory.createWithOneDoidAndTerm(doid, term))
     }
 
+    fun createResolverWithTwoDoidsAndTerms(doids: List<String>, terms: List<String>): FunctionInputResolver {
+        return createResolverWithDoidModel(TestDoidModelFactory.createWithTwoDoidsAndTerms(doids, terms))
+    }
+
     fun createResolverWithOneValidGene(gene: String): FunctionInputResolver {
         return FunctionInputResolver(
             TestDoidModelFactory.createMinimalTestDoidModel(),
