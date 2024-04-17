@@ -1,39 +1,38 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
+import com.hartwig.actin.molecular.datamodel.GenericPanelMolecularTest
+import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
+import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.MolecularTestVisitor
 import org.apache.logging.log4j.LogManager
 
-object PriorMolecularTestInterpreter {
-    private val LOGGER = LogManager.getLogger(PriorMolecularTestInterpreter::class.java)
+class PriorMolecularTestInterpreter : MolecularTestVisitor {
+    private val logger = LogManager.getLogger(PriorMolecularTestInterpreter::class.java)
 
-    fun interpret(priorTests: List<PriorMolecularTest>): PriorMolecularTestInterpretation {
-        val (textBasedPriorTests, valueBasedPriorTests) = priorTests.map { priorTest ->
-            val scoreText = priorTest.scoreText
-            if (scoreText != null) {
-                PriorMolecularTestCollection(
-                    listOf(PriorMolecularTestKey(test = priorTest.test, scoreText = scoreText) to priorTest),
-                    emptySet()
-                )
-            } else if (priorTest.scoreValue != null) {
-                PriorMolecularTestCollection(emptyList(), setOf(priorTest))
-            } else {
-                LOGGER.warn("Prior test is neither text-based nor value-based: {}", priorTest)
-                PriorMolecularTestCollection()
-            }
-        }.fold(PriorMolecularTestCollection(), PriorMolecularTestCollection::combine)
-        return PriorMolecularTestInterpretation(textBasedPriorTests.groupBy({ it.first }, { it.second }), valueBasedPriorTests)
+    private val interpretationBuilder = PriorMolecularTestInterpretationBuilder()
+
+    override fun visit(test: IHCMolecularTest) {
+        val scoreText = test.result.scoreText
+        if (scoreText != null) {
+            interpretationBuilder.addTest(test.result.test, test.result.item ?: "", test.result.scoreText!!)
+        } else if (test.result.scoreValue != null) {
+            interpretationBuilder.addTest(test.result.test, test.result.item ?: "", test.result.scoreValue.toString())
+        } else {
+            logger.error("IHC test is neither text-based nor value-based: {}", test.result)
+        }
     }
 
-    private data class PriorMolecularTestCollection(
-        val textBasedPriorMolecularTests: List<Pair<PriorMolecularTestKey, PriorMolecularTest>> = emptyList(),
-        val valueBasedPriorTests: Set<PriorMolecularTest> = emptySet()
-    ) {
+    override fun visit(test: ArcherMolecularTest) {
+        test.result.variants.forEach { interpretationBuilder.addTest(test.type.display(), it.gene, it.hgvsCodingImpact) }
+    }
 
-        fun combine(other: PriorMolecularTestCollection): PriorMolecularTestCollection {
-            return PriorMolecularTestCollection(
-                textBasedPriorMolecularTests + other.textBasedPriorMolecularTests,
-                valueBasedPriorTests + other.valueBasedPriorTests
-            )
-        }
+    override fun visit(test: GenericPanelMolecularTest) {
+        test.result.testedGenes().forEach { interpretationBuilder.addTest(test.type.display(), it, "Negative") }
+    }
+
+    fun interpret(priorTests: List<MolecularTest<*>>): PriorMolecularTestInterpretation {
+        priorTests.forEach { it.accept(this) }
+        return interpretationBuilder.build()
     }
 }

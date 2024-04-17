@@ -6,14 +6,14 @@ import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import org.apache.logging.log4j.LogManager
 import java.io.File
+import org.apache.logging.log4j.LogManager
 
 object TestReportWriterApplication {
 
     private val LOGGER = LogManager.getLogger(TestReportWriterApplication::class.java)
 
-    private val WORK_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp"
+    private val WORK_DIRECTORY = System.getProperty("user.dir")
     private val OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "patient.treatment_match.json"
 
     @JvmStatic

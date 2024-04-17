@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularCharacteristicsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularDriversGenerator
@@ -38,7 +39,12 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
     private fun addMolecularDetails(document: Document) {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val priorMolecularResultGenerator =
-            PriorMolecularResultGenerator(report.patientRecord.molecularHistory, keyWidth, contentWidth() - keyWidth - 10)
+            PriorMolecularResultGenerator(
+                report.patientRecord.molecularHistory,
+                keyWidth,
+                contentWidth() - keyWidth - 10,
+                PriorMolecularTestInterpreter()
+            )
         val priorMolecularResults = priorMolecularResultGenerator.contents().setBorder(Border.NO_BORDER)
         document.add(priorMolecularResults)
 
