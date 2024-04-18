@@ -7,6 +7,7 @@ import com.hartwig.actin.molecular.datamodel.GenericPanelMolecularTest
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTestVisitor
+import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.Panel
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
@@ -17,15 +18,15 @@ class PriorMolecularTestInterpreter : MolecularTestVisitor {
     private val interpretationBuilder = PriorMolecularTestInterpretationBuilder()
 
     override fun visit(test: IHCMolecularTest) {
-        val scoreText = test.result.scoreText
-        if (scoreText != null) {
-            interpretationBuilder.addInterpretation(test.result.test, test.result.scoreText!!, test.result.item ?: "")
-        } else if (test.result.scoreValue != null) {
-            interpretationBuilder.addInterpretation(
-                test.result.test, test.result.item ?: "", formatValueBasedPriorTest(test.result)
-            )
-        } else {
-            logger.error("IHC test is neither text-based nor value-based: {}", test.result)
+        val result = test.result
+        val item = result.item ?: ""
+        val type = result.test
+        val scoreText = result.scoreText
+        val scoreValue = result.scoreValue
+        when {
+            scoreText != null -> interpretationBuilder.addInterpretation(type, scoreText, item)
+            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedPriorTest(result))
+            else -> logger.error("IHC test is neither text-based nor value-based: {}", result)
         }
     }
 
@@ -38,17 +39,24 @@ class PriorMolecularTestInterpreter : MolecularTestVisitor {
         interpretImpliedNegatives(test.type, test.result)
     }
 
+    override fun visit(test: OtherPriorMolecularTest) {
+        val scoreText = test.result.scoreText
+        val item = test.result.item
+        if (scoreText != null && item != null) {
+            interpretationBuilder.addInterpretation(test.type.display(), scoreText, item)
+        }
+    }
+
     private fun interpretImpliedNegatives(type: ExperimentType, panel: Panel, tested: Set<String> = emptySet()) {
         (panel.testedGenes() - tested).forEach { interpretationBuilder.addInterpretation(type.display(), "Negative", it) }
     }
 
     private fun formatValueBasedPriorTest(valueTest: PriorMolecularTest): String {
-        return listOfNotNull(
-            "Score",
-            valueTest.measure,
-            valueTest.scoreValuePrefix,
-            Formats.twoDigitNumber(valueTest.scoreValue!!) + valueTest.scoreValueUnit
-        ).joinToString(" ")
+        return valueTest.scoreValue?.let {
+            return listOfNotNull(
+                "Score", valueTest.measure, valueTest.scoreValuePrefix, Formats.twoDigitNumber(it) + valueTest.scoreValueUnit
+            ).joinToString(" ")
+        } ?: ""
     }
 
     fun interpret(priorTests: List<MolecularTest<*>>): List<PriorMolecularTestInterpretation> {
