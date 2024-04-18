@@ -60,8 +60,16 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val recommendationEngine = RecommendationEngineFactory(resources).create()
 
         LOGGER.info(recommendationEngine.provideRecommendations(patient))
-        val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
-        LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
+        val requiredTreatments = recommendationEngine.determineRequiredTreatments(patient)
+        requiredTreatments.forEach {
+            val allMessages = it.evaluations.flatMap { evaluation ->
+                with(evaluation) {
+                    passGeneralMessages + warnGeneralMessages + undeterminedGeneralMessages
+                }
+            }
+            LOGGER.debug("${it.treatmentCandidate.treatment.display()}: ${allMessages.joinToString(", ")}")
+        }
+        LOGGER.info("Standard of care has${if (requiredTreatments.isEmpty()) "" else " not"} been exhausted")
     }
 
     companion object {
