@@ -12,6 +12,10 @@ data class ArcherPanel(
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
-        return variants.map { it.gene }.toSet() + fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet() + ARCHER_ALWAYS_TESTED_GENES
+        return genesWithVariants() + ARCHER_ALWAYS_TESTED_GENES
+    }
+
+    fun genesWithVariants(): Set<String> {
+        return variants.map { it.gene }.toSet() + fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
     }
 }

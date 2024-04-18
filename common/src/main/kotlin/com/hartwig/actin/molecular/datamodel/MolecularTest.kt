@@ -16,16 +16,7 @@ interface MolecularTest<T> {
     val type: ExperimentType
     val date: LocalDate?
     val result: T
-
-    fun accept(molecularTestVisitor: MolecularTestVisitor) {
-        when (this) {
-            is WGSMolecularTest -> molecularTestVisitor.visit(this)
-            is IHCMolecularTest -> molecularTestVisitor.visit(this)
-            is ArcherMolecularTest -> molecularTestVisitor.visit(this)
-            is GenericPanelMolecularTest -> molecularTestVisitor.visit(this)
-            is OtherPriorMolecularTest -> molecularTestVisitor.visit(this)
-        }
-    }
+    fun accept(molecularTestVisitor: MolecularTestVisitor)
 }
 
 interface MolecularTestVisitor {
@@ -188,9 +179,7 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*
 
     override fun read(input: JsonReader): MolecularTest<*>? {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
-        val type = jsonObject.get("type").asString
-
-        return when (type) {
+        return when (val type = jsonObject.get("type").asString) {
             ExperimentType.WHOLE_GENOME.toString() -> gson.fromJson(jsonObject, WGSMolecularTest::class.java)
             ExperimentType.TARGETED.toString() -> gson.fromJson(jsonObject, WGSMolecularTest::class.java)
             ExperimentType.IHC.toString() -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)

@@ -347,6 +347,16 @@ object TestClinicalFactory {
                 scoreValue = null,
                 scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
+            ),
+            PriorMolecularTest(
+                test = "Freetext",
+                item = "FGFR3::TACC3",
+                measure = null,
+                scoreText = "Positive",
+                scoreValuePrefix = null,
+                scoreValue = null,
+                scoreValueUnit = null,
+                impliesPotentialIndeterminateStatus = false
             )
         )
     }

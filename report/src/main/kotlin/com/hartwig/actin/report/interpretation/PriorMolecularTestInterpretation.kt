@@ -1,22 +1,22 @@
 package com.hartwig.actin.report.interpretation
 
 data class PriorMolecularTestInterpretation(
-    val displaySections: List<MolecularTestDisplay>
+    val type: String,
+    val results: List<PriorMolecularTestResultInterpretation>
 )
 
-data class MolecularTestDisplay(val type: String, val results: List<String>)
+data class PriorMolecularTestResultInterpretation(val grouping: String, val details: String)
 
 class PriorMolecularTestInterpretationBuilder {
-    private val displaySections = mutableListOf<Triple<String, String, String>>()
+    private val results = mutableListOf<Triple<String, String, String>>()
 
-    fun addTest(type: String, item: String, result: String) {
-        displaySections.add(Triple(type, item, result))
+    fun addInterpretation(type: String, grouping: String, details: String) {
+        results.add(Triple(type, grouping, details))
     }
 
-    fun build(): PriorMolecularTestInterpretation {
-        return PriorMolecularTestInterpretation(displaySections.groupBy { it.first to it.third }
-            .map {
-                MolecularTestDisplay(it.key.first, it.value.map { t -> t.second })
-            })
+    fun build(): List<PriorMolecularTestInterpretation> {
+        return results.groupBy { it.first }.map { (type, results) ->
+            PriorMolecularTestInterpretation(type, results.map { PriorMolecularTestResultInterpretation(it.second, it.third) })
+        }
     }
 }
