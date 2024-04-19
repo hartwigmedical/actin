@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
@@ -22,12 +23,22 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         }
 
         val molecular = record.molecularHistory.latestMolecularRecord()
-        if (molecular != null) {
-            return findActivatingMutationsInOrangeMolecular(molecular)
-        }
+        val molecularEvaluation = if (molecular != null) {
+            findActivatingMutationsInOrangeMolecular(molecular)
+        } else null
 
-        val result = findActivatingMutationsInPanels(record.molecularHistory)
-        return result ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(record.molecularHistory) else null
+
+        val groupedEvaluationsByResult = listOfNotNull(molecularEvaluation, panelEvaluation)
+            .groupBy { evaluation -> evaluation.result }
+            .mapValues { entry ->
+                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
+            }
+
+        return groupedEvaluationsByResult[EvaluationResult.PASS]
+            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
     }
 
     private fun findActivatingMutationsInOrangeMolecular(molecular: MolecularRecord): Evaluation {
@@ -190,7 +201,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
 
         if (activatingVariants.isNotEmpty())
             return EvaluationFactory.pass(
-                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
+                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Archer panel",
                 "$gene activating mutation(s)",
                 inclusionEvents = activatingVariants
             )
