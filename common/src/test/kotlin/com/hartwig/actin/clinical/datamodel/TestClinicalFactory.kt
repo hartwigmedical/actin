@@ -299,16 +299,6 @@ object TestClinicalFactory {
     fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
         return listOf(
             PriorMolecularTest(
-                test = "",
-                item = "KIT",
-                measure = null,
-                scoreText = "Exon 11: c.1714_1719dup p.D572_P573dup",
-                scoreValuePrefix = null,
-                scoreValue = null,
-                scoreValueUnit = null,
-                impliesPotentialIndeterminateStatus = false
-            ),
-            PriorMolecularTest(
                 test = ARCHER_FP_LUNG_TARGET,
                 item = "EGFR",
                 measure = "c.2240_2254del",

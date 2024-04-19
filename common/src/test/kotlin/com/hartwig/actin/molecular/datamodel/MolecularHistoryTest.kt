@@ -5,9 +5,9 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMol
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class MolecularHistoryTest {
 
@@ -137,7 +137,7 @@ class MolecularHistoryTest {
             emptyPanel.copy(date = LocalDate.of(2023, 1, 1)),
         )
 
-        val molecularHistory = MolecularHistory(archerPanels.map { ArcherMolecularTest(ExperimentType.ARCHER, it.date, it) })
+        val molecularHistory = MolecularHistory(archerPanels.map { ArcherMolecularTest(it.date, it) })
         assertThat(molecularHistory.latestArcherPanel()?.date).isEqualTo(LocalDate.of(2024, 1, 1))
     }
 }

@@ -30,7 +30,8 @@ class PriorMolecularResultGenerator(
             }
             for (priorMolecularTestInterpretation in sortedInterpretation) {
                 table.addCell(Cells.createSubTitle(priorMolecularTestInterpretation.type + " Results"))
-                table.addCell(Cells.createValue(priorMolecularTestInterpretation.results.groupBy { it.grouping }
+                table.addCell(Cells.createValue(priorMolecularTestInterpretation.results.sortedBy { it.sortPrecedence }
+                    .groupBy { it.grouping }
                     .map { Paragraph("${it.key}: ${it.value.joinToString { i -> i.details }}") }))
             }
         }

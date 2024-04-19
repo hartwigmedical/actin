@@ -24,8 +24,8 @@ class PriorMolecularTestInterpreter : MolecularTestVisitor {
         val scoreText = result.scoreText
         val scoreValue = result.scoreValue
         when {
-            scoreText != null -> interpretationBuilder.addInterpretation(type, scoreText, item)
-            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedPriorTest(result))
+            scoreText != null -> interpretationBuilder.addInterpretation(type, scoreText, item, 0)
+            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedPriorTest(result), 1)
             else -> logger.error("IHC test is neither text-based nor value-based: {}", result)
         }
     }

@@ -76,10 +76,12 @@ data class WGSMolecularTest(
 }
 
 data class IHCMolecularTest(
-    override val type: ExperimentType,
-    override val date: LocalDate?,
+    override val date: LocalDate? = null,
     override val result: PriorMolecularTest
 ) : MolecularTest<PriorMolecularTest> {
+
+    override val type: ExperimentType
+        get() = ExperimentType.IHC
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
@@ -87,16 +89,18 @@ data class IHCMolecularTest(
 
     companion object {
         fun fromPriorMolecularTest(result: PriorMolecularTest): IHCMolecularTest {
-            return IHCMolecularTest(ExperimentType.IHC, date = null, result)
+            return IHCMolecularTest(date = null, result)
         }
     }
 }
 
 data class ArcherMolecularTest(
-    override val type: ExperimentType,
-    override val date: LocalDate?,
+    override val date: LocalDate? = null,
     override val result: ArcherPanel
 ) : MolecularTest<ArcherPanel> {
+
+    override val type: ExperimentType
+        get() = ExperimentType.ARCHER
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
@@ -119,7 +123,7 @@ data class ArcherMolecularTest(
                     // TODO (kz): we haven't seen an example of fusions in the data yet,
                     //  figure out how they are represented and add them here when we do
                     ArcherMolecularTest(
-                        ExperimentType.ARCHER, date = date,
+                        date = date,
                         result = ArcherPanel(date, variants, fusions = emptyList())
                     )
                 }
@@ -128,10 +132,12 @@ data class ArcherMolecularTest(
 }
 
 data class GenericPanelMolecularTest(
-    override val type: ExperimentType,
-    override val date: LocalDate?,
+    override val date: LocalDate? = null,
     override val result: GenericPanel
 ) : MolecularTest<GenericPanel> {
+
+    override val type: ExperimentType
+        get() = ExperimentType.GENERIC_PANEL
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
@@ -142,17 +148,19 @@ data class GenericPanelMolecularTest(
             return results.filter { it.test == AVL_PANEL }
                 .groupBy { it.measureDate }
                 .map { (date, _) ->
-                    GenericPanelMolecularTest(ExperimentType.GENERIC_PANEL, date = date, result = GenericPanel(GenericPanelType.AVL, date))
+                    GenericPanelMolecularTest(date = date, result = GenericPanel(GenericPanelType.AVL, date))
                 }
         }
     }
 }
 
 data class OtherPriorMolecularTest(
-    override val type: ExperimentType,
-    override val date: LocalDate?,
+    override val date: LocalDate? = null,
     override val result: PriorMolecularTest
 ) : MolecularTest<PriorMolecularTest> {
+
+    override val type: ExperimentType
+        get() = ExperimentType.OTHER
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
@@ -160,7 +168,7 @@ data class OtherPriorMolecularTest(
 
     companion object {
         fun fromPriorMolecularTest(result: PriorMolecularTest): OtherPriorMolecularTest {
-            return OtherPriorMolecularTest(ExperimentType.OTHER, date = null, result)
+            return OtherPriorMolecularTest(date = null, result)
         }
     }
 }

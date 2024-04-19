@@ -7,7 +7,7 @@ private val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF")
 
 data class GenericPanel(
     val panelName: GenericPanelType,
-    val date: LocalDate?,
+    val date: LocalDate? = null,
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
