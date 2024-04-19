@@ -26,13 +26,8 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
             return findActivatingMutationsInOrangeMolecular(molecular)
         }
 
-        return if (findActivatingMutationsInPanels(record.molecularHistory) != null) {
-            findActivatingMutationsInPanels(record.molecularHistory)!!
-        } else {
-            // return no molecular data? or gene not tested?
-            EvaluationFactory.undetermined("No molecular data", "No molecular data")
-            EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
-        }
+        val result = findActivatingMutationsInPanels(record.molecularHistory)
+        return result ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
     }
 
     private fun findActivatingMutationsInOrangeMolecular(molecular: MolecularRecord): Evaluation {
