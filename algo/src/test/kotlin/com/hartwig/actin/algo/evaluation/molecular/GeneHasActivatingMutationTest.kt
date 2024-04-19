@@ -240,8 +240,13 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should do what when codons and panels but no orange`() {
-        TODO()
+    fun `Should be undetermined for Archer variant on gene but codons to ignore and no Orange molecular`() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT))
+        )
+
+        val evaluation = functionWithCodonsToIgnore.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
