@@ -30,6 +30,7 @@ interface MolecularTestVisitor {
 
 const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
 const val AVL_PANEL = "AvL Panel"
+const val FREETEXT_PANEL = "Freetext"
 
 class MolecularTestFactory {
     companion object {
@@ -37,7 +38,7 @@ class MolecularTestFactory {
             return when (result.test) {
                 ARCHER_FP_LUNG_TARGET -> ExperimentType.ARCHER
                 AVL_PANEL -> ExperimentType.GENERIC_PANEL
-                "Freetext" -> ExperimentType.GENERIC_PANEL
+                FREETEXT_PANEL -> ExperimentType.GENERIC_PANEL
                 "IHC" -> ExperimentType.IHC
                 "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
                 else -> ExperimentType.OTHER
@@ -166,8 +167,8 @@ data class GenericPanelMolecularTest(
 
         private fun classify(type: String?): GenericPanelType {
             return when (type) {
-                "AvL Panel" -> GenericPanelType.AVL
-                "Freetext" -> GenericPanelType.FREE_TEXT
+                AVL_PANEL -> GenericPanelType.AVL
+                FREETEXT_PANEL -> GenericPanelType.FREE_TEXT
                 else -> throw IllegalArgumentException("Unknown generic panel type: $type")
             }
         }

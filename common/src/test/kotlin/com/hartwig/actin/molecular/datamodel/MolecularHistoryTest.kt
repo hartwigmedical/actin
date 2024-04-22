@@ -4,10 +4,10 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
-import java.time.LocalDate
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class MolecularHistoryTest {
 
@@ -78,21 +78,21 @@ class MolecularHistoryTest {
     @Test
     fun `Should classify Archer tests`() {
         assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest("Archer FP Lung Target", item = "gene", impliesPotentialIndeterminateStatus = false))
+            PriorMolecularTest(ARCHER_FP_LUNG_TARGET, item = "gene", impliesPotentialIndeterminateStatus = false))
         ).isEqualTo(ExperimentType.ARCHER)
     }
 
     @Test
     fun `Should classify AvL Panels`() {
         assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest("AvL Panel", impliesPotentialIndeterminateStatus = false))
+            PriorMolecularTest(AVL_PANEL, impliesPotentialIndeterminateStatus = false))
         ).isEqualTo(ExperimentType.GENERIC_PANEL)
     }
 
     @Test
     fun `Should classify Free text curated Panels`() {
         assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest("Freetext", impliesPotentialIndeterminateStatus = false))
+            PriorMolecularTest(FREETEXT_PANEL, impliesPotentialIndeterminateStatus = false))
         ).isEqualTo(ExperimentType.GENERIC_PANEL)
     }
 
