@@ -103,7 +103,7 @@ private val BRAIN_AND_LUNG_LESION_TUMOR_DETAILS = TUMOR_DETAILS.copy(
     lungLesionsCount = 1
 )
 
-class EhrTumorDetafilsExtractorTest {
+class EhrTumorDetailsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
     private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {

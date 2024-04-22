@@ -1,0 +1,134 @@
+package com.hartwig.actin.clinical.feed.standard
+
+import com.hartwig.actin.clinical.AtcModel
+import com.hartwig.actin.clinical.curation.CurationDatabase
+import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
+import com.hartwig.actin.clinical.datamodel.Intolerance
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import io.mockk.every
+import io.mockk.mockk
+import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
+
+private const val NAME = "allergy"
+private const val CATEGORY = "category"
+private const val CLINICAL_STATUS = "clinicalStatus"
+private const val VERIFICATION_STATUS = "verificationStatus"
+private const val SEVERITY = "severity"
+private const val CURATED = "curated"
+private const val DOID = "doid"
+private const val SUBCATEGORY = "subcategory"
+
+private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
+    allergies = listOf(
+        EhrAllergy(
+            name = NAME,
+            category = CATEGORY,
+            clinicalStatus = CLINICAL_STATUS,
+            verificationStatus = VERIFICATION_STATUS,
+            severity = SEVERITY,
+            startDate = LocalDate.of(2024, 4, 22),
+            endDate = LocalDate.of(2024, 4, 22)
+        )
+    )
+)
+
+class EhrIntolerancesExtractorTest {
+
+    private val atcModel = mockk<AtcModel>()
+    private val intoleranceCuration = mockk<CurationDatabase<IntoleranceConfig>> {
+        every { find(any()) } returns emptySet()
+    }
+    private val extractor = EhrIntolerancesExtractor(atcModel, intoleranceCuration)
+
+    @Test
+    fun `Should extract intolerances from allergies when no curation present`() {
+        val results = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(results.extracted).containsExactly(
+            Intolerance(
+                name = NAME,
+                category = CATEGORY,
+                clinicalStatus = CLINICAL_STATUS,
+                verificationStatus = VERIFICATION_STATUS,
+                criticality = SEVERITY,
+                doids = emptySet(),
+                subcategories = emptySet(),
+                treatmentCategories = emptySet()
+            )
+        )
+    }
+
+    @Test
+    fun `Should extract intolerances from allergies and augment with curation when present`() {
+        every { atcModel.resolveByName(CURATED) } returns setOf(SUBCATEGORY)
+        every { intoleranceCuration.find(NAME) } returns setOf(
+            IntoleranceConfig(
+                input = NAME,
+                name = CURATED,
+                doids = setOf(DOID),
+                treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
+            )
+        )
+        val results = extractor.extract(EHR_PATIENT_RECORD)
+        assertThat(results.extracted).containsExactly(
+            Intolerance(
+                name = CURATED,
+                category = CATEGORY,
+                clinicalStatus = CLINICAL_STATUS,
+                verificationStatus = VERIFICATION_STATUS,
+                criticality = SEVERITY,
+                doids = setOf(DOID),
+                subcategories = setOf(SUBCATEGORY),
+                treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
+            )
+        )
+        assertThat(results.evaluation.warnings).isEmpty()
+    }
+
+    @Test
+    fun `Should extract intolerances from prior other conditions, supporting multiple configs per input, but ignore any curation warnings`() {
+        val anotherCurated = "another curated"
+        every { atcModel.resolveByName(CURATED) } returns setOf(SUBCATEGORY)
+        every { atcModel.resolveByName(anotherCurated) } returns emptySet()
+        every { intoleranceCuration.find(NAME) } returns setOf(
+            IntoleranceConfig(
+                input = NAME,
+                name = CURATED,
+                doids = setOf(DOID),
+                treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
+            ),
+            IntoleranceConfig(
+                input = NAME,
+                name = anotherCurated,
+                doids = emptySet(),
+                treatmentCategories = emptySet()
+            )
+        )
+        val results = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                allergies = emptyList(),
+                priorOtherConditions = listOf(
+                    EhrPriorOtherCondition(name = NAME, startDate = LocalDate.of(2024, 4, 22)),
+                    EhrPriorOtherCondition(name = "not an intolerance", startDate = LocalDate.of(2024, 4, 22))
+                )
+            )
+        )
+        assertThat(results.extracted).containsExactly(
+            Intolerance(
+                name = CURATED,
+                doids = setOf(DOID),
+                subcategories = setOf(SUBCATEGORY),
+                treatmentCategories = setOf(TreatmentCategory.CHEMOTHERAPY)
+            ),
+            Intolerance(
+                name = anotherCurated,
+                doids = emptySet(),
+                subcategories = emptySet(),
+                treatmentCategories = emptySet()
+            )
+        )
+        assertThat(results.evaluation.warnings).isEmpty()
+    }
+
+}
