@@ -80,8 +80,7 @@ data class IHCMolecularTest(
     override val result: PriorMolecularTest
 ) : MolecularTest<PriorMolecularTest> {
 
-    override val type: ExperimentType
-        get() = ExperimentType.IHC
+    override val type = ExperimentType.IHC
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
@@ -99,8 +98,7 @@ data class ArcherMolecularTest(
     override val result: ArcherPanel
 ) : MolecularTest<ArcherPanel> {
 
-    override val type: ExperimentType
-        get() = ExperimentType.ARCHER
+    override val type = ExperimentType.ARCHER
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
@@ -124,7 +122,7 @@ data class ArcherMolecularTest(
                     //  figure out how they are represented and add them here when we do
                     ArcherMolecularTest(
                         date = date,
-                        result = ArcherPanel(date, variants, fusions = emptyList())
+                        result = ArcherPanel(variants, fusions = emptyList())
                     )
                 }
         }
@@ -136,8 +134,7 @@ data class GenericPanelMolecularTest(
     override val result: GenericPanel
 ) : MolecularTest<GenericPanel> {
 
-    override val type: ExperimentType
-        get() = ExperimentType.GENERIC_PANEL
+    override val type = ExperimentType.GENERIC_PANEL
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
@@ -148,7 +145,7 @@ data class GenericPanelMolecularTest(
             return results.filter { it.test == AVL_PANEL }
                 .groupBy { it.measureDate }
                 .map { (date, _) ->
-                    GenericPanelMolecularTest(date = date, result = GenericPanel(GenericPanelType.AVL, date))
+                    GenericPanelMolecularTest(date = date, result = GenericPanel(GenericPanelType.AVL))
                 }
         }
     }
@@ -159,8 +156,7 @@ data class OtherPriorMolecularTest(
     override val result: PriorMolecularTest
 ) : MolecularTest<PriorMolecularTest> {
 
-    override val type: ExperimentType
-        get() = ExperimentType.OTHER
+    override val type = ExperimentType.OTHER
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)

@@ -23,11 +23,6 @@ data class MolecularHistory(
             .map { it.result as ArcherPanel }
     }
 
-    fun latestArcherPanel(): ArcherPanel? {
-        return allArcherPanels()
-            .maxByOrNull { it.date ?: LocalDate.MIN }
-    }
-
     fun allGenericPanels(): List<GenericPanel> {
         return molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }
             .map { it.result as GenericPanel }
