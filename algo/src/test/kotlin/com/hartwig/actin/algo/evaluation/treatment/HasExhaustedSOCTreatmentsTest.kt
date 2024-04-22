@@ -13,6 +13,7 @@ import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import io.mockk.every
 import io.mockk.mockk
+import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class HasExhaustedSOCTreatmentsTest {
@@ -58,6 +59,7 @@ class HasExhaustedSOCTreatmentsTest {
         every { recommendationEngine.patientHasExhaustedStandardOfCare(any()) } returns false
         every { recommendationEngine.determineRequiredTreatments(any()) } returns nonEmptyTreatmentList
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
-        println(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failGeneralMessages)
+        Assertions.assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failGeneralMessages)
+            .containsExactly("Patient has not exhausted SOC (remaining options: pembrolizumab)")
     }
 }
