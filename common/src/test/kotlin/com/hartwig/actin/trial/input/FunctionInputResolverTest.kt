@@ -31,6 +31,7 @@ import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
+import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
@@ -402,6 +403,21 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one integer many doid terms input`() {
+        val resolver = TestFunctionInputResolverFactory.createResolverWithTwoDoidsAndTerms(listOf("doid 1", "doid 2"), listOf("term 1", "term 2"))
+        val rule: EligibilityRule = firstOfType(FunctionInput.ONE_INTEGER_MANY_DOID_TERMS)
+        val valid: EligibilityFunction = create(rule, listOf("2", "term 1;term 2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val expected = OneIntegerManyDoidTerms(2, listOf("term 1", "term 2"))
+        assertThat(resolver.createOneIntegerManyDoidTermsInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not an integer", "not an integer")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1", "doid term", "other string")))!!).isFalse
     }
 
     @Test

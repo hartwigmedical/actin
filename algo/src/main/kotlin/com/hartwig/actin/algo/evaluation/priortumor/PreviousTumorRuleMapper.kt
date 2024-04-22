@@ -14,6 +14,8 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
             EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_IGNORING_DOID_TERMS_X to hasHistoryOfSecondMalignancyIgnoringSomeDoidsCreator(),
             EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X to hasHistoryOfSecondMalignancyWithDoidTermCreator(),
             EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS to hasHistoryOfSecondMalignancyWithinYearsCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS_IGNORING_DOID_TERMS_Y
+                    to hasHistoryOfSecondMalignancyWithinYearsIgnoringSomeDoidsCreator(),
         )
     }
 
@@ -28,7 +30,7 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     private fun hasHistoryOfSecondMalignancyIgnoringSomeDoidsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val doidTermsToIgnore = functionInputResolver().createManyDoidTermsInput(function)
-            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore)
+            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore, minDate = null)
         }
     }
 
@@ -44,6 +46,15 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
             val maxYears = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
             HasHistoryOfSecondMalignancyWithinYears(minDate)
+        }
+    }
+
+    private fun hasHistoryOfSecondMalignancyWithinYearsIgnoringSomeDoidsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxYears = functionInputResolver().createOneIntegerManyDoidTermsInput(function)
+            val minDate = referenceDateProvider().date().minusYears(maxYears.integer.toLong())
+            val doidTermsToIgnore = functionInputResolver().createOneIntegerManyDoidTermsInput(function).doidTerms
+            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore, minDate)
         }
     }
 }
