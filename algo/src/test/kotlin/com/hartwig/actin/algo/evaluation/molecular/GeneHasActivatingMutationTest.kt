@@ -4,7 +4,6 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
-import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -314,10 +313,8 @@ class GeneHasActivatingMutationTest {
         private val TEST_DATE = LocalDate.of(2023, 1, 1)
 
         private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherMolecularTest(
-            type = ExperimentType.ARCHER,
             date = TEST_DATE,
             result = ArcherPanel(
-                date = TEST_DATE,
                 variants = listOf(
                     ArcherVariant(
                         gene = GENE,
@@ -329,10 +326,8 @@ class GeneHasActivatingMutationTest {
         )
 
         private val EMPTY_ARCHER_MOLECULAR_TEST = ArcherMolecularTest(
-            type = ExperimentType.ARCHER,
             date = TEST_DATE,
             result = ArcherPanel(
-                date = TEST_DATE,
                 variants = emptyList(),
                 fusions = emptyList()
             )
