@@ -3,25 +3,25 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
-import org.apache.logging.log4j.LogManager
 import java.io.File
+import java.time.LocalDate
 import kotlin.system.exitProcess
+import org.apache.logging.log4j.LogManager
 
 class TestStandardOfCareApplication {
 
     fun run(): Int {
-        val patient = patient()
-
-        LOGGER.info("Running ACTIN Test SOC Application with clinical record")
-        PatientPrinter.printRecord(patient)
+        LOGGER.info("Running ACTIN Test SOC Application")
 
         LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH)
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH)
@@ -33,6 +33,10 @@ class TestStandardOfCareApplication {
         val recommendationEngine = RecommendationEngineFactory(
             RuleMappingResourcesTestFactory.create(doidModel, AtcTree.createFromFile(ATC_TREE_PATH), treatmentDatabase)
         ).create()
+       
+        val patient = patient(treatmentDatabase)
+        LOGGER.info("Generating recommendations for patient record")
+        PatientPrinter.printRecord(patient)
 
         LOGGER.info(recommendationEngine.provideRecommendations(patient))
         val patientHasExhaustedStandardOfCare = recommendationEngine.patientHasExhaustedStandardOfCare(patient)
@@ -47,7 +51,7 @@ class TestStandardOfCareApplication {
             System.getProperty("user.home"),
             "hmf",
             "repos",
-            "common-resources-public",
+            "actin-resources-private",
             "disease_ontology",
             "doid.json"
         ).joinToString(File.separator)
@@ -56,18 +60,27 @@ class TestStandardOfCareApplication {
             System.getProperty("user.home"),
             "hmf",
             "repos",
-            "crunch-resources-private",
-            "actin"
+            "actin-resources-private"
         ).joinToString(File.separator)
 
         private val TREATMENT_JSON_PATH = ACTIN_RESOURCE_PATH + File.separator + "treatment_db"
 
         private val ATC_TREE_PATH = listOf(ACTIN_RESOURCE_PATH, "atc_config", "atc_tree.tsv").joinToString(File.separator)
 
-        private fun patient(): PatientRecord {
+        private fun patient(treatmentDatabase: TreatmentDatabase): PatientRecord {
             val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
+            val recentDate = LocalDate.now().minusDays(7)
             return base.copy(
-                tumor = base.tumor.copy(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID))
+                tumor = base.tumor.copy(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID), primaryTumorSubLocation = "sigmoid"),
+                oncologicalHistory = listOf(CAPOX, CAPECITABINE, BEVACIZUMAB, TRIFLURIDINE_TIPIRACIL, FOLFIRI, PANITUMUMAB)
+                    .map {
+                        val treatment = treatmentDatabase.findTreatmentByName(it) ?: throw IllegalStateException("Treatment not found: $it")
+                        TreatmentTestFactory.treatmentHistoryEntry(
+                            setOf(TreatmentTestFactory.drugTreatment(treatment.name, treatment.categories().first())),
+                            stopYear = recentDate.year,
+                            stopMonth = recentDate.monthValue
+                        )
+                    }
             )
         }
     }

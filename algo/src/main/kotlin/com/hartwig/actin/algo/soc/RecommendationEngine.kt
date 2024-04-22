@@ -27,7 +27,7 @@ class RecommendationEngine(
         return DoidConstants.COLORECTAL_CANCER_DOID in tumorDoids && (EXCLUDED_TUMOR_DOIDS intersect tumorDoids).isEmpty()
     }
 
-    private fun determineRequiredTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
+    fun determineRequiredTreatments(patientRecord: PatientRecord): List<EvaluatedTreatment> {
         return treatmentCandidates().asSequence()
             .filterNot(TreatmentCandidate::optional)
             .map { evaluateTreatmentRequirementForPatient(it, patientRecord) }
@@ -56,7 +56,7 @@ class RecommendationEngine(
         treatmentCandidate: TreatmentCandidate,
         patientRecord: PatientRecord
     ): EvaluatedTreatment {
-        return evaluateTreatmentCandidate(treatmentCandidate.eligibilityFunctions, patientRecord, treatmentCandidate)
+        return evaluateTreatmentCandidate(treatmentCandidate.eligibilityFunctionsForRequirement(), patientRecord, treatmentCandidate)
     }
 
     private fun evaluateTreatmentCandidate(

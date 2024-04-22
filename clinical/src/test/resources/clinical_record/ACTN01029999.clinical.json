@@ -25,6 +25,7 @@
       "0050933"
     ],
     "stage": "IV",
+    "derivedStages": null,
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
     "hasActiveBrainLesions": true,

@@ -14,6 +14,14 @@ object TestDoidModelFactory {
         return create(mapOf(child to listOf(parent)))
     }
 
+    fun createWithParentChildAndTermPerDoidMaps(childToParentMap: Map<String, String>, doidToTermMap: Map<String, String>): DoidModel {
+        return create(
+            childToParentsMap = childToParentMap.mapValues { listOf(it.value) },
+            termPerDoidMap = doidToTermMap,
+            doidPerLowerCaseTermMap = doidToTermMap.entries.associate { (doid, term) -> term.lowercase() to doid }
+        )
+    }
+
     fun createWithChildToParentMap(childToParentMap: Map<String, String>): DoidModel {
         return create(childToParentMap.mapValues { listOf(it.value) })
     }
@@ -24,6 +32,12 @@ object TestDoidModelFactory {
 
     fun createWithOneDoidAndTerm(doid: String, term: String): DoidModel {
         return create(termPerDoidMap = mapOf(doid to term), doidPerLowerCaseTermMap = mapOf(term.lowercase() to doid))
+    }
+
+    fun createWithTwoDoidsAndTerms(doids: List<String>, terms: List<String>): DoidModel {
+        return create(termPerDoidMap = mapOf(doids[0] to terms[0], doids[1] to terms[1]),
+            doidPerLowerCaseTermMap = mapOf(terms[0].lowercase() to doids[0], terms[1].lowercase() to doids[1])
+        )
     }
 
     fun createWithDoidManualConfig(config: DoidManualConfig): DoidModel {
