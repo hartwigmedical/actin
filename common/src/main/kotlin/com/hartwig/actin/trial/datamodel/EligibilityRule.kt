@@ -213,7 +213,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     MOLECULAR_RESULTS_MUST_BE_AVAILABLE(FunctionInput.NONE),
     MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X(FunctionInput.ONE_GENE),
     MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X(FunctionInput.ONE_GENE),
-    NSCLC_DRIVER_GENE_STATUSES_MUST_BE_AVAILABLE(FunctionInput.NONE),
+    HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES(FunctionInput.NONE),
     HAS_EGFR_PACC_MUTATION(FunctionInput.NONE),
 
     // Rules related to recent laboratory measurements
