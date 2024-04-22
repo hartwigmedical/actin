@@ -92,7 +92,7 @@ class MolecularHistoryTest {
     @Test
     fun `Should classify Free text curated Panels`() {
         assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest(FREETEXT_PANEL, impliesPotentialIndeterminateStatus = false))
+            PriorMolecularTest(FREE_TEXT_PANEL, impliesPotentialIndeterminateStatus = false))
         ).isEqualTo(ExperimentType.GENERIC_PANEL)
     }
 
