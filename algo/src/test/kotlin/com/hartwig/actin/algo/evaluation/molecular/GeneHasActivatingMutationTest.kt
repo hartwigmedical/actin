@@ -203,14 +203,15 @@ class GeneHasActivatingMutationTest {
 
     @Test
     fun `Should be undetermined for gene not in Archer panel with no Orange molecular`() {
-        assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionNotIgnoringCodons.evaluate(
-                TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(listOf(EMPTY_ARCHER_MOLECULAR_TEST)),
-                )
+
+        val evaluation = functionNotIgnoringCodons.evaluate(
+            TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+                molecularHistory = MolecularHistory(listOf(EMPTY_ARCHER_MOLECULAR_TEST)),
             )
         )
+
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Gene $GENE not tested")
     }
 
     @Test
