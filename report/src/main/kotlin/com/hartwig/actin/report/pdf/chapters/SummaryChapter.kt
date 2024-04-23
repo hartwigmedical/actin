@@ -84,7 +84,7 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
         val (openCohortsWithoutSlots, _) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false)
 
-        val molecular = report.patientRecord.molecularHistory.latestMolecularRecord()
+        val molecular = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(molecular, evaluated)
         val generators = listOfNotNull(
             PatientClinicalHistoryGenerator(report.patientRecord, report.config, false, keyWidth, valueWidth),

@@ -14,7 +14,7 @@ class HasKnownHPVStatus : EvaluationFunction {
             .filter { (it.item?.contains("HPV") ?: false) }
             .partition(PriorMolecularTest::impliesPotentialIndeterminateStatus)
 
-        val molecularRecords = record.molecularHistory.allMolecularRecords()
+        val molecularRecords = record.molecularHistory.allOrangeMolecularRecords()
 
         return when {
             molecularRecords.any { it.type == ExperimentType.WHOLE_GENOME && it.containsTumorCells } -> {
@@ -43,7 +43,7 @@ class HasKnownHPVStatus : EvaluationFunction {
                 )
             }
 
-            record.molecularHistory.allMolecularRecords().isEmpty() -> {
+            record.molecularHistory.allOrangeMolecularRecords().isEmpty() -> {
                 EvaluationFactory.undetermined("HPV status not available (no molecular data)", "Undetermined HPV status (no molecular data)")
             }
 

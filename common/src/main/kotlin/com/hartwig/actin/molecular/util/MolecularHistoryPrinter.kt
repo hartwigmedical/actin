@@ -7,7 +7,7 @@ class MolecularHistoryPrinter(private val printer: DatamodelPrinter) {
 
     fun print(molecularHistory: MolecularHistory) {
         // TODO (kz): print all records in history
-        molecularHistory.latestMolecularRecord()?.let(MolecularRecordPrinter::printRecord)
+        molecularHistory.latestOrangeMolecularRecord()?.let(MolecularRecordPrinter::printRecord)
     }
 
     companion object {

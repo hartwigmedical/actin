@@ -22,14 +22,14 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
             return EvaluationFactory.undetermined("No molecular data", "No molecular data")
         }
 
-        val molecular = record.molecularHistory.latestMolecularRecord()
-        val molecularEvaluation = if (molecular != null) {
-            findActivatingMutationsInOrangeMolecular(molecular)
+        val orangeMolecular = record.molecularHistory.latestOrangeMolecularRecord()
+        val orangeMolecularEvaluation = if (orangeMolecular != null) {
+            findActivatingMutationsInOrangeMolecular(orangeMolecular)
         } else null
 
         val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(record.molecularHistory) else null
 
-        val groupedEvaluationsByResult = listOfNotNull(molecularEvaluation, panelEvaluation)
+        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
             .groupBy { evaluation -> evaluation.result }
             .mapValues { entry ->
                 entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }

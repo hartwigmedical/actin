@@ -4,9 +4,9 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class MolecularHistoryTest {
 
@@ -20,7 +20,7 @@ class MolecularHistoryTest {
         )
 
         val molecularHistory = MolecularHistory.fromInputs(molecularRecords, emptyList())
-        assertThat(molecularHistory.latestMolecularRecord()).isEqualTo(molecularRecords[1])
+        assertThat(molecularHistory.latestOrangeMolecularRecord()).isEqualTo(molecularRecords[1])
     }
 
     @Test
@@ -30,7 +30,7 @@ class MolecularHistoryTest {
             TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = null),
         )
         val molecularHistory = MolecularHistory.fromInputs(molecularRecords, emptyList())
-        assertThat(molecularHistory.latestMolecularRecord()).isEqualTo(molecularRecords[0])
+        assertThat(molecularHistory.latestOrangeMolecularRecord()).isEqualTo(molecularRecords[0])
     }
 
     @Test
@@ -47,7 +47,7 @@ class MolecularHistoryTest {
         )
 
         val molecularHistory = MolecularHistory.fromInputs(molecularRecords, priorMolecularTests)
-        assertThat(molecularHistory.latestMolecularRecord()).isEqualTo(molecularRecords.first())
+        assertThat(molecularHistory.latestOrangeMolecularRecord()).isEqualTo(molecularRecords.first())
 
         assertThat(molecularHistory.allIHCTests().sortedBy { it.item })
             .isEqualTo(priorMolecularTests.filter { it.test == "IHC" }.sortedBy { it.item })
