@@ -5,6 +5,11 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMol
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -97,7 +102,64 @@ class MolecularHistoryTest {
     }
 
     @Test
-    fun `Should convert all prior molecular tests`() {
+    fun `Should distinguish generic panel types`() {
+        val genericPanelTests = listOf(
+            avlPanelPriorMolecularNoMutationsFoundRecord(),
+            freetextPriorMolecularFusionRecord("geneUp", "geneDown")
+        )
+        val molecularTests = MolecularTestFactory.fromPriorMolecular(genericPanelTests)
+        assertThat(molecularTests).hasSize(2)
+        assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(2)
+
+    }
+
+    @Test
+    fun `Should construct AvL panel from prior molecular`() {
+        val priorMolecularTests = listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
+        val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
+
+        val expected = GenericPanelMolecularTest(
+            date = null,
+            result = GenericPanel(GenericPanelType.AVL)
+        )
+        assertThat(molecularTests).containsExactly(expected)
+    }
+
+    @Test
+    fun `Should construct Freetext panel from prior molecular`() {
+        val priorMolecularTests = listOf(freetextPriorMolecularFusionRecord("geneUp", "geneDown"))
+        val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
+
+        val expected = GenericPanelMolecularTest(
+            date = null,
+            result = GenericPanel(
+                GenericPanelType.FREE_TEXT,
+                listOf(GenericFusion("geneUp", "geneDown"))
+            )
+        )
+        assertThat(molecularTests).containsExactly(expected)
+    }
+
+    @Test
+    fun `Should construct Archer panel from prior molecular`() {
+        val priorMolecularTests = listOf(archerPriorMolecularVariantRecord("gene", "c.1A>T"))
+        val molecularTests = ArcherMolecularTest.fromPriorMolecularTests(priorMolecularTests)
+        
+        assertThat(molecularTests).containsExactly(
+            ArcherMolecularTest(
+                date = null,
+                result = ArcherPanel(
+                    variants = listOf(
+                        ArcherVariant("gene", "c.1A>T")
+                    ),
+                    fusions = emptyList()
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should convert and group all prior molecular tests`() {
 
         val IHCTests = listOf(
             PriorMolecularTest("IHC", item = "protein1", impliesPotentialIndeterminateStatus = false),
@@ -122,7 +184,6 @@ class MolecularHistoryTest {
         val otherTests = listOf(
             PriorMolecularTest("Future-Panel", item = "gene", impliesPotentialIndeterminateStatus = false)
         )
-
 
         val priorMolecularTests = IHCTests + archerGroup1Tests + archerGroup2Tests + genericPanelTests + otherTests
 

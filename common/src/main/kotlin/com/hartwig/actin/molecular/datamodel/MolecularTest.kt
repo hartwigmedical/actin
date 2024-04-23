@@ -145,24 +145,16 @@ data class GenericPanelMolecularTest(
 
     companion object {
         fun fromPriorMolecularTest(results: List<PriorMolecularTest>): List<GenericPanelMolecularTest> {
-            return results.groupBy { it.test }.flatMap { (test, results) -> fromTestGroup(results, classify(test)) }
+            return results.groupBy { it.test }
+                .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
         }
 
-        private fun fromTestGroup(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
+        private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
             return results.groupBy { it.measureDate }
                 .map { (date, results) ->
-                    val fusion = results.mapNotNull { it.item?.let { item -> parseFusion(item) } }
-                    GenericPanelMolecularTest(date = date, result = GenericPanel(GenericPanelType.AVL, fusion))
+                    val fusion = results.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
+                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusion))
                 }
-        }
-
-        fun parseFusion(text: String): GenericFusion {
-            val parts = text.trim().split("::")
-            if (parts.size != 2) {
-                throw IllegalArgumentException("Expected two parts in fusion but got ${parts.size} for $text")
-            }
-
-            return GenericFusion(parts[0], parts[1])
         }
 
         private fun classify(type: String?): GenericPanelType {
