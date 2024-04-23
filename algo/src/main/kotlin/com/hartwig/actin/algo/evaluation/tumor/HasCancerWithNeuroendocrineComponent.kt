@@ -39,12 +39,10 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) : E
                         "undetermined if neuroendocrine component could be present as well", "Undetermined neuroendocrine component"
             )
         }
-        return if (hasNeuroendocrineMolecularProfile(record).first) {
-            val message = "Neuroendocrine molecular profile present" +
-                    "(inactivated genes: ${hasNeuroendocrineMolecularProfile(record).second.joinToString(", ")})"
+        return if (hasNeuroendocrineMolecularProfile(record)) {
             EvaluationFactory.undetermined(
-                "$message - undetermined if considered cancer with neuroendocrine component",
-                "$message - undetermined if considered cancer with neuroendocrine component"
+                "Patient has cancer with neuroendocrine molecular profile, undetermind if considered neuroendocrine component",
+                "Undetermined if neuroendocrine component"
             )
         } else
             EvaluationFactory.fail(
@@ -58,10 +56,8 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) : E
         val NEUROENDOCRINE_TERMS = setOf("neuroendocrine")
         val NEUROENDOCRINE_EXTRA_DETAILS = setOf("neuroendocrine", "NEC", "NET")
 
-        private fun hasNeuroendocrineMolecularProfile(record: PatientRecord): Pair<Boolean, List<String>> {
-            val genes = listOf("TP53", "PTEN", "RB1")
-            val inactivatedGenes = genes.filter { geneIsInactivatedForPatient(it, record) }
-            return Pair(inactivatedGenes.size >= 2, inactivatedGenes)
+        private fun hasNeuroendocrineMolecularProfile(record: PatientRecord): Boolean {
+            return listOf("TP53", "PTEN", "RB1").count { geneIsInactivatedForPatient(it, record) } >= 2
         }
     }
 }
