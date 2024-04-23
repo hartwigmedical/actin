@@ -37,6 +37,7 @@ class StandardEhrIngestion(
     private val secondPrimaryExtractor: EhrPriorPrimariesExtractor,
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
     private val bodyWeightExtractor: EhrBodyWeightExtractor,
+    private val bodyHeightExtractor: EhrBodyHeightExtractor,
     private val molecularTestExtractor: EhrMolecularTestExtractor,
     private val dataQualityMask: DataQualityMask
 ) : ClinicalFeedIngestion {
@@ -65,6 +66,7 @@ class StandardEhrIngestion(
             val intolerances = intolerancesExtractor.extract(ehrPatientRecord)
             val surgeries = surgeryExtractor.extract(ehrPatientRecord)
             val bodyWeights = bodyWeightExtractor.extract(ehrPatientRecord)
+            val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
             val molecularTests = molecularTestExtractor.extract(ehrPatientRecord)
 
             val patientEvaluation = listOf(
@@ -82,6 +84,7 @@ class StandardEhrIngestion(
                 intolerances,
                 surgeries,
                 bodyWeights,
+                bodyHeights,
                 secondPrimaries,
                 molecularTests
             )
@@ -106,6 +109,7 @@ class StandardEhrIngestion(
                     intolerances = intolerances.extracted,
                     surgeries = surgeries.extracted,
                     bodyWeights = bodyWeights.extracted,
+                    bodyHeights = bodyHeights.extracted,
                     priorSecondPrimaries = secondPrimaries.extracted,
                     priorMolecularTests = molecularTests.extracted
                 )
@@ -164,6 +168,7 @@ class StandardEhrIngestion(
             EhrPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor(),
+            EhrBodyHeightExtractor(),
             EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             DataQualityMask()
         )

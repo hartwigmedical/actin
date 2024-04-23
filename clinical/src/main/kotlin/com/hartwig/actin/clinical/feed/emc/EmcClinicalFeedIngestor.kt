@@ -93,6 +93,7 @@ class EmcClinicalFeedIngestor(
                 intolerances = intoleranceExtraction.extracted,
                 surgeries = extractSurgeries(feedRecord),
                 bodyWeights = extractBodyWeights(feedRecord),
+                bodyHeights = emptyList(),
                 vitalFunctions = extractVitalFunctions(feedRecord),
                 bloodTransfusions = bloodTransfusionsExtraction.extracted,
                 medications = medicationExtraction.extracted

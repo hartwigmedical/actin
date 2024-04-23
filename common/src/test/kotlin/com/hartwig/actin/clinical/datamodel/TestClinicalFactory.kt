@@ -53,6 +53,7 @@ object TestClinicalFactory {
             intolerances = emptyList(),
             surgeries = emptyList(),
             bodyWeights = emptyList(),
+            bodyHeights = emptyList(),
             vitalFunctions = emptyList(),
             bloodTransfusions = emptyList(),
             medications = emptyList()
