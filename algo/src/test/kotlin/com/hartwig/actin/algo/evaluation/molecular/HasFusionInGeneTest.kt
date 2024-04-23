@@ -99,7 +99,7 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                listOf(freetextPriorMolecularFusionRecord("gene A", "gene B")))
+                listOf(freetextPriorMolecularFusionRecord(MATCHING_GENE, "gene B")))
             )
         )
     }
@@ -108,7 +108,7 @@ class HasFusionInGeneTest {
     fun `Should aggregate fusions found in both Orange molecular and panels`() {
         val evaluation = function.evaluate(
             addingTestFromPriorMolecular(MolecularTestFactory.withFusion(matchingFusion),
-                listOf(freetextPriorMolecularFusionRecord("gene A", "gene B"))
+                listOf(freetextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
             )
         )
 
@@ -117,10 +117,11 @@ class HasFusionInGeneTest {
     }
 
     @Test
-    fun `Should be indeterminate for fusions in untested genes in panel and no Orange molecular`() {
+    fun `Should be undetermined for gene not tested in panel and no Orange molecular`() {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
             function.evaluate(MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
                 listOf(freetextPriorMolecularFusionRecord("gene B", "gene C"))
-            )))
+            ))
+        )
     }
 }
