@@ -184,7 +184,8 @@ class PatientClinicalHistoryGenerator(
         }
 
         private fun toSecondPrimaryString(priorSecondPrimary: PriorSecondPrimary): String {
-            val tumorLocation = priorSecondPrimary.tumorLocation + priorSecondPrimary.tumorSubLocation.let { " ($it)" }
+            val tumorSubLocation = priorSecondPrimary.tumorSubLocation
+            val tumorLocation = priorSecondPrimary.tumorLocation + if (tumorSubLocation.isNotEmpty()) " ($tumorSubLocation)" else ""
             val tumorDetails = when {
                 priorSecondPrimary.tumorSubType.isNotEmpty() -> {
                     tumorLocation + " " + priorSecondPrimary.tumorSubType.lowercase()

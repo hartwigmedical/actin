@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
-class HasCancerOfUnknownPrimary (private val doidModel: DoidModel, private val categoryOfCUP: TumorTypeInput) : EvaluationFunction {
+class HasCancerOfUnknownPrimary(private val doidModel: DoidModel, private val categoryOfCUP: TumorTypeInput) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids

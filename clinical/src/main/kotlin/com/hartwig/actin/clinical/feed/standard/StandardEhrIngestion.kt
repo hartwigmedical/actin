@@ -12,6 +12,8 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
+import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.doid.DoidModel
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
@@ -127,7 +129,8 @@ class StandardEhrIngestion(
         fun create(
             directory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel
+            atcModel: AtcModel,
+            doidModel: DoidModel
         ) = StandardEhrIngestion(
             directory,
             EhrMedicationExtractor(
@@ -136,7 +139,10 @@ class StandardEhrIngestion(
                 curationDatabaseContext.cypInteractionCuration
             ),
             EhrSurgeryExtractor(),
-            EhrIntolerancesExtractor(atcModel, curationDatabaseContext.intoleranceCuration),
+            EhrIntolerancesExtractor(
+                atcModel,
+                curationDatabaseContext.intoleranceCuration
+            ),
             EhrVitalFunctionsExtractor(),
             EhrBloodTransfusionExtractor(),
             EhrLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
@@ -151,13 +157,15 @@ class StandardEhrIngestion(
                 curationDatabaseContext.nonOncologicalHistoryCuration
             ),
             EhrClinicalStatusExtractor(),
-            EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration),
+            EhrTumorDetailsExtractor(
+                curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration,
+                TumorStageDeriver.create(doidModel)
+            ),
             EhrPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor(),
             EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             DataQualityMask()
         )
-
     }
 }

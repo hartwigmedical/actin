@@ -46,9 +46,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
             )
         )
         val intolerance = Intolerance(
-            "Nivolumab", setOf(
-                DoidConstants.DRUG_ALLERGY_DOID
-            ), "", setOf(""), "", "", "", "", setOf(TreatmentCategory.IMMUNOTHERAPY)
+            "Nivolumab", setOf(DoidConstants.DRUG_ALLERGY_DOID), "", setOf(""), "", "", "", "", setOf(TreatmentCategory.IMMUNOTHERAPY)
         )
         val base = createMinimalTestWGSPatientRecord()
         val record = base.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments)

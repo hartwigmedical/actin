@@ -162,7 +162,7 @@ class RecommendationEngineTest {
         CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             val patientRecord: PatientRecord = patientWithTreatmentHistoryEntry(
                 treatmentHistoryEntry(
-                    treatmentSetWithName(treatmentName), stopReason = StopReason.PROGRESSIVE_DISEASE, startYear = HISTORICAL_YEAR
+                    treatmentSetWithName(treatmentName), stopReason = StopReason.PROGRESSIVE_DISEASE, startYear = HISTORICAL_DATE.year
                 )
             )
             assertThat(resultsForPatient(patientRecord)).noneMatch {
@@ -176,7 +176,7 @@ class RecommendationEngineTest {
         CHEMO_TREATMENT_NAMES.forEach { treatmentName: String ->
             val patientRecord: PatientRecord = patientWithTreatmentHistoryEntry(
                 treatmentHistoryEntry(
-                    treatmentSetWithName(treatmentName), stopReason = StopReason.PROGRESSIVE_DISEASE, startYear = HISTORICAL_YEAR
+                    treatmentSetWithName(treatmentName), stopReason = StopReason.PROGRESSIVE_DISEASE, startYear = HISTORICAL_DATE.year
                 )
             )
             assertThat(resultsForPatient(patientRecord)).noneMatch {
@@ -339,7 +339,7 @@ class RecommendationEngineTest {
     }
 
     @Test
-    fun `Should recommend Entrectinib and Larotrectinib for patients with NTRK fusion only after SOC exhaustion`() {
+    fun `Should recommend Entrectinib and Larotrectinib for patients with NTRK fusion`() {
         val ntrkFusionTreatments = listOf(ENTRECTINIB, LAROTRECTINIB).map(TREATMENT_DATABASE::findTreatmentByName)
         val patientWithNtrkFusion = MolecularTestFactory.withFusion(
             TestFusionFactory.createMinimal().copy(
@@ -351,10 +351,6 @@ class RecommendationEngineTest {
             )
         ).copy(tumor = MINIMAL_CRC_PATIENT_RECORD.tumor)
 
-        assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientWithNtrkFusion)).isFalse
-        assertThat(resultsForPatient(patientWithNtrkFusion).map(TreatmentCandidate::treatment))
-            .doesNotContainAnyElementsOf(ntrkFusionTreatments)
-
         val pastTreatmentNames = listOf(FOLFOX, IRINOTECAN, FLUOROURACIL, CAPECITABINE, CETUXIMAB, "TARGETED_THERAPY")
         val patientWithNtrkFusionAndSocExhaustion = patientWithNtrkFusion.copy(
             oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames)
@@ -362,6 +358,19 @@ class RecommendationEngineTest {
         assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientWithNtrkFusionAndSocExhaustion)).isTrue
         assertThat(resultsForPatient(patientWithNtrkFusionAndSocExhaustion).map(TreatmentCandidate::treatment))
             .containsAll(ntrkFusionTreatments)
+    }
+
+    @Test
+    fun `Should report SOC exhaustion if all required treatments in recent history`() {
+        val pastTreatmentNames = listOf(FOLFIRI, CAPOX, CETUXIMAB)
+        assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patientRecordWithTreatmentHistory(pastTreatmentNames))).isTrue
+    }
+
+    @Test
+    fun `Should report SOC exhaustion if all required treatments in history even if years have passed`() {
+        val pastTreatmentNames = listOf(FOLFIRI, CAPOX, CETUXIMAB)
+        val patient = MINIMAL_CRC_PATIENT_RECORD.copy(oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames, HISTORICAL_DATE))
+        assertThat(RECOMMENDATION_ENGINE.patientHasExhaustedStandardOfCare(patient)).isTrue
     }
 
     @Test
@@ -446,7 +455,8 @@ class RecommendationEngineTest {
             )
         )
 
-        private val HISTORICAL_YEAR = LocalDate.now().minusYears(3).year
+        private val RECENT_DATE = LocalDate.now().minusMonths(4)
+        private val HISTORICAL_DATE = LocalDate.now().minusYears(3)
 
         private fun drug(name: String): Drug {
             val category = if (name == "TARGETED_THERAPY" || name.endsWith("B")) {
@@ -513,8 +523,7 @@ class RecommendationEngineTest {
             )
         }
 
-        private fun treatmentHistoryFromNames(names: List<String>): List<TreatmentHistoryEntry> {
-            val treatmentDate = LocalDate.now().minusMonths(4)
+        private fun treatmentHistoryFromNames(names: List<String>, treatmentDate: LocalDate = RECENT_DATE): List<TreatmentHistoryEntry> {
             return names.map { treatmentName ->
                 treatmentHistoryEntry(
                     treatments = treatmentSetWithName(treatmentName), startYear = treatmentDate.year, startMonth = treatmentDate.monthValue

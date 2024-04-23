@@ -7,16 +7,13 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.clinical.datamodel.TumorStage
 
-internal class DerivedTumorStageEvaluationFunction(
-    private val tumorStageDerivationFunction: TumorStageDerivationFunction,
-    private val originalFunction: EvaluationFunction
-) : EvaluationFunction {
+internal class DerivedTumorStageEvaluationFunction(private val originalFunction: EvaluationFunction) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.tumor.stage != null) {
             return originalFunction.evaluate(record)
         }
-        val derivedResults = tumorStageDerivationFunction.apply(record.tumor)
-            ?.associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
+
+        val derivedResults = record.tumor.derivedStages?.associateWith { tumorStage -> evaluatedDerivedStage(record, tumorStage) }
 
         if (derivedResults.isNullOrEmpty()) {
             return originalFunction.evaluate(record)

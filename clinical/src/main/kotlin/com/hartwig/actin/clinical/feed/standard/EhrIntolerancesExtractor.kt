@@ -9,14 +9,16 @@ import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.Intolerance
 
-class EhrIntolerancesExtractor(private val atcModel: AtcModel, private val intoleranceCuration: CurationDatabase<IntoleranceConfig>) :
+class EhrIntolerancesExtractor(
+    private val atcModel: AtcModel,
+    private val intoleranceCuration: CurationDatabase<IntoleranceConfig>
+) :
     EhrExtractor<List<Intolerance>> {
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Intolerance>> {
-        return ehrPatientRecord.allergies.map {
+        val intolerancesFromAllergies = ehrPatientRecord.allergies.map {
             Intolerance(
                 name = it.name,
                 category = it.category,
-                type = "unspecified",
                 clinicalStatus = it.clinicalStatus,
                 verificationStatus = it.verificationStatus,
                 criticality = it.severity,
@@ -26,29 +28,58 @@ class EhrIntolerancesExtractor(private val atcModel: AtcModel, private val intol
             )
         }
             .map {
-                val curationResponse = CurationResponse.createFromConfigs(
-                    intoleranceCuration.find(it.name),
-                    ehrPatientRecord.patientDetails.hashedId,
-                    CurationCategory.INTOLERANCE,
-                    it.name,
-                    "intolerance",
-                    true
-                )
+                val curationResponse = curateIntolerance(ehrPatientRecord, true, it.name, intoleranceCuration.find(it.name))
                 val curatedIntolerance = curationResponse.config()?.let { config ->
-                    val subcategories = if (it.category.equals("medication", ignoreCase = true)) {
-                        atcModel.resolveByName(config.name.lowercase())
-                    } else emptySet()
                     it.copy(
                         name = config.name,
                         doids = config.doids,
-                        subcategories = subcategories,
+                        subcategories = subcategoriesFromAtc(config),
                         treatmentCategories = config.treatmentCategories
                     )
                 } ?: it
                 ExtractionResult(listOf(curatedIntolerance), curationResponse.extractionEvaluation)
             }
-            .fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { (intolerances, aggregatedEval), (intolerance, eval) ->
-                ExtractionResult(intolerances + intolerance, aggregatedEval + eval)
+
+        val intolerancesFromNonOncologicalHistory = ehrPatientRecord.priorOtherConditions.mapNotNull {
+            val curationResponse = curateIntolerance(ehrPatientRecord, false, it.name, intoleranceCuration.find(it.name))
+            if (curationResponse.configs.isNotEmpty()) {
+                ExtractionResult(curationResponse.configs.map { config ->
+                    Intolerance(
+                        name = config.name,
+                        doids = config.doids,
+                        subcategories = subcategoriesFromAtc(config),
+                        treatmentCategories = config.treatmentCategories
+                    )
+                }, CurationExtractionEvaluation())
+            } else {
+                null
             }
+        }
+
+        return (intolerancesFromAllergies + intolerancesFromNonOncologicalHistory).fold(
+            ExtractionResult(
+                emptyList(),
+                CurationExtractionEvaluation()
+            )
+        ) { (intolerances, aggregatedEval), (intolerance, eval) ->
+            ExtractionResult(intolerances + intolerance, aggregatedEval + eval)
+        }
+
     }
+
+    private fun subcategoriesFromAtc(config: IntoleranceConfig) = atcModel.resolveByName(config.name.lowercase())
+
+    private fun curateIntolerance(
+        ehrPatientRecord: EhrPatientRecord,
+        requireUniqueness: Boolean,
+        input: String,
+        configs: Set<IntoleranceConfig>
+    ) = CurationResponse.createFromConfigs(
+        configs,
+        ehrPatientRecord.patientDetails.hashedId,
+        CurationCategory.INTOLERANCE,
+        input,
+        "intolerance",
+        requireUniqueness
+    )
 }

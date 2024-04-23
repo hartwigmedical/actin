@@ -38,24 +38,30 @@ class HasHadPriorConditionWithDoidsFromSetRecently(
         return when {
             matchingConditionSummary.containsKey(EvaluationResult.PASS) -> {
                 EvaluationFactory.pass(
-                    "Patient has had DOIDs ${matchingConditionSummary[EvaluationResult.PASS]?.joinToString(", ") 
-                        { extractDoids(it) }} (belonging to $priorOtherConditionTerm) within specified time frame",
+                    "Patient has had DOIDs ${
+                        matchingConditionSummary[EvaluationResult.PASS]?.joinToString(", ")
+                        { extractDoids(it) }
+                    } (belonging to $priorOtherConditionTerm) within specified time frame",
                     "Recent $priorOtherConditionTerm"
                 )
             }
 
             matchingConditionSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "Patient has had DOIDs ${matchingConditionSummary[EvaluationResult.WARN]?.joinToString(", ") 
-                    { extractDoids(it) }} (belonging to $priorOtherConditionTerm) near start of specified time frame",
+                    "Patient has had DOIDs ${
+                        matchingConditionSummary[EvaluationResult.WARN]?.joinToString(", ")
+                        { extractDoids(it) }
+                    } (belonging to $priorOtherConditionTerm) near start of specified time frame",
                     "Borderline recent $priorOtherConditionTerm"
                 )
             }
 
             matchingConditionSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "Patient has had DOIDs ${matchingConditionSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ") 
-                    { extractDoids(it) }} (belonging to $priorOtherConditionTerm), but undetermined whether that is within specified time frame",
+                    "Patient has had DOIDs ${
+                        matchingConditionSummary[EvaluationResult.UNDETERMINED]?.joinToString(", ")
+                        { extractDoids(it) }
+                    } (belonging to $priorOtherConditionTerm), but undetermined whether that is within specified time frame",
                     "Recent $priorOtherConditionTerm"
                 )
             }

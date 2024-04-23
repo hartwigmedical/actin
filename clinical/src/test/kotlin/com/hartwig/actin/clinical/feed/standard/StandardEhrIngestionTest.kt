@@ -8,6 +8,7 @@ import com.hartwig.actin.clinical.curation.CURATION_DIRECTORY
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.curation.TestAtcFactory
+import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
@@ -22,26 +23,25 @@ class StandardEhrIngestionTest {
 
     @Test
     fun `Should load EHR data from json and convert to clinical record`() {
+        val doidModel = TestDoidModelFactory.createWithDoidManualConfig(
+            DoidManualConfig(
+                emptySet(),
+                emptySet(),
+                mapOf(
+                    "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "10286" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "0050933" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
+                    "5082" to CurationDoidValidator.DISEASE_DOID,
+                    "11335" to CurationDoidValidator.DISEASE_DOID,
+                    "0060500" to CurationDoidValidator.DISEASE_DOID,
+                    "0081062" to CurationDoidValidator.DISEASE_DOID
+                )
+            )
+        )
         val curationDatabase = CurationDatabaseContext.create(
             CURATION_DIRECTORY,
-            CurationDoidValidator(
-                TestDoidModelFactory.createWithDoidManualConfig(
-                    DoidManualConfig(
-                        emptySet(),
-                        emptySet(),
-                        mapOf(
-                            "299" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "3908" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "10286" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "0050933" to CurationDoidValidator.DISEASE_OF_CELLULAR_PROLIFERATION_DOID,
-                            "5082" to CurationDoidValidator.DISEASE_DOID,
-                            "11335" to CurationDoidValidator.DISEASE_DOID,
-                            "0060500" to CurationDoidValidator.DISEASE_DOID,
-                            "0081062" to CurationDoidValidator.DISEASE_DOID
-                        )
-                    )
-                )
-            ),
+            CurationDoidValidator(doidModel),
             TestTreatmentDatabaseFactory.createProper()
         )
         val feed = StandardEhrIngestion(
@@ -58,7 +58,10 @@ class StandardEhrIngestionTest {
                 curationDatabase.nonOncologicalHistoryCuration,
                 curationDatabase.treatmentHistoryEntryCuration
             ),
-            intolerancesExtractor = EhrIntolerancesExtractor(TestAtcFactory.createProperAtcModel(), curationDatabase.intoleranceCuration),
+            intolerancesExtractor = EhrIntolerancesExtractor(
+                TestAtcFactory.createProperAtcModel(),
+                curationDatabase.intoleranceCuration
+            ),
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration,
@@ -69,7 +72,8 @@ class StandardEhrIngestionTest {
             patientDetailsExtractor = EhrPatientDetailsExtractor(),
             tumorDetailsExtractor = EhrTumorDetailsExtractor(
                 curationDatabase.primaryTumorCuration,
-                curationDatabase.lesionLocationCuration
+                curationDatabase.lesionLocationCuration,
+                TumorStageDeriver.create(doidModel)
             ),
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),

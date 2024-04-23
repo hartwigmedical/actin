@@ -13,7 +13,7 @@ object TestReportWriterApplication {
 
     private val LOGGER = LogManager.getLogger(TestReportWriterApplication::class.java)
 
-    private val WORK_DIRECTORY = System.getProperty("user.home") + File.separator + "hmf" + File.separator + "tmp"
+    private val WORK_DIRECTORY = System.getProperty("user.dir")
     private val OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "patient.treatment_match.json"
 
     @JvmStatic

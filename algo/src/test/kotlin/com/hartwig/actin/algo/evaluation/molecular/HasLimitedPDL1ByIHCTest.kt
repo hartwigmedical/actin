@@ -12,7 +12,7 @@ class HasLimitedPDL1ByIHCTest {
     private val function = HasLimitedPDL1ByIHC(MEASURE, 2.0)
 
     private val pdl1Test = MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = MEASURE)
-    
+
     @Test
     fun `Should fail with no prior tests`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(emptyList())))

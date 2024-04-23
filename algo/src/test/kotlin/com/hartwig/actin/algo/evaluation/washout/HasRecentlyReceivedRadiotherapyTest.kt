@@ -10,6 +10,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val YEAR = 2020
@@ -54,7 +55,10 @@ class HasRecentlyReceivedRadiotherapyTest {
     @Test
     fun `Should pass with right category and recent year`() {
         val rightCategoryRecentYear = radiotherapy(YEAR)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYear)))
+        val evaluation = function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYear))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passSpecificMessages)
+            .containsExactly("Patient has recently received radiotherapy - pay attention to washout period")
     }
 
     @Test

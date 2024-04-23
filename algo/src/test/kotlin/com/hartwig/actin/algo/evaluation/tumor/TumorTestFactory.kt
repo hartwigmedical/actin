@@ -30,18 +30,18 @@ internal object TumorTestFactory {
                     baseMolecular.copy(
                         characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                         drivers = baseMolecular.drivers.copy(
-                    copyNumbers = setOf(
-                        TestCopyNumberFactory.createMinimal().copy(
-                            isReportable = true,
-                            gene = amplifiedGene,
-                            geneRole = GeneRole.ONCO,
-                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                            type = CopyNumberType.FULL_GAIN,
-                            minCopies = 20,
-                            maxCopies = 20
+                            copyNumbers = setOf(
+                                TestCopyNumberFactory.createMinimal().copy(
+                                    isReportable = true,
+                                    gene = amplifiedGene,
+                                    geneRole = GeneRole.ONCO,
+                                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                    type = CopyNumberType.FULL_GAIN,
+                                    minCopies = 20,
+                                    maxCopies = 20
+                                )
+                            )
                         )
-                    )
-                )
                     )
                 ), emptyList()
             )
@@ -58,18 +58,18 @@ internal object TumorTestFactory {
                     baseMolecular.copy(
                         characteristics = baseMolecular.characteristics.copy(ploidy = 2.0),
                         drivers = baseMolecular.drivers.copy(
-                    copyNumbers = setOf(
-                        TestCopyNumberFactory.createMinimal().copy(
-                            isReportable = true,
-                            gene = amplifiedGene,
-                            geneRole = GeneRole.ONCO,
-                            proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                            type = CopyNumberType.FULL_GAIN,
-                            minCopies = 20,
-                            maxCopies = 20
+                            copyNumbers = setOf(
+                                TestCopyNumberFactory.createMinimal().copy(
+                                    isReportable = true,
+                                    gene = amplifiedGene,
+                                    geneRole = GeneRole.ONCO,
+                                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                                    type = CopyNumberType.FULL_GAIN,
+                                    minCopies = 20,
+                                    maxCopies = 20
+                                )
+                            )
                         )
-                    )
-                )
                     )
                 ),
                 priorMolecularTests
@@ -99,6 +99,10 @@ internal object TumorTestFactory {
 
     fun withTumorStage(stage: TumorStage?): PatientRecord {
         return withTumorDetails(TumorDetails(stage = stage))
+    }
+
+    fun withTumorStageAndDerivedStages(stage: TumorStage?, derivedStages: Set<TumorStage>? = null): PatientRecord {
+        return withTumorDetails(TumorDetails(stage = stage, derivedStages = derivedStages))
     }
 
     fun withTumorStageAndDoid(stage: TumorStage?, doid: String?): PatientRecord {

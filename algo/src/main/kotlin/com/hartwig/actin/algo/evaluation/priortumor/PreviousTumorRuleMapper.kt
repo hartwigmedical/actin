@@ -11,6 +11,7 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
         return mapOf(
             EligibilityRule.HAS_ACTIVE_SECOND_MALIGNANCY to hasActiveSecondMalignancyCreator(),
             EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY to hasHistoryOfSecondMalignancyCreator(),
+            EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_IGNORING_DOID_TERMS_X to hasHistoryOfSecondMalignancyIgnoringSomeDoidsCreator(),
             EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_BELONGING_TO_DOID_TERM_X to hasHistoryOfSecondMalignancyWithDoidTermCreator(),
             EligibilityRule.HAS_HISTORY_OF_SECOND_MALIGNANCY_WITHIN_X_YEARS to hasHistoryOfSecondMalignancyWithinYearsCreator(),
         )
@@ -22,6 +23,13 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
 
     private fun hasHistoryOfSecondMalignancyCreator(): FunctionCreator {
         return FunctionCreator { HasHistoryOfSecondMalignancy() }
+    }
+
+    private fun hasHistoryOfSecondMalignancyIgnoringSomeDoidsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val doidTermsToIgnore = functionInputResolver().createManyDoidTermsInput(function)
+            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore)
+        }
     }
 
     private fun hasHistoryOfSecondMalignancyWithDoidTermCreator(): FunctionCreator {
