@@ -14,7 +14,7 @@ class HasRecentlyReceivedRadiotherapy(
     override fun evaluate(record: PatientRecord): Evaluation {
         val radiotherapyEvaluations = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
             .map(::evaluateRadiotherapyEntry).toSet()
-        val bodyLocationMessage = "to body location $requestedLocation "
+        val bodyLocationMessage = if (requestedLocation != null) "to body location $requestedLocation " else ""
 
         return when {
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == true } -> {
