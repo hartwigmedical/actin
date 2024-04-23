@@ -17,7 +17,7 @@ class HasInheritedPredispositionToBleedingOrThrombosis(private val doidModel: Do
             .find {
                 doidModel.doidWithParents(it).any(DOID_CONSTANTS_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS::contains)
             }
-            ?.let { doidModel::resolveTermForDoid }
+            ?.let(doidModel::resolveTermForDoid)
 
         val hasMatchingName = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .any { it.name.lowercase().contains(NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS.lowercase()) }
