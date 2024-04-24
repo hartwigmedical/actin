@@ -11,16 +11,18 @@ class HasSufficientPDL1ByIHC internal constructor(private val measure: String, p
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
-        val pdl1TestsWithRequestedMeasurement =
+        val pdl1TestsWithRequestedMeasurement = if (measure != "") {
             PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure)
+        } else PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests)
 
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {
                 val evaluation = evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minPDL1)
                 if (evaluation == EvaluationResult.PASS) {
+                    val measureMessage = if (measure != "") " measured by $measure" else ""
                     return EvaluationFactory.pass(
-                        "PD-L1 expression measured by $measure meets at least desired level of $minPDL1",
+                        "PD-L1 expression$measureMessage meets at least desired level of $minPDL1",
                         "PD-L1 expression exceeds $minPDL1"
                     )
                 }

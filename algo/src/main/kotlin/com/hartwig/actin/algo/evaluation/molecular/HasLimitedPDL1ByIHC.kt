@@ -11,16 +11,18 @@ class HasLimitedPDL1ByIHC(private val measure: String, private val maxPDL1: Doub
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
-        val pdl1TestsWithRequestedMeasurement =
+        val pdl1TestsWithRequestedMeasurement = if (measure != "") {
             PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure)
+        } else PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests)
 
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {
                 val evaluation = evaluateVersusMaxValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, maxPDL1)
                 if (evaluation == EvaluationResult.PASS) {
+                    val measureMessage = if (measure != "") " measured by $measure" else ""
                     return EvaluationFactory.pass(
-                        "PD-L1 expression measured by $measure does not exceed maximum of $maxPDL1", "PD-L1 expression below $maxPDL1"
+                        "PD-L1 expression$measureMessage does not exceed maximum of $maxPDL1", "PD-L1 expression below $maxPDL1"
                     )
                 }
             }
