@@ -55,104 +55,105 @@ class PatientClinicalHistoryWithOverviewGenerator(
         return mainTable
     }
 
-    companion object {
-        private fun whoStatus(who: Int?): String {
-            return who?.toString() ?: Formats.VALUE_UNKNOWN
+    private fun whoStatus(who: Int?): String {
+        return who?.toString() ?: Formats.VALUE_UNKNOWN
+    }
+
+    private fun tumor(tumor: TumorDetails): String {
+        val location = tumorLocation(tumor)
+        val type = tumorType(tumor)
+        return if (location == null || type == null) {
+            Formats.VALUE_UNKNOWN
+        } else {
+            location + if (type.isNotEmpty()) " - $type" else ""
         }
+    }
 
-        private fun tumor(tumor: TumorDetails): String {
-            val location = tumorLocation(tumor)
-            val type = tumorType(tumor)
-            return if (location == null || type == null) {
-                Formats.VALUE_UNKNOWN
-            } else {
-                location + if (type.isNotEmpty()) " - $type" else ""
-            }
+    private fun tumorLocation(tumor: TumorDetails): String? {
+        return tumor.primaryTumorLocation?.let { tumorLocation ->
+            val tumorSubLocation = tumor.primaryTumorSubLocation
+            return if (!tumorSubLocation.isNullOrEmpty()) "$tumorLocation ($tumorSubLocation)" else tumorLocation
         }
+    }
 
-        private fun tumorLocation(tumor: TumorDetails): String? {
-            return tumor.primaryTumorLocation?.let { tumorLocation ->
-                val tumorSubLocation = tumor.primaryTumorSubLocation
-                return if (!tumorSubLocation.isNullOrEmpty()) "$tumorLocation ($tumorSubLocation)" else tumorLocation
-            }
+    private fun tumorType(tumor: TumorDetails): String? {
+        return tumor.primaryTumorType?.let { tumorType ->
+            val tumorSubType = tumor.primaryTumorSubType
+            if (!tumorSubType.isNullOrEmpty()) tumorSubType else tumorType
         }
+    }
 
-        private fun tumorType(tumor: TumorDetails): String? {
-            return tumor.primaryTumorType?.let { tumorType ->
-                val tumorSubType = tumor.primaryTumorSubType
-                if (!tumorSubType.isNullOrEmpty()) tumorSubType else tumorType
-            }
+    private fun stage(tumor: TumorDetails): String {
+        return tumor.stage?.display() ?: Formats.VALUE_UNKNOWN
+    }
+
+    private fun lesions(tumor: TumorDetails): String {
+        val categorizedLesions = listOf(
+            "CNS" to tumor.hasCnsLesions,
+            "Brain" to tumor.hasBrainLesions,
+            "Liver" to tumor.hasLiverLesions,
+            "Bone" to tumor.hasBoneLesions,
+            "Lung" to tumor.hasLungLesions
+        ).filter { it.second == true }.map { it.first }
+
+        val lesions = listOfNotNull(categorizedLesions, tumor.otherLesions, listOfNotNull(tumor.biopsyLocation))
+            .flatten()
+            .sorted()
+            .distinctBy(String::uppercase)
+
+        val (lymphNodeLesions, otherLesions) = lesions.partition { it.lowercase().startsWith("lymph node") }
+
+        val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
+            lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }.joinToString(" ")
         }
+            .filterNot(String::isEmpty)
+            .distinctBy(String::lowercase)
 
-        private fun stage(tumor: TumorDetails): String {
-            return tumor.stage?.display() ?: Formats.VALUE_UNKNOWN
+        val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
+            listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
+        } else if (lymphNodeLesions.isNotEmpty()) {
+            listOf("Lymph nodes")
+        } else emptyList()
+
+        return if (lesions.isEmpty()) {
+            Formats.VALUE_UNKNOWN
+        } else {
+            (otherLesions + lymphNodeLesionsString).joinToString(", ")
         }
+    }
 
-        fun lesions(tumor: TumorDetails): String {
-            val categorizedLesions = listOf(
-                "CNS" to tumor.hasCnsLesions,
-                "Brain" to tumor.hasBrainLesions,
-                "Liver" to tumor.hasLiverLesions,
-                "Bone" to tumor.hasBoneLesions,
-                "Lung" to tumor.hasLungLesions
-            ).filter { it.second == true }.map { it.first }
-
-            val lesions =
-                listOfNotNull(categorizedLesions, tumor.otherLesions, listOfNotNull(tumor.biopsyLocation)).flatten()
-                    .sorted().distinctBy { it.uppercase() }
-
-            val (lymphNodeLesions, otherLesions) = lesions.partition { it.lowercase().startsWith("lymph node") }
-
-            val filteredLymphNodeLesions = lymphNodeLesions.map { lesion ->
-                lesion.split(" ").filterNot { it.lowercase() in setOf("lymph", "node", "nodes", "") }.joinToString(" ")
-            }.filterNot(String::isEmpty).distinctBy(String::lowercase)
-
-            val lymphNodeLesionsString = if (filteredLymphNodeLesions.isNotEmpty()) {
-                listOf("Lymph nodes (${filteredLymphNodeLesions.joinToString(", ")})")
-            } else if (lymphNodeLesions.isNotEmpty()) {
-                listOf("Lymph nodes")
-            } else emptyList()
-
-            return if (lesions.isEmpty()) {
-                Formats.VALUE_UNKNOWN
-            } else {
-                (otherLesions + lymphNodeLesionsString).joinToString(", ")
-            }
+    private fun geneToDrivers(variants: Set<Variant>, geneToFind: String): String {
+        val drivers = if (variants.none { it.gene == geneToFind }) {
+            "Wild-type"
+        } else {
+            variants.filter { it.gene == geneToFind }.joinToString { it.canonicalImpact.hgvsProteinImpact }
         }
+        return "$geneToFind: $drivers"
+    }
 
-        private fun geneToDrivers(variants: Set<Variant>, geneToFind: String): String {
-            val drivers = if (variants.none { it.gene == geneToFind }) {
-                "Wild-type"
-            } else {
-                variants.filter { it.gene == geneToFind }.joinToString { it.canonicalImpact.hgvsProteinImpact }
-            }
-            return "$geneToFind: $drivers"
-        }
+    private fun msStatus(molecular: MolecularRecord): String {
+        return if (molecular.characteristics.isMicrosatelliteUnstable == true) "MSI" else "MSS"
+    }
 
-        private fun msStatus(molecular: MolecularRecord): String {
-            return if (molecular.characteristics.isMicrosatelliteUnstable == true) "MSI" else "MSS"
+    private fun measurableDisease(tumor: TumorDetails): String {
+        return when (tumor.hasMeasurableDisease) {
+            true -> "Yes"
+            false -> "No"
+            else -> "NA"
         }
+    }
 
-        private fun measurableDisease(tumor: TumorDetails): String {
-            return when (tumor.hasMeasurableDisease) {
-                true -> "Yes"
-                false -> "No"
-                else -> "NA"
-            }
-        }
+    private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>?, gene: String): String {
+        val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
+        return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
+    }
 
-        private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>?, gene: String): String {
-            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
-            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
-        }
+    private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>?, geneToFind: String): PharmacoEntry? {
+        return pharmaco?.find { it.gene == geneToFind }
+    }
 
-        private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>?, geneToFind: String): PharmacoEntry? {
-            return pharmaco?.find { it.gene == geneToFind }
-        }
-
-        private fun molecularResults(molecular: MolecularRecord): String {
-            val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(molecular.drivers.variants, it) }
-            return (drivers + msStatus(molecular)).joinToString(", ")
-        }
+    private fun molecularResults(molecular: MolecularRecord): String {
+        val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(molecular.drivers.variants, it) }
+        return (drivers + msStatus(molecular)).joinToString(", ")
     }
 }

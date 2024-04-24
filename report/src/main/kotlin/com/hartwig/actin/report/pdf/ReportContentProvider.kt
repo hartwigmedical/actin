@@ -39,7 +39,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 Pair(false, false)
             }
 
-            report.config.showEfficacy -> {
+            report.config.showSOCLiteratureEfficacyEvidence -> {
                 LOGGER.info("Including SOC literature details")
                 Pair(true, false)
             }
@@ -52,8 +52,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         return listOf(
             SummaryChapter(report),
-            MolecularDetailsChapter(report, include = report.config.includeMolecularChapter),
-            EfficacyEvidenceChapter(report, include = report.config.showEfficacy),
+            MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
+            EfficacyEvidenceChapter(report, include = report.config.showSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
             TrialMatchingChapter(report, enableExtendedMode),

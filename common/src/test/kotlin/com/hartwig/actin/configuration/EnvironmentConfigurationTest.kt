@@ -34,7 +34,7 @@ class EnvironmentConfigurationTest {
         val config = EnvironmentConfiguration.create(resourceOnClasspath("/config.yaml"), "CRC")
         assertThat(config.algo.warnIfToxicitiesNotFromQuestionnaire).isFalse
         assertThat(config.report.includeOverviewWithClinicalHistorySummary).isTrue
-        assertThat(config.report.includeMolecularChapter).isFalse
+        assertThat(config.report.includeMolecularDetailsChapter).isFalse
     }
 
     @Test
@@ -43,9 +43,9 @@ class EnvironmentConfigurationTest {
             defaultConfig.copy(
                 report = defaultConfig.report.copy(
                     includeOverviewWithClinicalHistorySummary = true,
-                    includeMolecularChapter = false,
+                    includeMolecularDetailsChapter = false,
                     showApprovedTreatmentsInSummary = false,
-                    showEfficacy = true,
+                    showSOCLiteratureEfficacyEvidence = true,
                     showEligibleSOCTreatmentSummary = true,
                     showMolecularSummary = false,
                     showPatientHeader = false

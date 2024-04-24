@@ -15,8 +15,8 @@ enum class ConfigurationProfile {
 data class ReportConfiguration(
     val filterTrialsWithOverlappingMolecularTargetsInSummary: Boolean = false,
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
-    val includeMolecularChapter: Boolean = true,
-    val showEfficacy: Boolean = false,
+    val includeMolecularDetailsChapter: Boolean = true,
+    val showSOCLiteratureEfficacyEvidence: Boolean = false,
     val showEligibleSOCTreatmentSummary: Boolean = false,
     val showMolecularSummary: Boolean = true,
     val showOtherOncologicalHistoryInSummary: Boolean = true,
@@ -57,9 +57,9 @@ data class EnvironmentConfiguration(
                 ConfigurationProfile.CRC -> rawConfig.copy(
                     report = rawConfig.report.copy(
                         includeOverviewWithClinicalHistorySummary = true,
-                        includeMolecularChapter = false,
+                        includeMolecularDetailsChapter = false,
                         showApprovedTreatmentsInSummary = false,
-                        showEfficacy = true,
+                        showSOCLiteratureEfficacyEvidence = true,
                         showEligibleSOCTreatmentSummary = true,
                         showMolecularSummary = false,
                         showPatientHeader = false
@@ -68,7 +68,9 @@ data class EnvironmentConfiguration(
 
                 ConfigurationProfile.STANDARD -> rawConfig
             }
-            LOGGER.info("Loaded environment configuration from file $filePath:\n$configuration")
+
+            val configSource = filePath?.let { "file $it" } ?: "defaults"
+            LOGGER.info("Loaded environment configuration from $configSource using $configProfile profile:\n$configuration")
             return configuration
         }
     }

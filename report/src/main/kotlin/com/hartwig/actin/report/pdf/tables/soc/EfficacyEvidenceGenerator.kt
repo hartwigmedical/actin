@@ -17,6 +17,14 @@ class EfficacyEvidenceGenerator(
     private val treatments: List<AnnotatedTreatmentMatch>?,
     private val width: Float
 ) : TableGenerator {
+    private val patientCharacteristicHeadersAndFunctions = listOf<Pair<String, (PatientPopulation) -> String?>>(
+        "WHO/ECOG" to SOCGeneratorFunctions::createWhoString,
+        "Primary tumor location" to { it.formatTumorLocation(", ") },
+        "Mutations" to PatientPopulation::mutations,
+        "Metastatic sites" to PatientPopulation::formatMetastaticSites,
+        "Previous systemic therapy" to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
+        "Prior therapies" to PatientPopulation::priorTherapies
+    )
 
     override fun title(): String {
         return "Standard of care options considered potentially eligible"
@@ -79,26 +87,17 @@ class EfficacyEvidenceGenerator(
 
     private fun createPatientCharacteristics(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
         val table = Tables.createFixedWidthCols(100f, 150f).setWidth(400f)
-        trialReference.patientPopulations.filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
-            .forEach { patientPopulation ->
-                listOf<Pair<String, (PatientPopulation) -> String?>>(
-                    "WHO/ECOG" to SOCGeneratorFunctions::createWhoString,
-                    "Primary tumor location" to { it.formatTumorLocation(", ") },
-                    "Mutations" to PatientPopulation::mutations,
-                    "Metastatic sites" to PatientPopulation::formatMetastaticSites,
-                    "Previous systemic therapy" to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
-                    "Prior therapies" to PatientPopulation::priorTherapies
-                )
-                    .flatMap { (characteristic, extractAsString) -> listOf(characteristic, extractAsString(patientPopulation) ?: NA) }
-                    .forEach { table.addCell(Cells.createContent(it)) }
-            }
-//        table.addCell(
-//            Cells.createSpanningSubNote(
-//                "This patient matches all patient characteristics of the treatment group, except for age (68 years)",
-//                table
-//            )
-//        )
+        trialReference.patientPopulations.asSequence()
+            .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
+            .forEach { addPatientCharacteristicsToTable(it, table) }
         return table
+    }
+
+    private fun addPatientCharacteristicsToTable(patientPopulation: PatientPopulation, table: Table) {
+        patientCharacteristicHeadersAndFunctions.flatMap { (characteristic, extractAsString) ->
+            sequenceOf(characteristic, extractAsString(patientPopulation) ?: NA)
+        }
+            .forEach { table.addCell(Cells.createContent(it)) }
     }
 
     private fun createEndpoints(trialReference: TrialReference, treatment: AnnotatedTreatmentMatch): Table {
