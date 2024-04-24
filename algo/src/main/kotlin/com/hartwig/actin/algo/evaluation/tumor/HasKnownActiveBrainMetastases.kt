@@ -11,16 +11,16 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
         val hasBrainMetastases = record.tumor.hasBrainLesions
         // If a patient's active brain metastases status is unknown, set to false if patient is known to have no brain metastases
         val hasActiveBrainMetastases = record.tumor.hasActiveBrainLesions ?: if (hasBrainMetastases == false) false else null
-        ?: return if (hasBrainMetastases == true) {
-            EvaluationFactory.undetermined(
-                "Brain metastases in history but data regarding active brain metastases is missing - assuming there are none",
-                "Brain metastases present but unknown if active (data missing)"
-            )
-        } else {
-            EvaluationFactory.recoverableUndetermined(
-                "Data regarding presence of active brain metastases is missing",
-                "Missing active brain metastases data"
-            )
+            ?: return if (hasBrainMetastases == true) {
+                EvaluationFactory.undetermined(
+                    "Brain metastases in history but data regarding active brain metastases is missing - assuming there are none",
+                    "Brain metastases present but unknown if active (data missing)"
+                )
+            } else {
+                EvaluationFactory.recoverableUndetermined(
+                    "Data regarding presence of active brain metastases is missing",
+                    "Missing active brain metastases data"
+                )
         }
 
         return if (hasActiveBrainMetastases) {

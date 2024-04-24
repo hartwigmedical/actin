@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import java.io.File
 import org.apache.logging.log4j.LogManager
+import java.io.File
 
 object TestReportWriterApplication {
 

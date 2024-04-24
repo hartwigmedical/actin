@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.ToxicitySource
-import java.time.LocalDate
 import org.junit.Test
+import java.time.LocalDate
 
 class HasToxicityWithGradeTest {
 

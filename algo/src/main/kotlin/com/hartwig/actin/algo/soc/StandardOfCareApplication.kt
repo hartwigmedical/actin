@@ -48,7 +48,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
             doidModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
         )
         val environmentConfiguration =
-            config.overridesYaml?.let { EnvironmentConfiguration.createFromFile(config.overridesYaml) } ?: EnvironmentConfiguration()
+            config.overridesYaml?.let { EnvironmentConfiguration.create(config.overridesYaml) } ?: EnvironmentConfiguration()
         val resources = RuleMappingResources(
             referenceDateProvider,
             doidModel,

@@ -1,10 +1,10 @@
 package com.hartwig.actin.clinical.feed.emc
 
 import com.hartwig.actin.clinical.feed.emc.FeedModel.Companion.fromFeedDirectory
-import java.io.IOException
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.io.IOException
+import java.time.LocalDate
 
 class FeedModelTest {
     private val model: FeedModel = TestFeedFactory.createProperTestFeedModel()

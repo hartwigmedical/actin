@@ -16,7 +16,14 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(private val genes
     private fun createEvaluationFunctions(genesToIgnore: Set<String>): List<EvaluationFunction> =
         listOf(
             listOf(Triple("EGFR", "19", VariantTypeInput.DELETE), Triple("EGFR", "20", VariantTypeInput.INSERT))
-                .map { (gene, exon, variantType) -> gene to GeneHasVariantInExonRangeOfType(gene, exon.toInt(), exon.toInt(), variantType) },
+                .map { (gene, exon, variantType) ->
+                    gene to GeneHasVariantInExonRangeOfType(
+                        gene,
+                        exon.toInt(),
+                        exon.toInt(),
+                        variantType
+                    )
+                },
             listOf(Pair("EGFR", "L858R"), Pair("BRAF", "V600E")).map { (gene, impact) ->
                 gene to GeneHasVariantWithProteinImpact(gene, listOf(impact))
             },

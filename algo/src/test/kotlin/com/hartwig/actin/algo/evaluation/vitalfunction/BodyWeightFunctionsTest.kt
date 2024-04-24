@@ -7,9 +7,9 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evalu
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.weight
 import com.hartwig.actin.clinical.datamodel.BodyWeight
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class BodyWeightFunctionsTest {
 

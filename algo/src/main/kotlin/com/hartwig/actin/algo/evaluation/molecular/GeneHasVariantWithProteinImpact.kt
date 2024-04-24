@@ -10,7 +10,8 @@ import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import org.apache.logging.log4j.LogManager
 
-class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) : MolecularEvaluationFunction {
+class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) :
+    MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()

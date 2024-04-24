@@ -19,17 +19,20 @@ class HasLimitedLabValueULN(private val maxULNFactor: Double) : LabEvaluationFun
                     "$labValueString exceeds maximum of $referenceString", "$labValueString exceeds max of $referenceString"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 EvaluationFactory.recoverableUndetermined(
                     "$labValueString exceeds maximum of $referenceString", "$labValueString exceeds max of $referenceString"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} could not be evaluated against maximum ULN",
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
                 EvaluationFactory.recoverablePass(
                     "$labValueString below maximum of $referenceString", "$labValueString below max of $referenceString"

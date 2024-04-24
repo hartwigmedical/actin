@@ -34,12 +34,14 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
                     "Pulse oximetry above $minMedianPulseOximetry"
                 )
             }
+
             (median.compareTo(referenceWithMargin) >= 0) -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Patient has median pulse oximetry ($median%) below $minMedianPulseOximetry but within margin of error",
                     "Median pulse oximetry ($median%) below $minMedianPulseOximetry but within margin of error"
                 )
             }
+
             else -> {
                 EvaluationFactory.recoverableFail(
                     "Patient has median pulse oximetry ($median%) below $minMedianPulseOximetry",

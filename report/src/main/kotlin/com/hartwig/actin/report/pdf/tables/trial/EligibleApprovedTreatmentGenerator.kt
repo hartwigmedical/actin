@@ -9,10 +9,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
-class EligibleApprovedTreatmentGenerator(
-    private val patientRecord: PatientRecord,
-    private val width: Float
-) : TableGenerator {
+class EligibleApprovedTreatmentGenerator(private val patientRecord: PatientRecord, private val width: Float) : TableGenerator {
 
     override fun title(): String {
         return "Approved treatments considered eligible"

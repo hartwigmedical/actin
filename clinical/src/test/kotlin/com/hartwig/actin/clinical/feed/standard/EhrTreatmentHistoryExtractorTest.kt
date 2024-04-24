@@ -16,10 +16,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 import com.hartwig.actin.clinical.feed.standard.EhrTestData.createEhrPatientRecord
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import java.time.LocalDate
 
 private const val PREVIOUS_CONDITION = "previous_condition"
 
@@ -191,7 +191,11 @@ class EhrTreatmentHistoryExtractorTest {
 
     @Test
     fun `Should consider previous conditions as treatment history if not present in non-oncological history curation and is present in oncological history curation`() {
-        every { treatmentCurationDatabase.find(PREVIOUS_CONDITION) } returns setOf(TREATMENT_HISTORY_ENTRY_CONFIG)
+        val curated = TREATMENT_HISTORY_ENTRY_CONFIG.curated!!
+        every { treatmentCurationDatabase.find(PREVIOUS_CONDITION) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG,
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(curated = curated.copy(isTrial = true))
+        )
         val result = extractor.extract(
             EHR_PATIENT_RECORD.copy(
                 treatmentHistory = emptyList(),
@@ -200,25 +204,27 @@ class EhrTreatmentHistoryExtractorTest {
                 )
             )
         )
+        val firstEntry = TreatmentHistoryEntry(
+            startYear = 2024,
+            startMonth = 2,
+            treatments = curated.treatments,
+            treatmentHistoryDetails = TreatmentHistoryDetails(
+                stopYear = 2024,
+                stopMonth = 2,
+                stopReason = null,
+                bestResponse = null,
+                bodyLocations = setOf("bone"),
+                bodyLocationCategories = setOf(BodyLocationCategory.BONE),
+                switchToTreatments = null,
+                cycles = null,
+                maintenanceTreatment = TreatmentStage(treatment = TREATMENT, cycles = 1, startYear = 2024, startMonth = 2),
+            ),
+            isTrial = false,
+            trialAcronym = "trialAcronym"
+        )
         assertThat(result.extracted).containsExactly(
-            TreatmentHistoryEntry(
-                startYear = 2024,
-                startMonth = 2,
-                treatments = TREATMENT_HISTORY_ENTRY_CONFIG.curated!!.treatments,
-                treatmentHistoryDetails = TreatmentHistoryDetails(
-                    stopYear = 2024,
-                    stopMonth = 2,
-                    stopReason = null,
-                    bestResponse = null,
-                    bodyLocations = setOf("bone"),
-                    bodyLocationCategories = setOf(BodyLocationCategory.BONE),
-                    switchToTreatments = null,
-                    cycles = null,
-                    maintenanceTreatment = TreatmentStage(treatment = TREATMENT, cycles = 1, startYear = 2024, startMonth = 2),
-                ),
-                isTrial = false,
-                trialAcronym = "trialAcronym"
-            )
+            firstEntry,
+            firstEntry.copy(isTrial = true)
         )
     }
 

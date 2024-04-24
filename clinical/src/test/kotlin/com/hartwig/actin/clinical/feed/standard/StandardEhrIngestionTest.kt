@@ -58,7 +58,10 @@ class StandardEhrIngestionTest {
                 curationDatabase.nonOncologicalHistoryCuration,
                 curationDatabase.treatmentHistoryEntryCuration
             ),
-            intolerancesExtractor = EhrIntolerancesExtractor(TestAtcFactory.createProperAtcModel(), curationDatabase.intoleranceCuration),
+            intolerancesExtractor = EhrIntolerancesExtractor(
+                TestAtcFactory.createProperAtcModel(),
+                curationDatabase.intoleranceCuration
+            ),
             complicationExtractor = EhrComplicationExtractor(curationDatabase.complicationCuration),
             treatmentHistoryExtractor = EhrTreatmentHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration,

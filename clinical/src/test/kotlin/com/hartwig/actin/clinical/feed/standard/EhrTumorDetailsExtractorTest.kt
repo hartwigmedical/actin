@@ -12,9 +12,9 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord()
 private const val TUMOR_LOCATION = "tumorLocation"
@@ -103,7 +103,7 @@ private val BRAIN_AND_LUNG_LESION_TUMOR_DETAILS = TUMOR_DETAILS.copy(
     lungLesionsCount = 1
 )
 
-class EhrTumorDetafilsExtractorTest {
+class EhrTumorDetailsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
     private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {

@@ -45,7 +45,8 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
             LOGGER.info("Loading evidence database")
             val serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion())
             val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
-            val evidenceDatabase = loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
+            val evidenceDatabase =
+                loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())

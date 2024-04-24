@@ -24,7 +24,9 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
         fun create(efficacyEvidence: List<EfficacyEntry>): EvaluatedTreatmentAnnotator {
             val evidenceByTreatmentName = efficacyEvidence
                 .flatMap { entry ->
-                    entry.treatments.map { it.name.lowercase() to entry }
+                    entry.trialReferences
+                        .flatMap { it.patientPopulations }
+                        .mapNotNull { it.treatment }.map { it.name.lowercase() to entry }
                 }
                 .groupBy({ it.first }, { it.second })
             return EvaluatedTreatmentAnnotator(evidenceByTreatmentName)

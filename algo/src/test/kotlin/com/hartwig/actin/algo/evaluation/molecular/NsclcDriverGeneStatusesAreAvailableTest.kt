@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.molecular.NsclcDriverGeneStatusesAreAva
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import org.assertj.core.api.Assertions
 import org.junit.Test
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 
 class NsclcDriverGeneStatusesAreAvailableTest {
 
@@ -21,6 +21,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
             function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.WHOLE_GENOME, true))
         )
     }
+
     @Test
     fun `Should pass if targeted panel analysis is available and contains tumor cells`() {
         EvaluationAssert.assertEvaluation(
@@ -56,12 +57,12 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     }
 
     @Test
-    fun `Should fail if molecular history is empty`(){
+    fun `Should fail if molecular history is empty`() {
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(createNonWGSRecordWithOptionalPriorTests()))
     }
 
     @Test
-    fun `Should fail if molecular history does not contain WGS or targeted panel analysis and other panels do not cover any target gene`(){
+    fun `Should fail if molecular history does not contain WGS or targeted panel analysis and other panels do not cover any target gene`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(createNonWGSRecordWithOptionalPriorTests(listOf(archerPriorMolecularVariantRecord("GeneX", ""))))
@@ -69,7 +70,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     }
 
     @Test
-    fun `Should fail with specific message if no WGS or targeted panel analysis in history and other panels only cover part of the target genes`(){
+    fun `Should fail with specific message if no WGS or targeted panel analysis in history and other panels only cover part of the target genes`() {
         val evaluation = function.evaluate(
             createNonWGSRecordWithOptionalPriorTests(NSCLC_DRIVER_GENE_SET.drop(1).map { archerPriorMolecularVariantRecord(it, "") })
         )
