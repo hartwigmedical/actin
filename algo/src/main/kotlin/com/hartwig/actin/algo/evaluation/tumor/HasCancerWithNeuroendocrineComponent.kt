@@ -40,8 +40,8 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) : E
             )
         }
         return if (hasNeuroendocrineMolecularProfile(record).first) {
-            val message = "Neuroendocrine molecular profile present" +
-                    "(inactivated genes: ${hasNeuroendocrineMolecularProfile(record).second.joinToString(", ")})"
+            val message = "Neuroendocrine molecular profile " +
+                    " (inactivated genes: ${hasNeuroendocrineMolecularProfile(record).second.joinToString(", ")})"
             EvaluationFactory.undetermined(
                 "$message - undetermined if considered cancer with neuroendocrine component",
                 "$message - undetermined if considered cancer with neuroendocrine component"

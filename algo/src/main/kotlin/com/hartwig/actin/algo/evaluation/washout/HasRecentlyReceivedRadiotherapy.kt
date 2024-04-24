@@ -15,20 +15,20 @@ class HasRecentlyReceivedRadiotherapy(
     override fun evaluate(record: PatientRecord): Evaluation {
         val radiotherapyEvaluations = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
             .map(::evaluateRadiotherapyEntry).toSet()
-        val bodyLocationMessage = if (requestedLocation != null) "to body location $requestedLocation " else ""
+        val bodyLocationMessage = if (requestedLocation != null) " to body location $requestedLocation" else ""
 
         return when {
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == true } -> {
                 EvaluationFactory.pass(
-                    "Patient has recently received radiotherapy $bodyLocationMessage- pay attention to washout period",
-                    "Has recently received radiotherapy $bodyLocationMessage- pay attention to washout period"
+                    "Patient has recently received radiotherapy$bodyLocationMessage - pay attention to washout period",
+                    "Has recently received radiotherapy$bodyLocationMessage"
                 )
             }
 
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == true } -> {
                 EvaluationFactory.undetermined(
-                    "Has received prior radiotherapy $bodyLocationMessage" + "with unknown date - if recent: pay attention to washout period",
-                    "Has received prior radiotherapy $bodyLocationMessage" + "with unknown date - pay attention to washout period"
+                    "Has received prior radiotherapy$bodyLocationMessage with unknown date - if recent: pay attention to washout period",
+                    "Has received prior radiotherapy$bodyLocationMessage with unknown date - pay attention to washout period"
                 )
             }
 

@@ -31,7 +31,7 @@ class HasLimitedPDL1ByIHC(private val measure: String, private val maxPDL1: Doub
                 "PD-L1 expression exceeds $maxPDL1"
             )
         } else if (PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty()) {
-            EvaluationFactory.fail(
+            EvaluationFactory.recoverableFail(
                 "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
             )
         } else {
