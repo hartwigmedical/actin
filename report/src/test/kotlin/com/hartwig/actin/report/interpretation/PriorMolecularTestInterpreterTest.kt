@@ -75,6 +75,7 @@ class PriorMolecularTestInterpreterTest {
                 type = "NGS Panel", results = listOf(
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "EGFR"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "BRAF"),
+                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "KRAS"),
                 )
             )
         )
