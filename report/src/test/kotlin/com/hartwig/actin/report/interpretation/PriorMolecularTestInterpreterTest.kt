@@ -53,6 +53,8 @@ class PriorMolecularTestInterpreterTest {
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "RET"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "MET"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NTRK1"),
+                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NTRK2"),
+                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NTRK3"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NRG1")
                 )
             )
