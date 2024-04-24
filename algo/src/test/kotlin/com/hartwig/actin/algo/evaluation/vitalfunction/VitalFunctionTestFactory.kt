@@ -18,7 +18,7 @@ internal object VitalFunctionTestFactory {
         date: LocalDateTime = LocalDateTime.of(2017, 7, 7, 12, 30, 0),
         value: Double = 0.0,
         valid: Boolean = true,
-        unit: String = BodyWeightFunctions.EXPECTED_UNIT
+        unit: String = BodyWeightFunctions.EXPECTED_UNITS.first()
     ): BodyWeight {
         return BodyWeight(date = date, value = value, unit = unit, valid = valid)
     }
