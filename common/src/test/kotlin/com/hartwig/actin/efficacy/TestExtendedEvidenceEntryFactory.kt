@@ -78,14 +78,14 @@ object TestExtendedEvidenceEntryFactory {
 
     private fun createAnalysisGroup(): AnalysisGroup {
         return AnalysisGroup(
-            id = 1, primaryEndPoints = listOf(
-                PrimaryEndPoint(
+            id = 1, name = "Analyis group", nPatients = 200, endPoints = listOf(
+                EndPoint(
                     id = 2,
                     name = "Median Progression-Free Survival",
                     value = 6.8,
-                    unitOfMeasure = PrimaryEndPointUnit.MONTHS,
+                    unitOfMeasure = EndPointUnit.MONTHS,
                     confidenceInterval = null,
-                    type = PrimaryEndPointType.PRIMARY,
+                    type = EndPointType.PRIMARY,
                     derivedMetrics = listOf(
                         DerivedMetric(
                             relativeMetricId = 1,

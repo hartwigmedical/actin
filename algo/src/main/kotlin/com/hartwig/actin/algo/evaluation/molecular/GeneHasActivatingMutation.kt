@@ -140,7 +140,9 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
                     nonHighDriverSubclonalVariants,
                     "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
                             " have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)} and no high driver likelihood",
-                    "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
+                    "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(
+                        1 - CLONAL_CUTOFF
+                    )
                 ),
                 EventsWithMessages(
                     nonHighDriverVariants,

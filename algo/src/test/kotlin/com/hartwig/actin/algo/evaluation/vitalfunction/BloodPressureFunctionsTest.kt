@@ -8,10 +8,10 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.ev
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMinimumBloodPressure
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
-import java.time.LocalDate
-import java.time.LocalDateTime
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class BloodPressureFunctionsTest {
 

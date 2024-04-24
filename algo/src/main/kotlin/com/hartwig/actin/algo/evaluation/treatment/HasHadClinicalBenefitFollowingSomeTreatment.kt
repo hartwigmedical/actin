@@ -24,7 +24,7 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
         val mixedResponse = targetTreatmentsToResponseMap.containsKey(TreatmentResponse.MIXED)
         val uncertainResponse = targetTreatmentsToResponseMap.keys == setOf(null)
 
-        val benefitMessage = "objective benefit from treatment with ${treatment.name}"
+        val benefitMessage = "objective benefit from treatment with ${treatment.display()}"
         val bestResponse = if (stableDisease) "best response: stable disease" else "best response: mixed"
         return when {
             targetTreatmentsToResponseMap.isEmpty() -> {
@@ -36,8 +36,8 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
                         ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true
                     }) {
                     EvaluationFactory.undetermined(
-                        "Undetermined clinical benefit from ${treatment.name} - patient did not $similarDrugMessage",
-                        "Undetermined clinical benefit from ${treatment.name} - did not $similarDrugMessage"
+                        "Undetermined clinical benefit from ${treatment.display()} - patient did not $similarDrugMessage",
+                        "Undetermined clinical benefit from ${treatment.display()} - did not $similarDrugMessage"
                     ) } else {
                         EvaluationFactory.fail(
                             "Patient did not $similarDrugMessage with PD as best response",
@@ -46,8 +46,8 @@ class HasHadClinicalBenefitFollowingSomeTreatment(private val treatment: Treatme
                     }
                 } else {
                     EvaluationFactory.fail(
-                        "Patient has not received ${treatment.name} treatment",
-                        "Has not received ${treatment.name} treatment"
+                        "Patient has not received ${treatment.display()} treatment",
+                        "Has not received ${treatment.display()} treatment"
                     )
                 }
             }

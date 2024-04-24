@@ -14,7 +14,9 @@ class HasExperiencedImmuneRelatedAdverseEvents internal constructor() : Evaluati
         val stopReasonUnknown = immunotherapyTreatmentsByStopReason.keys == setOf(null)
         val hasHadImmunoTherapyWithStopReasonToxicity = StopReason.TOXICITY in immunotherapyTreatmentsByStopReason
 
-        val hasImmunotherapyAllergies = record.intolerances.any { TreatmentCategory.IMMUNOTHERAPY in it.treatmentCategories }
+        val hasImmunotherapyAllergies = record.intolerances.any {
+            TreatmentCategory.IMMUNOTHERAPY in (it.treatmentCategories ?: emptySet())
+        }
 
         return when {
             hasHadImmunoTherapyWithStopReasonToxicity || hasImmunotherapyAllergies -> {

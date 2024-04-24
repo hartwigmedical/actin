@@ -139,7 +139,10 @@ class StandardEhrIngestion(
                 curationDatabaseContext.cypInteractionCuration
             ),
             EhrSurgeryExtractor(),
-            EhrIntolerancesExtractor(atcModel, curationDatabaseContext.intoleranceCuration),
+            EhrIntolerancesExtractor(
+                atcModel,
+                curationDatabaseContext.intoleranceCuration
+            ),
             EhrVitalFunctionsExtractor(),
             EhrBloodTransfusionExtractor(),
             EhrLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),

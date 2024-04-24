@@ -11,12 +11,12 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.Temporal
-import org.apache.logging.log4j.LogManager
 
 class FeedTemporalDeserializer<T : Temporal>(private val parser: (String, DateTimeFormatter) -> T?) : JsonDeserializer<T?>() {
     companion object {

@@ -110,7 +110,7 @@ class PatientCurrentDetailsGenerator(private val record: PatientRecord, private 
         private fun allergies(intolerances: List<Intolerance>): String {
             val intoleranceSummary = intolerances.filter { !it.name.equals("none", ignoreCase = true) }
                 .joinToString(Formats.COMMA_SEPARATOR) {
-                    it.name + if (it.category.isNotEmpty()) " (${it.category})" else ""
+                    it.name + if (it.category?.isNotEmpty() == true) " (${it.category})" else ""
                 }
             return Formats.valueOrDefault(intoleranceSummary, "None")
         }
