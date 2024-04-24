@@ -33,7 +33,6 @@ object SOCGeneratorFunctions {
         }
     }
 
-
     fun createWhoString(patientPopulation: PatientPopulation): String {
         return with(patientPopulation) {
             listOf(
