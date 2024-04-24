@@ -24,7 +24,7 @@ class HasHadSystemicTherapyWithAnyIntent(
             systemicTreatments.groupBy { it.intents?.any { intent -> intent in intents } }
         } ?: systemicTreatments.groupBy { true }
 
-        val intentsLowercase = intents?.let { concatItemsWithOr(it).lowercase() }
+        val intentsLowercase = intents?.let { concatItemsWithOr(it).lowercase() } ?: ""
 
         return when {
             monthsAgo == null && matchingTreatments.containsKey(true) -> {
