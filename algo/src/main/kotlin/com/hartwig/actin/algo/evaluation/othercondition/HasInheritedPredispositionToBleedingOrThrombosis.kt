@@ -12,33 +12,27 @@ import com.hartwig.actin.doid.DoidModel
 class HasInheritedPredispositionToBleedingOrThrombosis(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingDoidTerm = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
+        val matchingDoid = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .flatMap(PriorOtherCondition::doids)
             .find {
                 doidModel.doidWithParents(it).any(DOID_CONSTANTS_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS::contains)
             }
-            ?.let(doidModel::resolveTermForDoid)
 
         val hasMatchingName = OtherConditionSelector.selectClinicallyRelevant(record.priorOtherConditions)
             .any { it.name.lowercase().contains(NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS.lowercase()) }
 
         val baseMessage = "(typically) inherited predisposition to bleeding or thrombosis"
 
-        return if (matchingDoidTerm != null) {
-            EvaluationFactory.pass(
-                "Patient has $baseMessage: $matchingDoidTerm",
-                "History of $baseMessage: $matchingDoidTerm"
-            )
+        return if (matchingDoid != null) {
+            val matchingDoidTerm = doidModel.resolveTermForDoid(matchingDoid) ?: "DOID $matchingDoid"
+            EvaluationFactory.pass("Patient has $baseMessage: $matchingDoidTerm", "History of $baseMessage: $matchingDoidTerm")
         } else if (hasMatchingName) {
             EvaluationFactory.pass(
                 "Patient has $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS",
                 "History of $baseMessage: $NAME_INDICATING_INHERITED_PREDISPOSITION_TO_BLEEDING_OR_THROMBOSIS"
             )
         } else {
-            EvaluationFactory.fail(
-                "Patient has no $baseMessage",
-                "No history of $baseMessage"
-            )
+            EvaluationFactory.fail("Patient has no $baseMessage", "No history of $baseMessage")
         }
     }
 

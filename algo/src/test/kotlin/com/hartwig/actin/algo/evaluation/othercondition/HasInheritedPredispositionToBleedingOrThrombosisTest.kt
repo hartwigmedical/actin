@@ -10,9 +10,7 @@ private const val MATCHING_DOID = DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID
 
 class HasInheritedPredispositionToBleedingOrThrombosisTest {
     private val function = HasInheritedPredispositionToBleedingOrThrombosis(
-        TestDoidModelFactory.createWithOneDoidAndTerm(
-            MATCHING_DOID, "matching term"
-        )
+        TestDoidModelFactory.createWithOneDoidAndTerm(MATCHING_DOID, "matching term")
     )
 
     @Test
