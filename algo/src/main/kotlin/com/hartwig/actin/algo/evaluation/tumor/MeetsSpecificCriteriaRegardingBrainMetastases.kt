@@ -31,7 +31,7 @@ class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
         } else {
             EvaluationFactory.fail(
                 "No known brain metastases present hence also won't meet specific protocol criteria regarding brain metastases",
-                "Specific criteria regarding brain metastases not met"
+                "No known brain metastases"
             )
         }
     }
