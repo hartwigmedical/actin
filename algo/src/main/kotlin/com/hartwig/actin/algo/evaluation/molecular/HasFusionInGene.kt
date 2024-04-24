@@ -19,11 +19,11 @@ class HasFusionInGene(private val gene: String) : EvaluationFunction {
             return EvaluationFactory.undetermined("No molecular data", "No molecular data")
         }
 
-        val molecular = record.molecularHistory.latestMolecularRecord()
-        val molecularEvaluation = if (molecular != null) findMatchingFusionsInOrangeMolecular(molecular) else null
+        val orangeMolecular = record.molecularHistory.latestOrangeMolecularRecord()
+        val orangeMolecularEvaluation = if (orangeMolecular != null) findMatchingFusionsInOrangeMolecular(orangeMolecular) else null
         val panelEvaluation = findMatchingFusionsInPanels(record.molecularHistory)
 
-        val groupedEvaluationsByResult = listOfNotNull(molecularEvaluation, panelEvaluation)
+        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
             .groupBy { evaluation -> evaluation.result }
             .mapValues { entry ->
                 entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
