@@ -40,5 +40,6 @@ data class TrialIngestionResult(
     val ingestionStatus: TrialIngestionStatus,
     val trialStatusDatabaseValidation: TrialStatusDatabaseValidation,
     val trialValidationResult: TrialDatabaseValidation,
+    val unusedRules: Set<String>,
     @Transient val trials: List<Trial>
 )
