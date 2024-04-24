@@ -201,7 +201,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
 
         if (activatingVariants.isNotEmpty())
             return EvaluationFactory.pass(
-                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Archer panel",
+                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Panel(s)",
                 "$gene activating mutation(s)",
                 inclusionEvents = activatingVariants
             )
