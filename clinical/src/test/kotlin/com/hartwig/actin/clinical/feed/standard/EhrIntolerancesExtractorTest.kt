@@ -7,9 +7,9 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val NAME = "allergy"
 private const val CATEGORY = "category"

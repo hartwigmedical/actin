@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.panel.Panel
 
-class NsclcDriverGeneStatusesAreAvailable: EvaluationFunction {
+class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val molecularHistory = record.molecularHistory

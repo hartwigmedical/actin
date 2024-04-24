@@ -9,9 +9,9 @@ import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class HasSufficientLabValueLLNTest {
-
     private val function = HasSufficientLabValueLLN(2.0)
     private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
+
     @Test
     fun `Should pass when lab value is above requested fold of LLN`() {
         assertUndetermined(80.0, 35.0, EvaluationResult.PASS)
@@ -36,16 +36,18 @@ class HasSufficientLabValueLLNTest {
     }
 
     private fun assertUndetermined(
-        labValue: Double, referenceLimitLow: Double?, result: EvaluationResult): AbstractComparableAssert<*, *> {
+        labValue: Double, referenceLimitLow: Double?, result: EvaluationResult
+    ): AbstractComparableAssert<*, *> {
         val evaluation =
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value =  labValue, refLimitLow = referenceLimitLow))
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = labValue, refLimitLow = referenceLimitLow))
         return Assertions.assertThat(evaluation.result).isEqualTo(result)
     }
 
     private fun assertRecoverable(
-        labValue: Double, referenceLimitLow: Double?): AbstractBooleanAssert<*> {
+        labValue: Double, referenceLimitLow: Double?
+    ): AbstractBooleanAssert<*> {
         val evaluation =
-            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value =  labValue, refLimitLow = referenceLimitLow))
+            function.evaluate(record, LabMeasurement.CREATININE, LabTestFactory.create(value = labValue, refLimitLow = referenceLimitLow))
         return Assertions.assertThat(evaluation.recoverable).isTrue()
     }
 }

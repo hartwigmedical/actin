@@ -35,7 +35,8 @@ object TestDoidModelFactory {
     }
 
     fun createWithTwoDoidsAndTerms(doids: List<String>, terms: List<String>): DoidModel {
-        return create(termPerDoidMap = mapOf(doids[0] to terms[0], doids[1] to terms[1]),
+        return create(
+            termPerDoidMap = mapOf(doids[0] to terms[0], doids[1] to terms[1]),
             doidPerLowerCaseTermMap = mapOf(terms[0].lowercase() to doids[0], terms[1].lowercase() to doids[1])
         )
     }

@@ -29,6 +29,7 @@ class HasLimitedLabValue(
                     } ${targetUnit.display()} exceeds max of $maxValue ${targetUnit.display()}"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 EvaluationFactory.recoverableUndetermined(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${
@@ -39,12 +40,14 @@ class HasLimitedLabValue(
                     } ${targetUnit.display()} exceeds max of $maxValue ${targetUnit.display()} but within margin of error"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} requirements could not be determined",
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} requirements undetermined"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
                 EvaluationFactory.recoverablePass(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} ${

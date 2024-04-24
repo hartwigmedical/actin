@@ -1,20 +1,8 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.clinical.datamodel.TumorDetails
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
-import com.hartwig.actin.report.interpretation.EvaluatedCohort
-import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
-import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
-import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
+import com.hartwig.actin.report.pdf.ReportContentProvider
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -25,7 +13,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
 
-class SummaryChapter(private val report: Report, private val externalTrialSummarizer: ExternalTrialSummarizer) : ReportChapter {
+class SummaryChapter(private val report: Report) : ReportChapter {
 
     override fun name(): String {
         return "Summary"
@@ -36,7 +24,9 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
     }
 
     override fun render(document: Document) {
-        addPatientDetails(document)
+        if (report.config.showPatientHeader) {
+            addPatientDetails(document)
+        }
         addChapterTitle(document)
         addSummaryTable(document)
     }
@@ -69,35 +59,13 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
         document.add(paragraph.setWidth(contentWidth()).setTextAlignment(TextAlignment.RIGHT))
     }
 
-    private fun addChapterTitle(document: Document) {
-        document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
-    }
-
     private fun addSummaryTable(document: Document) {
-        val table = Tables.createSingleColWithWidth(contentWidth())
+        val contentWidth = contentWidth()
+        val table = Tables.createSingleColWithWidth(contentWidth)
         val keyWidth = Formats.STANDARD_KEY_WIDTH
-        val valueWidth = contentWidth() - keyWidth
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-
-        val (openCohortsWithSlots, evaluated) =
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = true)
-        val (openCohortsWithoutSlots, _) =
-            EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), slotsAvailable = false)
-
-        val molecular = report.patientRecord.molecularHistory.latestMolecularRecord()
-        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(molecular, evaluated)
-        val generators = listOfNotNull(
-            PatientClinicalHistoryGenerator(report.patientRecord, report.config, false, keyWidth, valueWidth),
-            if (report.config.showMolecularSummary)
-                molecular?.let { MolecularSummaryGenerator(report.patientRecord, it, cohorts, keyWidth, valueWidth) } else null,
-            if (report.config.showApprovedTreatmentsInSummary)
-                EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth()) else null,
-            openCohortsWithSlots,
-            openCohortsWithoutSlots,
-            dutchTrialGenerator,
-            nonDutchTrialGenerator
-        )
-
+        val valueWidth = contentWidth - keyWidth
+        val generators = ReportContentProvider(report).provideSummaryTables(keyWidth, valueWidth, contentWidth)
+        
         for (i in generators.indices) {
             val generator = generators[i]
             table.addCell(Cells.createTitle(generator.title()))
@@ -107,35 +75,6 @@ class SummaryChapter(private val report: Report, private val externalTrialSummar
             }
         }
         document.add(table)
-    }
-
-    private fun externalTrials(molecular: MolecularRecord?, evaluated: List<EvaluatedCohort>): Pair<TableGenerator?, TableGenerator?> {
-        if (molecular == null) {
-            return Pair(null, null)
-        } else {
-            val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
-                AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
-            )
-            val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, evaluated)
-            return Pair(
-                if (externalTrialSummary.dutchTrials.isNotEmpty()) {
-                    EligibleDutchExternalTrialsGenerator(
-                        molecular.externalTrialSource,
-                        externalTrialSummary.dutchTrials,
-                        contentWidth(),
-                        externalTrialSummary.dutchTrialsFiltered
-                    )
-                } else null,
-                if (externalTrialSummary.otherCountryTrials.isNotEmpty()) {
-                    EligibleOtherCountriesExternalTrialsGenerator(
-                        molecular.externalTrialSource,
-                        externalTrialSummary.otherCountryTrials,
-                        contentWidth(),
-                        externalTrialSummary.otherCountryTrialsFiltered
-                    )
-                } else null
-            )
-        }
     }
 
     companion object {

@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import org.junit.Test
 
-class HasKnownHPVStatusTest{
+class HasKnownHPVStatusTest {
 
     private val function = HasKnownHPVStatus()
 
@@ -26,7 +26,8 @@ class HasKnownHPVStatusTest{
     @Test
     fun `Should resolve to undetermined if WGS does not contain enough tumor cells and no correct test in prior molecular tests `() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-            ExperimentType.WHOLE_GENOME, false, MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something"))
+            ExperimentType.WHOLE_GENOME, false, MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something")
+        )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
@@ -34,7 +35,8 @@ class HasKnownHPVStatusTest{
     fun `Should resolve to undetermined if no WGS has been performed and correct test is in priorMolecularTest with indeterminate status`() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
             ExperimentType.WHOLE_GENOME, false, MolecularTestFactory.priorMolecularTest(
-                test = "IHC", item = "HPV", impliesIndeterminate = true)
+                test = "IHC", item = "HPV", impliesIndeterminate = true
+            )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
@@ -43,7 +45,8 @@ class HasKnownHPVStatusTest{
     fun `Should pass if WGS does not contain enough tumor cells but correct test is in priorMolecularTest`() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
             ExperimentType.WHOLE_GENOME, false, MolecularTestFactory.priorMolecularTest(
-                test = "IHC", item = "HPV", impliesIndeterminate = false)
+                test = "IHC", item = "HPV", impliesIndeterminate = false
+            )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
@@ -51,7 +54,8 @@ class HasKnownHPVStatusTest{
     @Test
     fun `Should pass if no WGS performed but correct test is in priorMolecularTest`() {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            molecularHistory = MolecularHistory.fromInputs(emptyList(),
+            molecularHistory = MolecularHistory.fromInputs(
+                emptyList(),
                 listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "HPV", impliesIndeterminate = false))
             )
         )
@@ -64,7 +68,8 @@ class HasKnownHPVStatusTest{
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                    molecularHistory = MolecularHistory.fromInputs(emptyList(),
+                    molecularHistory = MolecularHistory.fromInputs(
+                        emptyList(),
                         listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something", impliesIndeterminate = false))
                     )
                 )

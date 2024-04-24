@@ -68,42 +68,47 @@ class HasRecentlyReceivedRadiotherapyTest {
     }
 
     @Test
-    fun `Should pass with correct body location and within requested weeks`(){
+    fun `Should pass with correct body location and within requested weeks`() {
         val correctLocationAndTimeframe = radiotherapy(YEAR, MONTH, setOf(CORRECT_LOCATION))
         assertEvaluation(EvaluationResult.PASS, functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationAndTimeframe)))
     }
 
     @Test
-    fun `Should fail with wrong body location and within requested weeks`(){
+    fun `Should fail with wrong body location and within requested weeks`() {
         val wrongLocationAndCorrectTimeframe = radiotherapy(YEAR, MONTH, setOf("Wrong location"))
         assertEvaluation(EvaluationResult.FAIL, functionWithLocation.evaluate(withTreatmentHistoryEntry(wrongLocationAndCorrectTimeframe)))
     }
 
     @Test
-    fun `Should return undetermined with unknown body location and within requested weeks`(){
+    fun `Should return undetermined with unknown body location and within requested weeks`() {
         val unknownLocationAndCorrectTimeframe = radiotherapy(YEAR, MONTH, null)
-        assertEvaluation(EvaluationResult.UNDETERMINED,
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
             functionWithLocation.evaluate(withTreatmentHistoryEntry(unknownLocationAndCorrectTimeframe))
         )
     }
 
     @Test
-    fun `Should return undetermined with correct body location but unknown date`(){
+    fun `Should return undetermined with correct body location but unknown date`() {
         val correctLocationButUnknownDate = radiotherapy(null, null, setOf(CORRECT_LOCATION))
-        assertEvaluation(EvaluationResult.UNDETERMINED,
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
             functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationButUnknownDate))
         )
     }
 
     private fun radiotherapy(
-        startYear: Int? = null, startMonth: Int? = null, location: Set<String>? = null): TreatmentHistoryEntry {
+        startYear: Int? = null, startMonth: Int? = null, location: Set<String>? = null
+    ): TreatmentHistoryEntry {
         return treatmentHistoryEntry(radiotherapy, startYear, startMonth, location)
     }
 
     private fun treatmentHistoryEntry(
-        treatment: Treatment, startYear: Int? = null, startMonth: Int? = null, location: Set<String>? = null): TreatmentHistoryEntry {
+        treatment: Treatment, startYear: Int? = null, startMonth: Int? = null, location: Set<String>? = null
+    ): TreatmentHistoryEntry {
         return TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(treatment), startYear = startYear, startMonth = startMonth, bodyLocations = location)
+            treatments = setOf(treatment), startYear = startYear, startMonth = startMonth, bodyLocations = location
+        )
     }
 
     private fun withTreatmentHistoryEntry(treatment: TreatmentHistoryEntry): PatientRecord {
