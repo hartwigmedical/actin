@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.clinical.datamodel.BodyHeight
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
@@ -14,6 +15,10 @@ internal object VitalFunctionTestFactory {
         return base.copy(bodyWeights = bodyWeights)
     }
 
+    fun withBodyWeightsAndHeight(bodyWeights: List<BodyWeight>, bodyHeight: BodyHeight): PatientRecord {
+        return base.copy(bodyWeights = bodyWeights, bodyHeights = listOf(bodyHeight))
+    }
+
     fun weight(
         date: LocalDateTime = LocalDateTime.of(2017, 7, 7, 12, 30, 0),
         value: Double = 0.0,
@@ -21,6 +26,15 @@ internal object VitalFunctionTestFactory {
         unit: String = BodyWeightFunctions.EXPECTED_UNIT
     ): BodyWeight {
         return BodyWeight(date = date, value = value, unit = unit, valid = valid)
+    }
+
+    fun height(
+        date: LocalDateTime = LocalDateTime.of(2017, 7, 7, 12, 30, 0),
+        value: Double = 0.0,
+        valid: Boolean = true,
+        unit: String = "centimeters"
+    ): BodyHeight {
+        return BodyHeight(date = date, value = value, unit = unit, valid = valid)
     }
 
     fun withVitalFunctions(vitalFunctions: List<VitalFunction>): PatientRecord {

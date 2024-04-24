@@ -1,6 +1,7 @@
 package com.hartwig.actin
 
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
+import com.hartwig.actin.clinical.datamodel.BodyHeight
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
@@ -31,6 +32,7 @@ data class PatientRecord(
     val intolerances: List<Intolerance>,
     val surgeries: List<Surgery>,
     val bodyWeights: List<BodyWeight>,
+    val bodyHeights: List<BodyHeight>,
     val vitalFunctions: List<VitalFunction>,
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,
