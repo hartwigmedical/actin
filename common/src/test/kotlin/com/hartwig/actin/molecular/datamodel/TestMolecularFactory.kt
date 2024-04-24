@@ -340,4 +340,12 @@ object TestMolecularFactory {
             impliesPotentialIndeterminateStatus = false
         )
     }
+
+    fun freetextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = "Freetext",
+            item = "$geneStart::$geneEnd",
+            impliesPotentialIndeterminateStatus = false
+        )
+    }
 }
