@@ -16,5 +16,23 @@
     "study_status": "CLOSED",
     "study_slots_number_available": 0,
     "study_slots_date_update": "2024-03-12T00:00:00"
+  },
+  {
+    "study_id": 2,
+    "study_metc": "MEC-002",
+    "study_acronym": "CLS-001",
+    "study_title": "Pending trial",
+    "study_status": "PENDING",
+    "study_slots_number_available": 0,
+    "study_slots_date_update": "2024-03-12T00:00:00"
+  },
+  {
+    "study_id": 2,
+    "study_metc": "MEC-002",
+    "study_acronym": "CLS-001",
+    "study_title": "Withdrawn trial",
+    "study_status": "WITHDRAWN",
+    "study_slots_number_available": 0,
+    "study_slots_date_update": "2024-03-12T00:00:00"
   }
 ]
