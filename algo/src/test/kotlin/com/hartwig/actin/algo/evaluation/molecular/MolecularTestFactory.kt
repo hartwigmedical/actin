@@ -247,6 +247,13 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun addingTestFromPriorMolecular(patientRecord: PatientRecord, priorMolecular: List<PriorMolecularTest>): PatientRecord {
+        return patientRecord.copy(molecularHistory =
+        MolecularHistory(patientRecord.molecularHistory.molecularTests +
+                MolecularHistory.fromInputs(emptyList(), priorMolecular).molecularTests)
+        )
+    }
+
     private fun withDriver(driver: Driver): PatientRecord {
         return withCharacteristicsAndDriver(baseMolecular.characteristics, driver)
     }
