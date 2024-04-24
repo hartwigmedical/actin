@@ -25,7 +25,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
     override fun contents(): Table {
         val record = report.patientRecord
         val pharmaco = report.patientRecord.molecularHistory.latestMolecularRecord()?.pharmaco
-        val supertable = Tables.createSingleColWithWidth(700f)
+        val mainTable = Tables.createSingleColWithWidth(700f)
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth)
         listOf(
@@ -50,9 +50,9 @@ class PatientClinicalHistoryWithOverviewGenerator(
         val molecularRecord = record.molecularHistory.latestMolecularRecord()
         clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
 
-        supertable.addCell(create(clinicalSummaryTable))
-        supertable.addCell(create(clinicalHistoryTable))
-        return supertable
+        mainTable.addCell(create(clinicalSummaryTable))
+        mainTable.addCell(create(clinicalHistoryTable))
+        return mainTable
     }
 
     companion object {
