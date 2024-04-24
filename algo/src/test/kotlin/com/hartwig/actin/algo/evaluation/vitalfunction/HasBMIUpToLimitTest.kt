@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
-import kotlin.math.roundToInt
 
 class HasBMIUpToLimitTest {
     private val function: HasBMIUpToLimit = HasBMIUpToLimit(40, LocalDate.of(2023, 12, 1))
