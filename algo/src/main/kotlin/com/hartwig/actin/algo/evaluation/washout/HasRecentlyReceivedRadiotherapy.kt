@@ -9,7 +9,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEn
 import java.time.YearMonth
 
 class HasRecentlyReceivedRadiotherapy(
-    private val referenceYear: Int, private val referenceMonth: Int, private val requestedLocation: String? = null) : EvaluationFunction {
+    private val referenceYear: Int, private val referenceMonth: Int, private val requestedLocation: String? = null
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val radiotherapyEvaluations = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
@@ -23,27 +24,33 @@ class HasRecentlyReceivedRadiotherapy(
                     "Has recently received radiotherapy$bodyLocationMessage"
                 )
             }
+
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == true } -> {
                 EvaluationFactory.undetermined(
                     "Has received prior radiotherapy$bodyLocationMessage with unknown date - if recent: pay attention to washout period",
                     "Has received prior radiotherapy$bodyLocationMessage with unknown date - pay attention to washout period"
                 )
             }
+
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == null } -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Patient has received radiotherapy but undetermined if target location was $requestedLocation",
                     "Undetermined recent $requestedLocation radiation therapy"
                 )
             }
+
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == null } -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Patient has received prior radiotherapy but undetermined if recent (date unknown) and if $bodyLocationMessage",
                     "Has received prior radiotherapy but undetermined if recent (date unknown) and if $bodyLocationMessage"
                 )
             }
+
             else -> {
-                EvaluationFactory.fail("Patient has not recently received radiotherapy $bodyLocationMessage",
-                    "No recent radiotherapy $bodyLocationMessage")
+                EvaluationFactory.fail(
+                    "Patient has not recently received radiotherapy $bodyLocationMessage",
+                    "No recent radiotherapy $bodyLocationMessage"
+                )
             }
         }
     }

@@ -49,7 +49,7 @@ object BodyWeightFunctions {
                 val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
                 val generalMessage = "Median body weight ($median kg) below $referenceBodyWeight kg"
                 EvaluationFactory.recoverableUndetermined(specificMessage, generalMessage)
-                    }
+            }
 
             comparisonWithoutMargin < 0 -> {
                 val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"

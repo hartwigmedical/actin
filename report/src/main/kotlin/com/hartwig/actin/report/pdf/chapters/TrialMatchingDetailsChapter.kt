@@ -23,7 +23,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.AreaBreakType
 
-class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
+class TrialMatchingDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
     override fun name(): String {
         return "Trial Matching Details"
     }
@@ -47,10 +47,6 @@ class TrialMatchingDetailsChapter(private val report: Report) : ReportChapter {
             }
             addTrialMatches(document, nonEligible, "Other trials & cohorts", false)
         }
-    }
-
-    private fun addChapterTitle(document: Document) {
-        document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
     }
 
     private fun addTrialMatches(

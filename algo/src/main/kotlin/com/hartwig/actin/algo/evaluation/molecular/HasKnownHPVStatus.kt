@@ -25,8 +25,10 @@ class HasKnownHPVStatus : EvaluationFunction {
             }
 
             conclusivePriorTestsForHPV.isNotEmpty() -> {
-                EvaluationFactory.pass("HPV has been tested in a prior molecular test",
-                    "HPV result available")
+                EvaluationFactory.pass(
+                    "HPV has been tested in a prior molecular test",
+                    "HPV result available"
+                )
             }
 
             molecularRecords.any { it.type == ExperimentType.WHOLE_GENOME } -> {
@@ -44,7 +46,10 @@ class HasKnownHPVStatus : EvaluationFunction {
             }
 
             record.molecularHistory.allMolecularRecords().isEmpty() -> {
-                EvaluationFactory.undetermined("HPV status not available (no molecular data)", "Undetermined HPV status (no molecular data)")
+                EvaluationFactory.undetermined(
+                    "HPV status not available (no molecular data)",
+                    "Undetermined HPV status (no molecular data)"
+                )
             }
 
             else -> {

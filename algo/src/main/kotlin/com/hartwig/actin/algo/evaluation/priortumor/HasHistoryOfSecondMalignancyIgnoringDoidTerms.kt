@@ -9,7 +9,7 @@ import com.hartwig.actin.doid.DoidModel
 
 class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
     private val doidModel: DoidModel, private val doidTermsToIgnore: List<String>
-): EvaluationFunction {
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidsToIgnore = doidTermsToIgnore.map { doidModel.resolveDoidForTerm(it) }

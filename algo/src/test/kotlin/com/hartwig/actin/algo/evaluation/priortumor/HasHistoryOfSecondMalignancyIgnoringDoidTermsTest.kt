@@ -24,20 +24,20 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
     }
 
     @Test
-    fun `Should fail when prior tumors present in history but with doid to ignore`(){
+    fun `Should fail when prior tumors present in history but with doid to ignore`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorSecondPrimary(doid = matchDoid))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
     }
 
     @Test
-    fun `Should fail when prior tumors present in history but doid is child of doid to ignore`(){
+    fun `Should fail when prior tumors present in history but doid is child of doid to ignore`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorSecondPrimary(doid = matchDoid))
         val function = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, listOf(parentTerm))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
     }
 
     @Test
-    fun `Should pass when prior tumors present in history with doid term not to ignore`(){
+    fun `Should pass when prior tumors present in history with doid term not to ignore`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorSecondPrimary(doid = "other"))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorSecondPrimaries(priorTumors)))
     }

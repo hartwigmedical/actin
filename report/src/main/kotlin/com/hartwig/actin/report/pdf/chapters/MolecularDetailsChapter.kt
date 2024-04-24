@@ -11,14 +11,12 @@ import com.hartwig.actin.report.pdf.tables.molecular.PriorMolecularResultGenerat
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
-import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.borders.Border
-import com.itextpdf.layout.element.Paragraph
 
-class MolecularDetailsChapter(private val report: Report) : ReportChapter {
+class MolecularDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
     override fun name(): String {
         return "Molecular Details"
     }
@@ -30,10 +28,6 @@ class MolecularDetailsChapter(private val report: Report) : ReportChapter {
     override fun render(document: Document) {
         addChapterTitle(document)
         addMolecularDetails(document)
-    }
-
-    private fun addChapterTitle(document: Document) {
-        document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
     }
 
     private fun addMolecularDetails(document: Document) {
