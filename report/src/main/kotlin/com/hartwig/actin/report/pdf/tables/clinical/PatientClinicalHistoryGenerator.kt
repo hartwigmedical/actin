@@ -8,7 +8,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
-import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
@@ -22,32 +22,34 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
 class PatientClinicalHistoryGenerator(
-    private val record: PatientRecord,
-    private val config: ReportConfiguration,
+    private val report: Report,
     private val showDetails: Boolean,
     private val keyWidth: Float,
     private val valueWidth: Float
 ) : TableGenerator {
-    
+
     override fun title(): String {
         return "Clinical summary"
     }
 
     override fun contents(): Table {
         val table = createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(createKey("Relevant systemic treatment history"))
-        table.addCell(create(tableOrNone(relevantSystemicPreTreatmentHistoryTable(record))))
-        if (config.showOtherOncologicalHistoryInSummary || showDetails) {
-            table.addCell(createKey("Relevant other oncological history"))
-            table.addCell(create(tableOrNone(relevantNonSystemicPreTreatmentHistoryTable(record))))
-        }
-        table.addCell(createKey("Previous primary tumor"))
-        table.addCell(create(tableOrNone(secondPrimaryHistoryTable(record))))
-        if (config.showRelevantNonOncologicalHistoryInSummary || showDetails) {
-            table.addCell(createKey("Relevant non-oncological history"))
-            table.addCell(create(tableOrNone(relevantNonOncologicalHistoryTable(record))))
-        }
+        contentsAsList().forEach(table::addCell)
         return table
+    }
+
+    fun contentsAsList(): List<Cell> {
+        val record = report.patientRecord
+        return listOfNotNull(
+            "Relevant systemic treatment history" to relevantSystemicPreTreatmentHistoryTable(record),
+            if (report.config.showOtherOncologicalHistoryInSummary || showDetails) {
+                "Relevant other oncological history" to relevantNonSystemicPreTreatmentHistoryTable(record)
+            } else null,
+            "Previous primary tumor" to secondPrimaryHistoryTable(record),
+            if (report.config.showRelevantNonOncologicalHistoryInSummary || showDetails) {
+                "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
+            } else null
+        ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
     }
 
     private fun tableOrNone(table: Table): Table {
@@ -55,9 +57,7 @@ class PatientClinicalHistoryGenerator(
     }
 
     private fun createNoneTable(): Table {
-        val table: Table = createSingleColumnTable(
-            valueWidth
-        )
+        val table: Table = createSingleColumnTable(valueWidth)
         table.addCell(createSpanningTableEntry("None", table))
         return table
     }
@@ -107,10 +107,11 @@ class PatientClinicalHistoryGenerator(
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
+        val anyDateIsKnown = record.priorOtherConditions.any { toDateString(it.year, it.month) != null }
         record.priorOtherConditions.forEach { priorOtherCondition: PriorOtherCondition ->
             val dateString = toDateString(priorOtherCondition.year, priorOtherCondition.month)
-            if (record.priorOtherConditions.any { toDateString(it.year, it.month) != null }) {
-                table.addCell(createSingleTableEntry(dateString?: DATE_UNKNOWN))
+            if (anyDateIsKnown) {
+                table.addCell(createSingleTableEntry(dateString ?: DATE_UNKNOWN))
                 table.addCell(createSingleTableEntry(toPriorOtherConditionString(priorOtherCondition)))
             } else {
                 table.addCell(createSpanningTableEntry(toPriorOtherConditionString(priorOtherCondition), table))

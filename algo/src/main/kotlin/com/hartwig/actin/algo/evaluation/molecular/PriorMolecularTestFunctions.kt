@@ -11,7 +11,10 @@ internal object PriorMolecularTestFunctions {
         return allIHCTests(priorMolecularTests).filter { it.item == PD_L1 }
     }
 
-    fun allPDL1TestsWithSpecificMeasurement(priorMolecularTests: List<PriorMolecularTest>, measureToFind: String): List<PriorMolecularTest> {
+    fun allPDL1TestsWithSpecificMeasurement(
+        priorMolecularTests: List<PriorMolecularTest>,
+        measureToFind: String
+    ): List<PriorMolecularTest> {
         return allPDL1Tests(priorMolecularTests).filter { measureToFind == it.measure }
     }
 

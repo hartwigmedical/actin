@@ -26,7 +26,7 @@ class AggregatedEvidenceInterpreterTest {
     )
 
     @Test
-    fun `Should correctly group trials with identical nctIds combining all events of these trials`(){
+    fun `Should correctly group trials with identical nctIds combining all events of these trials`() {
         val externalTrialTargetingTwoEvents = externalTrial(5)
         val externalTrialTargetingOneEvent = externalTrial(6)
         val externalTrialsPerEvent = mapOf(
@@ -44,7 +44,7 @@ class AggregatedEvidenceInterpreterTest {
     }
 
     @Test
-    fun `Should filter out external trials with NCT ID that matches local trial and maintain event to trial mapping`(){
+    fun `Should filter out external trials with NCT ID that matches local trial and maintain event to trial mapping`() {
         val externalTrialWithMatchToLocal = externalTrial(1)
         val externalTrialWithoutMatchToLocal = externalTrial(2)
         val externalTrialsPerEvent = mapOf(
@@ -58,7 +58,7 @@ class AggregatedEvidenceInterpreterTest {
     }
 
     @Test
-    fun `Should return unchanged external trial map when trialMatches is empty`(){
+    fun `Should return unchanged external trial map when trialMatches is empty`() {
         val externalTrialsPerEvent = mapOf("event1" to listOf(externalTrial(1), externalTrial(2)))
         assertThat(filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, emptyList())).isEqualTo(externalTrialsPerEvent)
     }

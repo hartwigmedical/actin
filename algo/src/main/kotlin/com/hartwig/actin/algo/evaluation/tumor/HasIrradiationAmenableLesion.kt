@@ -26,7 +26,7 @@ class HasIrradiationAmenableLesion(private val hasMetastaticCancer: HasMetastati
             }
 
             else -> {
-                EvaluationFactory.undetermined(
+                EvaluationFactory.recoverableUndetermined(
                     "Undetermined if patient has irradiation amenable lesion",
                     "Undetermined if irradiation amenable lesion"
                 )

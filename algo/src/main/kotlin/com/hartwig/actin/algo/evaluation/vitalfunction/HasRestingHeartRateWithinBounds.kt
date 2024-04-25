@@ -33,6 +33,7 @@ class HasRestingHeartRateWithinBounds(
                     "Median heart rate ($median bpm) within range"
                 )
             }
+
             in minHeartRateWithMargin..maxHeartRateWithMargin -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate" +
@@ -40,6 +41,7 @@ class HasRestingHeartRateWithinBounds(
                     "Median heart rate ($median bpm) outside range but within margin of error"
                 )
             }
+
             else -> {
                 EvaluationFactory.recoverableFail(
                     "Patient does not have median heart rate between $minMedianRestingHeartRate and $maxMedianRestingHeartRate",

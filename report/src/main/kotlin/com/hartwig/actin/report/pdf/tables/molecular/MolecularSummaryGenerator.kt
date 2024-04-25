@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -34,7 +35,8 @@ class MolecularSummaryGenerator(
             noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
             table.addCell(Cells.create(noRecent))
         }
-        val priorMolecularResultGenerator = PriorMolecularResultGenerator(patientRecord.molecularHistory, keyWidth, valueWidth)
+        val priorMolecularResultGenerator =
+            PriorMolecularResultGenerator(patientRecord.molecularHistory, keyWidth, valueWidth, PriorMolecularTestInterpreter())
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.create(priorMolecularResultGenerator.contents()))
         return table

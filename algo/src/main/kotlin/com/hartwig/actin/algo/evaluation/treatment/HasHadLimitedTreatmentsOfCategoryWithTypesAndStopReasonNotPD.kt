@@ -52,6 +52,7 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
                     hasTreatmentGeneralMessage("for less than $maxWeeks weeks")
                 )
             }
+
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITHOUT_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
                 undetermined("without stop reason PD but unknown nr of weeks")
             }
@@ -72,8 +73,10 @@ class HasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPD(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.fail("Patient has received ${treatment()} but with stop reason PD",
-                    "Has received ${treatment()} with stop reason PD")
+                EvaluationFactory.fail(
+                    "Patient has received ${treatment()} but with stop reason PD",
+                    "Has received ${treatment()} with stop reason PD"
+                )
             }
 
             else -> {

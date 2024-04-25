@@ -3,10 +3,13 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.addingTestFromPriorMolecular
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
@@ -88,6 +91,37 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)))
+        )
+    }
+
+    @Test
+    fun `Should pass on fusion in panel when no Orange molecular`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                listOf(freetextPriorMolecularFusionRecord(MATCHING_GENE, "gene B")))
+            )
+        )
+    }
+
+    @Test
+    fun `Should aggregate fusions found in both Orange molecular and panels`() {
+        val evaluation = function.evaluate(
+            addingTestFromPriorMolecular(MolecularTestFactory.withFusion(matchingFusion),
+                listOf(freetextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
+            )
+        )
+
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passSpecificMessages.size).isEqualTo(2)
+    }
+
+    @Test
+    fun `Should be undetermined for gene not tested in panel and no Orange molecular`() {
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                listOf(freetextPriorMolecularFusionRecord("gene B", "gene C"))
+            ))
         )
     }
 }

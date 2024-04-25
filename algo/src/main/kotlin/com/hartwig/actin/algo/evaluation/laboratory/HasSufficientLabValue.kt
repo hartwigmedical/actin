@@ -27,18 +27,21 @@ class HasSufficientLabValue(
                     "$labValueString is below minimum of $refString", "$labValueString below min of $refString"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
                 EvaluationFactory.recoverableUndetermined(
                     "$labValueString is below minimum of $refString but within margin of error",
                     "$labValueString below min of $refString but within margin of error"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
                 EvaluationFactory.recoverableUndetermined(
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} sufficiency could not be evaluated",
                     "${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined"
                 )
             }
+
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
                 EvaluationFactory.recoverablePass(
                     "$labValueString exceeds minimum of $refString",

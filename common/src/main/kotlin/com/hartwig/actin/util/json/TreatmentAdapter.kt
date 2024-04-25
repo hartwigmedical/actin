@@ -17,9 +17,7 @@ class TreatmentAdapter(private val gson: Gson) : TypeAdapter<Treatment>() {
 
     override fun read(input: JsonReader): Treatment {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
-        val type = jsonObject.get("treatmentClass").asString
-
-        return when (type) {
+        return when (val type = jsonObject.get("treatmentClass").asString) {
             "DRUG_TREATMENT" -> gson.fromJson(jsonObject, DrugTreatment::class.java)
             "OTHER_TREATMENT" -> gson.fromJson(jsonObject, OtherTreatment::class.java)
             "RADIOTHERAPY" -> gson.fromJson(jsonObject, Radiotherapy::class.java)

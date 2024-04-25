@@ -6,6 +6,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
@@ -207,6 +208,32 @@ class MolecularResultsAreAvailableForGeneTest {
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
                     listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass for gene in fusion curated from free text`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(freetextPriorMolecularFusionRecord("gene 1", "gene 2")
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail for gene not in fusion curated from free text`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    listOf(freetextPriorMolecularFusionRecord("gene 2", "gene 3")
+                    )
                 )
             )
         )

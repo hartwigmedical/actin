@@ -53,8 +53,11 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
     @Test
     fun `Should pass if single type is requested and treatment is of multiple types of which one is the requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY,
-                setOf(MATCHING_TYPES.first(), DrugType.EGFR_ANTIBODY))
+            setOf(
+                MATCHING_DRUG_TREATMENT, drugTreatment(
+                    "combined", MATCHING_CATEGORY,
+                    setOf(MATCHING_TYPES.first(), DrugType.EGFR_ANTIBODY)
+                )
             )
         )
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
@@ -73,20 +76,28 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
+
     @Test
     fun `Should evaluate to undetermined if requested drug in history combined with trial without treatments configured`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(MATCHING_DRUG_TREATMENT,
+            setOf(
+                MATCHING_DRUG_TREATMENT,
                 TreatmentTestFactory.treatment("empty trial treatment", isSystemic = true)
             ), isTrial = true
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined if treatment history entry does not have any treatments specified`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        )
     }
 
     @Test

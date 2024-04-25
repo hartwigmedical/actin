@@ -3,9 +3,9 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import java.time.LocalDate
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import java.time.LocalDate
 
 private val MIN_DATE = LocalDate.of(2020, 6, 6)
 

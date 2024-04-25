@@ -5,11 +5,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 data class Intolerance(
     val name: String,
     val doids: Set<String>,
-    val category: String,
-    val subcategories: Set<String>,
-    val type: String,
-    val clinicalStatus: String,
-    val verificationStatus: String,
-    val criticality: String,
-    val treatmentCategories: Set<TreatmentCategory>
+    val category: String? = null,
+    val subcategories: Set<String>? = null,
+    val type: String? = null,
+    val clinicalStatus: String? = null,
+    val verificationStatus: String? = null,
+    val criticality: String? = null,
+    val treatmentCategories: Set<TreatmentCategory>? = null
 )
