@@ -81,6 +81,18 @@ class BodyWeightFunctionsTest {
     }
 
     @Test
+    fun `Should pass on median weight below max and unit kilograms instead of kilogram`() {
+        val weights = listOf(
+            weight(referenceDateTime, 151.0, true, unit = "Kilograms"),
+            weight(referenceDateTime.plusDays(1), 148.0, true, unit = "Kilograms")
+        )
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+        )
+    }
+
+    @Test
     fun `Should pass on median weight equal to max`() {
         val weights = listOf(
             weight(referenceDateTime, 152.0, true),
