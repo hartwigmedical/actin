@@ -19,7 +19,6 @@ class MolecularEvaluationFunctionTest {
 
     @Test
     fun `Should return no molecular data message when no Orange nor other molecular data`() {
-
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
         val evaluation = function.evaluate(patient)
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
