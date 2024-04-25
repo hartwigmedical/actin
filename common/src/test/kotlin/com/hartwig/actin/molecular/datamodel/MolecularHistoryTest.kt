@@ -4,12 +4,14 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularVariantrecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -115,12 +117,15 @@ class MolecularHistoryTest {
 
     @Test
     fun `Should construct AvL panel from prior molecular`() {
-        val priorMolecularTests = listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
+        val priorMolecularTests = listOf(
+            avlPanelPriorMolecularNoMutationsFoundRecord(),
+            avlPanelPriorMolecularVariantrecord("gene", "c1A>T")
+        )
         val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
 
         val expected = GenericPanelMolecularTest(
             date = null,
-            result = GenericPanel(GenericPanelType.AVL)
+            result = GenericPanel(GenericPanelType.AVL, variants = listOf(GenericVariant("gene", "c1A>T")))
         )
         assertThat(molecularTests).containsExactly(expected)
     }
@@ -144,7 +149,7 @@ class MolecularHistoryTest {
     fun `Should construct Archer panel from prior molecular`() {
         val priorMolecularTests = listOf(archerPriorMolecularVariantRecord("gene", "c.1A>T"))
         val molecularTests = ArcherMolecularTest.fromPriorMolecularTests(priorMolecularTests)
-        
+
         assertThat(molecularTests).containsExactly(
             ArcherMolecularTest(
                 date = null,

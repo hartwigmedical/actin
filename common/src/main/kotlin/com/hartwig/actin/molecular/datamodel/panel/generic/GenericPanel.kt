@@ -5,12 +5,24 @@ import com.hartwig.actin.molecular.datamodel.panel.Panel
 private val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF")
 
 data class GenericPanel(
-    val panelName: GenericPanelType,
+    val panelType: GenericPanelType,
     val fusions: List<GenericFusion> = emptyList(),
+    val variants: List<GenericVariant> = emptyList()
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
-        return fusions.map { it.geneStart }.toSet() + fusions.map { it.geneEnd }.toSet() +
-                if (panelName == GenericPanelType.FREE_TEXT) emptySet() else GENERIC_PANEL_ALWAYS_TESTED_GENES
+        return genesWithVariants() + genesWithFusions() + alwaysTestedGenes()
+    }
+
+    fun genesWithVariants(): Set<String> {
+        return variants.map { it.gene }.toSet()
+    }
+
+    fun genesWithFusions(): Set<String> {
+        return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
+    }
+
+    fun alwaysTestedGenes(): Set<String> {
+        return if (panelType == GenericPanelType.FREE_TEXT) emptySet() else GENERIC_PANEL_ALWAYS_TESTED_GENES
     }
 }

@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import java.time.LocalDate
 
 interface MolecularTest<T> {
@@ -152,8 +153,16 @@ data class GenericPanelMolecularTest(
         private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
             return results.groupBy { it.measureDate }
                 .map { (date, results) ->
-                    val fusion = results.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
-                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusion))
+                    val (fusionRecords, yariantRecords) = results.partition { it.item?.contains("::") ?: false }
+                    val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
+
+                    val variants = mutableListOf<GenericVariant>()
+                    for (record in yariantRecords) {
+                        if (record.item != null && record.measure != null) {
+                            variants.add(GenericVariant(gene = record.item, hgvsCodingImpact = record.measure))
+                        }
+                    }
+                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusions, variants))
                 }
         }
 

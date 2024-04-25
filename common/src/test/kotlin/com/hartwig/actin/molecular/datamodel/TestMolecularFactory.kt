@@ -341,6 +341,15 @@ object TestMolecularFactory {
         )
     }
 
+    fun avlPanelPriorMolecularVariantrecord(gene: String, hgvs: String): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = "AvL Panel",
+            item = gene,
+            measure = hgvs,
+            impliesPotentialIndeterminateStatus = false
+        )
+    }
+
     fun freetextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): PriorMolecularTest {
         return PriorMolecularTest(
             test = "Freetext",
