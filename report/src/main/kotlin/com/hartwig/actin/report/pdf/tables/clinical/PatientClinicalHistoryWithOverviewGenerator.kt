@@ -17,14 +17,14 @@ import com.itextpdf.layout.element.Table
 class PatientClinicalHistoryWithOverviewGenerator(
     private val report: Report, private val keyWidth: Float, val valueWidth: Float
 ) : TableGenerator {
-    
+
     override fun title(): String {
         return "Clinical summary"
     }
 
     override fun contents(): Table {
         val record = report.patientRecord
-        val pharmaco = report.patientRecord.molecularHistory.latestMolecularRecord()?.pharmaco
+        val pharmaco = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.pharmaco
         val mainTable = Tables.createSingleColWithWidth(700f)
 
         val clinicalSummaryTable = createFixedWidthCols(keyWidth / 2, valueWidth / 2, keyWidth / 2, valueWidth)
@@ -47,7 +47,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
         val clinicalHistoryTable = createFixedWidthCols(keyWidth, valueWidth)
         PatientClinicalHistoryGenerator(report, true, keyWidth, valueWidth).contentsAsList().forEach(clinicalHistoryTable::addCell)
         clinicalHistoryTable.addCell(createKey("Recent molecular results"))
-        val molecularRecord = record.molecularHistory.latestMolecularRecord()
+        val molecularRecord = record.molecularHistory.latestOrangeMolecularRecord()
         clinicalHistoryTable.addCell(createValue(molecularRecord?.let(::molecularResults) ?: Formats.VALUE_NOT_AVAILABLE))
 
         mainTable.addCell(create(clinicalSummaryTable))

@@ -10,7 +10,7 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val molecularHistory = record.molecularHistory
-        val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allMolecularRecords()
+        val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allOrangeMolecularRecords()
             .partition { it.containsTumorCells }
         val panelGenes = (molecularHistory.allArcherPanels() + molecularHistory.allGenericPanels()).flatMap(Panel::testedGenes).toSet()
 

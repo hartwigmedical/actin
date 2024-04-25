@@ -89,7 +89,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val (openCohortsWithoutSlotsGenerator, _) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
 
-        val molecular = report.patientRecord.molecularHistory.latestMolecularRecord()
+        val molecular = report.patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(molecular, evaluated, contentWidth)
         return listOfNotNull(
             clinicalHistoryGenerator,

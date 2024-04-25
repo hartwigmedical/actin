@@ -65,7 +65,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth - keyWidth
         val generators = ReportContentProvider(report).provideSummaryTables(keyWidth, valueWidth, contentWidth)
-        
+
         for (i in generators.indices) {
             val generator = generators[i]
             table.addCell(Cells.createTitle(generator.title()))

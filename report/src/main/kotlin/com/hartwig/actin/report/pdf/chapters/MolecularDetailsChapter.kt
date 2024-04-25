@@ -44,7 +44,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         table.addCell(Cells.createEmpty())
-        report.patientRecord.molecularHistory.latestMolecularRecord()?.let { molecular ->
+        report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.let { molecular ->
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )

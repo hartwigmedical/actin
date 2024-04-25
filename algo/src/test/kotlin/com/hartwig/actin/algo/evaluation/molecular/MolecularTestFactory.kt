@@ -108,7 +108,7 @@ internal object MolecularTestFactory {
     }
 
     fun withExperimentTypeAndCopyNumber(type: ExperimentType, copyNumber: CopyNumber): PatientRecord {
-        return withMolecularRecord(withDriver(copyNumber).molecularHistory.latestMolecularRecord()?.copy(type = type))
+        return withMolecularRecord(withDriver(copyNumber).molecularHistory.latestOrangeMolecularRecord()?.copy(type = type))
     }
 
     fun withHlaAllele(hlaAllele: HlaAllele): PatientRecord {
@@ -244,6 +244,13 @@ internal object MolecularTestFactory {
                 hasSufficientQualityAndPurity = hasSufficientQualityAndPurity,
                 hasSufficientQuality = hasSufficientQuality
             )
+        )
+    }
+
+    fun addingTestFromPriorMolecular(patientRecord: PatientRecord, priorMolecular: List<PriorMolecularTest>): PatientRecord {
+        return patientRecord.copy(molecularHistory =
+        MolecularHistory(patientRecord.molecularHistory.molecularTests +
+                MolecularHistory.fromInputs(emptyList(), priorMolecular).molecularTests)
         )
     }
 
