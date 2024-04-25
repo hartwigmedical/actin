@@ -11,6 +11,6 @@ class GenericPanelTest {
             GenericPanelType.AVL,
         )
 
-        assertThat(genericPanel.testedGenes()).containsExactlyInAnyOrder("EGFR", "BRAF")
+        assertThat(genericPanel.testedGenes()).isEqualTo(GENERIC_PANEL_ALWAYS_TESTED_GENES)
     }
 }

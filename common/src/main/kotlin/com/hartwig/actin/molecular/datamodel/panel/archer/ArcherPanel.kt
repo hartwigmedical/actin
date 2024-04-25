@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.datamodel.panel.archer
 
 import com.hartwig.actin.molecular.datamodel.panel.Panel
 
-private val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK", "NRG1")
+val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NTRK2", "NTRK3", "NRG1")
 
 data class ArcherPanel(
     val variants: List<ArcherVariant>,
