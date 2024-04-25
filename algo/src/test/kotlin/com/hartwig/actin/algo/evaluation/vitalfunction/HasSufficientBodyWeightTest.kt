@@ -15,8 +15,8 @@ class HasSufficientBodyWeightTest {
     @Test
     fun `Should fail on median weight too low and outside margin of error`() {
         val weights = listOf(
-            weight(referenceDate, 30.0, true),
-            weight(referenceDate.plusDays(1), 35.0, true)
+            weight(referenceDate, 30.0),
+            weight(referenceDate.plusDays(1), 35.0)
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
@@ -24,8 +24,8 @@ class HasSufficientBodyWeightTest {
     @Test
     fun `Should pass on median weight above min`() {
         val weights = listOf(
-            weight(referenceDate, 39.0, true),
-            weight(referenceDate.plusDays(1), 41.5, true)
+            weight(referenceDate, 39.0),
+            weight(referenceDate.plusDays(1), 41.5)
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
     }
