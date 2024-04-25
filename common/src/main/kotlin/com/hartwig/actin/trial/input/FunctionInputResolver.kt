@@ -496,7 +496,6 @@ class FunctionInputResolver(
             integer = parameterAsInt(function, 0),
             doidTerms = doidStringList
         )
-
     }
 
     fun createManyTumorStagesInput(function: EligibilityFunction): Set<TumorStage> {
