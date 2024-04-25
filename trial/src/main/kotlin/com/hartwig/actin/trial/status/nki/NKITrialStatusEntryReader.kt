@@ -11,6 +11,7 @@ import com.hartwig.actin.trial.status.TrialStatusEntryReader
 import java.io.File
 
 private const val TRIALS_JSON = "trial_status.json"
+private val STATUS_TO_INCLUDE = setOf("OPEN", "CLOSED")
 
 class NKITrialStatusEntryReader : TrialStatusEntryReader {
 
@@ -25,6 +26,7 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
     override fun read(inputPath: String): List<TrialStatusEntry> {
         return mapper.readValue(File("$inputPath/$TRIALS_JSON"), object : TypeReference<List<NKITrialStatus>>() {})
             .filter { it.studyStatus != null && it.studyMetc != null }
+            .filter { it.studyStatus in STATUS_TO_INCLUDE }
             .map {
                 TrialStatusEntry(
                     studyId = it.studyId.toInt(),
