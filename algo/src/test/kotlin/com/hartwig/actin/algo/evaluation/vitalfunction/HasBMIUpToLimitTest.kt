@@ -47,6 +47,19 @@ class HasBMIUpToLimitTest {
     }
 
     @Test
+    fun `Should pass if median weight is in kilograms instead of kilogram and value is less than warn threshold`() {
+        val evaluation = function.evaluate(
+            VitalFunctionTestFactory.withBodyWeights(
+                listOf(
+                    weight(date = referenceDate, value = 70.0, unit = "Kilograms", valid = true),
+                    weight(date = referenceDate.plusDays(1), value = 80.0, unit = "Kilograms", valid = true)
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+    }
+
+    @Test
     fun `Should fail if median weight is greater than fail threshold`() {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
