@@ -14,7 +14,7 @@ data class ArcherPanel(
     }
 
     fun genesWithVariants(): Set<String> {
-        return variants.map { it.gene }.toSet() + fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
+        return variants.map { it.gene }.toSet()
     }
 
     fun genesWithFusions(): Set<String> {
