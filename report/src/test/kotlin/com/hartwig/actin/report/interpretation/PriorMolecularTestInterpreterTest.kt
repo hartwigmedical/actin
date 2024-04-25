@@ -52,7 +52,9 @@ class PriorMolecularTestInterpreterTest {
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "ROS1"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "RET"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "MET"),
-                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NTRK"),
+                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NTRK1"),
+                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NTRK2"),
+                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NTRK3"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "NRG1")
                 )
             )
@@ -73,6 +75,7 @@ class PriorMolecularTestInterpreterTest {
                 type = "NGS Panel", results = listOf(
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "EGFR"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "BRAF"),
+                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "KRAS"),
                 )
             )
         )

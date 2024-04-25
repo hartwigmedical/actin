@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.datamodel.panel.generic
 
 import com.hartwig.actin.molecular.datamodel.panel.Panel
 
-private val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF")
+val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 data class GenericPanel(
     val panelName: GenericPanelType,

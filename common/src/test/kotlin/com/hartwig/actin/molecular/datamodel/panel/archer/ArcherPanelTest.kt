@@ -16,6 +16,6 @@ class ArcherPanelTest {
             )
         )
 
-        assertThat(archerPanel.testedGenes()).containsExactlyInAnyOrder("ALK", "ROS1", "RET", "MET", "NTRK", "NRG1", "KRAS")
+        assertThat(archerPanel.testedGenes()).isEqualTo(setOf("KRAS", "RET", "MET") + ARCHER_ALWAYS_TESTED_GENES)
     }
 }
