@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import java.time.LocalDate
 
@@ -143,6 +144,20 @@ class MolecularHistoryTest {
             )
         )
         assertThat(molecularTests).containsExactly(expected)
+    }
+
+    @Test
+    fun `Should throw exception on unextractable freetext record`() {
+        val record = PriorMolecularTest(
+            test = "Freetext",
+            item = "KRAS A1Z",
+            measure = null,
+            impliesPotentialIndeterminateStatus = false
+        )
+        val priorMolecularTests = listOf(record)
+        assertThatThrownBy {
+            GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
+        }.isInstanceOf(IllegalArgumentException::class.java)
     }
 
     @Test

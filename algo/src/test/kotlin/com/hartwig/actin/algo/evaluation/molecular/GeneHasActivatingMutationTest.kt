@@ -206,7 +206,7 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should pass for gene with mutation in Generic panel and no Orange molecualr`() {
+    fun `Should pass for gene with mutation in Generic panel and no Orange molecular`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             functionNotIgnoringCodons.evaluate(

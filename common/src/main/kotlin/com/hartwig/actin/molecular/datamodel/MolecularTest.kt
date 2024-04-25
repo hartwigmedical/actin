@@ -151,19 +151,31 @@ data class GenericPanelMolecularTest(
         }
 
         private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
-            return results.groupBy { it.measureDate }
+            return results
+                .groupBy { it.measureDate }
                 .map { (date, results) ->
-                    val (fusionRecords, yariantRecords) = results.partition { it.item?.contains("::") ?: false }
+                    val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
+                    val (fusionRecords, variantRecords) = usableResults.partition { it.item?.contains("::") ?: false }
+
                     val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
 
-                    val variants = mutableListOf<GenericVariant>()
-                    for (record in yariantRecords) {
+                    val variants = variantRecords.map { record ->
                         if (record.item != null && record.measure != null) {
-                            variants.add(GenericVariant(gene = record.item, hgvsCodingImpact = record.measure))
+                            GenericVariant(gene = record.item, hgvsCodingImpact = record.measure)
+                        } else {
+                            throw IllegalArgumentException("Expected item and measure for variant but got ${record.item} and ${record.measure}")
                         }
                     }
+
                     GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusions, variants))
                 }
+        }
+
+        private fun isKnownIgnorableRecord(result: PriorMolecularTest, type: GenericPanelType): Boolean {
+            return when (type) {
+                GenericPanelType.AVL -> result.measure == "GEEN mutaties aangetoond met behulp van het AVL Panel"
+                else -> false
+            }
         }
 
         private fun classify(type: String?): GenericPanelType {
