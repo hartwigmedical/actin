@@ -112,6 +112,20 @@ class TrialIngestionTest {
         assertThat(ingestion.ingestTrials().trials).isEmpty()
     }
 
+    @Test
+    fun `Should include any unused rules in the ingestion result`() {
+        val baseConfigDatabase = TestTrialConfigDatabaseFactory.createProperTestTrialConfigDatabase()
+        val trialConfigDatabase = baseConfigDatabase.copy(
+            unusedRulesToKeep = baseConfigDatabase.unusedRulesToKeep - EligibilityRule.IS_MALE.toString()
+        )
+        val ingestion = TrialIngestion(
+            TrialConfigModel.createFromDatabase(trialConfigDatabase, TrialConfigDatabaseValidator(eligibilityFactory)),
+            TestTrialStatusConfigInterpreterFactory.createWithProperTestTrialStatusDatabase(),
+            eligibilityFactory
+        )
+        assertThat(ingestion.ingestTrials().unusedRules).containsExactly("IS_MALE")
+    }
+
     companion object {
         private val TRIAL_CONFIG_DIRECTORY = resourceOnClasspath("trial_config")
 

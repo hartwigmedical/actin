@@ -59,7 +59,8 @@ class TrialIngestionResultTest {
                 setOf(TrialDefinitionValidationError(config = trialDefinition, message = "Duplicated trial id of trial 1")),
                 setOf(UnusedRuleToKeepError(config = "invalid rule"))
             ),
-            trials = emptyList()
+            trials = emptyList(),
+            unusedRules = setOf("unused rule"),
         )
         GsonSerializer.create().toJson(result)
     }
