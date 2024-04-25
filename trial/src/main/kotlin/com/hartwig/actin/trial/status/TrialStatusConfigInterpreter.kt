@@ -177,7 +177,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     }
 
     private fun constructTrialId(entry: TrialStatusEntry): String {
-        return trialPrefix?.let { "$it  ${entry.metcStudyID}" } ?: entry.metcStudyID
+        return trialPrefix?.let { "$it ${entry.metcStudyID}" } ?: entry.metcStudyID
     }
 
     companion object {
