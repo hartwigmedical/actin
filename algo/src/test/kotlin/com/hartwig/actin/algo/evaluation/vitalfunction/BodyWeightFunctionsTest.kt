@@ -93,6 +93,17 @@ class BodyWeightFunctionsTest {
     }
 
     @Test
+    fun `Should ignore weights of unknown units and returned undetermined`() {
+        val weights = listOf(
+            weight(referenceDateTime, 151.0, unit = "pounds"),
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+        )
+    }
+
+    @Test
     fun `Should pass on median weight equal to max`() {
         val weights = listOf(
             weight(referenceDateTime, 152.0),
