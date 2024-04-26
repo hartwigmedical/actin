@@ -10,7 +10,7 @@ import com.hartwig.actin.trial.interpretation.ConfigInterpreter
 class TrialStatusConfigInterpreter(
     private val trialStatusDatabase: TrialStatusDatabase,
     private val trialPrefix: String? = null,
-    private val ignoreNewTrials: Boolean
+    private val ignoreNewTrials: Boolean = false
 ) :
     ConfigInterpreter {
 
