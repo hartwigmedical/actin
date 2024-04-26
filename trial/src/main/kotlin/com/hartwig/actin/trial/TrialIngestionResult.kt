@@ -51,7 +51,6 @@ data class TrialIngestionResult(
     val unusedRules: Set<String>,
     @Transient val trials: List<Trial>
 ) {
-
     fun serialize(): String {
         return GsonBuilder().registerTypeHierarchyAdapter(ValidationError::class.java, ValidationErrorSerializer())
             .create()
@@ -61,8 +60,7 @@ data class TrialIngestionResult(
 
 class ValidationErrorSerializer : JsonSerializer<ValidationError<*>> {
     override fun serialize(src: ValidationError<*>, p1: Type, context: JsonSerializationContext): JsonElement {
-        val gson = Gson()
-        val serialized = gson.toJsonTree(src)
+        val serialized = Gson().toJsonTree(src)
         serialized.asJsonObject.addProperty("warningMessage", src.warningMessage())
         return serialized
     }
