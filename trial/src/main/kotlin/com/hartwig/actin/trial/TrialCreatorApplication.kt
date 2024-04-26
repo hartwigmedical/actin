@@ -16,7 +16,6 @@ import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
-import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -70,7 +69,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info("Writing {} trial ingestion results to {}", result.trials.size, resultsJson)
         Files.write(
             resultsJson,
-            GsonSerializer.create().toJson(result).toByteArray()
+            result.serialize().toByteArray()
         )
         printAllValidationErrors(result)
     }
