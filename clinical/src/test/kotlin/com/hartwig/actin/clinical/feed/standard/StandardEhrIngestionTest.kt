@@ -78,6 +78,7 @@ class StandardEhrIngestionTest {
             labValuesExtractor = EhrLabValuesExtractor(curationDatabase.laboratoryTranslation),
             clinicalStatusExtractor = EhrClinicalStatusExtractor(),
             bodyWeightExtractor = EhrBodyWeightExtractor(),
+            bodyHeightExtractor = EhrBodyHeightExtractor(),
             bloodTransfusionExtractor = EhrBloodTransfusionExtractor(),
             molecularTestExtractor = EhrMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
             dataQualityMask = DataQualityMask()

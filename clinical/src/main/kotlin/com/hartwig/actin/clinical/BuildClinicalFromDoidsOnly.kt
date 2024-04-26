@@ -57,6 +57,7 @@ class BuildClinicalFromDoidsOnly(private val command: CommandLine) {
                 intolerances = emptyList(),
                 surgeries = emptyList(),
                 bodyWeights = emptyList(),
+                bodyHeights = emptyList(),
                 vitalFunctions = emptyList(),
                 bloodTransfusions = emptyList(),
                 medications = emptyList()

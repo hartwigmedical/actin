@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.EXPECTED_UNITS
 import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: LocalDate) : EvaluationFunction {
@@ -21,10 +22,21 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
             }
         )
         val median = BodyWeightFunctions.determineMedianBodyWeight(relevant)
-
+        val height = record.bodyHeights.maxOfOrNull { it.value }?.div(100)
+        val bodyMassIndex = if (height != null) median / (height * height) else null
         val minimumRequiredHeight = calculateHeightForBmiAndWeight(maximumBMI.toDouble(), median)
 
         return when {
+            bodyMassIndex != null && (bodyMassIndex <= maximumBMI) -> {
+                val message = "BMI (${bodyMassIndex.roundToInt()}) under limit of $maximumBMI"
+                EvaluationFactory.pass(message, message)
+            }
+
+            bodyMassIndex != null && (bodyMassIndex > maximumBMI) -> {
+                val message = "BMI (${bodyMassIndex.roundToInt()}) above limit of $maximumBMI"
+                EvaluationFactory.fail(message, message)
+            }
+
             minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES -> {
                 EvaluationFactory.pass(
                     String.format(
