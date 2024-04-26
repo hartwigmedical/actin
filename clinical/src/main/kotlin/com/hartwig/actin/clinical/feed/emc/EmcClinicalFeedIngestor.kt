@@ -154,7 +154,8 @@ class EmcClinicalFeedIngestor(
     }
 
     private fun bodyWeightIsValid(entry: BodyWeightEntry): Boolean {
-        return entry.valueQuantityUnit.lowercase() == BODY_WEIGHT_EXPECTED_UNIT && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
+        return entry.valueQuantityUnit.lowercase() in BODY_WEIGHT_EXPECTED_UNIT
+                && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
     }
 
     private fun extractVitalFunctions(feedRecord: FeedRecord): List<VitalFunction> {
@@ -238,7 +239,7 @@ class EmcClinicalFeedIngestor(
 
         const val BODY_WEIGHT_MIN = 20.0
         const val BODY_WEIGHT_MAX = 300.0
-        const val BODY_WEIGHT_EXPECTED_UNIT = "kilogram"
+        internal val BODY_WEIGHT_EXPECTED_UNIT = listOf("kilogram", "kilograms")
         const val HEART_RATE_MIN = 10.0
         const val HEART_RATE_MAX = 300.0
         const val HEART_RATE_EXPECTED_UNIT = "bpm"

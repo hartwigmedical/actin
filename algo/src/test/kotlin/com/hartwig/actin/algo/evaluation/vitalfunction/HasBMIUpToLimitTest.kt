@@ -26,7 +26,7 @@ class HasBMIUpToLimitTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 VitalFunctionTestFactory.withBodyWeights(
-                    listOf(weight(date = referenceDate, value = 70.0, unit = "pound", valid = false))
+                    listOf(weight(date = referenceDate, value = 70.0, unit = "pound"))
                 )
             )
         )
@@ -37,8 +37,8 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    weight(date = referenceDate, value = 70.0, unit = "Kilogram", valid = true),
-                    weight(date = referenceDate.plusDays(1), value = 80.0, unit = "Kilogram", valid = true)
+                    weight(date = referenceDate, value = 70.0, unit = "Kilogram"),
+                    weight(date = referenceDate.plusDays(1), value = 80.0, unit = "Kilogram")
                 )
             )
         )
@@ -47,12 +47,25 @@ class HasBMIUpToLimitTest {
     }
 
     @Test
+    fun `Should pass if median weight is in kilograms instead of kilogram and value is less than warn threshold`() {
+        val evaluation = function.evaluate(
+            VitalFunctionTestFactory.withBodyWeights(
+                listOf(
+                    weight(date = referenceDate, value = 70.0, unit = "Kilograms"),
+                    weight(date = referenceDate.plusDays(1), value = 80.0, unit = "Kilograms")
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+    }
+
+    @Test
     fun `Should fail if median weight is greater than fail threshold`() {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    weight(date = referenceDate, value = 180.0, unit = "Kilogram", valid = true),
-                    weight(date = referenceDate.plusDays(1), value = 170.0, unit = "Kilogram", valid = true)
+                    weight(date = referenceDate, value = 180.0, unit = "Kilogram"),
+                    weight(date = referenceDate.plusDays(1), value = 170.0, unit = "Kilogram")
                 )
             )
         )
@@ -65,8 +78,8 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    weight(date = referenceDate, value = 105.0, unit = "Kilogram", valid = true),
-                    weight(date = referenceDate.plusDays(1), value = 100.0, unit = "Kilogram", valid = true)
+                    weight(date = referenceDate, value = 105.0, unit = "Kilogram"),
+                    weight(date = referenceDate.plusDays(1), value = 100.0, unit = "Kilogram")
                 )
             )
         )
