@@ -9,7 +9,11 @@ object TestTrialStatusConfigInterpreterFactory {
         return TrialStatusConfigInterpreter(TestTrialStatusDatabaseFactory.createMinimalTestTrialStatusDatabase(), CTC_TRIAL_PREFIX)
     }
 
-    fun createWithProperTestTrialStatusDatabase(): TrialStatusConfigInterpreter {
-        return TrialStatusConfigInterpreter(TestTrialStatusDatabaseFactory.createProperTestTrialStatusDatabase(), CTC_TRIAL_PREFIX)
+    fun createWithProperTestTrialStatusDatabase(ignoreNewTrials: Boolean = false): TrialStatusConfigInterpreter {
+        return TrialStatusConfigInterpreter(
+            TestTrialStatusDatabaseFactory.createProperTestTrialStatusDatabase(),
+            CTC_TRIAL_PREFIX,
+            ignoreNewTrials
+        )
     }
 }

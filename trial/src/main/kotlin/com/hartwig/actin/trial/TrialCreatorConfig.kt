@@ -1,5 +1,7 @@
 package com.hartwig.actin.trial
 
+import com.hartwig.actin.configuration.OVERRIDE_YAML_ARGUMENT
+import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
@@ -16,7 +18,8 @@ data class TrialCreatorConfig(
     val doidJson: String,
     val atcTsv: String,
     val knownGenesTsv: String,
-    val outputDirectory: String
+    val outputDirectory: String,
+    val overridesYaml: String?
 ) {
 
     companion object {
@@ -43,6 +46,7 @@ data class TrialCreatorConfig(
             options.addOption(KNOWN_GENES_TSV, true, "A TSV containing genes which are allowed as valid genes in trial config")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where treatment data will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
+            options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             return options
         }
 
@@ -60,7 +64,8 @@ data class TrialCreatorConfig(
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 knownGenesTsv = ApplicationConfig.nonOptionalFile(cmd, KNOWN_GENES_TSV),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
     }

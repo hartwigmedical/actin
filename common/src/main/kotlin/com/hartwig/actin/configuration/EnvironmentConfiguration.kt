@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.apache.logging.log4j.LogManager
 import java.io.File
+import org.apache.logging.log4j.LogManager
 
 enum class ConfigurationProfile {
     STANDARD,
@@ -32,12 +32,17 @@ data class AlgoConfiguration(
     val warnIfToxicitiesNotFromQuestionnaire: Boolean = true
 )
 
+data class TrialConfiguration(
+    val ignoreAllNewTrialsInTrialStatusDatabase: Boolean = false,
+)
+
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
 const val OVERRIDE_YAML_DESCRIPTION = "Optional file specifying configuration overrides"
 
 data class EnvironmentConfiguration(
     val algo: AlgoConfiguration = AlgoConfiguration(),
-    val report: ReportConfiguration = ReportConfiguration()
+    val report: ReportConfiguration = ReportConfiguration(),
+    val trial: TrialConfiguration = TrialConfiguration()
 ) {
 
     companion object {
