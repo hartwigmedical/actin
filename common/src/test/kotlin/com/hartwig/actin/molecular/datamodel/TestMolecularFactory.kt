@@ -341,7 +341,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun avlPanelPriorMolecularVariantrecord(gene: String, hgvs: String): PriorMolecularTest {
+    fun avlPanelPriorMolecularVariantRecord(gene: String, hgvs: String): PriorMolecularTest {
         return PriorMolecularTest(
             test = "AvL Panel",
             item = gene,

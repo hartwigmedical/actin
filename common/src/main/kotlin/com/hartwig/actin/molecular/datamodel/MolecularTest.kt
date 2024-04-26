@@ -156,16 +156,8 @@ data class GenericPanelMolecularTest(
                 .map { (date, results) ->
                     val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
                     val (fusionRecords, variantRecords) = usableResults.partition { it.item?.contains("::") ?: false }
-
                     val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
-
-                    val variants = variantRecords.map { record ->
-                        if (record.item != null && record.measure != null) {
-                            GenericVariant(gene = record.item, hgvsCodingImpact = record.measure)
-                        } else {
-                            throw IllegalArgumentException("Expected item and measure for variant but got ${record.item} and ${record.measure}")
-                        }
-                    }
+                    val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
 
                     GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusions, variants))
                 }
