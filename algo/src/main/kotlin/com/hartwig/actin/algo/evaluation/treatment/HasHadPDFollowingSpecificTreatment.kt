@@ -27,7 +27,10 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
         } else if (treatmentEvaluation.matchingTreatments.isNotEmpty()) {
             EvaluationFactory.fail("Has received ${Format.concatItems(treatmentEvaluation.matchingTreatments)} treatment, but no PD")
         } else {
-            EvaluationFactory.fail("Has not received specific ${Format.concatItems(treatments)} treatment")
+            EvaluationFactory.fail(
+                "Patient has not received ${Format.concatItems(treatments)} treatment",
+                "Has not received ${Format.concatItems(treatments)} treatment"
+            )
         }
     }
 

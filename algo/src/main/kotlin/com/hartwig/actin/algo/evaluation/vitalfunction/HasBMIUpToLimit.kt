@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.EXPECTED_UNITS
 import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
 import kotlin.math.roundToInt
@@ -14,8 +15,8 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
     override fun evaluate(record: PatientRecord): Evaluation {
         val allBodyWeights = record.bodyWeights
         val relevant = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDate) ?: return EvaluationFactory.undetermined(
-            if (allBodyWeights.isNotEmpty() && allBodyWeights.none { it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }) {
-                "Body weights not measured in $EXPECTED_UNIT"
+            if (allBodyWeights.isNotEmpty() && allBodyWeights.none { weight -> EXPECTED_UNITS.any { it.equals(weight.unit, ignoreCase = true) } }) {
+                "Body weights not measured in ${EXPECTED_UNITS.first()}"
             } else {
                 "No (recent) body weights found"
             }
@@ -68,7 +69,6 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
     }
 
     companion object {
-        private const val EXPECTED_UNIT: String = "kilogram"
         private const val MIN_EXPECTED_HEIGHT_METRES = 1.5
         private const val MAX_EXPECTED_HEIGHT_METRES = 2.0
 

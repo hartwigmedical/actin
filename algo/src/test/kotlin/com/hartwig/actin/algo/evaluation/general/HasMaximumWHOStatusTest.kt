@@ -1,9 +1,7 @@
 package com.hartwig.actin.algo.evaluation.general
 
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasMaximumWHOStatusTest {

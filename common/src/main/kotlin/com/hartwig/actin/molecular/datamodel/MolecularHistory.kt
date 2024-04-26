@@ -13,7 +13,7 @@ data class MolecularHistory(
             .map { it.result as PriorMolecularTest }
     }
 
-    fun allMolecularRecords(): List<MolecularRecord> {
+    fun allOrangeMolecularRecords(): List<MolecularRecord> {
         return molecularTests.filter { it.type == ExperimentType.WHOLE_GENOME || it.type == ExperimentType.TARGETED }
             .map { it.result as MolecularRecord }
     }
@@ -28,8 +28,8 @@ data class MolecularHistory(
             .map { it.result as GenericPanel }
     }
 
-    fun latestMolecularRecord(): MolecularRecord? {
-        return allMolecularRecords()
+    fun latestOrangeMolecularRecord(): MolecularRecord? {
+        return allOrangeMolecularRecords()
             .maxByOrNull { it.date ?: LocalDate.MIN }
     }
 

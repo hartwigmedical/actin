@@ -9,10 +9,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
-class EligibleApprovedTreatmentGenerator(
-    private val patientRecord: PatientRecord,
-    private val width: Float
-) : TableGenerator {
+class EligibleApprovedTreatmentGenerator(private val patientRecord: PatientRecord, private val width: Float) : TableGenerator {
 
     override fun title(): String {
         return "Approved treatments considered eligible"
@@ -22,7 +19,7 @@ class EligibleApprovedTreatmentGenerator(
         val table = Tables.createSingleColWithWidth(width)
         table.addHeaderCell(Cells.createHeader("Treatment"))
         val isCUP = TumorDetailsInterpreter.isCUP(patientRecord.tumor)
-        val molecular = patientRecord.molecularHistory.latestMolecularRecord()
+        val molecular = patientRecord.molecularHistory.latestOrangeMolecularRecord()
         val hasConfidentPrediction =
             molecular?.let { TumorOriginInterpreter.hasConfidentPrediction(molecular.characteristics.predictedTumorOrigin) } ?: false
         if (isCUP && hasConfidentPrediction) {

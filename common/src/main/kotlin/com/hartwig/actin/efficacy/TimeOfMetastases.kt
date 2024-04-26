@@ -1,9 +1,15 @@
 package com.hartwig.actin.efficacy
 
-enum class TimeOfMetastases {
-    SYNCHRONOUS,
-    METACHRONOUS,
-    BOTH,
-    UNKNOWN,
-    NONE
+import com.hartwig.actin.Displayable
+
+enum class TimeOfMetastases(private val display: String) : Displayable {
+    SYNCHRONOUS("Synchronous"),
+    METACHRONOUS("Metachronous"),
+    BOTH("Synchronous and metachronous"),
+    UNKNOWN("Unknown"),
+    NONE("None");
+
+    override fun display(): String {
+        return display
+    }
 }

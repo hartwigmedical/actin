@@ -1,6 +1,6 @@
 package com.hartwig.actin.efficacy
 
-enum class PrimaryEndPointType {
+enum class EndPointType {
     PRIMARY,
     SECONDARY,
     NA,

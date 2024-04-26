@@ -31,7 +31,7 @@ class HasSufficientPDL1ByIHC internal constructor(private val measure: String, p
                 "No PD-L1 IHC test found where level exceeds desired level of $minPDL1", "PD-L1 expression below $minPDL1"
             )
         } else if (PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty()) {
-            EvaluationFactory.fail(
+            EvaluationFactory.recoverableFail(
                 "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
             )
         } else {

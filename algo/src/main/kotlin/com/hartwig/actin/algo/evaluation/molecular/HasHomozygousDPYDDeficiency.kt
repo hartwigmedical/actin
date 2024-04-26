@@ -7,6 +7,8 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
 private const val DPYD_GENE = "DPYD"
 
+private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
+
 class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
@@ -36,17 +38,13 @@ class HasHomozygousDPYDDeficiency internal constructor() : MolecularEvaluationFu
 
     private fun containsUnexpectedHaplotypeFunction(pharmaco: List<PharmacoEntry>): Boolean {
         return pharmaco.any { pharmacoEntry ->
-            pharmacoEntry.gene == DPYD_GENE && pharmacoEntry.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions }
+            pharmacoEntry.haplotypes.any { it.function.lowercase() !in expectedHaplotypeFunctions }
         }
     }
 
     private fun isHomozygousDeficient(pharmaco: List<PharmacoEntry>): Boolean {
         return pharmaco.none { pharmacoEntry ->
-            pharmacoEntry.gene == DPYD_GENE && pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }
+            pharmacoEntry.haplotypes.any { it.function.lowercase() == "normal function" }
         }
     }
-
-    private val expectedHaplotypeFunctions = setOf("normal function", "reduced function", "no function")
 }
-
-

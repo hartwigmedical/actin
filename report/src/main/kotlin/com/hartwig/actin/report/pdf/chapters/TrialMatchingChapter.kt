@@ -25,10 +25,6 @@ class TrialMatchingChapter(private val report: Report, private val enableExtende
         addTrialMatchingOverview(document)
     }
 
-    private fun addChapterTitle(document: Document) {
-        document.add(Paragraph(name()).addStyle(Styles.chapterTitleStyle()))
-    }
-
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)

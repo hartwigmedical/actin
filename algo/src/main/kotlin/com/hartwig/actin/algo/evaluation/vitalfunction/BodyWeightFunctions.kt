@@ -23,10 +23,10 @@ object BodyWeightFunctions {
     ): Evaluation {
         val relevant = selectMedianBodyWeightPerDay(record, minimumDate)
             ?: return if (record.bodyWeights.isNotEmpty() &&
-                record.bodyWeights.none { it.unit.equals(EXPECTED_UNIT, ignoreCase = true) }
+                record.bodyWeights.none { weight -> EXPECTED_UNITS.any { it.equals(weight.unit, ignoreCase = true) } }
             ) {
                 EvaluationFactory.undetermined(
-                    "Body weights not measured in $EXPECTED_UNIT",
+                    "Body weights not measured in ${EXPECTED_UNITS.joinToString(" or ")}",
                     "Invalid body weight unit"
                 )
             } else {
@@ -49,7 +49,7 @@ object BodyWeightFunctions {
                 val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
                 val generalMessage = "Median body weight ($median kg) below $referenceBodyWeight kg"
                 EvaluationFactory.recoverableUndetermined(specificMessage, generalMessage)
-                    }
+            }
 
             comparisonWithoutMargin < 0 -> {
                 val specificMessage = "Patient median body weight ($median kg) is below $referenceBodyWeight kg"
@@ -110,7 +110,7 @@ object BodyWeightFunctions {
         }
     }
 
-    const val EXPECTED_UNIT = "kilogram"
+    val EXPECTED_UNITS = listOf("kilogram", "kilograms")
     private const val MAX_ENTRIES = 5
 }
 

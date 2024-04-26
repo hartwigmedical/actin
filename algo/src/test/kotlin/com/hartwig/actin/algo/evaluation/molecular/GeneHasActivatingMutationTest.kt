@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -11,7 +12,11 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class GeneHasActivatingMutationTest {
     private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
@@ -184,6 +189,66 @@ class GeneHasActivatingMutationTest {
         )
     }
 
+    @Test
+    fun `Should pass for gene with mutation in Archer panel and no Orange molecular`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            functionNotIgnoringCodons.evaluate(
+                TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+                    molecularHistory = MolecularHistory(listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should be undetermined for gene not in Archer panel with no Orange molecular`() {
+
+        val evaluation = functionNotIgnoringCodons.evaluate(
+            TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+                molecularHistory = MolecularHistory(listOf(EMPTY_ARCHER_MOLECULAR_TEST)),
+            )
+        )
+
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Gene $GENE not tested")
+    }
+
+    @Test
+    fun `Should fail for gene always tested but not returned in Archer panel and no Orange molecular`() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            GeneHasActivatingMutation("ALK", null).evaluate(
+                TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+                    molecularHistory = MolecularHistory(listOf(EMPTY_ARCHER_MOLECULAR_TEST)),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass and aggregate findings for gene with mutation in Archer panel and also in Orange molecular`() {
+        val base = MolecularTestFactory.withHasTumorMutationalLoadAndVariants(false, ACTIVATING_VARIANT)
+        val patient = base.copy(molecularHistory = MolecularHistory(
+            base.molecularHistory.molecularTests + listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)))
+
+        val evaluation = functionNotIgnoringCodons.evaluate(patient)
+
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passSpecificMessages).size().isEqualTo(2)
+        assertThat(evaluation.passGeneralMessages).size().isEqualTo(1)
+    }
+
+    @Test
+    fun `Should be undetermined for Archer variant on gene but codons to ignore and no Orange molecular`() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT))
+        )
+
+        val evaluation = functionWithCodonsToIgnore.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+    }
+
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
@@ -245,5 +310,28 @@ class GeneHasActivatingMutationTest {
         )
 
         private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
+
+        private val TEST_DATE = LocalDate.of(2023, 1, 1)
+
+        private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherMolecularTest(
+            date = TEST_DATE,
+            result = ArcherPanel(
+                variants = listOf(
+                    ArcherVariant(
+                        gene = GENE,
+                        hgvsCodingImpact = "c.1A>T",
+                    ),
+                ),
+                fusions = emptyList()
+            )
+        )
+
+        private val EMPTY_ARCHER_MOLECULAR_TEST = ArcherMolecularTest(
+            date = TEST_DATE,
+            result = ArcherPanel(
+                variants = emptyList(),
+                fusions = emptyList()
+            )
+        )
     }
 }

@@ -12,9 +12,9 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord()
 private const val TUMOR_LOCATION = "tumorLocation"

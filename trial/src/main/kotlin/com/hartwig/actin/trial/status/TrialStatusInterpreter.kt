@@ -11,7 +11,9 @@ internal object TrialStatusInterpreter {
         trialIdConstructor: (TrialStatusEntry) -> String,
     ): Pair<Boolean?, List<TrialDefinitionValidationError>> {
         val trialId = trialDefinitionConfig.trialId
-        val trialStates = entries.filter { trialId.equals(trialIdConstructor.invoke(it), ignoreCase = true) }
+        val trialStates = entries.filter {
+            val other = trialIdConstructor.invoke(it).trim()
+            trialId.equals(other, ignoreCase = true) }
             .map { it.studyStatus }
             .distinct()
         if (trialStates.size > 1) {

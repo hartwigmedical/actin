@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import java.time.LocalDate
@@ -29,6 +30,7 @@ interface MolecularTestVisitor {
 
 const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
 const val AVL_PANEL = "AvL Panel"
+const val FREE_TEXT_PANEL = "Freetext"
 
 class MolecularTestFactory {
     companion object {
@@ -36,6 +38,7 @@ class MolecularTestFactory {
             return when (result.test) {
                 ARCHER_FP_LUNG_TARGET -> ExperimentType.ARCHER
                 AVL_PANEL -> ExperimentType.GENERIC_PANEL
+                FREE_TEXT_PANEL -> ExperimentType.GENERIC_PANEL
                 "IHC" -> ExperimentType.IHC
                 "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
                 else -> ExperimentType.OTHER
@@ -142,11 +145,24 @@ data class GenericPanelMolecularTest(
 
     companion object {
         fun fromPriorMolecularTest(results: List<PriorMolecularTest>): List<GenericPanelMolecularTest> {
-            return results.filter { it.test == AVL_PANEL }
-                .groupBy { it.measureDate }
-                .map { (date, _) ->
-                    GenericPanelMolecularTest(date = date, result = GenericPanel(GenericPanelType.AVL))
+            return results.groupBy { it.test }
+                .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
+        }
+
+        private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
+            return results.groupBy { it.measureDate }
+                .map { (date, results) ->
+                    val fusion = results.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
+                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusion))
                 }
+        }
+
+        private fun classify(type: String?): GenericPanelType {
+            return when (type) {
+                AVL_PANEL -> GenericPanelType.AVL
+                FREE_TEXT_PANEL -> GenericPanelType.FREE_TEXT
+                else -> throw IllegalArgumentException("Unknown generic panel type: $type")
+            }
         }
     }
 }

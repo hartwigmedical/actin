@@ -7,7 +7,7 @@ import com.hartwig.actin.trial.config.TrialDefinitionValidationError
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.interpretation.ConfigInterpreter
 
-class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusDatabase, private val trialPrefix: String = "") :
+class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusDatabase, private val trialPrefix: String? = null) :
     ConfigInterpreter {
 
     private val trialDefinitionValidationErrors = mutableListOf<TrialDefinitionValidationError>()
@@ -177,7 +177,7 @@ class TrialStatusConfigInterpreter(private val trialStatusDatabase: TrialStatusD
     }
 
     private fun constructTrialId(entry: TrialStatusEntry): String {
-        return trialPrefix + " " + entry.metcStudyID
+        return trialPrefix?.let { "$it ${entry.metcStudyID}" } ?: entry.metcStudyID
     }
 
     companion object {
