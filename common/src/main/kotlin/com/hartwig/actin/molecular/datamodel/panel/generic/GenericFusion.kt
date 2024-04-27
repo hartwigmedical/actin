@@ -1,9 +1,11 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
+import com.hartwig.actin.molecular.datamodel.panel.PanelFusion
+
 data class GenericFusion(
     val geneStart: String,
     val geneEnd: String,
-) {
+) : PanelFusion {
     companion object {
         fun parseFusion(text: String): GenericFusion {
             val parts = text.trim().split("::")
@@ -13,5 +15,9 @@ data class GenericFusion(
 
             return GenericFusion(parts[0], parts[1])
         }
+    }
+
+    override fun event(): String {
+        return "$geneStart::$geneEnd"
     }
 }
