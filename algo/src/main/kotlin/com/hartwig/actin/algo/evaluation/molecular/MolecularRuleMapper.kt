@@ -1,5 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -14,6 +18,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
+            EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_ANY_GENES_X to anyGeneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
@@ -54,6 +59,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to hasPSMAPositivePETScanCreator(),
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
+            EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_ANY_GENES_X to anyGeneHasMolecularResultsAvailableCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to nsclcDriverGeneStatusesAreAvailableCreator(),
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
@@ -79,6 +85,18 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
             Or(listOf(GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null), GeneIsAmplified(gene.geneName)))
+        }
+    }
+
+    private fun anyGeneIsActivatedOrAmplifiedCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val genes = functionInputResolver().createManyGenesInput(function)
+            Or(
+                listOf(
+                    messageCombiner(Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null) })),
+                    Or(genes.geneNames.map { GeneIsAmplified(it) })
+                ),
+            )
         }
     }
 
@@ -333,6 +351,39 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
             MolecularResultsAreAvailableForGene(gene.geneName)
+        }
+    }
+
+    private fun anyGeneHasMolecularResultsAvailableCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val genes = functionInputResolver().createManyGenesInput(function)
+            messageCombiner(Or(genes.geneNames.map { MolecularResultsAreAvailableForGene(it) }))
+        }
+    }
+
+    // TODO (kz): this is an experimental hack, only supports augmenting undetermined messages
+    //  with the molecular events that caused the undetermined result and which are currently stashed
+    //  in the inclusionMolecularEvents field.
+    private fun messageCombiner(evaluationFunction: EvaluationFunction): EvaluationFunction {
+        return object : EvaluationFunction {
+            override fun evaluate(record: PatientRecord): Evaluation {
+                val evaluation = evaluationFunction.evaluate(record)
+
+                if (evaluation.result == EvaluationResult.UNDETERMINED &&
+                    evaluation.inclusionMolecularEvents.isNotEmpty() &&
+                    evaluation.undeterminedSpecificMessages.size == 1 &&
+                    evaluation.undeterminedGeneralMessages.size == 1
+                ) {
+                    val events = evaluation.inclusionMolecularEvents.joinToString(", ")
+                    return evaluation.copy(
+                        undeterminedSpecificMessages = setOf(evaluation.undeterminedSpecificMessages.first() + ": $events"),
+                        undeterminedGeneralMessages = setOf(evaluation.undeterminedGeneralMessages.first() + ": $events"),
+                        inclusionMolecularEvents = emptySet(),
+                    )
+                } else {
+                    return evaluation
+                }
+            }
         }
     }
 

@@ -38,7 +38,9 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         return groupedEvaluationsByResult[EvaluationResult.PASS]
             ?: groupedEvaluationsByResult[EvaluationResult.WARN]
             ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
-            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+//            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+            ?: EvaluationFactory.undetermined("Gene not tested in molecular data", "Gene not tested")
+                .copy(inclusionMolecularEvents = setOf(gene))
     }
 
     private fun findActivatingMutationsInOrangeMolecular(molecular: MolecularRecord): Evaluation {
