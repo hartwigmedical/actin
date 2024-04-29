@@ -18,7 +18,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
-            EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_ANY_GENES_X to anyGeneIsActivatedOrAmplifiedCreator(),
+            EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_ANY_GENES_X to anyGeneIsActivatedOrAmplifiedCreatorV1(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
@@ -59,7 +59,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to hasPSMAPositivePETScanCreator(),
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
-            EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_ANY_GENES_X to anyGeneHasMolecularResultsAvailableCreator(),
+            EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_ANY_GENES_X to molecularResultsAreAvailableForAnyGeneCreatorV2(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to nsclcDriverGeneStatusesAreAvailableCreator(),
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
@@ -88,7 +88,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun anyGeneIsActivatedOrAmplifiedCreator(): FunctionCreator {
+    private fun anyGeneIsActivatedOrAmplifiedCreatorV1(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
             Or(
@@ -98,6 +98,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 ),
             )
         }
+    }
+
+    private fun anyGeneIsActivatedOrAmplifiedCreatorV2(): FunctionCreator {
+        TODO("use IntermediateEvaluation strategy")
     }
 
     private fun geneIsInactivatedCreator(): FunctionCreator {
@@ -354,16 +358,16 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun anyGeneHasMolecularResultsAvailableCreator(): FunctionCreator {
+    // TODO (kz): this is an experimental hack, only supports augmenting undetermined messages
+    //  with the molecular events that caused the undetermined result and which are currently stashed
+    //  in the inclusionMolecularEvents field.
+    private fun molecularResultsAreAvailableForAnyGeneCreatorV1(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
             messageCombiner(Or(genes.geneNames.map { MolecularResultsAreAvailableForGene(it) }))
         }
     }
 
-    // TODO (kz): this is an experimental hack, only supports augmenting undetermined messages
-    //  with the molecular events that caused the undetermined result and which are currently stashed
-    //  in the inclusionMolecularEvents field.
     private fun messageCombiner(evaluationFunction: EvaluationFunction): EvaluationFunction {
         return object : EvaluationFunction {
             override fun evaluate(record: PatientRecord): Evaluation {
@@ -384,6 +388,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     return evaluation
                 }
             }
+        }
+    }
+
+    private fun molecularResultsAreAvailableForAnyGeneCreatorV2(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val genes = functionInputResolver().createManyGenesInput(function)
+            MolecularResultsAreAvailableForAnyGene(genes.geneNames.toSet())
         }
     }
 
