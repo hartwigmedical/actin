@@ -6,9 +6,9 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 data class GenericPanel(
-    val panelName: GenericPanelType,
+    val panelType: GenericPanelType,
+    val variants: List<GenericVariant> = emptyList(),
     val fusions: List<GenericFusion> = emptyList(),
-    val variants: List<GenericVariant> = emptyList()
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
@@ -24,19 +24,18 @@ data class GenericPanel(
     }
 
     override fun alwaysTestedGenes(): Set<String> {
-        return when (panelName) {
+        return when (panelType) {
             GenericPanelType.FREE_TEXT -> emptySet()
             else -> GENERIC_PANEL_ALWAYS_TESTED_GENES
         }
     }
 
     override fun events(): List<PanelEvent> {
-        return fusions // TODO add variants implemented in ACTIN-890
+        return variants + fusions
     }
 
     override fun eventsForGene(gene: String): List<PanelEvent> {
-        // TODO add variants implemented in ACTIN-890
-        return fusions.filter { it.geneStart == gene || it.geneEnd == gene }
+        return variants.filter { it.gene == gene } + fusions.filter { it.geneStart == gene || it.geneEnd == gene }
     }
 
     private fun genesHavingResultsInPanel(): Set<String> {
