@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import java.time.LocalDate
 
 interface MolecularTest<T> {
@@ -150,11 +151,23 @@ data class GenericPanelMolecularTest(
         }
 
         private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
-            return results.groupBy { it.measureDate }
+            return results
+                .groupBy { it.measureDate }
                 .map { (date, results) ->
-                    val fusion = results.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
-                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusion))
+                    val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
+                    val (fusionRecords, variantRecords) = usableResults.partition { it.item?.contains("::") ?: false }
+                    val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
+                    val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
+
+                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusions, variants))
                 }
+        }
+
+        private fun isKnownIgnorableRecord(result: PriorMolecularTest, type: GenericPanelType): Boolean {
+            return when (type) {
+                GenericPanelType.AVL -> result.measure == "GEEN mutaties aangetoond met behulp van het AVL Panel"
+                else -> false
+            }
         }
 
         private fun classify(type: String?): GenericPanelType {
