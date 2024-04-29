@@ -201,6 +201,14 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
             }
         }
 
+        for (panel in molecularHistory.allGenericPanels()) {
+            for (variant in panel.variants) {
+                if (gene == variant.gene) {
+                    activatingVariants.add(variant.hgvsCodingImpact)
+                }
+            }
+        }
+
         if (activatingVariants.isNotEmpty())
             return EvaluationFactory.pass(
                 "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Panel(s)",

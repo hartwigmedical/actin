@@ -4,13 +4,16 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import java.time.LocalDate
 
@@ -115,12 +118,15 @@ class MolecularHistoryTest {
 
     @Test
     fun `Should construct AvL panel from prior molecular`() {
-        val priorMolecularTests = listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
+        val priorMolecularTests = listOf(
+            avlPanelPriorMolecularNoMutationsFoundRecord(),
+            avlPanelPriorMolecularVariantRecord("gene", "c1A>T")
+        )
         val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
 
         val expected = GenericPanelMolecularTest(
             date = null,
-            result = GenericPanel(GenericPanelType.AVL)
+            result = GenericPanel(GenericPanelType.AVL, variants = listOf(GenericVariant("gene", "c1A>T")))
         )
         assertThat(molecularTests).containsExactly(expected)
     }
@@ -141,10 +147,24 @@ class MolecularHistoryTest {
     }
 
     @Test
+    fun `Should throw exception on unextractable freetext record`() {
+        val record = PriorMolecularTest(
+            test = "Freetext",
+            item = "KRAS A1Z",
+            measure = null,
+            impliesPotentialIndeterminateStatus = false
+        )
+        val priorMolecularTests = listOf(record)
+        assertThatThrownBy {
+            GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
+        }.isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Test
     fun `Should construct Archer panel from prior molecular`() {
         val priorMolecularTests = listOf(archerPriorMolecularVariantRecord("gene", "c.1A>T"))
         val molecularTests = ArcherMolecularTest.fromPriorMolecularTests(priorMolecularTests)
-        
+
         assertThat(molecularTests).containsExactly(
             ArcherMolecularTest(
                 date = null,

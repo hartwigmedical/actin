@@ -4,6 +4,7 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
+import com.hartwig.actin.molecular.datamodel.GenericPanelMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -14,6 +15,9 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -202,6 +206,18 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
+    fun `Should pass for gene with mutation in Generic panel and no Orange molecular`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            functionNotIgnoringCodons.evaluate(
+                TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+                    molecularHistory = MolecularHistory(listOf(AVL_PANEL_WITH_ACTIVATING_VARIANT)),
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should be undetermined for gene not in Archer panel with no Orange molecular`() {
 
         val evaluation = functionNotIgnoringCodons.evaluate(
@@ -330,6 +346,20 @@ class GeneHasActivatingMutationTest {
             date = TEST_DATE,
             result = ArcherPanel(
                 variants = emptyList(),
+                fusions = emptyList()
+            )
+        )
+
+        private val AVL_PANEL_WITH_ACTIVATING_VARIANT = GenericPanelMolecularTest(
+            date = TEST_DATE,
+            result = GenericPanel(
+                panelType = GenericPanelType.AVL,
+                variants = listOf(
+                    GenericVariant(
+                        gene = GENE,
+                        hgvsCodingImpact = "c.1A>T",
+                    ),
+                ),
                 fusions = emptyList()
             )
         )

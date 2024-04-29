@@ -226,4 +226,13 @@ class TrialStatusConfigInterpreterTest {
         trialStatusConfigInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
     }
 
+    @Test
+    fun `Should not return validation errors when new trials if ignore is enabled `() {
+        val trialConfigs: List<TrialDefinitionConfig> = emptyList()
+        val trialStatusConfigInterpreterIgnoringNewTrials =
+            TestTrialStatusConfigInterpreterFactory.createWithProperTestTrialStatusDatabase(ignoreNewTrials = true)
+        trialStatusConfigInterpreterIgnoringNewTrials.checkModelForNewTrials(trialConfigs)
+        assertThat(trialStatusConfigInterpreterIgnoringNewTrials.validation().trialStatusDatabaseValidationErrors).isEmpty()
+    }
+
 }

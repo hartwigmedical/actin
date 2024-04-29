@@ -8,10 +8,19 @@ val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 data class GenericPanel(
     val panelName: GenericPanelType,
     val fusions: List<GenericFusion> = emptyList(),
+    val variants: List<GenericVariant> = emptyList()
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + alwaysTestedGenes()
+    }
+
+    fun genesWithVariants(): Set<String> {
+        return variants.map { it.gene }.toSet()
+    }
+
+    fun genesWithFusions(): Set<String> {
+        return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
     }
 
     override fun alwaysTestedGenes(): Set<String> {
@@ -28,14 +37,6 @@ data class GenericPanel(
     override fun eventsForGene(gene: String): List<PanelEvent> {
         // TODO add variants implemented in ACTIN-890
         return fusions.filter { it.geneStart == gene || it.geneEnd == gene }
-    }
-
-    fun genesWithVariants(): Set<String> {
-        return emptySet() // TODO this is implemented in ACTIN-890
-    }
-
-    fun genesWithFusions(): Set<String> {
-        return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
     }
 
     private fun genesHavingResultsInPanel(): Set<String> {
