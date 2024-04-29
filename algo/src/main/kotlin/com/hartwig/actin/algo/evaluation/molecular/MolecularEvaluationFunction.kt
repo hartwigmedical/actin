@@ -9,8 +9,10 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 interface MolecularEvaluationFunction : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         return record.molecularHistory.latestOrangeMolecularRecord()?.let(::evaluate)
-            ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
+            ?: noMolecularRecordEvaluation()
     }
+
+    fun noMolecularRecordEvaluation() = EvaluationFactory.undetermined("No molecular data", "No molecular data")
 
     fun evaluate(molecular: MolecularRecord): Evaluation
 }
