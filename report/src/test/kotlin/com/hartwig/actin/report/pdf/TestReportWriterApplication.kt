@@ -9,22 +9,14 @@ import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWr
 import org.apache.logging.log4j.LogManager
 import java.io.File
 
+private val WORK_DIRECTORY = System.getProperty("user.dir")
+
 object TestReportWriterApplication {
 
     private val LOGGER = LogManager.getLogger(TestReportWriterApplication::class.java)
-
-    private val WORK_DIRECTORY = System.getProperty("user.dir")
     private val OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "patient.treatment_match.json"
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        val skipMolecular: Boolean = args.contains("--no-molecular")
-        val writer = createProductionReportWriter(WORK_DIRECTORY)
-        val report = createTestReport(skipMolecular)
-        writer.write(report)
-    }
-
-    private fun createTestReport(skipMolecular: Boolean): Report {
+    fun createTestReport(skipMolecular: Boolean): Report {
         val report = if (skipMolecular) TestReportFactory.createExhaustiveTestReportWithoutMolecular() else
             TestReportFactory.createExhaustiveTestReport()
         LOGGER.info("Printing patient record")
@@ -45,4 +37,11 @@ object TestReportWriterApplication {
         TreatmentMatchPrinter.printMatch(updated.treatmentMatch)
         return updated
     }
+}
+
+fun main(args: Array<String>) {
+    val skipMolecular: Boolean = args.contains("--no-molecular")
+    val writer = createProductionReportWriter(WORK_DIRECTORY)
+    val report = TestReportWriterApplication.createTestReport(skipMolecular)
+    writer.write(report)
 }

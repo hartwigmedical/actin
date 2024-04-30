@@ -1,8 +1,16 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
+import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.efficacy.AnalysisGroup
+import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.PatientPopulation
+import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Styles
+import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.kernel.pdf.action.PdfAction
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 
 const val NA = "NA"
@@ -47,5 +55,51 @@ object SOCGeneratorFunctions {
                 .mapNotNull { (patients, who) -> patients?.let { "$who: $it" } }
                 .joinToString(", ")
         }
+    }
+
+    fun approvedTreatmentCells(treatments: List<AnnotatedTreatmentMatch>): List<Cell> {
+        return treatments.sortedByDescending { it.annotations.size }
+            .flatMap { treatment: AnnotatedTreatmentMatch ->
+                val nameCell = Cells.createContentBold(treatment.treatmentCandidate.treatment.name)
+
+                val annotationsCell = if (treatment.annotations.isEmpty()) {
+                    Cells.createContent("No literature efficacy evidence available yet")
+                } else {
+                    val subTable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
+                    treatment.annotations.forEach { annotation -> addTreatmentAnnotationToTable(annotation, treatment, subTable) }
+                    Cells.createContent(subTable)
+                }
+
+                val warningMessages = treatment.evaluations.flatMap {
+                    it.undeterminedGeneralMessages + it.warnGeneralMessages + if (it.recoverable) it.failGeneralMessages else emptyList()
+                }
+                val warningsCell = Cells.createContent(
+                    warningMessages.sorted().distinct().joinToString(Formats.COMMA_SEPARATOR)
+                )
+
+                sequenceOf(nameCell, annotationsCell, warningsCell)
+            }
+    }
+
+    private fun addTreatmentAnnotationToTable(annotation: EfficacyEntry, treatment: AnnotatedTreatmentMatch, subTable: Table) {
+        annotation.trialReferences.flatMap(TrialReference::patientPopulations)
+            .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
+            .forEach { patientPopulation ->
+                val analysisGroup = analysisGroupForPopulation(patientPopulation)
+                subTable.addCell(Cells.createEmpty())
+                subTable.addCell(
+                    Cells.createTitle(annotation.acronym)
+                        .setAction(PdfAction.createURI(annotation.trialReferences.first().url))
+                        .addStyle(Styles.urlStyle())
+                )
+                subTable.addCell(Cells.createValue("PFS: "))
+                addEndPointsToTable(analysisGroup, "Median Progression-Free Survival", subTable)
+
+                subTable.addCell(Cells.createValue("OS: "))
+                addEndPointsToTable(analysisGroup, "Median Overall Survival", subTable)
+
+                subTable.addCell(Cells.createValue(" "))
+                subTable.addCell(Cells.createValue(" "))
+            }
     }
 }
