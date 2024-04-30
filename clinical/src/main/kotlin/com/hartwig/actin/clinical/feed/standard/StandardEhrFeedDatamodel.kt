@@ -106,7 +106,7 @@ data class EhrLabValue(
 @JacksonSerializable
 data class EhrMedication(
     val name: String,
-    val atcCode: String,
+    val atcCode: String?,
     val startDate: LocalDate?,
     val endDate: LocalDate?,
     val administrationRoute: String?,
