@@ -7,11 +7,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 
-class HasLimitedPDL1ByIHC(private val measure: String, private val maxPDL1: Double) : EvaluationFunction {
+class HasLimitedPDL1ByIHC(private val measure: String?, private val maxPDL1: Double) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
-        val pdl1TestsWithRequestedMeasurement = if (measure != "") {
+        val pdl1TestsWithRequestedMeasurement = if (measure != null) {
             PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure)
         } else PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests)
 
@@ -20,7 +20,7 @@ class HasLimitedPDL1ByIHC(private val measure: String, private val maxPDL1: Doub
             if (scoreValue != null) {
                 val evaluation = evaluateVersusMaxValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, maxPDL1)
                 if (evaluation == EvaluationResult.PASS) {
-                    val measureMessage = if (measure != "") " measured by $measure" else ""
+                    val measureMessage = if (measure != null) " measured by $measure" else ""
                     return EvaluationFactory.pass(
                         "PD-L1 expression$measureMessage does not exceed maximum of $maxPDL1", "PD-L1 expression below $maxPDL1"
                     )

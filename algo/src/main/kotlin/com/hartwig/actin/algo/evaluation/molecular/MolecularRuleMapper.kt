@@ -280,14 +280,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasSufficientPDL1ByIHCCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minPDL1 = functionInputResolver().createOneIntegerInput(function)
-            HasSufficientPDL1ByIHC("", minPDL1.toDouble())
+            HasSufficientPDL1ByIHC(null, minPDL1.toDouble())
         }
     }
 
     private fun hasLimitedPDL1ByIHCCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val maxPDL1 = functionInputResolver().createOneIntegerInput(function)
-            HasLimitedPDL1ByIHC("", maxPDL1.toDouble())
+            HasLimitedPDL1ByIHC(null, maxPDL1.toDouble())
         }
     }
 
