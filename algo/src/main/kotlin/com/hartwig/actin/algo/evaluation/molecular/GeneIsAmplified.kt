@@ -7,6 +7,9 @@ import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
+private const val SOFT_PLOIDY_FACTOR = 2.5
+private const val HARD_PLOIDY_FACTOR = 3.0
+
 private enum class CopyNumberEvaluation {
     REPORTABLE_FULL_AMP,
     REPORTABLE_PARTIAL_AMP,
@@ -14,7 +17,43 @@ private enum class CopyNumberEvaluation {
     AMP_ON_NON_ONCOGENE,
     UNREPORTABLE_AMP,
     AMP_NEAR_CUTOFF,
-    NON_AMP_WITH_SUFFICIENT_COPY_NUMBER
+    NON_AMP_WITH_SUFFICIENT_COPY_NUMBER;
+
+    companion object {
+        fun fromCopyNumber(copyNumber: CopyNumber, ploidy: Double): CopyNumberEvaluation {
+            val relativeMinCopies = copyNumber.minCopies / ploidy
+            val relativeMaxCopies = copyNumber.maxCopies / ploidy
+
+            return if (relativeMaxCopies >= HARD_PLOIDY_FACTOR) {
+                when {
+                    copyNumber.geneRole == GeneRole.TSG -> {
+                        AMP_ON_NON_ONCOGENE
+                    }
+
+                    copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION
+                            || copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED -> {
+                        AMP_WITH_LOSS_OF_FUNCTION
+                    }
+
+                    !copyNumber.isReportable -> {
+                        UNREPORTABLE_AMP
+                    }
+
+                    relativeMinCopies < HARD_PLOIDY_FACTOR -> {
+                        REPORTABLE_PARTIAL_AMP
+                    }
+
+                    else -> {
+                        REPORTABLE_FULL_AMP
+                    }
+                }
+            } else if (relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies < HARD_PLOIDY_FACTOR) {
+                AMP_NEAR_CUTOFF
+            } else {
+                NON_AMP_WITH_SUFFICIENT_COPY_NUMBER
+            }
+        }
+    }
 }
 
 class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?) : MolecularEvaluationFunction {
@@ -25,46 +64,11 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
                 "Cannot determine amplification for gene $gene without ploidy", "Undetermined amplification for $gene"
             )
 
-        val evaluatedCopyNumbers = molecular.drivers.copyNumbers.filter { copyNumber ->
+        val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = molecular.drivers.copyNumbers.filter { copyNumber ->
             copyNumber.gene == gene && (requestedMinCopyNumber == null || copyNumber.minCopies >= requestedMinCopyNumber)
         }
-            .groupBy(
-                { copyNumber ->
-                    val relativeMinCopies = copyNumber.minCopies / ploidy
-                    val relativeMaxCopies = copyNumber.maxCopies / ploidy
-
-                    if (relativeMaxCopies >= HARD_PLOIDY_FACTOR) {
-                        when {
-                            copyNumber.geneRole == GeneRole.TSG -> {
-                                CopyNumberEvaluation.AMP_ON_NON_ONCOGENE
-                            }
-
-                            copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION
-                                    || copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED -> {
-                                CopyNumberEvaluation.AMP_WITH_LOSS_OF_FUNCTION
-                            }
-
-                            !copyNumber.isReportable -> {
-                                CopyNumberEvaluation.UNREPORTABLE_AMP
-                            }
-
-                            relativeMinCopies < HARD_PLOIDY_FACTOR -> {
-                                CopyNumberEvaluation.REPORTABLE_PARTIAL_AMP
-                            }
-
-                            else -> {
-                                CopyNumberEvaluation.REPORTABLE_FULL_AMP
-                            }
-                        }
-                    } else if (relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies < HARD_PLOIDY_FACTOR) {
-                        CopyNumberEvaluation.AMP_NEAR_CUTOFF
-                    } else {
-                        CopyNumberEvaluation.NON_AMP_WITH_SUFFICIENT_COPY_NUMBER
-                    }
-                },
-                CopyNumber::event
-            )
-            .mapValues { (_, copyNumbers) -> copyNumbers.toSet() }
+            .groupBy({ copyNumber -> CopyNumberEvaluation.fromCopyNumber(copyNumber, ploidy) }, valueTransform = CopyNumber::event)
+            .mapValues { (_, copyNumberEvents) -> copyNumberEvents.toSet() }
 
         return evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_FULL_AMP]?.let { reportableFullAmps ->
             val minCopyMessage = requestedMinCopyNumber?.let { " with >=$requestedMinCopyNumber copies" }
@@ -105,46 +109,38 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
         evidenceSource: String
     ): Evaluation? {
         val eventGroupsWithMessages = listOf(
-            Triple(
+            EventsWithMessages(
                 reportablePartialAmps,
                 "Gene $gene is partially amplified and not fully amplified",
                 "$gene partially amplified"
             ),
-            Triple(
+            EventsWithMessages(
                 ampsWithLossOfFunction,
                 "Gene $gene is amplified but event is annotated as having loss-of-function impact in $evidenceSource",
                 "$gene amplification but gene associated with loss-of-function protein impact in $evidenceSource"
             ),
-            Triple(
+            EventsWithMessages(
                 ampsOnNonOncogenes,
                 "Gene $gene is amplified but gene $gene is known as TSG in $evidenceSource",
                 "$gene amplification but $gene known as TSG in $evidenceSource"
             ),
-            Triple(
+            EventsWithMessages(
                 unreportableAmps,
                 "Gene $gene is amplified but not considered reportable",
                 "$gene amplification but considered not reportable"
             ),
-            Triple(
+            EventsWithMessages(
                 ampsThatAreNearCutoff,
                 "Gene $gene does not meet cut-off for amplification, but is near cut-off",
                 "$gene near cut-off for amplification"
             ),
-            Triple(
+            EventsWithMessages(
                 nonAmpsWithSufficientCopyNumber,
                 "Gene $gene does not meet cut-off for amplification, but has copy number > $requestedMinCopyNumber",
                 "$gene has sufficient copies but not reported as amplification"
             )
         )
-            .map { (events, specificMessage, generalMessage) ->
-                EventsWithMessages(events ?: emptySet(), specificMessage, generalMessage)
-            }
 
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(eventGroupsWithMessages)
-    }
-
-    companion object {
-        private const val SOFT_PLOIDY_FACTOR = 2.5
-        private const val HARD_PLOIDY_FACTOR = 3.0
     }
 }
