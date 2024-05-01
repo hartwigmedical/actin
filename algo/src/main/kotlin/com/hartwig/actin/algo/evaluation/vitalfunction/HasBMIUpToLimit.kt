@@ -14,7 +14,7 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val allBodyWeights = record.bodyWeights
-        val relevant = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDate) ?: return EvaluationFactory.undetermined(
+        val relevant = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDate) ?: return EvaluationFactory.recoverableUndetermined(
             if (allBodyWeights.isNotEmpty() && allBodyWeights.none { weight -> EXPECTED_UNITS.any { it.equals(weight.unit, ignoreCase = true) } }) {
                 "Body weights not measured in ${EXPECTED_UNITS.first()}"
             } else {
