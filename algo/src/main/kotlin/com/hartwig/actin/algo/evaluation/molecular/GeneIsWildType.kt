@@ -1,10 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
@@ -15,17 +13,13 @@ import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 
-class GeneIsWildType internal constructor(private val gene: String) : EvaluationFunction {
+class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(patient: PatientRecord): Evaluation {
-        if (!patient.molecularHistory.hasMolecularData()) {
-            return EvaluationFactory.undetermined("No molecular data", "No molecular data")
-        }
-
-        val orangeMolecular = patient.molecularHistory.latestOrangeMolecularRecord()
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+        val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = orangeMolecular?.let { evaluateInOrangeMolecular(it) }
 
-        val panelEvaluation = evaluateInPanels(patient.molecularHistory)
+        val panelEvaluation = evaluateInPanels(molecularHistory)
 
         val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
             .groupBy { evaluation -> evaluation.result }
