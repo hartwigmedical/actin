@@ -85,57 +85,41 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
                     inclusionEvents = ampsThatAreUnreportable
                 )
             }
-            ?: evaluatePotentialWarns(
-                evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_PARTIAL_AMP],
-                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_WITH_LOSS_OF_FUNCTION],
-                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_ON_NON_ONCOGENE],
-                evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_AMP],
-                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_NEAR_CUTOFF],
-                requestedMinCopyNumber?.let { evaluatedCopyNumbers[CopyNumberEvaluation.NON_AMP_WITH_SUFFICIENT_COPY_NUMBER] },
-                molecular.evidenceSource
-            )
+            ?: evaluatePotentialWarns(evaluatedCopyNumbers, molecular.evidenceSource)
             ?: EvaluationFactory.fail(
                 "No amplification detected of gene $gene with min copy number of $requestedMinCopyNumber", "No sufficient copies of $gene"
             )
     }
 
-    private fun evaluatePotentialWarns(
-        reportablePartialAmps: Set<String>?,
-        ampsWithLossOfFunction: Set<String>?,
-        ampsOnNonOncogenes: Set<String>?,
-        unreportableAmps: Set<String>?,
-        ampsThatAreNearCutoff: Set<String>?,
-        nonAmpsWithSufficientCopyNumber: Set<String>?,
-        evidenceSource: String
-    ): Evaluation? {
+    private fun evaluatePotentialWarns(evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>>, evidenceSource: String): Evaluation? {
         val eventGroupsWithMessages = listOf(
             EventsWithMessages(
-                reportablePartialAmps,
+                evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_PARTIAL_AMP],
                 "Gene $gene is partially amplified and not fully amplified",
                 "$gene partially amplified"
             ),
             EventsWithMessages(
-                ampsWithLossOfFunction,
+                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_WITH_LOSS_OF_FUNCTION],
                 "Gene $gene is amplified but event is annotated as having loss-of-function impact in $evidenceSource",
                 "$gene amplification but gene associated with loss-of-function protein impact in $evidenceSource"
             ),
             EventsWithMessages(
-                ampsOnNonOncogenes,
+                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_ON_NON_ONCOGENE],
                 "Gene $gene is amplified but gene $gene is known as TSG in $evidenceSource",
                 "$gene amplification but $gene known as TSG in $evidenceSource"
             ),
             EventsWithMessages(
-                unreportableAmps,
+                evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_AMP],
                 "Gene $gene is amplified but not considered reportable",
                 "$gene amplification but considered not reportable"
             ),
             EventsWithMessages(
-                ampsThatAreNearCutoff,
+                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_NEAR_CUTOFF],
                 "Gene $gene does not meet cut-off for amplification, but is near cut-off",
                 "$gene near cut-off for amplification"
             ),
             EventsWithMessages(
-                nonAmpsWithSufficientCopyNumber,
+                requestedMinCopyNumber?.let { evaluatedCopyNumbers[CopyNumberEvaluation.NON_AMP_WITH_SUFFICIENT_COPY_NUMBER] },
                 "Gene $gene does not meet cut-off for amplification, but has copy number > $requestedMinCopyNumber",
                 "$gene has sufficient copies but not reported as amplification"
             )
