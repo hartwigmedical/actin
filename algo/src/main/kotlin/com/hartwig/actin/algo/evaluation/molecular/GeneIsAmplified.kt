@@ -47,7 +47,7 @@ private enum class CopyNumberEvaluation {
                         REPORTABLE_FULL_AMP
                     }
                 }
-            } else if (relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies < HARD_PLOIDY_FACTOR) {
+            } else if (relativeMinCopies >= SOFT_PLOIDY_FACTOR) {
                 AMP_NEAR_CUTOFF
             } else {
                 NON_AMP_WITH_SUFFICIENT_COPY_NUMBER

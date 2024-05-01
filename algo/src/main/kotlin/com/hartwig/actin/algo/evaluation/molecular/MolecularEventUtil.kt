@@ -11,11 +11,7 @@ object MolecularEventUtil {
         val (warnEvents, warnSpecificMessages, warnGeneralMessages) = eventsWithMessages
             .filter { (events, _, _) -> !events.isNullOrEmpty() }
             .fold(
-                Triple(
-                    emptySet<String>(),
-                    emptySet<String>(),
-                    emptySet<String>()
-                )
+                Triple(emptySet<String>(), emptySet<String>(), emptySet<String>())
             ) { (allEvents, specificMessages, generalMessages), (events, specific, general) ->
                 Triple(allEvents + events!!, specificMessages + specific, generalMessages + general)
             }
