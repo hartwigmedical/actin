@@ -78,7 +78,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneIsActivatedOrAmplifiedCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            Or(listOf(GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null), GeneIsAmplified(gene.geneName)))
+            Or(listOf(GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null), GeneIsAmplified(gene.geneName, null)))
         }
     }
 
@@ -152,14 +152,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneIsAmplifiedCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val gene = functionInputResolver().createOneGeneInput(function)
-            GeneIsAmplified(gene.geneName)
+            GeneIsAmplified(gene.geneName, null)
         }
     }
 
     private fun geneIsAmplifiedMinCopiesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneIsAmplifiedMinCopies(input.geneName, input.integer)
+            GeneIsAmplified(input.geneName, input.integer)
         }
     }
 

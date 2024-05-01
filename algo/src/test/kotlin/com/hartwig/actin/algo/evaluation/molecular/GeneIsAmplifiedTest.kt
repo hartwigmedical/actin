@@ -10,8 +10,6 @@ import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import org.junit.Test
 
 class GeneIsAmplifiedTest {
-    private val function = GeneIsAmplified("gene A")
-
     private val passingAmp = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene A",
         geneRole = GeneRole.ONCO,
@@ -23,7 +21,58 @@ class GeneIsAmplifiedTest {
     )
 
     @Test
-    fun canEvaluate() {
+    fun `Should evaluate with min copies`() {
+        val function = GeneIsAmplified("gene A", 5)
+
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp))
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(geneRole = GeneRole.TSG)))
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+            )
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(isReportable = false)))
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp))
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 8, maxCopies = 8)))
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 4, maxCopies = 4)))
+        )
+
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 3)))
+        )
+    }
+
+    @Test
+    fun `Should evaluate with no min copies`() {
+        val function = GeneIsAmplified("gene A", null)
+        
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
 
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp)))
@@ -41,12 +90,12 @@ class GeneIsAmplifiedTest {
                 MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
             )
         )
-        
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(isReportable = false)))
         )
-        
+
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 3)))
@@ -56,7 +105,7 @@ class GeneIsAmplifiedTest {
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 8, maxCopies = 8)))
         )
-        
+
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 4, maxCopies = 4)))
