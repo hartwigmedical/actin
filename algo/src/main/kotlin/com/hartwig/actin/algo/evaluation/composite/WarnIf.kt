@@ -13,21 +13,21 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
             return Evaluation(
                 result = EvaluationResult.WARN,
                 recoverable = evaluation.recoverable,
-                inclusionMolecularEvents = evaluation.inclusionMolecularEvents,
-                exclusionMolecularEvents = evaluation.exclusionMolecularEvents,
+                inclusionMolecularEvents = emptySet(),
+                exclusionMolecularEvents = emptySet(),
                 warnSpecificMessages = evaluation.passSpecificMessages,
                 warnGeneralMessages = evaluation.passGeneralMessages
             )
         } else if (evaluation.result == EvaluationResult.WARN) {
-            return evaluation
+            return evaluation.copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
         }
         val notImplementedMessages = if (evaluation.result == EvaluationResult.NOT_IMPLEMENTED) setOf("not implemented") else emptySet()
 
         return Evaluation(
             result = EvaluationResult.PASS,
             recoverable = evaluation.recoverable,
-            inclusionMolecularEvents = evaluation.inclusionMolecularEvents,
-            exclusionMolecularEvents = evaluation.exclusionMolecularEvents,
+            inclusionMolecularEvents = emptySet(),
+            exclusionMolecularEvents = emptySet(),
             passSpecificMessages = (
                     evaluation.passSpecificMessages + evaluation.warnSpecificMessages + evaluation.undeterminedSpecificMessages
                             + evaluation.failSpecificMessages + notImplementedMessages
