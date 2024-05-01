@@ -16,24 +16,24 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
     override fun evaluate(record: PatientRecord): Evaluation {
         val doidsToIgnore = doidTermsToIgnore.map { doidModel.resolveDoidForTerm(it) }
         val priorSecondPrimaries = record.priorSecondPrimaries
-        val priorSecondPrimariesByDate = groupByDate(priorSecondPrimaries, minDate)
+        val priorSecondPrimariesByDate = groupByDate(priorSecondPrimaries)
 
         val (priorSecondPrimaryDoidsOfInterest, otherSecondPrimaryDoids) =
-            filterDoidsOfInterest(priorSecondPrimariesByDate.first, doidModel, doidsToIgnore)
+            partitionDoidsOfInterest(priorSecondPrimariesByDate.let { it[true] ?: emptyList() }, doidsToIgnore)
 
         val (priorSecondPrimaryDoidsOfInterestWithUnknownDate, _) =
-            filterDoidsOfInterest(priorSecondPrimariesByDate.third, doidModel, doidsToIgnore)
+            partitionDoidsOfInterest(priorSecondPrimariesByDate.let { it[null] ?: emptyList() }, doidsToIgnore)
 
         val recentMessage = if (minDate != null) " recent" else ""
 
         return if (priorSecondPrimaryDoidsOfInterest.isNotEmpty()) {
-            val priorPrimaryMessage = buildDoidTermList(priorSecondPrimaryDoidsOfInterest, doidModel)
+            val priorPrimaryMessage = buildDoidTermList(priorSecondPrimaryDoidsOfInterest)
             EvaluationFactory.pass(
                 "Patient has history of$recentMessage previous malignancy$priorPrimaryMessage",
                 "History of$recentMessage previous malignancy$priorPrimaryMessage"
             )
         } else if (priorSecondPrimaryDoidsOfInterestWithUnknownDate.isNotEmpty()) {
-            val priorPrimaryMessage = buildDoidTermList(priorSecondPrimaryDoidsOfInterestWithUnknownDate, doidModel)
+            val priorPrimaryMessage = buildDoidTermList(priorSecondPrimaryDoidsOfInterestWithUnknownDate)
             val dateMessage = "but undetermined if recent (date unknown)"
             EvaluationFactory.undetermined(
                 "Patient has history of previous malignancy$priorPrimaryMessage $dateMessage",
@@ -52,42 +52,28 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
         }
     }
 
-    companion object {
-        private fun filterDoidsOfInterest(
-            priorSecondPrimaries: List<PriorSecondPrimary>, doidModel: DoidModel, doidsToIgnore: List<String?>
-        ): Pair<List<String>, List<String>> {
-            return priorSecondPrimaries.flatMap(PriorSecondPrimary::doids)
-                .partition { doidModel.doidWithParents(it).none(doidsToIgnore::contains) }
-        }
+    private fun partitionDoidsOfInterest(
+        priorSecondPrimaries: List<PriorSecondPrimary>, doidsToIgnore: List<String?>
+    ): Pair<List<String>, List<String>> {
+        return priorSecondPrimaries.flatMap(PriorSecondPrimary::doids)
+            .partition { doidModel.doidWithParents(it).none(doidsToIgnore::contains) }
+    }
 
-        private fun groupByDate(
-            priorSecondPrimaries: List<PriorSecondPrimary>, minDate: LocalDate?
-        ): Triple<List<PriorSecondPrimary>, List<PriorSecondPrimary>, List<PriorSecondPrimary>> {
-            if (minDate == null) return Triple(priorSecondPrimaries, emptyList(), emptyList()) else {
-                val insideDateRange = mutableListOf<PriorSecondPrimary>()
-                val outsideDateRange = mutableListOf<PriorSecondPrimary>()
-                val unknownDate = mutableListOf<PriorSecondPrimary>()
-
-                priorSecondPrimaries.forEach { priorSecondPrimary ->
-                    val effectiveMinDate = if (priorSecondPrimary.lastTreatmentYear != null) minDate else minDate.minusYears(1)
-                    val year = priorSecondPrimary.lastTreatmentYear ?: priorSecondPrimary.diagnosedYear
-                    val month = priorSecondPrimary.lastTreatmentMonth ?: priorSecondPrimary.diagnosedMonth
-
-                    when (DateComparison.isAfterDate(effectiveMinDate, year, month)) {
-                        true -> insideDateRange.add(priorSecondPrimary)
-                        false -> outsideDateRange.add(priorSecondPrimary)
-                        else -> unknownDate.add(priorSecondPrimary)
-                    }
-                }
-                return Triple(insideDateRange.toList(), outsideDateRange.toList(), unknownDate.toList())
+    private fun groupByDate(priorSecondPrimaries: List<PriorSecondPrimary>): Map<Boolean?, List<PriorSecondPrimary>> {
+        return if (minDate == null) mapOf(true to priorSecondPrimaries) else {
+            priorSecondPrimaries.groupBy { priorSecondPrimary ->
+                val effectiveMinDate = if (priorSecondPrimary.lastTreatmentYear != null) minDate else minDate.minusYears(1)
+                val year = priorSecondPrimary.lastTreatmentYear ?: priorSecondPrimary.diagnosedYear?.let { it + 1 }
+                val month = priorSecondPrimary.lastTreatmentMonth ?: priorSecondPrimary.diagnosedMonth
+                DateComparison.isAfterDate(effectiveMinDate, year, month)
             }
         }
+    }
 
-        private fun buildDoidTermList(doidList: List<String>, doidModel: DoidModel): String {
-            return doidList
-                .map { doidModel.resolveTermForDoid(it) }
-                .takeIf { it.isNotEmpty() }
-                ?.joinToString(separator = ", ", prefix = " (", postfix = ")") ?: ""
-        }
+    private fun buildDoidTermList(doidList: List<String>): String {
+        return doidList
+            .mapNotNull(doidModel::resolveTermForDoid)
+            .takeIf { it.isNotEmpty() }
+            ?.joinToString(separator = ", ", prefix = " (", postfix = ")") ?: ""
     }
 }
