@@ -221,7 +221,7 @@ class GeneIsWildTypeTest {
     }
 
     @Test
-    fun `Should pass for tested gene having no event in Panel `() {
+    fun `Should pass for tested gene having no event in panel `() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(molecularHistory = MolecularHistoryFactory.withEmptyArcherPanel())
         val evaluationResult = GeneIsWildType("ALK").evaluate(patient)

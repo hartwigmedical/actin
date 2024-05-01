@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariant
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 data class GenericVariant(
     val gene: String,
     val hgvsCodingImpact: String
-) : PanelVariant {
+) : PanelEvent {
     companion object {
         fun parseVariant(priorMolecularTest: PriorMolecularTest): GenericVariant {
             return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
