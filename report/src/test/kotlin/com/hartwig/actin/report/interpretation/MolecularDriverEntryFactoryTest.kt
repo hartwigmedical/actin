@@ -81,7 +81,7 @@ class MolecularDriverEntryFactoryTest {
         assertCopyNumberType(CopyNumberType.LOSS, "Loss")
         assertCopyNumberType(CopyNumberType.FULL_GAIN, "Amplification")
         assertCopyNumberType(CopyNumberType.PARTIAL_GAIN, "Amplification")
-        assertCopyNumberType(CopyNumberType.NONE, "None")
+        assertCopyNumberType(CopyNumberType.NONE, "Copy Number")
     }
 
     private fun assertCopyNumberType(copyNumberType: CopyNumberType, expectedDriverType: String) {
