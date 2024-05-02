@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.Driver
 import com.hartwig.actin.molecular.datamodel.driver.Fusion
@@ -43,7 +44,11 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromCopyNumber(copyNumber: CopyNumber): MolecularDriverEntry {
-        val driverType = if (copyNumber.type.isGain) "Amplification" else "Loss"
+        val driverType = when (copyNumber.type) {
+            CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> "Amplification"
+            CopyNumberType.LOSS -> "Loss"
+            CopyNumberType.NONE -> "None"
+        }
         val name = copyNumber.event + ", " + copyNumber.minCopies + " copies"
         return driverEntry(driverType, name, copyNumber)
     }
@@ -101,6 +106,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
                 evidence.preClinicalTreatments.isNotEmpty() -> {
                     "Pre-clinical"
                 }
+
                 else -> null
             }
         }
@@ -115,6 +121,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
                 evidence.suspectResistantTreatments.isNotEmpty() -> {
                     "Suspect resistance"
                 }
+
                 else -> null
             }
         }
