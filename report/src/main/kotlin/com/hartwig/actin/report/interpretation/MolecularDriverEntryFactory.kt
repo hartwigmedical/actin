@@ -47,7 +47,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val driverType = when (copyNumber.type) {
             CopyNumberType.FULL_GAIN, CopyNumberType.PARTIAL_GAIN -> "Amplification"
             CopyNumberType.LOSS -> "Loss"
-            CopyNumberType.NONE -> "None"
+            CopyNumberType.NONE -> "Copy Number"
         }
         val name = copyNumber.event + ", " + copyNumber.minCopies + " copies"
         return driverEntry(driverType, name, copyNumber)
