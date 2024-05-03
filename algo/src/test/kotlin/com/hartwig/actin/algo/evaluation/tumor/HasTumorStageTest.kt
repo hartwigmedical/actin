@@ -62,9 +62,15 @@ class HasTumorStageTest {
     }
 
     @Test
-    fun `Should pass when derived stage is part of same category`() {
-        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIIB, TumorStage.IIIC))
-        assertEvaluation(EvaluationResult.PASS, HasTumorStage(setOf(TumorStage.III)).evaluate(patientRecord))
+    fun `Should pass when derived stage is equal to the category of the stage to match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))
+        assertEvaluation(EvaluationResult.PASS, HasTumorStage(setOf(TumorStage.IIIB)).evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should fail when derived stage is not equal to the category of the stage to match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))
+        assertEvaluation(EvaluationResult.FAIL, HasTumorStage(setOf(TumorStage.IIB)).evaluate(patientRecord))
     }
 
     @Test

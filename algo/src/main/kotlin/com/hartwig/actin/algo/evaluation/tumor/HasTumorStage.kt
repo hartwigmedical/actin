@@ -51,8 +51,6 @@ class HasTumorStage(private val stagesToMatch: Set<TumorStage>) : EvaluationFunc
     }
 
     private fun evaluateCategoryMatchForDerivedStage(derivedStage: TumorStage): Boolean {
-        val stagesInCategory =
-            derivedStage.category?.let { TumorStage.values().filter { it.category != null && it.category == it } } ?: emptySet()
-        return derivedStage in stagesInCategory
+        return stagesToMatch.any { it.category == derivedStage }
     }
 }
