@@ -7,8 +7,7 @@ import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
-private const val SOFT_PLOIDY_FACTOR = 2.5
-private const val HARD_PLOIDY_FACTOR = 3.0
+private const val PLOIDY_FACTOR = 3.0
 
 private enum class CopyNumberEvaluation {
     REPORTABLE_FULL_AMP,
@@ -16,7 +15,6 @@ private enum class CopyNumberEvaluation {
     AMP_WITH_LOSS_OF_FUNCTION,
     AMP_ON_NON_ONCOGENE,
     UNREPORTABLE_AMP,
-    AMP_NEAR_CUTOFF,
     NON_AMP_WITH_SUFFICIENT_COPY_NUMBER;
 
     companion object {
@@ -24,7 +22,7 @@ private enum class CopyNumberEvaluation {
             val relativeMinCopies = copyNumber.minCopies / ploidy
             val relativeMaxCopies = copyNumber.maxCopies / ploidy
 
-            return if (relativeMaxCopies >= HARD_PLOIDY_FACTOR) {
+            return if (relativeMaxCopies >= PLOIDY_FACTOR) {
                 when {
                     copyNumber.geneRole == GeneRole.TSG -> {
                         AMP_ON_NON_ONCOGENE
@@ -39,7 +37,7 @@ private enum class CopyNumberEvaluation {
                         UNREPORTABLE_AMP
                     }
 
-                    relativeMinCopies < HARD_PLOIDY_FACTOR -> {
+                    relativeMinCopies < PLOIDY_FACTOR -> {
                         REPORTABLE_PARTIAL_AMP
                     }
 
@@ -47,8 +45,6 @@ private enum class CopyNumberEvaluation {
                         REPORTABLE_FULL_AMP
                     }
                 }
-            } else if (relativeMinCopies >= SOFT_PLOIDY_FACTOR) {
-                AMP_NEAR_CUTOFF
             } else {
                 NON_AMP_WITH_SUFFICIENT_COPY_NUMBER
             }
@@ -112,11 +108,6 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
                 evaluatedCopyNumbers[CopyNumberEvaluation.UNREPORTABLE_AMP],
                 "Gene $gene is amplified but not considered reportable",
                 "$gene amplification but considered not reportable"
-            ),
-            EventsWithMessages(
-                evaluatedCopyNumbers[CopyNumberEvaluation.AMP_NEAR_CUTOFF],
-                "Gene $gene does not meet cut-off for amplification, but is near cut-off",
-                "$gene near cut-off for amplification"
             ),
             EventsWithMessages(
                 requestedMinCopyNumber?.let { evaluatedCopyNumbers[CopyNumberEvaluation.NON_AMP_WITH_SUFFICIENT_COPY_NUMBER] },

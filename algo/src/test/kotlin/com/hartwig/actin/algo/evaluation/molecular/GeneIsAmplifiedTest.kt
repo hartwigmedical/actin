@@ -26,6 +26,11 @@ class GeneIsAmplifiedTest {
     private val functionWithNoMinCopies = GeneIsAmplified("gene A", null)
 
     @Test
+    fun `Should return undetermined when molecular record is empty`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, TestPatientFactory.createEmptyMolecularTestPatientRecord())
+    }
+    
+    @Test
     fun `Should fail with minimal WGS record`() {
         assertEvaluation(EvaluationResult.FAIL, TestPatientFactory.createMinimalTestWGSPatientRecord())
     }
@@ -90,14 +95,6 @@ class GeneIsAmplifiedTest {
     @Test
     fun `Should warn with reportable partial amplification`() {
         assertEvaluation(EvaluationResult.WARN, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 6)))
-    }
-
-    @Test
-    fun `Should warn with amplification near cutoff`() {
-        assertEvaluation(
-            EvaluationResult.WARN,
-            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 8, maxCopies = 8))
-        )
     }
 
     @Test
