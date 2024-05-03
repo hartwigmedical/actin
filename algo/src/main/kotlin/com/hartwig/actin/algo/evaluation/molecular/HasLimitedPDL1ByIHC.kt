@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
@@ -12,14 +11,8 @@ class HasLimitedPDL1ByIHC(private val measure: String, private val maxPDL1: Doub
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
-        val pdl1TestsWithSpecificMeasurement = PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure)
         val pdl1TestsWithRequestedMeasurement =
-            if (measure == "TPS" && record.tumor.doids?.any { it in DoidConstants.LUNG_NON_SMALL_CELL_CANCER_DOID_SET } == true
-                && PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests).all { it.measure == null }) {
-                PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests)
-            } else {
-                pdl1TestsWithSpecificMeasurement
-            }
+            PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure, record.tumor.doids)
 
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
