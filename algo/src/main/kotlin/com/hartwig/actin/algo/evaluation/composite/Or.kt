@@ -12,15 +12,15 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
         val best = evaluationsByResult.keys.maxOrNull()
             ?: throw IllegalStateException("Could not determine OR result for functions: $functions")
 
-        val evaluations = evaluationsByResult[best]!!
+        val evaluations = when (best) {
+            EvaluationResult.PASS -> {
+                evaluationsByResult[best]!! + (evaluationsByResult[EvaluationResult.WARN] ?: emptyList())
+            }
+            else -> {
+                evaluationsByResult[best]!!
+            }
+        }
 
-        val evaluation = evaluations.fold(Evaluation(best, evaluations.any(Evaluation::recoverable)), Evaluation::addMessagesAndEvents)
-
-        return if (best == EvaluationResult.PASS) {
-            evaluation.copy(
-                inclusionMolecularEvents = evaluation.inclusionMolecularEvents +
-                        (evaluationsByResult[EvaluationResult.WARN]?.flatMap(Evaluation::inclusionMolecularEvents) ?: emptyList())
-            )
-        } else evaluation
+        return evaluations.fold(Evaluation(best, evaluations.any(Evaluation::recoverable)), Evaluation::addMessagesAndEvents)
     }
 }
