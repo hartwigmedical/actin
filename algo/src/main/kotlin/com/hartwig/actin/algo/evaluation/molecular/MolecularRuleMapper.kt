@@ -159,7 +159,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneIsAmplifiedMinCopiesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneIsAmplifiedMinCopies(input.geneName, input.integer)
+            GeneIsAmplified(input.geneName, input.integer)
         }
     }
 

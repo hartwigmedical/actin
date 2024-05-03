@@ -6,7 +6,9 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
-class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
+class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int? = null) : MolecularEvaluationFunction {
+
+    private val copyNumberMessage = if (requestedMinCopyNumber != null) " with >$requestedMinCopyNumber copies" else ""
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val ploidy = molecular.characteristics.ploidy
@@ -21,7 +23,7 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
         val evidenceSource = molecular.evidenceSource
 
         for (copyNumber in molecular.drivers.copyNumbers) {
-            if (copyNumber.gene == gene) {
+            if (copyNumber.gene == gene && copyNumber.minCopies >= (requestedMinCopyNumber ?: 0)) {
                 val relativeMinCopies = copyNumber.minCopies / ploidy
                 val relativeMaxCopies = copyNumber.maxCopies / ploidy
                 val isAmplification = relativeMaxCopies >= PLOIDY_FACTOR
@@ -45,7 +47,8 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
         }
         if (reportableFullAmps.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "Amplification detected of gene $gene", "$gene is amplified", inclusionEvents = reportableFullAmps
+                "Amplification detected of gene $gene$copyNumberMessage", "$gene is amplified$copyNumberMessage",
+                inclusionEvents = reportableFullAmps
             )
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(
@@ -56,7 +59,9 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
             evidenceSource
         )
         return potentialWarnEvaluation
-            ?: EvaluationFactory.fail("No amplification detected of gene $gene", "No amplification of $gene")
+            ?: EvaluationFactory.fail("No amplification detected of gene $gene$copyNumberMessage",
+                "No amplification of $gene$copyNumberMessage"
+            )
     }
 
     private fun evaluatePotentialWarns(
@@ -67,23 +72,23 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
             listOf(
                 EventsWithMessages(
                     reportablePartialAmps,
-                    "Gene $gene is partially amplified and not fully amplified",
-                    "$gene partially amplified"
+                    "Gene $gene is partially amplified$copyNumberMessage and not fully amplified",
+                    "$gene partially amplified$copyNumberMessage"
                 ),
                 EventsWithMessages(
                     ampsWithLossOfFunction,
-                    "Gene $gene is amplified but event is annotated as having loss-of-function impact in $evidenceSource",
-                    "$gene amplification but gene associated with loss-of-function protein impact in $evidenceSource"
+                    "Gene $gene is amplified$copyNumberMessage but event is annotated as having loss-of-function impact in $evidenceSource",
+                    "$gene amplification$copyNumberMessage but gene associated with loss-of-function protein impact in $evidenceSource"
                 ),
                 EventsWithMessages(
                     ampsOnNonOncogenes,
-                    "Gene $gene is amplified but gene $gene is known as TSG in $evidenceSource",
-                    "$gene amplification but $gene known as TSG in $evidenceSource"
+                    "Gene $gene is amplified$copyNumberMessage but gene $gene is known as TSG in $evidenceSource",
+                    "$gene amplification$copyNumberMessage but $gene known as TSG in $evidenceSource"
                 ),
                 EventsWithMessages(
                     ampsThatAreUnreportable,
-                    "Gene $gene is amplified but not considered reportable",
-                    "$gene amplification but considered not reportable"
+                    "Gene $gene is amplified$copyNumberMessage but not considered reportable",
+                    "$gene amplification$copyNumberMessage but considered not reportable"
                 )
             )
         )
