@@ -18,7 +18,7 @@ internal object PriorMolecularTestFunctions {
         measureToFind: String,
         doids: Set<String>? = null
     ): List<PriorMolecularTest> {
-        return if (measureToFind == "TPS" && doids?.any { it in DoidConstants.LUNG_NON_SMALL_CELL_CANCER_DOID_SET } == true
+        return if (measureToFind == "TPS" && doids?.any { it in DoidConstants.LUNG_CANCER_DOID_SET } == true
             && allPDL1Tests(priorMolecularTests).all { it.measure == null }) {
             allPDL1Tests(priorMolecularTests)
         } else {

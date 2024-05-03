@@ -34,7 +34,7 @@ class PriorMolecularTestFunctionsTest {
     fun `Should assume that measurement is TPS if cancer is (subtype of) lung cancer and measurement is not specified`() {
         val test1 = priorMolecularTest(test = "Archer", item = "PD-L1", measure = null)
         val test2 = priorMolecularTest(test = "IHC", item = "PD-L1", measure = null)
-        val filtered = allPDL1TestsWithSpecificMeasurement(listOf(test1, test2), "TPS", DoidConstants.LUNG_NON_SMALL_CELL_CANCER_DOID_SET)
+        val filtered = allPDL1TestsWithSpecificMeasurement(listOf(test1, test2), "TPS", DoidConstants.LUNG_CANCER_DOID_SET)
         assertThat(filtered).containsExactly(test2)
     }
 
