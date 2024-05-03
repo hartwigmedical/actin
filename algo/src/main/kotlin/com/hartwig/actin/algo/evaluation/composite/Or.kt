@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.composite
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 
 class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
@@ -13,6 +14,13 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
 
         val evaluations = evaluationsByResult[best]!!
 
-        return evaluations.fold(Evaluation(best, evaluations.any(Evaluation::recoverable)), Evaluation::addMessagesAndEvents)
+        val evaluation = evaluations.fold(Evaluation(best, evaluations.any(Evaluation::recoverable)), Evaluation::addMessagesAndEvents)
+
+        return if (best == EvaluationResult.PASS) {
+            evaluation.copy(
+                inclusionMolecularEvents = evaluation.inclusionMolecularEvents +
+                        (evaluationsByResult[EvaluationResult.WARN]?.flatMap(Evaluation::inclusionMolecularEvents) ?: emptyList())
+            )
+        } else evaluation
     }
 }
