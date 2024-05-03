@@ -49,7 +49,7 @@ class HasLimitedPDL1ByIHCTest {
 
     @Test
     fun `Should use any measurement type when requested measure in function is an empty string`() {
-        val function = HasLimitedPDL1ByIHC("", 2.0)
+        val function = HasLimitedPDL1ByIHC(null, 2.0)
         val molecular = listOf(
             MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", scoreValue = 0.5, measure = "wrong"),
         )

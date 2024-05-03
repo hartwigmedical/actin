@@ -11,9 +11,7 @@ class HasSufficientPDL1ByIHC internal constructor(private val measure: String?, 
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
-        val pdl1TestsWithRequestedMeasurement = if (measure != null) {
-            PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure)
-        } else PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests)
+        val pdl1TestsWithRequestedMeasurement = PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests, measure)
 
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
