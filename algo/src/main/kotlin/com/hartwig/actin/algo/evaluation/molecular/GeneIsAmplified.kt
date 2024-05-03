@@ -18,15 +18,13 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
         val ampsWithLossOfFunction: MutableSet<String> = mutableSetOf()
         val ampsOnNonOncogenes: MutableSet<String> = mutableSetOf()
         val ampsThatAreUnreportable: MutableSet<String> = mutableSetOf()
-        val ampsThatAreNearCutoff: MutableSet<String> = mutableSetOf()
         val evidenceSource = molecular.evidenceSource
 
         for (copyNumber in molecular.drivers.copyNumbers) {
             if (copyNumber.gene == gene) {
                 val relativeMinCopies = copyNumber.minCopies / ploidy
                 val relativeMaxCopies = copyNumber.maxCopies / ploidy
-                val isAmplification = relativeMaxCopies >= HARD_PLOIDY_FACTOR
-                val isNearAmp = relativeMinCopies >= SOFT_PLOIDY_FACTOR && relativeMaxCopies <= HARD_PLOIDY_FACTOR
+                val isAmplification = relativeMaxCopies >= PLOIDY_FACTOR
                 val isNoOncogene = copyNumber.geneRole == GeneRole.TSG
                 val isLossOfFunction = (copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION
                         || copyNumber.proteinEffect == ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
@@ -37,13 +35,11 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
                         ampsWithLossOfFunction.add(copyNumber.event)
                     } else if (!copyNumber.isReportable) {
                         ampsThatAreUnreportable.add(copyNumber.event)
-                    } else if (relativeMinCopies < HARD_PLOIDY_FACTOR) {
+                    } else if (relativeMinCopies < PLOIDY_FACTOR) {
                         reportablePartialAmps.add(copyNumber.event)
                     } else {
                         reportableFullAmps.add(copyNumber.event)
                     }
-                } else if (isNearAmp) {
-                    ampsThatAreNearCutoff.add(copyNumber.event)
                 }
             }
         }
@@ -57,7 +53,6 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
             ampsWithLossOfFunction,
             ampsOnNonOncogenes,
             ampsThatAreUnreportable,
-            ampsThatAreNearCutoff,
             evidenceSource
         )
         return potentialWarnEvaluation
@@ -66,8 +61,7 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
 
     private fun evaluatePotentialWarns(
         reportablePartialAmps: Set<String>, ampsWithLossOfFunction: Set<String>,
-        ampsOnNonOncogenes: Set<String>, ampsThatAreUnreportable: Set<String>,
-        ampsThatAreNearCutoff: Set<String>, evidenceSource: String
+        ampsOnNonOncogenes: Set<String>, ampsThatAreUnreportable: Set<String>, evidenceSource: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOf(
@@ -90,18 +84,12 @@ class GeneIsAmplified(private val gene: String) : MolecularEvaluationFunction {
                     ampsThatAreUnreportable,
                     "Gene $gene is amplified but not considered reportable",
                     "$gene amplification but considered not reportable"
-                ),
-                EventsWithMessages(
-                    ampsThatAreNearCutoff,
-                    "Gene $gene does not meet cut-off for amplification but is near cut-off",
-                    "$gene near cut-off for amplification"
                 )
             )
         )
     }
 
     companion object {
-        private const val SOFT_PLOIDY_FACTOR = 2.5
-        private const val HARD_PLOIDY_FACTOR = 3.0
+        private const val PLOIDY_FACTOR = 3.0
     }
 }
