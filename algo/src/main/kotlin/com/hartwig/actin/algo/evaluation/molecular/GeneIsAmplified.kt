@@ -66,8 +66,8 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
             .groupBy({ copyNumber -> CopyNumberEvaluation.fromCopyNumber(copyNumber, ploidy) }, valueTransform = CopyNumber::event)
             .mapValues { (_, copyNumberEvents) -> copyNumberEvents.toSet() }
 
+        val minCopyMessage = requestedMinCopyNumber?.let { " with >=$requestedMinCopyNumber copies" }
         return evaluatedCopyNumbers[CopyNumberEvaluation.REPORTABLE_FULL_AMP]?.let { reportableFullAmps ->
-            val minCopyMessage = requestedMinCopyNumber?.let { " with >=$requestedMinCopyNumber copies" }
             EvaluationFactory.pass(
                 "Amplification detected of gene $gene$minCopyMessage",
                 "$gene is amplified$minCopyMessage",
@@ -83,7 +83,8 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
             }
             ?: evaluatePotentialWarns(evaluatedCopyNumbers, molecular.evidenceSource)
             ?: EvaluationFactory.fail(
-                "No amplification detected of gene $gene with min copy number of $requestedMinCopyNumber", "No sufficient copies of $gene"
+                "No amplification detected of gene $gene$minCopyMessage",
+                if (requestedMinCopyNumber == null) "No amplification of $gene" else "Insufficient copies of $gene"
             )
     }
 
