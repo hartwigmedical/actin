@@ -14,7 +14,7 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val doidsToIgnore = doidTermsToIgnore.map(doidModel::resolveDoidForTerm).toSet()
+        val doidsToIgnore = doidTermsToIgnore.mapNotNull(doidModel::resolveDoidForTerm).toSet()
         val priorSecondPrimaries = record.priorSecondPrimaries
         val priorSecondPrimariesByDate = groupByDate(priorSecondPrimaries)
 
@@ -53,7 +53,7 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
     }
 
     private fun partitionDoidsOfInterest(
-        priorSecondPrimaries: List<PriorSecondPrimary>, doidsToIgnore: Set<String?>
+        priorSecondPrimaries: List<PriorSecondPrimary>, doidsToIgnore: Set<String>
     ): Pair<List<String>, List<String>> {
         return priorSecondPrimaries.flatMap(PriorSecondPrimary::doids)
             .partition { doidModel.doidWithParents(it).none(doidsToIgnore::contains) }
