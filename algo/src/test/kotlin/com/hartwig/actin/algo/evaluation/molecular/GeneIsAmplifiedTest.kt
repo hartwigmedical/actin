@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
@@ -9,9 +10,9 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import org.junit.Test
 
-class GeneIsAmplifiedTest {
-    private val function = GeneIsAmplified("gene A")
+private const val PLOIDY = 3.0
 
+class GeneIsAmplifiedTest {
     private val passingAmp = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene A",
         geneRole = GeneRole.ONCO,
@@ -21,45 +22,100 @@ class GeneIsAmplifiedTest {
         minCopies = 40,
         maxCopies = 40
     )
+    private val functionWithMinCopies = GeneIsAmplified("gene A", 5)
+    private val functionWithNoMinCopies = GeneIsAmplified("gene A", null)
 
     @Test
-    fun canEvaluate() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    fun `Should return undetermined when molecular record is empty`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, TestPatientFactory.createEmptyMolecularTestPatientRecord())
+    }
+    
+    @Test
+    fun `Should fail with minimal WGS record`() {
+        assertEvaluation(EvaluationResult.FAIL, TestPatientFactory.createMinimalTestWGSPatientRecord())
+    }
+    
+    @Test
+    fun `Should fail with null ploidy`() {
+        assertEvaluation(EvaluationResult.FAIL, MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp))
+    }
 
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp)))
+    @Test
+    fun `Should warn with non-oncogene`() {
+        assertEvaluation(
+            EvaluationResult.WARN, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(geneRole = GeneRole.TSG))
+        )
+    }
 
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp)))
+    @Test
+    fun `Should warn with loss of function effect`() {
+        assertEvaluation(
+            EvaluationResult.WARN,
+            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+        )
+    }
 
+    @Test
+    fun `Should warn with loss of function predicted effect`() {
+        assertEvaluation(
+            EvaluationResult.WARN,
+            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
+        )
+    }
+
+    @Test
+    fun `Should warn with unreportable amplification when no min copies requested`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(geneRole = GeneRole.TSG)))
+            functionWithNoMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(isReportable = false)))
         )
+    }
 
+    @Test
+    fun `Should pass with unreportable amplification when min copies requested and satisfied`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
-            )
+            EvaluationResult.PASS,
+            functionWithMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(isReportable = false)))
         )
-        
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(isReportable = false)))
-        )
-        
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 3)))
-        )
+    }
 
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 8, maxCopies = 8)))
-        )
-        
+    @Test
+    fun `Should pass with reportable full gain of function`() {
+        assertEvaluation(EvaluationResult.PASS, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp))
+    }
+
+    @Test
+    fun `Should fail when requested min copy number is not satisfied`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(3.0, passingAmp.copy(minCopies = 4, maxCopies = 4)))
+            functionWithMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 3)))
         )
+    }
+
+    @Test
+    fun `Should warn with reportable partial amplification`() {
+        assertEvaluation(EvaluationResult.WARN, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 6)))
+    }
+
+    @Test
+    fun `Should fail with copy numbers below amplification threshold`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 4, maxCopies = 4))
+        )
+    }
+
+    @Test
+    fun `Should warn with copy numbers below amplification threshold if requested min copy number is met`() {
+        val function = GeneIsAmplified("gene A", 4)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 4, maxCopies = 4)))
+        )
+    }
+
+    private fun assertEvaluation(result: EvaluationResult, record: PatientRecord) {
+        assertMolecularEvaluation(result, functionWithMinCopies.evaluate(record))
+        assertMolecularEvaluation(result, functionWithNoMinCopies.evaluate(record))
     }
 }
