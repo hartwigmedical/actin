@@ -19,7 +19,14 @@ class EhrMedicationExtractor(
 
     override fun extract(ehrPatientRecord: EhrPatientRecord): ExtractionResult<List<Medication>?> {
         return ExtractionResult(ehrPatientRecord.medications?.map {
-            val atcClassification = if (!it.isTrial && !it.isSelfCare) atcModel.resolveByCode(it.atcCode, "") else null
+            val atcClassification = if (!it.isTrial && !it.isSelfCare) atcModel.resolveByCode(
+                it.atcCode
+                    ?: throw IllegalStateException(
+                        "Patient '${ehrPatientRecord.patientDetails.hashedId}' had medication '${it.name}' with null atc code, " +
+                                "but is not a trial or self care"
+                    ),
+                ""
+            ) else null
             val atcNameOrInput = atcClassification?.chemicalSubstance?.name ?: it.name
             Medication(
                 name = atcNameOrInput,

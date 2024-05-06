@@ -6,7 +6,8 @@ object TestDoidManualConfigFactory {
         return DoidManualConfig(
             mainCancerDoids = emptySet(),
             adenoSquamousMappings = emptySet(),
-            additionalDoidsPerDoid = emptyMap()
+            additionalDoidsPerDoid = emptyMap(),
+            childToParentRelationshipsToExclude = emptySet()
         )
     }
 

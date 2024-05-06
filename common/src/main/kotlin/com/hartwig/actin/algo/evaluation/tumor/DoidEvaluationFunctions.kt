@@ -6,8 +6,8 @@ import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 
 object DoidEvaluationFunctions {
-
     private val LOGGER = LogManager.getLogger(DoidEvaluationFunctions::class.java)
+
     fun hasConfiguredDoids(tumorDoids: Set<String>?): Boolean {
         return !tumorDoids.isNullOrEmpty()
     }
@@ -17,41 +17,30 @@ object DoidEvaluationFunctions {
     }
 
     fun isOfAtLeastOneDoidType(doidModel: DoidModel, tumorDoids: Set<String>?, doidsToMatch: Set<String>): Boolean {
-        val fullExpandedDoidTree = createFullExpandedDoidTree(doidModel, tumorDoids)
-        for (doidToMatch in doidsToMatch) {
-            if (fullExpandedDoidTree.contains(doidToMatch)) {
-                return true
-            }
-        }
-        return false
+        return setsIntersect(createFullExpandedDoidTree(doidModel, tumorDoids), doidsToMatch)
     }
 
     fun isOfAtLeastOneDoidTerm(doidModel: DoidModel, tumorDoids: Set<String>?, doidTermsToMatch: Set<String>): Boolean {
-        for (doid in createFullExpandedDoidTree(doidModel, tumorDoids)) {
-            val term: String? = doidModel.resolveTermForDoid(doid)
+        return createFullExpandedDoidTree(doidModel, tumorDoids).any { doid ->
+            val term = doidModel.resolveTermForDoid(doid)
             if (term == null) {
                 LOGGER.warn("Could not resolve term for doid '{}'", doid)
+                false
             } else {
-                if (stringCaseInsensitivelyMatchesQueryCollection(term, doidTermsToMatch)) {
-                    return true
-                }
+                stringCaseInsensitivelyMatchesQueryCollection(term, doidTermsToMatch)
             }
         }
-        return false
     }
 
     fun isOfExactDoid(tumorDoids: Set<String>?, doidToMatch: String): Boolean {
-        return tumorDoids != null && tumorDoids == setOf(doidToMatch)
+        return tumorDoids == setOf(doidToMatch)
     }
 
     fun isOfDoidCombinationType(tumorDoids: Set<String>?, validDoidCombination: Set<String>): Boolean {
-        val validDoidCombinations: Set<Set<String>> = setOf(validDoidCombination)
-        return hasAtLeastOneCombinationOfDoids(tumorDoids, validDoidCombinations)
+        return hasAtLeastOneCombinationOfDoids(tumorDoids, setOf(validDoidCombination))
     }
 
-    fun isOfExclusiveDoidType(
-        doidModel: DoidModel, tumorDoids: Set<String>?, doidToMatch: String
-    ): Boolean {
+    fun isOfExclusiveDoidType(doidModel: DoidModel, tumorDoids: Set<String>?, doidToMatch: String): Boolean {
         return evaluateAllDoidsMatchWithFailAndWarns(
             doidModel, tumorDoids, setOf(doidToMatch), emptySet(), emptySet()
         ) == EvaluationResult.PASS
@@ -84,7 +73,7 @@ object DoidEvaluationFunctions {
     }
 
     fun createFullExpandedDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?): Set<String> {
-        return doidsToExpand?.flatMap { doidModel.doidWithParents(it) }?.toSet() ?: emptySet()
+        return doidsToExpand?.flatMap(doidModel::doidWithParents)?.toSet() ?: emptySet()
     }
 
     private fun <T> setsIntersect(setA: Set<T>, setB: Set<T>): Boolean {
