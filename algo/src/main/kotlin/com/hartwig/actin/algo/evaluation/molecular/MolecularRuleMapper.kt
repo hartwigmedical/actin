@@ -44,6 +44,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIHCCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
+            EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByIHCCreator(),
+            EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByCPSByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByCPSByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByTPSByIHCCreator(),
@@ -273,6 +275,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun proteinHasLimitedExpressionByIHCCreator(): FunctionCreator {
         return FunctionCreator { ProteinHasLimitedExpressionByIHCCreator() }
+    }
+
+    private fun hasSufficientPDL1ByIHCCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minPDL1 = functionInputResolver().createOneIntegerInput(function)
+            HasSufficientPDL1ByIHC(null, minPDL1.toDouble())
+        }
+    }
+
+    private fun hasLimitedPDL1ByIHCCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxPDL1 = functionInputResolver().createOneIntegerInput(function)
+            HasLimitedPDL1ByIHC(null, maxPDL1.toDouble())
+        }
     }
 
     private fun hasSufficientPDL1ByCPSByIHCCreator(): FunctionCreator {
