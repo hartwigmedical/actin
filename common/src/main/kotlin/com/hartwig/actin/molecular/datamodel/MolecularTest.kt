@@ -6,7 +6,9 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
@@ -97,6 +99,9 @@ data class IHCMolecularTest(
     }
 }
 
+private val FUSION_REGEX = Regex("([A-Z0-9])+ fusie aangetoond")
+private val EXON_SKIP_REGEX = Regex("([A-Z0-9]+) exon ([0-9]+(-[0-9]+)?) skipping aangetoond")
+
 data class ArcherMolecularTest(
     override val date: LocalDate? = null,
     override val result: ArcherPanel
@@ -113,22 +118,34 @@ data class ArcherMolecularTest(
             return results.filter { it.test == ARCHER_FP_LUNG_TARGET }
                 .groupBy { it.measureDate }
                 .map { (date, results) ->
-                    val variants = results.mapNotNull { result ->
-                        result.item?.let { item ->
-                            ArcherVariant(
-                                gene = item, hgvsCodingImpact = result.measure
-                                    ?: throw IllegalArgumentException("Expected measure with hgvs variant but was null for item $item")
-                            )
+                    val variantResults = results.filter { it.item != null && it.measure != null }
+                    val variants = variantResults
+                        .filter { it.measure!!.startsWith("c.") }
+                        .map { ArcherVariant(it.item!!, it.measure!!) }
+                    val fusions = variantResults
+                        .mapNotNull { FUSION_REGEX.find(it.measure!!)?.let { matchResult -> ArcherFusion(matchResult.groupValues[0]) } }
+                    val exonSkips = variantResults
+                        .mapNotNull {
+                            EXON_SKIP_REGEX.find(it.measure!!)?.let { matchResult ->
+                                val parsed = parseRange(matchResult.groupValues[1])
+                                ArcherSkippedExons(matchResult.groupValues[0], parsed.first, parsed.second)
+                            }
                         }
-                    }
 
-                    // TODO (kz): we haven't seen an example of fusions in the data yet,
-                    //  figure out how they are represented and add them here when we do
                     ArcherMolecularTest(
                         date = date,
-                        result = ArcherPanel(variants, fusions = emptyList())
+                        result = ArcherPanel(variants, fusions, exonSkips)
                     )
                 }
+        }
+
+        private fun parseRange(range: String): Pair<Int, Int> {
+            val parts = range.split("-")
+            return if (parts.size == 2) {
+                parts[0].toInt() to parts[1].toInt()
+            } else {
+                parts[0].toInt() to parts[0].toInt()
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NT
 data class ArcherPanel(
     val variants: List<ArcherVariant>,
     val fusions: List<ArcherFusion>,
+    val exonSkipping: List<ArcherSkippedExons>
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
@@ -23,15 +24,15 @@ data class ArcherPanel(
     }
 
     override fun eventsForGene(gene: String): List<PanelEvent> {
-        return variants.filter { it.gene == gene } + fusions.filter { it.geneStart == gene || it.geneEnd == gene }
+        return variants.filter { it.gene == gene } + fusions.filter { it.gene == gene }
     }
 
     fun genesWithVariants(): Set<String> {
         return variants.map { it.gene }.toSet()
     }
 
-    fun genesWithFusions(): Set<String> {
-        return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
+    private fun genesWithFusions(): Set<String> {
+        return fusions.flatMap { listOf(it.gene) }.toSet()
     }
 
     private fun genesHavingResultsInPanel(): Set<String> {

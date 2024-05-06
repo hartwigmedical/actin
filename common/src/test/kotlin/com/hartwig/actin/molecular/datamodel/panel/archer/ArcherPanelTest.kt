@@ -12,8 +12,9 @@ class ArcherPanelTest {
                 ArcherVariant("KRAS", "c.1A>T"),
             ),
             fusions = listOf(
-                ArcherFusion("RET", "MET"),
-            )
+                ArcherFusion("RET"),
+            ),
+            exonSkipping = listOf(ArcherSkippedExons("MET", 1, 4))
         )
 
         assertThat(archerPanel.testedGenes()).isEqualTo(setOf("KRAS", "RET", "MET") + ARCHER_ALWAYS_TESTED_GENES)
