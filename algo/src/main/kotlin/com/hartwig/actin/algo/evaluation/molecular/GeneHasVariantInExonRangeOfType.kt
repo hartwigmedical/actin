@@ -1,7 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
@@ -10,9 +13,15 @@ import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
     private val requiredVariantType: VariantTypeInput?
-) : MolecularEvaluationFunction {
+) : EvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(record: PatientRecord): Evaluation {
+        // clean up kz you lazy boy
+        return evaluateOrange(record.molecularHistory.latestOrangeMolecularRecord()!!)
+    }
+
+    private fun evaluateOrange(molecular: MolecularRecord): Evaluation {
+
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
         val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected"
@@ -76,6 +85,28 @@ class GeneHasVariantInExonRangeOfType(
                 )
             )
         )
+    }
+
+    private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
+
+        val warns = mutableListOf<String>()
+
+        for (panel in molecularHistory.allGenericPanels()) {
+            val variant = panel.variants.find { it.gene == gene }
+            if (variant != null) {
+                if (variant.affectedExon != null && hasEffectInExonRange(variant.affectedExon, minExon, maxExon)) {
+                    return EvaluationFactory.pass(
+                        "Variant in exon $minExon - $maxExon in gene $gene detected",
+                        "Variant in exon $minExon - $maxExon in gene $gene detected",
+                        inclusionEvents = variant.effects.map { toString() }.toSet()
+                    )
+                } else {
+                    warns.add("Variant in gene $gene detected but not in exon $minExon - $maxExon")
+                }
+            }
+
+        }
+        return null
     }
 
     companion object {

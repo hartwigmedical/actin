@@ -204,7 +204,8 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         for (panel in molecularHistory.allGenericPanels()) {
             for (variant in panel.variants) {
                 if (gene == variant.gene) {
-                    activatingVariants.add(variant.hgvsCodingImpact)
+                    TODO("replace with event() that can describe SNVs, exon deletions, etc")
+//                    activatingVariants.add(variant.hgvsCodingImpact)
                 }
             }
         }

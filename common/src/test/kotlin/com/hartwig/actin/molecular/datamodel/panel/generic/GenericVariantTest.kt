@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -13,6 +14,8 @@ class GenericVariantTest {
         val genericVariant = GenericVariant.parseVariant(priorMolecularTest)
         assertThat("gene").isEqualTo(genericVariant.gene)
         assertThat("c.A>T").isEqualTo(genericVariant.hgvsCodingImpact)
+        assertThat(genericVariant.affectedExon).isNull()
+        assertThat(genericVariant.effects).isEmpty()
     }
 
     @Test
@@ -26,8 +29,18 @@ class GenericVariantTest {
         invalidInputs.forEach { priorMolecularTest ->
             assertThatThrownBy { GenericVariant.parseVariant(priorMolecularTest) }
                 .isInstanceOf(IllegalArgumentException::class.java)
-                .hasMessage("Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}")
+                .hasMessage("Expected gene and variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}")
         }
+    }
+
+    @Test
+    fun `Should parse exon deletion`() {
+        val priorMolecularTest = priorMolecularTest(item = "gene", measure = "ex19 del")
+        val genericVariant = GenericVariant.parseVariant(priorMolecularTest)
+        assertThat("gene").isEqualTo(genericVariant.gene)
+        assertThat(genericVariant.hgvsCodingImpact).isNull()
+        assertThat(genericVariant.affectedExon).isEqualTo(19)
+        assertThat(genericVariant.effects).containsExactly(VariantEffect.INFRAME_DELETION)
     }
 
     companion object {
