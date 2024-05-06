@@ -18,6 +18,10 @@ data class MolecularHistory(
             .map { it.result as MolecularRecord }
     }
 
+    fun allPanels(): List<com.hartwig.actin.molecular.datamodel.panel.Panel> {
+        return listOf(allArcherPanels() + allGenericPanels()).flatten()
+    }
+
     fun allArcherPanels(): List<ArcherPanel> {
         return molecularTests.filter { it.type == ExperimentType.ARCHER }
             .map { it.result as ArcherPanel }
