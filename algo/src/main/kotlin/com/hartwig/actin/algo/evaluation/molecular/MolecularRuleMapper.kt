@@ -308,14 +308,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasLimitedPDL1ByTPSByIHCCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val maxPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
-            HasLimitedPDL1ByIHC("TPS", maxPDL1Percentage)
+            HasLimitedPDL1ByIHC("TPS", maxPDL1Percentage, doidModel())
         }
     }
 
     private fun hasSufficientPDL1ByTPSByIHCCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientPDL1ByIHC("TPS", minPDL1Percentage)
+            HasSufficientPDL1ByIHC("TPS", minPDL1Percentage, doidModel())
         }
     }
 

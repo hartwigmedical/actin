@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 
 internal object PriorMolecularTestFunctions {
@@ -10,11 +9,10 @@ internal object PriorMolecularTestFunctions {
 
     // For lung cancer the measurement type for PD-L1 is assumed to be TPS if not otherwise specified
     fun allPDL1Tests(
-        priorMolecularTests: List<PriorMolecularTest>, measureToFind: String? = null, doids: Set<String>? = null
+        priorMolecularTests: List<PriorMolecularTest>, measureToFind: String? = null, isLungCancer: Boolean? = null
     ): List<PriorMolecularTest> {
         val allPDL1Tests = allIHCTests(priorMolecularTests).filter { test -> test.item == PD_L1 }
-        return if (measureToFind == "TPS" && doids?.any { it in DoidConstants.LUNG_CANCER_DOID_SET } == true
-            && allPDL1Tests.all { it.measure == null }) {
+        return if (measureToFind == "TPS" && isLungCancer == true && allPDL1Tests.all { it.measure == null }) {
             allPDL1Tests
         } else {
             allPDL1Tests.filter { measureToFind == it.measure || measureToFind == null }

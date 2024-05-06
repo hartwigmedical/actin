@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.clinical.datamodel.TumorDetails
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import org.assertj.core.api.Assertions
 import org.junit.Test
@@ -70,11 +71,13 @@ class HasSufficientPDL1ByIHCTest {
 
     @Test
     fun `Should assume that measurement type is TPS if tumor type is non-small cell lung cancer and measurement is null`(){
+        val doidModel =
+            TestDoidModelFactory.createWithOneParentChild(DoidConstants.LUNG_CANCER_DOID, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             tumor = TumorDetails(
                 doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
             ), molecularHistory = MolecularHistory.fromInputs(emptyList(), listOf(pdl1Test.copy(measure = null, scoreValue = 3.0)))
         )
-        assertEvaluation(EvaluationResult.PASS, HasSufficientPDL1ByIHC("TPS", 2.0).evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, HasSufficientPDL1ByIHC("TPS", 2.0, doidModel).evaluate(record))
     }
 }
