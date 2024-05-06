@@ -12,10 +12,10 @@ internal object PriorMolecularTestFunctions {
         priorMolecularTests: List<PriorMolecularTest>, measureToFind: String? = null, isLungCancer: Boolean? = null
     ): List<PriorMolecularTest> {
         val allPDL1Tests = allIHCTests(priorMolecularTests).filter { test -> test.item == PD_L1 }
-        return if (measureToFind == "TPS" && isLungCancer == true && allPDL1Tests.all { it.measure == null }) {
+        return if (measureToFind == null || measureToFind == "TPS" && isLungCancer == true && allPDL1Tests.all { it.measure == null }) {
             allPDL1Tests
         } else {
-            allPDL1Tests.filter { measureToFind == it.measure || measureToFind == null }
+            allPDL1Tests.filter { measureToFind == it.measure }
         }
     }
 

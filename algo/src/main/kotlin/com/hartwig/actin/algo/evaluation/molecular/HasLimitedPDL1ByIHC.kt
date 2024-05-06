@@ -16,9 +16,7 @@ class HasLimitedPDL1ByIHC(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
-        val isLungCancer = doidModel?.let {
-            DoidEvaluationFunctions.isOfAtLeastOneDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID_SET)
-        }
+        val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
         val pdl1TestsWithRequestedMeasurement = PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests, measure, isLungCancer)
 
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {

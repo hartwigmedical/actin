@@ -49,7 +49,6 @@ class HasLimitedPDL1ByIHCTest {
         )
         val evaluation = function.evaluate(MolecularTestFactory.withPriorTests(molecular))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        println(evaluation.failGeneralMessages)
         Assertions.assertThat(evaluation.failGeneralMessages).containsExactly("PD-L1 tests not in correct unit ($MEASURE)")
     }
 
