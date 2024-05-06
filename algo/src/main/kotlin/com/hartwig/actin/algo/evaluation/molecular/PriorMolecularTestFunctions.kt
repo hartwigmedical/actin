@@ -8,21 +8,16 @@ internal object PriorMolecularTestFunctions {
     private const val PD_L1 = "PD-L1"
     private const val IHC = "IHC"
 
-    fun allPDL1Tests(priorMolecularTests: List<PriorMolecularTest>): List<PriorMolecularTest> {
-        return allIHCTests(priorMolecularTests).filter { it.item == PD_L1 }
-    }
-
     // For lung cancer the measurement type for PD-L1 is assumed to be TPS if not otherwise specified
-    fun allPDL1TestsWithSpecificMeasurement(
-        priorMolecularTests: List<PriorMolecularTest>,
-        measureToFind: String,
-        doids: Set<String>? = null
+    fun allPDL1Tests(
+        priorMolecularTests: List<PriorMolecularTest>, measureToFind: String? = null, doids: Set<String>? = null
     ): List<PriorMolecularTest> {
+        val allPDL1Tests = allIHCTests(priorMolecularTests).filter { test -> test.item == PD_L1 }
         return if (measureToFind == "TPS" && doids?.any { it in DoidConstants.LUNG_CANCER_DOID_SET } == true
-            && allPDL1Tests(priorMolecularTests).all { it.measure == null }) {
-            allPDL1Tests(priorMolecularTests)
+            && allPDL1Tests.all { it.measure == null }) {
+            allPDL1Tests
         } else {
-            allPDL1Tests(priorMolecularTests).filter { measureToFind == it.measure }
+            allPDL1Tests.filter { measureToFind == it.measure || measureToFind == null }
         }
     }
 

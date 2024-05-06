@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.priorMolecularTest
 import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allIHCTestsForProtein
 import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allPDL1Tests
-import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -26,7 +25,7 @@ class PriorMolecularTestFunctionsTest {
         val test2 = priorMolecularTest(test = "IHC", item = "PD-L1", measure = "CPS")
         val test3 = priorMolecularTest(test = "IHC", item = "PD-L1", measure = "wrong")
         val test4 = priorMolecularTest(test = "IHC", item = "BRAF")
-        val filtered = allPDL1TestsWithSpecificMeasurement(listOf(test1, test2, test3, test4), "CPS")
+        val filtered = allPDL1Tests(listOf(test1, test2, test3, test4), "CPS")
         assertThat(filtered).containsExactly(test2)
     }
 
@@ -34,7 +33,7 @@ class PriorMolecularTestFunctionsTest {
     fun `Should assume that measurement is TPS if cancer is (subtype of) lung cancer and measurement is not specified`() {
         val test1 = priorMolecularTest(test = "Archer", item = "PD-L1", measure = null)
         val test2 = priorMolecularTest(test = "IHC", item = "PD-L1", measure = null)
-        val filtered = allPDL1TestsWithSpecificMeasurement(listOf(test1, test2), "TPS", DoidConstants.LUNG_CANCER_DOID_SET)
+        val filtered = allPDL1Tests(listOf(test1, test2), "TPS", DoidConstants.LUNG_CANCER_DOID_SET)
         assertThat(filtered).containsExactly(test2)
     }
 

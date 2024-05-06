@@ -8,20 +8,20 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allPDL1Tests
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 
-class HasSufficientPDL1ByIHC internal constructor(private val measure: String, private val minPDL1: Double) : EvaluationFunction {
+class HasSufficientPDL1ByIHC internal constructor(private val measure: String?, private val minPDL1: Double) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
-        val pdl1TestsWithRequestedMeasurement =
-            PriorMolecularTestFunctions.allPDL1TestsWithSpecificMeasurement(priorMolecularTests, measure, record.tumor.doids)
+        val pdl1TestsWithRequestedMeasurement = allPDL1Tests(priorMolecularTests, measure, record.tumor.doids)
 
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {
                 val evaluation = evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minPDL1)
                 if (evaluation == EvaluationResult.PASS) {
+                    val measureMessage = if (measure != null) " measured by $measure" else ""
                     return EvaluationFactory.pass(
-                        "PD-L1 expression measured by $measure meets at least desired level of $minPDL1",
+                        "PD-L1 expression$measureMessage meets at least desired level of $minPDL1",
                         "PD-L1 expression exceeds $minPDL1"
                     )
                 }

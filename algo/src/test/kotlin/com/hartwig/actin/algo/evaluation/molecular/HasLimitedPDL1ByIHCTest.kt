@@ -48,7 +48,18 @@ class HasLimitedPDL1ByIHCTest {
         )
         val evaluation = function.evaluate(MolecularTestFactory.withPriorTests(molecular))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
+        println(evaluation.failGeneralMessages)
         Assertions.assertThat(evaluation.failGeneralMessages).containsExactly("PD-L1 tests not in correct unit ($MEASURE)")
+    }
+
+    @Test
+    fun `Should use any measurement type when requested measure in function is an empty string`() {
+        val function = HasLimitedPDL1ByIHC(null, 2.0)
+        val molecular = listOf(
+            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", scoreValue = 0.5, measure = "wrong"),
+        )
+        val evaluation = function.evaluate(MolecularTestFactory.withPriorTests(molecular))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
     }
 
     @Test

@@ -39,6 +39,16 @@ class HasSufficientPDL1ByIHCTest {
     }
 
     @Test
+    fun `Should use any measurement type when requested measure in function is an empty string`() {
+        val function = HasSufficientPDL1ByIHC(null, 2.0)
+        val molecular = listOf(
+            MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", scoreValue = 2.5, measure = "wrong"),
+        )
+        val evaluation = function.evaluate(MolecularTestFactory.withPriorTests(molecular))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+    }
+
+    @Test
     fun `Should fail when test value is too low`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTests(listOf(pdl1Test.copy(scoreValue = 1.0))))
