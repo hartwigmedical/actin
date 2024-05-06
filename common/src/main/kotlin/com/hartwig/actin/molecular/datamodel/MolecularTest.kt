@@ -159,7 +159,7 @@ data class GenericPanelMolecularTest(
                     val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
                     val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
 
-                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, fusions, variants))
+                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, variants, fusions))
                 }
         }
 

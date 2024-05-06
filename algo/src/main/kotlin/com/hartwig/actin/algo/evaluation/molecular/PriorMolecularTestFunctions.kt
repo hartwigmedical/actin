@@ -7,8 +7,10 @@ internal object PriorMolecularTestFunctions {
     private const val PD_L1 = "PD-L1"
     private const val IHC = "IHC"
 
-    fun allPDL1Tests(priorMolecularTests: List<PriorMolecularTest>): List<PriorMolecularTest> {
-        return allIHCTests(priorMolecularTests).filter { it.item == PD_L1 }
+    fun allPDL1Tests(priorMolecularTests: List<PriorMolecularTest>, measureToFind: String? = null): List<PriorMolecularTest> {
+        return allIHCTests(priorMolecularTests).filter { test ->
+            test.item == PD_L1 && (measureToFind == null || measureToFind == test.measure)
+        }
     }
 
     fun allPDL1TestsWithSpecificMeasurement(

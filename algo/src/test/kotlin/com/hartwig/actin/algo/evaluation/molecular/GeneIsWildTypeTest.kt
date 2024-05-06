@@ -219,4 +219,38 @@ class GeneIsWildTypeTest {
             )
         )
     }
+
+    @Test
+    fun `Should pass for tested gene having no event in panel `() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+            .copy(molecularHistory = MolecularHistoryFactory.withEmptyArcherPanel())
+        val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluationResult)
+    }
+
+    @Test
+    fun `Should be undetermined for gene not tested in panel`() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+            .copy(molecularHistory = MolecularHistoryFactory.withEmptyArcherPanel())
+        val evaluationResult = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluationResult)
+    }
+
+    @Test
+    fun `Should fail for gene with variant in archer panels`() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+            .copy(molecularHistory = MolecularHistoryFactory.withArcherVariant(MATCHING_GENE, "c.1234A>T"))
+
+        val evaluationResult = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
+    }
+
+    @Test
+    fun `Should fail for gene with fusion in archer panels`() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+            .copy(molecularHistory = MolecularHistoryFactory.withArcherFusion(MATCHING_GENE, "c.1234A>T"))
+
+        val evaluationResult = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
+    }
 }

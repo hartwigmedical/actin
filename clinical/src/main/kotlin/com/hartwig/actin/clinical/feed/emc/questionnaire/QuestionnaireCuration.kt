@@ -51,7 +51,8 @@ internal object QuestionnaireCuration {
         "no total resection" to false,
         "probably" to null,
         "ye" to true,
-        "possible" to null
+        "possible" to null,
+        "onbekend" to null,
     )
 
     private val STAGE_MAPPING = mapOf(

@@ -47,7 +47,8 @@ class ClinicalIngestionFeedAdapterTest {
                     "11335" to CurationDoidValidator.DISEASE_DOID,
                     "0060500" to CurationDoidValidator.DISEASE_DOID,
                     "0081062" to CurationDoidValidator.DISEASE_DOID
-                )
+                ),
+                emptySet()
             )
         )
         curationDatabase = CurationDatabaseContext.create(

@@ -140,7 +140,8 @@ class MolecularHistoryTest {
             date = null,
             result = GenericPanel(
                 GenericPanelType.FREE_TEXT,
-                listOf(GenericFusion("geneUp", "geneDown"))
+                variants = emptyList(),
+                fusions = listOf(GenericFusion("geneUp", "geneDown"))
             )
         )
         assertThat(molecularTests).containsExactly(expected)

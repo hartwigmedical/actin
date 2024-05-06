@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 
 data class GenericVariant(
@@ -8,7 +9,7 @@ data class GenericVariant(
     val hgvsCodingImpact: String? = null,
     val affectedExon: Int? = null,
     val effects: Set<VariantEffect> = emptySet()
-) {
+) : PanelEvent {
     companion object {
         fun parseVariant(priorMolecularTest: PriorMolecularTest): GenericVariant {
             return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
@@ -23,5 +24,9 @@ data class GenericVariant(
                 throw IllegalArgumentException("Expected gene and variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}")
             }
         }
+    }
+
+    override fun event(): String {
+        return "$gene $hgvsCodingImpact"
     }
 }

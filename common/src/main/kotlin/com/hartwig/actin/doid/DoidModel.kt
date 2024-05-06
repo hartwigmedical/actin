@@ -11,11 +11,7 @@ data class DoidModel(
 ) {
 
     fun doidWithParents(doid: String): Set<String> {
-        val expandedDoids = expandedWithAllParents(doid)
-        val additionalDoids = expandedDoids.mapNotNull { doidManualConfig.additionalDoidsPerDoid[it] }
-            .flatMap(::expandedWithAllParents)
-            .toSet()
-        return expandedDoids + additionalDoids
+        return expandedDoidSet(setOf(doid), emptySet())
     }
 
     fun mainCancerDoids(doid: String): Set<String> {
@@ -35,17 +31,13 @@ data class DoidModel(
         return doidForLowerCaseTermMap[term.lowercase()]
     }
 
-    private fun expandedWithAllParents(doid: String): Set<String> {
-        return expandedDoidSet(setOf(doid), emptySet())
-    }
-
     private tailrec fun expandedDoidSet(doidsToExpand: Set<String>, expandedDoids: Set<String>): Set<String> {
         if (doidsToExpand.isEmpty()) {
             return expandedDoids
         }
         val nextDoid = doidsToExpand.first()
         val newDoids = if (nextDoid in expandedDoids) emptySet() else {
-            childToParentsMap[nextDoid] ?: emptySet()
+            (childToParentsMap[nextDoid] ?: emptyList()) + listOfNotNull(doidManualConfig.additionalDoidsPerDoid[nextDoid])
         }
         return expandedDoidSet(doidsToExpand + newDoids - nextDoid, expandedDoids + nextDoid)
     }

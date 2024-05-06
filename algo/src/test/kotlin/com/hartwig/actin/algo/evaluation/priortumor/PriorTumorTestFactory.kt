@@ -11,6 +11,7 @@ internal object PriorTumorTestFactory {
     fun priorSecondPrimary(
         doid: String? = null,
         diagnosedYear: Int? = null,
+        diagnosedMonth: Int? = null,
         lastTreatmentYear: Int? = null,
         lastTreatmentMonth: Int? = null,
         status: TumorStatus = TumorStatus.INACTIVE
@@ -22,6 +23,7 @@ internal object PriorTumorTestFactory {
             tumorSubType = "",
             doids = setOfNotNull(doid),
             diagnosedYear = diagnosedYear,
+            diagnosedMonth = diagnosedMonth,
             treatmentHistory = "",
             lastTreatmentYear = lastTreatmentYear,
             lastTreatmentMonth = lastTreatmentMonth,
