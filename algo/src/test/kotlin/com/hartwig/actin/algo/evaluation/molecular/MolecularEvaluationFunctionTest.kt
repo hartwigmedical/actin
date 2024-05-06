@@ -13,11 +13,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val OVERRIDE_MESSAGE = "Override message"
+private const val FAIL_SPECIFIC_MESSAGE = "Fail specific message"
+private const val FAIL_GENERAL_MESSAGE = "Fail general message"
 
 class MolecularEvaluationFunctionTest {
     private val function = object : MolecularEvaluationFunction {
         override fun evaluate(molecular: MolecularRecord): Evaluation {
-            return EvaluationFactory.fail("Fail specific message", "Fail general message")
+            return EvaluationFactory.fail(FAIL_SPECIFIC_MESSAGE, FAIL_GENERAL_MESSAGE)
         }
     }
 
@@ -27,6 +29,15 @@ class MolecularEvaluationFunctionTest {
         }
 
         override fun noMolecularRecordEvaluation() = EvaluationFactory.fail(OVERRIDE_MESSAGE)
+    }
+
+    private val functionOnMolecularHistory = object : MolecularEvaluationFunction {
+        override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+            return EvaluationFactory.fail(
+                FAIL_SPECIFIC_MESSAGE,
+                FAIL_GENERAL_MESSAGE
+            )
+        }
     }
 
     @Test
@@ -54,8 +65,8 @@ class MolecularEvaluationFunctionTest {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failSpecificMessages).containsExactly("Fail specific message")
-        assertThat(evaluation.failGeneralMessages).containsExactly("Fail general message")
+        assertThat(evaluation.failSpecificMessages).containsExactly(FAIL_SPECIFIC_MESSAGE)
+        assertThat(evaluation.failGeneralMessages).containsExactly(FAIL_GENERAL_MESSAGE)
     }
 
     @Test
@@ -69,6 +80,15 @@ class MolecularEvaluationFunctionTest {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(molecularHistory = MolecularHistory.fromInputs(emptyList(), listOf(archerPriorMolecularNoFusionsFoundRecord())))
         assertOverrideEvaluation(patient)
+    }
+
+    @Test
+    fun `Should evaluate molecular history when available`() {
+        val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
+        val evaluation = functionOnMolecularHistory.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failSpecificMessages).containsExactly(FAIL_SPECIFIC_MESSAGE)
+        assertThat(evaluation.failGeneralMessages).containsExactly(FAIL_GENERAL_MESSAGE)
     }
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
