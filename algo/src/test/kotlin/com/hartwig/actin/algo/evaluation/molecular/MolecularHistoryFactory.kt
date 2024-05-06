@@ -15,7 +15,7 @@ internal object MolecularHistoryFactory {
                     date = null, result = ArcherPanel(
                         variants = listOf(ArcherVariant(gene = gene, hgvsCodingImpact = hgvsCodingImpact)),
                         fusions = emptyList(),
-                        exonSkipping = emptyList()
+                        skippedExons = emptyList()
                     )
                 )
             )
@@ -29,7 +29,7 @@ internal object MolecularHistoryFactory {
                     date = null, result = ArcherPanel(
                         variants = emptyList(),
                         fusions = listOf(ArcherFusion(gene = geneStart)),
-                        exonSkipping = emptyList()
+                        skippedExons = emptyList()
                     )
                 )
             )
@@ -43,7 +43,7 @@ internal object MolecularHistoryFactory {
                     date = null, result = ArcherPanel(
                         variants = emptyList(),
                         fusions = emptyList(),
-                        exonSkipping = emptyList()
+                        skippedExons = emptyList()
                     )
                 )
             )

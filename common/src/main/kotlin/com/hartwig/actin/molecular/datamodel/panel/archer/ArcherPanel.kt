@@ -8,7 +8,7 @@ val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NT
 data class ArcherPanel(
     val variants: List<ArcherVariant>,
     val fusions: List<ArcherFusion>,
-    val exonSkipping: List<ArcherSkippedExons>
+    val skippedExons: List<ArcherSkippedExons>
 ) : Panel {
 
     override fun testedGenes(): Set<String> {

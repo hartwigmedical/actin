@@ -18,9 +18,9 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class GeneHasActivatingMutationTest {
     private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
@@ -245,8 +245,11 @@ class GeneHasActivatingMutationTest {
     @Test
     fun `Should pass and aggregate findings for gene with mutation in Archer panel and also in Orange molecular`() {
         val base = MolecularTestFactory.withHasTumorMutationalLoadAndVariants(false, ACTIVATING_VARIANT)
-        val patient = base.copy(molecularHistory = MolecularHistory(
-            base.molecularHistory.molecularTests + listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)))
+        val patient = base.copy(
+            molecularHistory = MolecularHistory(
+                base.molecularHistory.molecularTests + listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)
+            )
+        )
 
         val evaluation = functionNotIgnoringCodons.evaluate(patient)
 
@@ -338,7 +341,8 @@ class GeneHasActivatingMutationTest {
                         hgvsCodingImpact = "c.1A>T",
                     ),
                 ),
-                fusions = emptyList()
+                fusions = emptyList(),
+                skippedExons = emptyList()
             )
         )
 
@@ -346,7 +350,8 @@ class GeneHasActivatingMutationTest {
             date = TEST_DATE,
             result = ArcherPanel(
                 variants = emptyList(),
-                fusions = emptyList()
+                fusions = emptyList(),
+                skippedExons = emptyList()
             )
         )
 

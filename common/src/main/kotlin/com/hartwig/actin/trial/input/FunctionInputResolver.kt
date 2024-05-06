@@ -33,6 +33,7 @@ import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
+import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
@@ -45,9 +46,9 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
+import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
@@ -179,6 +180,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_INTEGER_MANY_STRINGS -> {
                     createOneIntegerManyStringsInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
+                    createOneIntegerManyDoidTermsInput(function)
                     return true
                 }
 
@@ -476,6 +482,19 @@ class FunctionInputResolver(
         return OneIntegerManyStrings(
             integer = parameterAsInt(function, 0),
             strings = toStringList(function.parameters[1])
+        )
+    }
+
+    fun createOneIntegerManyDoidTermsInput(function: EligibilityFunction): OneIntegerManyDoidTerms {
+        assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_DOID_TERMS, 2)
+        val doidStringList = toStringList(function.parameters[1])
+        val invalidTerms = doidStringList.filter { doidModel.resolveDoidForTerm(it) == null }
+        if (invalidTerms.isNotEmpty()) {
+            throw IllegalStateException("DOID term(s) not valid: ${invalidTerms.joinToString(", ")}")
+        }
+        return OneIntegerManyDoidTerms(
+            integer = parameterAsInt(function, 0),
+            doidTerms = doidStringList
         )
     }
 

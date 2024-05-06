@@ -12,7 +12,7 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val exonSkipInArcher = record.molecularHistory.allArcherPanels().flatMap { it.exonSkipping }
+        val exonSkipInArcher = record.molecularHistory.allArcherPanels().flatMap { it.skippedExons }
             .any { it.gene == gene && exonToSkip in it.start..it.end }
 
         val molecular = record.molecularHistory.latestOrangeMolecularRecord()

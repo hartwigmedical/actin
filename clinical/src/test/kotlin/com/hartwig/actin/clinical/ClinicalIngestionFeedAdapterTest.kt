@@ -18,11 +18,11 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import com.hartwig.actin.util.json.GsonSerializer
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.Before
 import org.junit.Test
-import java.io.File
 
 private const val PATIENT = "ACTN01029999"
 private val EXPECTED_CLINICAL_RECORD = "${resourceOnClasspath("clinical_record")}/$PATIENT.clinical.json"
@@ -47,7 +47,8 @@ class ClinicalIngestionFeedAdapterTest {
                     "11335" to CurationDoidValidator.DISEASE_DOID,
                     "0060500" to CurationDoidValidator.DISEASE_DOID,
                     "0081062" to CurationDoidValidator.DISEASE_DOID
-                )
+                ),
+                emptySet()
             )
         )
         curationDatabase = CurationDatabaseContext.create(
