@@ -332,6 +332,25 @@ object TestMolecularFactory {
         )
     }
 
+    fun archerPriorMolecularFusionRecord(gene: String?, date: LocalDate? = null): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = "Archer FP Lung Target",
+            item = gene,
+            measure = "$gene fusie aangetoond",
+            measureDate = date,
+            impliesPotentialIndeterminateStatus = false
+        )
+    }
+
+    fun archerExonSkippingRecord(gene: String, skippingRange: String): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = "Archer FP Lung Target",
+            item = gene,
+            measure = "$gene exon $skippingRange skipping aangetoond",
+            impliesPotentialIndeterminateStatus = false
+        )
+    }
+
     fun archerPriorMolecularNoFusionsFoundRecord(date: LocalDate? = null): PriorMolecularTest {
         return archerPriorMolecularVariantRecord(null, "GEEN fusie(s) aangetoond", date)
     }

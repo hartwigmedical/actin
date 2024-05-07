@@ -191,23 +191,10 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
 
     private fun findActivatingMutationsInPanels(molecularHistory: MolecularHistory): Evaluation? {
 
-        val activatingVariants: MutableSet<String> = mutableSetOf()
-
-        for (panel in molecularHistory.allArcherPanels()) {
-            for (variant in panel.variants) {
-                if (gene == variant.gene) {
-                    activatingVariants.add(variant.hgvsCodingImpact)
-                }
-            }
-        }
-
-        for (panel in molecularHistory.allGenericPanels()) {
-            for (variant in panel.variants) {
-                if (gene == variant.gene) {
-                    activatingVariants.add(variant.hgvsCodingImpact)
-                }
-            }
-        }
+        val activatingVariants = molecularHistory.allPanels()
+            .flatMap { panel -> panel.events() }
+            .filter { variant -> variant.impactsGene(gene) }
+            .map { variant -> variant.eventDisplay() }.toSet()
 
         if (activatingVariants.isNotEmpty())
             return EvaluationFactory.pass(

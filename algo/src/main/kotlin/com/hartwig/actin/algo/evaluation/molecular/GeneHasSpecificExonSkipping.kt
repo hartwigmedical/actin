@@ -12,8 +12,8 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val exonSkipInArcher = record.molecularHistory.allArcherPanels().flatMap { it.skippedExons }
-            .any { it.gene == gene && exonToSkip in it.start..it.end }
+        val archerExonSkippingEvents = record.molecularHistory.allArcherPanels().flatMap { it.skippedExons }
+            .filter { it.impactsGene(gene) && exonToSkip == it.start && exonToSkip == it.end }.map { it.eventDisplay() }
 
         val molecular = record.molecularHistory.latestOrangeMolecularRecord()
         val fusionSkippingEvents = molecular?.drivers?.fusions?.filter { fusion ->
@@ -34,11 +34,11 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
             ?.toSet() ?: emptySet()
 
         return when {
-            fusionSkippingEvents.isNotEmpty() || exonSkipInArcher -> {
+            fusionSkippingEvents.isNotEmpty() || archerExonSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}",
                     "Exon $exonToSkip skipping in $gene",
-                    inclusionEvents = fusionSkippingEvents
+                    inclusionEvents = fusionSkippingEvents + archerExonSkippingEvents
                 )
             }
 

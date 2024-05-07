@@ -129,29 +129,17 @@ class HasFusionInGene(private val gene: String) : EvaluationFunction {
     }
 
     private fun findMatchingFusionsInPanels(molecularHistory: MolecularHistory): Evaluation? {
-        val matchedFusionsInGenericPanels = molecularHistory.allGenericPanels()
-            .flatMap { panel ->
-                panel.fusions.filter { fusion ->
-                    fusion.geneStart == gene || fusion.geneEnd == gene
-                }.map { fusion ->
-                    "${fusion.geneStart} - ${fusion.geneEnd} fusion"
-                }
-            }.toSet()
+        val matchedFusions = molecularHistory.allPanels()
+            .flatMap { it.fusions() }
+            .filter { it.impactsGene(gene) }
+            .map { it.eventDisplay() }
+            .toSet()
 
-        val matchedFusionsInArcherPanels = molecularHistory.allArcherPanels()
-            .flatMap { panel ->
-                panel.fusions.filter { fusion ->
-                    fusion.gene == gene
-                }.map { fusion ->
-                    "${fusion.gene} - fusion"
-                }
-            }.toSet()
-
-        if (matchedFusionsInGenericPanels.isNotEmpty() || matchedFusionsInArcherPanels.isNotEmpty()) {
+        if (matchedFusions.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "Fusion(s) ${concat(matchedFusionsInGenericPanels)} detected in gene $gene in panel(s)",
+                "Fusion(s) ${concat(matchedFusions)} detected in gene $gene in panel(s)",
                 "Fusion(s) detected in gene $gene",
-                inclusionEvents = matchedFusionsInGenericPanels
+                inclusionEvents = matchedFusions
             )
         }
 

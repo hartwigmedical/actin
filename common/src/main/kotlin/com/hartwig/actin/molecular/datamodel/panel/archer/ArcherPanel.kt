@@ -12,26 +12,22 @@ data class ArcherPanel(
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
-        return genesHavingResultsInPanel() + alwaysTestedGenes()
+        return genesHavingResultsInPanel() + ARCHER_ALWAYS_TESTED_GENES
     }
 
-    override fun alwaysTestedGenes(): Set<String> {
-        return ARCHER_ALWAYS_TESTED_GENES
+    override fun variants(): List<PanelEvent> {
+        return variants
     }
 
-    override fun events(): List<PanelEvent> {
-        return variants + fusions
-    }
-
-    override fun eventsForGene(gene: String): List<PanelEvent> {
-        return variants.filter { it.gene == gene } + fusions.filter { it.gene == gene }
+    override fun fusions(): List<PanelEvent> {
+        return fusions
     }
 
     fun genesWithVariants(): Set<String> {
         return variants.map { it.gene }.toSet()
     }
 
-    private fun genesWithFusions(): Set<String> {
+    fun genesWithFusions(): Set<String> {
         return fusions.flatMap { listOf(it.gene) }.toSet()
     }
 

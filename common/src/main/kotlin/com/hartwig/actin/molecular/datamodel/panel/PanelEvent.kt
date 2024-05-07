@@ -1,5 +1,8 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
 interface PanelEvent {
-    fun event(): String
+
+    fun impactsGene(gene: String): Boolean
+
+    fun eventDisplay(): String
 }

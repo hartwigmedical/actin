@@ -77,8 +77,6 @@ data class WGSMolecularTest(
             return WGSMolecularTest(result.type, result.date, result)
         }
     }
-
-
 }
 
 data class IHCMolecularTest(
@@ -99,8 +97,8 @@ data class IHCMolecularTest(
     }
 }
 
-private val FUSION_REGEX = Regex("([A-Z0-9])+ fusie aangetoond")
-private val EXON_SKIP_REGEX = Regex("([A-Z0-9]+) exon ([0-9]+(-[0-9]+)?) skipping aangetoond")
+private val FUSION_REGEX = Regex("([A-Za-z0-9 ]+)( fusie aangetoond)")
+private val EXON_SKIP_REGEX = Regex("([A-Za-z0-9 ]+)( exon )([0-9]+(-[0-9]+)?)( skipping aangetoond)")
 
 data class ArcherMolecularTest(
     override val date: LocalDate? = null,
@@ -123,12 +121,12 @@ data class ArcherMolecularTest(
                         .filter { it.measure!!.startsWith("c.") }
                         .map { ArcherVariant(it.item!!, it.measure!!) }
                     val fusions = variantResults
-                        .mapNotNull { FUSION_REGEX.find(it.measure!!)?.let { matchResult -> ArcherFusion(matchResult.groupValues[0]) } }
+                        .mapNotNull { FUSION_REGEX.find(it.measure!!)?.let { matchResult -> ArcherFusion(matchResult.groupValues[1]) } }
                     val exonSkips = variantResults
                         .mapNotNull {
                             EXON_SKIP_REGEX.find(it.measure!!)?.let { matchResult ->
-                                val parsed = parseRange(matchResult.groupValues[1])
-                                ArcherSkippedExons(matchResult.groupValues[0], parsed.first, parsed.second)
+                                val parsed = parseRange(matchResult.groupValues[3])
+                                ArcherSkippedExons(matchResult.groupValues[1], parsed.first, parsed.second)
                             }
                         }
 

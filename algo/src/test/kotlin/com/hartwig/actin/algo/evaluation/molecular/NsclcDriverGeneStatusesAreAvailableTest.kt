@@ -12,6 +12,8 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMol
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
+private const val HGVS_VARIANT = "c.123C<T"
+
 class NsclcDriverGeneStatusesAreAvailableTest {
 
     @Test
@@ -35,7 +37,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                createNonWGSRecordWithOptionalPriorTests(NSCLC_DRIVER_GENE_SET.map { archerPriorMolecularVariantRecord(it, "") })
+                createNonWGSRecordWithOptionalPriorTests(NSCLC_DRIVER_GENE_SET.map { archerPriorMolecularVariantRecord(it, HGVS_VARIANT) })
             )
         )
     }
@@ -72,7 +74,8 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     @Test
     fun `Should fail with specific message if no WGS or targeted panel analysis in history and other panels only cover part of the target genes`() {
         val evaluation = function.evaluate(
-            createNonWGSRecordWithOptionalPriorTests(NSCLC_DRIVER_GENE_SET.drop(1).map { archerPriorMolecularVariantRecord(it, "") })
+            createNonWGSRecordWithOptionalPriorTests(
+                NSCLC_DRIVER_GENE_SET.drop(1).map { archerPriorMolecularVariantRecord(it, HGVS_VARIANT) })
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
         Assertions.assertThat(evaluation.failSpecificMessages).containsExactly(

@@ -32,7 +32,11 @@ class PriorMolecularTestInterpreter : MolecularTestVisitor {
 
     override fun visit(test: ArcherMolecularTest) {
         test.result.variants.forEach { interpretationBuilder.addInterpretation(test.type.display(), it.gene, it.hgvsCodingImpact) }
-        interpretImpliedNegatives(test.type, test.result, test.result.genesWithVariants())
+        interpretImpliedNegatives(
+            test.type,
+            test.result,
+            test.result.genesWithVariants() + test.result.genesWithFusions()
+        )
     }
 
     override fun visit(test: GenericPanelMolecularTest) {
