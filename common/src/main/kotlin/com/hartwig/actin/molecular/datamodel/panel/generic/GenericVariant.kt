@@ -1,8 +1,10 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
+
+private val EXON_DELETION_REGEX = Regex("ex(\\d+) del")
 
 data class GenericVariant(
     val gene: String,
@@ -13,7 +15,7 @@ data class GenericVariant(
     companion object {
         fun parseVariant(priorMolecularTest: PriorMolecularTest): GenericVariant {
             return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
-                val exonMatch = Regex("ex(\\d+) del").find(priorMolecularTest.measure)
+                val exonMatch = EXON_DELETION_REGEX.find(priorMolecularTest.measure)
                 if (exonMatch != null) {
                     val exon = exonMatch.groupValues[1].toInt()
                     GenericVariant(gene = priorMolecularTest.item, affectedExon = exon, effects = setOf(VariantEffect.INFRAME_DELETION))

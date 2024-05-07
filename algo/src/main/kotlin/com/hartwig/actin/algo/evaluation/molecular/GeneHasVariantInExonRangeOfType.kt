@@ -1,23 +1,32 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
     private val gene: String, private val minExon: Int, private val maxExon: Int,
     private val requiredVariantType: VariantTypeInput?
-) : EvaluationFunction {
+) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        // clean up kz you lazy boy
-        return evaluateOrange(record.molecularHistory.latestOrangeMolecularRecord()!!)
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+        val orangeEvaluations = evaluateOrange(molecularHistory.latestOrangeMolecularRecord()!!)
+        val panelEvaluations = evaluatePanel(molecularHistory)
+
+        // write a helper to merge the evaluations, and use it here and elsewhere if we are
+        // sticking with that pattern
+        // also, shouldn't we merge the evals when they are the same type, e.g.
+        // if orange gives something and panel another thing (for some reason), should we
+        // merge or just return the orange result?
+        return orangeEvaluations ?: panelEvaluations ?: EvaluationFactory.fail(
+            "No variant in exon $minExon - $maxExon in gene $gene detected",
+            "No variant in exon $minExon - $maxExon in gene $gene detected"
+        )
     }
 
     private fun evaluateOrange(molecular: MolecularRecord): Evaluation {
@@ -89,24 +98,31 @@ class GeneHasVariantInExonRangeOfType(
 
     private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
 
-        val warns = mutableListOf<String>()
-
-        for (panel in molecularHistory.allGenericPanels()) {
-            val variant = panel.variants.find { it.gene == gene }
-            if (variant != null) {
-                if (variant.affectedExon != null && hasEffectInExonRange(variant.affectedExon, minExon, maxExon)) {
-                    return EvaluationFactory.pass(
-                        "Variant in exon $minExon - $maxExon in gene $gene detected",
-                        "Variant in exon $minExon - $maxExon in gene $gene detected",
-                        inclusionEvents = variant.effects.map { toString() }.toSet()
-                    )
-                } else {
-                    warns.add("Variant in gene $gene detected but not in exon $minExon - $maxExon")
+        val matches = molecularHistory.allGenericPanels().flatMap { panel ->
+            panel.variants
+                .filter { variant -> variant.gene == gene }
+                .filter { variant ->
+                    variant.affectedExon != null &&
+                            hasEffectInExonRange(variant.affectedExon, minExon, maxExon) &&
+                            // argh how do i model inframe_deletions? there's varianteffect, varainttype and variantinputtype
+                            variant.effects.contains(effectForVariantType(requiredVariantType))
                 }
-            }
+                .map { variant -> variant.event() }
+        }.toSet()
 
+        // and what about archer variants?
+
+        if (matches.isNotEmpty()) {
+            return EvaluationFactory.pass(
+                "Variant in exon $minExon - $maxExon in gene $gene detected",
+                "Variant in exon $minExon - $maxExon in gene $gene detected",
+                inclusionEvents = matches
+            )
+        } else {
+            // should we return a fail if variant is tested, and undetermined (insufficient data) if not tested?
+            return null
         }
-        return null
+
     }
 
     companion object {
@@ -167,6 +183,18 @@ class GeneHasVariantInExonRangeOfType(
                 else -> {
                     throw IllegalStateException("Could not map required variant type: $requiredVariantType")
                 }
+            }
+        }
+
+        private fun effectForVariantType(requiredVariantType: VariantTypeInput?): VariantEffect {
+            return when (requiredVariantType) {
+                // is this even correct? maybe check how orange datamodel is mapped to the molecular datamodel,
+                // is there a determination happening there we can follow?
+
+                // also, can should we just determine snv, mnv etc from the hgvs where available?
+
+                VariantTypeInput.DELETE -> VariantEffect.INFRAME_DELETION
+                else -> throw IllegalStateException("Could not map required variant type: $requiredVariantType")
             }
         }
     }

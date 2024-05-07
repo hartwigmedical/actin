@@ -265,6 +265,12 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
+    @Test
+    fun `Should pass for exon deletion in Panel`() {
+        // we treat exon deletions as activating mutations?
+        TODO("Implement this test")
+    }
+
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
