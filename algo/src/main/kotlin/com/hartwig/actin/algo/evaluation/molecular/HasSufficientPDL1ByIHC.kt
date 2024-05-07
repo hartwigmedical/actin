@@ -3,15 +3,21 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allPDL1Tests
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
+import com.hartwig.actin.doid.DoidModel
 
-class HasSufficientPDL1ByIHC internal constructor(private val measure: String?, private val minPDL1: Double) : EvaluationFunction {
+class HasSufficientPDL1ByIHC (
+    private val measure: String?, private val minPDL1: Double, private val doidModel: DoidModel? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
-        val pdl1TestsWithRequestedMeasurement = PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests, measure)
+        val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
+        val pdl1TestsWithRequestedMeasurement = allPDL1Tests(priorMolecularTests, measure, isLungCancer)
 
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
@@ -30,7 +36,7 @@ class HasSufficientPDL1ByIHC internal constructor(private val measure: String?, 
             EvaluationFactory.fail(
                 "No PD-L1 IHC test found where level exceeds desired level of $minPDL1", "PD-L1 expression below $minPDL1"
             )
-        } else if (PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty()) {
+        } else if (allPDL1Tests(priorMolecularTests).isNotEmpty()) {
             EvaluationFactory.recoverableFail(
                 "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
             )
