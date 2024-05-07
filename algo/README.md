@@ -111,7 +111,7 @@ The following rules are available:
 | WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X   | > Currently set to the Netherlands           |                                                                                                                                                  |
 | IS_LEGALLY_INSTITUTIONALIZED             | > Won't be evaluated                         |                                                                                                                                                  |
 | IS_INVOLVED_IN_STUDY_PROCEDURES          | > Won't be evaluated                         |                                                                                                                                                  |
-| USES_TOBACCO_PRODUCTS                    | > Won't be evaluated                         |                                                                                                                                                  |
+| USES_TOBACCO_PRODUCTS                    | Resolves to `UNDETERMINED`                   |                                                                                                                                                  |
 
 ##### Rules related to tumor and lesion localization
 

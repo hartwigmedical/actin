@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class UsesTobaccoProducts : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated(
-            "Currently assumed that patient does not use tobacco products",
-            "Assumed patient does not use tobacco products"
+        return EvaluationFactory.undetermined(
+            "Undetermined if patient uses tobacco products",
+            "Undetermined if patient uses tobacco products"
         )
     }
 }
