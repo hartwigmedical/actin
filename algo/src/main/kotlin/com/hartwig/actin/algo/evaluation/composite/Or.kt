@@ -12,14 +12,11 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
         val best = evaluationsByResult.keys.maxOrNull()
             ?: throw IllegalStateException("Could not determine OR result for functions: $functions")
 
-        val evaluations = when (best) {
-            EvaluationResult.PASS -> {
-                evaluationsByResult[best]!! + (evaluationsByResult[EvaluationResult.WARN] ?: emptyList())
-            }
-            else -> {
-                evaluationsByResult[best]!!
-            }
-        }
+        val additionalEvaluations = if (best == EvaluationResult.PASS) {
+            evaluationsByResult[EvaluationResult.WARN]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
+                ?: emptyList()
+        } else emptyList()
+        val evaluations = evaluationsByResult[best]!! + additionalEvaluations
 
         return evaluations.fold(Evaluation(best, evaluations.any(Evaluation::recoverable)), Evaluation::addMessagesAndEvents)
     }
