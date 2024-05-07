@@ -6,9 +6,9 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NTRK2", "NTRK3", "NRG1")
 
 data class ArcherPanel(
-    val variants: List<ArcherVariant>,
-    val fusions: List<ArcherFusion>,
-    val skippedExons: List<ArcherSkippedExons>
+    val variants: List<ArcherVariant> = emptyList(),
+    val fusions: List<ArcherFusion> = emptyList(),
+    val skippedExons: List<ArcherSkippedExons> = emptyList()
 ) : Panel {
 
     override fun testedGenes(): Set<String> {
@@ -21,6 +21,10 @@ data class ArcherPanel(
 
     override fun fusions(): List<PanelEvent> {
         return fusions
+    }
+
+    override fun events(): List<PanelEvent> {
+        return super.events() + skippedExons
     }
 
     fun genesWithVariants(): Set<String> {

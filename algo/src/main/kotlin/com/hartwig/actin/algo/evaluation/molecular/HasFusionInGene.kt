@@ -132,7 +132,7 @@ class HasFusionInGene(private val gene: String) : EvaluationFunction {
         val matchedFusions = molecularHistory.allPanels()
             .flatMap { it.fusions() }
             .filter { it.impactsGene(gene) }
-            .map { it.eventDisplay() }
+            .map { it.display() }
             .toSet()
 
         if (matchedFusions.isNotEmpty()) {

@@ -10,7 +10,7 @@ data class ArcherFusion(
         return this.gene == gene
     }
 
-    override fun eventDisplay(): String {
-        return gene
+    override fun display(): String {
+        return "$gene fusion"
     }
 }

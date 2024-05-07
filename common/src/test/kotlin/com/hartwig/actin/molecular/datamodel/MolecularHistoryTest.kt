@@ -6,7 +6,9 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMol
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
@@ -16,6 +18,9 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+
+private const val GENE = "EGFR"
+private const val HGVS_TRANSCRIPT = "c.123C>T"
 
 class MolecularHistoryTest {
 
@@ -174,25 +179,6 @@ class MolecularHistoryTest {
     }
 
     @Test
-    fun `Should construct Archer panel from prior molecular`() {
-        val priorMolecularTests = listOf(archerPriorMolecularVariantRecord("gene", "c.1A>T"))
-        val molecularTests = ArcherMolecularTest.fromPriorMolecularTests(priorMolecularTests)
-
-        assertThat(molecularTests).containsExactly(
-            ArcherMolecularTest(
-                date = null,
-                result = ArcherPanel(
-                    variants = listOf(
-                        ArcherVariant("gene", "c.1A>T")
-                    ),
-                    fusions = emptyList(),
-                    skippedExons = emptyList()
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should convert and group all prior molecular tests`() {
 
         val IHCTests = listOf(
@@ -227,5 +213,78 @@ class MolecularHistoryTest {
         assertThat(molecularTests.filter { it.type == ExperimentType.ARCHER }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
+    }
+
+    @Test
+    fun `Should parse archer variants from prior molecular tests`() {
+        val result =
+            ArcherMolecularTest.fromPriorMolecularTests(
+                listOf(
+                    archerPriorMolecularVariantRecord(
+                        GENE,
+                        HGVS_TRANSCRIPT
+                    )
+                )
+            )
+        assertThat(result).containsExactly(
+            ArcherMolecularTest(
+                result = ArcherPanel(
+                    variants = listOf(
+                        ArcherVariant(GENE, HGVS_TRANSCRIPT)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should parse archer fusions from prior molecular tests`() {
+        val result =
+            ArcherMolecularTest.fromPriorMolecularTests(
+                listOf(
+                    TestMolecularFactory.archerPriorMolecularFusionRecord(GENE)
+                )
+            )
+        assertThat(result).containsExactly(
+            ArcherMolecularTest(
+                result = ArcherPanel(
+                    fusions = listOf(ArcherFusion(GENE))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should parse archer exon skips from prior molecular tests`() {
+        val result =
+            ArcherMolecularTest.fromPriorMolecularTests(
+                listOf(
+                    TestMolecularFactory.archerExonSkippingRecord(GENE, "1-2"),
+                    TestMolecularFactory.archerExonSkippingRecord(GENE, "3")
+                )
+            )
+        assertThat(result).containsExactly(
+            ArcherMolecularTest(
+                result = ArcherPanel(
+                    skippedExons = listOf(ArcherSkippedExons(GENE, 1, 2), ArcherSkippedExons(GENE, 3, 3))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should throw illegal argument exception when unknown result`() {
+        assertThatThrownBy {
+            ArcherMolecularTest.fromPriorMolecularTests(
+                listOf(
+                    PriorMolecularTest(
+                        test = "Archer FP Lung Target",
+                        item = GENE,
+                        measure = "Unknown",
+                        impliesPotentialIndeterminateStatus = false
+                    )
+                )
+            )
+        }.isInstanceOf(IllegalArgumentException::class.java)
     }
 }

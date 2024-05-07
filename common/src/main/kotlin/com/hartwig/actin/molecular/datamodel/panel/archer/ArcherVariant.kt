@@ -11,7 +11,7 @@ data class ArcherVariant(
         return this.gene == gene
     }
 
-    override fun eventDisplay(): String {
+    override fun display(): String {
         return "$gene $hgvsCodingImpact"
     }
 }

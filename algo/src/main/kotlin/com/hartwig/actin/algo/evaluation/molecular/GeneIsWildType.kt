@@ -97,7 +97,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
             EvaluationFactory.pass("Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type"))
         } else {
             EvaluationFactory.fail(
-                "Gene $gene is not considered wild-type due to ${Format.concat(events.map { it.eventDisplay() })}",
+                "Gene $gene is not considered wild-type due to ${Format.concatItems(events)}",
                 "$gene not wild-type"
             )
         }

@@ -12,7 +12,7 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMol
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
-private const val HGVS_VARIANT = "c.123C<T"
+private const val HGVS_VARIANT = "c.123C>T"
 
 class NsclcDriverGeneStatusesAreAvailableTest {
 
@@ -67,7 +67,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail if molecular history does not contain WGS or targeted panel analysis and other panels do not cover any target gene`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(createNonWGSRecordWithOptionalPriorTests(listOf(archerPriorMolecularVariantRecord("GeneX", ""))))
+            function.evaluate(createNonWGSRecordWithOptionalPriorTests(listOf(archerPriorMolecularVariantRecord("GeneX", HGVS_VARIANT))))
         )
     }
 

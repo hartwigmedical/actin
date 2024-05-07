@@ -17,7 +17,7 @@ data class GenericFusion(
         }
     }
 
-    override fun eventDisplay(): String {
+    override fun display(): String {
         return "$geneStart::$geneEnd"
     }
 

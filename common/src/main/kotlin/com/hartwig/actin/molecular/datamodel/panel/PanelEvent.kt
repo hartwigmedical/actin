@@ -1,8 +1,10 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
-interface PanelEvent {
+import com.hartwig.actin.Displayable
+
+interface PanelEvent : Displayable {
 
     fun impactsGene(gene: String): Boolean
 
-    fun eventDisplay(): String
+    override fun display(): String
 }

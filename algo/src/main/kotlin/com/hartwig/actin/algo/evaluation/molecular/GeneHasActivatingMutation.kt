@@ -13,6 +13,8 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.panel.Panel
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
     EvaluationFunction {
@@ -192,9 +194,9 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
     private fun findActivatingMutationsInPanels(molecularHistory: MolecularHistory): Evaluation? {
 
         val activatingVariants = molecularHistory.allPanels()
-            .flatMap { panel -> panel.events() }
-            .filter { variant -> variant.impactsGene(gene) }
-            .map { variant -> variant.eventDisplay() }.toSet()
+            .flatMap(Panel::events)
+            .filter { it.impactsGene(gene) }
+            .map(PanelEvent::display).toSet()
 
         if (activatingVariants.isNotEmpty())
             return EvaluationFactory.pass(

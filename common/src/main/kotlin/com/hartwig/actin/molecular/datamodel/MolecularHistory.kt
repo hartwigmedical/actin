@@ -20,7 +20,8 @@ data class MolecularHistory(
     }
 
     fun allPanels(): List<Panel> {
-        return allArcherPanels() + allGenericPanels()
+        return molecularTests.filter { it.result is Panel }
+            .map { it.result as Panel }
     }
 
     fun allArcherPanels(): List<ArcherPanel> {
