@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
@@ -155,11 +156,14 @@ data class GenericPanelMolecularTest(
                 .groupBy { it.measureDate }
                 .map { (date, results) ->
                     val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
-                    val (fusionRecords, variantRecords) = usableResults.partition { it.item?.contains("::") ?: false }
+                    val (fusionRecords, nonFusionRecords) = usableResults.partition { it.item?.contains("::") ?: false }
                     val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
-                    val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
 
-                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, variants, fusions))
+                    val (exonDeletionRecords, variantRecords) = nonFusionRecords.partition { it.measure?.endsWith(" del") ?: false }
+                    val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
+                    val exonDeletions = exonDeletionRecords.map { record -> GenericExonDeletion.parse(record) }
+
+                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, variants, fusions, exonDeletions))
                 }
         }
 

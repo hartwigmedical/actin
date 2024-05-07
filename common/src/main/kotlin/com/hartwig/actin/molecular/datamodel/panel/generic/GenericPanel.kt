@@ -9,6 +9,7 @@ data class GenericPanel(
     val panelType: GenericPanelType,
     val variants: List<GenericVariant> = emptyList(),
     val fusions: List<GenericFusion> = emptyList(),
+    val exonDeletions: List<GenericExonDeletion> = emptyList(),
 ) : Panel {
 
     override fun testedGenes(): Set<String> {

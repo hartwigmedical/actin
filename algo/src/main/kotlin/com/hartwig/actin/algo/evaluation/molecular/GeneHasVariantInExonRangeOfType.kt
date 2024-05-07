@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
@@ -99,18 +98,15 @@ class GeneHasVariantInExonRangeOfType(
     private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
 
         val matches = molecularHistory.allGenericPanels().flatMap { panel ->
-            panel.variants
+            panel.exonDeletions
                 .filter { variant -> variant.gene == gene }
                 .filter { variant ->
-                    variant.affectedExon != null &&
-                            hasEffectInExonRange(variant.affectedExon, minExon, maxExon) &&
-                            // argh how do i model inframe_deletions? there's varianteffect, varainttype and variantinputtype
-                            variant.effects.contains(effectForVariantType(requiredVariantType))
+                    hasEffectInExonRange(variant.affectedExon, minExon, maxExon) && VariantType.DELETE in determineAllowedVariantTypes(requiredVariantType)
                 }
                 .map { variant -> variant.event() }
         }.toSet()
 
-        // and what about archer variants?
+        // and what about archer and generic variants?
 
         if (matches.isNotEmpty()) {
             return EvaluationFactory.pass(
@@ -183,18 +179,6 @@ class GeneHasVariantInExonRangeOfType(
                 else -> {
                     throw IllegalStateException("Could not map required variant type: $requiredVariantType")
                 }
-            }
-        }
-
-        private fun effectForVariantType(requiredVariantType: VariantTypeInput?): VariantEffect {
-            return when (requiredVariantType) {
-                // is this even correct? maybe check how orange datamodel is mapped to the molecular datamodel,
-                // is there a determination happening there we can follow?
-
-                // also, can should we just determine snv, mnv etc from the hgvs where available?
-
-                VariantTypeInput.DELETE -> VariantEffect.INFRAME_DELETION
-                else -> throw IllegalStateException("Could not map required variant type: $requiredVariantType")
             }
         }
     }
