@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
@@ -267,8 +268,12 @@ class GeneHasActivatingMutationTest {
 
     @Test
     fun `Should pass for exon deletion in Panel`() {
-        // we treat exon deletions as activating mutations?
-        TODO("Implement this test")
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
+        )
+
+        val evaluation = functionNotIgnoringCodons.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
     }
 
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
@@ -367,6 +372,21 @@ class GeneHasActivatingMutationTest {
                     ),
                 ),
                 fusions = emptyList()
+            )
+        )
+
+        private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanelMolecularTest(
+            date = TEST_DATE,
+            result = GenericPanel(
+                panelType = GenericPanelType.FREE_TEXT,
+                variants = emptyList(),
+                fusions = emptyList(),
+                exonDeletions = listOf(
+                    GenericExonDeletion(
+                        gene = GENE,
+                        affectedExon = 1,
+                    ),
+                )
             )
         )
     }

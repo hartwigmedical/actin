@@ -5,9 +5,11 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMol
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularVariantRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularExonDeletionRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
@@ -199,7 +201,8 @@ class MolecularHistoryTest {
 
         val genericPanelTests = listOf(
             avlPanelPriorMolecularNoMutationsFoundRecord(),
-            freetextPriorMolecularFusionRecord("geneUp", "geneDown")
+            freetextPriorMolecularFusionRecord("geneUp", "geneDown"),
+            freetextPriorMolecularExonDeletionRecord("gene", 19),
         )
 
         val otherTests = listOf(
@@ -214,5 +217,24 @@ class MolecularHistoryTest {
         assertThat(molecularTests.filter { it.type == ExperimentType.ARCHER }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
+
+        val genericPanelsByType = molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }
+            .map { it as GenericPanelMolecularTest }
+            .groupBy { it.result.panelType }
+
+        assertThat(genericPanelsByType).hasSize(2)
+        assertThat(genericPanelsByType[GenericPanelType.AVL]).hasSize(1)
+        assertThat(genericPanelsByType[GenericPanelType.FREE_TEXT]).hasSize(1)
+
+        val expectedAvlPanel = GenericPanel(GenericPanelType.AVL)
+        assertThat(genericPanelsByType[GenericPanelType.AVL]!!.first().result).isEqualTo(expectedAvlPanel)
+
+        val expectedFreetextPanel = GenericPanel(
+            GenericPanelType.FREE_TEXT,
+            variants = emptyList(),
+            fusions = listOf(GenericFusion("geneUp", "geneDown")),
+            exonDeletions = listOf(GenericExonDeletion("gene", 19))
+        )
+        assertThat(genericPanelsByType[GenericPanelType.FREE_TEXT]!!.first().result).isEqualTo(expectedFreetextPanel)
     }
 }
