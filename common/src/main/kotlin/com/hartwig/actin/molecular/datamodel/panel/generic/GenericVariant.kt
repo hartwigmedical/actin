@@ -17,7 +17,11 @@ data class GenericVariant(
         }
     }
 
-    override fun event(): String {
+    override fun impactsGene(gene: String): Boolean {
+        return this.gene == gene
+    }
+
+    override fun display(): String {
         return "$gene $hgvsCodingImpact"
     }
 }

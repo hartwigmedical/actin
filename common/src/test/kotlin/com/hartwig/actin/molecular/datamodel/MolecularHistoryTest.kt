@@ -6,16 +6,21 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMol
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import java.time.LocalDate
+
+private const val GENE = "EGFR"
+private const val HGVS_TRANSCRIPT = "c.123C>T"
 
 class MolecularHistoryTest {
 
@@ -64,43 +69,55 @@ class MolecularHistoryTest {
 
     @Test
     fun `Should classify IHC tests`() {
-        assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest("IHC", item = "protein1", impliesPotentialIndeterminateStatus = false))
+        assertThat(
+            MolecularTestFactory.classify(
+                PriorMolecularTest("IHC", item = "protein1", impliesPotentialIndeterminateStatus = false)
+            )
         ).isEqualTo(ExperimentType.IHC)
     }
 
     @Test
     fun `Should classify PD-L1 tests`() {
-        assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest("", item = "PD-L1", impliesPotentialIndeterminateStatus = false))
+        assertThat(
+            MolecularTestFactory.classify(
+                PriorMolecularTest("", item = "PD-L1", impliesPotentialIndeterminateStatus = false)
+            )
         ).isEqualTo(ExperimentType.IHC)
     }
 
     @Test
     fun `Should classify unsupported tests as other`() {
-        assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest("Future-Panel", item = "gene", impliesPotentialIndeterminateStatus = false))
+        assertThat(
+            MolecularTestFactory.classify(
+                PriorMolecularTest("Future-Panel", item = "gene", impliesPotentialIndeterminateStatus = false)
+            )
         ).isEqualTo(ExperimentType.OTHER)
     }
 
     @Test
     fun `Should classify Archer tests`() {
-        assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest(ARCHER_FP_LUNG_TARGET, item = "gene", impliesPotentialIndeterminateStatus = false))
+        assertThat(
+            MolecularTestFactory.classify(
+                PriorMolecularTest(ARCHER_FP_LUNG_TARGET, item = "gene", impliesPotentialIndeterminateStatus = false)
+            )
         ).isEqualTo(ExperimentType.ARCHER)
     }
 
     @Test
     fun `Should classify AvL Panels`() {
-        assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest(AVL_PANEL, impliesPotentialIndeterminateStatus = false))
+        assertThat(
+            MolecularTestFactory.classify(
+                PriorMolecularTest(AVL_PANEL, impliesPotentialIndeterminateStatus = false)
+            )
         ).isEqualTo(ExperimentType.GENERIC_PANEL)
     }
 
     @Test
     fun `Should classify Free text curated Panels`() {
-        assertThat(MolecularTestFactory.classify(
-            PriorMolecularTest(FREE_TEXT_PANEL, impliesPotentialIndeterminateStatus = false))
+        assertThat(
+            MolecularTestFactory.classify(
+                PriorMolecularTest(FREE_TEXT_PANEL, impliesPotentialIndeterminateStatus = false)
+            )
         ).isEqualTo(ExperimentType.GENERIC_PANEL)
     }
 
@@ -162,24 +179,6 @@ class MolecularHistoryTest {
     }
 
     @Test
-    fun `Should construct Archer panel from prior molecular`() {
-        val priorMolecularTests = listOf(archerPriorMolecularVariantRecord("gene", "c.1A>T"))
-        val molecularTests = ArcherMolecularTest.fromPriorMolecularTests(priorMolecularTests)
-
-        assertThat(molecularTests).containsExactly(
-            ArcherMolecularTest(
-                date = null,
-                result = ArcherPanel(
-                    variants = listOf(
-                        ArcherVariant("gene", "c.1A>T")
-                    ),
-                    fusions = emptyList()
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should convert and group all prior molecular tests`() {
 
         val IHCTests = listOf(
@@ -214,5 +213,78 @@ class MolecularHistoryTest {
         assertThat(molecularTests.filter { it.type == ExperimentType.ARCHER }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
+    }
+
+    @Test
+    fun `Should parse archer variants from prior molecular tests`() {
+        val result =
+            ArcherMolecularTest.fromPriorMolecularTests(
+                listOf(
+                    archerPriorMolecularVariantRecord(
+                        GENE,
+                        HGVS_TRANSCRIPT
+                    )
+                )
+            )
+        assertThat(result).containsExactly(
+            ArcherMolecularTest(
+                result = ArcherPanel(
+                    variants = listOf(
+                        ArcherVariant(GENE, HGVS_TRANSCRIPT)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should parse archer fusions from prior molecular tests`() {
+        val result =
+            ArcherMolecularTest.fromPriorMolecularTests(
+                listOf(
+                    TestMolecularFactory.archerPriorMolecularFusionRecord(GENE)
+                )
+            )
+        assertThat(result).containsExactly(
+            ArcherMolecularTest(
+                result = ArcherPanel(
+                    fusions = listOf(ArcherFusion(GENE))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should parse archer exon skips from prior molecular tests`() {
+        val result =
+            ArcherMolecularTest.fromPriorMolecularTests(
+                listOf(
+                    TestMolecularFactory.archerExonSkippingRecord(GENE, "1-2"),
+                    TestMolecularFactory.archerExonSkippingRecord(GENE, "3")
+                )
+            )
+        assertThat(result).containsExactly(
+            ArcherMolecularTest(
+                result = ArcherPanel(
+                    skippedExons = listOf(ArcherSkippedExons(GENE, 1, 2), ArcherSkippedExons(GENE, 3, 3))
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should throw illegal argument exception when unknown result`() {
+        assertThatThrownBy {
+            ArcherMolecularTest.fromPriorMolecularTests(
+                listOf(
+                    PriorMolecularTest(
+                        test = "Archer FP Lung Target",
+                        item = GENE,
+                        measure = "Unknown",
+                        impliesPotentialIndeterminateStatus = false
+                    )
+                )
+            )
+        }.isInstanceOf(IllegalArgumentException::class.java)
     }
 }

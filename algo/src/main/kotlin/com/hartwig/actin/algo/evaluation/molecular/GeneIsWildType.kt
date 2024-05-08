@@ -88,7 +88,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
 
         val allPanels = molecularHistory.allPanels()
         val isTestedInAnyPanel = allPanels.any { panel -> panel.testedGenes().contains(gene) }
-        val events = allPanels.flatMap { panel -> panel.eventsForGene(gene) }.toSet()
+        val events = allPanels.flatMap { it.events() }.filter { it.impactsGene(gene) }.toSet()
         val hasResultInAnyPanel = events.isNotEmpty()
 
         return if (!isTestedInAnyPanel) {
@@ -96,7 +96,10 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
         } else if (!hasResultInAnyPanel) {
             EvaluationFactory.pass("Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type"))
         } else {
-            EvaluationFactory.fail("Gene $gene is not considered wild-type due to ${Format.concat(events.map { it.event() })}", "$gene not wild-type")
+            EvaluationFactory.fail(
+                "Gene $gene is not considered wild-type due to ${Format.concatItems(events)}",
+                "$gene not wild-type"
+            )
         }
     }
 
