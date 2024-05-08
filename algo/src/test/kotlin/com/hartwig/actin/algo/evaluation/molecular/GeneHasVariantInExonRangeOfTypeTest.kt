@@ -3,12 +3,19 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.GenericPanelMolecularTest
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val MATCHING_EXON = 1
 private const val OTHER_EXON = 6
@@ -173,5 +180,96 @@ class GeneHasVariantInExonRangeOfTypeTest {
         )
     }
 
+    @Test
+    fun `Should pass for exon deletion in panel without variant type`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON + 1, null)
+
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
+        )
+
+        val evaluation = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+    }
+
+    @Test
+    fun `Should pass for exon deletion in panel with matching variant type`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON + 1, VariantTypeInput.DELETE)
+
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
+        )
+
+        val evaluation = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+    }
+
+    @Test
+    fun `Should fail for exon deletion in panel with differing variant type`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON + 1, VariantTypeInput.INSERT)
+
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
+        )
+
+        val evaluation = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+    }
+
+    @Test
+    fun `Should fail for exon deletion from panel on differing exon`() {
+
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, OTHER_EXON, OTHER_EXON + 1, VariantTypeInput.DELETE)
+
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
+        )
+
+        val evaluation = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+    }
+
+    @Test
+    fun `Should fail for panel variant on same gene different location`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INSERT)
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_VARIANT))
+        )
+
+        val evaluation = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+
+    }
+
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
+
+    private val TEST_DATE = LocalDate.of(2023, 1, 1)
+    private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanelMolecularTest(
+        date = TEST_DATE,
+        result = GenericPanel(
+            panelType = GenericPanelType.FREE_TEXT,
+            variants = emptyList(),
+            fusions = emptyList(),
+            exonDeletions = listOf(
+                GenericExonDeletion(
+                    gene = TARGET_GENE,
+                    affectedExon = MATCHING_EXON,
+                ),
+            )
+        )
+    )
+
+    private val FREETEXT_PANEL_WITH_VARIANT = GenericPanelMolecularTest(
+        date = TEST_DATE,
+        result = GenericPanel(
+            panelType = GenericPanelType.FREE_TEXT,
+            variants = listOf(
+                GenericVariant(
+                    gene = TARGET_GENE,
+                    hgvsCodingImpact = "c.9999A>T",
+                ),
+            ),
+            fusions = emptyList()
+        )
+    )
 }
