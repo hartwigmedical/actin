@@ -3,10 +3,14 @@ package com.hartwig.actin.molecular.datamodel.panel.archer
 import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 data class ArcherFusion(
-    val geneStart: String,
-    val geneEnd: String,
+    val gene: String
 ) : PanelEvent {
-    override fun event(): String {
-        return "$geneStart::$geneEnd"
+
+    override fun impactsGene(gene: String): Boolean {
+        return this.gene == gene
+    }
+
+    override fun display(): String {
+        return "$gene fusion"
     }
 }

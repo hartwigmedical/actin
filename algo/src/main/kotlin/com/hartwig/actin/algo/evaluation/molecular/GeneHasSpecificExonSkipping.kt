@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.Fusion
@@ -10,30 +11,21 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val fusionSkippingEvents = molecular.drivers.fusions.filter { fusion ->
-            fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.fusedExonUp == exonToSkip - 1
-                    && fusion.fusedExonDown == exonToSkip + 1
-        }
-            .map(Fusion::event)
-            .toSet()
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        val exonSplicingVariants = molecular.drivers.variants.filter { variant ->
-            val isCanonicalSplice =
-                variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion
-            val canonicalExonAffected = variant.canonicalImpact.affectedExon
-            val isCanonicalExonAffected = canonicalExonAffected != null && canonicalExonAffected == exonToSkip
-            variant.isReportable && variant.gene == gene && isCanonicalExonAffected && isCanonicalSplice
-        }
-            .map(Variant::event)
-            .toSet()
+        val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.skippedExons }
+            .filter { it.impactsGene(gene) && exonToSkip == it.start && exonToSkip == it.end }.map { it.display() }
+
+        val molecular = molecularHistory.latestOrangeMolecularRecord()
+        val fusionSkippingEvents = molecular?.let(::findFusionSkippingEvents) ?: emptySet()
+        val exonSplicingVariants = molecular?.let(::findExonSplicingVariants) ?: emptySet()
 
         return when {
-            fusionSkippingEvents.isNotEmpty() -> {
+            fusionSkippingEvents.isNotEmpty() || archerExonSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}",
                     "Exon $exonToSkip skipping in $gene",
-                    inclusionEvents = fusionSkippingEvents
+                    inclusionEvents = fusionSkippingEvents + archerExonSkippingEvents
                 )
             }
 
@@ -50,4 +42,18 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
             }
         }
     }
+
+    private fun findExonSplicingVariants(molecular: MolecularRecord) = molecular.drivers.variants.filter { variant ->
+        val isCanonicalExonAffected = variant.canonicalImpact.affectedExon != null && variant.canonicalImpact.affectedExon == exonToSkip
+        variant.isReportable && variant.gene == gene && isCanonicalExonAffected && (variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion)
+    }
+        .map(Variant::event)
+        .toSet()
+
+    private fun findFusionSkippingEvents(molecular: MolecularRecord) = molecular.drivers.fusions.filter { fusion ->
+        fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.fusedExonUp == exonToSkip - 1
+                && fusion.fusedExonDown == exonToSkip + 1
+    }
+        .map(Fusion::event)
+        .toSet()
 }

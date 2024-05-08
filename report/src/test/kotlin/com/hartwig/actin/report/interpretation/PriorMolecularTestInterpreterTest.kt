@@ -41,7 +41,11 @@ class PriorMolecularTestInterpreterTest {
         val result = interpreter.interpret(
             listOf(
                 ArcherMolecularTest(
-                    result = ArcherPanel(variants = listOf(ArcherVariant("ALK", "c.2240_2254del")), fusions = emptyList())
+                    result = ArcherPanel(
+                        variants = listOf(ArcherVariant("ALK", "c.2240_2254del")),
+                        fusions = emptyList(),
+                        skippedExons = emptyList()
+                    )
                 )
             )
         )

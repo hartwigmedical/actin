@@ -14,11 +14,11 @@ internal object PriorConditionMessages {
     }
 
     fun passGeneral(matches: Iterable<String>): String {
-        return "Patient has ${Format.concatStringsWithAnd(matches)}"
+        return "History of ${Format.concatStringsWithAnd(matches)}"
     }
 
     fun passSpecific(characteristic: Characteristic, matches: Iterable<String>, doidTerm: String?): String {
-        return String.format("Patient has %s %s, which is indicative of %s", characteristic.displayText, concat(matches), doidTerm)
+        return String.format("Patient has history of %s %s, which is indicative of %s", characteristic.displayText, concat(matches), doidTerm)
     }
 
     internal enum class Characteristic(val displayText: String) {

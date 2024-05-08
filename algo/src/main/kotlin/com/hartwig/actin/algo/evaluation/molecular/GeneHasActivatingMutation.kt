@@ -1,10 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
@@ -13,21 +11,19 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.panel.Panel
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
-    EvaluationFunction {
-    override fun evaluate(record: PatientRecord): Evaluation {
+    MolecularEvaluationFunction {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        if (!record.molecularHistory.hasMolecularData()) {
-            return EvaluationFactory.undetermined("No molecular data", "No molecular data")
-        }
-
-        val orangeMolecular = record.molecularHistory.latestOrangeMolecularRecord()
+        val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) {
             findActivatingMutationsInOrangeMolecular(orangeMolecular)
         } else null
 
-        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(record.molecularHistory) else null
+        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(molecularHistory) else null
 
         val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
             .groupBy { evaluation -> evaluation.result }
@@ -191,23 +187,10 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
 
     private fun findActivatingMutationsInPanels(molecularHistory: MolecularHistory): Evaluation? {
 
-        val activatingVariants: MutableSet<String> = mutableSetOf()
-
-        for (panel in molecularHistory.allArcherPanels()) {
-            for (variant in panel.variants) {
-                if (gene == variant.gene) {
-                    activatingVariants.add(variant.hgvsCodingImpact)
-                }
-            }
-        }
-
-        for (panel in molecularHistory.allGenericPanels()) {
-            for (variant in panel.variants) {
-                if (gene == variant.gene) {
-                    activatingVariants.add(variant.event())
-                }
-            }
-        }
+        val activatingVariants = molecularHistory.allPanels()
+            .flatMap(Panel::events)
+            .filter { it.impactsGene(gene) }
+            .map(PanelEvent::display).toSet()
 
         if (activatingVariants.isNotEmpty())
             return EvaluationFactory.pass(

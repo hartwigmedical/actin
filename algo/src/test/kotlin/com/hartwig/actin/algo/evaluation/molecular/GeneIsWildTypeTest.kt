@@ -248,7 +248,7 @@ class GeneIsWildTypeTest {
     @Test
     fun `Should fail for gene with fusion in archer panels`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistoryFactory.withArcherFusion(MATCHING_GENE, "c.1234A>T"))
+            .copy(molecularHistory = MolecularHistoryFactory.withArcherFusion(MATCHING_GENE))
 
         val evaluationResult = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)

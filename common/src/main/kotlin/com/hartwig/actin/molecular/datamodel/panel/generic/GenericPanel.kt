@@ -16,27 +16,27 @@ data class GenericPanel(
         return genesHavingResultsInPanel() + alwaysTestedGenes()
     }
 
-    fun genesWithVariants(): Set<String> {
+    private fun genesWithVariants(): Set<String> {
         return variants.map { it.gene }.toSet()
     }
 
-    fun genesWithFusions(): Set<String> {
+    private fun genesWithFusions(): Set<String> {
         return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
     }
 
-    override fun alwaysTestedGenes(): Set<String> {
+    private fun alwaysTestedGenes(): Set<String> {
         return when (panelType) {
             GenericPanelType.FREE_TEXT -> emptySet()
             else -> GENERIC_PANEL_ALWAYS_TESTED_GENES
         }
     }
 
-    override fun events(): List<PanelEvent> {
-        return variants + fusions
+    override fun variants(): List<PanelEvent> {
+        return variants
     }
 
-    override fun eventsForGene(gene: String): List<PanelEvent> {
-        return variants.filter { it.gene == gene } + fusions.filter { it.geneStart == gene || it.geneEnd == gene }
+    override fun fusions(): List<PanelEvent> {
+        return fusions
     }
 
     private fun genesHavingResultsInPanel(): Set<String> {

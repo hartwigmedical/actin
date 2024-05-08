@@ -31,4 +31,12 @@ class WarnIfTest {
         assertThat(result.warnSpecificMessages).isNotEmpty()
         assertThat(result.warnGeneralMessages).isNotEmpty()
     }
+
+    @Test
+    fun `Should not return inclusion or exclusion molecular events`(){
+        val result: Evaluation =
+            WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        assertThat(result.inclusionMolecularEvents).isEmpty()
+        assertThat(result.exclusionMolecularEvents).isEmpty()
+    }
 }

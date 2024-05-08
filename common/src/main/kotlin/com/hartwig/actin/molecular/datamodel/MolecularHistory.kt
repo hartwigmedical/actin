@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.Panel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import java.time.LocalDate
@@ -18,8 +19,9 @@ data class MolecularHistory(
             .map { it.result as MolecularRecord }
     }
 
-    fun allPanels(): List<com.hartwig.actin.molecular.datamodel.panel.Panel> {
-        return listOf(allArcherPanels() + allGenericPanels()).flatten()
+    fun allPanels(): List<Panel> {
+        return molecularTests.filter { it.result is Panel }
+            .map { it.result as Panel }
     }
 
     fun allArcherPanels(): List<ArcherPanel> {
