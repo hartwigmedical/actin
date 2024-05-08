@@ -16,6 +16,10 @@ data class GenericPanel(
         return genesHavingResultsInPanel() + alwaysTestedGenes()
     }
 
+    override fun events(): List<PanelEvent> {
+        return super.events() + exonDeletions
+    }
+
     private fun genesWithVariants(): Set<String> {
         return variants.map { it.gene }.toSet()
     }
