@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
@@ -35,11 +34,7 @@ class GeneHasSpecificExonSkippingTest {
     fun `Should be undetermined when no molecular history in patient record`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
-                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                    molecularHistory = MolecularHistory(
-                        emptyList()
-                    )
-                )
+                TestPatientFactory.createEmptyMolecularTestPatientRecord()
             )
         )
     }

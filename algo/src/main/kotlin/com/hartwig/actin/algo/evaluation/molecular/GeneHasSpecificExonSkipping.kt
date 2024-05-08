@@ -44,11 +44,8 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
     }
 
     private fun findExonSplicingVariants(molecular: MolecularRecord) = molecular.drivers.variants.filter { variant ->
-        val isCanonicalSplice =
-            variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion
-        val canonicalExonAffected = variant.canonicalImpact.affectedExon
-        val isCanonicalExonAffected = canonicalExonAffected != null && canonicalExonAffected == exonToSkip
-        variant.isReportable && variant.gene == gene && isCanonicalExonAffected && isCanonicalSplice
+        val isCanonicalExonAffected = variant.canonicalImpact.affectedExon != null && variant.canonicalImpact.affectedExon == exonToSkip
+        variant.isReportable && variant.gene == gene && isCanonicalExonAffected && (variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion)
     }
         .map(Variant::event)
         .toSet()

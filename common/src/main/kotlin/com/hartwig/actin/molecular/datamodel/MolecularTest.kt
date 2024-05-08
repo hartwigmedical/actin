@@ -118,17 +118,17 @@ data class ArcherMolecularTest(
             return results.filter { it.test == ARCHER_FP_LUNG_TARGET }
                 .groupBy { it.measureDate }
                 .map { (date, results) ->
-                    val variantResults = results.filter { it.item != null && it.measure != null }
-                    val variants = variantResults
+                    val resultsWithItemAndMeasure = results.filter { it.item != null && it.measure != null }
+                    val variants = resultsWithItemAndMeasure
                         .filter { it.measure!!.startsWith("c.") }
                         .map {
                             ArcherVariant(it.item!!, it.measure!!) to it
                         }
-                    val fusions = variantResults
+                    val fusions = resultsWithItemAndMeasure
                         .mapNotNull {
                             FUSION_REGEX.find(it.measure!!)?.let { matchResult -> ArcherFusion(matchResult.groupValues[1]) to it }
                         }
-                    val exonSkips = variantResults
+                    val exonSkips = resultsWithItemAndMeasure
                         .mapNotNull {
                             EXON_SKIP_REGEX.find(it.measure!!)?.let { matchResult ->
                                 val (start, end) = parseRange(matchResult.groupValues[3])
@@ -149,9 +149,9 @@ data class ArcherMolecularTest(
             fusions: List<Pair<ArcherFusion, PriorMolecularTest>>,
             exonSkips: List<Pair<ArcherSkippedExons, PriorMolecularTest>>
         ) {
-            val unknownResults =
-                results.filter { it.measure != NO_FUSIONS && it.measure != NO_MUTATION } - (variants + fusions + exonSkips).map { it.second }
-                    .toSet()
+            val relevantResults = results.filter { it.measure != NO_FUSIONS && it.measure != NO_MUTATION }.toSet()
+            val processedResults = (variants + fusions + exonSkips).map { it.second }.toSet()
+            val unknownResults = relevantResults - processedResults
             if (unknownResults.isNotEmpty()) {
                 throw IllegalArgumentException("Unknown results in Archer: ${unknownResults.map { "${it.item} ${it.measure}" }}")
             }
@@ -159,11 +159,7 @@ data class ArcherMolecularTest(
 
         private fun parseRange(range: String): Pair<Int, Int> {
             val parts = range.split("-")
-            return if (parts.size == 2) {
-                parts[0].toInt() to parts[1].toInt()
-            } else {
-                parts[0].toInt() to parts[0].toInt()
-            }
+            return parts[0].toInt() to parts[parts.size - 1].toInt()
         }
     }
 }
