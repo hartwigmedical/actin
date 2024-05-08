@@ -10,12 +10,23 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.system.exitProcess
 
 class ReformatQuestionnaireApplication(private val questionnaireFile: String) {
     @Throws(IOException::class)
     fun run() {
-        val questionnaire = Files.readAllLines(File(questionnaireFile).toPath()).joinToString("\\n")
+        val parts = Files.readAllLines(File(questionnaireFile).toPath()).joinToString("\\n").split("\\n", limit = 2)
+        val questionnaire =
+            listOf(
+                parts[0],
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSS")),
+                "consultation",
+                "Beloop",
+                parts[1]
+            ).joinToString("\"\t\"", "\"", "\"")
         println(questionnaire)
     }
 
