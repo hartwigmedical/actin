@@ -99,13 +99,11 @@ class GeneHasVariantInExonRangeOfType(
     }
 
     private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
-        val exonDeletionsOnGene = molecularHistory.allGenericPanels()
-            .flatMap { panel -> panel.exonDeletions }
-            .filter { exonDeletion -> exonDeletion.impactsGene(gene) }
-            .toSet()
-
         val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
-            exonDeletionsOnGene.filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
+            molecularHistory.allGenericPanels()
+                .flatMap { panel -> panel.exonDeletions }
+                .filter { exonDeletion -> exonDeletion.impactsGene(gene) }
+                .filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
                 .map { exonDeletion -> exonDeletion.display() }
                 .toSet()
         } else {
@@ -121,19 +119,14 @@ class GeneHasVariantInExonRangeOfType(
             return EvaluationFactory.pass(message, message, inclusionEvents = matches)
         } else {
             val geneIsTestedInAnyPanel = molecularHistory.allPanels().any { panel -> panel.testedGenes().contains(gene) }
-            
+
             val anyVariantOnGeneInAnyPanel = molecularHistory.allPanels().any { panel ->
                 panel.variants().any { it.impactsGene(gene) }
             }
 
-            val anyExonDeletionOnGeneInAnyPanel = exonDeletionsOnGene.isNotEmpty()
-
             if (anyVariantOnGeneInAnyPanel) {
                 // we can't currently determine transcript impact of panel variants, so temporarily consider undetermined
                 return null
-            } else if (anyExonDeletionOnGeneInAnyPanel && requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
-                val message = "No variant $baseMessage"
-                return EvaluationFactory.fail(message, message)
             } else if (geneIsTestedInAnyPanel) {
                 val message = "No variant $baseMessage"
                 return EvaluationFactory.fail(message, message)
