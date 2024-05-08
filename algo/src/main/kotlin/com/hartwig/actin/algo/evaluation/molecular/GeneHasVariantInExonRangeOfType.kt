@@ -103,7 +103,7 @@ class GeneHasVariantInExonRangeOfType(
                 .filter { variant ->
                     hasEffectInExonRange(variant.affectedExon, minExon, maxExon) && VariantType.DELETE in determineAllowedVariantTypes(requiredVariantType)
                 }
-                .map { variant -> variant.event() }
+                .map { variant -> variant.display() }
         }.toSet()
 
         // and what about archer and generic variants?
