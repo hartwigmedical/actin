@@ -248,6 +248,17 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
+    @Test
+    fun `Should fail for gene always tested in panel but no variant`() {
+        val function = GeneHasVariantInExonRangeOfType("EGFR", MATCHING_EXON, MATCHING_EXON + 1, null)
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(EMPTY_AVL_PANEL))
+        )
+
+        val evaluation = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+    }
+
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 
     private val TEST_DATE = LocalDate.of(2023, 1, 1)
@@ -278,6 +289,16 @@ class GeneHasVariantInExonRangeOfTypeTest {
                 ),
             ),
             fusions = emptyList()
+        )
+    )
+
+    private val EMPTY_AVL_PANEL = GenericPanelMolecularTest(
+        date = TEST_DATE,
+        result = GenericPanel(
+            panelType = GenericPanelType.AVL,
+            variants = emptyList(),
+            fusions = emptyList(),
+            exonDeletions = emptyList()
         )
     )
 }
