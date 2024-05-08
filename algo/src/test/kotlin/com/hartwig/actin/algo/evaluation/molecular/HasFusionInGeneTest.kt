@@ -27,7 +27,7 @@ class HasFusionInGeneTest {
     )
 
     @Test
-    fun `Should fail on minimal test patient record evaluate`() {
+    fun `Should fail on minimal test patient record`() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 

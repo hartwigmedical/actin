@@ -18,7 +18,7 @@ data class GenericFusion(
     }
 
     override fun display(): String {
-        return "$geneStart::$geneEnd"
+        return "$geneStart-$geneEnd fusion"
     }
 
     override fun impactsGene(gene: String): Boolean {

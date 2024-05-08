@@ -1,10 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
@@ -17,19 +15,15 @@ import com.hartwig.actin.molecular.datamodel.panel.Panel
 import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
-    EvaluationFunction {
-    override fun evaluate(record: PatientRecord): Evaluation {
+    MolecularEvaluationFunction {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        if (!record.molecularHistory.hasMolecularData()) {
-            return EvaluationFactory.undetermined("No molecular data", "No molecular data")
-        }
-
-        val orangeMolecular = record.molecularHistory.latestOrangeMolecularRecord()
+        val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) {
             findActivatingMutationsInOrangeMolecular(orangeMolecular)
         } else null
 
-        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(record.molecularHistory) else null
+        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(molecularHistory) else null
 
         val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
             .groupBy { evaluation -> evaluation.result }

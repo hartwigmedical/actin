@@ -1,10 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
@@ -12,16 +10,13 @@ import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
-class HasFusionInGene(private val gene: String) : EvaluationFunction {
+class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
-        if (!record.molecularHistory.hasMolecularData()) {
-            return EvaluationFactory.undetermined("No molecular data", "No molecular data")
-        }
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        val orangeMolecular = record.molecularHistory.latestOrangeMolecularRecord()
+        val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) findMatchingFusionsInOrangeMolecular(orangeMolecular) else null
-        val panelEvaluation = findMatchingFusionsInPanels(record.molecularHistory)
+        val panelEvaluation = findMatchingFusionsInPanels(molecularHistory)
 
         val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
             .groupBy { evaluation -> evaluation.result }

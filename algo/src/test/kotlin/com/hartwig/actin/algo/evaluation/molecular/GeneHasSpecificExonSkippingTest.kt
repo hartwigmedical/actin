@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
@@ -29,6 +30,19 @@ private val SPLICE_VARIANT = TestVariantFactory.createMinimal().copy(
 class GeneHasSpecificExonSkippingTest {
 
     val function = GeneHasSpecificExonSkipping(MATCHING_GENE, 2)
+
+    @Test
+    fun `Should be undetermined when no molecular history in patient record`() {
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(
+                TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                    molecularHistory = MolecularHistory(
+                        emptyList()
+                    )
+                )
+            )
+        )
+    }
 
     @Test
     fun `Should fail when no variants in patient record`() {
@@ -76,7 +90,7 @@ class GeneHasSpecificExonSkippingTest {
     }
 
     @Test
-    fun `Should fail on fusion skipping specific more than the specific exon`() {
+    fun `Should fail on fusion skipping more than the specific exon`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION.copy(fusedExonDown = 5)))
         )

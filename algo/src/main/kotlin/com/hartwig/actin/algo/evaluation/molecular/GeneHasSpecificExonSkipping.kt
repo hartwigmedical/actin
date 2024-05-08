@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.Fusion
@@ -11,12 +11,12 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
 
-    override fun evaluate(record: PatientRecord): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        val archerExonSkippingEvents = record.molecularHistory.allArcherPanels().flatMap { it.skippedExons }
+        val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.skippedExons }
             .filter { it.impactsGene(gene) && exonToSkip == it.start && exonToSkip == it.end }.map { it.display() }
 
-        val molecular = record.molecularHistory.latestOrangeMolecularRecord()
+        val molecular = molecularHistory.latestOrangeMolecularRecord()
         val fusionSkippingEvents = molecular?.let(::findFusionSkippingEvents) ?: emptySet()
         val exonSplicingVariants = molecular?.let(::findExonSplicingVariants) ?: emptySet()
 
