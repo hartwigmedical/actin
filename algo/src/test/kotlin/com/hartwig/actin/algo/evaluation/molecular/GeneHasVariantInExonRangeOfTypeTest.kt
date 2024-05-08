@@ -129,7 +129,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should fail for type INDEL when type is MNV`() {
+    fun `Should fail for input type INDEL when variant type is MNV`() {
         val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INDEL)
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
@@ -144,7 +144,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should pass for type INDEL when type is INSERT`() {
+    fun `Should pass for input type INDEL when variant type is INSERT`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -181,7 +181,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should pass for exon deletion in panel without variant type`() {
+    fun `Should pass for exon deletion in panel when no required input type`() {
         val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON + 1, null)
 
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
@@ -193,7 +193,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should pass for exon deletion in panel with matching variant type`() {
+    fun `Should pass for exon deletion in panel with required input type DELETE`() {
         val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON + 1, VariantTypeInput.DELETE)
 
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
@@ -205,9 +205,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should fail for exon deletion in panel with differing variant type`() {
+    fun `Should fail for exon deletion in panel with required input type INSERT`() {
         val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON + 1, VariantTypeInput.INSERT)
-
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
             molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
         )
@@ -218,9 +217,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should fail for exon deletion from panel on differing exon`() {
-
         val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, OTHER_EXON, OTHER_EXON + 1, VariantTypeInput.DELETE)
-
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
             molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
         )
@@ -230,20 +227,31 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should fail for panel variant on same gene different location`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INSERT)
+    fun `Should pass but currently undetermined for panel variant on same gene`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON + 1, null)
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
             molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_VARIANT))
         )
 
         val evaluation = function.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+    }
 
+    @Test
+    fun `Should be undetermined for gene not tested in panel data`() {
+        val function = GeneHasVariantInExonRangeOfType("ANOTHER_GENE", MATCHING_EXON, MATCHING_EXON + 1, null)
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_VARIANT))
+        )
+
+        val evaluation = function.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 
     private val TEST_DATE = LocalDate.of(2023, 1, 1)
+
     private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanelMolecularTest(
         date = TEST_DATE,
         result = GenericPanel(
@@ -266,7 +274,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
             variants = listOf(
                 GenericVariant(
                     gene = TARGET_GENE,
-                    hgvsCodingImpact = "c.9999A>T",
+                    hgvsCodingImpact = "c.10A>T",
                 ),
             ),
             fusions = emptyList()

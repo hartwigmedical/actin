@@ -20,12 +20,16 @@ data class GenericPanel(
         return super.events() + exonDeletions
     }
 
-    private fun genesWithVariants(): Set<String> {
+    fun genesWithVariants(): Set<String> {
         return variants.map { it.gene }.toSet()
     }
 
     private fun genesWithFusions(): Set<String> {
         return fusions.flatMap { listOf(it.geneStart, it.geneEnd) }.toSet()
+    }
+
+    private fun genesWithExonDeletions(): Set<String> {
+        return exonDeletions.map { it.gene }.toSet()
     }
 
     private fun alwaysTestedGenes(): Set<String> {
@@ -44,6 +48,6 @@ data class GenericPanel(
     }
 
     private fun genesHavingResultsInPanel(): Set<String> {
-        return genesWithVariants() + genesWithFusions()
+        return genesWithVariants() + genesWithFusions() + genesWithExonDeletions()
     }
 }
