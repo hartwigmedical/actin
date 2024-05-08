@@ -10,7 +10,7 @@ data class ExternalTrialSummary(
     val otherCountryTrialsFiltered: Int
 )
 
-class ExternalTrialSummarizer(private val filterOverlappingMolecularTargets: Boolean) {
+class ExternalTrialSummarizer {
 
     fun summarize(
         externalEligibleTrials: Map<String, Iterable<ExternalTrial>>,
@@ -33,10 +33,9 @@ class ExternalTrialSummarizer(private val filterOverlappingMolecularTargets: Boo
         molecularTargetsAlreadyIncluded: Set<String>,
         trials: Map<String, Iterable<ExternalTrial>>
     ): Pair<Map<String, Iterable<ExternalTrial>>, Int> {
-        val filtered =
-            if (filterOverlappingMolecularTargets) trials.filterNot {
-                splitMolecularEvents(it.key).all { mt -> molecularTargetsAlreadyIncluded.contains(mt) }
-            } else trials
+        val filtered = trials.filterNot {
+            splitMolecularEvents(it.key).all { mt -> molecularTargetsAlreadyIncluded.contains(mt) }
+        }
         return filtered to uniqueTrialCount(trials) - uniqueTrialCount(filtered)
     }
 
