@@ -235,6 +235,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedSpecificMessages.first()).contains("but unable to determine exon impact")
     }
 
     @Test

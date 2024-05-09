@@ -31,15 +31,13 @@ class GenericExonDeletionTest {
                 .hasMessage("Expected gene and variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}")
         }
     }
+}
 
-    companion object {
-        private fun priorMolecularTest(item: String?, measure: String?): PriorMolecularTest {
-            return PriorMolecularTest(
-                test = FREE_TEXT_PANEL,
-                item = item,
-                measure = measure,
-                impliesPotentialIndeterminateStatus = false
-            )
-        }
-    }
+private fun priorMolecularTest(item: String?, measure: String?): PriorMolecularTest {
+    return PriorMolecularTest(
+        test = FREE_TEXT_PANEL,
+        item = item,
+        measure = measure,
+        impliesPotentialIndeterminateStatus = false
+    )
 }

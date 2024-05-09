@@ -7,6 +7,8 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
@@ -28,6 +30,7 @@ class GeneHasVariantInExonRangeOfType(
         return groupedEvaluationsByResult[EvaluationResult.PASS]
             ?: groupedEvaluationsByResult[EvaluationResult.WARN]
             ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+            ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED]
             ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
     }
 
@@ -101,10 +104,10 @@ class GeneHasVariantInExonRangeOfType(
     private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
         val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
             molecularHistory.allGenericPanels()
-                .flatMap { panel -> panel.exonDeletions }
+                .flatMap(GenericPanel::exonDeletions)
                 .filter { exonDeletion -> exonDeletion.impactsGene(gene) }
                 .filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
-                .map { exonDeletion -> exonDeletion.display() }
+                .map(GenericExonDeletion::display)
                 .toSet()
         } else {
             emptySet()
@@ -125,8 +128,10 @@ class GeneHasVariantInExonRangeOfType(
             }
 
             if (anyVariantOnGeneInAnyPanel) {
-                // we can't currently determine transcript impact of panel variants, so temporarily consider undetermined
-                return null
+                return EvaluationFactory.undetermined(
+                    "Variant in gene $gene detected in Panel(s), but unable to determine exon impact",
+                    "Unclassified variant detected in gene $gene in Panel(s)"
+                )
             } else if (geneIsTestedInAnyPanel) {
                 val message = "No variant $baseMessage"
                 return EvaluationFactory.fail(message, message)
