@@ -5,8 +5,7 @@ import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
-import com.hartwig.actin.molecular.archer.ArcherAnnotator
-import com.hartwig.actin.molecular.archer.ArcherInterpreter
+import com.hartwig.actin.molecular.clinical.ClinicalMolecularTests
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
@@ -54,10 +53,9 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
         }
         LOGGER.info("Loading evidence database for ARCHER")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
-        val archerMolecularRecord =
-            MolecularPipeline(ArcherInterpreter(), ArcherAnnotator(evidenceDatabase)).run(clinical.priorMolecularTests)
+        val clinicalMolecularTests = ClinicalMolecularTests.create(evidenceDatabase).process(clinical.priorMolecularTests)
 
-        val history = MolecularHistory(orangeMolecularRecord + archerMolecularRecord)
+        val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
         val patientRecord = PatientRecordFactory.fromInputs(clinical, history)
         PatientRecordJson.write(patientRecord, config.outputDirectory)
@@ -66,13 +64,11 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
     }
 
     private fun loadEvidence(
-        clinical: ClinicalRecord,
-        orangeRefGenomeVersion: OrangeRefGenomeVersion
+        clinical: ClinicalRecord, orangeRefGenomeVersion: OrangeRefGenomeVersion
     ): Pair<KnownEvents, EvidenceDatabase> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
         val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
-        val evidenceDatabase =
-            loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
+        val evidenceDatabase = loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
         return Pair(knownEvents, evidenceDatabase)
     }
 
@@ -82,8 +78,7 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
         private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
 
         private fun loadEvidenceDatabase(
-            serveDirectory: String, doidJson: String, serveRefGenomeVersion: RefGenome,
-            knownEvents: KnownEvents, clinical: ClinicalRecord
+            serveDirectory: String, doidJson: String, serveRefGenomeVersion: RefGenome, knownEvents: KnownEvents, clinical: ClinicalRecord
         ): EvidenceDatabase {
             val actionableEvents = ActionableEventsLoader.readFromDir(serveDirectory, serveRefGenomeVersion)
 

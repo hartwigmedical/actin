@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.archer
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.clinical.ArcherInterpreter
 import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion

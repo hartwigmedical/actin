@@ -2,12 +2,11 @@ package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalDisruption
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalHomozygousDisruption
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalTranscriptImpact
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalVariant
+import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
+import com.hartwig.actin.molecular.evidence.matching.VARIANT_CRITERIA
 import com.hartwig.serve.datamodel.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.MutationType
@@ -19,6 +18,7 @@ import com.hartwig.serve.datamodel.gene.KnownGene
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
 import com.hartwig.serve.datamodel.range.KnownExon
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -27,7 +27,7 @@ import org.junit.Test
 class KnownEventResolverTest {
 
     @Test
-    fun canResolveKnownEventsForVariants() {
+    fun `Should resolve known events for variants`() {
         val hotspot: KnownHotspot =
             TestServeKnownFactory.hotspotBuilder().gene("gene 1").chromosome("12").position(10).ref("A").alt("T").build()
         val codon: KnownCodon = TestServeKnownFactory.codonBuilder()
@@ -49,22 +49,24 @@ class KnownEventResolverTest {
             ImmutableKnownEvents.builder().addHotspots(hotspot).addCodons(codon).addExons(exon).addGenes(knownGene).build()
         val resolver = KnownEventResolver(known, known.genes())
 
-        val hotspotMatch = minimalVariant().copy(gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T",
-            canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE))
+        val hotspotMatch = VARIANT_CRITERIA.copy(
+            gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T",
+            codingEffect = CodingEffect.MISSENSE
+        )
 
-        assertEquals(hotspot, resolver.resolveForVariant(hotspotMatch))
+        assertEquals(hotspot, resolver.resolveForVariant(hotspotMatch).first())
 
         val codonMatch = hotspotMatch.copy(position = 9)
-        assertEquals(codon, resolver.resolveForVariant(codonMatch))
+        assertEquals(codon, resolver.resolveForVariant(codonMatch).first())
 
         val exonMatch = hotspotMatch.copy(position = 6)
-        assertEquals(exon, resolver.resolveForVariant(exonMatch))
+        assertEquals(exon, resolver.resolveForVariant(exonMatch).first())
 
         val geneMatch = hotspotMatch.copy(position = 1)
-        assertNotNull(resolver.resolveForVariant(geneMatch))
+        assertNotNull(resolver.resolveForVariant(geneMatch).first())
 
         val wrongGene = hotspotMatch.copy(gene = "other")
-        assertNull(resolver.resolveForVariant(wrongGene))
+        assertThat(resolver.resolveForVariant(wrongGene)).isEmpty()
     }
 
     @Test
@@ -110,10 +112,10 @@ class KnownEventResolverTest {
         val known: KnownEvents = ImmutableKnownEvents.builder().addFusions(fusion).build()
         val resolver = KnownEventResolver(known, known.genes())
 
-        val fusionMatch = TestMolecularFactory.minimalFusion().copy(geneStart = "up", geneEnd = "down")
+        val fusionMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down")
         assertEquals(fusion, resolver.resolveForFusion(fusionMatch))
 
-        val fusionMismatch = TestMolecularFactory.minimalFusion().copy(geneStart = "down", geneEnd = "up")
+        val fusionMismatch = FUSION_CRITERIA.copy(geneStart = "down", geneEnd = "up")
         assertNull(resolver.resolveForFusion(fusionMismatch))
     }
 

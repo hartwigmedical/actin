@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.archer
+package com.hartwig.actin.molecular.clinical
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularInterpreter

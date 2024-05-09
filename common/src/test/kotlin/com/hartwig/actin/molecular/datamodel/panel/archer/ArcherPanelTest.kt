@@ -8,9 +8,7 @@ class ArcherPanelTest {
     @Test
     fun `Should identify tested genes`() {
         val archerPanel = ArcherPanel(
-            variants = listOf(
-                ArcherVariant("KRAS", "c.1A>T"),
-            ),
+            variants = listOf(ArcherVariant("KRAS", "c.1A>T")),
             fusions = listOf(
                 ArcherFusion("RET"),
             ),

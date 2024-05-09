@@ -1,10 +1,11 @@
-package com.hartwig.actin.molecular.archer
+package com.hartwig.actin.molecular.clinical
 
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantAnnotation
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -34,11 +35,13 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             )
             val knownExon = evidenceDatabase.knownExonAlterationForVariant(criteria)
             it.copy(
-                evidence = evidence,
-                geneRole = geneAlteration.geneRole,
-                proteinEffect = it.proteinEffect,
-                isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-                exonRank = knownExon?.inputExonRank()
+                annotation = ArcherVariantAnnotation(
+                    evidence = evidence,
+                    geneRole = geneAlteration.geneRole,
+                    proteinEffect = geneAlteration.proteinEffect,
+                    isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
+                    exonRank = knownExon?.inputExonRank()
+                )
             )
         }
 

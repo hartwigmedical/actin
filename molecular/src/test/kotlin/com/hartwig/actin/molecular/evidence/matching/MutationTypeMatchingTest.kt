@@ -2,59 +2,89 @@ package com.hartwig.actin.molecular.evidence.matching
 
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalTranscriptImpact
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalVariant
 import com.hartwig.serve.datamodel.MutationType
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MutationTypeMatchingTest {
 
     @Test
-    fun worksForEveryCodingEffect() {
-        val nonCoding = minimalVariant().copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.NONE))
+    fun `Should work for every coding effect`() {
+        val nonCoding = VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONE)
         for (type in MutationType.values()) {
-            assertFalse(MutationTypeMatching.matches(type, nonCoding))
+            assertThat(MutationTypeMatching.matches(type, nonCoding)).isFalse()
         }
     }
 
     @Test
-    fun canMatchMutationTypes() {
-        val nonsenseOrFrameshift = minimalVariant().copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT))
-        assertTrue(MutationTypeMatching.matches(MutationType.NONSENSE_OR_FRAMESHIFT, nonsenseOrFrameshift))
-        assertTrue(MutationTypeMatching.matches(MutationType.ANY, nonsenseOrFrameshift))
+    fun `Should match for nonsense or frameshift`() {
+        val nonsenseOrFrameshift =
+            VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        assertThat(MutationTypeMatching.matches(MutationType.NONSENSE_OR_FRAMESHIFT, nonsenseOrFrameshift)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.ANY, nonsenseOrFrameshift)).isTrue()
+    }
 
-        val splice = minimalVariant().copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.SPLICE))
-        assertTrue(MutationTypeMatching.matches(MutationType.SPLICE, splice))
-        assertTrue(MutationTypeMatching.matches(MutationType.ANY, splice))
+    @Test
+    fun `Should match for splice`() {
+        val splice = VARIANT_CRITERIA.copy(codingEffect = CodingEffect.SPLICE)
+        assertThat(MutationTypeMatching.matches(MutationType.SPLICE, splice)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.ANY, splice)).isTrue()
+    }
 
-        val inframe = minimalVariant().copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE), type = VariantType.MNV, ref = "AAG", alt = "TTG")
-        assertTrue(MutationTypeMatching.matches(MutationType.MISSENSE, inframe))
-        assertTrue(MutationTypeMatching.matches(MutationType.INFRAME, inframe))
-        assertFalse(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframe))
-        assertFalse(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframe))
-        assertTrue(MutationTypeMatching.matches(MutationType.ANY, splice))
+    @Test
+    fun `Should match for inframe missense`() {
+        val inframe = VARIANT_CRITERIA.copy(
+            codingEffect = CodingEffect.MISSENSE,
+            type = VariantType.MNV,
+            ref = "AAG",
+            alt = "TTG"
+        )
+        assertThat(MutationTypeMatching.matches(MutationType.MISSENSE, inframe)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME, inframe)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframe)).isFalse()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframe)).isFalse()
+    }
 
-        val inframeDeletion = minimalVariant().copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE), type = VariantType.DELETE, ref = "ATGATG", alt = "TTT")
-        assertTrue(MutationTypeMatching.matches(MutationType.MISSENSE, inframeDeletion))
-        assertTrue(MutationTypeMatching.matches(MutationType.INFRAME, inframeDeletion))
-        assertTrue(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframeDeletion))
-        assertFalse(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframeDeletion))
-        assertTrue(MutationTypeMatching.matches(MutationType.ANY, inframeDeletion))
+    @Test
+    fun `Should match for inframe deletion`() {
+        val inframeDeletion = VARIANT_CRITERIA.copy(
+            codingEffect = CodingEffect.MISSENSE,
+            type = VariantType.DELETE,
+            ref = "ATGATG",
+            alt = "TTT"
+        )
+        assertThat(MutationTypeMatching.matches(MutationType.MISSENSE, inframeDeletion)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME, inframeDeletion)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframeDeletion)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframeDeletion)).isFalse()
+        assertThat(MutationTypeMatching.matches(MutationType.ANY, inframeDeletion)).isTrue()
+    }
 
-        val inframeInsertion = minimalVariant().copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE), type = VariantType.INSERT, ref = "TTT", alt = "ATGATG")
-        assertTrue(MutationTypeMatching.matches(MutationType.MISSENSE, inframeInsertion))
-        assertTrue(MutationTypeMatching.matches(MutationType.INFRAME, inframeInsertion))
-        assertFalse(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframeInsertion))
-        assertTrue(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframeInsertion))
-        assertTrue(MutationTypeMatching.matches(MutationType.ANY, inframeInsertion))
+    @Test
+    fun `Should match for inframe insertion`() {
+        val inframeInsertion = VARIANT_CRITERIA.copy(
+            codingEffect = CodingEffect.MISSENSE,
+            type = VariantType.INSERT,
+            ref = "TTT",
+            alt = "ATGATG"
+        )
+        assertThat(MutationTypeMatching.matches(MutationType.MISSENSE, inframeInsertion)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME, inframeInsertion)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframeInsertion)).isFalse()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframeInsertion)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.ANY, inframeInsertion)).isTrue()
+    }
 
-        val missense = minimalVariant().copy(canonicalImpact = minimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE), type = VariantType.SNV)
-        assertTrue(MutationTypeMatching.matches(MutationType.MISSENSE, missense))
-        assertFalse(MutationTypeMatching.matches(MutationType.INFRAME, missense))
-        assertFalse(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, missense))
-        assertFalse(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, missense))
-        assertTrue(MutationTypeMatching.matches(MutationType.ANY, missense))
+    @Test
+    fun `Should match for snv missense`() {
+        val missense = VARIANT_CRITERIA.copy(
+            codingEffect = CodingEffect.MISSENSE,
+            type = VariantType.SNV
+        )
+        assertThat(MutationTypeMatching.matches(MutationType.MISSENSE, missense)).isTrue()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME, missense)).isFalse()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, missense)).isFalse()
+        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, missense)).isFalse()
+        assertThat(MutationTypeMatching.matches(MutationType.ANY, missense)).isTrue()
     }
 }

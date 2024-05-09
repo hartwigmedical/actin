@@ -1,13 +1,16 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalDisruption
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalFusion
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalVariant
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -36,9 +39,18 @@ class EvidenceDatabaseTest {
     @Test
     fun canMatchEvidenceForDrivers() {
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
-
+        TestMolecularFactory.minimalVariant()
         // Assume default objects match with default SERVE objects
-        val variant = minimalVariant()
+        val variant = VariantMatchCriteria(
+            chromosome = "",
+            position = 0,
+            ref = "",
+            alt = "",
+            isReportable = true,
+            type = VariantType.SNV,
+            gene = "",
+            codingEffect = CodingEffect.NONE,
+        )
         assertNotNull(database.geneAlterationForVariant(variant))
         assertEquals(1, evidenceCount(database.evidenceForVariant(variant)).toLong())
 
@@ -54,7 +66,14 @@ class EvidenceDatabaseTest {
         assertNotNull(database.geneAlterationForBreakend(disruption))
         assertEquals(1, evidenceCount(database.evidenceForBreakend(disruption)).toLong())
 
-        val fusion = minimalFusion().copy(isReportable = true)
+        val fusion = FusionMatchCriteria(
+            geneStart = "",
+            fusedExonUp = 0,
+            geneEnd = "",
+            fusedExonDown = 0,
+            driverType = FusionDriverType.NONE,
+            isReportable = true,
+        ).copy(isReportable = true)
         assertNotNull(database.lookupKnownFusion(fusion))
         assertEquals(2, evidenceCount(database.evidenceForFusion(fusion)).toLong())
 

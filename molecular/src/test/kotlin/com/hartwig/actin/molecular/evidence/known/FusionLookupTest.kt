@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.known
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalFusion
+import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -24,19 +24,19 @@ class FusionLookupTest {
             .build()
         val knownFusions: MutableList<KnownFusion> = Lists.newArrayList(fusion1, fusion2, fusion3, fusion4)
 
-        val broadMatch = minimalFusion().copy(geneStart = "up", geneEnd = "down", fusedExonUp = 2, fusedExonDown = 5)
+        val broadMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 2, fusedExonDown = 5)
         assertEquals(fusion1, FusionLookup.find(knownFusions, broadMatch))
 
-        val specificUpMatch = minimalFusion().copy(geneStart = "up", geneEnd = "down", fusedExonUp = 3, fusedExonDown = 5)
+        val specificUpMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 3, fusedExonDown = 5)
         assertEquals(fusion2, FusionLookup.find(knownFusions, specificUpMatch))
 
-        val specificDownMatch = minimalFusion().copy(geneStart = "up", geneEnd = "down", fusedExonUp = 2, fusedExonDown = 4)
+        val specificDownMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 2, fusedExonDown = 4)
         assertEquals(fusion3, FusionLookup.find(knownFusions, specificDownMatch))
 
-        val specificMatch = minimalFusion().copy(geneStart = "up", geneEnd = "down", fusedExonUp = 3, fusedExonDown = 4)
+        val specificMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 3, fusedExonDown = 4)
         assertEquals(fusion4, FusionLookup.find(knownFusions, specificMatch))
 
-        val noMatch = minimalFusion().copy(geneStart = "down", geneEnd = "up")
+        val noMatch = FUSION_CRITERIA.copy(geneStart = "down", geneEnd = "up")
         assertNull(FusionLookup.find(knownFusions, noMatch))
     }
 }

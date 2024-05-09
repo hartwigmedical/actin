@@ -7,10 +7,7 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import java.time.LocalDate
 
 interface MolecularTest<T> {
@@ -26,36 +23,6 @@ interface MolecularTestVisitor {
     fun visit(test: ArcherMolecularTest) {}
     fun visit(test: GenericPanelMolecularTest) {}
     fun visit(test: OtherPriorMolecularTest) {}
-}
-
-const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
-const val AVL_PANEL = "AvL Panel"
-const val FREE_TEXT_PANEL = "Freetext"
-
-class MolecularTestFactory {
-    companion object {
-        fun classify(result: PriorMolecularTest): ExperimentType {
-            return when (result.test) {
-                ARCHER_FP_LUNG_TARGET -> ExperimentType.ARCHER
-                AVL_PANEL -> ExperimentType.GENERIC_PANEL
-                FREE_TEXT_PANEL -> ExperimentType.GENERIC_PANEL
-                "IHC" -> ExperimentType.IHC
-                "" -> if (result.item == "PD-L1") ExperimentType.IHC else ExperimentType.OTHER
-                else -> ExperimentType.OTHER
-            }
-        }
-
-        fun fromPriorMolecular(tests: List<PriorMolecularTest>): List<MolecularTest<out Any>> {
-            return tests.groupBy { classify(it) }
-                .flatMap { (type, results) ->
-                    when (type) {
-                        ExperimentType.IHC -> results.map { IHCMolecularTest.fromPriorMolecularTest(it) }
-                        ExperimentType.GENERIC_PANEL -> GenericPanelMolecularTest.fromPriorMolecularTest(results)
-                        else -> results.map { OtherPriorMolecularTest.fromPriorMolecularTest(it) }
-                    }
-                }
-        }
-    }
 }
 
 data class WGSMolecularTest(
@@ -85,12 +52,6 @@ data class IHCMolecularTest(
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
     }
-
-    companion object {
-        fun fromPriorMolecularTest(result: PriorMolecularTest): IHCMolecularTest {
-            return IHCMolecularTest(date = null, result)
-        }
-    }
 }
 
 data class ArcherMolecularTest(
@@ -115,41 +76,6 @@ data class GenericPanelMolecularTest(
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
     }
-
-    companion object {
-        fun fromPriorMolecularTest(results: List<PriorMolecularTest>): List<GenericPanelMolecularTest> {
-            return results.groupBy { it.test }
-                .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
-        }
-
-        private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
-            return results
-                .groupBy { it.measureDate }
-                .map { (date, results) ->
-                    val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
-                    val (fusionRecords, variantRecords) = usableResults.partition { it.item?.contains("::") ?: false }
-                    val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
-                    val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
-
-                    GenericPanelMolecularTest(date = date, result = GenericPanel(type, variants, fusions))
-                }
-        }
-
-        private fun isKnownIgnorableRecord(result: PriorMolecularTest, type: GenericPanelType): Boolean {
-            return when (type) {
-                GenericPanelType.AVL -> result.measure == "GEEN mutaties aangetoond met behulp van het AVL Panel"
-                else -> false
-            }
-        }
-
-        private fun classify(type: String?): GenericPanelType {
-            return when (type) {
-                AVL_PANEL -> GenericPanelType.AVL
-                FREE_TEXT_PANEL -> GenericPanelType.FREE_TEXT
-                else -> throw IllegalArgumentException("Unknown generic panel type: $type")
-            }
-        }
-    }
 }
 
 data class OtherPriorMolecularTest(
@@ -161,12 +87,6 @@ data class OtherPriorMolecularTest(
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
-    }
-
-    companion object {
-        fun fromPriorMolecularTest(result: PriorMolecularTest): OtherPriorMolecularTest {
-            return OtherPriorMolecularTest(date = null, result)
-        }
     }
 }
 
