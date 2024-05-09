@@ -17,11 +17,13 @@ import com.hartwig.serve.datamodel.range.KnownExon
 
 class KnownEventResolver(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: Set<KnownGene>) {
 
-    fun resolveForVariant(variant: VariantMatchCriteria): GeneAlteration? {
-        return findHotspot(knownEvents.hotspots(), variant)
-            ?: findCodon(knownEvents.codons(), variant)
-            ?: findExon(knownEvents.exons(), variant)
-            ?: GeneLookup.find(aggregatedKnownGenes, variant.gene)
+    fun resolveForVariant(variant: VariantMatchCriteria): List<GeneAlteration> {
+        return listOfNotNull(
+            findHotspot(knownEvents.hotspots(), variant),
+            findCodon(knownEvents.codons(), variant),
+            findExon(knownEvents.exons(), variant),
+            GeneLookup.find(aggregatedKnownGenes, variant.gene)
+        )
     }
 
     fun resolveForCopyNumber(copyNumber: CopyNumber): GeneAlteration? {

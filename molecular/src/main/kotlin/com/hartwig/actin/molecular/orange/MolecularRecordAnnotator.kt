@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
@@ -138,8 +139,13 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateFusion(fusion: Fusion): Fusion {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(fusion))!!
-        val knownFusion = evidenceDatabase.lookupKnownFusion(fusion)
+        val evidence =
+            ActionableEvidenceFactory.create(
+                evidenceDatabase.evidenceForFusion(
+                    createFusionCriteria(fusion)
+                )
+            )!!
+        val knownFusion = evidenceDatabase.lookupKnownFusion(createFusionCriteria(fusion))
 
         val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
             GeneAlterationFactory.convertProteinEffect(knownFusion.proteinEffect())
@@ -152,6 +158,13 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
             isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
         )
     }
+
+    private fun createFusionCriteria(fusion: Fusion) = FusionMatchCriteria(
+        isReportable = fusion.isReportable,
+        geneStart = fusion.geneStart,
+        geneEnd = fusion.geneEnd,
+        driverType = fusion.driverType
+    )
 
     private fun annotateViruse(virus: Virus): Virus {
         val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))!!

@@ -1,8 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.molecular.MolecularInterpreterConfig
-import com.hartwig.actin.molecular.OrangeInterpreterApplication
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -22,7 +20,6 @@ import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class OrangeInterpreterTest {
@@ -188,21 +185,6 @@ class OrangeInterpreterTest {
             )
         val interpreter = createTestInterpreter()
         interpreter.interpret(record)
-    }
-
-    @Test
-    fun `Should fail if no serve db provided when molecular is present`() {
-        val config = MolecularInterpreterConfig(
-            orangeJson = ORANGE_JSON,
-            serveDirectory = null,
-            clinicalJson = CLINICAL_JSON,
-            doidJson = DOID_JSON,
-            outputDirectory = "output"
-        )
-        val application = OrangeInterpreterApplication(config)
-        assertThatThrownBy { application.run() }
-            .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage("SERVE directory must be provided when interpreting ORANGE record!")
     }
 
     companion object {

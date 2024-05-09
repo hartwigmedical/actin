@@ -37,18 +37,12 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
 
         val orangeMolecularRecord = if (config.orangeJson != null) {
-            if (config.serveDirectory == null) {
-                throw IllegalArgumentException("SERVE directory must be provided when interpreting ORANGE record!")
-            }
 
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
             val orange = OrangeJson.getInstance().read(config.orangeJson)
 
-            LOGGER.info("Loading evidence database")
-            val serveRefGenomeVersion = toServeRefGenomeVersion(orange.refGenomeVersion())
-            val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
-            val evidenceDatabase =
-                loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
+            LOGGER.info("Loading evidence database for ORANGE")
+            val (knownEvents, evidenceDatabase) = loadEvidence(clinical, orange.refGenomeVersion())
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
@@ -58,7 +52,10 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
         } else {
             emptyList()
         }
-        val archerMolecularRecord = MolecularPipeline(ArcherInterpreter(), ArcherAnnotator()).run(clinical.priorMolecularTests)
+        LOGGER.info("Loading evidence database for ARCHER")
+        val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
+        val archerMolecularRecord =
+            MolecularPipeline(ArcherInterpreter(), ArcherAnnotator(evidenceDatabase)).run(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + archerMolecularRecord)
         MolecularHistoryPrinter.printRecord(history)
@@ -66,6 +63,17 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
         PatientRecordJson.write(patientRecord, config.outputDirectory)
 
         LOGGER.info("Done!")
+    }
+
+    private fun loadEvidence(
+        clinical: ClinicalRecord,
+        orangeRefGenomeVersion: OrangeRefGenomeVersion
+    ): Pair<KnownEvents, EvidenceDatabase> {
+        val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
+        val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
+        val evidenceDatabase =
+            loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
+        return Pair(knownEvents, evidenceDatabase)
     }
 
     companion object {

@@ -17,27 +17,31 @@ class OrangeInterpreter(private val geneFilter: GeneFilter) : MolecularInterpret
 
     override fun interpret(records: List<OrangeRecord>): List<MolecularTest<MolecularRecord>> {
         return records.map { record ->
-            validateOrangeRecord(record)
-            val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter)
-            val characteristicsExtractor = CharacteristicsExtractor()
-
-            MolecularRecord(
-                patientId = toPatientId(record.sampleId()),
-                sampleId = record.sampleId(),
-                type = determineExperimentType(record.experimentType()),
-                refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
-                date = record.samplingDate(),
-                evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
-                externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
-                containsTumorCells = containsTumorCells(record),
-                hasSufficientQualityAndPurity = hasSufficientQualityAndPurity(record),
-                hasSufficientQuality = hasSufficientQuality(record),
-                characteristics = characteristicsExtractor.extract(record),
-                drivers = driverExtractor.extract(record),
-                immunology = ImmunologyExtraction.extract(record),
-                pharmaco = PharmacoExtraction.extract(record)
-            )
+            interpret(record)
         }.map { WGSMolecularTest(type = it.type, date = it.date, result = it) }
+    }
+
+    fun interpret(record: OrangeRecord): MolecularRecord {
+        validateOrangeRecord(record)
+        val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter)
+        val characteristicsExtractor = CharacteristicsExtractor()
+
+        return MolecularRecord(
+            patientId = toPatientId(record.sampleId()),
+            sampleId = record.sampleId(),
+            type = determineExperimentType(record.experimentType()),
+            refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
+            date = record.samplingDate(),
+            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
+            externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
+            containsTumorCells = containsTumorCells(record),
+            hasSufficientQualityAndPurity = hasSufficientQualityAndPurity(record),
+            hasSufficientQuality = hasSufficientQuality(record),
+            characteristics = characteristicsExtractor.extract(record),
+            drivers = driverExtractor.extract(record),
+            immunology = ImmunologyExtraction.extract(record),
+            pharmaco = PharmacoExtraction.extract(record)
+        )
     }
 
     companion object {

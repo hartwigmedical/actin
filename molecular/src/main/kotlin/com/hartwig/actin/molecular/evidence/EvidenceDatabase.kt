@@ -11,6 +11,10 @@ import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.fusion.KnownFusion
+import com.hartwig.serve.datamodel.gene.KnownGene
+import com.hartwig.serve.datamodel.hotspot.KnownHotspot
+import com.hartwig.serve.datamodel.range.KnownCodon
+import com.hartwig.serve.datamodel.range.KnownExon
 
 class EvidenceDatabase internal constructor(
     private val knownEventResolver: KnownEventResolver,
@@ -50,7 +54,19 @@ class EvidenceDatabase internal constructor(
     }
 
     fun geneAlterationForVariant(variant: VariantMatchCriteria): GeneAlteration? {
-        return knownEventResolver.resolveForVariant(variant)
+        return knownEventResolver.resolveForVariant(variant).minByOrNull {
+            when (it) {
+                is KnownHotspot -> 1
+                is KnownCodon -> 2
+                is KnownExon -> 3
+                is KnownGene -> 4
+                else -> 5
+            }
+        }
+    }
+
+    fun knownExonAlterationForVariant(variant: VariantMatchCriteria): KnownExon? {
+        return knownEventResolver.resolveForVariant(variant).filterIsInstance<KnownExon>().firstOrNull()
     }
 
     fun evidenceForVariant(variant: VariantMatchCriteria): ActionabilityMatch {

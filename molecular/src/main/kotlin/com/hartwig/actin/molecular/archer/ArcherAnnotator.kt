@@ -3,9 +3,7 @@ package com.hartwig.actin.molecular.archer
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
@@ -19,12 +17,12 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             val criteria = VariantMatchCriteria(
                 true,
                 it.gene,
-                CodingEffect.MISSENSE,
-                VariantType.SNV,
-                "1",
-                123,
-                "C",
-                "T"
+                it.codingEffect,
+                it.type,
+                it.chromosome,
+                it.position,
+                it.ref,
+                it.alt
             )
             val evidence = ActionableEvidenceFactory.create(
                 evidenceDatabase.evidenceForVariant(
@@ -34,7 +32,14 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             val geneAlteration = GeneAlterationFactory.convertAlteration(
                 it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
             )
-            it.copy(evidence = evidence, geneAlteration = geneAlteration)
+            val knownExon = evidenceDatabase.knownExonAlterationForVariant(criteria)
+            it.copy(
+                evidence = evidence,
+                geneRole = geneAlteration.geneRole,
+                proteinEffect = it.proteinEffect,
+                isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
+                exonRank = knownExon?.inputExonRank()
+            )
         }
 
         val annotatedFusions = input.result.fusions.map {
