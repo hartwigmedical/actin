@@ -190,9 +190,19 @@ data class GenericPanelMolecularTest(
                     val (fusionRecords, nonFusionRecords) = usableResults.partition { it.item?.contains("::") ?: false }
                     val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
 
-                    val (exonDeletionRecords, variantRecords) = nonFusionRecords.partition { it.measure?.endsWith(" del") ?: false }
-                    val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
+                    val (exonDeletionRecords, nonExonDeletionRecords) = nonFusionRecords.partition { it.measure?.endsWith(" del") ?: false }
                     val exonDeletions = exonDeletionRecords.map { record -> GenericExonDeletion.parse(record) }
+
+                    val (variantRecords, unknownRecords) = nonExonDeletionRecords.partition { it.measure?.startsWith("c.") ?: false }
+                    val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
+
+                    if (unknownRecords.isNotEmpty()) {
+                        throw IllegalArgumentException("Unrecognized records in $type panel: ${
+                            unknownRecords
+                                .map { "item \"${it.item}\" measure \"${it.measure}\"" }
+                                .joinToString(", ")
+                        }")
+                    }
 
                     GenericPanelMolecularTest(date = date, result = GenericPanel(type, variants, fusions, exonDeletions))
                 }

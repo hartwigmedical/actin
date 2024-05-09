@@ -7,6 +7,7 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorM
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularExonDeletionRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularVariantRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
@@ -16,10 +17,10 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import java.time.LocalDate
 
 private const val GENE = "EGFR"
 private const val HGVS_TRANSCRIPT = "c.123C>T"
@@ -139,28 +140,33 @@ class MolecularHistoryTest {
     fun `Should construct AvL panel from prior molecular`() {
         val priorMolecularTests = listOf(
             avlPanelPriorMolecularNoMutationsFoundRecord(),
-            avlPanelPriorMolecularVariantRecord("gene", "c1A>T")
+            avlPanelPriorMolecularVariantRecord("gene", "c.1A>T")
         )
         val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
 
         val expected = GenericPanelMolecularTest(
             date = null,
-            result = GenericPanel(GenericPanelType.AVL, variants = listOf(GenericVariant("gene", "c1A>T")))
+            result = GenericPanel(GenericPanelType.AVL, variants = listOf(GenericVariant("gene", "c.1A>T")))
         )
         assertThat(molecularTests).containsExactly(expected)
     }
 
     @Test
     fun `Should construct Freetext panel from prior molecular`() {
-        val priorMolecularTests = listOf(freetextPriorMolecularFusionRecord("geneUp", "geneDown"))
+        val priorMolecularTests = listOf(
+            freetextPriorMolecularVariantRecord("gene", "c.1A>T"),
+            freetextPriorMolecularFusionRecord("geneUp", "geneDown"),
+            freetextPriorMolecularExonDeletionRecord("gene", 19),
+        )
         val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
 
         val expected = GenericPanelMolecularTest(
             date = null,
             result = GenericPanel(
                 GenericPanelType.FREE_TEXT,
-                variants = emptyList(),
-                fusions = listOf(GenericFusion("geneUp", "geneDown"))
+                variants = listOf(GenericVariant("gene", "c.1A>T")),
+                fusions = listOf(GenericFusion("geneUp", "geneDown")),
+                exonDeletions = listOf(GenericExonDeletion("gene", 19))
             )
         )
         assertThat(molecularTests).containsExactly(expected)

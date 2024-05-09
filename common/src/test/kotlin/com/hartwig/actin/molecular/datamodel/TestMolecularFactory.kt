@@ -381,6 +381,15 @@ object TestMolecularFactory {
         )
     }
 
+    fun freetextPriorMolecularVariantRecord(gene: String, hgvs: String): PriorMolecularTest {
+        return PriorMolecularTest(
+            test = "Freetext",
+            item = gene,
+            measure = hgvs,
+            impliesPotentialIndeterminateStatus = false
+        )
+    }
+    
     fun freetextPriorMolecularExonDeletionRecord(gene: String, exon: Int): PriorMolecularTest {
         return PriorMolecularTest(
             test = "Freetext",
