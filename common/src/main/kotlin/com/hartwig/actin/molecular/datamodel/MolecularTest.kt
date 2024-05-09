@@ -10,6 +10,10 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import java.time.LocalDate
 
+const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
+const val AVL_PANEL = "AvL Panel"
+const val FREE_TEXT_PANEL = "Freetext"
+
 interface MolecularTest<T> {
     val type: ExperimentType
     val date: LocalDate?
@@ -33,12 +37,6 @@ data class WGSMolecularTest(
 
     override fun accept(molecularTestVisitor: MolecularTestVisitor) {
         molecularTestVisitor.visit(this)
-    }
-
-    companion object {
-        fun fromMolecularRecord(result: MolecularRecord): WGSMolecularTest {
-            return WGSMolecularTest(result.type, result.date, result)
-        }
     }
 }
 

@@ -4,14 +4,13 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.MolecularInterpreter
 import com.hartwig.actin.molecular.MolecularPipeline
+import com.hartwig.actin.molecular.datamodel.ARCHER_FP_LUNG_TARGET
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
+import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
-
-const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
-const val AVL_PANEL = "AvL Panel"
-const val FREE_TEXT_PANEL = "Freetext"
 
 private fun identityAnnotator() = object : MolecularAnnotator<PriorMolecularTest> {
     override fun annotate(input: MolecularTest<PriorMolecularTest>): MolecularTest<PriorMolecularTest> {
@@ -31,7 +30,7 @@ private fun ihcInterpreter() = object : MolecularInterpreter<PriorMolecularTest,
     }
 }
 
-class ClinicalMolecularTests(private val pipelines: Set<MolecularPipeline<PriorMolecularTest, out Any>>) {
+class ClinicalMolecular(private val pipelines: Set<MolecularPipeline<PriorMolecularTest, out Any>>) {
 
     fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest<out Any>> {
         val otherPipeline = MolecularPipeline(
@@ -42,7 +41,7 @@ class ClinicalMolecularTests(private val pipelines: Set<MolecularPipeline<PriorM
     }
 
     companion object {
-        fun create(evidenceDatabase: EvidenceDatabase) = ClinicalMolecularTests(
+        fun create(evidenceDatabase: EvidenceDatabase) = ClinicalMolecular(
             setOf(
                 MolecularPipeline(
                     ArcherInterpreter(),

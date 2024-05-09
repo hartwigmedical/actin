@@ -5,7 +5,7 @@ import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
-import com.hartwig.actin.molecular.clinical.ClinicalMolecularTests
+import com.hartwig.actin.molecular.clinical.ClinicalMolecular
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
@@ -53,7 +53,7 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
         }
         LOGGER.info("Loading evidence database for ARCHER")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
-        val clinicalMolecularTests = ClinicalMolecularTests.create(evidenceDatabase).process(clinical.priorMolecularTests)
+        val clinicalMolecularTests = ClinicalMolecular.create(evidenceDatabase).process(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)

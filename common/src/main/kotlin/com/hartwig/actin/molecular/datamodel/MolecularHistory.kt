@@ -47,12 +47,5 @@ data class MolecularHistory(
         fun empty(): MolecularHistory {
             return MolecularHistory(emptyList())
         }
-
-        fun fromInputs(molecularRecords: List<MolecularRecord>, priorMolecularTests: List<PriorMolecularTest>): MolecularHistory {
-            return MolecularHistory(
-                molecularRecords.map { WGSMolecularTest.fromMolecularRecord(it) } +
-                        MolecularTestFactory.fromPriorMolecular(priorMolecularTests)
-            )
-        }
     }
 }

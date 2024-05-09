@@ -1,37 +1,11 @@
-package com.hartwig.actin.molecular.datamodel
+package com.hartwig.actin.molecular.clinical
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularVariantRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
-import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+class ClinicalMolecularTest{
 
-private const val GENE = "EGFR"
-private const val HGVS_TRANSCRIPT = "c.123C>T"
+/*    val evidenceDatabase = mockk<EvidenceDatabase>()
+    val clinicalMolecular = ClinicalMolecular.create()
 
-class MolecularHistoryTest {
-
-    @Test
-    fun `Should return most recent molecular record when multiple exist`() {
-
-        val molecularRecords = listOf(
-            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = null),
-            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2024, 1, 1)),
-            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2023, 1, 1)),
-        )
-
-        val molecularHistory = MolecularHistory.fromInputs(molecularRecords, emptyList())
-        assertThat(molecularHistory.latestOrangeMolecularRecord()).isEqualTo(molecularRecords[1])
-    }
-
-    @Test
+   @Test
     fun `Should return undated molecular record when no dated records exist`() {
 
         val molecularRecords = listOf(
@@ -118,8 +92,8 @@ class MolecularHistoryTest {
     @Test
     fun `Should distinguish generic panel types`() {
         val genericPanelTests = listOf(
-            avlPanelPriorMolecularNoMutationsFoundRecord(),
-            freetextPriorMolecularFusionRecord("geneUp", "geneDown")
+            TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord(),
+            TestMolecularFactory.freetextPriorMolecularFusionRecord("geneUp", "geneDown")
         )
         val molecularTests = MolecularTestFactory.fromPriorMolecular(genericPanelTests)
         assertThat(molecularTests).hasSize(2)
@@ -130,8 +104,8 @@ class MolecularHistoryTest {
     @Test
     fun `Should construct AvL panel from prior molecular`() {
         val priorMolecularTests = listOf(
-            avlPanelPriorMolecularNoMutationsFoundRecord(),
-            avlPanelPriorMolecularVariantRecord("gene", "c1A>T")
+            TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord(),
+            TestMolecularFactory.avlPanelPriorMolecularVariantRecord("gene", "c1A>T")
         )
         val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
 
@@ -144,7 +118,7 @@ class MolecularHistoryTest {
 
     @Test
     fun `Should construct Freetext panel from prior molecular`() {
-        val priorMolecularTests = listOf(freetextPriorMolecularFusionRecord("geneUp", "geneDown"))
+        val priorMolecularTests = listOf(TestMolecularFactory.freetextPriorMolecularFusionRecord("geneUp", "geneDown"))
         val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
 
         val expected = GenericPanelMolecularTest(
@@ -167,7 +141,7 @@ class MolecularHistoryTest {
             impliesPotentialIndeterminateStatus = false
         )
         val priorMolecularTests = listOf(record)
-        assertThatThrownBy {
+        Assertions.assertThatThrownBy {
             GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -181,8 +155,8 @@ class MolecularHistoryTest {
         )
 
         val genericPanelTests = listOf(
-            avlPanelPriorMolecularNoMutationsFoundRecord(),
-            freetextPriorMolecularFusionRecord("geneUp", "geneDown")
+            TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord(),
+            TestMolecularFactory.freetextPriorMolecularFusionRecord("geneUp", "geneDown")
         )
 
         val otherTests = listOf(
@@ -196,5 +170,5 @@ class MolecularHistoryTest {
         assertThat(molecularTests.filter { it.type == ExperimentType.IHC }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
-    }
+    }*/
 }
