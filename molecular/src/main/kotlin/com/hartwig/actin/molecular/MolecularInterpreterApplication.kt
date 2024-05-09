@@ -1,15 +1,17 @@
-package com.hartwig.actin.molecular.orange
+package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
+import com.hartwig.actin.molecular.archer.ArcherAnnotator
+import com.hartwig.actin.molecular.archer.ArcherInterpreter
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
+import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.hmftools.datamodel.OrangeJson
@@ -18,15 +20,15 @@ import com.hartwig.serve.datamodel.ActionableEventsLoader
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.KnownEventsLoader
 import com.hartwig.serve.datamodel.RefGenome
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
-class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) {
+class OrangeInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
@@ -34,7 +36,7 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
         LOGGER.info("Loading clinical json from {}", config.clinicalJson)
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
 
-        val molecularHistory = if (config.orangeJson != null) {
+        val orangeMolecularRecord = if (config.orangeJson != null) {
             if (config.serveDirectory == null) {
                 throw IllegalArgumentException("SERVE directory must be provided when interpreting ORANGE record!")
             }
@@ -50,23 +52,17 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
-            val molecular = EvidenceAnnotator(evidenceDatabase).annotate(OrangeInterpreter(geneFilter).interpret(orange))
+            val orangePipeline = MolecularPipeline(OrangeInterpreter(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
 
-            if (clinical.patientId != molecular.patientId) {
-                LOGGER.warn(
-                    "Clinical patientId '{}' not the same as molecular patientId '{}'! Using clinical patientId",
-                    clinical.patientId,
-                    molecular.patientId
-                )
-            }
-
-            MolecularHistory.fromInputs(listOf(molecular), clinical.priorMolecularTests)
+            orangePipeline.run(listOf(orange))
         } else {
-            MolecularHistory.fromInputs(emptyList(), clinical.priorMolecularTests)
+            emptyList()
         }
+        val archerMolecularRecord = MolecularPipeline(ArcherInterpreter(), ArcherAnnotator()).run(clinical.priorMolecularTests)
 
-        MolecularHistoryPrinter.printRecord(molecularHistory)
-        val patientRecord = PatientRecordFactory.fromInputs(clinical, molecularHistory)
+        val history = MolecularHistory(orangeMolecularRecord + archerMolecularRecord)
+        MolecularHistoryPrinter.printRecord(history)
+        val patientRecord = PatientRecordFactory.fromInputs(clinical, history)
         PatientRecordJson.write(patientRecord, config.outputDirectory)
 
         LOGGER.info("Done!")
@@ -112,10 +108,10 @@ class OrangeInterpreterApplication(private val config: OrangeInterpreterConfig) 
 }
 
 fun main(args: Array<String>) {
-    val options: Options = OrangeInterpreterConfig.createOptions()
-    val config: OrangeInterpreterConfig?
+    val options: Options = MolecularInterpreterConfig.createOptions()
+    val config: MolecularInterpreterConfig?
     try {
-        config = OrangeInterpreterConfig.createConfig(DefaultParser().parse(options, args))
+        config = MolecularInterpreterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
         OrangeInterpreterApplication.LOGGER.warn(exception)
         HelpFormatter().printHelp(OrangeInterpreterApplication.APPLICATION, options)

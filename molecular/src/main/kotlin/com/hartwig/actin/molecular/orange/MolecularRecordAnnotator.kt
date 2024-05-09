@@ -1,6 +1,9 @@
-package com.hartwig.actin.molecular.evidence
+package com.hartwig.actin.molecular.orange
 
+import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.WGSMolecularTest
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
@@ -11,15 +14,21 @@ import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.Virus
+import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 
-class EvidenceAnnotator(private val evidenceDatabase: EvidenceDatabase) {
+class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord> {
 
-    fun annotate(record: MolecularRecord): MolecularRecord {
-        return record.copy(
-            characteristics = annotateCharacteristics(record.characteristics),
-            drivers = annotateDrivers(record.drivers),
+    override fun annotate(input: MolecularTest<MolecularRecord>): WGSMolecularTest {
+        return WGSMolecularTest(
+            date = input.date,
+            type = input.type,
+            result = input.result.copy(
+                characteristics = annotateCharacteristics(input.result.characteristics),
+                drivers = annotateDrivers(input.result.drivers),
+            )
         )
     }
 
@@ -54,13 +63,17 @@ class EvidenceAnnotator(private val evidenceDatabase: EvidenceDatabase) {
 
     private fun annotateVariant(variant: Variant): Variant {
         val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-            ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(variant))!!
+            ActionableEvidenceFactory.create(
+                evidenceDatabase.evidenceForVariant(
+                    createCriteria(variant)
+                )
+            )!!
         } else {
             ActionableEvidenceFactory.createNoEvidence()
         }
 
         val alteration = GeneAlterationFactory.convertAlteration(
-            variant.gene, evidenceDatabase.geneAlterationForVariant(variant)
+            variant.gene, evidenceDatabase.geneAlterationForVariant(createCriteria(variant))
         )
 
         return variant.copy(
@@ -70,6 +83,17 @@ class EvidenceAnnotator(private val evidenceDatabase: EvidenceDatabase) {
             isAssociatedWithDrugResistance = alteration.isAssociatedWithDrugResistance
         )
     }
+
+    private fun createCriteria(variant: Variant) = VariantMatchCriteria(
+        gene = variant.gene,
+        chromosome = variant.chromosome,
+        position = variant.position,
+        ref = variant.ref,
+        alt = variant.alt,
+        type = variant.type,
+        codingEffect = variant.canonicalImpact.codingEffect,
+        isReportable = variant.isReportable
+    )
 
     private fun annotateCopyNumber(copyNumber: CopyNumber): CopyNumber {
         val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))!!

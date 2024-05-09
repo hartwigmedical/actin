@@ -2,11 +2,11 @@ package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.fusion.KnownFusion
@@ -17,7 +17,7 @@ import com.hartwig.serve.datamodel.range.KnownExon
 
 class KnownEventResolver(private val knownEvents: KnownEvents, private val aggregatedKnownGenes: Set<KnownGene>) {
 
-    fun resolveForVariant(variant: Variant): GeneAlteration? {
+    fun resolveForVariant(variant: VariantMatchCriteria): GeneAlteration? {
         return findHotspot(knownEvents.hotspots(), variant)
             ?: findCodon(knownEvents.codons(), variant)
             ?: findExon(knownEvents.exons(), variant)
@@ -39,20 +39,20 @@ class KnownEventResolver(private val knownEvents: KnownEvents, private val aggre
         return GeneLookup.find(aggregatedKnownGenes, disruptiopn.gene)
     }
 
-    fun resolveForFusion(fusion: Fusion): KnownFusion? {
+    fun resolveForFusion(fusion: FusionMatchCriteria): KnownFusion? {
         return FusionLookup.find(knownEvents.fusions(), fusion)
     }
 
     companion object {
-        private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: Variant): KnownHotspot? {
+        private fun findHotspot(knownHotspots: Iterable<KnownHotspot>, variant: VariantMatchCriteria): KnownHotspot? {
             return knownHotspots.find { HotspotMatching.isMatch(it, variant) }
         }
 
-        private fun findCodon(knownCodons: Iterable<KnownCodon>, variant: Variant): KnownCodon? {
+        private fun findCodon(knownCodons: Iterable<KnownCodon>, variant: VariantMatchCriteria): KnownCodon? {
             return knownCodons.find { RangeMatching.isMatch(it, variant) }
         }
 
-        private fun findExon(knownExons: Iterable<KnownExon>, variant: Variant): KnownExon? {
+        private fun findExon(knownExons: Iterable<KnownExon>, variant: VariantMatchCriteria): KnownExon? {
             return knownExons.find { RangeMatching.isMatch(it, variant) }
         }
     }

@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.TestPatientFactory
+import com.hartwig.actin.molecular.MolecularInterpreterConfig
+import com.hartwig.actin.molecular.OrangeInterpreterApplication
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
-import com.hartwig.actin.molecular.orange.OrangeInterpreterApplication
-import com.hartwig.actin.molecular.orange.OrangeInterpreterConfig
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
@@ -20,10 +20,10 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
-import java.time.LocalDate
 
 class OrangeInterpreterTest {
 
@@ -192,7 +192,7 @@ class OrangeInterpreterTest {
 
     @Test
     fun `Should fail if no serve db provided when molecular is present`() {
-        val config = OrangeInterpreterConfig(
+        val config = MolecularInterpreterConfig(
             orangeJson = ORANGE_JSON,
             serveDirectory = null,
             clinicalJson = CLINICAL_JSON,

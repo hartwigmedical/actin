@@ -6,7 +6,7 @@ import com.hartwig.actin.database.algo.TreatmentMatchLoaderApplication
 import com.hartwig.actin.database.clinical.ClinicalLoaderApplication
 import com.hartwig.actin.database.molecular.MolecularLoaderApplication
 import com.hartwig.actin.database.trial.TrialLoaderApplication
-import com.hartwig.actin.molecular.orange.OrangeInterpreterApplication
+import com.hartwig.actin.molecular.OrangeInterpreterApplication
 import com.hartwig.actin.report.ReporterApplication
 import com.hartwig.actin.trial.TrialCreatorApplication
 import org.apache.logging.log4j.LogManager

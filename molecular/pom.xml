@@ -65,7 +65,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.molecular.orange.OrangeInterpreterApplicationKt</mainClass>
+                            <mainClass>com.hartwig.actin.molecular.orange.MolecularInterpreterApplicationKt</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>

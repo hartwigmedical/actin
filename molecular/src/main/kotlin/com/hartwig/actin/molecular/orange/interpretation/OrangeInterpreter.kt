@@ -1,7 +1,10 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.hartwig.actin.molecular.MolecularInterpreter
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
+import com.hartwig.actin.molecular.datamodel.WGSMolecularTest
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
@@ -10,29 +13,31 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 
-class OrangeInterpreter(private val geneFilter: GeneFilter) {
+class OrangeInterpreter(private val geneFilter: GeneFilter) : MolecularInterpreter<OrangeRecord, MolecularRecord> {
 
-    fun interpret(record: OrangeRecord): MolecularRecord {
-        validateOrangeRecord(record)
-        val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter)
-        val characteristicsExtractor = CharacteristicsExtractor()
+    override fun interpret(records: List<OrangeRecord>): List<MolecularTest<MolecularRecord>> {
+        return records.map { record ->
+            validateOrangeRecord(record)
+            val driverExtractor: DriverExtractor = DriverExtractor.create(geneFilter)
+            val characteristicsExtractor = CharacteristicsExtractor()
 
-        return MolecularRecord(
-            patientId = toPatientId(record.sampleId()),
-            sampleId = record.sampleId(),
-            type = determineExperimentType(record.experimentType()),
-            refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
-            date = record.samplingDate(),
-            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
-            externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
-            containsTumorCells = containsTumorCells(record),
-            hasSufficientQualityAndPurity = hasSufficientQualityAndPurity(record),
-            hasSufficientQuality = hasSufficientQuality(record),
-            characteristics = characteristicsExtractor.extract(record),
-            drivers = driverExtractor.extract(record),
-            immunology = ImmunologyExtraction.extract(record),
-            pharmaco = PharmacoExtraction.extract(record)
-        )
+            MolecularRecord(
+                patientId = toPatientId(record.sampleId()),
+                sampleId = record.sampleId(),
+                type = determineExperimentType(record.experimentType()),
+                refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
+                date = record.samplingDate(),
+                evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
+                externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
+                containsTumorCells = containsTumorCells(record),
+                hasSufficientQualityAndPurity = hasSufficientQualityAndPurity(record),
+                hasSufficientQuality = hasSufficientQuality(record),
+                characteristics = characteristicsExtractor.extract(record),
+                drivers = driverExtractor.extract(record),
+                immunology = ImmunologyExtraction.extract(record),
+                pharmaco = PharmacoExtraction.extract(record)
+            )
+        }.map { WGSMolecularTest(type = it.type, date = it.date, result = it) }
     }
 
     companion object {
@@ -90,8 +95,8 @@ class OrangeInterpreter(private val geneFilter: GeneFilter) {
         }
 
         private fun throwIfGermlineFieldNonEmpty(orange: OrangeRecord) {
-            val message = ("must be null or empty because ACTIN only accepts ORANGE output that has been "
-                    + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
+            val message =
+                ("must be null or empty because ACTIN only accepts ORANGE output that has been " + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
             val allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants()
             check(allGermlineStructuralVariants.isNullOrEmpty()) { "allGermlineStructuralVariants $message" }
             val allGermlineBreakends = orange.linx().allGermlineBreakends()

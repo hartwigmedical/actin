@@ -2,10 +2,10 @@ package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.Virus
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 
 class ActionableEventMatcher internal constructor(
     private val personalizedActionabilityFactory: PersonalizedActionabilityFactory,
@@ -31,7 +31,7 @@ class ActionableEventMatcher internal constructor(
         return personalizedActionabilityFactory.create(signatureEvidence.findTumorLoadMatches(hasHighTumorMutationalLoad))
     }
 
-    fun matchForVariant(variant: Variant): ActionabilityMatch {
+    fun matchForVariant(variant: VariantMatchCriteria): ActionabilityMatch {
         return personalizedActionabilityFactory.create(variantEvidence.findMatches(variant))
     }
 
@@ -47,7 +47,7 @@ class ActionableEventMatcher internal constructor(
         return personalizedActionabilityFactory.create(breakendEvidence.findMatches(disruption))
     }
 
-    fun matchForFusion(fusion: Fusion): ActionabilityMatch {
+    fun matchForFusion(fusion: FusionMatchCriteria): ActionabilityMatch {
         return personalizedActionabilityFactory.create(fusionEvidence.findMatches(fusion))
     }
 

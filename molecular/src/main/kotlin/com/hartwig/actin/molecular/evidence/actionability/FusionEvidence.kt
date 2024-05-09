@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
@@ -12,9 +12,9 @@ import com.hartwig.serve.datamodel.gene.GeneEvent
 internal class FusionEvidence private constructor(
     private val actionablePromiscuous: List<ActionableGene>,
     private val actionableFusions: List<ActionableFusion>
-) : EvidenceMatcher<Fusion> {
+) : EvidenceMatcher<FusionMatchCriteria> {
 
-    override fun findMatches(event: Fusion): List<ActionableEvent> {
+    override fun findMatches(event: FusionMatchCriteria): List<ActionableEvent> {
         return actionablePromiscuous.filter {
             isPromiscuousMatch(it, event) && event.isReportable
         } + actionableFusions.filter {
@@ -30,7 +30,7 @@ internal class FusionEvidence private constructor(
             return FusionEvidence(actionablePromiscuous, actionableEvents.fusions())
         }
 
-        private fun isPromiscuousMatch(actionable: ActionableGene, fusion: Fusion): Boolean {
+        private fun isPromiscuousMatch(actionable: ActionableGene, fusion: FusionMatchCriteria): Boolean {
             return when (fusion.driverType) {
                 FusionDriverType.PROMISCUOUS_3 -> {
                     actionable.gene() == fusion.geneEnd

@@ -1,15 +1,14 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.serve.datamodel.fusion.FusionPair
 
 object FusionMatching {
 
-    fun isGeneMatch(fusionPair: FusionPair, fusion: Fusion): Boolean {
+    fun isGeneMatch(fusionPair: FusionPair, fusion: FusionMatchCriteria): Boolean {
         return fusionPair.geneUp() == fusion.geneStart && fusionPair.geneDown() == fusion.geneEnd
     }
 
-    fun isExonMatch(fusionPair: FusionPair, fusion: Fusion): Boolean {
+    fun isExonMatch(fusionPair: FusionPair, fusion: FusionMatchCriteria): Boolean {
         val minExonUp = fusionPair.minExonUp()
         val maxExonUp = fusionPair.maxExonUp()
         val meetsExonUp = minExonUp == null || maxExonUp == null || explicitlyMatchesExonUp(fusionPair, fusion)
@@ -21,23 +20,23 @@ object FusionMatching {
         return meetsExonUp && meetsExonDown
     }
 
-    fun explicitlyMatchesExonUp(fusionPair: FusionPair, fusion: Fusion): Boolean {
+    fun explicitlyMatchesExonUp(fusionPair: FusionPair, fusion: FusionMatchCriteria): Boolean {
         val minExonUp = fusionPair.minExonUp()
         val maxExonUp = fusionPair.maxExonUp()
         return if (minExonUp == null || maxExonUp == null) {
             false
         } else {
-            fusion.fusedExonUp >= minExonUp && fusion.fusedExonUp <= maxExonUp
+            fusion.fusedExonUp in minExonUp..maxExonUp
         }
     }
 
-    fun explicitlyMatchesExonDown(fusionPair: FusionPair, fusion: Fusion): Boolean {
+    fun explicitlyMatchesExonDown(fusionPair: FusionPair, fusion: FusionMatchCriteria): Boolean {
         val minExonDown = fusionPair.minExonDown()
         val maxExonDown = fusionPair.maxExonDown()
         return if (minExonDown == null || maxExonDown == null) {
             false
         } else {
-            fusion.fusedExonDown >= minExonDown && fusion.fusedExonDown <= maxExonDown
+            fusion.fusedExonDown in minExonDown..maxExonDown
         }
     }
 }
