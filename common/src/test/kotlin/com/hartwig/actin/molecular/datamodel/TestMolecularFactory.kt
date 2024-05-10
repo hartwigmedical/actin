@@ -350,19 +350,6 @@ object TestMolecularFactory {
         )
     }
 
-    fun archerPriorMolecularNoFusionsFoundRecord(date: LocalDate? = null): PriorMolecularTest {
-        return archerPriorMolecularVariantRecord(null, "GEEN fusie(s) aangetoond", date)
-    }
-
-    fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "AvL Panel",
-            item = null,
-            measure = "GEEN mutaties aangetoond met behulp van het AVL Panel",
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
     fun freetextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): MolecularTest {
         return GenericPanel(
             fusions = listOf(GenericFusion(geneStart, geneEnd)),

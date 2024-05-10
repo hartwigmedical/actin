@@ -69,6 +69,10 @@ class EvidenceDatabase internal constructor(
         return knownEventResolver.resolveForVariant(variant).filterIsInstance<KnownExon>().firstOrNull()
     }
 
+    fun knownCodonAlterationForVariant(variant: VariantMatchCriteria): KnownCodon? {
+        return knownEventResolver.resolveForVariant(variant).filterIsInstance<KnownCodon>().firstOrNull()
+    }
+
     fun evidenceForVariant(variant: VariantMatchCriteria): ActionabilityMatch {
         return actionableEventMatcher.matchForVariant(variant)
     }

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.clinical
+package com.hartwig.actin.molecular.priormoleculartest
 
 class ClinicalMolecularTest{
 

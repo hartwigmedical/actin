@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.MolecularInterpreter
+import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -11,7 +11,7 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 
-class OrangeInterpreter(private val geneFilter: GeneFilter) : MolecularInterpreter<OrangeRecord, MolecularRecord> {
+class OrangeInterpreter(private val geneFilter: GeneFilter) : MolecularExtractor<OrangeRecord, MolecularRecord> {
 
     override fun interpret(input: List<OrangeRecord>): List<MolecularRecord> {
         return input.map { record ->

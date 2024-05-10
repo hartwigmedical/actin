@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.archer
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.clinical.ArcherInterpreter
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.priormoleculartest.ArcherExtractor
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -14,8 +14,8 @@ import org.junit.Test
 const val GENE = "EGFR"
 const val HGVS_TRANSCRIPT = "c.123C>T"
 
-class ArcherInterpreterTest {
-    private val interpreter = ArcherInterpreter()
+class ArcherExtractorTest {
+    private val interpreter = ArcherExtractor()
 
     @Test
     fun `Should parse archer variants from prior molecular tests`() {

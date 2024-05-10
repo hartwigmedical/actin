@@ -5,13 +5,13 @@ import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
-import com.hartwig.actin.molecular.clinical.ClinicalMolecular
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter
+import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
@@ -27,7 +27,7 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class OrangeInterpreterApplication(private val config: MolecularInterpreterConfig) {
+class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
@@ -45,7 +45,7 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
-            val orangePipeline = MolecularPipeline(OrangeInterpreter(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
+            val orangePipeline = MolecularInterpreter(OrangeInterpreter(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
 
             orangePipeline.run(listOf(orange))
         } else {
@@ -53,7 +53,7 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
         }
         LOGGER.info("Loading evidence database for ARCHER")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
-        val clinicalMolecularTests = ClinicalMolecular.create(evidenceDatabase).process(clinical.priorMolecularTests)
+        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(evidenceDatabase).process(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
@@ -73,9 +73,9 @@ class OrangeInterpreterApplication(private val config: MolecularInterpreterConfi
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(OrangeInterpreterApplication::class.java)
+        val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
         const val APPLICATION: String = "ACTIN ORANGE Interpreter"
-        private val VERSION = OrangeInterpreterApplication::class.java.getPackage().implementationVersion
+        private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion
 
         private fun loadEvidenceDatabase(
             serveDirectory: String, doidJson: String, serveRefGenomeVersion: RefGenome, knownEvents: KnownEvents, clinical: ClinicalRecord
@@ -116,10 +116,10 @@ fun main(args: Array<String>) {
     try {
         config = MolecularInterpreterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        OrangeInterpreterApplication.LOGGER.warn(exception)
-        HelpFormatter().printHelp(OrangeInterpreterApplication.APPLICATION, options)
+        MolecularInterpreterApplication.LOGGER.warn(exception)
+        HelpFormatter().printHelp(MolecularInterpreterApplication.APPLICATION, options)
         exitProcess(1)
     }
 
-    OrangeInterpreterApplication(config).run()
+    MolecularInterpreterApplication(config).run()
 }

@@ -1,7 +1,7 @@
-package com.hartwig.actin.molecular.clinical
+package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.MolecularInterpreter
+import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
@@ -12,7 +12,7 @@ private val EXON_SKIP_REGEX = Regex("([A-Za-z0-9 ]+)( exon )([0-9]+(-[0-9]+)?)( 
 private const val NO_FUSIONS = "GEEN fusie(s) aangetoond"
 private const val NO_MUTATION = "GEEN mutaties aangetoond"
 
-class ArcherInterpreter : MolecularInterpreter<PriorMolecularTest, ArcherPanel> {
+class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
     override fun interpret(input: List<PriorMolecularTest>): List<ArcherPanel> {
         return input.groupBy { it.measureDate }
             .map { (date, results) ->

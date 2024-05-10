@@ -9,5 +9,6 @@ data class ArcherVariantAnnotation(
     val geneRole: GeneRole,
     val proteinEffect: ProteinEffect,
     val isAssociatedWithDrugResistance: Boolean?,
-    val exonRank: Int?
+    val exonRank: Int?,
+    val codonRank: Int?
 )
