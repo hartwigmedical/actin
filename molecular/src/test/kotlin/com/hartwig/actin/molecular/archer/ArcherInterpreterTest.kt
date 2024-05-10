@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.archer
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.clinical.ArcherInterpreter
-import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
@@ -30,11 +29,9 @@ class ArcherInterpreterTest {
                 )
             )
         assertThat(result).containsExactly(
-            ArcherMolecularTest(
-                result = ArcherPanel(
-                    variants = listOf(
-                        ArcherVariant(GENE, HGVS_TRANSCRIPT)
-                    )
+            ArcherPanel(
+                variants = listOf(
+                    ArcherVariant(GENE, HGVS_TRANSCRIPT)
                 )
             )
         )
@@ -49,10 +46,8 @@ class ArcherInterpreterTest {
                 )
             )
         assertThat(result).containsExactly(
-            ArcherMolecularTest(
-                result = ArcherPanel(
-                    fusions = listOf(ArcherFusion(GENE))
-                )
+            ArcherPanel(
+                fusions = listOf(ArcherFusion(GENE))
             )
         )
     }
@@ -67,10 +62,8 @@ class ArcherInterpreterTest {
                 )
             )
         assertThat(result).containsExactly(
-            ArcherMolecularTest(
-                result = ArcherPanel(
-                    skippedExons = listOf(ArcherSkippedExons(GENE, 1, 2), ArcherSkippedExons(GENE, 3, 3))
-                )
+            ArcherPanel(
+                skippedExons = listOf(ArcherSkippedExons(GENE, 1, 2), ArcherSkippedExons(GENE, 3, 3))
             )
         )
     }

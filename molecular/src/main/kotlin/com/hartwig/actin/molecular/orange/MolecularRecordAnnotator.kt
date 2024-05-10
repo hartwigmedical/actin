@@ -2,8 +2,6 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.WGSMolecularTest
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
@@ -22,14 +20,10 @@ import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord> {
 
-    override fun annotate(input: MolecularTest<MolecularRecord>): WGSMolecularTest {
-        return WGSMolecularTest(
-            date = input.date,
-            type = input.type,
-            result = input.result.copy(
-                characteristics = annotateCharacteristics(input.result.characteristics),
-                drivers = annotateDrivers(input.result.drivers),
-            )
+    override fun annotate(input: MolecularRecord): MolecularRecord {
+        return input.copy(
+            characteristics = annotateCharacteristics(input.characteristics),
+            drivers = annotateDrivers(input.drivers),
         )
     }
 

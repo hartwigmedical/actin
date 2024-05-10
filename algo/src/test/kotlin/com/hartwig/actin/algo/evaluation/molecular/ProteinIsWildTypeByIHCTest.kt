@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import org.junit.Test
 
 private const val IHC = "IHC"
@@ -45,7 +45,7 @@ class ProteinIsWildTypeByIHCTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withPriorTests(priorTests)))
     }
 
-    private fun ihcTest(test: String = IHC, item: String = PROTEIN, scoreText: String? = "WildType"): PriorMolecularTest {
-        return MolecularTestFactory.priorMolecularTest(test = test, item = item, scoreText = scoreText)
+    private fun ihcTest(test: String = IHC, item: String = PROTEIN, scoreText: String? = "WildType"): IHCMolecularTest {
+        return IHCMolecularTest((MolecularTestFactory.priorMolecularTest(test = test, item = item, scoreText = scoreText)))
     }
 }

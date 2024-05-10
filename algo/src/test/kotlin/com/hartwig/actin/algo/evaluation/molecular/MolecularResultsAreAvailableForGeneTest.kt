@@ -3,13 +3,16 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
+import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
+import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.junit.Test
 
 class MolecularResultsAreAvailableForGeneTest {
@@ -105,7 +108,7 @@ class MolecularResultsAreAvailableForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.WHOLE_GENOME,
                     false,
-                    MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true)
+                    OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true))
                 )
             )
         )
@@ -119,7 +122,7 @@ class MolecularResultsAreAvailableForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.WHOLE_GENOME,
                     false,
-                    MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false)
+                    IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
                 )
             )
         )
@@ -131,7 +134,15 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
+                    listOf(
+                        IHCMolecularTest(
+                            MolecularTestFactory.priorMolecularTest(
+                                test = "IHC",
+                                item = "gene 1",
+                                impliesIndeterminate = false
+                            )
+                        )
+                    )
                 )
             )
         )
@@ -145,7 +156,7 @@ class MolecularResultsAreAvailableForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.WHOLE_GENOME,
                     false,
-                    MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false)
+                    OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false))
                 )
             )
         )
@@ -158,7 +169,7 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                        listOf(archerPriorMolecularNoFusionsFoundRecord())
+                        listOf(ArcherPanel())
                     )
                 )
         )
@@ -170,11 +181,13 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(archerPriorMolecularVariantRecord("gene 1", "c.1A>T"))
+                    listOf(archerPanelWithVariantForGene("gene 1"))
                 )
             )
         )
     }
+
+    private fun archerPanelWithVariantForGene(gene: String) = ArcherPanel(variants = listOf(ArcherVariant(gene, "c.1A>T")))
 
     @Test
     fun `Should fail for Archer if gene is not tested in panel`() {
@@ -182,7 +195,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(archerPriorMolecularVariantRecord("gene 2", "c.1A>T"))
+                    listOf(archerPanelWithVariantForGene("gene 2"))
                 )
             )
         )
@@ -195,7 +208,7 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("EGFR")
                 .evaluate(
                     MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                        listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
+                        listOf(GenericPanel(GenericPanelType.AVL))
                     )
                 )
         )
@@ -207,7 +220,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(avlPanelPriorMolecularNoMutationsFoundRecord())
+                    listOf(ArcherPanel())
                 )
             )
         )
@@ -219,7 +232,8 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(freetextPriorMolecularFusionRecord("gene 1", "gene 2")
+                    listOf(
+                        freetextPriorMolecularFusionRecord("gene 1", "gene 2")
                     )
                 )
             )
@@ -232,7 +246,8 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(freetextPriorMolecularFusionRecord("gene 2", "gene 3")
+                    listOf(
+                        freetextPriorMolecularFusionRecord("gene 2", "gene 3")
                     )
                 )
             )

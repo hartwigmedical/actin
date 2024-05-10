@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -53,7 +53,7 @@ class MolecularEvaluationFunctionTest {
     @Test
     fun `Should return insufficient molecular data when no ORANGE but other molecular data`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistory.fromInputs(emptyList(), listOf(archerPriorMolecularNoFusionsFoundRecord())))
+            .copy(molecularHistory = MolecularHistory(listOf(ArcherPanel())))
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedSpecificMessages).containsExactly("Insufficient molecular data")
@@ -78,7 +78,7 @@ class MolecularEvaluationFunctionTest {
     @Test
     fun `Should use override message when provided for patient with no ORANGE record but other data`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularHistory = MolecularHistory.fromInputs(emptyList(), listOf(archerPriorMolecularNoFusionsFoundRecord())))
+            .copy(molecularHistory = MolecularHistory(listOf(ArcherPanel())))
         assertOverrideEvaluation(patient)
     }
 

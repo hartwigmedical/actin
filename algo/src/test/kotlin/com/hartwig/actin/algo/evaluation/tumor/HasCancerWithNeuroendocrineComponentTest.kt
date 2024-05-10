@@ -58,7 +58,7 @@ class HasCancerWithNeuroendocrineComponentTest {
         val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
         return base.copy(
-            molecularHistory = MolecularHistory.fromInputs(
+            molecularHistory = MolecularHistory(
                 listOf(
                     baseMolecular.copy(
                         drivers = baseMolecular.drivers.copy(
@@ -70,8 +70,7 @@ class HasCancerWithNeuroendocrineComponentTest {
                             )
                         )
                     )
-                ),
-                emptyList()
+                )
             )
         )
     }

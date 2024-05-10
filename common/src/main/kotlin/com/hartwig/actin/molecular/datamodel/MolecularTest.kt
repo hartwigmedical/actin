@@ -14,83 +14,28 @@ const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
 const val AVL_PANEL = "AvL Panel"
 const val FREE_TEXT_PANEL = "Freetext"
 
-interface MolecularTest<T> {
+interface MolecularTest {
     val type: ExperimentType
     val date: LocalDate?
-    val result: T
-    fun accept(molecularTestVisitor: MolecularTestVisitor)
-}
-
-interface MolecularTestVisitor {
-    fun visit(test: WGSMolecularTest) {}
-    fun visit(test: IHCMolecularTest) {}
-    fun visit(test: ArcherMolecularTest) {}
-    fun visit(test: GenericPanelMolecularTest) {}
-    fun visit(test: OtherPriorMolecularTest) {}
-}
-
-data class WGSMolecularTest(
-    override val type: ExperimentType,
-    override val date: LocalDate?,
-    override val result: MolecularRecord
-) : MolecularTest<MolecularRecord> {
-
-    override fun accept(molecularTestVisitor: MolecularTestVisitor) {
-        molecularTestVisitor.visit(this)
-    }
 }
 
 data class IHCMolecularTest(
-    override val date: LocalDate? = null,
-    override val result: PriorMolecularTest
-) : MolecularTest<PriorMolecularTest> {
-
+    val test: PriorMolecularTest
+) : MolecularTest {
     override val type = ExperimentType.IHC
-
-    override fun accept(molecularTestVisitor: MolecularTestVisitor) {
-        molecularTestVisitor.visit(this)
-    }
-}
-
-data class ArcherMolecularTest(
-    override val date: LocalDate? = null,
-    override val result: ArcherPanel
-) : MolecularTest<ArcherPanel> {
-
-    override val type = ExperimentType.ARCHER
-
-    override fun accept(molecularTestVisitor: MolecularTestVisitor) {
-        molecularTestVisitor.visit(this)
-    }
-}
-
-data class GenericPanelMolecularTest(
-    override val date: LocalDate? = null,
-    override val result: GenericPanel
-) : MolecularTest<GenericPanel> {
-
-    override val type = ExperimentType.GENERIC_PANEL
-
-    override fun accept(molecularTestVisitor: MolecularTestVisitor) {
-        molecularTestVisitor.visit(this)
-    }
+    override val date = test.measureDate
 }
 
 data class OtherPriorMolecularTest(
-    override val date: LocalDate? = null,
-    override val result: PriorMolecularTest
-) : MolecularTest<PriorMolecularTest> {
-
+    val test: PriorMolecularTest
+) : MolecularTest {
     override val type = ExperimentType.OTHER
-
-    override fun accept(molecularTestVisitor: MolecularTestVisitor) {
-        molecularTestVisitor.visit(this)
-    }
+    override val date = test.measureDate
 }
 
-class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*>>() {
+class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>() {
 
-    override fun write(out: JsonWriter, value: MolecularTest<*>?) {
+    override fun write(out: JsonWriter, value: MolecularTest?) {
         if (value == null) {
             out.nullValue()
             return
@@ -100,14 +45,14 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*
         gson.toJson(jsonObject, out)
     }
 
-    override fun read(input: JsonReader): MolecularTest<*>? {
+    override fun read(input: JsonReader): MolecularTest? {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
         return when (val type = jsonObject.get("type").asString) {
-            ExperimentType.WHOLE_GENOME.toString() -> gson.fromJson(jsonObject, WGSMolecularTest::class.java)
-            ExperimentType.TARGETED.toString() -> gson.fromJson(jsonObject, WGSMolecularTest::class.java)
+            ExperimentType.WHOLE_GENOME.toString() -> gson.fromJson(jsonObject, MolecularRecord::class.java)
+            ExperimentType.TARGETED.toString() -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.IHC.toString() -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
-            ExperimentType.ARCHER.toString() -> gson.fromJson(jsonObject, ArcherMolecularTest::class.java)
-            ExperimentType.GENERIC_PANEL.toString() -> gson.fromJson(jsonObject, GenericPanelMolecularTest::class.java)
+            ExperimentType.ARCHER.toString() -> gson.fromJson(jsonObject, ArcherPanel::class.java)
+            ExperimentType.GENERIC_PANEL.toString() -> gson.fromJson(jsonObject, GenericPanel::class.java)
             ExperimentType.OTHER.toString() -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
             else -> throw IllegalArgumentException("Unknown molecular test type: $type")
         }

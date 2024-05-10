@@ -2,9 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.MolecularInterpreter
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
-import com.hartwig.actin.molecular.datamodel.WGSMolecularTest
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
@@ -15,10 +13,10 @@ import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 
 class OrangeInterpreter(private val geneFilter: GeneFilter) : MolecularInterpreter<OrangeRecord, MolecularRecord> {
 
-    override fun interpret(records: List<OrangeRecord>): List<MolecularTest<MolecularRecord>> {
-        return records.map { record ->
+    override fun interpret(input: List<OrangeRecord>): List<MolecularRecord> {
+        return input.map { record ->
             interpret(record)
-        }.map { WGSMolecularTest(type = it.type, date = it.date, result = it) }
+        }.map { it }
     }
 
     fun interpret(record: OrangeRecord): MolecularRecord {

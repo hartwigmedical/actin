@@ -26,10 +26,10 @@ import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.Test
-import java.time.LocalDate
 
 class RecommendationEngineTest {
 
@@ -190,7 +190,7 @@ class RecommendationEngineTest {
         val antiEgfrTreatments = setOf(CETUXIMAB, PANITUMUMAB)
         assertThat(
             resultsForPatientWithHistoryAndMolecular(listOf(CAPOX), MINIMAL_MOLECULAR_RECORD, "Ascending colon")
-            .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
+                .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
     }
 
     @Test
@@ -497,7 +497,7 @@ class RecommendationEngineTest {
             val patientRecord = MINIMAL_PATIENT_RECORD.copy(
                 tumor = tumorDetails,
                 oncologicalHistory = treatmentHistoryFromNames(pastTreatmentNames),
-                molecularHistory = MolecularHistory.fromInputs(listOf(molecularRecord), emptyList())
+                molecularHistory = MolecularHistory(listOf(molecularRecord))
             )
             return patientRecord
         }

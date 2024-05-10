@@ -4,12 +4,13 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.addingTestFromPriorMolecular
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -113,7 +114,7 @@ class HasFusionInGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(archerPriorMolecularFusionRecord(MATCHING_GENE))
+                    listOf(ArcherPanel(fusions = listOf(ArcherFusion(MATCHING_GENE))))
                 )
             )
         )

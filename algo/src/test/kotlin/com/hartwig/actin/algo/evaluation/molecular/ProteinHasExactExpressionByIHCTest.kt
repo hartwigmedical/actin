@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import org.junit.Test
 
 private const val IHC = "IHC"
@@ -48,9 +48,11 @@ class ProteinHasExactExpressionByIHCTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTest(ihcTest(scoreValue = 2.0))))
     }
 
-    private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null): PriorMolecularTest {
-        return MolecularTestFactory.priorMolecularTest(
-            test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
+    private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null): IHCMolecularTest {
+        return IHCMolecularTest(
+            MolecularTestFactory.priorMolecularTest(
+                test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
+            )
         )
     }
 }

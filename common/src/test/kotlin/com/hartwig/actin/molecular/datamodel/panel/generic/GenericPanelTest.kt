@@ -8,7 +8,7 @@ class GenericPanelTest {
     @Test
     fun `Should identify tested genes`() {
         val genericPanel = GenericPanel(
-            GenericPanelType.AVL,
+            GenericPanelType.AVL
         )
 
         assertThat(genericPanel.testedGenes()).isEqualTo(GENERIC_PANEL_ALWAYS_TESTED_GENES)

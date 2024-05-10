@@ -2,8 +2,6 @@ package com.hartwig.actin.molecular.clinical
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularInterpreter
-import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
-import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
@@ -15,7 +13,7 @@ private const val NO_FUSIONS = "GEEN fusie(s) aangetoond"
 private const val NO_MUTATION = "GEEN mutaties aangetoond"
 
 class ArcherInterpreter : MolecularInterpreter<PriorMolecularTest, ArcherPanel> {
-    override fun interpret(input: List<PriorMolecularTest>): List<MolecularTest<ArcherPanel>> {
+    override fun interpret(input: List<PriorMolecularTest>): List<ArcherPanel> {
         return input.groupBy { it.measureDate }
             .map { (date, results) ->
                 val resultsWithItemAndMeasure = results.filter { it.item != null && it.measure != null }
@@ -36,10 +34,7 @@ class ArcherInterpreter : MolecularInterpreter<PriorMolecularTest, ArcherPanel> 
                         }
                     }
                 checkForUnknownResults(results, variants, fusions, exonSkips)
-                ArcherMolecularTest(
-                    date = date,
-                    result = ArcherPanel(variants.map { it.first }, fusions.map { it.first }, exonSkips.map { it.first })
-                )
+                ArcherPanel(variants.map { it.first }, fusions.map { it.first }, exonSkips.map { it.first }, date)
             }
     }
 
