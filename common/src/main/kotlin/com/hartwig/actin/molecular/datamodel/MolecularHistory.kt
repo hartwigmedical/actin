@@ -7,31 +7,30 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import java.time.LocalDate
 
 data class MolecularHistory(
-    val molecularTests: List<MolecularTest<*>>,
+    val molecularTests: List<MolecularTest>,
 ) {
     fun allIHCTests(): List<PriorMolecularTest> {
-        return molecularTests.filter { it.type == ExperimentType.IHC }
-            .map { it.result as PriorMolecularTest }
+        return molecularTests.filterIsInstance<IHCMolecularTest>().map { it.test }
     }
 
     fun allOrangeMolecularRecords(): List<MolecularRecord> {
-        return molecularTests.filter { it.type == ExperimentType.WHOLE_GENOME || it.type == ExperimentType.TARGETED }
-            .map { it.result as MolecularRecord }
+        return molecularTests.filterIsInstance<MolecularRecord>()
     }
 
     fun allPanels(): List<Panel> {
-        return molecularTests.filter { it.result is Panel }
-            .map { it.result as Panel }
+        return molecularTests.filterIsInstance<Panel>()
     }
 
     fun allArcherPanels(): List<ArcherPanel> {
-        return molecularTests.filter { it.type == ExperimentType.ARCHER }
-            .map { it.result as ArcherPanel }
+        return molecularTests.filterIsInstance<ArcherPanel>()
     }
 
     fun allGenericPanels(): List<GenericPanel> {
-        return molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }
-            .map { it.result as GenericPanel }
+        return molecularTests.filterIsInstance<GenericPanel>()
+    }
+
+    fun allOtherTests(): List<OtherPriorMolecularTest> {
+        return molecularTests.filterIsInstance<OtherPriorMolecularTest>()
     }
 
     fun latestOrangeMolecularRecord(): MolecularRecord? {

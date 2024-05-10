@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 
-interface MolecularAnnotator<T> {
+interface MolecularAnnotator<T : MolecularTest> {
 
-    fun annotate(input: MolecularTest<T>): MolecularTest<T>
+    fun annotate(input: T): T
 }

@@ -4,20 +4,18 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularInterpreter
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
-import com.hartwig.actin.molecular.datamodel.GenericPanelMolecularTest
-import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 
 class GenericPanelInterpreter : MolecularInterpreter<PriorMolecularTest, GenericPanel> {
-    override fun interpret(input: List<PriorMolecularTest>): List<MolecularTest<GenericPanel>> {
+    override fun interpret(input: List<PriorMolecularTest>): List<GenericPanel> {
         return input.groupBy { it.test }
             .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
     }
 
-    private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelMolecularTest> {
+    private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanel> {
         return results
             .groupBy { it.measureDate }
             .map { (date, results) ->
@@ -26,7 +24,7 @@ class GenericPanelInterpreter : MolecularInterpreter<PriorMolecularTest, Generic
                 val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
                 val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
 
-                GenericPanelMolecularTest(date = date, result = GenericPanel(type, variants, fusions))
+                GenericPanel(type, variants, fusions, date)
             }
     }
 

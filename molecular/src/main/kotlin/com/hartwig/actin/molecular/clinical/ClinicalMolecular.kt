@@ -12,27 +12,27 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 
-private fun identityAnnotator() = object : MolecularAnnotator<PriorMolecularTest> {
-    override fun annotate(input: MolecularTest<PriorMolecularTest>): MolecularTest<PriorMolecularTest> {
+private fun identityAnnotator() = object : MolecularAnnotator<MolecularTest> {
+    override fun annotate(input: MolecularTest): MolecularTest {
         return input
     }
 }
 
-private fun otherInterpreter() = object : MolecularInterpreter<PriorMolecularTest, PriorMolecularTest> {
-    override fun interpret(input: List<PriorMolecularTest>): List<MolecularTest<PriorMolecularTest>> {
-        return input.map { OtherPriorMolecularTest(it.measureDate, it) }
+private fun otherInterpreter() = object : MolecularInterpreter<PriorMolecularTest, MolecularTest> {
+    override fun interpret(input: List<PriorMolecularTest>): List<MolecularTest> {
+        return input.map { OtherPriorMolecularTest(it) }
     }
 }
 
-private fun ihcInterpreter() = object : MolecularInterpreter<PriorMolecularTest, PriorMolecularTest> {
-    override fun interpret(input: List<PriorMolecularTest>): List<MolecularTest<PriorMolecularTest>> {
-        return input.map { IHCMolecularTest(it.measureDate, it) }
+private fun ihcInterpreter() = object : MolecularInterpreter<PriorMolecularTest, MolecularTest> {
+    override fun interpret(input: List<PriorMolecularTest>): List<MolecularTest> {
+        return input.map { IHCMolecularTest(it) }
     }
 }
 
-class ClinicalMolecular(private val pipelines: Set<MolecularPipeline<PriorMolecularTest, out Any>>) {
+class ClinicalMolecular(private val pipelines: Set<MolecularPipeline<PriorMolecularTest, out MolecularTest>>) {
 
-    fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest<out Any>> {
+    fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest> {
         val otherPipeline = MolecularPipeline(
             otherInterpreter(),
             identityAnnotator()

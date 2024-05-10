@@ -30,6 +30,9 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFact
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import java.time.LocalDate
@@ -78,18 +81,15 @@ object TestMolecularFactory {
     }
 
     fun createMinimalTestMolecularHistory(): MolecularHistory {
-        val record = createMinimalTestMolecularRecord()
-        return MolecularHistory(listOf(WGSMolecularTest(record.type, record.date, record)))
+        return MolecularHistory(listOf(createMinimalTestMolecularRecord()))
     }
 
     fun createProperTestMolecularHistory(): MolecularHistory {
-        val record = createProperTestMolecularRecord()
-        return MolecularHistory(listOf(WGSMolecularTest(record.type, record.date, record)))
+        return MolecularHistory(listOf(createProperTestMolecularRecord()))
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        val record = createExhaustiveTestMolecularRecord()
-        return MolecularHistory(listOf(WGSMolecularTest(record.type, record.date, record)))
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord()))
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
@@ -363,20 +363,10 @@ object TestMolecularFactory {
         )
     }
 
-    fun avlPanelPriorMolecularVariantRecord(gene: String, hgvs: String): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "AvL Panel",
-            item = gene,
-            measure = hgvs,
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
-    fun freetextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "Freetext",
-            item = "$geneStart::$geneEnd",
-            impliesPotentialIndeterminateStatus = false
+    fun freetextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): MolecularTest {
+        return GenericPanel(
+            fusions = listOf(GenericFusion(geneStart, geneEnd)),
+            panelType = GenericPanelType.FREE_TEXT
         )
     }
 }
