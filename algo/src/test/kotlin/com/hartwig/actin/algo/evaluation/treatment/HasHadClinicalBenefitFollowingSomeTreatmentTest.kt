@@ -30,6 +30,9 @@ class HasHadClinicalBenefitFollowingSomeTreatmentTest {
     )
     private val WRONG_TREATMENT = TreatmentTestFactory.treatment("Radiotherapy", false, setOf(TreatmentCategory.RADIOTHERAPY))
     private val function = HasHadClinicalBenefitFollowingSomeTreatment(TARGET_TREATMENT)
+    private val TARGET_CATEGORY = TreatmentCategory.IMMUNOTHERAPY
+    private val TARGET_TYPES = setOf(DrugType.ANTI_PD_L1, DrugType.ANTI_PD_1)
+    private val TARGET_DRUG_TREATMENT = TreatmentTestFactory.drugTreatment("treatment", TARGET_CATEGORY, TARGET_TYPES)
 
     @Test
     fun `Should fail if treatment history is empty`() {
@@ -43,7 +46,7 @@ class HasHadClinicalBenefitFollowingSomeTreatmentTest {
     }
 
     @Test
-    fun `Should pass if treatment history contains target therapy with best response complete response `() {
+    fun `Should pass if treatment history contains specific treatment with best response complete response `() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(TARGET_TREATMENT),
@@ -51,6 +54,36 @@ class HasHadClinicalBenefitFollowingSomeTreatmentTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)))
+    }
+
+    @Test
+    fun `Should pass if treatment history contains treatment of target category and type with best response complete response `() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TARGET_DRUG_TREATMENT),
+                bestResponse = TreatmentResponse.COMPLETE_RESPONSE
+            )
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            HasHadClinicalBenefitFollowingSomeTreatment(category = TARGET_CATEGORY, types = TARGET_TYPES).evaluate(
+                TreatmentTestFactory.withTreatmentHistory(history)
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains treatment of target category with best response complete response when no type requested `() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TARGET_DRUG_TREATMENT),
+                bestResponse = TreatmentResponse.COMPLETE_RESPONSE
+            )
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            HasHadClinicalBenefitFollowingSomeTreatment(category = TARGET_CATEGORY).evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
     }
 
     @Test

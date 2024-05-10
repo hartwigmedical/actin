@@ -151,6 +151,20 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with one treatment category input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY)
+        val treatment = TreatmentCategory.IMMUNOTHERAPY.display()
+
+        val valid = create(rule, listOf(treatment))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val input = resolver.createOneTreatmentCategoryInput(valid)
+        assertThat(input).isEqualTo(TreatmentCategory.IMMUNOTHERAPY)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment input")))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with one treatment category or type input`() {
         val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE)
         val treatment = TreatmentCategory.IMMUNOTHERAPY.display()

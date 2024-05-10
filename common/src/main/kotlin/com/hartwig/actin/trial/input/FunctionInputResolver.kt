@@ -6,6 +6,7 @@ import com.hartwig.actin.clinical.datamodel.ReceptorType
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver
@@ -90,6 +91,11 @@ class FunctionInputResolver(
 
                 FunctionInput.TWO_DOUBLES -> {
                     createTwoDoublesInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_TREATMENT_CATEGORY -> {
+                    createOneTreatmentCategoryInput(function)
                     return true
                 }
 
@@ -328,6 +334,11 @@ class FunctionInputResolver(
             double1 = parameterAsString(function, 0).toDouble(),
             double2 = parameterAsString(function, 1).toDouble()
         )
+    }
+
+    fun createOneTreatmentCategoryInput(function: EligibilityFunction): TreatmentCategory {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY, 1)
+        return TreatmentCategoryResolver.fromString(parameterAsString(function, 0))
     }
 
     fun createOneTreatmentCategoryOrTypeInput(function: EligibilityFunction): TreatmentCategoryInput {
