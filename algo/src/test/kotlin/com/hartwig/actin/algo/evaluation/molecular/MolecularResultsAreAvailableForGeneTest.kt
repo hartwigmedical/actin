@@ -11,6 +11,8 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.junit.Test
 
 class MolecularResultsAreAvailableForGeneTest {
@@ -206,7 +208,7 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("EGFR")
                 .evaluate(
                     MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                        listOf(ArcherPanel())
+                        listOf(GenericPanel(GenericPanelType.AVL))
                     )
                 )
         )
