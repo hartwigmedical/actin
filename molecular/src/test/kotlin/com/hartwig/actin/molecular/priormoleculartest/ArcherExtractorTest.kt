@@ -1,69 +1,45 @@
-package com.hartwig.actin.molecular.archer
+package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
-import com.hartwig.actin.molecular.priormoleculartest.ArcherExtractor
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-const val GENE = "EGFR"
-const val HGVS_TRANSCRIPT = "c.123C>T"
 
 class ArcherExtractorTest {
     private val interpreter = ArcherExtractor()
 
     @Test
     fun `Should parse archer variants from prior molecular tests`() {
-        val result =
-            interpreter.interpret(
-                listOf(
-                    TestMolecularFactory.archerPriorMolecularVariantRecord(
-                        GENE,
-                        HGVS_TRANSCRIPT
-                    )
-                )
-            )
-        assertThat(result).containsExactly(
-            ArcherPanel(
-                variants = listOf(
-                    ArcherVariant(GENE, HGVS_TRANSCRIPT)
-                )
-            )
-        )
+        val result = interpreter.extract(listOf(archerPriorMolecularVariantRecord(GENE, HGVS)))
+        assertThat(result).containsExactly(ArcherPanel(variants = listOf(ArcherVariant(GENE, HGVS))))
     }
 
     @Test
     fun `Should parse archer fusions from prior molecular tests`() {
-        val result =
-            interpreter.interpret(
-                listOf(
-                    TestMolecularFactory.archerPriorMolecularFusionRecord(GENE)
-                )
-            )
-        assertThat(result).containsExactly(
-            ArcherPanel(
-                fusions = listOf(ArcherFusion(GENE))
-            )
-        )
+        val result = interpreter.extract(listOf(archerPriorMolecularFusionRecord(GENE)))
+        assertThat(result).containsExactly(ArcherPanel(fusions = listOf(ArcherFusion(GENE))))
     }
 
     @Test
     fun `Should parse archer exon skips from prior molecular tests`() {
         val result =
-            interpreter.interpret(
+            interpreter.extract(
                 listOf(
-                    TestMolecularFactory.archerExonSkippingRecord(GENE, "1-2"),
-                    TestMolecularFactory.archerExonSkippingRecord(GENE, "3")
+                    archerExonSkippingRecord(GENE, "1-2"),
+                    archerExonSkippingRecord(GENE, "3")
                 )
             )
         assertThat(result).containsExactly(
             ArcherPanel(
-                skippedExons = listOf(ArcherSkippedExons(GENE, 1, 2), ArcherSkippedExons(GENE, 3, 3))
+                skippedExons = listOf(
+                    ArcherSkippedExons(GENE, 1, 2),
+                    ArcherSkippedExons(GENE, 3, 3)
+                )
             )
         )
     }
@@ -71,7 +47,7 @@ class ArcherExtractorTest {
     @Test
     fun `Should throw illegal argument exception when unknown result`() {
         Assertions.assertThatThrownBy {
-            interpreter.interpret(
+            interpreter.extract(
                 listOf(
                     PriorMolecularTest(
                         test = "Archer FP Lung Target",

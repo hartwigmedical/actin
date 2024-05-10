@@ -13,7 +13,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 
 class OrangeInterpreter(private val geneFilter: GeneFilter) : MolecularExtractor<OrangeRecord, MolecularRecord> {
 
-    override fun interpret(input: List<OrangeRecord>): List<MolecularRecord> {
+    override fun extract(input: List<OrangeRecord>): List<MolecularRecord> {
         return input.map { record ->
             interpret(record)
         }.map { it }

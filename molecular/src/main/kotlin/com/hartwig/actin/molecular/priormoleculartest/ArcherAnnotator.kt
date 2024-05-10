@@ -24,11 +24,7 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
                 it.ref,
                 it.alt
             )
-            val evidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForVariant(
-                    criteria
-                )
-            )
+            val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
             val geneAlteration = GeneAlterationFactory.convertAlteration(
                 it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
             )

@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 
 class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPanel> {
-    override fun interpret(input: List<PriorMolecularTest>): List<GenericPanel> {
+    override fun extract(input: List<PriorMolecularTest>): List<GenericPanel> {
         return input.groupBy { it.test }
             .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
     }

@@ -13,7 +13,7 @@ private const val NO_FUSIONS = "GEEN fusie(s) aangetoond"
 private const val NO_MUTATION = "GEEN mutaties aangetoond"
 
 class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
-    override fun interpret(input: List<PriorMolecularTest>): List<ArcherPanel> {
+    override fun extract(input: List<PriorMolecularTest>): List<ArcherPanel> {
         return input.groupBy { it.measureDate }
             .map { (date, results) ->
                 val resultsWithItemAndMeasure = results.filter { it.item != null && it.measure != null }

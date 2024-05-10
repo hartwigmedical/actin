@@ -8,7 +8,7 @@ open class MolecularInterpreter<I, O : MolecularTest>(
     val inputPredicate: (I) -> Boolean = { true }
 ) {
     fun run(input: List<I>): List<O> {
-        return extractor.interpret(input.filter { inputPredicate.invoke(it) }).map { annotator.annotate(it) }
+        return extractor.extract(input.filter { inputPredicate.invoke(it) }).map { annotator.annotate(it) }
     }
 }
 

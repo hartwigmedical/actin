@@ -6,10 +6,10 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantType
 data class VariantMatchCriteria(
     val isReportable: Boolean,
     val gene: String,
-    val codingEffect: CodingEffect?,
-    val type: VariantType?,
-    val chromosome: String?,
-    val position: Int?,
-    val ref: String?,
-    val alt: String?,
+    val codingEffect: CodingEffect? = null,
+    val type: VariantType? = null,
+    val chromosome: String? = null,
+    val position: Int? = null,
+    val ref: String? = null,
+    val alt: String? = null,
 )

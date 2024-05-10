@@ -21,13 +21,13 @@ private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotato
 }
 
 private fun otherExtractor() = object : MolecularExtractor<PriorMolecularTest, MolecularTest> {
-    override fun interpret(input: List<PriorMolecularTest>): List<MolecularTest> {
+    override fun extract(input: List<PriorMolecularTest>): List<MolecularTest> {
         return input.map { OtherPriorMolecularTest(it) }
     }
 }
 
 private fun ihcExtractor() = object : MolecularExtractor<PriorMolecularTest, IHCMolecularTest> {
-    override fun interpret(input: List<PriorMolecularTest>): List<IHCMolecularTest> {
+    override fun extract(input: List<PriorMolecularTest>): List<IHCMolecularTest> {
         return input.map { IHCMolecularTest(it) }
     }
 }

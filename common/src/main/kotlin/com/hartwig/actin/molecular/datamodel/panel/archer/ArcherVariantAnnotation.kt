@@ -5,10 +5,10 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
 data class ArcherVariantAnnotation(
-    val evidence: ActionableEvidence?,
+    val evidence: ActionableEvidence? = null,
     val geneRole: GeneRole,
     val proteinEffect: ProteinEffect,
-    val isAssociatedWithDrugResistance: Boolean?,
-    val exonRank: Int?,
-    val codonRank: Int?
+    val isAssociatedWithDrugResistance: Boolean? = null,
+    val exonRank: Int? = null,
+    val codonRank: Int? = null
 )
