@@ -55,10 +55,6 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("1", "2")
             }
 
-            FunctionInput.ONE_TREATMENT_CATEGORY -> {
-                listOf(TreatmentCategory.IMMUNOTHERAPY.display())
-            }
-
             FunctionInput.ONE_TREATMENT_CATEGORY_OR_TYPE -> {
                 listOf(TreatmentCategory.IMMUNOTHERAPY.display())
             }

@@ -371,15 +371,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryInput(function)
-            HasHadClinicalBenefitFollowingSomeTreatment(category =  input)
+            val input = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
+            HasHadClinicalBenefitFollowingSomeTreatment(category = input.mappedCategory)
         }
     }
 
     private fun hasHadClinicalBenefitFollowingTreatmentOfCategoryAndTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadClinicalBenefitFollowingSomeTreatment(category =  input.category, types = input.types)
+            HasHadClinicalBenefitFollowingSomeTreatment(category = input.category, types = input.types)
         }
     }
 

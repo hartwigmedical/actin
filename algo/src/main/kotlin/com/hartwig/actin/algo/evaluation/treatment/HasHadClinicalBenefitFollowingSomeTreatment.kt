@@ -16,23 +16,24 @@ class HasHadClinicalBenefitFollowingSomeTreatment(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val history = record.oncologicalHistory
-        val targetTreatments =
-            when {
-                treatment != null -> {
-                    history.filter { it.allTreatments().any { t -> t.name.equals(treatment.name, ignoreCase = true) } }
-                }
-                category != null && types != null -> {
-                    history.filter {
-                        it.allTreatments().any { t -> t.categories().contains(category) && t.types().intersect(types).isNotEmpty() }
-                    }
-                }
-                category != null -> {
-                    history.filter { it.allTreatments().any { t -> t.categories().contains(category) } }
-                }
-                else -> history
+        val isMatchingTreatment: (Treatment) -> Boolean = when {
+            treatment != null -> {
+                { it.name.equals(treatment.name, ignoreCase = true) }
             }
-
-        val targetTreatmentsToResponseMap = targetTreatments.groupBy { it.treatmentHistoryDetails?.bestResponse }
+            category != null && types != null -> {
+                { it.categories().contains(category) && it.types().intersect(types).isNotEmpty() }
+            }
+            category != null -> {
+                { it.categories().contains(category) }
+            }
+            else -> {
+                throw IllegalStateException("Treatment not specified")
+            }
+        }
+        val targetTreatmentsToResponseMap = history.filter {
+            it.allTreatments().any(isMatchingTreatment::invoke)
+        }
+            .groupBy { it.treatmentHistoryDetails?.bestResponse }
 
         val treatmentsSimilarToTargetTreatment = treatment?.let {
             history.filter { (it.matchesTypeFromSet(treatment.types()) != false) &&
