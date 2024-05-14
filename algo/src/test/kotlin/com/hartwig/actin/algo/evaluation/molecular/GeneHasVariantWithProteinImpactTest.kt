@@ -25,7 +25,7 @@ class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(gene = MATCHING_GENE, isReportable = true))
+                TestMolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(gene = MATCHING_GENE, isReportable = true))
             )
         )
     }
@@ -35,7 +35,7 @@ class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -52,7 +52,7 @@ class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = "gene B",
                         isReportable = true,
@@ -69,7 +69,7 @@ class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -86,7 +86,7 @@ class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = false,
@@ -102,7 +102,7 @@ class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -119,7 +119,7 @@ class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,

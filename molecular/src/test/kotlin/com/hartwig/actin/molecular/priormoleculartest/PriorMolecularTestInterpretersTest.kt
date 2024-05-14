@@ -16,8 +16,6 @@ class PriorMolecularTestInterpretersTest {
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns ActionabilityMatch(emptyList(), emptyList())
         every { geneAlterationForVariant(any()) } returns null
-        every { knownExonAlterationForVariant(any()) } returns null
-        every { knownCodonAlterationForVariant(any()) } returns null
     }
 
     @Test

@@ -9,9 +9,9 @@ class HasLocallyAdvancedCancerTest {
     @Test
     fun canEvaluate() {
         val function = HasLocallyAdvancedCancer()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)))
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIB)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestTumorFactory.withTumorStage(null)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withTumorStage(TumorStage.IIIB)))
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(TestTumorFactory.withTumorStage(TumorStage.IIB)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withTumorStage(TumorStage.IV)))
     }
 }

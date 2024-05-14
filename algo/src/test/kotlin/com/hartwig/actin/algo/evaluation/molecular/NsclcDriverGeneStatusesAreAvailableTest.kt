@@ -23,7 +23,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should pass if WGS is available and contains tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.WHOLE_GENOME, true))
+            function.evaluate(TestMolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.WHOLE_GENOME, true))
         )
     }
 
@@ -31,7 +31,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should pass if targeted panel analysis is available and contains tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.TARGETED, true))
+            function.evaluate(TestMolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.TARGETED, true))
         )
     }
 
@@ -49,7 +49,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail if WGS is available but contains no tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.WHOLE_GENOME, false))
+            function.evaluate(TestMolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.WHOLE_GENOME, false))
         )
     }
 
@@ -57,7 +57,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail if targeted panel analysis is available but contains no tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.TARGETED, false))
+            function.evaluate(TestMolecularTestFactory.withExperimentTypeAndContainingTumorCells(ExperimentType.TARGETED, false))
         )
     }
 

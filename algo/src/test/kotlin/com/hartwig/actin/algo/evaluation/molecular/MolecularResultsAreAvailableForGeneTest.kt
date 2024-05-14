@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
@@ -37,7 +37,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                TestMolecularTestFactory.withExperimentTypeAndContainingTumorCells(
                     ExperimentType.WHOLE_GENOME, true
                 )
             )
@@ -49,7 +49,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                TestMolecularTestFactory.withExperimentTypeAndContainingTumorCells(
                     ExperimentType.WHOLE_GENOME, false
                 )
             )
@@ -61,7 +61,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                TestMolecularTestFactory.withExperimentTypeAndContainingTumorCells(
                     ExperimentType.TARGETED, true
                 )
             )
@@ -73,7 +73,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
+                TestMolecularTestFactory.withExperimentTypeAndContainingTumorCells(
                     ExperimentType.TARGETED, false
                 )
             )
@@ -85,7 +85,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.TARGETED, geneCopyNumber1)
+                TestMolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.TARGETED, geneCopyNumber1)
             )
         )
     }
@@ -95,7 +95,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.TARGETED, geneCopyNumber2)
+                TestMolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.TARGETED, geneCopyNumber2)
             )
         )
     }
@@ -105,10 +105,10 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                TestMolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.WHOLE_GENOME,
                     false,
-                    OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true))
+                    OtherPriorMolecularTest(TestMolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true))
                 )
             )
         )
@@ -119,10 +119,10 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                TestMolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.WHOLE_GENOME,
                     false,
-                    IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
+                    IHCMolecularTest(TestMolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
                 )
             )
         )
@@ -133,10 +133,10 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
                         IHCMolecularTest(
-                            MolecularTestFactory.priorMolecularTest(
+                            TestMolecularTestFactory.priorMolecularTest(
                                 test = "IHC",
                                 item = "gene 1",
                                 impliesIndeterminate = false
@@ -153,10 +153,10 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
+                TestMolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
                     ExperimentType.WHOLE_GENOME,
                     false,
-                    OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false))
+                    OtherPriorMolecularTest(TestMolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false))
                 )
             )
         )
@@ -168,7 +168,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
-                    MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(ArcherPanel())
                     )
                 )
@@ -180,7 +180,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(archerPanelWithVariantForGene("gene 1"))
                 )
             )
@@ -194,7 +194,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(archerPanelWithVariantForGene("gene 2"))
                 )
             )
@@ -207,7 +207,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             MolecularResultsAreAvailableForGene("EGFR")
                 .evaluate(
-                    MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                    TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(GenericPanel(GenericPanelType.AVL))
                     )
                 )
@@ -219,7 +219,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(ArcherPanel())
                 )
             )
@@ -231,9 +231,9 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
-                        freetextPriorMolecularFusionRecord("gene 1", "gene 2")
+                        freeTextPriorMolecularFusionRecord("gene 1", "gene 2")
                     )
                 )
             )
@@ -245,9 +245,9 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
-                        freetextPriorMolecularFusionRecord("gene 2", "gene 3")
+                        freeTextPriorMolecularFusionRecord("gene 2", "gene 3")
                     )
                 )
             )

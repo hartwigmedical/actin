@@ -22,11 +22,11 @@ class GeneHasUTR3LossTest {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.createMinimal().copy(gene = TARGET_GENE)))
+            function.evaluate(TestMolecularTestFactory.withDisruption(TestDisruptionFactory.createMinimal().copy(gene = TARGET_GENE)))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withDisruption(
+                TestMolecularTestFactory.withDisruption(
                     TestDisruptionFactory.createMinimal().copy(
                         gene = TARGET_GENE, regionType = RegionType.EXONIC, codingContext = CodingContext.UTR_3P
                 )
@@ -35,7 +35,7 @@ class GeneHasUTR3LossTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(gene = TARGET_GENE)))
+            function.evaluate(TestMolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(gene = TARGET_GENE)))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(patientWithThreePrimeUtrEffect(isReportable = false, isHotspot = false))
@@ -49,7 +49,7 @@ class GeneHasUTR3LossTest {
     }
 
     private fun patientWithThreePrimeUtrEffect(isReportable: Boolean, isHotspot: Boolean): PatientRecord {
-        return MolecularTestFactory.withVariant(
+        return TestMolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal().copy(
                 gene = TARGET_GENE,
                 isReportable = isReportable,

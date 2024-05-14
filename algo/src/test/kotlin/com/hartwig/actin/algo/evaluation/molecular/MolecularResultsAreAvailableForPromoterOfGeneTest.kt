@@ -11,18 +11,18 @@ class MolecularResultsAreAvailableForPromoterOfGeneTest {
     @Test
     fun canEvaluate() {
         val function = MolecularResultsAreAvailableForPromoterOfGene("gene 1")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withPriorTest(create("gene 1 promoter", false))))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withMolecularTest(create("gene 1 promoter", false))))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withPriorTest(create("gene 1 promoter", true)))
+            function.evaluate(TestMolecularTestFactory.withMolecularTest(create("gene 1 promoter", true)))
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTest(create("gene 1 coding", false))))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withPriorTest(create("gene 2 promoter", false))))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withMolecularTest(create("gene 1 coding", false))))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withMolecularTest(create("gene 2 promoter", false))))
     }
 
     private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): MolecularTest {
         return IHCMolecularTest(
-            MolecularTestFactory.priorMolecularTest(
+            TestMolecularTestFactory.priorMolecularTest(
                 test = "IHC",
                 item = gene,
                 impliesIndeterminate = impliesPotentialDeterminateStatus

@@ -54,19 +54,19 @@ class KnownEventResolverTest {
             codingEffect = CodingEffect.MISSENSE
         )
 
-        assertEquals(hotspot, resolver.resolveForVariant(hotspotMatch).first())
+        assertEquals(hotspot, resolver.resolveForVariant(hotspotMatch))
 
         val codonMatch = hotspotMatch.copy(position = 9)
-        assertEquals(codon, resolver.resolveForVariant(codonMatch).first())
+        assertEquals(codon, resolver.resolveForVariant(codonMatch))
 
         val exonMatch = hotspotMatch.copy(position = 6)
-        assertEquals(exon, resolver.resolveForVariant(exonMatch).first())
+        assertEquals(exon, resolver.resolveForVariant(exonMatch))
 
         val geneMatch = hotspotMatch.copy(position = 1)
-        assertNotNull(resolver.resolveForVariant(geneMatch).first())
+        assertNotNull(resolver.resolveForVariant(geneMatch))
 
         val wrongGene = hotspotMatch.copy(gene = "other")
-        assertThat(resolver.resolveForVariant(wrongGene)).isEmpty()
+        assertThat(resolver.resolveForVariant(wrongGene)).isNull()
     }
 
     @Test

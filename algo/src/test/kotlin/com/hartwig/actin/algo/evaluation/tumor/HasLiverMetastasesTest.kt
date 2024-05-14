@@ -9,19 +9,19 @@ class HasLiverMetastasesTest {
 
     @Test
     fun shouldBeUndeterminedWhenHasLiverLesionsIsNull() {
-        val undetermined = function.evaluate(TumorTestFactory.withLiverLesions(null))
+        val undetermined = function.evaluate(TestTumorFactory.withLiverLesions(null))
         assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
     }
 
     @Test
     fun shouldPassWhenHasLiverLesionsIsTrue() {
-        val pass = function.evaluate(TumorTestFactory.withLiverLesions(true))
+        val pass = function.evaluate(TestTumorFactory.withLiverLesions(true))
         assertEvaluation(EvaluationResult.PASS, pass)
     }
 
     @Test
     fun shouldFailWhenHasLiverLesionsIsFalse() {
-        val fail = function.evaluate(TumorTestFactory.withLiverLesions(false))
+        val fail = function.evaluate(TestTumorFactory.withLiverLesions(false))
         assertEvaluation(EvaluationResult.FAIL, fail)
     }
 }

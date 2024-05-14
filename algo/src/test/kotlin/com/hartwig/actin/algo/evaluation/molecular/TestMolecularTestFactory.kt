@@ -19,7 +19,7 @@ import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 
-internal object MolecularTestFactory {
+internal object TestMolecularTestFactory {
 
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val baseMolecular = TestMolecularFactory.createMinimalTestMolecularRecord()
@@ -44,16 +44,16 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withPriorTests(priorTests: List<MolecularTest>): PatientRecord {
-        return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular) + priorTests))
+    fun withMolecularTests(molecularTests: List<MolecularTest>): PatientRecord {
+        return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular) + molecularTests))
     }
 
-    fun withPriorTestsAndNoOrangeMolecular(priorTests: List<MolecularTest>): PatientRecord {
-        return base.copy(molecularHistory = MolecularHistory(priorTests))
+    fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
+        return base.copy(molecularHistory = MolecularHistory(molecularTests))
     }
 
-    fun withPriorTest(priorTest: MolecularTest): PatientRecord {
-        return withPriorTests(listOf(priorTest))
+    fun withMolecularTest(molecularTest: MolecularTest): PatientRecord {
+        return withMolecularTests(listOf(molecularTest))
     }
 
     fun withVariant(variant: Variant): PatientRecord {

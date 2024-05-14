@@ -11,11 +11,11 @@ class HasBiopsyAmenableLesionTest {
         val function = HasBiopsyAmenableLesion()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.TARGETED))
+            function.evaluate(TestTumorFactory.withMolecularExperimentType(ExperimentType.TARGETED))
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.WHOLE_GENOME))
+            function.evaluate(TestTumorFactory.withMolecularExperimentType(ExperimentType.WHOLE_GENOME))
         )
     }
 }

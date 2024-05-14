@@ -42,8 +42,6 @@ class ArcherAnnotatorTest {
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
         every { geneAlterationForVariant(any()) } returns null
-        every { knownExonAlterationForVariant(any()) } returns null
-        every { knownCodonAlterationForVariant(any()) } returns null
     }
     private val annotator = ArcherAnnotator(evidenceDatabase)
 
@@ -90,38 +88,6 @@ class ArcherAnnotatorTest {
                 evidence = ActionableEvidence(),
                 geneRole = GeneRole.ONCO,
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
-            )
-        )
-    }
-
-    @Test
-    fun `Should annotate variants with known codon`() {
-        every { evidenceDatabase.knownCodonAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns TestServeKnownFactory.codonBuilder()
-            .build().withInputCodonRank(1)
-        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        val annotation = annotated.variants[0].annotation
-        assertThat(annotation).isEqualTo(
-            ArcherVariantAnnotation(
-                evidence = ActionableEvidence(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                codonRank = 1
-            )
-        )
-    }
-
-    @Test
-    fun `Should annotate variants with known exon`() {
-        every { evidenceDatabase.knownExonAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns TestServeKnownFactory.exonBuilder()
-            .build().withInputExonRank(1)
-        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        val annotation = annotated.variants[0].annotation
-        assertThat(annotation).isEqualTo(
-            ArcherVariantAnnotation(
-                evidence = ActionableEvidence(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                exonRank = 1
             )
         )
     }

@@ -26,16 +26,12 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             val geneAlteration = GeneAlterationFactory.convertAlteration(
                 it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
             )
-            val knownExon = evidenceDatabase.knownExonAlterationForVariant(criteria)
-            val knownCodon = evidenceDatabase.knownCodonAlterationForVariant(criteria)
             it.copy(
                 annotation = ArcherVariantAnnotation(
                     evidence = evidence,
                     geneRole = geneAlteration.geneRole,
                     proteinEffect = geneAlteration.proteinEffect,
-                    isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-                    exonRank = knownExon?.inputExonRank(),
-                    codonRank = knownCodon?.inputCodonRank()
+                    isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
                 )
             )
         }

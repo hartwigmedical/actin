@@ -11,12 +11,10 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 
-class OrangeInterpreter(private val geneFilter: GeneFilter) : MolecularExtractor<OrangeRecord, MolecularRecord> {
+class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<OrangeRecord, MolecularRecord> {
 
     override fun extract(input: List<OrangeRecord>): List<MolecularRecord> {
-        return input.map { record ->
-            interpret(record)
-        }.map { it }
+        return input.map(::interpret)
     }
 
     fun interpret(record: OrangeRecord): MolecularRecord {

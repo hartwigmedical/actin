@@ -15,28 +15,28 @@ class HasStomachUndifferentiatedTumorTest {
 
     @Test
     fun `Should evaluate to undetermined if there are no tumor doids configured`() {
-        val tumor = TumorTestFactory.withDoids(null)
+        val tumor = TestTumorFactory.withDoids(null)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumor))
     }
 
     @Test
     fun `Should evaluate to undetermined if there is no tumor type configured`() {
         val tumor =
-            TumorTestFactory.withDoidAndType(DoidConstants.CANCER_DOID, primaryTumorType = null)
+            TestTumorFactory.withDoidAndType(DoidConstants.CANCER_DOID, primaryTumorType = null)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumor))
     }
 
     @Test
     fun `Should pass if tumor is stomach cancer of undifferentiated type`() {
         val tumor =
-            TumorTestFactory.withDoidAndType(DoidConstants.STOMACH_CANCER_DOID, targetType)
+            TestTumorFactory.withDoidAndType(DoidConstants.STOMACH_CANCER_DOID, targetType)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(tumor))
     }
 
     @Test
     fun `Should pass if tumor is stomach cancer with undifferentiated type specified in extra details`() {
         val tumor =
-            TumorTestFactory.withDoidAndTypeAndDetails(
+            TestTumorFactory.withDoidAndTypeAndDetails(
                 DoidConstants.STOMACH_CANCER_DOID,
                 "Stomach cancer",
                 UNDIFFERENTIATED_DETAILS.iterator().next()
@@ -47,7 +47,7 @@ class HasStomachUndifferentiatedTumorTest {
     @Test
     fun `Should fail if tumor type is not stomach cancer`() {
         val tumor =
-            TumorTestFactory.withDoidAndType(
+            TestTumorFactory.withDoidAndType(
                 DoidConstants.BRAIN_CANCER_DOID,
                 HasStomachUndifferentiatedTumor.UNDIFFERENTIATED_TYPES.iterator().next(),
             )

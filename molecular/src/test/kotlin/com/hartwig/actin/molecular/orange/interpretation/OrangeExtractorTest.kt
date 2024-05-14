@@ -9,7 +9,6 @@ import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.actin.testutil.ResourceLocator
 import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
@@ -22,7 +21,7 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class OrangeInterpreterTest {
+class OrangeExtractorTest {
 
     @Test
     fun `Should not crash on minimal orange record`() {
@@ -62,48 +61,48 @@ class OrangeInterpreterTest {
 
     @Test
     fun `Should be able to convert sample id to patient id`() {
-        assertThat(OrangeInterpreter.toPatientId("ACTN01029999T")).isEqualTo("ACTN01029999")
-        assertThat(OrangeInterpreter.toPatientId("ACTN01029999T2")).isEqualTo("ACTN01029999")
+        assertThat(OrangeExtractor.toPatientId("ACTN01029999T")).isEqualTo("ACTN01029999")
+        assertThat(OrangeExtractor.toPatientId("ACTN01029999T2")).isEqualTo("ACTN01029999")
     }
 
     @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception on invalid sample id`() {
-        OrangeInterpreter.toPatientId("no sample")
+        OrangeExtractor.toPatientId("no sample")
     }
 
     @Test
     fun `Should be able to resolve all ref genome versions`() {
         for (refGenomeVersion in OrangeRefGenomeVersion.values()) {
-            assertThat(OrangeInterpreter.determineRefGenomeVersion(refGenomeVersion)).isNotNull()
+            assertThat(OrangeExtractor.determineRefGenomeVersion(refGenomeVersion)).isNotNull()
         }
     }
 
     @Test
     fun `Should determine quality and purity to be sufficient when only pass status is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.PASS)
-        assertThat(OrangeInterpreter.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeInterpreter.hasSufficientQualityAndPurity(record)).isTrue
+        assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
+        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isTrue
     }
 
     @Test
     fun `Should determine quality but not purity to be sufficient when only low purity warning is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)
-        assertThat(OrangeInterpreter.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeInterpreter.hasSufficientQualityAndPurity(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
+        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isFalse
     }
 
     @Test
     fun `Should determine quality and purity to not be sufficient when other warning is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)
-        assertThat(OrangeInterpreter.hasSufficientQuality(record)).isFalse
-        assertThat(OrangeInterpreter.hasSufficientQualityAndPurity(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientQuality(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isFalse
     }
 
     @Test
     fun `Should determine quality excluding purity to not be sufficient when other warning is present with low purity warning`() {
         val record = orangeRecordWithQCStatuses(setOf(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES))
-        assertThat(OrangeInterpreter.hasSufficientQuality(record)).isFalse
-        assertThat(OrangeInterpreter.hasSufficientQualityAndPurity(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientQuality(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isFalse
     }
 
     @Test(expected = IllegalStateException::class)
@@ -200,12 +199,8 @@ class OrangeInterpreterTest {
                         .withQc(TestPurpleFactory.purpleQCBuilder().addAllStatus(statuses).build())))
         }
 
-        private fun createTestInterpreter(): OrangeInterpreter {
-            return OrangeInterpreter(TestGeneFilterFactory.createAlwaysValid())
+        private fun createTestInterpreter(): OrangeExtractor {
+            return OrangeExtractor(TestGeneFilterFactory.createAlwaysValid())
         }
-
-        private val ORANGE_JSON = ResourceLocator.resourceOnClasspath("serialization/real.v3.0.0.orange.json")
-        private val CLINICAL_JSON = ResourceLocator.resourceOnClasspath("interpretation/patient.clinical.json")
-        private val DOID_JSON = ResourceLocator.resourceOnClasspath("interpretation/example_doid.json")
     }
 }

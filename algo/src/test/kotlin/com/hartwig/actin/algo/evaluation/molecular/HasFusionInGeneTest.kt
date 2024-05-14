@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.addingTestFromPriorMolecular
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
+import com.hartwig.actin.algo.evaluation.molecular.TestMolecularTestFactory.addingTestFromPriorMolecular
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
@@ -35,7 +35,7 @@ class HasFusionInGeneTest {
     @Test
     fun `Should pass on high driver reportable gain of function matching fusion`() {
         assertMolecularEvaluation(
-            EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(matchingFusion))
+            EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withFusion(matchingFusion))
         )
     }
 
@@ -43,7 +43,7 @@ class HasFusionInGeneTest {
     fun `Should fail on three gene match when type five promiscuous`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene A")))
+            function.evaluate(TestMolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene A")))
         )
     }
 
@@ -51,7 +51,7 @@ class HasFusionInGeneTest {
     fun `Should fail if exon del dup on different gene`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene B")))
+            function.evaluate(TestMolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene B")))
         )
     }
 
@@ -59,14 +59,14 @@ class HasFusionInGeneTest {
     fun `Should fail on five gene match when type is three promiscuous`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(driverType = FusionDriverType.PROMISCUOUS_3)))
+            function.evaluate(TestMolecularTestFactory.withFusion(matchingFusion.copy(driverType = FusionDriverType.PROMISCUOUS_3)))
         )
     }
 
     @Test
     fun `Should warn on unreportable gain of function match`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false)))
+            EvaluationResult.WARN, function.evaluate(TestMolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false)))
         )
     }
 
@@ -75,7 +75,7 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false, proteinEffect = ProteinEffect.NO_EFFECT))
+                TestMolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false, proteinEffect = ProteinEffect.NO_EFFECT))
             )
         )
     }
@@ -84,7 +84,7 @@ class HasFusionInGeneTest {
     fun `Should warn on low driver gain of function fusion`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(driverLikelihood = DriverLikelihood.LOW)))
+            function.evaluate(TestMolecularTestFactory.withFusion(matchingFusion.copy(driverLikelihood = DriverLikelihood.LOW)))
         )
     }
 
@@ -92,7 +92,7 @@ class HasFusionInGeneTest {
     fun `Should warn on high driver fusion with no effect`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)))
+            function.evaluate(TestMolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)))
         )
     }
 
@@ -101,8 +101,8 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(freetextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                    listOf(freeTextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
                 )
             )
         )
@@ -113,7 +113,7 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(ArcherPanel(fusions = listOf(ArcherFusion(MATCHING_GENE))))
                 )
             )
@@ -124,8 +124,8 @@ class HasFusionInGeneTest {
     fun `Should aggregate fusions found in both Orange molecular and panels`() {
         val evaluation = function.evaluate(
             addingTestFromPriorMolecular(
-                MolecularTestFactory.withFusion(matchingFusion),
-                listOf(freetextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
+                TestMolecularTestFactory.withFusion(matchingFusion),
+                listOf(freeTextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
             )
         )
 
@@ -138,8 +138,8 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(freetextPriorMolecularFusionRecord("gene B", "gene C"))
+                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                    listOf(freeTextPriorMolecularFusionRecord("gene B", "gene C"))
                 )
             )
         )

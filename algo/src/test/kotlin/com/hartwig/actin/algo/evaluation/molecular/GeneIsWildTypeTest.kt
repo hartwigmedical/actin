@@ -24,7 +24,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -37,7 +37,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -50,7 +50,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -68,7 +68,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withCopyNumber(
+                TestMolecularTestFactory.withCopyNumber(
                     TestCopyNumberFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -80,7 +80,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withCopyNumber(
+                TestMolecularTestFactory.withCopyNumber(
                     TestCopyNumberFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -97,7 +97,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHomozygousDisruption(
+                TestMolecularTestFactory.withHomozygousDisruption(
                     TestHomozygousDisruptionFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -110,7 +110,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomozygousDisruption(
+                TestMolecularTestFactory.withHomozygousDisruption(
                     TestHomozygousDisruptionFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -123,7 +123,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomozygousDisruption(
+                TestMolecularTestFactory.withHomozygousDisruption(
                     TestHomozygousDisruptionFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -141,7 +141,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withDisruption(
+                TestMolecularTestFactory.withDisruption(
                     TestDisruptionFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -154,7 +154,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withDisruption(
+                TestMolecularTestFactory.withDisruption(
                     TestDisruptionFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -167,7 +167,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withDisruption(
+                TestMolecularTestFactory.withDisruption(
                     TestDisruptionFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
@@ -185,7 +185,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withFusion(
+                TestMolecularTestFactory.withFusion(
                     TestFusionFactory.createMinimal().copy(
                         geneStart = MATCHING_GENE,
                         isReportable = true,
@@ -197,7 +197,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withFusion(
+                TestMolecularTestFactory.withFusion(
                     TestFusionFactory.createMinimal().copy(
                         geneEnd = MATCHING_GENE,
                         isReportable = true,
@@ -209,7 +209,7 @@ class GeneIsWildTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withFusion(
+                TestMolecularTestFactory.withFusion(
                     TestFusionFactory.createMinimal().copy(
                         geneStart = MATCHING_GENE,
                         isReportable = true,

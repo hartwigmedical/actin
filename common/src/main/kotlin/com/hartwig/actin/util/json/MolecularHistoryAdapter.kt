@@ -7,7 +7,7 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.MolecularTestAdapter
+import com.hartwig.actin.molecular.serialization.MolecularTestAdapter
 
 class MolecularHistoryAdapter(private val gson: Gson) : TypeAdapter<MolecularHistory>() {
 

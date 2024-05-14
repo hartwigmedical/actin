@@ -8,14 +8,14 @@ class HasKnownCnsMetastasesTest {
     @Test
     fun canEvaluate() {
         val function = HasKnownCnsMetastases()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(null, null)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(null, false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(false, null)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(false, false)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(null, true)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(true, null)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(false, true)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(true, false)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainAndCnsLesions(true, true)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(null, null)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(null, false)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(false, null)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(false, false)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(null, true)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(true, null)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(false, true)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(true, false)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withBrainAndCnsLesions(true, true)))
     }
 }

@@ -10,8 +10,8 @@ class HasSecondaryGlioblastomaTest {
     @Test
     fun canEvaluate() {
         val function = HasSecondaryGlioblastoma(TestDoidModelFactory.createMinimalTestDoidModel())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids(DoidConstants.GLIOBLASTOMA_DOID)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("arbitrary doid")))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestTumorFactory.withDoids(null)))
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(TestTumorFactory.withDoids(DoidConstants.GLIOBLASTOMA_DOID)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withDoids("arbitrary doid")))
     }
 }

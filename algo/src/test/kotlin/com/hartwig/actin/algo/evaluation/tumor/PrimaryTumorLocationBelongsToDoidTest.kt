@@ -70,12 +70,12 @@ class PrimaryTumorLocationBelongsToDoidTest {
     }
 
     private fun assertResultForDoids(expectedResult: EvaluationResult, function: PrimaryTumorLocationBelongsToDoid, doids: Set<String>?) {
-        assertEvaluation(expectedResult, function.evaluate(TumorTestFactory.withDoids(doids)))
+        assertEvaluation(expectedResult, function.evaluate(TestTumorFactory.withDoids(doids)))
     }
 
     @Test
     fun `Should fail when sub location matches and tumor doid does not match`() {
-        assertEvaluation(EvaluationResult.FAIL, subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation("10", SUB_LOCATION)))
+        assertEvaluation(EvaluationResult.FAIL, subLocationFunction.evaluate(TestTumorFactory.withDoidAndSubLocation("10", SUB_LOCATION)))
     }
 
     @Test
@@ -92,7 +92,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
     fun `Should warn when sub location query provided and doid match and tumor sub location does not match`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID, "another"))
+            subLocationFunction.evaluate(TestTumorFactory.withDoidAndSubLocation(CHILD_DOID, "another"))
         )
     }
 
@@ -100,7 +100,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
     fun `Should pass when sub location and doid match`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            subLocationFunction.evaluate(TumorTestFactory.withDoidAndSubLocation(CHILD_DOID, SUB_LOCATION))
+            subLocationFunction.evaluate(TestTumorFactory.withDoidAndSubLocation(CHILD_DOID, SUB_LOCATION))
         )
     }
 

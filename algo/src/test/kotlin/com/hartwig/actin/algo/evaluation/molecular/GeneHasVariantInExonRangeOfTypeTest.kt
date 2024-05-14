@@ -28,7 +28,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(isReportable = true, gene = TARGET_GENE))
+                TestMolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(isReportable = true, gene = TARGET_GENE))
             )
         )
     }
@@ -38,7 +38,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = true, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
@@ -52,7 +52,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = true, type = VariantType.INSERT, canonicalImpact = impactWithExon(OTHER_EXON)
                     )
@@ -66,7 +66,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = true, type = VariantType.MNV, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
@@ -80,7 +80,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = true, type = VariantType.INSERT, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
@@ -94,7 +94,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = false, type = VariantType.INSERT, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
@@ -108,7 +108,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
@@ -127,7 +127,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = true, type = VariantType.MNV, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
@@ -141,7 +141,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = true, type = VariantType.INSERT, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
@@ -164,7 +164,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withVariant(
+                TestMolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE, isReportable = true, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )

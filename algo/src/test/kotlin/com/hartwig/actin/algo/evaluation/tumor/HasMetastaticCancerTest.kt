@@ -12,19 +12,19 @@ class HasMetastaticCancerTest {
         val matchDoid = "parent"
         val doidModel = TestDoidModelFactory.createWithOneParentChild(matchDoid, "child")
         val function = HasMetastaticCancer(doidModel)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIC)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestTumorFactory.withTumorStage(null)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withTumorStage(TumorStage.IV)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withTumorStage(TumorStage.IIIC)))
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                TumorTestFactory.withTumorStageAndDoid(
+                TestTumorFactory.withTumorStageAndDoid(
                     TumorStage.II,
                     HasMetastaticCancer.STAGE_II_POTENTIALLY_METASTATIC_CANCERS.iterator().next()
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, null)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStageAndDoid(TumorStage.II, "random")))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestTumorFactory.withTumorStageAndDoid(TumorStage.II, null)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withTumorStageAndDoid(TumorStage.II, "random")))
     }
 }

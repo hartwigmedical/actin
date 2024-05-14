@@ -15,7 +15,7 @@ class HasUGT1A1HaplotypeTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHaplotype(
+                TestMolecularTestFactory.withHaplotype(
                     PharmacoEntry(
                         gene = "UGT1A1",
                         haplotypes = setOf(
@@ -33,7 +33,7 @@ class HasUGT1A1HaplotypeTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withHaplotype(
+                TestMolecularTestFactory.withHaplotype(
                     PharmacoEntry(
                         gene = "UGT1A1",
                         haplotypes = setOf(
@@ -51,7 +51,7 @@ class HasUGT1A1HaplotypeTest {
         EvaluationAssert.assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHaplotype(
+                TestMolecularTestFactory.withHaplotype(
                     PharmacoEntry(
                         gene = "DPYD",
                         haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")),

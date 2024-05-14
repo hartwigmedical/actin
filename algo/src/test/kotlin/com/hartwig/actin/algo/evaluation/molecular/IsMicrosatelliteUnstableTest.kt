@@ -19,7 +19,7 @@ class IsMicrosatelliteUnstableTest {
     @Test
     fun `Should fail with unknown MSI and no MSI alteration`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant()))
+            EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant()))
         )
     }
 
@@ -28,7 +28,7 @@ class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant(isReportable = true, isBiallelic = true))
+                TestMolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant(isReportable = true, isBiallelic = true))
             )
         )
     }
@@ -37,7 +37,7 @@ class IsMicrosatelliteUnstableTest {
     fun `Should be undetermined with reportable non-biallelic MSI variant`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant(isReportable = true)))
+            function.evaluate(TestMolecularTestFactory.withMicrosatelliteInstabilityAndVariant(null, msiVariant(isReportable = true)))
         )
     }
 
@@ -45,7 +45,7 @@ class IsMicrosatelliteUnstableTest {
     fun `Should warn with MSI true and reportable non-biallelic MSI variant`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant(isReportable = true)))
+            function.evaluate(TestMolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant(isReportable = true)))
         )
     }
 
@@ -54,7 +54,7 @@ class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant(isReportable = true, isBiallelic = true))
+                TestMolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant(isReportable = true, isBiallelic = true))
             )
         )
     }
@@ -64,7 +64,7 @@ class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndLoss(
+                TestMolecularTestFactory.withMicrosatelliteInstabilityAndLoss(
                     true, TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, gene = msiGene)
                 )
             )
@@ -76,7 +76,7 @@ class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndHomozygousDisruption(
+                TestMolecularTestFactory.withMicrosatelliteInstabilityAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = msiGene)
                 )
             )
@@ -87,7 +87,7 @@ class IsMicrosatelliteUnstableTest {
     fun `Should warn with MSI true and MSI disruption`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndDisruption(
+                TestMolecularTestFactory.withMicrosatelliteInstabilityAndDisruption(
                     true, TestDisruptionFactory.createMinimal().copy(gene = msiGene)
                 )
             )
@@ -97,7 +97,7 @@ class IsMicrosatelliteUnstableTest {
     @Test
     fun `Should warn with MSI true and non-reportable non-biallelic MSI variant`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant()))
+            EvaluationResult.WARN, function.evaluate(TestMolecularTestFactory.withMicrosatelliteInstabilityAndVariant(true, msiVariant()))
         )
     }
 
@@ -105,7 +105,7 @@ class IsMicrosatelliteUnstableTest {
     fun `Should warn with MSI true and variant in non-MSI gene`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
+                TestMolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
                     true, TestVariantFactory.createMinimal().copy(gene = "other gene", isReportable = true, isBiallelic = false)
                 )
             )
@@ -116,7 +116,7 @@ class IsMicrosatelliteUnstableTest {
     fun `Should fail with MSI false and reportable MSI variant`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(false, msiVariant(isReportable = true)))
+            function.evaluate(TestMolecularTestFactory.withMicrosatelliteInstabilityAndVariant(false, msiVariant(isReportable = true)))
         )
     }
 

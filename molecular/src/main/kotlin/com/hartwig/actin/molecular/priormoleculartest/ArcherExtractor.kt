@@ -12,44 +12,47 @@ private val EXON_SKIP_REGEX = Regex("([A-Za-z0-9 ]+)( exon )([0-9]+(-[0-9]+)?)( 
 private const val NO_FUSIONS = "GEEN fusie(s) aangetoond"
 private const val NO_MUTATION = "GEEN mutaties aangetoond"
 
+private enum class ArcherVariantCategory {
+    VARIANT,
+    FUSION,
+    EXON_SKIP,
+    UNKNOWN
+}
+
 class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
     override fun extract(input: List<PriorMolecularTest>): List<ArcherPanel> {
         return input.groupBy { it.measureDate }
             .map { (date, results) ->
                 val resultsWithItemAndMeasure = results.filter { it.item != null && it.measure != null }
-                val variants = resultsWithItemAndMeasure
-                    .filter { it.measure!!.startsWith("c.") }
-                    .map {
-                        ArcherVariant(it.item!!, it.measure!!) to it
+                val groupedByCategory = resultsWithItemAndMeasure.groupBy {
+                    when {
+                        it.measure!!.startsWith("c.") -> ArcherVariantCategory.VARIANT
+                        FUSION_REGEX.find(it.measure!!) != null -> ArcherVariantCategory.FUSION
+                        EXON_SKIP_REGEX.find(it.measure!!) != null -> ArcherVariantCategory.EXON_SKIP
+                        else -> ArcherVariantCategory.UNKNOWN
                     }
-                val fusions = resultsWithItemAndMeasure
-                    .mapNotNull {
-                        FUSION_REGEX.find(it.measure!!)?.let { matchResult -> ArcherFusion(matchResult.groupValues[1]) to it }
-                    }
-                val exonSkips = resultsWithItemAndMeasure
-                    .mapNotNull {
-                        EXON_SKIP_REGEX.find(it.measure!!)?.let { matchResult ->
-                            val (start, end) = parseRange(matchResult.groupValues[3])
-                            ArcherSkippedExons(matchResult.groupValues[1], start, end) to it
-                        }
-                    }
-                checkForUnknownResults(results, variants, fusions, exonSkips)
-                ArcherPanel(variants.map { it.first }, fusions.map { it.first }, exonSkips.map { it.first }, date)
-            }
-    }
+                }
 
-    private fun checkForUnknownResults(
-        results: List<PriorMolecularTest>,
-        variants: List<Pair<ArcherVariant, PriorMolecularTest>>,
-        fusions: List<Pair<ArcherFusion, PriorMolecularTest>>,
-        exonSkips: List<Pair<ArcherSkippedExons, PriorMolecularTest>>
-    ) {
-        val relevantResults = results.filter { it.measure != NO_FUSIONS && it.measure != NO_MUTATION }.toSet()
-        val processedResults = (variants + fusions + exonSkips).map { it.second }.toSet()
-        val unknownResults = relevantResults - processedResults
-        if (unknownResults.isNotEmpty()) {
-            throw IllegalArgumentException("Unknown results in Archer: ${unknownResults.map { "${it.item} ${it.measure}" }}")
-        }
+                val variants =
+                    groupedByCategory[ArcherVariantCategory.VARIANT]?.map { ArcherVariant(it.item!!, it.measure!!) } ?: emptyList()
+                val fusions = groupedByCategory[ArcherVariantCategory.FUSION]?.mapNotNull {
+                    FUSION_REGEX.find(it.measure!!)?.let { matchResult ->
+                        ArcherFusion(matchResult.groupValues[1])
+                    }
+                } ?: emptyList()
+                val exonSkips = groupedByCategory[ArcherVariantCategory.EXON_SKIP]?.mapNotNull {
+                    EXON_SKIP_REGEX.find(it.measure!!)?.let { matchResult ->
+                        val (start, end) = parseRange(matchResult.groupValues[3])
+                        ArcherSkippedExons(matchResult.groupValues[1], start, end)
+                    }
+                } ?: emptyList()
+                val unknownResults =
+                    groupedByCategory[ArcherVariantCategory.UNKNOWN]?.filter { it.measure != NO_FUSIONS && it.measure != NO_MUTATION }
+                if (unknownResults?.isNotEmpty() == true) {
+                    throw IllegalArgumentException("Unknown results in Archer: ${unknownResults.map { "${it.item} ${it.measure}" }}")
+                }
+                ArcherPanel(variants, fusions, exonSkips, date)
+            }
     }
 
     private fun parseRange(range: String): Pair<Int, Int> {

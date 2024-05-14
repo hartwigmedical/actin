@@ -14,62 +14,62 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should pass when patient has liver metastases only`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverAndOtherLesions(true, emptyList()))
+            hasLiverMetastasesOnly.evaluate(TestTumorFactory.withLiverAndOtherLesions(true, emptyList()))
         )
-        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(false, true)))
+        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(TestTumorFactory.withBoneAndLiverLesions(false, true)))
     }
 
     @Test
     fun `Should evaluate to undetermined when data regarding liver metastases is missing`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(null)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, hasLiverMetastasesOnly.evaluate(TestTumorFactory.withLiverLesions(null)))
     }
 
     @Test
     fun `Should warn if patient has liver metastases but data regarding other lesions is missing `() {
-        assertEvaluation(EvaluationResult.WARN, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(true)))
+        assertEvaluation(EvaluationResult.WARN, hasLiverMetastasesOnly.evaluate(TestTumorFactory.withLiverLesions(true)))
     }
 
     @Test
     fun `Should fail when patient does not have liver metastases exclusively`() {
-        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(true, true)))
+        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(TestTumorFactory.withBoneAndLiverLesions(true, true)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverAndOtherLesions(true, listOf("skin")))
+            hasLiverMetastasesOnly.evaluate(TestTumorFactory.withLiverAndOtherLesions(true, listOf("skin")))
         )
     }
 
     @Test
     fun `Should fail when patient has no liver metastases`() {
-        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(false)))
+        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(TestTumorFactory.withLiverLesions(false)))
     }
 
     @Test
     fun `Should pass when patient has bone metastases only`() {
-        assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndOtherLesions(true, emptyList())))
-        assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(true, false)))
+        assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TestTumorFactory.withBoneAndOtherLesions(true, emptyList())))
+        assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TestTumorFactory.withBoneAndLiverLesions(true, false)))
     }
 
     @Test
     fun `Should evaluate to undetermined when data regarding bone metastases is missing`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneLesions(null)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, hasBoneMetastasesOnly.evaluate(TestTumorFactory.withBoneLesions(null)))
     }
 
     @Test
     fun `Should warn if patient has bone metastases but data regarding other lesions is missing `() {
-        assertEvaluation(EvaluationResult.WARN, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneLesions(true)))
+        assertEvaluation(EvaluationResult.WARN, hasBoneMetastasesOnly.evaluate(TestTumorFactory.withBoneLesions(true)))
     }
 
     @Test
     fun `Should fail when patient does not have bone metastases exclusively`() {
-        assertEvaluation(EvaluationResult.FAIL, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(true, true)))
+        assertEvaluation(EvaluationResult.FAIL, hasBoneMetastasesOnly.evaluate(TestTumorFactory.withBoneAndLiverLesions(true, true)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndOtherLesions(true, listOf("skin")))
+            hasBoneMetastasesOnly.evaluate(TestTumorFactory.withBoneAndOtherLesions(true, listOf("skin")))
         )
     }
 
     @Test
     fun `Should fail when patient has no bone metastases`() {
-        assertEvaluation(EvaluationResult.FAIL, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneLesions(false)))
+        assertEvaluation(EvaluationResult.FAIL, hasBoneMetastasesOnly.evaluate(TestTumorFactory.withBoneLesions(false)))
     }
 }

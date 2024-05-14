@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
+import com.hartwig.actin.algo.evaluation.tumor.TestTumorFactory
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
@@ -26,7 +26,7 @@ class IsEligibleForOnLabelTreatmentTest {
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create() } returns recommendationEngine }
     val function = IsEligibleForOnLabelTreatment(treatment("PEMBROLIZUMAB", true), recommendationEngineFactory)
-    private val colorectalCancerPatient = TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
+    private val colorectalCancerPatient = TestTumorFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, "left")
 
     @Test
     fun `Should return undetermined for colorectal cancer patient eligible for on label treatment pembrolizumab`() {
@@ -65,7 +65,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TumorTestFactory.withTumorDetails(TumorDetails(primaryTumorLocation = "unknown", primaryTumorSubLocation = "CUP"))
+                TestTumorFactory.withTumorDetails(TumorDetails(primaryTumorLocation = "unknown", primaryTumorSubLocation = "CUP"))
             )
         )
     }

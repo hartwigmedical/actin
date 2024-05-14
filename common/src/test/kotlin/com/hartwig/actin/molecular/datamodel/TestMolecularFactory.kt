@@ -320,7 +320,7 @@ object TestMolecularFactory {
         )
     }
 
-    fun freetextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): MolecularTest {
+    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): MolecularTest {
         return GenericPanel(
             fusions = listOf(GenericFusion(geneStart, geneEnd)),
             panelType = GenericPanelType.FREE_TEXT

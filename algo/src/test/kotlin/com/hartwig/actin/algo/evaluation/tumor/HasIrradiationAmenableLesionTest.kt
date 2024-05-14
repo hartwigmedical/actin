@@ -9,7 +9,7 @@ import org.junit.Test
 
 class HasIrradiationAmenableLesionTest {
 
-    private val patientRecord = TumorTestFactory.withTumorStage(null)
+    private val patientRecord = TestTumorFactory.withTumorStage(null)
 
     @Test
     fun `Should fail when no metastatic cancer`() {

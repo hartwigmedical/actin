@@ -55,7 +55,7 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should pass with matching TSG homozygous disruption`() {
         assertMolecularEvaluation(
-            EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption))
+            EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withHomozygousDisruption(matchingHomDisruption))
         )
     }
 
@@ -63,7 +63,7 @@ class GeneIsInactivatedTest {
     fun `Should warn when TSG homozygous disruption is not reportable`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(isReportable = false)))
+            function.evaluate(TestMolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(isReportable = false)))
         )
     }
 
@@ -71,7 +71,7 @@ class GeneIsInactivatedTest {
     fun `Should warn when homozygously disrupted gene is an oncogene`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(geneRole = GeneRole.ONCO)))
+            function.evaluate(TestMolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(geneRole = GeneRole.ONCO)))
         )
     }
 
@@ -79,27 +79,27 @@ class GeneIsInactivatedTest {
     fun `Should warn when TSG homozygous disruption implies gain of function`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
+                TestMolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
             )
         )
     }
 
     @Test
     fun `Should pass with matching TSG loss`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss)))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withCopyNumber(matchingLoss)))
     }
 
     @Test
     fun `Should warn when TSG loss is not reportable`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(isReportable = false)))
+            EvaluationResult.WARN, function.evaluate(TestMolecularTestFactory.withCopyNumber(matchingLoss.copy(isReportable = false)))
         )
     }
 
     @Test
     fun `Should warn when lost gene is an oncogene`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(geneRole = GeneRole.ONCO)))
+            EvaluationResult.WARN, function.evaluate(TestMolecularTestFactory.withCopyNumber(matchingLoss.copy(geneRole = GeneRole.ONCO)))
         )
     }
 
@@ -107,7 +107,7 @@ class GeneIsInactivatedTest {
     fun `Should warn when lost gene implies gain of function`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withCopyNumber(matchingLoss.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)))
+            function.evaluate(TestMolecularTestFactory.withCopyNumber(matchingLoss.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)))
         )
     }
 
@@ -186,7 +186,7 @@ class GeneIsInactivatedTest {
     fun `Should fail with multiple low driver variants with overlapping phase groups and inactivating effects`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     true, variantWithPhaseGroups(setOf(1)), variantWithPhaseGroups(setOf(1, 2))
                 )
             )
@@ -197,7 +197,7 @@ class GeneIsInactivatedTest {
     fun `Should warn with multiple low driver variants with non overlapping phase groups and inactivating effects`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     true, variantWithPhaseGroups(setOf(1)), variantWithPhaseGroups(setOf(2))
                 )
             )
@@ -212,7 +212,7 @@ class GeneIsInactivatedTest {
 
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(true, variant1, variant2)
+                TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(true, variant1, variant2)
             )
         )
     }
@@ -224,7 +224,7 @@ class GeneIsInactivatedTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                MolecularTestFactory.withHasTumorMutationalLoadAndVariantAndDisruption(
+                TestMolecularTestFactory.withHasTumorMutationalLoadAndVariantAndDisruption(
                     true, variantWithPhaseGroups(setOf(1)), disruption
                 )
             )
@@ -232,14 +232,14 @@ class GeneIsInactivatedTest {
     }
 
     private fun assertResultForVariant(result: EvaluationResult, variant: Variant) {
-        assertMolecularEvaluation(result, function.evaluate(MolecularTestFactory.withVariant(variant)))
+        assertMolecularEvaluation(result, function.evaluate(TestMolecularTestFactory.withVariant(variant)))
     }
 
     private fun assertResultForMutationalLoadAndVariant(
         result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: Variant
     ) {
         assertMolecularEvaluation(
-            result, function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant))
+            result, function.evaluate(TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant))
         )
     }
 

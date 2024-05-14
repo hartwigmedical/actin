@@ -5,7 +5,7 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withDoids
+import com.hartwig.actin.algo.evaluation.tumor.TestTumorFactory.withDoids
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
@@ -56,7 +56,7 @@ class HasLeftSidedColorectalTumorTest {
 
     companion object {
         private fun patientWithTumorSubLocation(subLocation: String?): PatientRecord {
-            return TumorTestFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, subLocation)
+            return TestTumorFactory.withDoidAndSubLocation(DoidConstants.COLORECTAL_CANCER_DOID, subLocation)
         }
 
         private fun function(): HasLeftSidedColorectalTumor {

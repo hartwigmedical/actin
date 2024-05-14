@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
-import com.hartwig.actin.molecular.orange.interpretation.OrangeInterpreter
+import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.hmftools.datamodel.OrangeJson
@@ -45,14 +45,16 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
-            val orangePipeline = MolecularInterpreter(OrangeInterpreter(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
+            val orangeRecordMolecularRecordMolecularInterpreter =
+                MolecularInterpreter(OrangeExtractor(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
 
-            orangePipeline.run(listOf(orange))
+            orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
         } else {
             emptyList()
         }
-        LOGGER.info("Loading evidence database for ARCHER")
+        LOGGER.info("Loading evidence database for prior molecular tests")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
+        LOGGER.info("Interpreting prior molecular tests")
         val clinicalMolecularTests = PriorMolecularTestInterpreters.create(evidenceDatabase).process(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)

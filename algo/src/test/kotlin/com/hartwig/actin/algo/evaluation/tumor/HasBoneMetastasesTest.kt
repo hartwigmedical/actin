@@ -9,19 +9,19 @@ class HasBoneMetastasesTest {
 
     @Test
     fun shouldBeUndeterminedWhenHasBoneLesionsIsNull() {
-        val undetermined = function.evaluate(TumorTestFactory.withBoneLesions(null))
+        val undetermined = function.evaluate(TestTumorFactory.withBoneLesions(null))
         assertEvaluation(EvaluationResult.UNDETERMINED, undetermined)
     }
 
     @Test
     fun shouldPassWhenHasBoneLesionsIsTrue() {
-        val pass = function.evaluate(TumorTestFactory.withBoneLesions(true))
+        val pass = function.evaluate(TestTumorFactory.withBoneLesions(true))
         assertEvaluation(EvaluationResult.PASS, pass)
     }
 
     @Test
     fun shouldFailWhenHasBoneLesionsIsFalse() {
-        val fail = function.evaluate(TumorTestFactory.withBoneLesions(false))
+        val fail = function.evaluate(TestTumorFactory.withBoneLesions(false))
         assertEvaluation(EvaluationResult.FAIL, fail)
     }
 }
