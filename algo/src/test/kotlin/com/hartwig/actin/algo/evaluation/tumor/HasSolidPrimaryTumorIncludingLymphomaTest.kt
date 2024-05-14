@@ -12,24 +12,24 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
 
     @Test
     fun shouldReturnUndeterminedForNullDoids() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestTumorFactory.withDoids(null)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
     }
 
     @Test
     fun shouldPassForCancerDoid() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withDoids(DoidConstants.CANCER_DOID)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID)))
     }
 
     @Test
     fun shouldPassForBenignNeoplasmDoid() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withDoids(DoidConstants.BENIGN_NEOPLASM_DOID)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(DoidConstants.BENIGN_NEOPLASM_DOID)))
     }
 
     @Test
     fun shouldWarnForWarnSolidCancerDoids() {
         val firstWarnDoid: String = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.iterator().next()
         assertEvaluation(
-            EvaluationResult.WARN, function.evaluate(TestTumorFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid))
+            EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid))
         )
     }
 
@@ -39,13 +39,13 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
         val firstNonSolidDoid: String = HasSolidPrimaryTumorIncludingLymphoma.NON_SOLID_CANCER_DOIDS.iterator().next()
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TestTumorFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid, firstNonSolidDoid))
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid, firstNonSolidDoid))
         )
     }
 
     @Test
     fun shouldFailForNonCancerDoids() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withDoids("arbitrary doid")))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("arbitrary doid")))
     }
 
     companion object {

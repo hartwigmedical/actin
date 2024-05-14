@@ -1,8 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.priorMolecularTest
 import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allIHCTestsForProtein
 import com.hartwig.actin.algo.evaluation.molecular.PriorMolecularTestFunctions.allPDL1Tests
-import com.hartwig.actin.algo.evaluation.molecular.TestMolecularTestFactory.priorMolecularTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

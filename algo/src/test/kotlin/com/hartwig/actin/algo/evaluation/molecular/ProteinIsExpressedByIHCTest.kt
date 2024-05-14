@@ -16,28 +16,28 @@ class ProteinIsExpressedByIHCTest {
     fun canEvaluate() {
         // No prior tests
         val priorTests = mutableListOf<MolecularTest>()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Add test with no result
         priorTests.add(ihcTest())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Add test with negative result
         priorTests.add(ihcTest(scoreText = "negative"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Add test with positive result
         priorTests.add(ihcTest(scoreValue = 2.0))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Also works for score texts.
         val otherPriorTests = listOf(ihcTest(scoreText = "positive"))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withMolecularTests(otherPriorTests)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMolecularTests(otherPriorTests)))
     }
 
     private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null): MolecularTest {
         return IHCMolecularTest(
-            TestMolecularTestFactory.priorMolecularTest(
+            MolecularTestFactory.priorMolecularTest(
                 test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
             )
         )

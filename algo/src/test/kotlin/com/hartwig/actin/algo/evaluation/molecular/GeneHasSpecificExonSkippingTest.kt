@@ -47,7 +47,7 @@ class GeneHasSpecificExonSkippingTest {
 
     @Test
     fun `Should warn on splice variant in specific exon`() {
-        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(TestMolecularTestFactory.withVariant(SPLICE_VARIANT)))
+        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT)))
     }
 
     @Test
@@ -55,7 +55,7 @@ class GeneHasSpecificExonSkippingTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     SPLICE_VARIANT.copy(
                         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(
                             affectedExon = 2, codingEffect = CodingEffect.SPLICE
@@ -69,26 +69,26 @@ class GeneHasSpecificExonSkippingTest {
     @Test
     fun `Should fail on splice variant in specific exon that is not reportable`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withVariant(SPLICE_VARIANT.copy(isReportable = false)))
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT.copy(isReportable = false)))
         )
     }
 
     @Test
     fun `Should pass on fusion skipping specific exon`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withFusion(EXON_SKIPPING_FUSION)))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION)))
     }
 
     @Test
     fun `Should fail on fusion skipping specific exon that is not reportable`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withFusion(EXON_SKIPPING_FUSION.copy(isReportable = false)))
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION.copy(isReportable = false)))
         )
     }
 
     @Test
     fun `Should fail on fusion skipping more than the specific exon`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withFusion(EXON_SKIPPING_FUSION.copy(fusedExonDown = 5)))
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION.copy(fusedExonDown = 5)))
         )
     }
 
@@ -96,7 +96,7 @@ class GeneHasSpecificExonSkippingTest {
     fun `Should pass on exon skipping detected in archer panel for specific exon`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS, function.evaluate(
-                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
                         archerPanelWithExonSkippingForGene(MATCHING_GENE, 2, 2)
                     )
@@ -119,7 +119,7 @@ class GeneHasSpecificExonSkippingTest {
     fun `Should fail on exon skipping detected in archer panel for range including exon`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(archerPanelWithExonSkippingForGene(MATCHING_GENE, 1, 3))
                 )
             )
@@ -130,7 +130,7 @@ class GeneHasSpecificExonSkippingTest {
     fun `Should fail on exon skipping detected in archer panel specific exon not matching`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                TestMolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(archerPanelWithExonSkippingForGene(MATCHING_GENE, 3, 3))
                 )
             )

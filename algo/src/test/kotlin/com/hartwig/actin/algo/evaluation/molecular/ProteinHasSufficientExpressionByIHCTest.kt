@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.molecular.TestMolecularTestFactory.priorMolecularTest
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.priorMolecularTest
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import org.junit.Test
@@ -17,28 +17,28 @@ class ProteinHasSufficientExpressionByIHCTest {
 
         // No prior tests
         val priorTests = mutableListOf<IHCMolecularTest>()
-        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Add test with no result
         priorTests.add(ihcTest())
-        assertEvaluation(EvaluationResult.FAIL, exact.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Add test with too low result
         priorTests.add(ihcTest(scoreValue = 1.0))
-        assertEvaluation(EvaluationResult.FAIL, exact.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.FAIL, exact.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Add test with too low result but a suitable comparator
         priorTests.add(ihcTest(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 1.0))
-        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, exact.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Add test with valid result
         priorTests.add(ihcTest(scoreValue = 3.0))
-        assertEvaluation(EvaluationResult.PASS, exact.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.PASS, exact.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Test with unclear result
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            exact.evaluate(TestMolecularTestFactory.withMolecularTest(ihcTest(scoreText = "Negative")))
+            exact.evaluate(MolecularTestFactory.withMolecularTest(ihcTest(scoreText = "Negative")))
         )
     }
 

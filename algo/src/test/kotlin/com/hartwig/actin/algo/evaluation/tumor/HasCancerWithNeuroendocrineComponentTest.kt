@@ -24,33 +24,33 @@ class HasCancerWithNeuroendocrineComponentTest {
         val function = HasCancerWithNeuroendocrineComponent(doidModel)
 
         // Can't determine when nothing known about tumor
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestTumorFactory.withTumorDetails(TumorDetails())))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorDetails(TumorDetails())))
 
         // Fail when tumor is of non-neuroendocrine type.
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withDoids("other")))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("other")))
 
         // Can't be sure when tumor has a small cell component.
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TestTumorFactory.withDoids(DoidConstants.SMALL_CELL_DOID_SET.iterator().next()))
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.SMALL_CELL_DOID_SET.iterator().next()))
         )
 
         // Can't be sure if tumor has a neuroendocrine profile
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(createWithNeuroendocrineProfile()))
 
         // Pass when tumor has a doid with a neuroendocrine term
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withDoids(matchDoid)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(matchDoid)))
 
         // Pass when tumor has a doid that is configured as neuroendocrine
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TestTumorFactory.withDoids(HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_DOIDS.iterator().next()))
+            function.evaluate(TumorTestFactory.withDoids(HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_DOIDS.iterator().next()))
         )
 
         // Pass when tumor has been annotated as neuroendocrine
         val annotation = HasCancerWithNeuroendocrineComponent.NEUROENDOCRINE_EXTRA_DETAILS.first() + " tumor"
         assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(TestTumorFactory.withTumorDetails(TumorDetails(primaryTumorExtraDetails = annotation)))
+            EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorDetails(TumorDetails(primaryTumorExtraDetails = annotation)))
         )
     }
 

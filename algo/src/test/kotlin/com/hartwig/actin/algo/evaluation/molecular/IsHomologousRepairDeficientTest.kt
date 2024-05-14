@@ -19,37 +19,37 @@ class IsHomologousRepairDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant())
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant())
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = true))
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = false))
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = false))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = false))
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = false))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = true))
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = true))
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
                     true, TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, gene = hrdGene)
                 )
             )
@@ -57,7 +57,7 @@ class IsHomologousRepairDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndHomozygousDisruption(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = hrdGene)
                 )
             )
@@ -65,26 +65,26 @@ class IsHomologousRepairDeficientTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
                     true, TestDisruptionFactory.createMinimal().copy(gene = hrdGene)
                 )
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TestMolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = false)))
+            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = false)))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                TestMolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
                     true, TestVariantFactory.createMinimal().copy(gene = "other gene", isReportable = true, isBiallelic = false)
                 )
             )
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TestMolecularTestFactory.withHomologousRepairDeficiencyAndVariant(false, hrdVariant(isReportable = true)))
+            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(false, hrdVariant(isReportable = true)))
         )
     }
 

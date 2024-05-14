@@ -37,13 +37,13 @@ class GeneIsAmplifiedTest {
     
     @Test
     fun `Should fail with null ploidy`() {
-        assertEvaluation(EvaluationResult.FAIL, TestMolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp))
+        assertEvaluation(EvaluationResult.FAIL, MolecularTestFactory.withPloidyAndCopyNumber(null, passingAmp))
     }
 
     @Test
     fun `Should warn with non-oncogene`() {
         assertEvaluation(
-            EvaluationResult.WARN, TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(geneRole = GeneRole.TSG))
+            EvaluationResult.WARN, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(geneRole = GeneRole.TSG))
         )
     }
 
@@ -51,7 +51,7 @@ class GeneIsAmplifiedTest {
     fun `Should warn with loss of function effect`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
         )
     }
 
@@ -59,7 +59,7 @@ class GeneIsAmplifiedTest {
     fun `Should warn with loss of function predicted effect`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
+            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
         )
     }
 
@@ -67,7 +67,7 @@ class GeneIsAmplifiedTest {
     fun `Should warn with unreportable amplification when no min copies requested`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            functionWithNoMinCopies.evaluate(TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(isReportable = false)))
+            functionWithNoMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(isReportable = false)))
         )
     }
 
@@ -75,33 +75,33 @@ class GeneIsAmplifiedTest {
     fun `Should pass with unreportable amplification when min copies requested and satisfied`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            functionWithMinCopies.evaluate(TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(isReportable = false)))
+            functionWithMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(isReportable = false)))
         )
     }
 
     @Test
     fun `Should pass with reportable full gain of function`() {
-        assertEvaluation(EvaluationResult.PASS, TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp))
+        assertEvaluation(EvaluationResult.PASS, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp))
     }
 
     @Test
     fun `Should fail when requested min copy number is not satisfied`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionWithMinCopies.evaluate(TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 3)))
+            functionWithMinCopies.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 3)))
         )
     }
 
     @Test
     fun `Should warn with reportable partial amplification`() {
-        assertEvaluation(EvaluationResult.WARN, TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 6)))
+        assertEvaluation(EvaluationResult.WARN, MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 6)))
     }
 
     @Test
     fun `Should fail with copy numbers below amplification threshold`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 4, maxCopies = 4))
+            MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 4, maxCopies = 4))
         )
     }
 
@@ -110,7 +110,7 @@ class GeneIsAmplifiedTest {
         val function = GeneIsAmplified("gene A", 4)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TestMolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 4, maxCopies = 4)))
+            function.evaluate(MolecularTestFactory.withPloidyAndCopyNumber(PLOIDY, passingAmp.copy(minCopies = 4, maxCopies = 4)))
         )
     }
 

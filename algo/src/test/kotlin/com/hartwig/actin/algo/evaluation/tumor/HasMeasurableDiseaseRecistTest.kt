@@ -9,28 +9,28 @@ import org.junit.Test
 class HasMeasurableDiseaseRecistTest {
     @Test
     fun shouldPassWhenHasMeasurableDiseaseIsTrue() {
-        val evaluation = FUNCTION.evaluate(TestTumorFactory.withMeasurableDisease(true))
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(true))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertTrue(evaluation.recoverable)
     }
 
     @Test
     fun shouldPassWhenHasMeasurableDiseaseIsTrueAndRandomDoid() {
-        val evaluation = FUNCTION.evaluate(TestTumorFactory.withMeasurableDiseaseAndDoid(true, "random"))
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true, "random"))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertTrue(evaluation.recoverable)
     }
 
     @Test
     fun shouldFailWhenHasMeasurableDiseaseIsFalse() {
-        val evaluation = FUNCTION.evaluate(TestTumorFactory.withMeasurableDisease(false))
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(false))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertTrue(evaluation.recoverable)
     }
 
     @Test
     fun shouldBeUndeterminedWhenHasMeasurableDiseaseIsUndetermined() {
-        val evaluation = FUNCTION.evaluate(TestTumorFactory.withMeasurableDisease(null))
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(null))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertTrue(evaluation.recoverable)
     }
@@ -38,7 +38,7 @@ class HasMeasurableDiseaseRecistTest {
     @Test
     fun shouldWarnWhenUncertainIfEvaluatedAgainstRecist() {
         val evaluation = FUNCTION.evaluate(
-            TestTumorFactory.withMeasurableDiseaseAndDoid(
+            TumorTestFactory.withMeasurableDiseaseAndDoid(
                 true,
                 HasMeasurableDiseaseRecist.NON_RECIST_TUMOR_DOIDS.iterator().next()
             )

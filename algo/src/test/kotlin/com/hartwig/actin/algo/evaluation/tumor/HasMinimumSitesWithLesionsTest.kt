@@ -39,7 +39,7 @@ class HasMinimumSitesWithLesionsTest {
 
     @Test
     fun shouldNotCountAdditionalLesionDetailsOrBiopsyLocationContainingLymphWhenLymphNodeLesionsPresent() {
-        val patient = TestTumorFactory.withTumorDetails(
+        val patient = TumorTestFactory.withTumorDetails(
             testPatient.tumor.copy(otherLesions = listOf("lymph node"), biopsyLocation = "lymph")
         )
         assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(6).evaluate(patient))
@@ -72,7 +72,7 @@ class HasMinimumSitesWithLesionsTest {
             hasBoneLesions: Boolean?, hasBrainLesions: Boolean?, hasCnsLesions: Boolean?, hasLiverLesions: Boolean?,
             hasLungLesions: Boolean?, hasLymphNodeLesions: Boolean?, otherLesions: List<String>?, biopsyLocation: String?
         ): PatientRecord {
-            return TestTumorFactory.withTumorDetails(
+            return TumorTestFactory.withTumorDetails(
                 TumorDetails(
                     hasBoneLesions = hasBoneLesions,
                     hasBrainLesions = hasBrainLesions,

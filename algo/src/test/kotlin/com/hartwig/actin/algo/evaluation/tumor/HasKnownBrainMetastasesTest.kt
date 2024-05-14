@@ -8,8 +8,8 @@ class HasKnownBrainMetastasesTest {
     @Test
     fun canEvaluate() {
         val function = HasKnownBrainMetastases()
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestTumorFactory.withBrainLesions(true)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withBrainLesions(false)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestTumorFactory.withBrainLesions(null)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBrainLesions(true)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(false)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(null)))
     }
 }

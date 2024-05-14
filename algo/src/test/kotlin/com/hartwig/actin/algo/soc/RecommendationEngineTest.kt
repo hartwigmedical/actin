@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
-import com.hartwig.actin.algo.evaluation.molecular.TestMolecularTestFactory
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.treatment.Drug
@@ -341,7 +341,7 @@ class RecommendationEngineTest {
     @Test
     fun `Should recommend Entrectinib and Larotrectinib for patients with NTRK fusion`() {
         val ntrkFusionTreatments = listOf(ENTRECTINIB, LAROTRECTINIB).map(TREATMENT_DATABASE::findTreatmentByName)
-        val patientWithNtrkFusion = TestMolecularTestFactory.withFusion(
+        val patientWithNtrkFusion = MolecularTestFactory.withFusion(
             TestFusionFactory.createMinimal().copy(
                 geneStart = "NTRK1",
                 geneEnd = "NTRK1",

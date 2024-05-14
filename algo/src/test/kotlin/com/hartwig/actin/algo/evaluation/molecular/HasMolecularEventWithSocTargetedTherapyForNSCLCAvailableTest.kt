@@ -28,7 +28,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     @Test
     fun `Should pass for activating mutation in correct gene`() {
         val evaluation = function.evaluate(
-            TestMolecularTestFactory.withVariant(
+            MolecularTestFactory.withVariant(
                 TestVariantFactory.createMinimal().copy(
                     gene = CORRECT_GENE,
                     isReportable = true,
@@ -47,7 +47,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(setOf(CORRECT_GENE)).evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = CORRECT_GENE,
                         isReportable = true,
@@ -65,7 +65,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = CORRECT_GENE,
                         isReportable = true,
@@ -83,7 +83,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = "Wrong",
                         isReportable = true,
@@ -101,7 +101,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = CORRECT_VARIANT_GENE,
                         isReportable = true,
@@ -151,7 +151,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = CORRECT_VARIANT_GENE, clonalLikelihood = 1.0, canonicalImpact = proteinImpact("1ABC2")
                     )
@@ -169,7 +169,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             geneEnd = CORRECT_EXON_SKIPPING_GENE,
             fusedExonDown = CORRECT_EXON_SKIPPING_EXON.plus(1)
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withFusion(exonSkippingFusion)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(exonSkippingFusion)))
     }
 
     @Test
@@ -181,7 +181,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             geneEnd = CORRECT_EXON_SKIPPING_GENE,
             fusedExonDown = 3
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withFusion(exonSkippingFusion)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(exonSkippingFusion)))
     }
 
     @Test
@@ -194,7 +194,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             fusedExonDown = 3,
             driverLikelihood = DriverLikelihood.HIGH
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withFusion(fusions)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(fusions)))
     }
 
     @Test
@@ -207,7 +207,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             fusedExonDown = 3,
             driverLikelihood = DriverLikelihood.LOW
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(TestMolecularTestFactory.withFusion(fusions)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withFusion(fusions)))
     }
 
     @Test
@@ -220,7 +220,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
             fusedExonDown = 3,
             driverLikelihood = DriverLikelihood.HIGH
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withFusion(fusions)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(fusions)))
     }
 
     @Test
@@ -228,7 +228,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = CORRECT_DELETION_GENE, isReportable = true,
                         type = VariantType.DELETE,
@@ -244,7 +244,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = "incorrect", isReportable = true,
                         type = VariantType.DELETE,
@@ -260,7 +260,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = CORRECT_INSERTION_GENE, isReportable = true,
                         type = VariantType.INSERT,
@@ -276,7 +276,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                TestMolecularTestFactory.withVariant(
+                MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
                         gene = "incorrect", isReportable = true,
                         type = VariantType.INSERT,

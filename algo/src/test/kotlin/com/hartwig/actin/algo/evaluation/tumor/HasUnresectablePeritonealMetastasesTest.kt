@@ -12,7 +12,7 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should be undetermined if other lesions are unknown`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TestTumorFactory.withOtherLesions(null))
+            function.evaluate(TumorTestFactory.withOtherLesions(null))
         )
     }
 
@@ -20,15 +20,15 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should fail if patient has no peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TestTumorFactory.withOtherLesions(listOf("retroperitoneal lesions")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("retroperitoneal lesions")))
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TestTumorFactory.withOtherLesions(listOf("metastases in subperitoneal region")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("metastases in subperitoneal region")))
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TestTumorFactory.withOtherLesions(listOf("Lymph node")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Lymph node")))
         )
     }
 
@@ -36,7 +36,7 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should fail if patient has no other lesions`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TestTumorFactory.withOtherLesions(emptyList()))
+            function.evaluate(TumorTestFactory.withOtherLesions(emptyList()))
         )
     }
 
@@ -44,15 +44,15 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should warn if patient has peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TestTumorFactory.withOtherLesions(listOf("Abdominal lesion located in Peritoneum")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Abdominal lesion located in Peritoneum")))
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TestTumorFactory.withOtherLesions(listOf("Multiple depositions abdominal and peritoneal")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions abdominal and peritoneal")))
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TestTumorFactory.withOtherLesions(listOf("intraperitoneal")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intraperitoneal")))
         )
     }
 }

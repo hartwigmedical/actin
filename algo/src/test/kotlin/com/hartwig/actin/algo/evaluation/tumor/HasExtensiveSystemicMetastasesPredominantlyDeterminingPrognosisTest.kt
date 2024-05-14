@@ -9,7 +9,7 @@ import org.junit.Test
 
 class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
 
-    private val patientRecord = TestTumorFactory.withTumorStage(null)
+    private val patientRecord = TumorTestFactory.withTumorStage(null)
 
     @Test
     fun `Should fail when no metastatic cancer`() {

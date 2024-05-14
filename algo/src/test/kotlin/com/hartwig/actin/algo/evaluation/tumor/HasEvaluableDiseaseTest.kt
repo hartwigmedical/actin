@@ -8,21 +8,21 @@ import org.junit.Test
 class HasEvaluableDiseaseTest {
     @Test
     fun `Should pass when has measurable disease is true`() {
-        val evaluation = FUNCTION.evaluate(TestTumorFactory.withMeasurableDisease(true))
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(true))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertTrue(evaluation.recoverable)
     }
 
     @Test
     fun `Should be undetermined when has measurable disease is false`() {
-        val evaluation = FUNCTION.evaluate(TestTumorFactory.withMeasurableDisease(false))
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(false))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertTrue(evaluation.recoverable)
     }
 
     @Test
     fun `Should be undetermined when has measurable disease is unknown`() {
-        val evaluation = FUNCTION.evaluate(TestTumorFactory.withMeasurableDisease(null))
+        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(null))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertTrue(evaluation.recoverable)
     }

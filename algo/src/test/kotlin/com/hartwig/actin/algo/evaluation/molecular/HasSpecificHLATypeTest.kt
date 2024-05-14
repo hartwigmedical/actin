@@ -13,20 +13,20 @@ class HasSpecificHLATypeTest {
         val function = HasSpecificHLAType(correct.name)
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TestMolecularTestFactory.withUnreliableMolecularImmunology())
+            function.evaluate(MolecularTestFactory.withUnreliableMolecularImmunology())
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestMolecularTestFactory.withHlaAllele(correct)))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHlaAllele(correct)))
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TestMolecularTestFactory.withHlaAllele(correct.copy(tumorCopyNumber = 0.0)))
+            function.evaluate(MolecularTestFactory.withHlaAllele(correct.copy(tumorCopyNumber = 0.0)))
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TestMolecularTestFactory.withHlaAllele(correct.copy(hasSomaticMutations = true)))
+            function.evaluate(MolecularTestFactory.withHlaAllele(correct.copy(hasSomaticMutations = true)))
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TestMolecularTestFactory.withHlaAllele(correct.copy(name = "other")))
+            function.evaluate(MolecularTestFactory.withHlaAllele(correct.copy(name = "other")))
         )
     }
 }

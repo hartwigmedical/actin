@@ -57,7 +57,7 @@ class GeneHasActivatingMutationTest {
     fun `Should pass with one variant to ignore and one variant not to ignore`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS, functionWithCodonsToIgnore.evaluate(
-                TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     true,
                     ACTIVATING_VARIANT,
                     ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE
@@ -66,7 +66,7 @@ class GeneHasActivatingMutationTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS, functionWithCodonsToIgnore.evaluate(
-                TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(
+                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     false,
                     ACTIVATING_VARIANT,
                     ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE
@@ -242,7 +242,7 @@ class GeneHasActivatingMutationTest {
 
     @Test
     fun `Should pass and aggregate findings for gene with mutation in Archer panel and also in Orange molecular`() {
-        val base = TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(false, ACTIVATING_VARIANT)
+        val base = MolecularTestFactory.withHasTumorMutationalLoadAndVariants(false, ACTIVATING_VARIANT)
         val patient = base.copy(
             molecularHistory = MolecularHistory(
                 base.molecularHistory.molecularTests + listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)
@@ -285,7 +285,7 @@ class GeneHasActivatingMutationTest {
     private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
         assertMolecularEvaluation(
             expectedResult,
-            functionNotIgnoringCodons.evaluate(TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
+            functionNotIgnoringCodons.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
         )
         if (expectedResult == EvaluationResult.WARN) {
             assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, hasHighTML)
@@ -295,7 +295,7 @@ class GeneHasActivatingMutationTest {
     private fun assertResultForVariantWithTMLIgnoringCodons(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
         assertMolecularEvaluation(
             expectedResult,
-            functionWithCodonsToIgnore.evaluate(TestMolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
+            functionWithCodonsToIgnore.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
         )
     }
 

@@ -12,15 +12,15 @@ class HasOvarianBorderlineTumorTest {
 
     @Test
     fun canEvaluate() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestTumorFactory.withDoids(null)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
 
-        val missingType = TestTumorFactory.withDoidAndType(DoidConstants.OVARIAN_CANCER_DOID, "wrong")
+        val missingType = TumorTestFactory.withDoidAndType(DoidConstants.OVARIAN_CANCER_DOID, "wrong")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(missingType))
 
-        val missingDoid = TestTumorFactory.withDoidAndType("wrong", targetedType)
+        val missingDoid = TumorTestFactory.withDoidAndType("wrong", targetedType)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(missingDoid))
 
-        val correct = TestTumorFactory.withDoidAndType(DoidConstants.OVARIAN_CANCER_DOID, targetedType)
+        val correct = TumorTestFactory.withDoidAndType(DoidConstants.OVARIAN_CANCER_DOID, targetedType)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(correct))
     }
 }

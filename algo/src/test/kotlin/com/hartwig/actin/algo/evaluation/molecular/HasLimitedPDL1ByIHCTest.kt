@@ -17,39 +17,39 @@ private const val MEASURE = "measure"
 class HasLimitedPDL1ByIHCTest {
     private val function = HasLimitedPDL1ByIHC(MEASURE, 2.0)
 
-    private val pdl1Test = TestMolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = MEASURE)
+    private val pdl1Test = MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = MEASURE)
 
     @Test
     fun `Should fail with no prior tests`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withMolecularTests(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(emptyList())))
     }
 
     @Test
     fun `Should fail when no test contains result`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(pdl1Test)))))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(pdl1Test)))))
     }
 
     @Test
     fun `Should fail when test value is too high`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TestMolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 3.0)))))
+            function.evaluate(MolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 3.0)))))
         )
     }
 
     @Test
     fun `Should fail when test value has non-matching prefix`() {
         val priorTests = listOf(IHCMolecularTest(pdl1Test.copy(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 1.0)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestMolecularTestFactory.withMolecularTests(priorTests)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
     }
 
     @Test
     fun `Should fail with specific message when molecular history only contains tests with other measure types `() {
         val molecular = listOf(
-            IHCMolecularTest(TestMolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "wrong")),
-            IHCMolecularTest(TestMolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "other wrong"))
+            IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "wrong")),
+            IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "other wrong"))
         )
-        val evaluation = function.evaluate(TestMolecularTestFactory.withMolecularTests(molecular))
+        val evaluation = function.evaluate(MolecularTestFactory.withMolecularTests(molecular))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         Assertions.assertThat(evaluation.failGeneralMessages).containsExactly("PD-L1 tests not in correct unit ($MEASURE)")
     }
@@ -58,9 +58,9 @@ class HasLimitedPDL1ByIHCTest {
     fun `Should use any measurement type when requested measure in function is an empty string`() {
         val function = HasLimitedPDL1ByIHC(null, 2.0)
         val molecular = listOf(
-            IHCMolecularTest(TestMolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", scoreValue = 0.5, measure = "wrong")),
+            IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", scoreValue = 0.5, measure = "wrong")),
         )
-        val evaluation = function.evaluate(TestMolecularTestFactory.withMolecularTests(molecular))
+        val evaluation = function.evaluate(MolecularTestFactory.withMolecularTests(molecular))
         assertEvaluation(EvaluationResult.PASS, evaluation)
     }
 
@@ -68,7 +68,7 @@ class HasLimitedPDL1ByIHCTest {
     fun `Should pass when test value is under limit`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TestMolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 1.0)))))
+            function.evaluate(MolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 1.0)))))
         )
     }
 
