@@ -365,21 +365,25 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadClinicalBenefitFollowingSomeTreatmentCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneSpecificTreatmentInput(function)
-            HasHadClinicalBenefitFollowingSomeTreatment(treatment = input)
+            HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(treatment = input)
         }
     }
 
     private fun hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            HasHadClinicalBenefitFollowingSomeTreatment(category = input.mappedCategory)
+            if (input.mappedType == null) {
+                HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(category = input.mappedCategory)
+            } else {
+                HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(category = input.mappedCategory, types = setOf(input.mappedType!!))
+            }
         }
     }
 
     private fun hasHadClinicalBenefitFollowingTreatmentOfCategoryAndTypesCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadClinicalBenefitFollowingSomeTreatment(category = input.category, types = input.types)
+            HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(category = input.category, types = input.types)
         }
     }
 

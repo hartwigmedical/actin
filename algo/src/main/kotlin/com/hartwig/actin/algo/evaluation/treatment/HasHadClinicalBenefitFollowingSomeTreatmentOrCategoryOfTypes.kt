@@ -10,7 +10,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 
-class HasHadClinicalBenefitFollowingSomeTreatment(
+class HasHadClinicalBenefitFollowingSomeTreatmentOrCategoryOfTypes(
     private val treatment: Treatment? = null, private val category: TreatmentCategory? = null, private val types: Set<TreatmentType>? = null
     ) : EvaluationFunction {
 
@@ -27,7 +27,7 @@ class HasHadClinicalBenefitFollowingSomeTreatment(
                 { it.categories().contains(category) }
             }
             else -> {
-                throw IllegalStateException("Treatment not specified")
+                throw IllegalStateException("Treatment or category must be provided")
             }
         }
         val targetTreatmentsToResponseMap = history.filter {
@@ -47,13 +47,12 @@ class HasHadClinicalBenefitFollowingSomeTreatment(
         val uncertainResponse = targetTreatmentsToResponseMap.keys == setOf(null)
 
         val treatmentDisplay =
-            if (treatment != null) {
-                " with ${treatment.display()}"
-            } else if (category != null && types != null) {
-                " of category ${category.display()} + and type(s) ${Format.concatItemsWithOr(types)}"
-            } else if (category != null) {
-                " of category ${category.display()}"
-            } else ""
+            when {
+                treatment != null -> " with ${treatment.display()}"
+                category != null && types != null -> " of category ${category.display()} and type(s) ${Format.concatItemsWithOr(types)}"
+                category != null -> " of category ${category.display()}"
+                else -> ""
+            }
         val benefitMessage = " objective benefit from treatment$treatmentDisplay"
         val bestResponse = if (stableDisease) "best response: stable disease" else "best response: mixed"
         return when {
