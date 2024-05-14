@@ -24,21 +24,11 @@ class QuestionnaireExtractionTest {
     }
 
     @Test
-    fun `Should be able to handle missing GENAYA subject number from questionnaire`() {
-        val questionnaire = questionnaire(
-            TestQuestionnaireFactory.createTestQuestionnaireValueV1_6()
-                .replace("GENAYA subjectno: GAYA-01-02-9999", "")
-        )
-        assertThat(questionnaire.genayaSubjectNumber).isNull()
-    }
-
-    @Test
     fun `Should be able to extract data from questionnaire v1_7`() {
         val questionnaire = questionnaire(TestQuestionnaireFactory.createTestQuestionnaireValueV1_7())
         assertPatientHistory(questionnaire)
         assertClinical(questionnaire)
         assertMolecularTests(questionnaire)
-        assertThat(questionnaire.genayaSubjectNumber).isEqualTo("GAYA-01-02-9999")
     }
 
     @Test
@@ -47,7 +37,6 @@ class QuestionnaireExtractionTest {
         assertPatientHistory(questionnaire)
         assertClinical(questionnaire)
         assertMolecularTests(questionnaire)
-        assertThat(questionnaire.genayaSubjectNumber).isEqualTo("GAYA-01-02-9999")
     }
 
     @Test
@@ -144,7 +133,6 @@ class QuestionnaireExtractionTest {
         val complications = questionnaire.complications
         assertThat(complications!!).hasSize(1)
         assertThat(complications).contains("ascites")
-        assertThat(questionnaire.genayaSubjectNumber).isNull()
     }
 
     @Test
@@ -184,7 +172,6 @@ class QuestionnaireExtractionTest {
         val complications = questionnaire.complications
         assertThat(complications!!).hasSize(1)
         assertThat(complications).contains("pleural effusion")
-        assertThat(questionnaire.genayaSubjectNumber).isNull()
     }
 
     @Test
@@ -226,7 +213,6 @@ class QuestionnaireExtractionTest {
         assertThat(ecg!!.hasSigAberrationLatestECG).isFalse
         assertThat(ecg.aberrationDescription).isEqualTo("No")
         assertThat(questionnaire.complications).isNull()
-        assertThat(questionnaire.genayaSubjectNumber).isNull()
     }
 
     @Test
@@ -333,7 +319,6 @@ class QuestionnaireExtractionTest {
             val complications = questionnaire.complications
             assertThat(complications!!).hasSize(1)
             assertThat(complications).contains("nausea")
-            assertThat(questionnaire.genayaSubjectNumber).isNull()
         }
 
         private fun assertMolecularTests(questionnaire: Questionnaire) {
@@ -354,7 +339,6 @@ class QuestionnaireExtractionTest {
             assertPatientHistory(questionnaire)
             assertClinical(questionnaire)
             assertMolecularTests(questionnaire)
-            assertThat(questionnaire.genayaSubjectNumber).isNull()
         }
     }
 }
