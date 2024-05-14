@@ -52,10 +52,9 @@ private class IHCInterpreter : MolecularInterpreter<PriorMolecularTest, IHCMolec
 class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpreter<PriorMolecularTest, out MolecularTest>>) {
 
     fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest> {
-        val otherInterpreter = MolecularInterpreter(
-            otherExtractor(),
-            identityAnnotator()
-        ) { test -> pipelines.none { it.inputPredicate.invoke(test) } }
+        val otherInterpreter = MolecularInterpreter(otherExtractor(), identityAnnotator()) { test ->
+            pipelines.none { it.inputPredicate.invoke(test) }
+        }
         return (pipelines + otherInterpreter).flatMap { it.run(clinicalTests) }
     }
 

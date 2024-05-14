@@ -15,6 +15,13 @@ class PriorMolecularTestInterpreter {
 
     private val interpretationBuilder = PriorMolecularTestInterpretationBuilder()
 
+    fun interpret(history: MolecularHistory): List<PriorMolecularTestInterpretation> {
+        history.allIHCTests().forEach(::interpret)
+        history.allArcherPanels().forEach(::interpret)
+        history.allGenericPanels().forEach(::interpret)
+        history.allOtherTests().forEach(::interpret)
+        return interpretationBuilder.build()
+    }
 
     private fun interpret(test: PriorMolecularTest) {
         val item = test.item ?: ""
@@ -59,13 +66,5 @@ class PriorMolecularTestInterpreter {
                 "Score", valueTest.measure, valueTest.scoreValuePrefix, Formats.twoDigitNumber(it) + valueTest.scoreValueUnit
             ).joinToString(" ")
         } ?: ""
-    }
-
-    fun interpret(history: MolecularHistory): List<PriorMolecularTestInterpretation> {
-        history.allIHCTests().forEach { interpret(it) }
-        history.allArcherPanels().forEach { interpret(it) }
-        history.allGenericPanels().forEach { interpret(it) }
-        history.allOtherTests().forEach { interpret(it) }
-        return interpretationBuilder.build()
     }
 }

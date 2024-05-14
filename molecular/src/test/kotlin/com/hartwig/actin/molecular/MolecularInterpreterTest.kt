@@ -7,6 +7,8 @@ import org.junit.Test
 
 class MolecularInterpreterTest {
     private val archerPanel = ArcherPanel()
+    var annotatorCalled: Boolean = false
+
     private val extractor = object : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
         override fun extract(input: List<PriorMolecularTest>): List<ArcherPanel> {
             return input.map { archerPanel }
@@ -14,6 +16,7 @@ class MolecularInterpreterTest {
     }
     private val annotator = object : MolecularAnnotator<ArcherPanel> {
         override fun annotate(input: ArcherPanel): ArcherPanel {
+            annotatorCalled = true
             return input
         }
     }
@@ -25,6 +28,7 @@ class MolecularInterpreterTest {
             annotator = annotator,
             inputPredicate = { true }
         ).run(listOf(PriorMolecularTest(test = "test", impliesPotentialIndeterminateStatus = false)))
+        assertThat(annotatorCalled).isTrue()
         assertThat(result).containsExactly(archerPanel)
     }
 
@@ -35,6 +39,7 @@ class MolecularInterpreterTest {
             annotator = annotator,
             inputPredicate = { false }
         ).run(listOf(PriorMolecularTest(test = "test", impliesPotentialIndeterminateStatus = false)))
+        assertThat(annotatorCalled).isFalse()
         assertThat(result).isEmpty()
     }
 

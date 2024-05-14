@@ -9,19 +9,17 @@ import org.junit.Test
 class MutationTypeMatchingTest {
 
     @Test
-    fun `Should work for every coding effect`() {
+    fun `Should not match for all mutation types when coding effect is none`() {
         val nonCoding = VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONE)
-        for (type in MutationType.values()) {
-            assertThat(MutationTypeMatching.matches(type, nonCoding)).isFalse()
-        }
+        val nothing = setOf<MutationType>()
+        shouldMatch(nonCoding, nothing)
     }
 
     @Test
     fun `Should match for nonsense or frameshift`() {
         val nonsenseOrFrameshift =
             VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT)
-        assertThat(MutationTypeMatching.matches(MutationType.NONSENSE_OR_FRAMESHIFT, nonsenseOrFrameshift)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.ANY, nonsenseOrFrameshift)).isTrue()
+        shouldMatch(nonsenseOrFrameshift, setOf(MutationType.NONSENSE_OR_FRAMESHIFT, MutationType.ANY))
     }
 
     @Test
@@ -39,10 +37,7 @@ class MutationTypeMatchingTest {
             ref = "AAG",
             alt = "TTG"
         )
-        assertThat(MutationTypeMatching.matches(MutationType.MISSENSE, inframe)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME, inframe)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframe)).isFalse()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframe)).isFalse()
+        shouldMatch(inframe, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.ANY))
     }
 
     @Test
@@ -53,11 +48,7 @@ class MutationTypeMatchingTest {
             ref = "ATGATG",
             alt = "TTT"
         )
-        assertThat(MutationTypeMatching.matches(MutationType.MISSENSE, inframeDeletion)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME, inframeDeletion)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframeDeletion)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframeDeletion)).isFalse()
-        assertThat(MutationTypeMatching.matches(MutationType.ANY, inframeDeletion)).isTrue()
+        shouldMatch(inframeDeletion, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.INFRAME_DELETION, MutationType.ANY))
     }
 
     @Test
@@ -68,11 +59,7 @@ class MutationTypeMatchingTest {
             ref = "TTT",
             alt = "ATGATG"
         )
-        assertThat(MutationTypeMatching.matches(MutationType.MISSENSE, inframeInsertion)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME, inframeInsertion)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, inframeInsertion)).isFalse()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, inframeInsertion)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.ANY, inframeInsertion)).isTrue()
+        shouldMatch(inframeInsertion, setOf(MutationType.MISSENSE, MutationType.INFRAME, MutationType.INFRAME_INSERTION, MutationType.ANY))
     }
 
     @Test
@@ -81,10 +68,15 @@ class MutationTypeMatchingTest {
             codingEffect = CodingEffect.MISSENSE,
             type = VariantType.SNV
         )
-        assertThat(MutationTypeMatching.matches(MutationType.MISSENSE, missense)).isTrue()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME, missense)).isFalse()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_DELETION, missense)).isFalse()
-        assertThat(MutationTypeMatching.matches(MutationType.INFRAME_INSERTION, missense)).isFalse()
-        assertThat(MutationTypeMatching.matches(MutationType.ANY, missense)).isTrue()
+        shouldMatch(missense, setOf(MutationType.MISSENSE, MutationType.ANY))
+    }
+
+    private fun shouldMatch(nonsenseOrFrameshift: VariantMatchCriteria, matchingTypes: Set<MutationType>) {
+        matchingTypes.forEach {
+            assertThat(MutationTypeMatching.matches(it, nonsenseOrFrameshift)).withFailMessage { "Expected $it to match" }.isTrue()
+        }
+        (MutationType.values().toSet() - matchingTypes).forEach {
+            assertThat(MutationTypeMatching.matches(it, nonsenseOrFrameshift)).withFailMessage { "Expected $it not to match" }.isFalse()
+        }
     }
 }

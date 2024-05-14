@@ -21,8 +21,8 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
             .map { (date, results) ->
                 val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
                 val (fusionRecords, variantRecords) = usableResults.partition { it.item?.contains("::") ?: false }
-                val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
-                val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
+                val fusions = fusionRecords.mapNotNull { it.item?.let(GenericFusion::parseFusion) }
+                val variants = variantRecords.map(GenericVariant::parseVariant)
 
                 GenericPanel(type, variants, fusions, date)
             }

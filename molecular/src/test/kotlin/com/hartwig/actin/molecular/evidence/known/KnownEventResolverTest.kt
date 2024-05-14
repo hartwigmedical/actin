@@ -50,7 +50,11 @@ class KnownEventResolverTest {
         val resolver = KnownEventResolver(known, known.genes())
 
         val hotspotMatch = VARIANT_CRITERIA.copy(
-            gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T",
+            gene = "gene 1",
+            chromosome = "12",
+            position = 10,
+            ref = "A",
+            alt = "T",
             codingEffect = CodingEffect.MISSENSE
         )
 

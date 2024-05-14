@@ -48,7 +48,7 @@ class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
                 } ?: emptyList()
                 val unknownResults =
                     groupedByCategory[ArcherVariantCategory.UNKNOWN]?.filter { it.measure != NO_FUSIONS && it.measure != NO_MUTATION }
-                if (unknownResults?.isNotEmpty() == true) {
+                if (!unknownResults.isNullOrEmpty()) {
                     throw IllegalArgumentException("Unknown results in Archer: ${unknownResults.map { "${it.item} ${it.measure}" }}")
                 }
                 ArcherPanel(variants, fusions, exonSkips, date)

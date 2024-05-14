@@ -39,7 +39,6 @@ class EvidenceDatabaseTest {
     @Test
     fun canMatchEvidenceForDrivers() {
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
-        TestMolecularFactory.minimalVariant()
         // Assume default objects match with default SERVE objects
         val variant = VariantMatchCriteria(
             chromosome = "",
@@ -73,7 +72,7 @@ class EvidenceDatabaseTest {
             fusedExonDown = 0,
             driverType = FusionDriverType.NONE,
             isReportable = true,
-        ).copy(isReportable = true)
+        )
         assertNotNull(database.lookupKnownFusion(fusion))
         assertEquals(2, evidenceCount(database.evidenceForFusion(fusion)).toLong())
 
