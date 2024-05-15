@@ -1,0 +1,17 @@
+---
+title: stopReasonDate
+---
+//[clinical](../../../index.html)/[com.hartwig.actin.clinical.feed.standard](../index.html)/[EhrTreatmentHistory](index.html)/[stopReasonDate](stop-reason-date.html)
+
+
+
+# stopReasonDate
+
+
+
+[JVM]\
+val [stopReasonDate](stop-reason-date.html): [LocalDate](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html)? = null
+
+
+
+

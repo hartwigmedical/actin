@@ -1,4 +1,4 @@
-$dokka.format:html-v1
+$dokka.format:jekyll-v1
 $dokka.linkExtension:html
 $dokka.location:com.hartwig.actin.clinical.feed.standard////PointingToDeclaration/clinical/com.hartwig.actin.clinical.feed.standard/index.html
 $dokka.location:com.hartwig.actin.clinical.feed.standard//enumeratedInput/#kotlin.String/PointingToDeclaration/clinical/com.hartwig.actin.clinical.feed.standard/enumerated-input.html
