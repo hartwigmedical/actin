@@ -4,12 +4,13 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.addingTestFromPriorMolecular
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularFusionRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -100,8 +101,8 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(freetextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
+                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                    listOf(freeTextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
                 )
             )
         )
@@ -112,8 +113,8 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(archerPriorMolecularFusionRecord(MATCHING_GENE))
+                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                    listOf(ArcherPanel(fusions = listOf(ArcherFusion(MATCHING_GENE))))
                 )
             )
         )
@@ -124,7 +125,7 @@ class HasFusionInGeneTest {
         val evaluation = function.evaluate(
             addingTestFromPriorMolecular(
                 MolecularTestFactory.withFusion(matchingFusion),
-                listOf(freetextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
+                listOf(freeTextPriorMolecularFusionRecord(MATCHING_GENE, "gene B"))
             )
         )
 
@@ -137,8 +138,8 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withPriorTestsAndNoOrangeMolecular(
-                    listOf(freetextPriorMolecularFusionRecord("gene B", "gene C"))
+                MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
+                    listOf(freeTextPriorMolecularFusionRecord("gene B", "gene C"))
                 )
             )
         )

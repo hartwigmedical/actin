@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.datamodel.ReceptorType.ER
 import com.hartwig.actin.clinical.datamodel.ReceptorType.HER2
 import com.hartwig.actin.clinical.datamodel.ReceptorType.PR
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -312,10 +313,12 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     companion object {
         private fun createPriorMolecularTest(
             item: String, scoreText: String = "Score", scoreValue: Double = 50.0, scoreValueUnit: String = "Unit"
-        ): PriorMolecularTest {
-            return PriorMolecularTest(
-                test = "IHC", item = item, scoreText = scoreText, scoreValue = scoreValue,
-                scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
+        ): IHCMolecularTest {
+            return IHCMolecularTest(
+                PriorMolecularTest(
+                    test = "IHC", item = item, scoreText = scoreText, scoreValue = scoreValue,
+                    scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
+                )
             )
         }
 

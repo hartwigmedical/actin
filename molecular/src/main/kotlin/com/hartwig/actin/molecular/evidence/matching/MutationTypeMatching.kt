@@ -10,8 +10,8 @@ object MutationTypeMatching {
 
     private val LOGGER = LogManager.getLogger(MutationTypeMatching::class.java)
 
-    fun matches(typeToMatch: MutationType, variant: Variant): Boolean {
-        val effect = variant.canonicalImpact.codingEffect
+    fun matches(typeToMatch: MutationType, variant: VariantMatchCriteria): Boolean {
+        val effect = variant.codingEffect
 
         return when (typeToMatch) {
             MutationType.NONSENSE_OR_FRAMESHIFT -> effect == CodingEffect.NONSENSE_OR_FRAMESHIFT

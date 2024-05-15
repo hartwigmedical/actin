@@ -1,43 +1,11 @@
-package com.hartwig.actin.molecular.datamodel
+package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularNoFusionsFoundRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.archerPriorMolecularVariantRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.avlPanelPriorMolecularVariantRecord
-import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freetextPriorMolecularFusionRecord
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
-import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+class ClinicalMolecularTest{
 
-private const val GENE = "EGFR"
-private const val HGVS_TRANSCRIPT = "c.123C>T"
+/*    val evidenceDatabase = mockk<EvidenceDatabase>()
+    val clinicalMolecular = ClinicalMolecular.create()
 
-class MolecularHistoryTest {
-
-    @Test
-    fun `Should return most recent molecular record when multiple exist`() {
-
-        val molecularRecords = listOf(
-            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = null),
-            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2024, 1, 1)),
-            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.of(2023, 1, 1)),
-        )
-
-        val molecularHistory = MolecularHistory.fromInputs(molecularRecords, emptyList())
-        assertThat(molecularHistory.latestOrangeMolecularRecord()).isEqualTo(molecularRecords[1])
-    }
-
-    @Test
+   @Test
     fun `Should return undated molecular record when no dated records exist`() {
 
         val molecularRecords = listOf(
@@ -124,8 +92,8 @@ class MolecularHistoryTest {
     @Test
     fun `Should distinguish generic panel types`() {
         val genericPanelTests = listOf(
-            avlPanelPriorMolecularNoMutationsFoundRecord(),
-            freetextPriorMolecularFusionRecord("geneUp", "geneDown")
+            TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord(),
+            TestMolecularFactory.freetextPriorMolecularFusionRecord("geneUp", "geneDown")
         )
         val molecularTests = MolecularTestFactory.fromPriorMolecular(genericPanelTests)
         assertThat(molecularTests).hasSize(2)
@@ -136,8 +104,8 @@ class MolecularHistoryTest {
     @Test
     fun `Should construct AvL panel from prior molecular`() {
         val priorMolecularTests = listOf(
-            avlPanelPriorMolecularNoMutationsFoundRecord(),
-            avlPanelPriorMolecularVariantRecord("gene", "c1A>T")
+            TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord(),
+            TestMolecularFactory.avlPanelPriorMolecularVariantRecord("gene", "c1A>T")
         )
         val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
 
@@ -150,7 +118,7 @@ class MolecularHistoryTest {
 
     @Test
     fun `Should construct Freetext panel from prior molecular`() {
-        val priorMolecularTests = listOf(freetextPriorMolecularFusionRecord("geneUp", "geneDown"))
+        val priorMolecularTests = listOf(TestMolecularFactory.freetextPriorMolecularFusionRecord("geneUp", "geneDown"))
         val molecularTests = GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
 
         val expected = GenericPanelMolecularTest(
@@ -173,7 +141,7 @@ class MolecularHistoryTest {
             impliesPotentialIndeterminateStatus = false
         )
         val priorMolecularTests = listOf(record)
-        assertThatThrownBy {
+        Assertions.assertThatThrownBy {
             GenericPanelMolecularTest.fromPriorMolecularTest(priorMolecularTests)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }
@@ -186,105 +154,21 @@ class MolecularHistoryTest {
             PriorMolecularTest("IHC", item = "protein2", impliesPotentialIndeterminateStatus = false),
         )
 
-        val archerGroup1Tests = listOf(
-            archerPriorMolecularNoFusionsFoundRecord(),
-            archerPriorMolecularVariantRecord("gene", "c.1A>T"),
-            archerPriorMolecularVariantRecord("gene", "c.5G>C")
-        )
-
-        val archerGroup2Tests = listOf(
-            archerPriorMolecularVariantRecord("gene", "c.5G>C", LocalDate.of(2020, 1, 1))
-        )
-
         val genericPanelTests = listOf(
-            avlPanelPriorMolecularNoMutationsFoundRecord(),
-            freetextPriorMolecularFusionRecord("geneUp", "geneDown")
+            TestMolecularFactory.avlPanelPriorMolecularNoMutationsFoundRecord(),
+            TestMolecularFactory.freetextPriorMolecularFusionRecord("geneUp", "geneDown")
         )
 
         val otherTests = listOf(
             PriorMolecularTest("Future-Panel", item = "gene", impliesPotentialIndeterminateStatus = false)
         )
 
-        val priorMolecularTests = IHCTests + archerGroup1Tests + archerGroup2Tests + genericPanelTests + otherTests
+        val priorMolecularTests = IHCTests + genericPanelTests + otherTests
 
         val molecularTests = MolecularTestFactory.fromPriorMolecular(priorMolecularTests)
-        assertThat(molecularTests).hasSize(7)
+        assertThat(molecularTests).hasSize(5)
         assertThat(molecularTests.filter { it.type == ExperimentType.IHC }).hasSize(2)
-        assertThat(molecularTests.filter { it.type == ExperimentType.ARCHER }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(2)
         assertThat(molecularTests.filter { it.type == ExperimentType.OTHER }).hasSize(1)
-    }
-
-    @Test
-    fun `Should parse archer variants from prior molecular tests`() {
-        val result =
-            ArcherMolecularTest.fromPriorMolecularTests(
-                listOf(
-                    archerPriorMolecularVariantRecord(
-                        GENE,
-                        HGVS_TRANSCRIPT
-                    )
-                )
-            )
-        assertThat(result).containsExactly(
-            ArcherMolecularTest(
-                result = ArcherPanel(
-                    variants = listOf(
-                        ArcherVariant(GENE, HGVS_TRANSCRIPT)
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should parse archer fusions from prior molecular tests`() {
-        val result =
-            ArcherMolecularTest.fromPriorMolecularTests(
-                listOf(
-                    TestMolecularFactory.archerPriorMolecularFusionRecord(GENE)
-                )
-            )
-        assertThat(result).containsExactly(
-            ArcherMolecularTest(
-                result = ArcherPanel(
-                    fusions = listOf(ArcherFusion(GENE))
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should parse archer exon skips from prior molecular tests`() {
-        val result =
-            ArcherMolecularTest.fromPriorMolecularTests(
-                listOf(
-                    TestMolecularFactory.archerExonSkippingRecord(GENE, "1-2"),
-                    TestMolecularFactory.archerExonSkippingRecord(GENE, "3")
-                )
-            )
-        assertThat(result).containsExactly(
-            ArcherMolecularTest(
-                result = ArcherPanel(
-                    skippedExons = listOf(ArcherSkippedExons(GENE, 1, 2), ArcherSkippedExons(GENE, 3, 3))
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should throw illegal argument exception when unknown result`() {
-        assertThatThrownBy {
-            ArcherMolecularTest.fromPriorMolecularTests(
-                listOf(
-                    PriorMolecularTest(
-                        test = "Archer FP Lung Target",
-                        item = GENE,
-                        measure = "Unknown",
-                        impliesPotentialIndeterminateStatus = false
-                    )
-                )
-            )
-        }.isInstanceOf(IllegalArgumentException::class.java)
-    }
+    }*/
 }

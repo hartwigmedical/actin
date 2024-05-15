@@ -19,7 +19,7 @@ class PriorMolecularResultGenerator(
         if (molecularHistory.molecularTests.isEmpty()) {
             table.addCell(Cells.createValue("None"))
         } else {
-            val sortedInterpretation = interpreter.interpret(molecularHistory.molecularTests).sortedBy {
+            val sortedInterpretation = interpreter.interpret(molecularHistory).sortedBy {
                 when (it.type) {
                     ExperimentType.IHC.display() -> 0
                     ExperimentType.ARCHER.display() -> 1

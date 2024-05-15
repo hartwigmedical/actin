@@ -1,7 +1,10 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
+import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.Panel
 import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
+import java.time.LocalDate
 
 val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
@@ -9,7 +12,10 @@ data class GenericPanel(
     val panelType: GenericPanelType,
     val variants: List<GenericVariant> = emptyList(),
     val fusions: List<GenericFusion> = emptyList(),
-) : Panel {
+    override val date: LocalDate? = null,
+) : Panel, MolecularTest {
+
+    override val type = ExperimentType.GENERIC_PANEL
 
     override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + alwaysTestedGenes()

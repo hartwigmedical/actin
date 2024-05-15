@@ -1,9 +1,8 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
-import com.hartwig.actin.molecular.datamodel.GenericPanelMolecularTest
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
@@ -18,7 +17,7 @@ class PriorMolecularTestInterpreterTest {
 
     @Test
     fun `Should interpret IHC test based on score text`() {
-        val result = interpreter.interpret(listOf(ihcMolecularTest("HER2", "Positive")))
+        val result = interpreter.interpret(MolecularHistory(listOf(ihcMolecularTest("HER2", "Positive"))))
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
                 "IHC", listOf(PriorMolecularTestResultInterpretation("Positive", "HER2"))
@@ -28,7 +27,7 @@ class PriorMolecularTestInterpreterTest {
 
     @Test
     fun `Should interpret IHC test based score value`() {
-        val result = interpreter.interpret(listOf(ihcMolecularTest("HER2", scoreValue = 90.0, scoreValueUnit = "%")))
+        val result = interpreter.interpret(MolecularHistory(listOf(ihcMolecularTest("HER2", scoreValue = 90.0, scoreValueUnit = "%"))))
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
                 "IHC", listOf(PriorMolecularTestResultInterpretation("HER2", "Score 90%", 1))
@@ -39,9 +38,9 @@ class PriorMolecularTestInterpreterTest {
     @Test
     fun `Should interpret Archer test based variants and implied negatives`() {
         val result = interpreter.interpret(
-            listOf(
-                ArcherMolecularTest(
-                    result = ArcherPanel(
+            MolecularHistory(
+                listOf(
+                    ArcherPanel(
                         variants = listOf(ArcherVariant("ALK", "c.2240_2254del")),
                         fusions = emptyList(),
                         skippedExons = emptyList()
@@ -68,10 +67,8 @@ class PriorMolecularTestInterpreterTest {
     @Test
     fun `Should interpret generic panel tests based on implied negatives`() {
         val result = interpreter.interpret(
-            listOf(
-                GenericPanelMolecularTest(
-                    result = GenericPanel(GenericPanelType.AVL)
-                )
+            MolecularHistory(
+                listOf(GenericPanel(GenericPanelType.AVL))
             )
         )
         assertThat(result).containsExactly(
@@ -88,13 +85,15 @@ class PriorMolecularTestInterpreterTest {
     @Test
     fun `Should interpret other molecular tests based on their curated test`() {
         val result = interpreter.interpret(
-            listOf(
-                OtherPriorMolecularTest(
-                    result = PriorMolecularTest(
-                        test = "Freetext",
-                        item = "ALK",
-                        scoreText = "Positive",
-                        impliesPotentialIndeterminateStatus = false
+            MolecularHistory(
+                listOf(
+                    OtherPriorMolecularTest(
+                        test = PriorMolecularTest(
+                            test = "Freetext",
+                            item = "ALK",
+                            scoreText = "Positive",
+                            impliesPotentialIndeterminateStatus = false
+                        )
                     )
                 )
             )
@@ -110,7 +109,7 @@ class PriorMolecularTestInterpreterTest {
 
     private fun ihcMolecularTest(gene: String, scoreText: String? = null, scoreValue: Double? = null, scoreValueUnit: String? = null) =
         IHCMolecularTest(
-            result = PriorMolecularTest(
+            test = PriorMolecularTest(
                 item = gene,
                 scoreText = scoreText,
                 test = "IHC",

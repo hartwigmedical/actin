@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -10,7 +11,11 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 
-class OrangeInterpreter(private val geneFilter: GeneFilter) {
+class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<OrangeRecord, MolecularRecord> {
+
+    override fun extract(input: List<OrangeRecord>): List<MolecularRecord> {
+        return input.map(::interpret)
+    }
 
     fun interpret(record: OrangeRecord): MolecularRecord {
         validateOrangeRecord(record)
@@ -90,8 +95,8 @@ class OrangeInterpreter(private val geneFilter: GeneFilter) {
         }
 
         private fun throwIfGermlineFieldNonEmpty(orange: OrangeRecord) {
-            val message = ("must be null or empty because ACTIN only accepts ORANGE output that has been "
-                    + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
+            val message =
+                ("must be null or empty because ACTIN only accepts ORANGE output that has been " + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
             val allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants()
             check(allGermlineStructuralVariants.isNullOrEmpty()) { "allGermlineStructuralVariants $message" }
             val allGermlineBreakends = orange.linx().allGermlineBreakends()
