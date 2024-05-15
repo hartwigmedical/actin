@@ -5,7 +5,9 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ReceptorType
+import com.hartwig.actin.clinical.datamodel.ReceptorType.ER
 import com.hartwig.actin.clinical.datamodel.ReceptorType.HER2
+import com.hartwig.actin.clinical.datamodel.ReceptorType.PR
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -244,6 +246,17 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should fail for all receptor types if tumor has doid term triple negative breast cancer configured`() {
+        val record = TumorTestFactory.withPriorMolecularTestsAndDoids(
+            emptyList(),
+            setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, ER).evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, PR).evaluate(record))
     }
 
     @Test
