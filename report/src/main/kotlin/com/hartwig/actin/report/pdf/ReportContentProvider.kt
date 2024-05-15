@@ -118,7 +118,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
                 AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
             )
-            val externalTrialSummarizer = ExternalTrialSummarizer(report.config.filterTrialsWithOverlappingMolecularTargetsInSummary)
+            val externalTrialSummarizer = ExternalTrialSummarizer()
             val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, evaluated)
             return Pair(
                 if (externalTrialSummary.dutchTrials.isNotEmpty()) {
