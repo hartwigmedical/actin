@@ -28,13 +28,12 @@ The column 'with date?' indicates whether the variable should be provided with c
 
 Patient details
 
-| Variable                | Example values | With date? |
-|-------------------------|----------------|------------|
-| Birth year              | 1940           |            |
-| Sex*                    | Male           |            |    
-| Gender*                 | Male           |            |
-| ACTIN registration date | 2023-01-01     | N/A        |
-| WHO                     | 0/1/2/3/4/5    | Yes        |
+| Variable                | Example values                                               | With date? |
+|-------------------------|--------------------------------------------------------------|------------|
+| Birth year              | 1940                                                         |            |
+| Gender*                 | Male                                                         |            |
+| ACTIN registration date | 2023-01-01                                                   | N/A        |
+| Hashed ID               | Base64 encoded SHA-256 hash of source hospital's identifier. |            |
 
 *If both are not available, either suffices.
 

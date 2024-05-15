@@ -130,6 +130,23 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <configuration>
+                    <sourceDirectories>
+                        <dir>${project.basedir}/src/main/kotlin/com/hartwig/actin/clinical/feed/standard</dir>
+                    </sourceDirectories>
+                    <dokkaPlugins>
+
+                        <plugin>
+                            <groupId>org.jetbrains.dokka</groupId>
+                            <artifactId>gfm-plugin</artifactId>
+                            <version>1.9.20</version>
+                        </plugin>
+                    </dokkaPlugins>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
