@@ -85,7 +85,8 @@ class TrialConfigDatabaseReaderTest {
     }
 
     private fun assertUnusedRulesToKeep(unusedRulesToKeep: List<String>) {
-        assertThat(unusedRulesToKeep.stream().map { EligibilityRule.valueOf(it) }).hasSize(93)
+        val converted = unusedRulesToKeep.stream().map { EligibilityRule.valueOf(it) }
+        assertThat(converted).isEqualTo(listOf(EligibilityRule.HAS_HLA_TYPE_X, EligibilityRule.HAS_POTENTIAL_HYPOKALEMIA))
     }
 
     private fun findReference(configs: List<InclusionCriteriaReferenceConfig>, referenceId: String): InclusionCriteriaReferenceConfig {
