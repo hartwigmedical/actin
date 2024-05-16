@@ -9,7 +9,7 @@ import org.junit.Test
 class TrialStatusInterpreterTest {
 
     @Test
-    fun `Should return null for empty CTC Database`() {
+    fun `Should return null for empty trial status Database`() {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(),

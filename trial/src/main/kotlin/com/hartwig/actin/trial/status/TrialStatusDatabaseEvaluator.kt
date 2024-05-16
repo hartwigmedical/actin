@@ -14,7 +14,7 @@ class TrialStatusDatabaseEvaluator(private val trialStatusDatabase: TrialStatusD
             unusedStudyMETCsToIgnore.map {
                 IgnoreValidationError(
                     it,
-                    "Study that is configured to be ignored is not actually referenced in CTC database"
+                    "Study that is configured to be ignored is not actually referenced in trial status database"
                 )
             }
         }
@@ -28,7 +28,7 @@ class TrialStatusDatabaseEvaluator(private val trialStatusDatabase: TrialStatusD
             unusedUnmappedCohortIds.map {
                 TrialStatusUnmappedValidationError(
                     it,
-                    "Cohort ID that is configured to be unmapped is not actually referenced in CTC database"
+                    "Cohort ID that is configured to be unmapped is not actually referenced in trial status database"
                 )
             }
         }

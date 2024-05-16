@@ -17,8 +17,8 @@ internal object CohortStatusInterpreter {
         entries: List<TrialStatusEntry>,
         cohortConfig: CohortDefinitionConfig
     ): CohortStatusInterpretation {
-        val ctcCohortIds = cohortConfig.externalCohortIds
-        if (isNotAvailableOrIncorrect(ctcCohortIds)) {
+        val externalCohortIds = cohortConfig.externalCohortIds
+        if (isNotAvailableOrIncorrect(externalCohortIds)) {
             LOGGER.debug(
                 " Trial status entry for cohort '{}' of trial '{}' explicitly configured to be unavailable or incorrect in trial status database. "
                         + "Ingesting cohort status as configured",
@@ -26,7 +26,7 @@ internal object CohortStatusInterpreter {
                 cohortConfig.trialId
             )
             return CohortStatusInterpretation(null, emptyList(), emptyList())
-        } else if (isMissingBecauseClosedOrUnavailable(ctcCohortIds)) {
+        } else if (isMissingBecauseClosedOrUnavailable(externalCohortIds)) {
             LOGGER.debug(
                 " Trial status entry missing for cohort '{}' of trial '{}' because it's assumed closed or not available. "
                         + "Setting cohort to closed without slots", cohortConfig.cohortId, cohortConfig.trialId
@@ -37,21 +37,21 @@ internal object CohortStatusInterpreter {
         return CohortStatusResolver.resolve(entries, cohortConfig)
     }
 
-    private fun isNotAvailableOrIncorrect(ctcCohortIds: Set<String>): Boolean {
+    private fun isNotAvailableOrIncorrect(externalCohortIds: Set<String>): Boolean {
         return isSingleEntryWithValue(
-            ctcCohortIds,
+            externalCohortIds,
             NOT_AVAILABLE,
             NOT_IN_TRIAL_STATUS_DATABASE_OVERVIEW_UNKNOWN_WHY,
             OVERRULED_BECAUSE_INCORRECT_IN_TRIAL_STATUS_DATABASE
         )
     }
 
-    private fun isMissingBecauseClosedOrUnavailable(ctcCohortIds: Set<String>): Boolean {
-        return isSingleEntryWithValue(ctcCohortIds, WONT_BE_MAPPED_BECAUSE_CLOSED, WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE)
+    private fun isMissingBecauseClosedOrUnavailable(externalCohortIds: Set<String>): Boolean {
+        return isSingleEntryWithValue(externalCohortIds, WONT_BE_MAPPED_BECAUSE_CLOSED, WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE)
     }
 
-    private fun isSingleEntryWithValue(ctcCohortIds: Set<String>, vararg valuesToFind: String): Boolean {
-        return ctcCohortIds.size == 1 && ctcCohortIds.first() in valuesToFind
+    private fun isSingleEntryWithValue(externalCohortIds: Set<String>, vararg valuesToFind: String): Boolean {
+        return externalCohortIds.size == 1 && externalCohortIds.first() in valuesToFind
     }
 
     private fun closedWithoutSlots(): InterpretedCohortStatus {
