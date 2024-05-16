@@ -69,7 +69,10 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         clinical: ClinicalRecord, orangeRefGenomeVersion: OrangeRefGenomeVersion
     ): Pair<KnownEvents, EvidenceDatabase> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
+        val knownEvents = KnownEventsLoader.readFromDir(
+            "${config.serveDirectory}/${serveRefGenomeVersion.name.lowercase().replace("v", "")}",
+            serveRefGenomeVersion
+        )
         val evidenceDatabase = loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
         return Pair(knownEvents, evidenceDatabase)
     }
