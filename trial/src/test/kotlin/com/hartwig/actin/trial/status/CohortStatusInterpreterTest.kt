@@ -9,26 +9,27 @@ class CohortStatusInterpreterTest {
 
     @Test
     fun `Should ignore cohorts that are configured as not available`() {
-        val notAvailable = createWithCTCCohortIDs(CohortStatusInterpreter.NOT_AVAILABLE)
+        val notAvailable = createWithExternalCohortIDs(CohortStatusInterpreter.NOT_AVAILABLE)
         assertThat(evaluate(notAvailable)).isNull()
     }
 
     @Test
-    fun `Should ignore cohorts that are configured as not in CTC overview unknown why`() {
-        val notInCTCOverviewUnknownWhy = createWithCTCCohortIDs(CohortStatusInterpreter.NOT_IN_TRIAL_STATUS_DATABASE_OVERVIEW_UNKNOWN_WHY)
-        assertThat(evaluate(notInCTCOverviewUnknownWhy)).isNull()
+    fun `Should ignore cohorts that are configured as not in trial status database unknown why`() {
+        val notInTrialStatusDatabaseUnknownWhy =
+            createWithExternalCohortIDs(CohortStatusInterpreter.NOT_IN_TRIAL_STATUS_DATABASE_OVERVIEW_UNKNOWN_WHY)
+        assertThat(evaluate(notInTrialStatusDatabaseUnknownWhy)).isNull()
     }
 
     @Test
-    fun `Should ignore cohorts that are configured as overruled because incorrect in CTC`() {
-        val overruledBecauseIncorrectInCTC =
-            createWithCTCCohortIDs(CohortStatusInterpreter.OVERRULED_BECAUSE_INCORRECT_IN_TRIAL_STATUS_DATABASE)
-        assertThat(evaluate(overruledBecauseIncorrectInCTC)).isNull()
+    fun `Should ignore cohorts that are configured as overruled because incorrect in trial status database`() {
+        val overruledBecauseIncorrectInTrialStatusDatabase =
+            createWithExternalCohortIDs(CohortStatusInterpreter.OVERRULED_BECAUSE_INCORRECT_IN_TRIAL_STATUS_DATABASE)
+        assertThat(evaluate(overruledBecauseIncorrectInTrialStatusDatabase)).isNull()
     }
 
     @Test
     fun `Should assume unmapped closed cohorts are closed`() {
-        val notMappedClosed = createWithCTCCohortIDs(CohortStatusInterpreter.WONT_BE_MAPPED_BECAUSE_CLOSED)
+        val notMappedClosed = createWithExternalCohortIDs(CohortStatusInterpreter.WONT_BE_MAPPED_BECAUSE_CLOSED)
         val status = evaluate(notMappedClosed)
         assertThat(status!!.open).isFalse
         assertThat(status.slotsAvailable).isFalse
@@ -36,7 +37,7 @@ class CohortStatusInterpreterTest {
 
     @Test
     fun `Should assume unmapped unavailable cohorts are closed`() {
-        val notMappedNotAvailable = createWithCTCCohortIDs(CohortStatusInterpreter.WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE)
+        val notMappedNotAvailable = createWithExternalCohortIDs(CohortStatusInterpreter.WONT_BE_MAPPED_BECAUSE_NOT_AVAILABLE)
         val status = evaluate(notMappedNotAvailable)
         assertThat(status!!.open).isFalse
         assertThat(status.slotsAvailable).isFalse
@@ -44,7 +45,7 @@ class CohortStatusInterpreterTest {
 
     @Test(expected = NumberFormatException::class)
     fun `Should throw exception on unexpected non integer cohort id`() {
-        val unexpected = createWithCTCCohortIDs("this is unexpected")
+        val unexpected = createWithExternalCohortIDs("this is unexpected")
         evaluate(unexpected)
     }
 
@@ -53,8 +54,8 @@ class CohortStatusInterpreterTest {
             return CohortStatusInterpreter.interpret(listOf(), cohortConfig).status
         }
 
-        private fun createWithCTCCohortIDs(vararg ctcCohortIDs: String): CohortDefinitionConfig {
-            return TestCohortDefinitionConfigFactory.MINIMAL.copy(externalCohortIds = setOf(*ctcCohortIDs))
+        private fun createWithExternalCohortIDs(vararg externalCohortIDs: String): CohortDefinitionConfig {
+            return TestCohortDefinitionConfigFactory.MINIMAL.copy(externalCohortIds = setOf(*externalCohortIDs))
         }
     }
 }
