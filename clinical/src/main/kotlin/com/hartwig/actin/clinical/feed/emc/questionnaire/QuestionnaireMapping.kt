@@ -97,7 +97,7 @@ internal object QuestionnaireMapping {
         QuestionnaireKey.PDL1_TEST_RESULTS to "PD L1 test results",
     ) + NEW_KEYS
 
-    val KEYS_V1_6: Map<QuestionnaireKey, String?> = KEYS_V1_5 + (QuestionnaireKey.GENAYA_SUBJECT_NUMBER to "GENAYA subjectno")
+    val KEYS_V1_6: Map<QuestionnaireKey, String?> = KEYS_V1_5
 
     val KEYS_V1_7: Map<QuestionnaireKey, String?> = KEYS_V1_6 + (QuestionnaireKey.FAMILY_HISTORY to "family history")
 
