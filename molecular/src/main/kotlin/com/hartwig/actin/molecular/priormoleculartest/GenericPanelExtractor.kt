@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
@@ -20,11 +21,24 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
             .groupBy { it.measureDate }
             .map { (date, results) ->
                 val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
-                val (fusionRecords, variantRecords) = usableResults.partition { it.item?.contains("::") ?: false }
-                val fusions = fusionRecords.mapNotNull { it.item?.let(GenericFusion::parseFusion) }
-                val variants = variantRecords.map(GenericVariant::parseVariant)
+                val (fusionRecords, nonFusionRecords) = usableResults.partition { it.item?.contains("::") ?: false }
+                val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
 
-                GenericPanel(type, variants, fusions, date)
+                val (exonDeletionRecords, nonExonDeletionRecords) = nonFusionRecords.partition { it.measure?.endsWith(" del") ?: false }
+                val exonDeletions = exonDeletionRecords.map { record -> GenericExonDeletion.parse(record) }
+
+                val (variantRecords, unknownRecords) = nonExonDeletionRecords.partition { it.measure?.startsWith("c.") ?: false }
+                val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
+
+                if (unknownRecords.isNotEmpty()) {
+                    throw IllegalArgumentException("Unrecognized records in $type panel: ${
+                        unknownRecords
+                            .map { "item \"${it.item}\" measure \"${it.measure}\"" }
+                            .joinToString(", ")
+                    }")
+                }
+
+                GenericPanel(type, variants, fusions, exonDeletions, date)
             }
     }
 

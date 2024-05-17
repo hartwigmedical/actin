@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.GenericPanelMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
@@ -264,42 +263,36 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     private val TEST_DATE = LocalDate.of(2023, 1, 1)
 
-    private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanelMolecularTest(
+    private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanel(
         date = TEST_DATE,
-        result = GenericPanel(
-            panelType = GenericPanelType.FREE_TEXT,
-            variants = emptyList(),
-            fusions = emptyList(),
-            exonDeletions = listOf(
-                GenericExonDeletion(
-                    gene = TARGET_GENE,
-                    affectedExon = MATCHING_EXON,
-                ),
-            )
-        )
-    )
-
-    private val FREETEXT_PANEL_WITH_VARIANT = GenericPanelMolecularTest(
-        date = TEST_DATE,
-        result = GenericPanel(
-            panelType = GenericPanelType.FREE_TEXT,
-            variants = listOf(
-                GenericVariant(
-                    gene = TARGET_GENE,
-                    hgvsCodingImpact = "c.10A>T",
-                ),
+        panelType = GenericPanelType.FREE_TEXT,
+        variants = emptyList(),
+        fusions = emptyList(),
+        exonDeletions = listOf(
+            GenericExonDeletion(
+                gene = TARGET_GENE,
+                affectedExon = MATCHING_EXON,
             ),
-            fusions = emptyList()
         )
     )
 
-    private val EMPTY_AVL_PANEL = GenericPanelMolecularTest(
+    private val FREETEXT_PANEL_WITH_VARIANT = GenericPanel(
         date = TEST_DATE,
-        result = GenericPanel(
-            panelType = GenericPanelType.AVL,
-            variants = emptyList(),
-            fusions = emptyList(),
-            exonDeletions = emptyList()
-        )
+        panelType = GenericPanelType.FREE_TEXT,
+        variants = listOf(
+            GenericVariant(
+                gene = TARGET_GENE,
+                hgvsCodingImpact = "c.10A>T",
+            ),
+        ),
+        fusions = emptyList()
+    )
+
+    private val EMPTY_AVL_PANEL = GenericPanel(
+        date = TEST_DATE,
+        panelType = GenericPanelType.AVL,
+        variants = emptyList(),
+        fusions = emptyList(),
+        exonDeletions = emptyList()
     )
 }
