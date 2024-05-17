@@ -10,7 +10,7 @@ title: apply
 
 
 [JVM]\
-fun [apply](apply.html)(ehrPatientRecord: [EhrPatientRecord](../-ehr-patient-record/index.html)): [EhrPatientRecord](../-ehr-patient-record/index.html)
+fun [apply](apply.html)(ehrPatientRecord: [ProvidedPatientRecord](../-provided-patient-record/index.html)): [ProvidedPatientRecord](../-provided-patient-record/index.html)
 
 
 

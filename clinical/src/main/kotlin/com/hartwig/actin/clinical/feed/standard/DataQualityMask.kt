@@ -1,13 +1,13 @@
 package com.hartwig.actin.clinical.feed.standard
 
-private fun EhrPatientRecord.scrubModifications() =
+private fun ProvidedPatientRecord.scrubModifications() =
     this.copy(treatmentHistory = this.treatmentHistory.map { it.copy(modifications = emptyList()) })
 
-private fun EhrPatientRecord.scrubMedications() =
+private fun ProvidedPatientRecord.scrubMedications() =
     this.copy(medications = null)
 
 class DataQualityMask {
-    fun apply(ehrPatientRecord: EhrPatientRecord): EhrPatientRecord {
+    fun apply(ehrPatientRecord: ProvidedPatientRecord): ProvidedPatientRecord {
         return ehrPatientRecord.scrubMedications().scrubModifications()
     }
 }

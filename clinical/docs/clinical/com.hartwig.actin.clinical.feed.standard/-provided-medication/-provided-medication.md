@@ -1,0 +1,17 @@
+---
+title: ProvidedMedication
+---
+//[clinical](../../../index.html)/[com.hartwig.actin.clinical.feed.standard](../index.html)/[ProvidedMedication](index.html)/[ProvidedMedication](-provided-medication.html)
+
+
+
+# ProvidedMedication
+
+
+
+[JVM]\
+constructor(name: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html), atcCode: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)?, startDate: [LocalDate](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html)?, endDate: [LocalDate](https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html)?, administrationRoute: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)?, dosage: [Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)?, dosageUnit: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)?, frequency: [Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)?, frequencyUnit: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)?, periodBetweenDosagesValue: [Double](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html)?, periodBetweenDosagesUnit: [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)?, administrationOnlyIfNeeded: [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html)?, isTrial: [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html), isSelfCare: [Boolean](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html))
+
+
+
+

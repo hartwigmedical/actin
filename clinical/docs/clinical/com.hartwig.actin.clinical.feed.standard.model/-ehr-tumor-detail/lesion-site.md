@@ -1,0 +1,6 @@
+//[clinical](../../../index.md)/[com.hartwig.actin.clinical.feed.standard.model](../index.md)/[EhrTumorDetail](index.md)/[lesionSite](lesion-site.md)
+
+# lesionSite
+
+[JVM]\
+val [lesionSite](lesion-site.md): [String](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html)? = null

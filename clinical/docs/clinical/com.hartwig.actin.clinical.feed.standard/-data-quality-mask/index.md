@@ -27,5 +27,5 @@ class [DataQualityMask](index.html)
 
 | Name | Summary |
 |---|---|
-| [apply](apply.html) | [JVM]<br>fun [apply](apply.html)(ehrPatientRecord: [EhrPatientRecord](../-ehr-patient-record/index.html)): [EhrPatientRecord](../-ehr-patient-record/index.html) |
+| [apply](apply.html) | [JVM]<br>fun [apply](apply.html)(ehrPatientRecord: [ProvidedPatientRecord](../-provided-patient-record/index.html)): [ProvidedPatientRecord](../-provided-patient-record/index.html) |
 

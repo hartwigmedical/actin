@@ -17,11 +17,11 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
    -output_directory /path/to/where/clinical_json_files/are/written
 ```
 
-## External clinical feed
+## Provided clinical feed
 
 ### Required set
 
-The (external) clinical feed is submitted to ACTIN using below datamodel, for every patient.
+External clinical data providers can submit data to actin adhering to the following schema. 
 
 The column 'with date?' indicates whether the variable should be provided with corresponding date. Note that all variables with 'with date?
 = Yes' can be provided N times.
