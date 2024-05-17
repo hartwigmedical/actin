@@ -20,6 +20,7 @@ class HasBreastCancerWithPositiveReceptorOfType(private val doidModel: DoidModel
         val targetPriorMolecularTests = record.molecularHistory.allIHCTests().filter { it.item == receptorType.display() }
         val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
         val targetReceptorNegativeInDoids = expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
+                || expandedDoidSet.contains(DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
 
         val testSummary = summarizeTests(targetPriorMolecularTests)
         val positiveArguments = TestResult.POSITIVE in testSummary || targetReceptorPositiveInDoids

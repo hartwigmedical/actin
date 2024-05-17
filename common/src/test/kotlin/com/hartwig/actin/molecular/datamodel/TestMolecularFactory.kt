@@ -1,8 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
@@ -31,6 +29,9 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFact
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import java.time.LocalDate
@@ -79,18 +80,15 @@ object TestMolecularFactory {
     }
 
     fun createMinimalTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(listOf(createMinimalTestMolecularRecord()), emptyList())
+        return MolecularHistory(listOf(createMinimalTestMolecularRecord()))
     }
 
     fun createProperTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(listOf(createProperTestMolecularRecord()), TestClinicalFactory.createTestPriorMolecularTests())
+        return MolecularHistory(listOf(createProperTestMolecularRecord()))
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(
-            listOf(createExhaustiveTestMolecularRecord()),
-            TestClinicalFactory.createTestPriorMolecularTests()
-        )
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord()))
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
@@ -322,62 +320,10 @@ object TestMolecularFactory {
         )
     }
 
-    fun archerPriorMolecularVariantRecord(gene: String?, hgvs: String?, date: LocalDate? = null): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "Archer FP Lung Target",
-            item = gene,
-            measure = hgvs,
-            measureDate = date,
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
-    fun archerPriorMolecularFusionRecord(gene: String?, date: LocalDate? = null): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "Archer FP Lung Target",
-            item = gene,
-            measure = "$gene fusie aangetoond",
-            measureDate = date,
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
-    fun archerExonSkippingRecord(gene: String, skippingRange: String): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "Archer FP Lung Target",
-            item = gene,
-            measure = "$gene exon $skippingRange skipping aangetoond",
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
-    fun archerPriorMolecularNoFusionsFoundRecord(date: LocalDate? = null): PriorMolecularTest {
-        return archerPriorMolecularVariantRecord(null, "GEEN fusie(s) aangetoond", date)
-    }
-
-    fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "AvL Panel",
-            item = null,
-            measure = "GEEN mutaties aangetoond met behulp van het AVL Panel",
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
-    fun avlPanelPriorMolecularVariantRecord(gene: String, hgvs: String): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "AvL Panel",
-            item = gene,
-            measure = hgvs,
-            impliesPotentialIndeterminateStatus = false
-        )
-    }
-
-    fun freetextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): PriorMolecularTest {
-        return PriorMolecularTest(
-            test = "Freetext",
-            item = "$geneStart::$geneEnd",
-            impliesPotentialIndeterminateStatus = false
+    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): MolecularTest {
+        return GenericPanel(
+            fusions = listOf(GenericFusion(geneStart, geneEnd)),
+            panelType = GenericPanelType.FREE_TEXT
         )
     }
 

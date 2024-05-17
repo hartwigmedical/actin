@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange
+package com.hartwig.actin.molecular
 
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
@@ -8,9 +8,9 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
-data class OrangeInterpreterConfig(
+data class MolecularInterpreterConfig(
     val orangeJson: String?,
-    val serveDirectory: String?,
+    val serveDirectory: String,
     val clinicalJson: String,
     val doidJson: String,
     val outputDirectory: String
@@ -28,21 +28,21 @@ data class OrangeInterpreterConfig(
             return options
         }
 
-        fun createConfig(cmd: CommandLine): OrangeInterpreterConfig {
+        fun createConfig(cmd: CommandLine): MolecularInterpreterConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
-            return OrangeInterpreterConfig(
+            return MolecularInterpreterConfig(
                 orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
-                serveDirectory = ApplicationConfig.optionalDir(cmd, SERVE_DIRECTORY),
+                serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
         }
 
-        private val LOGGER: Logger = LogManager.getLogger(OrangeInterpreterConfig::class.java)
+        private val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterConfig::class.java)
         private const val ORANGE_JSON: String = "orange_json"
 
         // Params for clinical annotation and interpretation

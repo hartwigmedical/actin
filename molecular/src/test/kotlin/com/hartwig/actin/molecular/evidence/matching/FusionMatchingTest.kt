@@ -1,62 +1,79 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalFusion
+import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.serve.datamodel.fusion.KnownFusion
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Test
+
+val FUSION_CRITERIA = FusionMatchCriteria(
+    isReportable = true,
+    geneStart = "up",
+    geneEnd = "down",
+    driverType = FusionDriverType.KNOWN_PAIR,
+)
+private val GENERIC_FUSION = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").build()
+private val EXON_AWARE_FUSION =
+    TestServeKnownFactory.fusionBuilder().from(GENERIC_FUSION).minExonUp(3).maxExonUp(4).minExonDown(6).maxExonDown(7).build()
+
 
 class FusionMatchingTest {
 
     @Test
-    fun `Should match fusions`() {
-        val generic: KnownFusion = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").build()
-        val exonAware: KnownFusion =
-            TestServeKnownFactory.fusionBuilder().from(generic).minExonUp(3).maxExonUp(4).minExonDown(6).maxExonDown(7).build()
+    fun `Should return false on non-matching gene`() {
+        val noMatch = FUSION_CRITERIA.copy(geneStart = "down", geneEnd = "up")
+        assertFalse(FusionMatching.isGeneMatch(GENERIC_FUSION, noMatch))
+        assertFalse(FusionMatching.isGeneMatch(EXON_AWARE_FUSION, noMatch))
+    }
 
-        val noMatch = minimalFusion().copy(geneStart = "down", geneEnd = "up")
-        assertFalse(FusionMatching.isGeneMatch(generic, noMatch))
-        assertFalse(FusionMatching.isGeneMatch(exonAware, noMatch))
+    @Test
+    fun `Should match on generic fusion`() {
+        assertThat(FusionMatching.isGeneMatch(GENERIC_FUSION, FUSION_CRITERIA)).isTrue()
+        assertThat(FusionMatching.isExonMatch(GENERIC_FUSION, FUSION_CRITERIA)).isTrue()
+        assertThat(FusionMatching.explicitlyMatchesExonUp(GENERIC_FUSION, FUSION_CRITERIA)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonDown(GENERIC_FUSION, FUSION_CRITERIA)).isFalse()
+        assertThat(FusionMatching.isGeneMatch(EXON_AWARE_FUSION, FUSION_CRITERIA)).isTrue()
+        assertThat(FusionMatching.isExonMatch(EXON_AWARE_FUSION, FUSION_CRITERIA)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonUp(EXON_AWARE_FUSION, FUSION_CRITERIA)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonDown(EXON_AWARE_FUSION, FUSION_CRITERIA)).isFalse()
+    }
 
-        val genericMatch = minimalFusion().copy(geneStart = "up", geneEnd = "down")
-        assertTrue(FusionMatching.isGeneMatch(generic, genericMatch))
-        assertTrue(FusionMatching.isExonMatch(generic, genericMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, genericMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, genericMatch))
-        assertTrue(FusionMatching.isGeneMatch(exonAware, genericMatch))
-        assertFalse(FusionMatching.isExonMatch(exonAware, genericMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonUp(exonAware, genericMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonDown(exonAware, genericMatch))
+    @Test
+    fun `Should match on exact match to exon aware fusion`() {
+        val exactMatch = FUSION_CRITERIA.copy(fusedExonUp = 4, fusedExonDown = 6)
+        assertThat(FusionMatching.isGeneMatch(GENERIC_FUSION, exactMatch)).isTrue()
+        assertThat(FusionMatching.isExonMatch(GENERIC_FUSION, exactMatch)).isTrue()
+        assertThat(FusionMatching.explicitlyMatchesExonUp(GENERIC_FUSION, exactMatch)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonDown(GENERIC_FUSION, exactMatch)).isFalse()
+        assertThat(FusionMatching.isGeneMatch(EXON_AWARE_FUSION, exactMatch)).isTrue()
+        assertThat(FusionMatching.isExonMatch(EXON_AWARE_FUSION, exactMatch)).isTrue()
+        assertThat(FusionMatching.explicitlyMatchesExonUp(EXON_AWARE_FUSION, exactMatch)).isTrue()
+        assertThat(FusionMatching.explicitlyMatchesExonDown(EXON_AWARE_FUSION, exactMatch)).isTrue()
+    }
 
-        val exactMatch = genericMatch.copy(fusedExonUp = 4, fusedExonDown = 6)
-        assertTrue(FusionMatching.isGeneMatch(generic, exactMatch))
-        assertTrue(FusionMatching.isExonMatch(generic, exactMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exactMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exactMatch))
-        assertTrue(FusionMatching.isGeneMatch(exonAware, exactMatch))
-        assertTrue(FusionMatching.isExonMatch(exonAware, exactMatch))
-        assertTrue(FusionMatching.explicitlyMatchesExonUp(exonAware, exactMatch))
-        assertTrue(FusionMatching.explicitlyMatchesExonDown(exonAware, exactMatch))
+    @Test
+    fun `Should match on exon up match to exon aware fusion`() {
+        val exonUpMatch = FUSION_CRITERIA.copy(fusedExonUp = 3, fusedExonDown = 8)
+        assertThat(FusionMatching.isGeneMatch(GENERIC_FUSION, exonUpMatch)).isTrue()
+        assertThat(FusionMatching.isExonMatch(GENERIC_FUSION, exonUpMatch)).isTrue()
+        assertThat(FusionMatching.explicitlyMatchesExonUp(GENERIC_FUSION, exonUpMatch)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonDown(GENERIC_FUSION, exonUpMatch)).isFalse()
+        assertThat(FusionMatching.isGeneMatch(EXON_AWARE_FUSION, exonUpMatch)).isTrue()
+        assertThat(FusionMatching.isExonMatch(EXON_AWARE_FUSION, exonUpMatch)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonUp(EXON_AWARE_FUSION, exonUpMatch)).isTrue()
+        assertThat(FusionMatching.explicitlyMatchesExonDown(EXON_AWARE_FUSION, exonUpMatch)).isFalse()
+    }
 
-        val exonUpMatch = genericMatch.copy(fusedExonUp = 3, fusedExonDown = 8)
-        assertTrue(FusionMatching.isGeneMatch(generic, exonUpMatch))
-        assertTrue(FusionMatching.isExonMatch(generic, exonUpMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exonUpMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exonUpMatch))
-        assertTrue(FusionMatching.isGeneMatch(exonAware, exonUpMatch))
-        assertFalse(FusionMatching.isExonMatch(exonAware, exonUpMatch))
-        assertTrue(FusionMatching.explicitlyMatchesExonUp(exonAware, exonUpMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonDown(exonAware, exonUpMatch))
-
-        val exonDownMatch = genericMatch.copy(fusedExonUp = 2, fusedExonDown = 7)
-        assertTrue(FusionMatching.isGeneMatch(generic, exonDownMatch))
-        assertTrue(FusionMatching.isExonMatch(generic, exonDownMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonUp(generic, exonDownMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonDown(generic, exonDownMatch))
-        assertTrue(FusionMatching.isGeneMatch(exonAware, exonDownMatch))
-        assertFalse(FusionMatching.isExonMatch(exonAware, exonDownMatch))
-        assertFalse(FusionMatching.explicitlyMatchesExonUp(exonAware, exonDownMatch))
-        assertTrue(FusionMatching.explicitlyMatchesExonDown(exonAware, exonDownMatch))
+    @Test
+    fun `Should match on exon down match to exon aware fusion`() {
+        val exonDownMatch = FUSION_CRITERIA.copy(fusedExonUp = 2, fusedExonDown = 7)
+        assertThat(FusionMatching.isGeneMatch(GENERIC_FUSION, exonDownMatch)).isTrue()
+        assertThat(FusionMatching.isExonMatch(GENERIC_FUSION, exonDownMatch)).isTrue()
+        assertThat(FusionMatching.explicitlyMatchesExonUp(GENERIC_FUSION, exonDownMatch)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonDown(GENERIC_FUSION, exonDownMatch)).isFalse()
+        assertThat(FusionMatching.isGeneMatch(EXON_AWARE_FUSION, exonDownMatch)).isTrue()
+        assertThat(FusionMatching.isExonMatch(EXON_AWARE_FUSION, exonDownMatch)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonUp(EXON_AWARE_FUSION, exonDownMatch)).isFalse()
+        assertThat(FusionMatching.explicitlyMatchesExonDown(EXON_AWARE_FUSION, exonDownMatch)).isTrue()
     }
 }

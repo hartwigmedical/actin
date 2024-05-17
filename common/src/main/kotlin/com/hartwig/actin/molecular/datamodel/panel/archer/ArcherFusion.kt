@@ -1,9 +1,11 @@
 package com.hartwig.actin.molecular.datamodel.panel.archer
 
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 data class ArcherFusion(
-    val gene: String
+    val gene: String,
+    val evidence: ActionableEvidence? = null
 ) : PanelEvent {
 
     override fun impactsGene(gene: String): Boolean {

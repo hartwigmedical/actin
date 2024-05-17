@@ -38,6 +38,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.mockk</groupId>
+            <artifactId>mockk-jvm</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.hartwig.actin</groupId>
             <artifactId>common</artifactId>
             <scope>test</scope>
@@ -65,7 +70,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.hartwig.actin.molecular.orange.OrangeInterpreterApplicationKt</mainClass>
+                            <mainClass>com.hartwig.actin.molecular.MolecularInterpreterApplicationKt</mainClass>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>

@@ -3,8 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.ArcherMolecularTest
-import com.hartwig.actin.molecular.datamodel.GenericPanelMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -343,41 +341,35 @@ class GeneHasActivatingMutationTest {
 
         private val TEST_DATE = LocalDate.of(2023, 1, 1)
 
-        private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherMolecularTest(
-            date = TEST_DATE,
-            result = ArcherPanel(
-                variants = listOf(
-                    ArcherVariant(
-                        gene = GENE,
-                        hgvsCodingImpact = "c.1A>T",
-                    ),
+        private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherPanel(
+            variants = listOf(
+                ArcherVariant(
+                    gene = GENE,
+                    hgvsCodingImpact = "c.1A>T",
                 ),
-                fusions = emptyList(),
-                skippedExons = emptyList()
-            )
+            ),
+            fusions = emptyList(),
+            skippedExons = emptyList(),
+            date = TEST_DATE
         )
 
-        private val EMPTY_ARCHER_MOLECULAR_TEST = ArcherMolecularTest(
-            date = TEST_DATE,
-            result = ArcherPanel(
-                variants = emptyList(),
-                fusions = emptyList(),
-                skippedExons = emptyList()
-            )
+        private val EMPTY_ARCHER_MOLECULAR_TEST = ArcherPanel(
+            variants = emptyList(),
+            fusions = emptyList(),
+            skippedExons = emptyList(),
+            date = TEST_DATE
         )
 
-        private val AVL_PANEL_WITH_ACTIVATING_VARIANT = GenericPanelMolecularTest(
-            date = TEST_DATE,
-            result = GenericPanel(
-                panelType = GenericPanelType.AVL,
-                variants = listOf(
-                    GenericVariant(
-                        gene = GENE,
-                        hgvsCodingImpact = "c.1A>T",
-                    ),
+        private val AVL_PANEL_WITH_ACTIVATING_VARIANT = GenericPanel(
+            panelType = GenericPanelType.AVL,
+            variants = listOf(
+                GenericVariant(
+                    gene = GENE,
+                    hgvsCodingImpact = "c.1A>T",
                 ),
-                fusions = emptyList()
-            )
+            ),
+            fusions = emptyList(),
+            date = TEST_DATE
         )
 
         private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanelMolecularTest(

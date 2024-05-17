@@ -49,9 +49,11 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByCPSByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByCPSByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByTPSByIHCCreator(),
+            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_MOST_X to hasLimitedPDL1ByTAPByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByTPSByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByICByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByTCByIHCCreator(),
+            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_LEAST_X to hasSufficientPDL1ByTAPByIHCCreator(),
             EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to hasAvailablePDL1StatusCreator(),
             EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to hasPSMAPositivePETScanCreator(),
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
@@ -312,6 +314,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasLimitedPDL1ByTAPByIHCCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
+            HasLimitedPDL1ByIHC("TAP", maxPDL1Percentage, doidModel())
+        }
+    }
+
     private fun hasSufficientPDL1ByTPSByIHCCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
@@ -330,6 +339,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { function: EligibilityFunction ->
             val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
             HasSufficientPDL1ByIHC("TC", minPDL1Percentage)
+        }
+    }
+
+    private fun hasSufficientPDL1ByTAPByIHCCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
+            HasSufficientPDL1ByIHC("TAP", minPDL1Percentage)
         }
     }
 

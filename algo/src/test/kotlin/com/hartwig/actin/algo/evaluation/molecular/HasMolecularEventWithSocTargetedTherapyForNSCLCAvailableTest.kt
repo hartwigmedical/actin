@@ -134,7 +134,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
         )
         val evaluation = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-                molecularHistory = MolecularHistory.fromInputs(listOf(record), emptyList())
+                molecularHistory = MolecularHistory(listOf(record))
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)

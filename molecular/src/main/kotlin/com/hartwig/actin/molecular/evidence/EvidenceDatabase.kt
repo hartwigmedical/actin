@@ -2,13 +2,13 @@ package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
 import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.Virus
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEventMatcher
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
+import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 
@@ -49,11 +49,11 @@ class EvidenceDatabase internal constructor(
         }
     }
 
-    fun geneAlterationForVariant(variant: Variant): GeneAlteration? {
+    fun geneAlterationForVariant(variant: VariantMatchCriteria): GeneAlteration? {
         return knownEventResolver.resolveForVariant(variant)
     }
 
-    fun evidenceForVariant(variant: Variant): ActionabilityMatch {
+    fun evidenceForVariant(variant: VariantMatchCriteria): ActionabilityMatch {
         return actionableEventMatcher.matchForVariant(variant)
     }
 
@@ -81,11 +81,11 @@ class EvidenceDatabase internal constructor(
         return actionableEventMatcher.matchForBreakend(disruption)
     }
 
-    fun lookupKnownFusion(fusion: Fusion): KnownFusion? {
+    fun lookupKnownFusion(fusion: FusionMatchCriteria): KnownFusion? {
         return knownEventResolver.resolveForFusion(fusion)
     }
 
-    fun evidenceForFusion(fusion: Fusion): ActionabilityMatch {
+    fun evidenceForFusion(fusion: FusionMatchCriteria): ActionabilityMatch {
         return actionableEventMatcher.matchForFusion(fusion)
     }
 

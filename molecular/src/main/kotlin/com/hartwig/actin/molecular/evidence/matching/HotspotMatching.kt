@@ -1,11 +1,10 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.serve.datamodel.hotspot.VariantHotspot
 
 object HotspotMatching {
 
-    fun isMatch(hotspot: VariantHotspot, variant: Variant): Boolean {
+    fun isMatch(hotspot: VariantHotspot, variant: VariantMatchCriteria): Boolean {
         val geneMatch = hotspot.gene() == variant.gene
         val chromosomeMatch = hotspot.chromosome() == variant.chromosome
         val positionMatch = hotspot.position() == variant.position

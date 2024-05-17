@@ -13,7 +13,6 @@ enum class ConfigurationProfile {
 }
 
 data class ReportConfiguration(
-    val filterTrialsWithOverlappingMolecularTargetsInSummary: Boolean = false,
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
     val includeMolecularDetailsChapter: Boolean = true,
     val showSOCLiteratureEfficacyEvidence: Boolean = false,
