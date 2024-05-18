@@ -15,8 +15,8 @@ class ArcherExtractorTest {
 
     @Test
     fun `Should parse archer variants from prior molecular tests`() {
-        val result = interpreter.extract(listOf(archerPriorMolecularVariantRecord(GENE, HGVS)))
-        assertThat(result).containsExactly(ArcherPanel(variants = listOf(ArcherVariant(GENE, HGVS))))
+        val result = interpreter.extract(listOf(archerPriorMolecularVariantRecord(GENE, HGVS_CODING)))
+        assertThat(result).containsExactly(ArcherPanel(variants = listOf(ArcherVariant(GENE, HGVS_CODING))))
     }
 
     @Test

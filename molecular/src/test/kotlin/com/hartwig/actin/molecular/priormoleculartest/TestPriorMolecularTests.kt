@@ -6,7 +6,8 @@ import java.time.LocalDate
 const val GENE_UP = "geneUp"
 const val GENE_DOWN = "geneDown"
 const val GENE = "gene"
-const val HGVS = "c.1A>T"
+const val HGVS_CODING = "c.1A>T"
+const val HGVS_PROTEIN = "p.G1E"
 
 fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorMolecularTest {
     return PriorMolecularTest(
@@ -21,7 +22,7 @@ fun avlPanelPriorMolecularVariantRecord(): PriorMolecularTest {
     return PriorMolecularTest(
         test = "AvL Panel",
         item = GENE,
-        measure = HGVS,
+        measure = HGVS_CODING,
         impliesPotentialIndeterminateStatus = false
     )
 }
@@ -34,7 +35,17 @@ fun freetextPriorMolecularFusionRecord(): PriorMolecularTest {
     )
 }
 
-fun archerPriorMolecularVariantRecord(gene: String? = GENE, hgvs: String? = HGVS, date: LocalDate? = null): PriorMolecularTest {
+fun freetextPriorMolecularVariantRecord(gene: String, hgvs: String, date: LocalDate? = null): PriorMolecularTest {
+    return PriorMolecularTest(
+        test = "Freetext",
+        item = gene,
+        measure = hgvs,
+        measureDate = date,
+        impliesPotentialIndeterminateStatus = false
+    )
+}
+
+fun archerPriorMolecularVariantRecord(gene: String? = GENE, hgvs: String? = HGVS_CODING, date: LocalDate? = null): PriorMolecularTest {
     return PriorMolecularTest(
         test = "Archer FP Lung Target",
         item = gene,

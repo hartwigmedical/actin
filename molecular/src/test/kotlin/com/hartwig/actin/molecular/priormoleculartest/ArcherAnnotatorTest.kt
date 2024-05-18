@@ -26,7 +26,7 @@ private const val ALT = "G"
 private const val CHROMOSOME = "1"
 
 private val ARCHER_PANEL_WITH_VARIANT =
-    ArcherPanel(variants = listOf(ArcherVariant(GENE, HGVS, ref = REF, alt = ALT, position = POSITION, chromosome = CHROMOSOME)))
+    ArcherPanel(variants = listOf(ArcherVariant(GENE, HGVS_CODING, ref = REF, alt = ALT, position = POSITION, chromosome = CHROMOSOME)))
 
 private val VARIANT_MATCH_CRITERIA = VariantMatchCriteria(
     isReportable = true,
