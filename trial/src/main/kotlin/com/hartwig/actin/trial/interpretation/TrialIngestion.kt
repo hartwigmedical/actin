@@ -39,7 +39,8 @@ class TrialIngestion(
             TrialIngestionStatus.from(ctcDatabaseValidation, trialDatabaseValidation),
             ctcDatabaseValidation,
             trialDatabaseValidation,
-            trials
+            EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep).map { it.name }.toSet(),
+            trials,
         )
     }
 
@@ -53,7 +54,6 @@ class TrialIngestion(
                 cohorts = cohortsForTrial(trialId, referencesById)
             )
         }
-        EligibilityRuleUsageEvaluator.evaluate(trials, trialConfigModel.unusedRulesToKeep)
         return trials
     }
 

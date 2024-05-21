@@ -9,9 +9,9 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson.fromJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.read
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
-import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.io.File
 
 class TreatmentMatchJsonTest {
 
@@ -60,12 +60,31 @@ class TreatmentMatchJsonTest {
                 + "\"failSpecificMessages\":[],\"failGeneralMessages\":[]}]],\"cohorts\":[]}],"
                 + "\"standardOfCareMatches\":[{\"treatmentCandidate\":{\"treatment\":{\"name\":\"Pembrolizumab\",\"isSystemic\":true,"
                 + "\"synonyms\":[],\"displayOverride\":null,\"categories\":[],\"types\":[],\"treatmentClass\":\"OTHER_TREATMENT\"},"
-                + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}]},"
+                + "\"optional\":true,\"eligibilityFunctions\":[{\"rule\":\"HAS_KNOWN_ACTIVE_CNS_METASTASES\",\"parameters\":[]}],\"additionalCriteriaForRequirement\":[]},"
                 + "\"evaluations\":[{\"result\":\"PASS\",\"recoverable\":false,\"inclusionMolecularEvents\":[],"
                 + "\"exclusionMolecularEvents\":[],\"passSpecificMessages\":[\"Patient has active CNS metastases\"],"
                 + "\"passGeneralMessages\":[\"Active CNS metastases\"],\"warnSpecificMessages\":[],\"warnGeneralMessages\":[],"
                 + "\"undeterminedSpecificMessages\":[],\"undeterminedGeneralMessages\":[],\"failSpecificMessages\":[],"
-                + "\"failGeneralMessages\":[]}],\"annotations\":[{\"acronym\":\"Study of Pembrolizumab\",\"phase\":\"Phase III\",\"treatments\":[{\"name\":\"PEMBROLIZUMAB\",\"drugs\":[{\"name\":\"PEMBROLIZUMAB\",\"drugTypes\":[\"TOPO1_INHIBITOR\"],\"category\":\"CHEMOTHERAPY\",\"displayOverride\":null}],\"synonyms\":[],\"displayOverride\":null,\"isSystemic\":true,\"maxCycles\":null,\"treatmentClass\":\"DRUG_TREATMENT\"}],\"therapeuticSetting\":\"ADJUVANT\",\"variantRequirements\":[{\"name\":\"MSI high\",\"requirementType\":\"required\"}],\"trialReferences\":[{\"patientPopulations\":[{\"name\":\"Pembrolizumab\",\"isControl\":true,\"ageMin\":55,\"ageMax\":65,\"ageMedian\":60.0,\"numberOfPatients\":200,\"numberOfMale\":100,\"numberOfFemale\":100,\"patientsWithWho0\":100,\"patientsWithWho1\":0,\"patientsWithWho2\":0,\"patientsWithWho3\":0,\"patientsWithWho4\":0,\"patientsWithWho0to1\":0,\"patientsWithWho1to2\":0,\"patientsPerPrimaryTumorLocation\":{\"Rectum\":100},\"mutations\":null,\"patientsWithPrimaryTumorRemovedComplete\":50,\"patientsWithPrimaryTumorRemovedPartial\":25,\"patientsWithPrimaryTumorRemoved\":25,\"patientsPerMetastaticSites\":{\"Lung\":{\"value\":100,\"percentage\":100.0}},\"timeOfMetastases\":\"BOTH\",\"treatment\":{\"name\":\"PEMBROLIZUMAB\",\"drugs\":[{\"name\":\"PEMBROLIZUMAB\",\"drugTypes\":[\"TOPO1_INHIBITOR\"],\"category\":\"CHEMOTHERAPY\",\"displayOverride\":null}],\"synonyms\":[],\"displayOverride\":null,\"isSystemic\":true,\"maxCycles\":null,\"treatmentClass\":\"DRUG_TREATMENT\"},\"priorSystemicTherapy\":\"Chemo\",\"patientsWithMSI\":33,\"medianFollowUpForSurvival\":\"30\",\"medianFollowUpPFS\":\"30\",\"analysisGroups\":[{\"id\":1,\"primaryEndPoints\":[{\"id\":2,\"name\":\"Median Progression-Free Survival\",\"value\":6.8,\"unitOfMeasure\":\"MONTHS\",\"confidenceInterval\":null,\"type\":\"PRIMARY\",\"derivedMetrics\":[{\"relativeMetricId\":1,\"value\":16.0,\"type\":\"PRIMARY\",\"confidenceInterval\":{\"lowerLimit\":14.0,\"upperLimit\":18.8},\"pValue\":\"0.0002\"}]}]}],\"priorTherapies\":\"5-FU\",\"patientsPerRace\":null,\"patientsPerRegion\":null}],\"url\":\"http://www.ncbi.nlm.nih.gov/pubmed/12345678\"}]}]}]}")
+                + "\"failGeneralMessages\":[]}],\"annotations\":[{\"acronym\":\"Study of Pembrolizumab\",\"phase\":\"Phase III\","
+                + "\"treatments\":[{\"name\":\"PEMBROLIZUMAB\",\"drugs\":[{\"name\":\"PEMBROLIZUMAB\",\"drugTypes\":[\"TOPO1_INHIBITOR\"],"
+                + "\"category\":\"CHEMOTHERAPY\",\"displayOverride\":null}],\"synonyms\":[],\"displayOverride\":null,\"isSystemic\":true,"
+                + "\"maxCycles\":null,\"treatmentClass\":\"DRUG_TREATMENT\"}],\"therapeuticSetting\":\"ADJUVANT\",\"variantRequirements\":"
+                + "[{\"name\":\"MSI high\",\"requirementType\":\"required\"}],\"trialReferences\":[{\"patientPopulations\":"
+                + "[{\"name\":\"Pembrolizumab\",\"isControl\":true,\"ageMin\":55,\"ageMax\":65,\"ageMedian\":60.0,\"numberOfPatients\":200,"
+                + "\"numberOfMale\":100,\"numberOfFemale\":100,\"patientsWithWho0\":100,\"patientsWithWho1\":0,\"patientsWithWho2\":0,"
+                + "\"patientsWithWho3\":0,\"patientsWithWho4\":0,\"patientsWithWho0to1\":0,\"patientsWithWho1to2\":0,"
+                + "\"patientsPerPrimaryTumorLocation\":{\"Rectum\":100},\"mutations\":null,\"patientsWithPrimaryTumorRemovedComplete\":50,"
+                + "\"patientsWithPrimaryTumorRemovedPartial\":25,\"patientsWithPrimaryTumorRemoved\":25,\"patientsPerMetastaticSites\":"
+                + "{\"Lung\":{\"value\":100,\"percentage\":100.0}},\"timeOfMetastases\":\"BOTH\",\"treatment\":"
+                + "{\"name\":\"PEMBROLIZUMAB\",\"drugs\":[{\"name\":\"PEMBROLIZUMAB\",\"drugTypes\":[\"TOPO1_INHIBITOR\"],"
+                + "\"category\":\"CHEMOTHERAPY\",\"displayOverride\":null}],\"synonyms\":[],\"displayOverride\":null,\"isSystemic\":true,"
+                + "\"maxCycles\":null,\"treatmentClass\":\"DRUG_TREATMENT\"},\"priorSystemicTherapy\":\"Chemo\",\"patientsWithMSI\":33,"
+                + "\"medianFollowUpForSurvival\":\"30\",\"medianFollowUpPFS\":\"30\",\"analysisGroups\":[{\"id\":1,"
+                + "\"name\":\"Analyis group\",\"nPatients\":200,\"endPoints\":[{\"id\":2,\"name\":\"Median Progression-Free Survival\","
+                + "\"value\":6.8,\"unitOfMeasure\":\"MONTHS\",\"confidenceInterval\":null,\"type\":\"PRIMARY\",\"derivedMetrics\":["
+                + "{\"relativeMetricId\":1,\"value\":16.0,\"type\":\"PRIMARY\",\"confidenceInterval\":{\"lowerLimit\":14.0,"
+                + "\"upperLimit\":18.8},\"pValue\":\"0.0002\"}]}]}],\"priorTherapies\":\"5-FU\",\"patientsPerRace\":null,"
+                + "\"patientsPerRegion\":null}],\"url\":\"http://www.ncbi.nlm.nih.gov/pubmed/12345678\"}]}]}]}")
         assertThat(toJson(match)).isEqualTo(expectedJson)
     }
 

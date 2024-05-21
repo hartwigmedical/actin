@@ -1,18 +1,43 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.panel.Panel
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
     MolecularEvaluationFunction {
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+
+        val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
+        val orangeMolecularEvaluation = if (orangeMolecular != null) {
+            findActivatingMutationsInOrangeMolecular(orangeMolecular)
+        } else null
+
+        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(molecularHistory) else null
+
+        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
+            .groupBy { evaluation -> evaluation.result }
+            .mapValues { entry ->
+                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
+            }
+
+        return groupedEvaluationsByResult[EvaluationResult.PASS]
+            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+    }
+
+    private fun findActivatingMutationsInOrangeMolecular(molecular: MolecularRecord): Evaluation {
         val activatingVariants: MutableSet<String> = mutableSetOf()
         val activatingVariantsAssociatedWithResistance: MutableSet<String> = mutableSetOf()
         val activatingVariantsNoHotspotAndNoGainOfFunction: MutableSet<String> = mutableSetOf()
@@ -140,7 +165,9 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
                     nonHighDriverSubclonalVariants,
                     "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
                             " have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)} and no high driver likelihood",
-                    "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
+                    "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(
+                        1 - CLONAL_CUTOFF
+                    )
                 ),
                 EventsWithMessages(
                     nonHighDriverVariants,
@@ -156,6 +183,25 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
                 )
             )
         )
+    }
+
+    private fun findActivatingMutationsInPanels(molecularHistory: MolecularHistory): Evaluation? {
+
+        val activatingVariants = molecularHistory.allPanels()
+            .flatMap(Panel::events)
+            .filter { it.impactsGene(gene) }
+            .map(PanelEvent::display).toSet()
+
+        if (activatingVariants.isNotEmpty())
+            return EvaluationFactory.pass(
+                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Panel(s)",
+                "$gene activating mutation(s)",
+                inclusionEvents = activatingVariants
+            )
+
+        return if (molecularHistory.allArcherPanels().any { it.testedGenes().contains(gene) })
+            EvaluationFactory.fail("No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)")
+        else null
     }
 
     companion object {

@@ -22,6 +22,7 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.WILL_PARTICIPATE_IN_TRIAL_IN_COUNTRY_X to willParticipateInTrialInCountryCreator(),
             EligibilityRule.IS_LEGALLY_INSTITUTIONALIZED to isLegallyInstitutionalizedCreator,
             EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES to isInvolvedInStudyProceduresCreator,
+            EligibilityRule.USES_TOBACCO_PRODUCTS to usesTobaccoProductsCreator(),
         )
     }
 
@@ -71,6 +72,10 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private val isInvolvedInStudyProceduresCreator: FunctionCreator
         get() = FunctionCreator { IsInvolvedInStudyProcedures() }
+
+    private fun usesTobaccoProductsCreator(): FunctionCreator {
+        return FunctionCreator { UsesTobaccoProducts() }
+    }
 
     private fun hasSufficientLifeExpectancyCreator(): FunctionCreator {
         return FunctionCreator { HasSufficientLifeExpectancy() }

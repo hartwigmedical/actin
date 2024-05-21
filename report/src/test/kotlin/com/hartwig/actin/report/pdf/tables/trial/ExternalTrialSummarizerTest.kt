@@ -13,7 +13,7 @@ private val TRIAL_2 = ExternalTrial("2", setOf(Country.BELGIUM), "url", "NCT002"
 
 class ExternalTrialSummarizerTest {
 
-    private val externalTrialSummarizer = ExternalTrialSummarizer(true)
+    private val externalTrialSummarizer = ExternalTrialSummarizer()
 
     @Test
     fun `Should not filter any external trials when no molecular targets overlap`() {
@@ -87,21 +87,6 @@ class ExternalTrialSummarizerTest {
         assertThat(externalTrialSummary.otherCountryTrials).isEmpty()
         assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
         assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(1)
-    }
-
-
-    @Test
-    fun `Should disable filtering when toggle is disabled`() {
-        val externalEligibleTrials =
-            mapOf(
-                TMB_TARGET to listOf(TRIAL_1, TRIAL_2),
-            )
-        val externalTrialSummary =
-            ExternalTrialSummarizer(false).summarize(externalEligibleTrials, listOf(evaluatedCohortTMB()))
-        assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(TMB_TARGET)
-        assertThat(externalTrialSummary.otherCountryTrials).containsOnlyKeys(TMB_TARGET)
-        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
-        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(0)
     }
 
     private fun evaluatedCohortTMB() =

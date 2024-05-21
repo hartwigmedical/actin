@@ -7,11 +7,11 @@ import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 data class MolecularRecord(
+    override val type: ExperimentType,
+    override val date: LocalDate?,
     val patientId: String,
     val sampleId: String,
-    val type: ExperimentType,
     val refGenomeVersion: RefGenomeVersion,
-    val date: LocalDate?,
     val evidenceSource: String,
     val externalTrialSource: String,
     val containsTumorCells: Boolean,
@@ -21,4 +21,4 @@ data class MolecularRecord(
     val drivers: MolecularDrivers,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>
-)
+) : MolecularTest

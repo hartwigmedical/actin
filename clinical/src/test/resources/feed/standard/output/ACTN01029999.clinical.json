@@ -259,7 +259,7 @@
       "doids": [],
       "category": "Medication",
       "subcategories": [],
-      "type": "unspecified",
+      "type": null,
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "Unknown",
@@ -270,7 +270,7 @@
       "doids": [],
       "category": "Other",
       "subcategories": [],
-      "type": "unspecified",
+      "type": null,
       "clinicalStatus": "Active",
       "verificationStatus": "Confirmed",
       "criticality": "Unknown",
@@ -306,6 +306,14 @@
       "date": "2020-02-01T00:00:00",
       "value": 53,
       "unit": "Kilograms",
+      "valid": true
+    }
+  ],
+  "bodyHeights": [
+    {
+      "date": "2020-01-01T00:00:00",
+      "value": 185.0,
+      "unit": "centimeters",
       "valid": true
     }
   ],

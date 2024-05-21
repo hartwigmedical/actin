@@ -1,6 +1,8 @@
 package com.hartwig.actin.trial
 
 import com.hartwig.actin.TreatmentDatabaseFactory
+import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.configuration.TrialConfiguration
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
@@ -14,16 +16,15 @@ import com.hartwig.actin.trial.status.TrialStatusConfigInterpreter
 import com.hartwig.actin.trial.status.TrialStatusDatabaseReader
 import com.hartwig.actin.trial.status.ctc.CTCTrialStatusEntryReader
 import com.hartwig.actin.trial.status.nki.NKITrialStatusEntryReader
-import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.serve.datamodel.serialization.KnownGeneFile
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 
 const val CTC_TRIAL_PREFIX = "MEC"
 
@@ -43,7 +44,7 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         val geneFilter = GeneFilterFactory.createFromKnownGenes(knownGenes)
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-        val configInterpreter = configInterpreter()
+        val configInterpreter = configInterpreter(EnvironmentConfiguration.create(config.overridesYaml).trial)
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
@@ -68,12 +69,12 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         LOGGER.info("Writing {} trial ingestion results to {}", result.trials.size, resultsJson)
         Files.write(
             resultsJson,
-            GsonSerializer.create().toJson(result).toByteArray()
+            result.serialize().toByteArray()
         )
         printAllValidationErrors(result)
     }
 
-    private fun configInterpreter(): ConfigInterpreter {
+    private fun configInterpreter(configuration: TrialConfiguration): ConfigInterpreter {
         if (config.ctcConfigDirectory != null && config.nkiConfigDirectory != null) {
             throw IllegalArgumentException("Only one of CTC and NKI config directories can be specified")
         }
@@ -81,10 +82,14 @@ class TrialCreatorApplication(private val config: TrialCreatorConfig) {
         return if (config.ctcConfigDirectory != null) {
             TrialStatusConfigInterpreter(
                 TrialStatusDatabaseReader(CTCTrialStatusEntryReader()).read(config.ctcConfigDirectory),
-                CTC_TRIAL_PREFIX
+                CTC_TRIAL_PREFIX,
+                ignoreNewTrials = configuration.ignoreAllNewTrialsInTrialStatusDatabase
             )
         } else if (config.nkiConfigDirectory != null) {
-            TrialStatusConfigInterpreter(TrialStatusDatabaseReader(NKITrialStatusEntryReader()).read(config.nkiConfigDirectory))
+            TrialStatusConfigInterpreter(
+                TrialStatusDatabaseReader(NKITrialStatusEntryReader()).read(config.nkiConfigDirectory),
+                ignoreNewTrials = configuration.ignoreAllNewTrialsInTrialStatusDatabase
+            )
         } else {
             SimpleConfigInterpreter()
         }

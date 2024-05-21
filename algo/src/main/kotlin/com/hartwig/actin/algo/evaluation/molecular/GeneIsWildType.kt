@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
@@ -13,7 +15,25 @@ import com.hartwig.actin.molecular.datamodel.driver.Variant
 
 class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+        val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
+        val orangeMolecularEvaluation = orangeMolecular?.let { evaluateInOrangeMolecular(it) }
+
+        val panelEvaluation = evaluateInPanels(molecularHistory)
+
+        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
+            .groupBy { evaluation -> evaluation.result }
+            .mapValues { entry ->
+                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
+            }
+
+        return groupedEvaluationsByResult[EvaluationResult.PASS]
+            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+    }
+
+    private fun evaluateInOrangeMolecular(molecular: MolecularRecord): Evaluation {
         val reportableEventsWithEffect: MutableSet<String> = mutableSetOf()
         val reportableEventsWithEffectPotentiallyWildtype: MutableSet<String> = mutableSetOf()
         val reportableEventsWithNoEffect: MutableSet<String> = mutableSetOf()
@@ -62,6 +82,25 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
             ?: EvaluationFactory.pass(
                 "Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type")
             )
+    }
+
+    private fun evaluateInPanels(molecularHistory: MolecularHistory): Evaluation {
+
+        val allPanels = molecularHistory.allPanels()
+        val isTestedInAnyPanel = allPanels.any { panel -> panel.testedGenes().contains(gene) }
+        val events = allPanels.flatMap { it.events() }.filter { it.impactsGene(gene) }.toSet()
+        val hasResultInAnyPanel = events.isNotEmpty()
+
+        return if (!isTestedInAnyPanel) {
+            EvaluationFactory.undetermined("Gene $gene is not tested in panel", "$gene not tested")
+        } else if (!hasResultInAnyPanel) {
+            EvaluationFactory.pass("Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type"))
+        } else {
+            EvaluationFactory.fail(
+                "Gene $gene is not considered wild-type due to ${Format.concatItems(events)}",
+                "$gene not wild-type"
+            )
+        }
     }
 
     private fun evaluatePotentialWarns(

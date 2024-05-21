@@ -24,6 +24,7 @@
       "0050933"
     ],
     "stage": "IV",
+    "derivedStages": null,
     "hasMeasurableDisease": true,
     "hasBrainLesions": true,
     "hasActiveBrainLesions": true,
@@ -280,6 +281,7 @@
       "valid": true
     }
   ],
+  "bodyHeights": [],
   "vitalFunctions": [
     {
       "date": "2019-04-28T13:45:00",

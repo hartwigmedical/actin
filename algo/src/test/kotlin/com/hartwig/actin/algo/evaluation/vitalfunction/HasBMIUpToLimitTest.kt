@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.height
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.weight
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,10 +27,26 @@ class HasBMIUpToLimitTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 VitalFunctionTestFactory.withBodyWeights(
-                    listOf(weight(date = referenceDate, value = 70.0, unit = "pound", valid = false))
+                    listOf(weight(date = referenceDate, value = 70.0, unit = "pound"))
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should pass if body height provided and calculated BMI below max BMI`() {
+        val weight = weight(date = referenceDate, value = 70.0, unit = "Kilogram")
+        val height = height(date = referenceDate, value = 180.0, unit = "centimeters", valid = true)
+        val evaluation = function.evaluate(VitalFunctionTestFactory.withBodyWeightsAndHeight(listOf(weight), height))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+    }
+
+    @Test
+    fun `Should fail if body height provided and calculated BMI above max BMI`() {
+        val weight = weight(date = referenceDate, value = 140.0, unit = "Kilogram")
+        val height = height(date = referenceDate, value = 160.0, unit = "centimeters", valid = true)
+        val evaluation = function.evaluate(VitalFunctionTestFactory.withBodyWeightsAndHeight(listOf(weight), height))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
     }
 
     @Test
@@ -37,8 +54,8 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    weight(date = referenceDate, value = 70.0, unit = "Kilogram", valid = true),
-                    weight(date = referenceDate.plusDays(1), value = 80.0, unit = "Kilogram", valid = true)
+                    weight(date = referenceDate, value = 70.0, unit = "Kilogram"),
+                    weight(date = referenceDate.plusDays(1), value = 80.0, unit = "Kilogram")
                 )
             )
         )
@@ -47,12 +64,25 @@ class HasBMIUpToLimitTest {
     }
 
     @Test
+    fun `Should pass if median weight is in kilograms instead of kilogram and value is less than warn threshold`() {
+        val evaluation = function.evaluate(
+            VitalFunctionTestFactory.withBodyWeights(
+                listOf(
+                    weight(date = referenceDate, value = 70.0, unit = "Kilograms"),
+                    weight(date = referenceDate.plusDays(1), value = 80.0, unit = "Kilograms")
+                )
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+    }
+
+    @Test
     fun `Should fail if median weight is greater than fail threshold`() {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    weight(date = referenceDate, value = 180.0, unit = "Kilogram", valid = true),
-                    weight(date = referenceDate.plusDays(1), value = 170.0, unit = "Kilogram", valid = true)
+                    weight(date = referenceDate, value = 180.0, unit = "Kilogram"),
+                    weight(date = referenceDate.plusDays(1), value = 170.0, unit = "Kilogram")
                 )
             )
         )
@@ -65,8 +95,8 @@ class HasBMIUpToLimitTest {
         val evaluation = function.evaluate(
             VitalFunctionTestFactory.withBodyWeights(
                 listOf(
-                    weight(date = referenceDate, value = 105.0, unit = "Kilogram", valid = true),
-                    weight(date = referenceDate.plusDays(1), value = 100.0, unit = "Kilogram", valid = true)
+                    weight(date = referenceDate, value = 105.0, unit = "Kilogram"),
+                    weight(date = referenceDate.plusDays(1), value = 100.0, unit = "Kilogram")
                 )
             )
         )

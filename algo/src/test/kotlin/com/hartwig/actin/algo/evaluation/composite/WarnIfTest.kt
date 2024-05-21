@@ -24,10 +24,19 @@ class WarnIfTest {
 
     @Test
     fun canMoveMessagesToWarnOnPass() {
-        val result: Evaluation = WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        val result: Evaluation =
+            WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertThat(result.passSpecificMessages).isEmpty()
         assertThat(result.passGeneralMessages).isEmpty()
         assertThat(result.warnSpecificMessages).isNotEmpty()
         assertThat(result.warnGeneralMessages).isNotEmpty()
+    }
+
+    @Test
+    fun `Should not return inclusion or exclusion molecular events`(){
+        val result: Evaluation =
+            WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        assertThat(result.inclusionMolecularEvents).isEmpty()
+        assertThat(result.exclusionMolecularEvents).isEmpty()
     }
 }

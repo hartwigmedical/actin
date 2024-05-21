@@ -9,10 +9,28 @@ import org.junit.Test
 class DoidModelFactoryTest {
 
     @Test
-    fun `Should generate model from doid entry`() {
+    fun `Should generate child-to-parents map from doid entry, excluding containment or blacklisted edges`() {
+        assertThat(createDoidModel().childToParentsMap).isEqualTo(
+            mapOf(
+                "200" to listOf("300"),
+                "300" to listOf("400", "600")
+            )
+        )
+    }
+
+    @Test
+    fun `Should generate mappings between doids and terms, excluding doids with unknown terms`() {
+        val model = createDoidModel()
+        assertThat(model.termForDoidMap).isEqualTo(mapOf("200" to "tumor A"))
+        assertThat(model.doidForLowerCaseTermMap).isEqualTo(mapOf("tumor a" to "200"))
+    }
+
+    private fun createDoidModel(): DoidModel {
         val edges = listOf(
             createParentChildEdge("200", "300"),
             createParentChildEdge("300", "400"),
+            createParentChildEdge("235", "1475"), // excluded by manual config
+            createParentChildEdge("300", "600"),
             createContainmentEdge("400", "500")
         )
         val nodes = listOf(
@@ -20,33 +38,11 @@ class DoidModelFactoryTest {
             createNode("300", null)
         )
         val entry = TestDoidEntryFactory.createMinimalTestDoidEntry().copy(edges = edges, nodes = nodes)
-        val model = DoidModelFactory.createFromDoidEntry(entry)
-
-        assertThat(model.childToParentsMap).hasSize(2)
-        val relations299 = model.childToParentsMap["200"]
-        assertThat(relations299).hasSize(1)
-        assertThat(relations299).contains("300")
-        val relations305 = model.childToParentsMap["300"]
-        assertThat(relations305).hasSize(1)
-        assertThat(relations305).contains("400")
-
-        assertThat(model.termForDoidMap).hasSize(1)
-        assertThat(model.termForDoidMap["200"]).isEqualTo("tumor A")
-        assertThat(model.termForDoidMap["300"]).isNull()
-
-        assertThat(model.doidForLowerCaseTermMap).hasSize(1)
-        assertThat(model.doidForLowerCaseTermMap["tumor a"]).isEqualTo("200")
-        assertThat(model.doidForLowerCaseTermMap["tumor b"]).isNull()
+        return DoidModelFactory.createFromDoidEntry(entry)
     }
 
     private fun createNode(doid: String, term: String?): Node {
-        return Node(
-            doid = doid,
-            url = "",
-            term = term,
-            metadata = null,
-            type = null
-        )
+        return Node(doid = doid, url = "", term = term, metadata = null, type = null)
     }
 
     private fun createParentChildEdge(child: String, parent: String): Edge {

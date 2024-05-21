@@ -37,6 +37,8 @@ import com.hartwig.actin.clinical.feed.emc.questionnaire.Questionnaire
 import com.hartwig.actin.clinical.feed.emc.questionnaire.QuestionnaireExtraction
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionEntry
 import com.hartwig.actin.clinical.feed.emc.vitalfunction.VitalFunctionExtraction
+import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.doid.DoidModel
 import org.apache.logging.log4j.LogManager
 
 class EmcClinicalFeedIngestor(
@@ -91,6 +93,7 @@ class EmcClinicalFeedIngestor(
                 intolerances = intoleranceExtraction.extracted,
                 surgeries = extractSurgeries(feedRecord),
                 bodyWeights = extractBodyWeights(feedRecord),
+                bodyHeights = emptyList(),
                 vitalFunctions = extractVitalFunctions(feedRecord),
                 bloodTransfusions = bloodTransfusionsExtraction.extracted,
                 medications = medicationExtraction.extracted
@@ -151,7 +154,8 @@ class EmcClinicalFeedIngestor(
     }
 
     private fun bodyWeightIsValid(entry: BodyWeightEntry): Boolean {
-        return entry.valueQuantityUnit.lowercase() == BODY_WEIGHT_EXPECTED_UNIT && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
+        return entry.valueQuantityUnit.lowercase() in BODY_WEIGHT_EXPECTED_UNIT
+                && entry.valueQuantityValue in BODY_WEIGHT_MIN..BODY_WEIGHT_MAX
     }
 
     private fun extractVitalFunctions(feedRecord: FeedRecord): List<VitalFunction> {
@@ -208,7 +212,8 @@ class EmcClinicalFeedIngestor(
             feedDirectory: String,
             curationDirectory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel
+            atcModel: AtcModel,
+            doidModel: DoidModel
         ) = EmcClinicalFeedIngestor(
             feed = FeedModel(
                 ClinicalFeedReader.read(feedDirectory).copy(
@@ -218,7 +223,7 @@ class EmcClinicalFeedIngestor(
                     )
                 )
             ),
-            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext),
+            tumorDetailsExtractor = TumorDetailsExtractor.create(curationDatabaseContext, TumorStageDeriver.create(doidModel)),
             complicationsExtractor = ComplicationsExtractor.create(curationDatabaseContext),
             clinicalStatusExtractor = ClinicalStatusExtractor.create(curationDatabaseContext),
             oncologicalHistoryExtractor = OncologicalHistoryExtractor.create(curationDatabaseContext),
@@ -229,12 +234,12 @@ class EmcClinicalFeedIngestor(
             toxicityExtractor = ToxicityExtractor.create(curationDatabaseContext),
             intoleranceExtractor = IntoleranceExtractor.create(curationDatabaseContext, atcModel),
             medicationExtractor = MedicationExtractor.create(curationDatabaseContext, atcModel),
-            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext)
+            bloodTransfusionsExtractor = BloodTransfusionsExtractor.create(curationDatabaseContext),
         )
 
         const val BODY_WEIGHT_MIN = 20.0
         const val BODY_WEIGHT_MAX = 300.0
-        const val BODY_WEIGHT_EXPECTED_UNIT = "kilogram"
+        internal val BODY_WEIGHT_EXPECTED_UNIT = listOf("kilogram", "kilograms")
         const val HEART_RATE_MIN = 10.0
         const val HEART_RATE_MAX = 300.0
         const val HEART_RATE_EXPECTED_UNIT = "bpm"

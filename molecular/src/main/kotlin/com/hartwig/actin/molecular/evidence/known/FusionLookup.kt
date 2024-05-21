@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
+import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 
 internal object FusionLookup {
 
-    fun find(knownFusions: Iterable<KnownFusion>, fusion: Fusion): KnownFusion? {
+    fun find(knownFusions: Iterable<KnownFusion>, fusion: FusionMatchCriteria): KnownFusion? {
         var best: KnownFusion? = null
         for (knownFusion in knownFusions) {
             if (FusionMatching.isGeneMatch(knownFusion, fusion)) {

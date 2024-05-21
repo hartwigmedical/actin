@@ -28,6 +28,7 @@ object PatientRecordFactory {
             intolerances = clinical.intolerances,
             surgeries = clinical.surgeries,
             bodyWeights = clinical.bodyWeights,
+            bodyHeights = clinical.bodyHeights,
             vitalFunctions = clinical.vitalFunctions,
             bloodTransfusions = clinical.bloodTransfusions,
             medications = clinical.medications,

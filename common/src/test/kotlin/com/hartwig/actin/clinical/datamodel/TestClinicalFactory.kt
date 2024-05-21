@@ -14,6 +14,8 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import com.hartwig.actin.molecular.datamodel.ARCHER_FP_LUNG_TARGET
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import java.time.LocalDateTime
 
 object TestClinicalFactory {
@@ -51,6 +53,7 @@ object TestClinicalFactory {
             intolerances = emptyList(),
             surgeries = emptyList(),
             bodyWeights = emptyList(),
+            bodyHeights = emptyList(),
             vitalFunctions = emptyList(),
             bloodTransfusions = emptyList(),
             medications = emptyList()
@@ -296,10 +299,20 @@ object TestClinicalFactory {
     fun createTestPriorMolecularTests(): List<PriorMolecularTest> {
         return listOf(
             PriorMolecularTest(
-                test = "",
-                item = "KIT",
-                measure = null,
-                scoreText = "Exon 11: c.1714_1719dup p.D572_P573dup",
+                test = ARCHER_FP_LUNG_TARGET,
+                item = "EGFR",
+                measure = "c.2240_2254del",
+                scoreText = null,
+                scoreValuePrefix = null,
+                scoreValue = null,
+                scoreValueUnit = null,
+                impliesPotentialIndeterminateStatus = false
+            ),
+            PriorMolecularTest(
+                test = AVL_PANEL,
+                item = null,
+                measure = "GEEN mutaties aangetoond met behulp van het AVL Panel",
+                scoreText = null,
                 scoreValuePrefix = null,
                 scoreValue = null,
                 scoreValueUnit = null,
@@ -313,6 +326,26 @@ object TestClinicalFactory {
                 scoreValuePrefix = null,
                 scoreValue = 90.0,
                 scoreValueUnit = "%",
+                impliesPotentialIndeterminateStatus = false
+            ),
+            PriorMolecularTest(
+                test = "IHC",
+                item = "HER2",
+                measure = null,
+                scoreText = "Positive",
+                scoreValuePrefix = null,
+                scoreValue = null,
+                scoreValueUnit = null,
+                impliesPotentialIndeterminateStatus = false
+            ),
+            PriorMolecularTest(
+                test = "Freetext",
+                item = "FGFR3::TACC3",
+                measure = null,
+                scoreText = "Positive",
+                scoreValuePrefix = null,
+                scoreValue = null,
+                scoreValueUnit = null,
                 impliesPotentialIndeterminateStatus = false
             )
         )

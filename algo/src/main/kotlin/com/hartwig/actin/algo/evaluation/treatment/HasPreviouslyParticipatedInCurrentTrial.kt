@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasPreviouslyParticipatedInCurrentTrial : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
+        return EvaluationFactory.recoverableUndetermined(
             "Trial participation in current trial currently cannot be evaluated",
             "Undetermined if participated previously in current trial"
         )

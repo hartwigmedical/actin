@@ -17,6 +17,7 @@ data class ClinicalRecord(
     val intolerances: List<Intolerance>,
     val surgeries: List<Surgery>,
     val bodyWeights: List<BodyWeight>,
+    val bodyHeights: List<BodyHeight>,
     val vitalFunctions: List<VitalFunction>,
     val bloodTransfusions: List<BloodTransfusion>,
     val medications: List<Medication>?,

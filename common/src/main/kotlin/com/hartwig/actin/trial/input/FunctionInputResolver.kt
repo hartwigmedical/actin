@@ -33,6 +33,7 @@ import com.hartwig.actin.trial.input.single.OneGeneOneIntegerOneVariantType
 import com.hartwig.actin.trial.input.single.OneGeneTwoIntegers
 import com.hartwig.actin.trial.input.single.OneHaplotype
 import com.hartwig.actin.trial.input.single.OneHlaAllele
+import com.hartwig.actin.trial.input.single.OneIntegerManyDoidTerms
 import com.hartwig.actin.trial.input.single.OneIntegerManyStrings
 import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
@@ -45,9 +46,9 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
+import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.util.Locale
 
 class FunctionInputResolver(
     private val doidModel: DoidModel,
@@ -182,6 +183,11 @@ class FunctionInputResolver(
                     return true
                 }
 
+                FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
+                    createOneIntegerManyDoidTermsInput(function)
+                    return true
+                }
+
                 FunctionInput.MANY_TUMOR_STAGES -> {
                     createManyTumorStagesInput(function)
                     return true
@@ -239,6 +245,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
                     createOneDoidTermOneIntegerInput(function)
+                    return true
+                }
+
+                FunctionInput.MANY_DOID_TERMS -> {
+                    createManyDoidTermsInput(function)
                     return true
                 }
 
@@ -474,6 +485,19 @@ class FunctionInputResolver(
         )
     }
 
+    fun createOneIntegerManyDoidTermsInput(function: EligibilityFunction): OneIntegerManyDoidTerms {
+        assertParamConfig(function, FunctionInput.ONE_INTEGER_MANY_DOID_TERMS, 2)
+        val doidStringList = toStringList(function.parameters[1])
+        val invalidTerms = doidStringList.filter { doidModel.resolveDoidForTerm(it) == null }
+        if (invalidTerms.isNotEmpty()) {
+            throw IllegalStateException("DOID term(s) not valid: ${invalidTerms.joinToString(", ")}")
+        }
+        return OneIntegerManyDoidTerms(
+            integer = parameterAsInt(function, 0),
+            doidTerms = doidStringList
+        )
+    }
+
     fun createManyTumorStagesInput(function: EligibilityFunction): Set<TumorStage> {
         assertParamConfig(function, FunctionInput.MANY_TUMOR_STAGES, 1)
         return toStringList(function.parameters.first()).map(TumorStage::valueOf).toSet()
@@ -582,6 +606,17 @@ class FunctionInputResolver(
             doidTerm = doidString,
             integer = parameterAsInt(function, 1)
         )
+    }
+
+    fun createManyDoidTermsInput(function: EligibilityFunction): List<String> {
+        assertParamConfig(function, FunctionInput.MANY_DOID_TERMS, 1)
+
+        val doidStringList = toStringList(function.parameters.first())
+        val invalidTerms = doidStringList.filter { doidModel.resolveDoidForTerm(it) == null }
+        if (invalidTerms.isNotEmpty()) {
+            throw IllegalStateException("DOID term(s) not valid: ${invalidTerms.joinToString(", ")}")
+        }
+        return doidStringList
     }
 
     fun createOneReceptorTypeInput(function: EligibilityFunction): ReceptorType {

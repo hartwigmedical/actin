@@ -38,6 +38,9 @@ steps:
     dir: 'clinical'
     args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-clinical', '$TAG_NAME', 'Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
 
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [ 'pubsub', 'topics', 'publish', 'actin-upgrade.pending', '--project', 'actin-build', '--message', '{ "tag": "$TAG_NAME", "repository": "actin"}' ]
+
 options:
   machineType: 'E2_HIGHCPU_8'
 images:

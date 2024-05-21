@@ -2,11 +2,14 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.ReceptorType
+import com.hartwig.actin.clinical.datamodel.ReceptorType.ER
 import com.hartwig.actin.clinical.datamodel.ReceptorType.HER2
+import com.hartwig.actin.clinical.datamodel.ReceptorType.PR
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -21,13 +24,13 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Positive")), emptySet()
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("No tumor doids configured")
     }
 
     @Test
     fun `Should fail if tumor type is not breast cancer`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Positive")),
@@ -45,7 +48,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("$TARGET_RECEPTOR-status unknown")
     }
 
@@ -56,7 +59,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID), "ERBB2", listOf(createPriorMolecularTest("wrong test", "positive"))
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
             evaluation.undeterminedGeneralMessages
         ).containsExactly(
@@ -72,7 +75,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
             evaluation.undeterminedGeneralMessages
         ).containsExactly(
@@ -82,7 +85,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should evaluate to undetermined if doids inconsistent`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     emptyList(),
@@ -97,7 +100,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should evaluate to undetermined if prior molecular test data inconsistent with doids`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Negative")),
@@ -109,7 +112,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should pass if target receptor type is positive with data source doids`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest("HER2", "Negative")),
@@ -121,7 +124,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should pass if target receptor type is positive with data source prior molecular tests`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Positive")),
@@ -133,7 +136,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should pass if target receptor type is positive with data source scoreValue from prior molecular tests`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest(item = TARGET_RECEPTOR, scoreValue = 75.0, scoreValueUnit = "%")),
@@ -141,7 +144,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest(item = "HER2", scoreValue = 3.0, scoreValueUnit = "+")),
@@ -153,7 +156,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should warn if HER2 negative based on doids but ERBB2 amp present`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withDoidsAndAmplification(
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID), "ERBB2"
@@ -164,7 +167,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should warn if HER2 negative based on IHC but ERBB2 amp present`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withDoidsAndAmplificationAndPriorMolecularTest(
                     setOf(DoidConstants.BREAST_CANCER_DOID), "ERBB2", listOf(
@@ -177,7 +180,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should warn if target receptor is HER2 and unclear (not positive or negative) based on IHC and doids but ERBB2 amp present`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withDoidsAndAmplificationAndPriorMolecularTest(
                     setOf(DoidConstants.BREAST_CANCER_DOID),
@@ -196,7 +199,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(
             evaluation.undeterminedGeneralMessages
         ).containsExactly(
@@ -212,7 +215,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(
             evaluation.warnGeneralMessages
         ).containsExactly(
@@ -222,7 +225,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should fail if target molecular test present but no clear determination possible on present data`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(
@@ -236,7 +239,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should fail if target receptor type is negative with data source doids`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     emptyList(),
@@ -247,8 +250,19 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     }
 
     @Test
+    fun `Should fail for all receptor types if tumor has doid term triple negative breast cancer configured`() {
+        val record = TumorTestFactory.withPriorMolecularTestsAndDoids(
+            emptyList(),
+            setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
+        )
+        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, ER).evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, PR).evaluate(record))
+    }
+
+    @Test
     fun `Should fail if target receptor type is negative with data source scoreText from prior molecular tests`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest(TARGET_RECEPTOR, "Negative")),
@@ -260,7 +274,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should fail if target receptor type is negative with data source scoreValue from prior molecular tests`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(createPriorMolecularTest(TARGET_RECEPTOR, scoreValue = 0.0, scoreValueUnit = "%")),
@@ -272,7 +286,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should only use scoreValue from target receptor type in evaluation of prior molecular tests`() {
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(
@@ -283,7 +297,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withPriorMolecularTestsAndDoids(
                     listOf(
@@ -299,10 +313,12 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     companion object {
         private fun createPriorMolecularTest(
             item: String, scoreText: String = "Score", scoreValue: Double = 50.0, scoreValueUnit: String = "Unit"
-        ): PriorMolecularTest {
-            return PriorMolecularTest(
-                test = "IHC", item = item, scoreText = scoreText, scoreValue = scoreValue,
-                scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
+        ): IHCMolecularTest {
+            return IHCMolecularTest(
+                PriorMolecularTest(
+                    test = "IHC", item = item, scoreText = scoreText, scoreValue = scoreValue,
+                    scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
+                )
             )
         }
 

@@ -191,35 +191,35 @@ class EfficacyEntryFactoryTest {
 
     @Test
     fun `Should use primary end point value when number is provided`() {
-        val monthsEndPointType = evidenceEntryFactory.convertPrimaryEndPointValue("16.0", "Months")
+        val monthsEndPointType = evidenceEntryFactory.convertEndPointValue("16.0", "Months")
         assertThat(monthsEndPointType).isEqualTo(16.0)
     }
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception when primary end point value is not a number`() {
-        evidenceEntryFactory.convertPrimaryEndPointValue("invalid input", "Months")
+        evidenceEntryFactory.convertEndPointValue("invalid input", "Months")
     }
 
     @Test
     fun `Should set primary end point value to 1 when Y is provided and primary end point type is YN`() {
-        val yesEndPointType = evidenceEntryFactory.convertPrimaryEndPointValue("Y", "Y/N")
+        val yesEndPointType = evidenceEntryFactory.convertEndPointValue("Y", "Y/N")
         assertThat(yesEndPointType).isEqualTo(1.0)
     }
 
     @Test
     fun `Should set primary end point value to 0 when N is provided and primary end point type is YN`() {
-        val noEndPointType = evidenceEntryFactory.convertPrimaryEndPointValue("N", "Y/N")
+        val noEndPointType = evidenceEntryFactory.convertEndPointValue("N", "Y/N")
         assertThat(noEndPointType).isEqualTo(0.0)
     }
 
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception when primary end point type is YN and primary end point value is neither Y or N`() {
-        evidenceEntryFactory.convertPrimaryEndPointValue("invalid input", "Y/N")
+        evidenceEntryFactory.convertEndPointValue("invalid input", "Y/N")
     }
 
     @Test
     fun `Should return null primary end point value when primary end point value is NR`() {
-        val NREndPointType = evidenceEntryFactory.convertPrimaryEndPointValue("NR", "Months")
+        val NREndPointType = evidenceEntryFactory.convertEndPointValue("NR", "Months")
         assertThat(NREndPointType).isEqualTo(null)
     }
 

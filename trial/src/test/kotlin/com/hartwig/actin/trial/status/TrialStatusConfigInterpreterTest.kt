@@ -200,7 +200,7 @@ class TrialStatusConfigInterpreterTest {
     fun `Should find no unused MEC trial ids not in trial status database when all these trials are configured`() {
         val trialConfigs: List<TrialDefinitionConfig> = listOf(
             TestTrialDefinitionConfigFactory.MINIMAL.copy(
-                trialId = TestTrialData.TEST_MEC_NOT_IN_CTC
+                trialId = TestTrialData.TEST_MEC_NOT_IN_TRIAL_STATUS_DATABASE
             )
         )
 
@@ -219,11 +219,19 @@ class TrialStatusConfigInterpreterTest {
 
         assertThat(trialStatusConfigInterpreter.extractUnusedStudiesNotInTrialStatusDatabase(trialConfigs)).isEqualTo(
             listOf(
-                TestTrialData.TEST_MEC_NOT_IN_CTC
+                TestTrialData.TEST_MEC_NOT_IN_TRIAL_STATUS_DATABASE
             )
         )
 
         trialStatusConfigInterpreter.checkModelForUnusedStudiesNotInTrialStatusDatabase(trialConfigs)
     }
 
+    @Test
+    fun `Should not return validation errors when new trials if ignore is enabled `() {
+        val trialConfigs: List<TrialDefinitionConfig> = emptyList()
+        val trialStatusConfigInterpreterIgnoringNewTrials =
+            TestTrialStatusConfigInterpreterFactory.createWithProperTestTrialStatusDatabase(ignoreNewTrials = true)
+        trialStatusConfigInterpreterIgnoringNewTrials.checkModelForNewTrials(trialConfigs)
+        assertThat(trialStatusConfigInterpreterIgnoringNewTrials.validation().trialStatusDatabaseValidationErrors).isEmpty()
+    }
 }

@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
@@ -10,7 +12,24 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+
+        val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
+        val orangeMolecularEvaluation = if (orangeMolecular != null) findMatchingFusionsInOrangeMolecular(orangeMolecular) else null
+        val panelEvaluation = findMatchingFusionsInPanels(molecularHistory)
+
+        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
+            .groupBy { evaluation -> evaluation.result }
+            .mapValues { entry ->
+                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
+            }
+        return groupedEvaluationsByResult[EvaluationResult.PASS]
+            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+    }
+
+    private fun findMatchingFusionsInOrangeMolecular(molecular: MolecularRecord): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()
@@ -102,6 +121,29 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
                 )
             )
         )
+    }
+
+    private fun findMatchingFusionsInPanels(molecularHistory: MolecularHistory): Evaluation? {
+        val matchedFusions = molecularHistory.allPanels()
+            .flatMap { it.fusions() }
+            .filter { it.impactsGene(gene) }
+            .map { it.display() }
+            .toSet()
+
+        if (matchedFusions.isNotEmpty()) {
+            return EvaluationFactory.pass(
+                "Fusion(s) ${concat(matchedFusions)} detected in gene $gene in panel(s)",
+                "Fusion(s) detected in gene $gene",
+                inclusionEvents = matchedFusions
+            )
+        }
+
+        val isGeneTested = molecularHistory.allGenericPanels().any { gene in it.testedGenes() }
+        return if (isGeneTested) {
+            EvaluationFactory.fail("No fusion detected with gene $gene in panel(s)", "No fusion in gene $gene")
+        } else {
+            null
+        }
     }
 
     companion object {

@@ -8,9 +8,7 @@ class EvaluatedTreatmentInterpreter(private val recommendedTreatments: List<Eval
         return if (recommendedTreatments.isEmpty()) {
             "No treatments available"
         } else {
-            "Recommended treatment(s): " + recommendedTreatments.map { it.treatmentCandidate.treatment.display() }
-                .distinct()
-                .joinToString(", ")
+            "Available treatment(s): " + recommendedTreatments.map(EvaluatedTreatment::treatmentCandidate).distinct().joinToString("\n")
         }
     }
 

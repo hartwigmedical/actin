@@ -65,7 +65,13 @@ class EvaluatedCohortFactoryTest {
     @Test
     fun canEvaluateTrialsWithoutCohort() {
         val trialMatchWithoutCohort = TrialMatch(
-            identification = TrialIdentification(trialId = "test", open = true, acronym = "test-1", title = "Example test trial 1", nctId = null),
+            identification = TrialIdentification(
+                trialId = "test",
+                open = true,
+                acronym = "test-1",
+                title = "Example test trial 1",
+                nctId = null
+            ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),
             evaluations = emptyMap()

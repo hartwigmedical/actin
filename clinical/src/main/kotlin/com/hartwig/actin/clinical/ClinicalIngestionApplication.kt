@@ -48,13 +48,20 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
         }
 
         LOGGER.info("Creating clinical feed model from directory {} of format {}", config.feedDirectory, config.feedFormat)
+        val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val clinicalIngestion = if (config.feedFormat == FeedFormat.EMC_TSV)
             EmcClinicalFeedIngestor.create(
                 config.feedDirectory,
                 config.curationDirectory,
                 curationDatabaseContext,
-                atcModel
-            ) else StandardEhrIngestion.create(config.feedDirectory, curationDatabaseContext, atcModel)
+                atcModel,
+                doidModel
+            ) else StandardEhrIngestion.create(
+            config.feedDirectory,
+            curationDatabaseContext,
+            atcModel,
+            doidModel
+        )
         val clinicalIngestionAdapter =
             ClinicalIngestionFeedAdapter(
                 clinicalIngestion,

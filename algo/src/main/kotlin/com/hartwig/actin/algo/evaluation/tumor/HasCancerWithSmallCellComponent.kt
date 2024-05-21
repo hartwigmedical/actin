@@ -12,7 +12,7 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions.hasT
 import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions.hasTumorWithType
 import com.hartwig.actin.doid.DoidModel
 
-class HasCancerWithSmallCellComponent (private val doidModel: DoidModel) : EvaluationFunction {
+class HasCancerWithSmallCellComponent(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids

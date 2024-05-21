@@ -1,33 +1,42 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalVariant
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.serve.datamodel.hotspot.VariantHotspot
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+
+private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().gene("gene 1").chromosome("12").position(10).ref("A").alt("T").build()
+
+private val MATCHING_CRITERIA = VARIANT_CRITERIA.copy(gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T")
 
 class HotspotMatchingTest {
 
     @Test
-    fun canMatchHotspots() {
-        val hotspot: VariantHotspot = TestServeKnownFactory.hotspotBuilder().gene("gene 1").chromosome("12").position(10).ref("A").alt("T").build()
-        val match = minimalVariant().copy(gene = "gene 1", chromosome = "12", position = 10, ref = "A", alt = "T")
-        assertTrue(HotspotMatching.isMatch(hotspot, match))
+    fun `Should return true on matching hotspot`() {
+        assertThat(HotspotMatching.isMatch(HOTSPOT, MATCHING_CRITERIA)).isTrue()
+    }
 
-        val wrongGene = match.copy(gene = "gene 2")
-        assertFalse(HotspotMatching.isMatch(hotspot, wrongGene))
+    @Test
+    fun `Should return false on non-matching gene`() {
+        assertThat(HotspotMatching.isMatch(HOTSPOT, MATCHING_CRITERIA.copy(gene = "gene 2"))).isFalse()
+    }
 
-        val wrongChromosome = match.copy(chromosome = "13")
-        assertFalse(HotspotMatching.isMatch(hotspot, wrongChromosome))
+    @Test
+    fun `Should return false on non-matching chromosome`() {
+        assertThat(HotspotMatching.isMatch(HOTSPOT, MATCHING_CRITERIA.copy(chromosome = "13"))).isFalse()
+    }
 
-        val wrongPosition = match.copy(position = 12)
-        assertFalse(HotspotMatching.isMatch(hotspot, wrongPosition))
+    @Test
+    fun `Should return false on non-matching position`() {
+        assertThat(HotspotMatching.isMatch(HOTSPOT, MATCHING_CRITERIA.copy(position = 12))).isFalse()
+    }
 
-        val wrongRef = match.copy(ref = "C")
-        assertFalse(HotspotMatching.isMatch(hotspot, wrongRef))
+    @Test
+    fun `Should return false on non-matching ref`() {
+        assertThat(HotspotMatching.isMatch(HOTSPOT, MATCHING_CRITERIA.copy(ref = "C"))).isFalse()
+    }
 
-        val wrongAlt = match.copy(alt = "G")
-        assertFalse(HotspotMatching.isMatch(hotspot, wrongAlt))
+    @Test
+    fun `Should return false on non-matching alt`() {
+        assertThat(HotspotMatching.isMatch(HOTSPOT, MATCHING_CRITERIA.copy(alt = "G"))).isFalse()
     }
 }

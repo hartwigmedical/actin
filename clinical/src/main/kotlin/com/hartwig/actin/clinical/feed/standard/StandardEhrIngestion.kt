@@ -12,6 +12,8 @@ import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.feed.ClinicalFeedIngestion
+import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
+import com.hartwig.actin.doid.DoidModel
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.stream.Collectors
@@ -35,6 +37,7 @@ class StandardEhrIngestion(
     private val secondPrimaryExtractor: EhrPriorPrimariesExtractor,
     private val patientDetailsExtractor: EhrPatientDetailsExtractor,
     private val bodyWeightExtractor: EhrBodyWeightExtractor,
+    private val bodyHeightExtractor: EhrBodyHeightExtractor,
     private val molecularTestExtractor: EhrMolecularTestExtractor,
     private val dataQualityMask: DataQualityMask
 ) : ClinicalFeedIngestion {
@@ -63,6 +66,7 @@ class StandardEhrIngestion(
             val intolerances = intolerancesExtractor.extract(ehrPatientRecord)
             val surgeries = surgeryExtractor.extract(ehrPatientRecord)
             val bodyWeights = bodyWeightExtractor.extract(ehrPatientRecord)
+            val bodyHeights = bodyHeightExtractor.extract(ehrPatientRecord)
             val molecularTests = molecularTestExtractor.extract(ehrPatientRecord)
 
             val patientEvaluation = listOf(
@@ -80,6 +84,7 @@ class StandardEhrIngestion(
                 intolerances,
                 surgeries,
                 bodyWeights,
+                bodyHeights,
                 secondPrimaries,
                 molecularTests
             )
@@ -104,6 +109,7 @@ class StandardEhrIngestion(
                     intolerances = intolerances.extracted,
                     surgeries = surgeries.extracted,
                     bodyWeights = bodyWeights.extracted,
+                    bodyHeights = bodyHeights.extracted,
                     priorSecondPrimaries = secondPrimaries.extracted,
                     priorMolecularTests = molecularTests.extracted
                 )
@@ -127,7 +133,8 @@ class StandardEhrIngestion(
         fun create(
             directory: String,
             curationDatabaseContext: CurationDatabaseContext,
-            atcModel: AtcModel
+            atcModel: AtcModel,
+            doidModel: DoidModel
         ) = StandardEhrIngestion(
             directory,
             EhrMedicationExtractor(
@@ -136,7 +143,10 @@ class StandardEhrIngestion(
                 curationDatabaseContext.cypInteractionCuration
             ),
             EhrSurgeryExtractor(),
-            EhrIntolerancesExtractor(atcModel, curationDatabaseContext.intoleranceCuration),
+            EhrIntolerancesExtractor(
+                atcModel,
+                curationDatabaseContext.intoleranceCuration
+            ),
             EhrVitalFunctionsExtractor(),
             EhrBloodTransfusionExtractor(),
             EhrLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
@@ -151,13 +161,16 @@ class StandardEhrIngestion(
                 curationDatabaseContext.nonOncologicalHistoryCuration
             ),
             EhrClinicalStatusExtractor(),
-            EhrTumorDetailsExtractor(curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration),
+            EhrTumorDetailsExtractor(
+                curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration,
+                TumorStageDeriver.create(doidModel)
+            ),
             EhrPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
             EhrPatientDetailsExtractor(),
             EhrBodyWeightExtractor(),
+            EhrBodyHeightExtractor(),
             EhrMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             DataQualityMask()
         )
-
     }
 }

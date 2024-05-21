@@ -40,10 +40,11 @@ class EhrTreatmentHistoryExtractor(
                     CurationCategory.ONCOLOGICAL_HISTORY,
                     ehrPreviousCondition.name,
                     TREATMENT_HISTORY,
+                    false
                 )
-                treatment.config()?.curated?.let { curatedTreatment ->
-                    ExtractionResult(
-                        listOf(
+                ExtractionResult(
+                    treatment.configs.mapNotNull { config ->
+                        config.curated?.let { curatedTreatment ->
                             TreatmentHistoryEntry(
                                 startYear = ehrPreviousCondition.startDate.year,
                                 startMonth = ehrPreviousCondition.startDate.monthValue,
@@ -62,11 +63,10 @@ class EhrTreatmentHistoryExtractor(
                                 ),
                                 isTrial = curatedTreatment.isTrial,
                                 trialAcronym = curatedTreatment.trialAcronym
-
                             )
-                        ), treatment.extractionEvaluation
-                    )
-                } ?: ExtractionResult(emptyList(), treatment.extractionEvaluation)
+                        }
+                    }, treatment.extractionEvaluation
+                )
             } else {
                 ExtractionResult(
                     emptyList(),

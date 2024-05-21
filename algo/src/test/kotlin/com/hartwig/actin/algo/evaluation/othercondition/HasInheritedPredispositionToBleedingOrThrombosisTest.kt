@@ -6,14 +6,17 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.Test
 
+private const val MATCHING_DOID = DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID
+
 class HasInheritedPredispositionToBleedingOrThrombosisTest {
-    private val function = HasInheritedPredispositionToBleedingOrThrombosis(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function = HasInheritedPredispositionToBleedingOrThrombosis(
+        TestDoidModelFactory.createWithOneDoidAndTerm(MATCHING_DOID, "matching term")
+    )
 
     @Test
     fun `Should fail with no prior conditions`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(emptyList()))
         )
     }
 
@@ -22,9 +25,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 OtherConditionTestFactory.withPriorOtherConditions(
-                    listOf(
-                        OtherConditionTestFactory.priorOtherCondition(doids = setOf("wrong doid")),
-                    )
+                    listOf(OtherConditionTestFactory.priorOtherCondition(doids = setOf("wrong doid")))
                 )
             )
         )
@@ -36,11 +37,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
             EvaluationResult.PASS,
             function.evaluate(
                 OtherConditionTestFactory.withPriorOtherCondition(
-                    OtherConditionTestFactory.priorOtherCondition(
-                        doids = setOf(
-                            "other doid", DoidConstants.AUTOSOMAL_HEMOPHILIA_A_DOID
-                        )
-                    )
+                    OtherConditionTestFactory.priorOtherCondition(doids = setOf("other doid", MATCHING_DOID))
                 )
             )
         )
@@ -54,12 +51,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
         )
 
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                OtherConditionTestFactory.withPriorOtherConditions(
-                    conditions
-                )
-            )
+            EvaluationResult.PASS, function.evaluate(OtherConditionTestFactory.withPriorOtherConditions(conditions))
         )
     }
 }

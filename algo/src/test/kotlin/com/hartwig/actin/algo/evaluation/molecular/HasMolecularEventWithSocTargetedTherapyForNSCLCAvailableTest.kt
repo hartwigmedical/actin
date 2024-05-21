@@ -16,7 +16,7 @@ import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
-class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
+class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     private val function = HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet())
 
@@ -43,8 +43,9 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     }
 
     @Test
-    fun `Should fail if activating mutation is in correct gene but this gene is in geneToIgnore`(){
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL,
+    fun `Should fail if activating mutation is in correct gene but this gene is in geneToIgnore`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
             HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(setOf(CORRECT_GENE)).evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
@@ -63,16 +64,17 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     fun `Should warn for mutation in correct gene when uncertain if activating`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withVariant(
-                TestVariantFactory.createMinimal().copy(
-                    gene = CORRECT_GENE,
-                    isReportable = true,
-                    driverLikelihood = DriverLikelihood.HIGH,
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    clonalLikelihood = 1.0
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal().copy(
+                        gene = CORRECT_GENE,
+                        isReportable = true,
+                        driverLikelihood = DriverLikelihood.HIGH,
+                        proteinEffect = ProteinEffect.UNKNOWN,
+                        clonalLikelihood = 1.0
+                    )
                 )
             )
-        )
         )
     }
 
@@ -112,7 +114,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     }
 
     @Test
-    fun `Should pass for multiple correct variants and should display correct message`(){
+    fun `Should pass for multiple correct variants and should display correct message`() {
         val variants = setOf(
             TestVariantFactory.createMinimal().copy(
                 gene = CORRECT_VARIANT_GENE,
@@ -130,8 +132,10 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
         val record = TestMolecularFactory.createMinimalTestMolecularRecord().copy(
             drivers = MolecularDrivers(variants = variants, emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
         )
-        val evaluation = function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            molecularHistory = MolecularHistory.fromInputs(listOf(record), emptyList()))
+        val evaluation = function.evaluate(
+            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+                molecularHistory = MolecularHistory(listOf(record))
+            )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
         Assertions.assertThat(evaluation.passGeneralMessages).isEqualTo(
@@ -286,7 +290,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest{
     private fun proteinImpact(hgvsProteinImpact: String): TranscriptImpact {
         return TestTranscriptImpactFactory.createMinimal().copy(hgvsProteinImpact = hgvsProteinImpact)
     }
-    
+
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 
     companion object {

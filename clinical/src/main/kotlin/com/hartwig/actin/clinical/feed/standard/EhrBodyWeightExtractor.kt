@@ -3,6 +3,7 @@ package com.hartwig.actin.clinical.feed.standard
 import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.BodyWeight
+import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor.Companion.BODY_WEIGHT_EXPECTED_UNIT
 
 
 class EhrBodyWeightExtractor : EhrExtractor<List<BodyWeight>> {
@@ -18,6 +19,7 @@ class EhrBodyWeightExtractor : EhrExtractor<List<BodyWeight>> {
                         "Unit of body weight is not Kilograms"
                     ),
                     valid = it.value in 20.0..250.0
+                            && BODY_WEIGHT_EXPECTED_UNIT.any { expectedUnit -> expectedUnit.equals(it.unit, ignoreCase = true) }
                 )
             }, CurationExtractionEvaluation()
         )

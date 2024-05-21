@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
 import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
 import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
@@ -30,6 +29,9 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFact
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import java.time.LocalDate
@@ -78,18 +80,15 @@ object TestMolecularFactory {
     }
 
     fun createMinimalTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(listOf(createMinimalTestMolecularRecord()), emptyList())
+        return MolecularHistory(listOf(createMinimalTestMolecularRecord()))
     }
 
     fun createProperTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(listOf(createProperTestMolecularRecord()), TestClinicalFactory.createTestPriorMolecularTests())
+        return MolecularHistory(listOf(createProperTestMolecularRecord()))
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory.fromInputs(
-            listOf(createExhaustiveTestMolecularRecord()),
-            TestClinicalFactory.createTestPriorMolecularTests()
-        )
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord()))
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
@@ -154,68 +153,72 @@ object TestMolecularFactory {
 
     private fun createMinimalMolecularDrivers() = MolecularDrivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
 
-    private fun createProperTestDrivers(): MolecularDrivers {
+    fun createProperTestDrivers(): MolecularDrivers {
         return createMinimalMolecularDrivers().copy(
             variants = setOf(
-                Variant(
-                    chromosome = "7",
-                    position = 140453136,
-                    ref = "T",
-                    alt = "A",
-                    isReportable = true,
-                    event = "BRAF V600E",
-                    driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = TestActionableEvidenceFactory.withApprovedTreatment("Vemurafenib"),
-                    gene = "BRAF",
-                    geneRole = GeneRole.ONCO,
-                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                    isAssociatedWithDrugResistance = true,
-                    type = VariantType.SNV,
-                    variantCopyNumber = 4.1,
-                    totalCopyNumber = 6.0,
-                    isBiallelic = false,
-                    isHotspot = true,
-                    clonalLikelihood = 1.0,
-                    canonicalImpact = TranscriptImpact(
-                        transcriptId = "ENST00000288602",
-                        hgvsCodingImpact = "c.1799T>A",
-                        hgvsProteinImpact = "p.V600E",
-                        affectedCodon = 600,
-                        isSpliceRegion = false,
-                        effects = setOf(VariantEffect.MISSENSE),
-                        codingEffect = CodingEffect.MISSENSE,
-                        affectedExon = null
-                    ),
-                    otherImpacts = emptySet(),
-                    phaseGroups = null
-                )
+                createProperVariant()
             ),
             copyNumbers = setOf(
-                CopyNumber(
-                    isReportable = true,
-                    event = "PTEN del",
-                    driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = TestActionableEvidenceFactory.withExternalEligibleTrial(
-                        TestExternalTrialFactory.create(
-                            title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in "
-                                    + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment "
-                                    + "for Participants With Advanced Solid Tumor (acronym)",
-                            countries = setOf(Country.BELGIUM, Country.GERMANY),
-                            url = "https://clinicaltrials.gov/study/NCT00000002",
-                            nctId = "NCT00000020"
-                        )
-                    ),
-                    gene = "PTEN",
-                    geneRole = GeneRole.TSG,
-                    proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-                    type = CopyNumberType.LOSS,
-                    minCopies = 0,
-                    maxCopies = 0,
-                    isAssociatedWithDrugResistance = null
-                )
+                createProperCopyNumber()
             )
         )
     }
+
+    fun createProperCopyNumber() = CopyNumber(
+        isReportable = true,
+        event = "PTEN del",
+        driverLikelihood = DriverLikelihood.HIGH,
+        evidence = TestActionableEvidenceFactory.withExternalEligibleTrial(
+            TestExternalTrialFactory.create(
+                title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in "
+                        + "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment "
+                        + "for Participants With Advanced Solid Tumor (acronym)",
+                countries = setOf(Country.BELGIUM, Country.GERMANY),
+                url = "https://clinicaltrials.gov/study/NCT00000002",
+                nctId = "NCT00000020"
+            )
+        ),
+        gene = "PTEN",
+        geneRole = GeneRole.TSG,
+        proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
+        type = CopyNumberType.LOSS,
+        minCopies = 0,
+        maxCopies = 0,
+        isAssociatedWithDrugResistance = null
+    )
+
+    fun createProperVariant() = Variant(
+        chromosome = "7",
+        position = 140453136,
+        ref = "T",
+        alt = "A",
+        isReportable = true,
+        event = "BRAF V600E",
+        driverLikelihood = DriverLikelihood.HIGH,
+        evidence = TestActionableEvidenceFactory.withApprovedTreatment("Vemurafenib"),
+        gene = "BRAF",
+        geneRole = GeneRole.ONCO,
+        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+        isAssociatedWithDrugResistance = true,
+        type = VariantType.SNV,
+        variantCopyNumber = 4.1,
+        totalCopyNumber = 6.0,
+        isBiallelic = false,
+        isHotspot = true,
+        clonalLikelihood = 1.0,
+        canonicalImpact = TranscriptImpact(
+            transcriptId = "ENST00000288602",
+            hgvsCodingImpact = "c.1799T>A",
+            hgvsProteinImpact = "p.V600E",
+            affectedCodon = 600,
+            isSpliceRegion = false,
+            effects = setOf(VariantEffect.MISSENSE),
+            codingEffect = CodingEffect.MISSENSE,
+            affectedExon = null
+        ),
+        otherImpacts = emptySet(),
+        phaseGroups = null
+    )
 
     private fun createProperTestImmunology(): MolecularImmunology {
         return MolecularImmunology(
@@ -314,6 +317,13 @@ object TestMolecularFactory {
                 integrations = 3,
                 isReliable = true,
             )
+        )
+    }
+
+    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): MolecularTest {
+        return GenericPanel(
+            fusions = listOf(GenericFusion(geneStart, geneEnd)),
+            panelType = GenericPanelType.FREE_TEXT
         )
     }
 }

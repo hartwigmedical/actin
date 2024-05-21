@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.doid.DoidModel
 
-class HasSolidPrimaryTumorIncludingLymphoma (private val doidModel: DoidModel) : EvaluationFunction {
+class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
@@ -29,12 +29,14 @@ class HasSolidPrimaryTumorIncludingLymphoma (private val doidModel: DoidModel) :
             EvaluationResult.FAIL -> {
                 EvaluationFactory.fail("Patient has non-solid primary tumor", "Tumor type")
             }
+
             EvaluationResult.WARN -> {
                 EvaluationFactory.warn(
                     "Unclear if tumor type of patient should be considered solid or non-solid",
                     "Unclear if primary tumor is considered solid"
                 )
             }
+
             EvaluationResult.PASS -> {
                 EvaluationFactory.pass("Patient has solid primary tumor (including lymphoma)", "Tumor type")
             }

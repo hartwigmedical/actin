@@ -1,6 +1,6 @@
 package com.hartwig.actin.doid
 
-import com.hartwig.actin.doid.config.DoidManualConfigFactory
+import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import org.apache.logging.log4j.LogManager
 
@@ -9,6 +9,7 @@ object DoidModelFactory {
     private val LOGGER = LogManager.getLogger(DoidModelFactory::class.java)
 
     fun createFromDoidEntry(doidEntry: DoidEntry): DoidModel {
+        val doidManualConfig = DoidManualConfig.create()
         val childToParentsMap = doidEntry.edges.asSequence()
             .filter { it.predicate == "is_a" }
             .map { edge ->
@@ -17,6 +18,7 @@ object DoidModelFactory {
                 child to parent
             }
             .distinct()
+            .filterNot(doidManualConfig.childToParentRelationshipsToExclude::contains)
             .groupBy(Pair<String, String>::first, Pair<String, String>::second)
         LOGGER.debug("Loaded {} parent-child relationships", childToParentsMap.size)
 
@@ -28,6 +30,6 @@ object DoidModelFactory {
         }
         val doidPerLowerCaseTermMap = termPerDoidMap.entries.associate { (doid, term) -> term.lowercase() to doid }
 
-        return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, DoidManualConfigFactory.create())
+        return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, doidManualConfig)
     }
 }

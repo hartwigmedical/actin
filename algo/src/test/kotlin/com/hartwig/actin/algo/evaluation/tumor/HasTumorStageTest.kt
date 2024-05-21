@@ -3,32 +3,25 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TumorStage
-import io.mockk.every
-import io.mockk.mockk
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
 class HasTumorStageTest {
+    private val hasTumorStage = HasTumorStage(setOf(TumorStage.III))
 
     @Test
-    fun `Should throw an exception when the set of stages to match is empty`(){
-        val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.tumor
-        val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IIIB)
-        Assertions.assertThatIllegalStateException().isThrownBy { HasTumorStage(derivationFunction, emptySet()).evaluate(patientRecord) }
+    fun `Should throw an exception when the set of stages to match is empty`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IIIB))
+        Assertions.assertThatIllegalStateException().isThrownBy { HasTumorStage(emptySet()).evaluate(patientRecord) }
             .withMessage("No stages to match configured")
     }
 
     @Test
     fun `Should evaluate normally when tumor stage exists`() {
-        val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(any()) } returns null
-        val victim = tumorStageFunction(derivationFunction)
-        assertEvaluation(EvaluationResult.FAIL, victim.evaluate(TumorTestFactory.withTumorStage(null)))
-        assertEvaluation(EvaluationResult.PASS, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)))
-        assertEvaluation(EvaluationResult.PASS, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)))
-        assertEvaluation(EvaluationResult.FAIL, victim.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
+        assertEvaluation(EvaluationResult.FAIL, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(null)))
+        assertEvaluation(EvaluationResult.PASS, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.III)))
+        assertEvaluation(EvaluationResult.PASS, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.IIIB)))
+        assertEvaluation(EvaluationResult.FAIL, hasTumorStage.evaluate(TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.IV)))
     }
 
     @Test
@@ -39,21 +32,15 @@ class HasTumorStageTest {
     }
 
     @Test
-    fun `Should pass when one stage of set to match passes`() {
-        val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.tumor
-        val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IIIB)
-        assertEvaluation(EvaluationResult.PASS, HasTumorStage(derivationFunction, setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
+    fun `Should pass when all derived stages are members of a stage to match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIIA, TumorStage.IIIB))
+        assertEvaluation(EvaluationResult.PASS, HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
     }
 
     @Test
-    fun `Should pass when all stages of set to match pass`() {
-        val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.tumor
-        val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IV)
-        assertEvaluation(EvaluationResult.PASS, HasTumorStage(derivationFunction, setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
+    fun `Should pass when all derived stages pass individually`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IV))
+        assertEvaluation(EvaluationResult.PASS, HasTumorStage(setOf(TumorStage.III, TumorStage.IV)).evaluate(patientRecord))
     }
 
     @Test
@@ -63,11 +50,8 @@ class HasTumorStageTest {
 
     @Test
     fun `Should display correct undetermined message with derived stages`() {
-        val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.tumor
-        val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(tumorDetails) } returns setOf(TumorStage.III, TumorStage.IV)
-        Assertions.assertThat((tumorStageFunction(derivationFunction).evaluate(patientRecord)).undeterminedGeneralMessages).containsExactly(
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III, TumorStage.IV))
+        Assertions.assertThat(hasTumorStage.evaluate(patientRecord).undeterminedGeneralMessages).containsExactly(
             "Unknown if tumor stage is III (data missing) - derived III or IV based on lesions"
         )
     }
@@ -77,15 +61,26 @@ class HasTumorStageTest {
         assertDerivedEvaluation(EvaluationResult.FAIL, TumorStage.I, TumorStage.II)
     }
 
-    private fun tumorStageFunction(derivationFunction: TumorStageDerivationFunction): HasTumorStage {
-        return HasTumorStage(derivationFunction, setOf(TumorStage.III))
+    @Test
+    fun `Should pass when derived stage is equal to the category of the stage to match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))
+        assertEvaluation(EvaluationResult.PASS, HasTumorStage(setOf(TumorStage.IIIB)).evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should fail when derived stage is not equal to the category of the stage to match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.III))
+        assertEvaluation(EvaluationResult.FAIL, HasTumorStage(setOf(TumorStage.IIB)).evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should fail when stage is part of the same category, but not an exact match`() {
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(TumorStage.III, emptySet())
+        assertEvaluation(EvaluationResult.FAIL, HasTumorStage(setOf(TumorStage.IIIB)).evaluate(patientRecord))
     }
 
     private fun assertDerivedEvaluation(expectedResult: EvaluationResult, vararg derivedStages: TumorStage) {
-        val patientRecord = TumorTestFactory.withTumorStage(null)
-        val tumorDetails = patientRecord.tumor
-        val derivationFunction = mockk<TumorStageDerivationFunction>()
-        every { derivationFunction.apply(tumorDetails) } returns setOf(*derivedStages)
-        assertEvaluation(expectedResult, tumorStageFunction(derivationFunction).evaluate(patientRecord))
+        val patientRecord = TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(*derivedStages))
+        assertEvaluation(expectedResult, hasTumorStage.evaluate(patientRecord))
     }
 }

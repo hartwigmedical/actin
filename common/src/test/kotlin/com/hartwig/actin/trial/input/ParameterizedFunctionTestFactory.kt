@@ -131,6 +131,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf("1", "string1;string2")
             }
 
+            FunctionInput.ONE_INTEGER_MANY_DOID_TERMS -> {
+                listOf("1", "$doidTermToUse;$doidTermToUse")
+            }
+
             FunctionInput.MANY_TUMOR_STAGES -> {
                 listOf("I;II")
             }
@@ -177,6 +181,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
 
             FunctionInput.ONE_DOID_TERM_ONE_INTEGER -> {
                 listOf(doidTermToUse, "1")
+            }
+
+            FunctionInput.MANY_DOID_TERMS -> {
+                listOf("$doidTermToUse; $doidTermToUse")
             }
 
             FunctionInput.ONE_RECEPTOR_TYPE -> {
