@@ -19,7 +19,7 @@ java -cp actin.jar com.hartwig.actin.clinical.ClinicalIngestionApplicationKt \
 
 ## ACTIN clinical model for providers
 
-Data providers can provide clinical data in JSON adhering to the [following format]()
+Data providers can provide clinical data in JSON adhering to the [following format](src/main/resources/json_schema/provided_clinical_data.schema.json)
 
 
 ## ACTIN clinical datamodel used internally 
