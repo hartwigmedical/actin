@@ -72,8 +72,8 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
         }
     }
 
-    fun treatmentCandidateWithBevacizumab(treatmentName: String): TreatmentCandidate {
-        return createTreatmentCandidate("$treatmentName+$BEVACIZUMAB", setOf(1), optional = true)
+    fun treatmentCandidateWithBevacizumab(treatmentName: String, treatmentLine: Int): TreatmentCandidate {
+        return createTreatmentCandidate("$treatmentName+$BEVACIZUMAB", setOf(treatmentLine), optional = true)
     }
 
     private fun createTreatmentCandidate(
