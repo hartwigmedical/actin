@@ -7,7 +7,7 @@ const val GENE_UP = "geneUp"
 const val GENE_DOWN = "geneDown"
 const val GENE = "gene"
 const val HGVS_CODING = "c.1A>T"
-const val HGVS_PROTEIN = "p.G1E"
+const val HGVS_PROTEIN = "p.M1L"
 
 fun avlPanelPriorMolecularNoMutationsFoundRecord(): PriorMolecularTest {
     return PriorMolecularTest(
