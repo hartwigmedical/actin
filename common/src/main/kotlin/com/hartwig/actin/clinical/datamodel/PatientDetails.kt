@@ -6,6 +6,5 @@ data class PatientDetails(
     val gender: Gender,
     val birthYear: Int,
     val registrationDate: LocalDate,
-    val questionnaireDate: LocalDate? = null,
-    val otherMolecularPatientId: String? = null
+    val questionnaireDate: LocalDate? = null
 )

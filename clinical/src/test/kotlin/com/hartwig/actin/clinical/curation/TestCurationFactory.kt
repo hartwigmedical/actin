@@ -15,7 +15,7 @@ object TestCurationFactory {
     fun emptyQuestionnaire(): Questionnaire {
         return Questionnaire(
             LocalDate.now(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null
+            null, null, null, null, null
         )
     }
 

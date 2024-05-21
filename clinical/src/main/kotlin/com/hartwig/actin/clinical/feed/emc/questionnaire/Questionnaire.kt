@@ -29,6 +29,5 @@ data class Questionnaire(
     val unresolvedToxicities: List<String>?,
     val infectionStatus: InfectionStatus?,
     val ecg: ECG?,
-    val complications: List<String>?,
-    val genayaSubjectNumber: String?,
+    val complications: List<String>?
 )

@@ -76,15 +76,13 @@ internal class ClinicalDAO(private val context: DSLContext) {
             Tables.PATIENT.GENDER,
             Tables.PATIENT.REGISTRATIONDATE,
             Tables.PATIENT.QUESTIONNAIREDATE,
-            Tables.PATIENT.OTHERMOLECULARPATIENTID
         )
             .values(
                 patientId,
                 patient.birthYear,
                 patient.gender.display(),
                 patient.registrationDate,
-                patient.questionnaireDate,
-                patient.otherMolecularPatientId
+                patient.questionnaireDate
             )
             .execute()
     }

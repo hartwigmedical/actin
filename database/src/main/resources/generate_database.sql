@@ -9,7 +9,6 @@ CREATE TABLE `patient`
     `birthYear` int NOT NULL,
     `registrationDate` DATE NOT NULL,
     `questionnaireDate` DATE,
-    `otherMolecularPatientId` varchar(20),
     PRIMARY KEY (`id`)
 );
 

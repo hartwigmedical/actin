@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.feed.emc.questionnaire
 
 internal object QuestionnaireMapping {
     private val NEW_KEYS: Map<QuestionnaireKey, String?> =
-        listOf(QuestionnaireKey.GENAYA_SUBJECT_NUMBER, QuestionnaireKey.FAMILY_HISTORY).associateWith { null }
+        listOf(QuestionnaireKey.FAMILY_HISTORY).associateWith { null }
 
     private val KEYS_INTRODUCED_AFTER_V1_3: Map<QuestionnaireKey, String?> =
         listOf(
@@ -97,7 +97,7 @@ internal object QuestionnaireMapping {
         QuestionnaireKey.PDL1_TEST_RESULTS to "PD L1 test results",
     ) + NEW_KEYS
 
-    val KEYS_V1_6: Map<QuestionnaireKey, String?> = KEYS_V1_5 + (QuestionnaireKey.GENAYA_SUBJECT_NUMBER to "GENAYA subjectno")
+    val KEYS_V1_6: Map<QuestionnaireKey, String?> = KEYS_V1_5
 
     val KEYS_V1_7: Map<QuestionnaireKey, String?> = KEYS_V1_6 + (QuestionnaireKey.FAMILY_HISTORY to "family history")
 
