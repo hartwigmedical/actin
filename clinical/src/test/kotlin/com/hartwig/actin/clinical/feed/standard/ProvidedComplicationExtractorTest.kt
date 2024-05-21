@@ -31,7 +31,7 @@ class ProvidedComplicationExtractorTest {
     fun `Should extract complication with end date`() {
         assertExtractionResult(
             ProvidedComplication(
-                COMPLICATION_NAME, emptyList(), EHR_START_DATE, LocalDate.now()
+                COMPLICATION_NAME, EHR_START_DATE, LocalDate.now()
             )
         )
     }
@@ -40,7 +40,7 @@ class ProvidedComplicationExtractorTest {
     fun `Should extract complication without end date`() {
         assertExtractionResult(
             ProvidedComplication(
-                COMPLICATION_NAME, emptyList(), EHR_START_DATE, null
+                COMPLICATION_NAME, EHR_START_DATE, null
             )
         )
     }

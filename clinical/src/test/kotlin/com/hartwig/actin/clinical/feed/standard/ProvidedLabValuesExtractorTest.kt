@@ -27,8 +27,7 @@ private val EHR_LAB_VALUE = ProvidedLabValue(
     unit = "g/dL",
     comparator = ">",
     refLowerBound = 12.0,
-    refUpperBound = 16.0,
-    refFlag = "N"
+    refUpperBound = 16.0
 )
 
 private val LAB_VALUE = LabValue(

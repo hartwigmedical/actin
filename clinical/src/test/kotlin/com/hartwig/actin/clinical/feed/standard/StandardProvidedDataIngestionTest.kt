@@ -71,7 +71,7 @@ class StandardProvidedDataIngestionTest {
             secondPrimaryExtractor = ProvidedPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
 
             patientDetailsExtractor = ProvidedPatientDetailsExtractor(),
-            tumorDetailsExtractor = HospitalProvidedTumorDetailsExtractor(
+            tumorDetailsExtractor = ProvidedTumorDetailsExtractor(
                 curationDatabase.primaryTumorCuration,
                 curationDatabase.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)

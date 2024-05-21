@@ -22,7 +22,7 @@ private const val SUBCATEGORY = "subcategory"
 
 private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
     allergies = listOf(
-        EhrAllergy(
+        ProvidedAllergy(
             name = NAME,
             category = CATEGORY,
             clinicalStatus = CLINICAL_STATUS,

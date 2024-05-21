@@ -33,7 +33,7 @@ class StandardProvidedDataIngestion(
     private val priorOtherConditionsExtractor: ProvidedPriorOtherConditionsExtractor,
     private val treatmentHistoryExtractor: ProvidedTreatmentHistoryExtractor,
     private val clinicalStatusExtractor: ProvidedClinicalStatusExtractor,
-    private val tumorDetailsExtractor: HospitalProvidedTumorDetailsExtractor,
+    private val tumorDetailsExtractor: ProvidedTumorDetailsExtractor,
     private val secondPrimaryExtractor: ProvidedPriorPrimariesExtractor,
     private val patientDetailsExtractor: ProvidedPatientDetailsExtractor,
     private val bodyWeightExtractor: ProvidedBodyWeightExtractor,
@@ -161,7 +161,7 @@ class StandardProvidedDataIngestion(
                 curationDatabaseContext.nonOncologicalHistoryCuration
             ),
             ProvidedClinicalStatusExtractor(),
-            HospitalProvidedTumorDetailsExtractor(
+            ProvidedTumorDetailsExtractor(
                 curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
