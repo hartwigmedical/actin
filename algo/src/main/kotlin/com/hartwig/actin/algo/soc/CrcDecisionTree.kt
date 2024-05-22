@@ -50,9 +50,8 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
 
     private val generallyAvailableTreatmentCandidates = listOf(
         commonChemotherapies.map(treatmentCandidateDatabase::treatmentCandidate),
-        commonChemotherapies.map { treatmentCandidateDatabase.treatmentCandidateWithBevacizumab(it, 1) },
-        listOf(IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(treatmentCandidateDatabase::treatmentCandidate),
-        listOf(treatmentCandidateDatabase.treatmentCandidateWithBevacizumab(TRIFLURIDINE_TIPIRACIL, 3))
+        commonChemotherapies.map(treatmentCandidateDatabase::treatmentCandidateWithBevacizumab),
+        listOf(IRINOTECAN, TRIFLURIDINE_TIPIRACIL, TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB).map(treatmentCandidateDatabase::treatmentCandidate),
     ).flatten()
 
     override fun treatmentCandidates(): List<TreatmentCandidate> {

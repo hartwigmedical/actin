@@ -264,8 +264,8 @@ class RecommendationEngineTest {
                 CETUXIMAB,
                 PANITUMUMAB,
                 IRINOTECAN,
-                TRIFLURIDINE_TIPIRACIL
-            ).map(TREATMENT_DATABASE::findTreatmentByName) + TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB
+                TRIFLURIDINE_TIPIRACIL, TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB
+            ).map(TREATMENT_DATABASE::findTreatmentByName)
 
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalTherapies)
@@ -295,8 +295,8 @@ class RecommendationEngineTest {
             listOf(
                 ENCORAFENIB_CETUXIMAB,
                 IRINOTECAN,
-                TRIFLURIDINE_TIPIRACIL
-            ).map(TREATMENT_DATABASE::findTreatmentByName) + TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB
+                TRIFLURIDINE_TIPIRACIL, TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB
+            ).map(TREATMENT_DATABASE::findTreatmentByName)
         assertThat(thirdLinePatientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalCandidates)
     }
@@ -324,7 +324,7 @@ class RecommendationEngineTest {
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MINIMAL_MOLECULAR_RECORD, "ascending colon"
         )
         val expectedAdditionalCandidates =
-            listOf(IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName) + TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB
+            listOf(IRINOTECAN, TRIFLURIDINE_TIPIRACIL, TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB).map(TREATMENT_DATABASE::findTreatmentByName)
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalCandidates)
     }
@@ -423,11 +423,8 @@ class RecommendationEngineTest {
             TREATMENT_DATABASE.findTreatmentByName(it)!!
         }
         private val COMMON_FIRST_LINE_THERAPIES = CrcDecisionTree.commonChemotherapies.map {
-            TREATMENT_CANDIDATE_DATABASE.treatmentCandidateWithBevacizumab(it, 1).treatment
+            TREATMENT_CANDIDATE_DATABASE.treatmentCandidateWithBevacizumab(it).treatment
         }
-
-        private val TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB =
-            TREATMENT_CANDIDATE_DATABASE.treatmentCandidateWithBevacizumab(TRIFLURIDINE_TIPIRACIL, 3).treatment
 
         private val RECOMMENDATION_ENGINE = RecommendationEngineFactory(
             RuleMappingResourcesTestFactory.create(

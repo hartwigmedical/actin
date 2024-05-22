@@ -32,6 +32,7 @@ const val NIVOLUMAB = "NIVOLUMAB"
 const val OXALIPLATIN = "OXALIPLATIN"
 const val PANITUMUMAB = "PANITUMUMAB"
 const val PEMBROLIZUMAB = "PEMBROLIZUMAB"
+const val TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB = "TRIFLURIDINE+TIPIRACIL+BEVACIZUMAB"
 private const val RECENT_TREATMENT_THRESHOLD_WEEKS = "26"
 
 private val drugExclusionExceptions = setOf(FLUOROURACIL, CAPECITABINE, FOLINIC_ACID)
@@ -62,6 +63,10 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
                 createTreatmentCandidate(treatmentName, setOf(3, 4, 5), optional = true)
             }
 
+            TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB -> {
+                createTreatmentCandidate(treatmentName, setOf(3, 4, 5), optional = true)
+            }
+
             ENTRECTINIB, LAROTRECTINIB -> {
                 createTreatmentCandidate(treatmentName, optional = true)
             }
@@ -72,8 +77,8 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
         }
     }
 
-    fun treatmentCandidateWithBevacizumab(treatmentName: String, treatmentLine: Int): TreatmentCandidate {
-        return createTreatmentCandidate("$treatmentName+$BEVACIZUMAB", setOf(treatmentLine), optional = true)
+    fun treatmentCandidateWithBevacizumab(treatmentName: String): TreatmentCandidate {
+        return createTreatmentCandidate("$treatmentName+$BEVACIZUMAB", setOf(1), optional = true)
     }
 
     private fun createTreatmentCandidate(
