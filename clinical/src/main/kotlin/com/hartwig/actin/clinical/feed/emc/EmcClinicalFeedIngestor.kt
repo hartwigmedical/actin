@@ -133,8 +133,7 @@ class EmcClinicalFeedIngestor(
             gender = patient.gender,
             birthYear = patient.birthYear,
             registrationDate = patient.periodStart,
-            questionnaireDate = questionnaire?.date,
-            otherMolecularPatientId = questionnaire?.genayaSubjectNumber
+            questionnaireDate = questionnaire?.date
         )
     }
 

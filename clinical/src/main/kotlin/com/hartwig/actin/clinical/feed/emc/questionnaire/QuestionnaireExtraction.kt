@@ -56,7 +56,6 @@ object QuestionnaireExtraction {
             infectionStatus = infectionStatus.curated,
             ecg = ecg.curated,
             complications = toList(value(lines, mapping[QuestionnaireKey.COMPLICATIONS])),
-            genayaSubjectNumber = optionalValue(lines, mapping[QuestionnaireKey.GENAYA_SUBJECT_NUMBER])
         ) to hasBoneLesions.errors + hasLiverLesions.errors + hasMeasurableDisease.errors + whoStatus.errors + infectionStatus.errors + ecg.errors + stage.errors
     }
 
