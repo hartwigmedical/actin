@@ -3,11 +3,11 @@ package com.hartwig.actin.molecular.datamodel.panel.generic
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class GenericPanelTest {
+class GenericPanelExtractionTestRecord {
 
     @Test
     fun `Should identify tested genes`() {
-        val genericPanel = GenericPanel(
+        val genericPanel = GenericPanelExtraction(
             GenericPanelType.AVL
         )
 

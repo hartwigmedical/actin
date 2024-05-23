@@ -3,11 +3,12 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import org.junit.Test
 
@@ -105,12 +106,14 @@ class GeneHasSpecificExonSkippingTest {
         )
     }
 
-    private fun archerPanelWithExonSkippingForGene(gene: String, start: Int, end: Int) = ArcherPanel(
-        skippedExons = listOf(
-            ArcherSkippedExons(
-                gene,
-                start,
-                end
+    private fun archerPanelWithExonSkippingForGene(gene: String, start: Int, end: Int) = TestPanelRecordFactory.empty().copy(
+        archerPanelExtraction = ArcherPanelExtraction(
+            skippedExons = listOf(
+                ArcherSkippedExons(
+                    gene,
+                    start,
+                    end
+                )
             )
         )
     )

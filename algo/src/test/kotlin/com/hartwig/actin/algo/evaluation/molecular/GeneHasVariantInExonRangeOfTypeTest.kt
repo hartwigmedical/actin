@@ -3,23 +3,53 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.molecular.datamodel.TEST_DATE
+import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 private const val MATCHING_EXON = 1
 private const val OTHER_EXON = 6
 private const val TARGET_GENE = "gene A"
+private val FREETEXT_PANEL_WITH_EXON_DELETION = TestPanelRecordFactory.empty().copy(
+    genericPanelExtraction = GenericPanelExtraction(
+        date = TEST_DATE,
+        panelType = GenericPanelType.FREE_TEXT,
+        variants = emptyList(),
+        fusions = emptyList(),
+        exonDeletions = listOf(
+            GenericExonDeletion(
+                gene = TARGET_GENE,
+                affectedExon = MATCHING_EXON,
+            ),
+        )
+    )
+)
 
+private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
+    genericPanelExtraction =GenericPanelExtraction(
+        date = TEST_DATE,
+        panelType = GenericPanelType.FREE_TEXT,
+        variants = listOf(
+            GenericVariant(
+                gene = TARGET_GENE,
+                hgvsCodingImpact = "c.10A>T",
+            ),
+        ),
+        fusions = emptyList()
+    ))
+
+private val EMPTY_AVL_PANEL = TestPanelRecordFactory.empty().copy(type = ExperimentType.GENERIC_PANEL)
 
 class GeneHasVariantInExonRangeOfTypeTest {
     private val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INSERT)
@@ -260,39 +290,4 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     private fun impactWithExon(affectedExon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedExon = affectedExon)
-
-    private val TEST_DATE = LocalDate.of(2023, 1, 1)
-
-    private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanel(
-        date = TEST_DATE,
-        panelType = GenericPanelType.FREE_TEXT,
-        variants = emptyList(),
-        fusions = emptyList(),
-        exonDeletions = listOf(
-            GenericExonDeletion(
-                gene = TARGET_GENE,
-                affectedExon = MATCHING_EXON,
-            ),
-        )
-    )
-
-    private val FREETEXT_PANEL_WITH_VARIANT = GenericPanel(
-        date = TEST_DATE,
-        panelType = GenericPanelType.FREE_TEXT,
-        variants = listOf(
-            GenericVariant(
-                gene = TARGET_GENE,
-                hgvsCodingImpact = "c.10A>T",
-            ),
-        ),
-        fusions = emptyList()
-    )
-
-    private val EMPTY_AVL_PANEL = GenericPanel(
-        date = TEST_DATE,
-        panelType = GenericPanelType.AVL,
-        variants = emptyList(),
-        fusions = emptyList(),
-        exonDeletions = emptyList()
-    )
 }

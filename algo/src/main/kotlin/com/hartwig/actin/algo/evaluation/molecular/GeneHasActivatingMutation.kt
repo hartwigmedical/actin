@@ -5,14 +5,27 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.panel.Panel
-import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
+import com.hartwig.actin.molecular.interpreted.InterpretedVariant
+
+data class ActivatingCharacteristics(
+    val event: String,
+    val activating: Boolean,
+    val associatedWithResistance: Boolean? = null,
+    val noHotspotAndNoGainOfFunction: Boolean? = null,
+    val nonOncoGene: Boolean? = null,
+    val subclonal: Boolean? = null,
+    val nonHighDriverGainOfFunction: Boolean? = null,
+    val nonHighDriverSubclonal: Boolean? = null,
+    val nonHighDriver: Boolean? = null,
+    val otherMissenseOrHotspot: Boolean? = null
+)
+
+private const val CLONAL_CUTOFF = 0.5
 
 class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
     MolecularEvaluationFunction {
@@ -20,12 +33,13 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
 
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) {
-            findActivatingMutationsInOrangeMolecular(orangeMolecular)
+            findActivatingMutations(orangeMolecular)
         } else null
 
-        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(molecularHistory) else null
+        val panelEvaluations =
+            if (codonsToIgnore.isNullOrEmpty()) molecularHistory.allPanels().map { findActivatingMutations(it) } else emptyList()
 
-        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
+        val groupedEvaluationsByResult = (listOfNotNull(orangeMolecularEvaluation) + panelEvaluations)
             .groupBy { evaluation -> evaluation.result }
             .mapValues { entry ->
                 entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
@@ -37,60 +51,59 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
             ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
     }
 
-    private fun findActivatingMutationsInOrangeMolecular(molecular: MolecularRecord): Evaluation {
-        val activatingVariants: MutableSet<String> = mutableSetOf()
-        val activatingVariantsAssociatedWithResistance: MutableSet<String> = mutableSetOf()
-        val activatingVariantsNoHotspotAndNoGainOfFunction: MutableSet<String> = mutableSetOf()
-        val activatingVariantsInNonOncogene: MutableSet<String> = mutableSetOf()
-        val activatingSubclonalVariants: MutableSet<String> = mutableSetOf()
-        val nonHighDriverGainOfFunctionVariants: MutableSet<String> = mutableSetOf()
-        val nonHighDriverSubclonalVariants: MutableSet<String> = mutableSetOf()
-        val nonHighDriverVariants: MutableSet<String> = mutableSetOf()
-        val otherMissenseOrHotspotVariants: MutableSet<String> = mutableSetOf()
-        val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
-        val evidenceSource = molecular.evidenceSource
-
-        for (variant in molecular.drivers.variants) {
-            if (variant.gene == gene && (codonsToIgnore == null || codonsToIgnore.none {
-                    isCodonMatch(
-                        variant.canonicalImpact.affectedCodon,
-                        it
-                    )
-                })) {
-                val isGainOfFunction =
-                    (variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION ||
-                            variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
-                val isNoOncogene = variant.geneRole == GeneRole.TSG
-                if (variant.isReportable) {
-                    if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-                        if (isAssociatedWithDrugResistance(variant)) {
-                            activatingVariantsAssociatedWithResistance.add(variant.event)
-                        } else if (!variant.isHotspot && !isGainOfFunction) {
-                            activatingVariantsNoHotspotAndNoGainOfFunction.add(variant.event)
-                        } else if (isNoOncogene) {
-                            activatingVariantsInNonOncogene.add(variant.event)
-                        } else if (variant.clonalLikelihood < CLONAL_CUTOFF) {
-                            activatingSubclonalVariants.add(variant.event)
-                        } else {
-                            activatingVariants.add(variant.event)
-                        }
+    private fun evaluateVariant(
+        variant: InterpretedVariant,
+        hasHighMutationalLoad: Boolean?
+    ): ActivatingCharacteristics {
+        val isNoOncogene = variant.geneRole == GeneRole.TSG
+        val isGainOfFunction =
+            variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
+        val characteristics = ActivatingCharacteristics(variant.event, false)
+        return if (variant.isReportable) {
+            if (variant.driverLikelihood == DriverLikelihood.HIGH) {
+                if (isAssociatedWithDrugResistance(variant)) {
+                    characteristics.copy(associatedWithResistance = true)
+                } else if (!variant.isHotspot && !isGainOfFunction) {
+                    characteristics.copy(noHotspotAndNoGainOfFunction = true)
+                } else if (isNoOncogene) {
+                    characteristics.copy(nonOncoGene = true)
+                } else if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                    characteristics.copy(subclonal = true)
+                } else {
+                    characteristics.copy(activating = true)
+                }
+            } else {
+                if (isGainOfFunction) {
+                    characteristics.copy(nonHighDriverGainOfFunction = true)
+                } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
+                    return if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                        characteristics.copy(nonHighDriverSubclonal = true)
                     } else {
-                        if (isGainOfFunction) {
-                            nonHighDriverGainOfFunctionVariants.add(variant.event)
-                        } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                            if (variant.clonalLikelihood < CLONAL_CUTOFF) {
-                                nonHighDriverSubclonalVariants.add(variant.event)
-                            } else {
-                                nonHighDriverVariants.add(variant.event)
-                            }
-                        }
+                        characteristics.copy(nonHighDriver = true)
                     }
-                } else if (isMissenseOrHotspot(variant)) {
-                    otherMissenseOrHotspotVariants.add(variant.event)
+                } else {
+                    characteristics
                 }
             }
+        } else if (isMissenseOrHotspot(variant)) {
+            return characteristics.copy(otherMissenseOrHotspot = true)
+        } else {
+            return characteristics
         }
+    }
 
+    private fun findActivatingMutations(molecular: MolecularTest<*>): Evaluation {
+        val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
+        val evidenceSource = molecular.evidenceSource
+        val variantCharacteristics = molecular.drivers.variants
+            .filter { it.gene == gene }
+            .filter { ignoredCodon(codonsToIgnore, it) }
+            .map { variant ->
+                evaluateVariant(variant, hasHighMutationalLoad)
+            }
+
+        val activatingVariants =
+            variantCharacteristics.filter(ActivatingCharacteristics::activating).map(ActivatingCharacteristics::event).toSet()
         if (activatingVariants.isNotEmpty()) {
             return EvaluationFactory.pass(
                 "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
@@ -100,14 +113,14 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         }
 
         val potentialWarnEvaluation = evaluatePotentialWarns(
-            activatingVariantsAssociatedWithResistance,
-            activatingVariantsInNonOncogene,
-            activatingVariantsNoHotspotAndNoGainOfFunction,
-            activatingSubclonalVariants,
-            nonHighDriverGainOfFunctionVariants,
-            nonHighDriverSubclonalVariants,
-            nonHighDriverVariants,
-            otherMissenseOrHotspotVariants,
+            filteredForWarnings(variantCharacteristics) { it.associatedWithResistance },
+            filteredForWarnings(variantCharacteristics) { it.nonOncoGene },
+            filteredForWarnings(variantCharacteristics) { it.noHotspotAndNoGainOfFunction },
+            filteredForWarnings(variantCharacteristics) { it.subclonal },
+            filteredForWarnings(variantCharacteristics) { it.nonHighDriverGainOfFunction },
+            filteredForWarnings(variantCharacteristics) { it.nonHighDriverSubclonal },
+            filteredForWarnings(variantCharacteristics) { it.nonHighDriver },
+            filteredForWarnings(variantCharacteristics) { it.otherMissenseOrHotspot },
             evidenceSource
         )
 
@@ -115,6 +128,22 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
             "No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)"
         )
     }
+
+    private fun ignoredCodon(
+        codonsToIgnore: List<String>?,
+        variant: InterpretedVariant
+    ) = codonsToIgnore == null || codonsToIgnore.none {
+        isCodonMatch(
+            variant.canonicalImpact.affectedCodon,
+            it
+        )
+    }
+
+    private fun filteredForWarnings(
+        variantCharacteristics: List<ActivatingCharacteristics>,
+        extractor: (ActivatingCharacteristics) -> Boolean?
+    ) =
+        variantCharacteristics.filter { extractor.invoke(it) == true }.map(ActivatingCharacteristics::event).toSet()
 
     private fun evaluatePotentialWarns(
         activatingVariantsAssociatedWithResistance: Set<String>,
@@ -185,43 +214,20 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         )
     }
 
-    private fun findActivatingMutationsInPanels(molecularHistory: MolecularHistory): Evaluation? {
-
-        val activatingVariants = molecularHistory.allPanels()
-            .flatMap(Panel::events)
-            .filter { it.impactsGene(gene) }
-            .map(PanelEvent::display).toSet()
-
-        if (activatingVariants.isNotEmpty())
-            return EvaluationFactory.pass(
-                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Panel(s)",
-                "$gene activating mutation(s)",
-                inclusionEvents = activatingVariants
-            )
-
-        return if (molecularHistory.allArcherPanels().any { it.testedGenes().contains(gene) })
-            EvaluationFactory.fail("No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)")
-        else null
+    private fun isAssociatedWithDrugResistance(variant: InterpretedVariant): Boolean {
+        val isAssociatedWithDrugResistance = variant.isAssociatedWithDrugResistance
+        return isAssociatedWithDrugResistance != null && isAssociatedWithDrugResistance
     }
 
-    companion object {
-        private const val CLONAL_CUTOFF = 0.5
+    private fun isMissenseOrHotspot(variant: InterpretedVariant): Boolean {
+        return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isHotspot
+    }
 
-        private fun isAssociatedWithDrugResistance(variant: Variant): Boolean {
-            val isAssociatedWithDrugResistance = variant.isAssociatedWithDrugResistance
-            return isAssociatedWithDrugResistance != null && isAssociatedWithDrugResistance
+    private fun isCodonMatch(affectedCodon: Int?, codonsToMatch: String): Boolean {
+        if (affectedCodon == null) {
+            return false
         }
-
-        private fun isMissenseOrHotspot(variant: Variant): Boolean {
-            return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isHotspot
-        }
-
-        private fun isCodonMatch(affectedCodon: Int?, codonsToMatch: String): Boolean {
-            if (affectedCodon == null) {
-                return false
-            }
-            val codonIndexToMatch = codonsToMatch.substring(1).takeWhile { it.isDigit() }.toInt()
-            return codonIndexToMatch == affectedCodon
-        }
+        val codonIndexToMatch = codonsToMatch.substring(1).takeWhile { it.isDigit() }.toInt()
+        return codonIndexToMatch == affectedCodon
     }
 }

@@ -1,16 +1,15 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class GenericPanelExtractorTest {
+class GenericPanelExtractionExtractorTestRecord {
 
     private val extractor = GenericPanelExtractor()
 
@@ -22,7 +21,6 @@ class GenericPanelExtractorTest {
         )
         val molecularTests = extractor.extract(genericPanelTests)
         assertThat(molecularTests).hasSize(2)
-        assertThat(molecularTests.filter { it.type == ExperimentType.GENERIC_PANEL }).hasSize(2)
 
     }
 
@@ -34,7 +32,7 @@ class GenericPanelExtractorTest {
         )
         val molecularTests = extractor.extract(priorMolecularTests)
 
-        val expected = GenericPanel(GenericPanelType.AVL, variants = listOf(GenericVariant(GENE, HGVS)))
+        val expected = GenericPanelExtraction(GenericPanelType.AVL, variants = listOf(GenericVariant(GENE, HGVS)))
         assertThat(molecularTests).containsExactly(expected)
     }
 
@@ -43,7 +41,7 @@ class GenericPanelExtractorTest {
         val priorMolecularTests = listOf(freetextPriorMolecularFusionRecord())
         val molecularTests = extractor.extract(priorMolecularTests)
 
-        val expected = GenericPanel(
+        val expected = GenericPanelExtraction(
             GenericPanelType.FREE_TEXT,
             variants = emptyList(),
             fusions = listOf(GenericFusion(GENE_UP, GENE_DOWN))

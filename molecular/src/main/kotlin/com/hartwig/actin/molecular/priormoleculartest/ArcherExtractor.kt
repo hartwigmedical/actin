@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 
@@ -19,8 +19,8 @@ private enum class ArcherVariantCategory {
     UNKNOWN
 }
 
-class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
-    override fun extract(input: List<PriorMolecularTest>): List<ArcherPanel> {
+class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanelExtraction> {
+    override fun extract(input: List<PriorMolecularTest>): List<ArcherPanelExtraction> {
         return input.groupBy { it.measureDate }
             .map { (date, results) ->
                 val resultsWithItemAndMeasure = results.filter { it.item != null && it.measure != null }
@@ -51,7 +51,7 @@ class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
                 if (!unknownResults.isNullOrEmpty()) {
                     throw IllegalArgumentException("Unknown results in Archer: ${unknownResults.map { "${it.item} ${it.measure}" }}")
                 }
-                ArcherPanel(variants, fusions, exonSkips, date)
+                ArcherPanelExtraction(variants, fusions, exonSkips, date)
             }
     }
 

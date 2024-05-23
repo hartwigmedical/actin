@@ -44,15 +44,15 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withMolecularTests(molecularTests: List<MolecularTest>): PatientRecord {
+    fun withMolecularTests(molecularTests: List<MolecularTest<*>>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular) + molecularTests))
     }
 
-    fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
+    fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest<*>>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(molecularTests))
     }
 
-    fun withMolecularTest(molecularTest: MolecularTest): PatientRecord {
+    fun withMolecularTest(molecularTest: MolecularTest<*>): PatientRecord {
         return withMolecularTests(listOf(molecularTest))
     }
 
@@ -131,7 +131,7 @@ internal object MolecularTestFactory {
     fun withExperimentTypeAndContainingTumorCellsAndPriorTest(
         type: ExperimentType,
         containsTumorCells: Boolean,
-        priorTest: MolecularTest
+        priorTest: MolecularTest<*>
     ): PatientRecord {
         return base.copy(
             molecularHistory = MolecularHistory(
@@ -247,7 +247,7 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun addingTestFromPriorMolecular(patientRecord: PatientRecord, priorMolecular: List<MolecularTest>): PatientRecord {
+    fun addingTestFromPriorMolecular(patientRecord: PatientRecord, priorMolecular: List<MolecularTest<*>>): PatientRecord {
         return patientRecord.copy(
             molecularHistory = MolecularHistory(
                 patientRecord.molecularHistory.molecularTests + priorMolecular

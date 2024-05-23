@@ -6,17 +6,17 @@ import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
 
-class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPanel> {
-    override fun extract(input: List<PriorMolecularTest>): List<GenericPanel> {
+class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPanelExtraction> {
+    override fun extract(input: List<PriorMolecularTest>): List<GenericPanelExtraction> {
         return input.groupBy { it.test }
             .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
     }
 
-    private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanel> {
+    private fun groupedByTestDate(results: List<PriorMolecularTest>, type: GenericPanelType): List<GenericPanelExtraction> {
         return results
             .groupBy { it.measureDate }
             .map { (date, results) ->
@@ -38,7 +38,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
                     }")
                 }
 
-                GenericPanel(type, variants, fusions, exonDeletions, date)
+                GenericPanelExtraction(type, variants, fusions, exonDeletions, date)
             }
     }
 

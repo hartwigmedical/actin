@@ -87,7 +87,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
     private fun evaluateInPanels(molecularHistory: MolecularHistory): Evaluation {
 
         val allPanels = molecularHistory.allPanels()
-        val isTestedInAnyPanel = allPanels.any { panel -> panel.testedGenes().contains(gene) }
+        val isTestedInAnyPanel = allPanels.any { panel -> panel.isGeneTested(gene) }
         val events = allPanels.flatMap { it.events() }.filter { it.impactsGene(gene) }.toSet()
         val hasResultInAnyPanel = events.isNotEmpty()
 

@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.molecular.datamodel.panel.Panel
+import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
 class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
 
@@ -12,7 +12,7 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
         val molecularHistory = record.molecularHistory
         val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allOrangeMolecularRecords()
             .partition { it.containsTumorCells }
-        val panelGenes = (molecularHistory.allArcherPanels() + molecularHistory.allGenericPanels()).flatMap(Panel::testedGenes).toSet()
+        val panelGenes = molecularHistory.allPanels().flatMap(PanelRecord::testedGenes).toSet()
 
         return when {
             validOncoPanelOrWGSList.isNotEmpty() || panelGenes.containsAll(NSCLC_DRIVER_GENE_SET) -> {

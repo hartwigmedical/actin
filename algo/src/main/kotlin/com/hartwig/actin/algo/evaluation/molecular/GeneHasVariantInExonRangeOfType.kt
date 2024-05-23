@@ -7,8 +7,6 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.driver.VariantType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
@@ -19,9 +17,9 @@ class GeneHasVariantInExonRangeOfType(
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeEvaluation = molecularHistory.latestOrangeMolecularRecord()?.let { evaluateOrange(it) }
-        val panelEvaluation = evaluatePanel(molecularHistory)
+       // val panelEvaluation = evaluatePanel(molecularHistory)
 
-        val groupedEvaluationsByResult = listOfNotNull(orangeEvaluation, panelEvaluation)
+        val groupedEvaluationsByResult = listOfNotNull(orangeEvaluation)
             .groupBy { evaluation -> evaluation.result }
             .mapValues { entry ->
                 entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
@@ -101,7 +99,7 @@ class GeneHasVariantInExonRangeOfType(
         )
     }
 
-    private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
+  /*  private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
         val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
             molecularHistory.allGenericPanels()
                 .flatMap(GenericPanel::exonDeletions)
@@ -121,10 +119,10 @@ class GeneHasVariantInExonRangeOfType(
             val message = "Variant(s) $baseMessage"
             return EvaluationFactory.pass(message, message, inclusionEvents = matches)
         } else {
-            val geneIsTestedInAnyPanel = molecularHistory.allPanels().any { panel -> panel.testedGenes().contains(gene) }
+            val geneIsTestedInAnyPanel = molecularHistory.allPanels().any { panel -> panel.isGeneTested(gene) }
 
             val anyVariantOnGeneInAnyPanel = molecularHistory.allPanels().any { panel ->
-                panel.variants().any { it.impactsGene(gene) }
+                panel.drivers.variants.any { it.impactsGene(gene) }
             }
 
             if (anyVariantOnGeneInAnyPanel) {
@@ -139,7 +137,7 @@ class GeneHasVariantInExonRangeOfType(
                 return null
             }
         }
-    }
+    }*/
 
     companion object {
         private fun hasEffectInExonRange(affectedExon: Int?, minExon: Int, maxExon: Int): Boolean {

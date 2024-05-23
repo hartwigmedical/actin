@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.molecular.datamodel.driver.GeneRole
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantAnnotation
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
@@ -26,7 +26,7 @@ private const val ALT = "G"
 private const val CHROMOSOME = "1"
 
 private val ARCHER_PANEL_WITH_VARIANT =
-    ArcherPanel(variants = listOf(ArcherVariant(GENE, HGVS, ref = REF, alt = ALT, position = POSITION, chromosome = CHROMOSOME)))
+    ArcherPanelExtraction(variants = listOf(ArcherVariant(GENE, HGVS)))
 
 private val VARIANT_MATCH_CRITERIA = VariantMatchCriteria(
     isReportable = true,
@@ -48,7 +48,7 @@ class ArcherAnnotatorTest {
     @Test
     fun `Should return empty annotation when no matches found`() {
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        assertThat(annotated.variants[0].annotation).isEqualTo(
+        assertThat(annotated.drivers.variants.first()).isEqualTo(
             ArcherVariantAnnotation(
                 evidence = ActionableEvidence(),
                 geneRole = GeneRole.UNKNOWN,
@@ -66,7 +66,7 @@ class ArcherAnnotatorTest {
             ), offLabelEvents = emptyList()
         )
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        val annotation = annotated.variants[0].annotation
+        val annotation = annotated.drivers.variants.first()
         assertThat(annotation).isEqualTo(
             ArcherVariantAnnotation(
                 evidence = ActionableEvidence(approvedTreatments = setOf("")),
@@ -82,7 +82,7 @@ class ArcherAnnotatorTest {
             .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)
             .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        val annotation = annotated.variants[0].annotation
+        val annotation = annotated.drivers.variants.first()
         assertThat(annotation).isEqualTo(
             ArcherVariantAnnotation(
                 evidence = ActionableEvidence(),

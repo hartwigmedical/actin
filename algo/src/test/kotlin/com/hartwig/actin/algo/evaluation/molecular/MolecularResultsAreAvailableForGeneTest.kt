@@ -6,12 +6,13 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
+import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.junit.Test
 
@@ -169,7 +170,7 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(ArcherPanel())
+                        listOf(TestPanelRecordFactory.empty().copy(archerPanelExtraction = ArcherPanelExtraction()))
                     )
                 )
         )
@@ -187,7 +188,8 @@ class MolecularResultsAreAvailableForGeneTest {
         )
     }
 
-    private fun archerPanelWithVariantForGene(gene: String) = ArcherPanel(variants = listOf(ArcherVariant(gene, "c.1A>T")))
+    private fun archerPanelWithVariantForGene(gene: String) =
+        TestPanelRecordFactory.empty().copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherVariant(gene, "c.1A>T"))))
 
     @Test
     fun `Should fail for Archer if gene is not tested in panel`() {
@@ -208,7 +210,9 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("EGFR")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(GenericPanel(GenericPanelType.AVL))
+                        listOf(
+                            TestPanelRecordFactory.empty().copy(genericPanelExtraction = GenericPanelExtraction(GenericPanelType.AVL))
+                        )
                     )
                 )
         )
@@ -220,7 +224,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                    listOf(ArcherPanel())
+                    listOf(TestPanelRecordFactory.empty())
                 )
             )
         )

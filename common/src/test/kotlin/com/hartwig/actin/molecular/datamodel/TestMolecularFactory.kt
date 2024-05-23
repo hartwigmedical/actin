@@ -30,7 +30,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
@@ -320,10 +320,12 @@ object TestMolecularFactory {
         )
     }
 
-    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): MolecularTest {
-        return GenericPanel(
+    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
+        genericPanelExtraction =
+        GenericPanelExtraction(
             fusions = listOf(GenericFusion(geneStart, geneEnd)),
             panelType = GenericPanelType.FREE_TEXT
         )
-    }
+    )
 }
+
