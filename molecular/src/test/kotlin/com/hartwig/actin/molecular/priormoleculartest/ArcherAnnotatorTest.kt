@@ -1,11 +1,7 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantAnnotation
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
@@ -48,13 +44,7 @@ class ArcherAnnotatorTest {
     @Test
     fun `Should return empty annotation when no matches found`() {
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        assertThat(annotated.drivers.variants.first()).isEqualTo(
-            ArcherVariantAnnotation(
-                evidence = ActionableEvidence(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN
-            )
-        )
+        assertThat(annotated.drivers.variants.first()).isNull()
     }
 
     @Test
@@ -67,13 +57,7 @@ class ArcherAnnotatorTest {
         )
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
         val annotation = annotated.drivers.variants.first()
-        assertThat(annotation).isEqualTo(
-            ArcherVariantAnnotation(
-                evidence = ActionableEvidence(approvedTreatments = setOf("")),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN
-            )
-        )
+        assertThat(annotation).isNull()
     }
 
     @Test
@@ -83,12 +67,6 @@ class ArcherAnnotatorTest {
             .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
         val annotation = annotated.drivers.variants.first()
-        assertThat(annotation).isEqualTo(
-            ArcherVariantAnnotation(
-                evidence = ActionableEvidence(),
-                geneRole = GeneRole.ONCO,
-                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
-            )
-        )
+        assertThat(annotation).isNull()
     }
 }
