@@ -27,7 +27,9 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
                 val (exonDeletionRecords, nonExonDeletionRecords) = nonFusionRecords.partition { it.measure?.endsWith(" del") ?: false }
                 val exonDeletions = exonDeletionRecords.map { record -> GenericExonDeletion.parse(record) }
 
-                val (variantRecords, unknownRecords) = nonExonDeletionRecords.partition { it.measure?.startsWith("c.") ?: false }
+                val (variantRecords, unknownRecords) = nonExonDeletionRecords.partition {
+                    it.measure?.let { measure -> measure.startsWith("c.") || measure.startsWith("p.") } ?: false
+                }
                 val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
 
                 if (unknownRecords.isNotEmpty()) {

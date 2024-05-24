@@ -10,8 +10,8 @@ const val TREATMENT_HISTORY_INPUT = "treatment name"
 
 object EhrTestData {
 
-    fun createEhrPatientRecord() = EhrPatientRecord(
-        patientDetails = EhrPatientDetail(
+    fun createEhrPatientRecord() = ProvidedPatientRecord(
+        patientDetails = ProvidedPatientDetail(
             hashedId = HASHED_ID_IN_BASE64,
             birthYear = 2024,
             gender = "FEMALE",
@@ -20,7 +20,7 @@ object EhrTestData {
         tumorDetails = createEhrTumorDetail()
     )
 
-    private fun createEhrTumorDetail() = EhrTumorDetail(
+    private fun createEhrTumorDetail() = ProvidedTumorDetail(
         diagnosisDate = LocalDate.of(2024, 2, 23),
         tumorLocation = "tumorLocation",
         tumorType = "tumorType",
@@ -33,7 +33,7 @@ object EhrTestData {
     )
 
 
-    fun createEhrTreatmentHistory() = EhrTreatmentHistory(
+    fun createEhrTreatmentHistory() = ProvidedTreatmentHistory(
         treatmentName = TREATMENT_NAME,
         administeredCycles = 1,
         intendedCycles = 1,
@@ -48,7 +48,7 @@ object EhrTestData {
         )
     )
 
-    fun createEhrModification() = EhrTreatmentModification(
+    fun createEhrModification() = ProvidedTreatmentModification(
         name = MODIFICATION_NAME, administeredCycles = 2, date = LocalDate.of(2024, 2, 23)
     )
 }

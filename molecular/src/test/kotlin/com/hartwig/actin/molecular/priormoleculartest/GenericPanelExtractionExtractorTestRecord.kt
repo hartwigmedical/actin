@@ -32,7 +32,7 @@ class GenericPanelExtractionExtractorTestRecord {
         )
         val molecularTests = extractor.extract(priorMolecularTests)
 
-        val expected = GenericPanelExtraction(GenericPanelType.AVL, variants = listOf(GenericVariant(GENE, HGVS)))
+        val expected = GenericPanelExtraction(GenericPanelType.AVL, variants = listOf(GenericVariant(GENE, HGVS_CODING)))
         assertThat(molecularTests).containsExactly(expected)
     }
 
@@ -45,6 +45,24 @@ class GenericPanelExtractionExtractorTestRecord {
             GenericPanelType.FREE_TEXT,
             variants = emptyList(),
             fusions = listOf(GenericFusion(GENE_UP, GENE_DOWN))
+        )
+        assertThat(molecularTests).containsExactly(expected)
+    }
+
+    @Test
+    fun `Should extract protein and coding variants`() {
+        val priorMolecularTests = listOf(
+            freetextPriorMolecularVariantRecord(GENE, HGVS_CODING),
+            freetextPriorMolecularVariantRecord(GENE, HGVS_PROTEIN)
+        )
+        val molecularTests = extractor.extract(priorMolecularTests)
+
+        val expected = GenericPanelExtraction(
+            GenericPanelType.FREE_TEXT,
+            variants = listOf(
+                GenericVariant(GENE, HGVS_CODING),
+                GenericVariant(GENE, HGVS_PROTEIN)
+            )
         )
         assertThat(molecularTests).containsExactly(expected)
     }
