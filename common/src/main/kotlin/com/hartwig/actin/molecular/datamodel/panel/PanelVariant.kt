@@ -25,7 +25,7 @@ class PanelVariant(
     override val isHotspot: Boolean,
     override val canonicalImpact: TranscriptImpact
 ) : Variant, PanelEvent {
-    override val clonalLikelihood = 0.0
+    override val clonalLikelihood = 0.5
     override fun impactsGene(gene: String): Boolean {
         return this.gene == gene
     }
