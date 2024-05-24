@@ -13,12 +13,13 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class GeneHasActivatingMutationTest {
     private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
@@ -266,6 +267,16 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
+    @Test
+    fun `Should pass for exon deletion in Panel`() {
+        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
+        )
+
+        val evaluation = functionNotIgnoringCodons.evaluate(patient)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+    }
+
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
@@ -359,6 +370,19 @@ class GeneHasActivatingMutationTest {
             ),
             fusions = emptyList(),
             date = TEST_DATE
+        )
+
+        private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanel(
+            date = TEST_DATE,
+            panelType = GenericPanelType.FREE_TEXT,
+            variants = emptyList(),
+            fusions = emptyList(),
+            exonDeletions = listOf(
+                GenericExonDeletion(
+                    gene = GENE,
+                    affectedExon = 1,
+                ),
+            )
         )
     }
 }

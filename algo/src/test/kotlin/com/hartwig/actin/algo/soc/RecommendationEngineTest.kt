@@ -238,7 +238,7 @@ class RecommendationEngineTest {
         ).map(TREATMENT_DATABASE::findTreatmentByName)
 
         assertThat(patientResults.map(TreatmentCandidate::treatment))
-            .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + COMMON_FIRST_LINE_CHEMOTHERAPIES + firstLineEgfrTherapies)
+            .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + COMMON_FIRST_LINE_THERAPIES + firstLineEgfrTherapies)
     }
 
     @Test
@@ -259,8 +259,13 @@ class RecommendationEngineTest {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MOLECULAR_RECORD_WITH_OTHER_BRAF_MUTATION, "rectum"
         )
-        val expectedAdditionalTherapies =
-            listOf(CETUXIMAB, PANITUMUMAB, IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
+        val expectedAdditionalTherapies = listOf(
+            CETUXIMAB,
+            PANITUMUMAB,
+            IRINOTECAN,
+            TRIFLURIDINE_TIPIRACIL,
+            TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB
+        ).map(TREATMENT_DATABASE::findTreatmentByName)
 
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalTherapies)
@@ -270,7 +275,7 @@ class RecommendationEngineTest {
     fun `Should recommend expected treatments for patient with BRAF V600E in first line`() {
         val firstLinePatientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), MOLECULAR_RECORD_WITH_BRAF_V600E)
         assertThat(firstLinePatientResults.map(TreatmentCandidate::treatment))
-            .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + COMMON_FIRST_LINE_CHEMOTHERAPIES)
+            .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + COMMON_FIRST_LINE_THERAPIES)
     }
 
     @Test
@@ -286,8 +291,12 @@ class RecommendationEngineTest {
         val thirdLinePatientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MOLECULAR_RECORD_WITH_BRAF_V600E
         )
-        val expectedAdditionalCandidates =
-            listOf(ENCORAFENIB_CETUXIMAB, IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
+        val expectedAdditionalCandidates = listOf(
+            ENCORAFENIB_CETUXIMAB,
+            IRINOTECAN,
+            TRIFLURIDINE_TIPIRACIL,
+            TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB
+        ).map(TREATMENT_DATABASE::findTreatmentByName)
         assertThat(thirdLinePatientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalCandidates)
     }
@@ -297,7 +306,7 @@ class RecommendationEngineTest {
         val patientResults = resultsForPatientWithHistoryAndMolecular(emptyList(), MINIMAL_MOLECULAR_RECORD, "ascending colon")
 
         assertThat(patientResults.map(TreatmentCandidate::treatment))
-            .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + COMMON_FIRST_LINE_CHEMOTHERAPIES)
+            .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + COMMON_FIRST_LINE_THERAPIES)
     }
 
     @Test
@@ -314,7 +323,8 @@ class RecommendationEngineTest {
         val patientResults = resultsForPatientWithHistoryAndMolecular(
             listOf("CHEMOTHERAPY", "TARGETED_THERAPY"), MINIMAL_MOLECULAR_RECORD, "ascending colon"
         )
-        val expectedAdditionalCandidates = listOf(IRINOTECAN, TRIFLURIDINE_TIPIRACIL).map(TREATMENT_DATABASE::findTreatmentByName)
+        val expectedAdditionalCandidates =
+            listOf(IRINOTECAN, TRIFLURIDINE_TIPIRACIL, TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB).map(TREATMENT_DATABASE::findTreatmentByName)
         assertThat(patientResults.map(TreatmentCandidate::treatment))
             .containsExactlyInAnyOrderElementsOf(ALWAYS_AVAILABLE_TREATMENTS + expectedAdditionalCandidates)
     }
@@ -412,7 +422,7 @@ class RecommendationEngineTest {
         private val ALWAYS_AVAILABLE_TREATMENTS = CrcDecisionTree.commonChemotherapies.map {
             TREATMENT_DATABASE.findTreatmentByName(it)!!
         }
-        private val COMMON_FIRST_LINE_CHEMOTHERAPIES = CrcDecisionTree.commonChemotherapies.map {
+        private val COMMON_FIRST_LINE_THERAPIES = CrcDecisionTree.commonChemotherapies.map {
             TREATMENT_CANDIDATE_DATABASE.treatmentCandidateWithBevacizumab(it).treatment
         }
 

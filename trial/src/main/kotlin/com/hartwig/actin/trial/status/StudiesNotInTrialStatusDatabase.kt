@@ -8,5 +8,7 @@ object StudiesNotInTrialStatusDatabase {
         return FileUtil.createObjectsFromTsv(tsv, ::create).toSet()
     }
 
-    private fun create(fields: Map<String, Int>, parts: List<String>): String = parts[fields["StudyNotInTrialStatusDatabase"]!!]
+    private fun create(fields: Map<String, Int>, parts: List<String>): String {
+        return parts[fields["studyNotInTrialStatusDatabase"]!!]
+    }
 }

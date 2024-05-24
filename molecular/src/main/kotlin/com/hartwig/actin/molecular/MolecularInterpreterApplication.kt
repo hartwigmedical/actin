@@ -69,46 +69,54 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         clinical: ClinicalRecord, orangeRefGenomeVersion: OrangeRefGenomeVersion
     ): Pair<KnownEvents, EvidenceDatabase> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
-        val knownEvents = KnownEventsLoader.readFromDir(config.serveDirectory, serveRefGenomeVersion)
-        val evidenceDatabase = loadEvidenceDatabase(config.serveDirectory, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
+        val serveDirectoryWithGenome = "${config.serveDirectory}/${serveRefGenomeVersion.name.lowercase().replace("v", "")}"
+        val knownEvents = KnownEventsLoader.readFromDir(
+            serveDirectoryWithGenome,
+            serveRefGenomeVersion
+        )
+        val evidenceDatabase = loadEvidenceDatabase(serveDirectoryWithGenome, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
         return Pair(knownEvents, evidenceDatabase)
+    }
+
+    private fun loadEvidenceDatabase(
+        serveDirectoryWithGenome: String,
+        doidJson: String,
+        serveRefGenomeVersion: RefGenome,
+        knownEvents: KnownEvents,
+        clinical: ClinicalRecord
+    ): EvidenceDatabase {
+        val actionableEvents = ActionableEventsLoader.readFromDir(serveDirectoryWithGenome, serveRefGenomeVersion)
+
+        val tumorDoids = clinical.tumor.doids.orEmpty().toSet()
+        if (tumorDoids.isEmpty()) {
+            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId)
+        } else {
+            LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
+        }
+
+        LOGGER.info("Loading DOID tree from {}", doidJson)
+        val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
+
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+        return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
+    }
+
+    private fun toServeRefGenomeVersion(refGenomeVersion: OrangeRefGenomeVersion): RefGenome {
+        return when (refGenomeVersion) {
+            OrangeRefGenomeVersion.V37 -> {
+                RefGenome.V37
+            }
+
+            OrangeRefGenomeVersion.V38 -> {
+                RefGenome.V38
+            }
+        }
     }
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
         const val APPLICATION: String = "ACTIN ORANGE Interpreter"
         private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion
-
-        private fun loadEvidenceDatabase(
-            serveDirectory: String, doidJson: String, serveRefGenomeVersion: RefGenome, knownEvents: KnownEvents, clinical: ClinicalRecord
-        ): EvidenceDatabase {
-            val actionableEvents = ActionableEventsLoader.readFromDir(serveDirectory, serveRefGenomeVersion)
-
-            val tumorDoids = clinical.tumor.doids.orEmpty().toSet()
-            if (tumorDoids.isEmpty()) {
-                LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId)
-            } else {
-                LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
-            }
-
-            LOGGER.info("Loading DOID tree from {}", doidJson)
-            val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
-
-            LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
-            return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
-        }
-
-        private fun toServeRefGenomeVersion(refGenomeVersion: OrangeRefGenomeVersion): RefGenome {
-            return when (refGenomeVersion) {
-                OrangeRefGenomeVersion.V37 -> {
-                    RefGenome.V37
-                }
-
-                OrangeRefGenomeVersion.V38 -> {
-                    RefGenome.V38
-                }
-            }
-        }
     }
 }
 

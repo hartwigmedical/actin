@@ -40,9 +40,9 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
     }
 
     private fun readStudiesNotInTrialStatusDatabaseStudies(tsv: String): Set<String> {
-        val notInCTCStudies = StudiesNotInTrialStatusDatabase.read(tsv)
-        LOGGER.info(" Read {} studies not in trial status database from {}", notInCTCStudies.size, tsv)
-        return notInCTCStudies
+        val notInTrialStatusDatabaseStudies = StudiesNotInTrialStatusDatabase.read(tsv)
+        LOGGER.info(" Read {} studies not in trial status database from {}", notInTrialStatusDatabaseStudies.size, tsv)
+        return notInTrialStatusDatabaseStudies
     }
 
     companion object {

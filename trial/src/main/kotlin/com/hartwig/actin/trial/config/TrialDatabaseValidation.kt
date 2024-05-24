@@ -26,7 +26,7 @@ data class InclusionCriteriaValidationError(
     override val message: String
 ) : TrialValidationError<InclusionCriteriaConfig> {
     override fun configFormat(config: InclusionCriteriaConfig): String {
-        return "trial id=${config.trialId} cohorts=${config.appliesToCohorts}"
+        return "trial id=${config.trialId} rule=${config.inclusionRule}"
     }
 }
 
