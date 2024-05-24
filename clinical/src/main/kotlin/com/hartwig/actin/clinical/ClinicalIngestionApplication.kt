@@ -4,7 +4,7 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
-import com.hartwig.actin.clinical.feed.standard.StandardProvidedDataIngestion
+import com.hartwig.actin.clinical.feed.standard.StandardDataIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -56,7 +56,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 curationDatabaseContext,
                 atcModel,
                 doidModel
-            ) else StandardProvidedDataIngestion.create(
+            ) else StandardDataIngestion.create(
             config.feedDirectory,
             curationDatabaseContext,
             atcModel,

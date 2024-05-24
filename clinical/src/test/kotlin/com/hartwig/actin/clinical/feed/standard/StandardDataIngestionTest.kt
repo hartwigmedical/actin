@@ -19,7 +19,7 @@ import org.junit.Test
 private val INPUT_JSON = resourceOnClasspath("feed/standard/input")
 private val OUTPUT_RECORD_JSON = resourceOnClasspath("feed/standard/output/ACTN01029999.clinical.json")
 
-class StandardProvidedDataIngestionTest {
+class StandardDataIngestionTest {
 
     @Test
     fun `Should load EHR data from json and convert to clinical record`() {
@@ -45,43 +45,43 @@ class StandardProvidedDataIngestionTest {
             CurationDoidValidator(doidModel),
             TestTreatmentDatabaseFactory.createProper()
         )
-        val feed = StandardProvidedDataIngestion(
+        val feed = StandardDataIngestion(
             directory = INPUT_JSON,
-            medicationExtractor = ProvidedMedicationExtractor(
+            medicationExtractor = StandardMedicationExtractor(
                 atcModel = TestAtcFactory.createProperAtcModel(),
                 qtProlongatingRiskCuration = curationDatabase.qtProlongingCuration,
                 cypInteractionCuration = curationDatabase.cypInteractionCuration
             ),
-            surgeryExtractor = ProvidedSurgeryExtractor(),
-            toxicityExtractor = ProvidedToxicityExtractor(curationDatabase.toxicityCuration),
-            vitalFunctionsExtractor = ProvidedVitalFunctionsExtractor(),
-            priorOtherConditionsExtractor = ProvidedPriorOtherConditionsExtractor(
+            surgeryExtractor = StandardSurgeryExtractor(),
+            toxicityExtractor = StandardToxicityExtractor(curationDatabase.toxicityCuration),
+            vitalFunctionsExtractor = StandardVitalFunctionsExtractor(),
+            priorOtherConditionsExtractor = StandardPriorOtherConditionsExtractor(
                 curationDatabase.nonOncologicalHistoryCuration,
                 curationDatabase.treatmentHistoryEntryCuration
             ),
-            intolerancesExtractor = ProvidedIntolerancesExtractor(
+            intolerancesExtractor = StandardIntolerancesExtractor(
                 TestAtcFactory.createProperAtcModel(),
                 curationDatabase.intoleranceCuration
             ),
-            complicationExtractor = ProvidedComplicationExtractor(curationDatabase.complicationCuration),
-            treatmentHistoryExtractor = ProvidedTreatmentHistoryExtractor(
+            complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
+            treatmentHistoryExtractor = StandardTreatmentHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration,
                 curationDatabase.nonOncologicalHistoryCuration
             ),
-            secondPrimaryExtractor = ProvidedPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
+            secondPrimaryExtractor = StandardPriorPrimariesExtractor(curationDatabase.secondPrimaryCuration),
 
-            patientDetailsExtractor = ProvidedPatientDetailsExtractor(),
-            tumorDetailsExtractor = ProvidedTumorDetailsExtractor(
+            patientDetailsExtractor = StandardPatientDetailsExtractor(),
+            tumorDetailsExtractor = StandardTumorDetailsExtractor(
                 curationDatabase.primaryTumorCuration,
                 curationDatabase.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
-            labValuesExtractor = ProvidedLabValuesExtractor(curationDatabase.laboratoryTranslation),
-            clinicalStatusExtractor = ProvidedClinicalStatusExtractor(),
-            bodyWeightExtractor = ProvidedBodyWeightExtractor(),
-            bodyHeightExtractor = ProvidedBodyHeightExtractor(),
-            bloodTransfusionExtractor = ProvidedBloodTransfusionExtractor(),
-            molecularTestExtractor = ProvidedMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
+            labValuesExtractor = StandardLabValuesExtractor(curationDatabase.laboratoryTranslation),
+            clinicalStatusExtractor = StandardClinicalStatusExtractor(),
+            bodyWeightExtractor = StandardBodyWeightExtractor(),
+            bodyHeightExtractor = StandardBodyHeightExtractor(),
+            bloodTransfusionExtractor = StandardBloodTransfusionExtractor(),
+            molecularTestExtractor = StandardMolecularTestExtractor(curationDatabase.molecularTestIhcCuration),
             dataQualityMask = DataQualityMask()
         )
         val expected = ClinicalRecordJson.read(OUTPUT_RECORD_JSON)

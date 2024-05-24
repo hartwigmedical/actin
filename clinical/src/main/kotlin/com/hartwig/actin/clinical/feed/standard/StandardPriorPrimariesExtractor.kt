@@ -8,8 +8,8 @@ import com.hartwig.actin.clinical.curation.config.SecondPrimaryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 
-class ProvidedPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatabase<SecondPrimaryConfig>) :
-    ProvidedDataExtractor<List<PriorSecondPrimary>> {
+class StandardPriorPrimariesExtractor(private val priorPrimaryCuration: CurationDatabase<SecondPrimaryConfig>) :
+    StandardDataExtractor<List<PriorSecondPrimary>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorSecondPrimary>> {
         val priorPrimaries = fromPriorPrimaries(ehrPatientRecord)
         val priorPrimariesFromPriorOtherConditions = fromPriorOtherConditions(ehrPatientRecord)

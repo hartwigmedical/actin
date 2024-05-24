@@ -41,10 +41,10 @@ private val LAB_VALUE = LabValue(
     refLimitLow = 12.0
 )
 
-class ProvidedLabValuesExtractorTest {
+class StandardLabValuesExtractorTest {
 
     private val labTranslationDatabase = mockk<TranslationDatabase<LaboratoryIdentifiers>>()
-    private val extractor = ProvidedLabValuesExtractor(labTranslationDatabase)
+    private val extractor = StandardLabValuesExtractor(labTranslationDatabase)
 
     @Test
     fun `Should extract and translate lab values with known units`() {

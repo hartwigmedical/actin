@@ -9,11 +9,11 @@ import com.hartwig.actin.clinical.curation.config.IntoleranceConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.Intolerance
 
-class ProvidedIntolerancesExtractor(
+class StandardIntolerancesExtractor(
     private val atcModel: AtcModel,
     private val intoleranceCuration: CurationDatabase<IntoleranceConfig>
 ) :
-    ProvidedDataExtractor<List<Intolerance>> {
+    StandardDataExtractor<List<Intolerance>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Intolerance>> {
         val intolerancesFromAllergies = ehrPatientRecord.allergies.map {
             Intolerance(

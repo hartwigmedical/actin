@@ -21,7 +21,7 @@ class ProvidedClinicalStatusExtractorTest {
                 ProvidedComplication(name = "complication", startDate = LocalDate.of(2024, 2, 26), endDate = LocalDate.of(2024, 2, 26))
             )
         )
-        val result = ProvidedClinicalStatusExtractor().extract(ehrPatientRecord)
+        val result = StandardClinicalStatusExtractor().extract(ehrPatientRecord)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).isEqualTo(
             ClinicalStatus(
@@ -41,7 +41,7 @@ class ProvidedClinicalStatusExtractorTest {
                 )
             )
         )
-        val result = ProvidedClinicalStatusExtractor().extract(ehrPatientRecord)
+        val result = StandardClinicalStatusExtractor().extract(ehrPatientRecord)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).isEqualTo(
             ClinicalStatus(
@@ -54,7 +54,7 @@ class ProvidedClinicalStatusExtractorTest {
     @Test
     fun `Should extract clinical status when there are no who evaluations`() {
         val ehrPatientRecord = createEhrPatientRecord()
-        val result = ProvidedClinicalStatusExtractor().extract(ehrPatientRecord)
+        val result = StandardClinicalStatusExtractor().extract(ehrPatientRecord)
         assertThat(result.evaluation.warnings).isEmpty()
         assertThat(result.extracted).isEqualTo(
             ClinicalStatus(

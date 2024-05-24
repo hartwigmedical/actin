@@ -14,11 +14,11 @@ import com.hartwig.actin.clinical.feed.tumor.TumorStageDeriver
 
 private const val CONCLUSIE_ = "Conclusie:"
 
-class ProvidedTumorDetailsExtractor(
+class StandardTumorDetailsExtractor(
     private val primaryTumorConfigCurationDatabase: CurationDatabase<PrimaryTumorConfig>,
     private val lesionCurationDatabase: CurationDatabase<LesionLocationConfig>,
     private val tumorStageDeriver: TumorStageDeriver
-) : ProvidedDataExtractor<TumorDetails> {
+) : StandardDataExtractor<TumorDetails> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<TumorDetails> {
         val input = "${ehrPatientRecord.tumorDetails.tumorLocation} | ${ehrPatientRecord.tumorDetails.tumorType}"

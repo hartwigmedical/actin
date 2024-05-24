@@ -25,7 +25,7 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
 )
 class ProvidedBodyHeightExtractorTest {
 
-    private val extractor = ProvidedBodyHeightExtractor()
+    private val extractor = StandardBodyHeightExtractor()
 
     @Test
     fun `Should extract body height from EHR`() {

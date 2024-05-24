@@ -20,25 +20,25 @@ import java.util.stream.Collectors
 import kotlin.io.path.name
 
 
-class StandardProvidedDataIngestion(
+class StandardDataIngestion(
     private val directory: String,
-    private val medicationExtractor: ProvidedMedicationExtractor,
-    private val surgeryExtractor: ProvidedSurgeryExtractor,
-    private val intolerancesExtractor: ProvidedIntolerancesExtractor,
-    private val vitalFunctionsExtractor: ProvidedVitalFunctionsExtractor,
-    private val bloodTransfusionExtractor: ProvidedBloodTransfusionExtractor,
-    private val labValuesExtractor: ProvidedLabValuesExtractor,
-    private val toxicityExtractor: ProvidedToxicityExtractor,
-    private val complicationExtractor: ProvidedComplicationExtractor,
-    private val priorOtherConditionsExtractor: ProvidedPriorOtherConditionsExtractor,
-    private val treatmentHistoryExtractor: ProvidedTreatmentHistoryExtractor,
-    private val clinicalStatusExtractor: ProvidedClinicalStatusExtractor,
-    private val tumorDetailsExtractor: ProvidedTumorDetailsExtractor,
-    private val secondPrimaryExtractor: ProvidedPriorPrimariesExtractor,
-    private val patientDetailsExtractor: ProvidedPatientDetailsExtractor,
-    private val bodyWeightExtractor: ProvidedBodyWeightExtractor,
-    private val bodyHeightExtractor: ProvidedBodyHeightExtractor,
-    private val molecularTestExtractor: ProvidedMolecularTestExtractor,
+    private val medicationExtractor: StandardMedicationExtractor,
+    private val surgeryExtractor: StandardSurgeryExtractor,
+    private val intolerancesExtractor: StandardIntolerancesExtractor,
+    private val vitalFunctionsExtractor: StandardVitalFunctionsExtractor,
+    private val bloodTransfusionExtractor: StandardBloodTransfusionExtractor,
+    private val labValuesExtractor: StandardLabValuesExtractor,
+    private val toxicityExtractor: StandardToxicityExtractor,
+    private val complicationExtractor: StandardComplicationExtractor,
+    private val priorOtherConditionsExtractor: StandardPriorOtherConditionsExtractor,
+    private val treatmentHistoryExtractor: StandardTreatmentHistoryExtractor,
+    private val clinicalStatusExtractor: StandardClinicalStatusExtractor,
+    private val tumorDetailsExtractor: StandardTumorDetailsExtractor,
+    private val secondPrimaryExtractor: StandardPriorPrimariesExtractor,
+    private val patientDetailsExtractor: StandardPatientDetailsExtractor,
+    private val bodyWeightExtractor: StandardBodyWeightExtractor,
+    private val bodyHeightExtractor: StandardBodyHeightExtractor,
+    private val molecularTestExtractor: StandardMolecularTestExtractor,
     private val dataQualityMask: DataQualityMask
 ) : ClinicalFeedIngestion {
     private val mapper = ObjectMapper().apply {
@@ -135,41 +135,41 @@ class StandardProvidedDataIngestion(
             curationDatabaseContext: CurationDatabaseContext,
             atcModel: AtcModel,
             doidModel: DoidModel
-        ) = StandardProvidedDataIngestion(
+        ) = StandardDataIngestion(
             directory,
-            ProvidedMedicationExtractor(
+            StandardMedicationExtractor(
                 atcModel,
                 curationDatabaseContext.qtProlongingCuration,
                 curationDatabaseContext.cypInteractionCuration
             ),
-            ProvidedSurgeryExtractor(),
-            ProvidedIntolerancesExtractor(
+            StandardSurgeryExtractor(),
+            StandardIntolerancesExtractor(
                 atcModel,
                 curationDatabaseContext.intoleranceCuration
             ),
-            ProvidedVitalFunctionsExtractor(),
-            ProvidedBloodTransfusionExtractor(),
-            ProvidedLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
-            ProvidedToxicityExtractor(curationDatabaseContext.toxicityCuration),
-            ProvidedComplicationExtractor(curationDatabaseContext.complicationCuration),
-            ProvidedPriorOtherConditionsExtractor(
+            StandardVitalFunctionsExtractor(),
+            StandardBloodTransfusionExtractor(),
+            StandardLabValuesExtractor(curationDatabaseContext.laboratoryTranslation),
+            StandardToxicityExtractor(curationDatabaseContext.toxicityCuration),
+            StandardComplicationExtractor(curationDatabaseContext.complicationCuration),
+            StandardPriorOtherConditionsExtractor(
                 curationDatabaseContext.nonOncologicalHistoryCuration,
                 curationDatabaseContext.treatmentHistoryEntryCuration
             ),
-            ProvidedTreatmentHistoryExtractor(
+            StandardTreatmentHistoryExtractor(
                 curationDatabaseContext.treatmentHistoryEntryCuration,
                 curationDatabaseContext.nonOncologicalHistoryCuration
             ),
-            ProvidedClinicalStatusExtractor(),
-            ProvidedTumorDetailsExtractor(
+            StandardClinicalStatusExtractor(),
+            StandardTumorDetailsExtractor(
                 curationDatabaseContext.primaryTumorCuration, curationDatabaseContext.lesionLocationCuration,
                 TumorStageDeriver.create(doidModel)
             ),
-            ProvidedPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
-            ProvidedPatientDetailsExtractor(),
-            ProvidedBodyWeightExtractor(),
-            ProvidedBodyHeightExtractor(),
-            ProvidedMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
+            StandardPriorPrimariesExtractor(curationDatabaseContext.secondPrimaryCuration),
+            StandardPatientDetailsExtractor(),
+            StandardBodyWeightExtractor(),
+            StandardBodyHeightExtractor(),
+            StandardMolecularTestExtractor(curationDatabaseContext.molecularTestIhcCuration),
             DataQualityMask()
         )
     }

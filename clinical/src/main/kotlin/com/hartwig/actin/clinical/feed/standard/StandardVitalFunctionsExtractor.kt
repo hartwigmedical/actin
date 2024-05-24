@@ -5,7 +5,7 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 
-class ProvidedVitalFunctionsExtractor : ProvidedDataExtractor<List<VitalFunction>> {
+class StandardVitalFunctionsExtractor : StandardDataExtractor<List<VitalFunction>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<VitalFunction>> {
         return ExtractionResult(ehrPatientRecord.measurements.filter {
             !setOf(

@@ -83,13 +83,13 @@ private val TREATMENT_HISTORY_FALLBACK = TREATMENT_HISTORY_ENTRY.copy(
     )
 )
 
-class ProvidedTreatmentHistoryExtractorTest {
+class StandardTreatmentHistoryExtractorTest {
 
     private val treatmentCurationDatabase = mockk<CurationDatabase<TreatmentHistoryEntryConfig>>()
     private val nonOncologicalHistoryCuration = mockk<CurationDatabase<NonOncologicalHistoryConfig>> {
         every { find(any()) } returns emptySet()
     }
-    private val extractor = ProvidedTreatmentHistoryExtractor(treatmentCurationDatabase, nonOncologicalHistoryCuration)
+    private val extractor = StandardTreatmentHistoryExtractor(treatmentCurationDatabase, nonOncologicalHistoryCuration)
 
     @Test
     fun `Should filter treatment history entry and warn when no curation for treatment name`() {

@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
 
-class ProvidedBloodTransfusionExtractor : ProvidedDataExtractor<List<BloodTransfusion>> {
+class StandardBloodTransfusionExtractor : StandardDataExtractor<List<BloodTransfusion>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<BloodTransfusion>> {
         return ExtractionResult(ehrPatientRecord.bloodTransfusions.map {
             BloodTransfusion(

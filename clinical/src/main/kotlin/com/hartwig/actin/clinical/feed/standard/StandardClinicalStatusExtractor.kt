@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 
-class ProvidedClinicalStatusExtractor : ProvidedDataExtractor<ClinicalStatus> {
+class StandardClinicalStatusExtractor : StandardDataExtractor<ClinicalStatus> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<ClinicalStatus> {
         val mostRecentWho = ehrPatientRecord.whoEvaluations.maxByOrNull { who -> who.evaluationDate }
         val whoAsInteger = mostRecentWho?.let { parseRangeAndUseLowerValue(it.status) }

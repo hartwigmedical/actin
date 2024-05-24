@@ -41,12 +41,12 @@ private val EHR_PATIENT_RECORD_WITH_PATHOLOGY_AND_MOLECULAR =
 private val UNUSED_DATE = LocalDate.of(2024, 4, 15)
 
 
-class ProvidedMolecularTestExtractorTest {
+class StandardMolecularTestExtractorTest {
 
     private val molecularTestCuration = mockk<CurationDatabase<MolecularTestConfig>> {
         every { find(any()) } returns emptySet()
     }
-    private val extractor = ProvidedMolecularTestExtractor(molecularTestCuration)
+    private val extractor = StandardMolecularTestExtractor(molecularTestCuration)
 
     @Test
     fun `Should return no molecular test configs when tumor differentiation is null`() {

@@ -11,11 +11,11 @@ import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluati
 import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Medication
 
-class ProvidedMedicationExtractor(
+class StandardMedicationExtractor(
     private val atcModel: AtcModel,
     private val qtProlongatingRiskCuration: CurationDatabase<QTProlongatingConfig>,
     private val cypInteractionCuration: CurationDatabase<CypInteractionConfig>
-) : ProvidedDataExtractor<List<Medication>?> {
+) : StandardDataExtractor<List<Medication>?> {
 
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<Medication>?> {
         return ExtractionResult(ehrPatientRecord.medications?.map {

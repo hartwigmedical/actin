@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.ExtractionResult
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.BodyHeight
 
-class ProvidedBodyHeightExtractor : ProvidedDataExtractor<List<BodyHeight>> {
+class StandardBodyHeightExtractor : StandardDataExtractor<List<BodyHeight>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<BodyHeight>> {
         return ExtractionResult(ehrPatientRecord.measurements
             .filter {

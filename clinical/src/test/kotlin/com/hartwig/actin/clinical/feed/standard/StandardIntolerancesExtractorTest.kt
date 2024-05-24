@@ -34,13 +34,13 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
     )
 )
 
-class ProvidedIntolerancesExtractorTest {
+class StandardIntolerancesExtractorTest {
 
     private val atcModel = mockk<AtcModel>()
     private val intoleranceCuration = mockk<CurationDatabase<IntoleranceConfig>> {
         every { find(any()) } returns emptySet()
     }
-    private val extractor = ProvidedIntolerancesExtractor(atcModel, intoleranceCuration)
+    private val extractor = StandardIntolerancesExtractor(atcModel, intoleranceCuration)
 
     @Test
     fun `Should extract intolerances from allergies when no curation present`() {

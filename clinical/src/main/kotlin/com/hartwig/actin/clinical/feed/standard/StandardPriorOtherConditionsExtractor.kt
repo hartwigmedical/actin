@@ -10,11 +10,11 @@ import com.hartwig.actin.clinical.curation.config.TreatmentHistoryEntryConfig
 import com.hartwig.actin.clinical.curation.extraction.CurationExtractionEvaluation
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 
-class ProvidedPriorOtherConditionsExtractor(
+class StandardPriorOtherConditionsExtractor(
     private val priorOtherConditionsCuration: CurationDatabase<NonOncologicalHistoryConfig>,
     private val oncologicalHistoryCuration: CurationDatabase<TreatmentHistoryEntryConfig>
 ) :
-    ProvidedDataExtractor<List<PriorOtherCondition>> {
+    StandardDataExtractor<List<PriorOtherCondition>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorOtherCondition>> {
         return ehrPatientRecord.priorOtherConditions.filter { oncologicalHistoryCuration.find(it.name).all(CurationConfig::ignore) }.map {
             val curatedPriorOtherCondition = CurationResponse.createFromConfigs(

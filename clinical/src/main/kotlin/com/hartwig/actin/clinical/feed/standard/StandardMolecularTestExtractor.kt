@@ -10,9 +10,9 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 
 private const val IHC_STRING = "immunohistochemie"
 
-class ProvidedMolecularTestExtractor(
+class StandardMolecularTestExtractor(
     private val molecularTestCuration: CurationDatabase<MolecularTestConfig>
-) : ProvidedDataExtractor<List<PriorMolecularTest>> {
+) : StandardDataExtractor<List<PriorMolecularTest>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<PriorMolecularTest>> {
         val extractedIHCTests = extractIHC(molecularTestCuration, ehrPatientRecord)
         val extractedFromPriorOtherConditions = extractFromPriorOtherConditions(ehrPatientRecord)

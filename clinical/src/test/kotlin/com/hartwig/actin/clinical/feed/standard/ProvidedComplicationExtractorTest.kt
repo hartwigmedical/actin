@@ -47,7 +47,7 @@ class ProvidedComplicationExtractorTest {
 
     private fun assertExtractionResult(providedComplication: ProvidedComplication): Complication {
         val ehrPatientRecord = EhrTestData.createEhrPatientRecord().copy(complications = listOf(providedComplication))
-        val result = ProvidedComplicationExtractor(curationDb).extract(ehrPatientRecord)
+        val result = StandardComplicationExtractor(curationDb).extract(ehrPatientRecord)
         assertThat(result.extracted.size).isEqualTo(1)
         val extracted = result.extracted[0]
         assertThat(extracted.name).isEqualTo(COMPLICATION_NAME)

@@ -25,7 +25,7 @@ private val EHR_PATIENT_RECORD = EhrTestData.createEhrPatientRecord().copy(
 
 class ProvidedBodyWeightExtractorTest {
 
-    private val extractor = ProvidedBodyWeightExtractor()
+    private val extractor = StandardBodyWeightExtractor()
 
     @Test
     fun `Should extract body weight from EHR`() {

@@ -9,7 +9,7 @@ import com.hartwig.actin.clinical.curation.translation.TranslationDatabase
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 
-class ProvidedLabValuesExtractor(private val labTranslation: TranslationDatabase<LaboratoryIdentifiers>) : ProvidedDataExtractor<List<LabValue>> {
+class StandardLabValuesExtractor(private val labTranslation: TranslationDatabase<LaboratoryIdentifiers>) : StandardDataExtractor<List<LabValue>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<LabValue>> {
         return ehrPatientRecord.labValues.map {
             val translation = labTranslation.find(LaboratoryIdentifiers(it.measureCode, it.measure))

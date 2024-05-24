@@ -17,10 +17,10 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
 private const val TREATMENT_HISTORY = "treatment history"
 
-class ProvidedTreatmentHistoryExtractor(
+class StandardTreatmentHistoryExtractor(
     private val treatmentCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
     private val nonOncologicalHistoryCuration: CurationDatabase<NonOncologicalHistoryConfig>
-) : ProvidedDataExtractor<List<TreatmentHistoryEntry>> {
+) : StandardDataExtractor<List<TreatmentHistoryEntry>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<TreatmentHistoryEntry>> {
         val oncologicalTreatmentHistory = oncologicalTreatmentHistory(ehrPatientRecord)
         val oncologicalPreviousConditions = getOncologicalPreviousConditions(ehrPatientRecord)

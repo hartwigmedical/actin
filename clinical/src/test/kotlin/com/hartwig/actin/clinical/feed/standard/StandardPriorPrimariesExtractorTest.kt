@@ -53,12 +53,12 @@ private val SECOND_PRIMARY_CONFIG = SecondPrimaryConfig(
 
 private val LUNG_PRIOR_SECOND_PRIMARY = BRAIN_PRIOR_SECOND_PRIMARY.copy(tumorLocation = "lung")
 
-class ProvidedPriorPrimariesExtractorTest {
+class StandardPriorPrimariesExtractorTest {
 
     private val secondPrimaryConfigCurationDatabase = mockk<CurationDatabase<SecondPrimaryConfig>> {
         every { find(any()) } returns emptySet()
     }
-    private val extractor = ProvidedPriorPrimariesExtractor(secondPrimaryConfigCurationDatabase)
+    private val extractor = StandardPriorPrimariesExtractor(secondPrimaryConfigCurationDatabase)
 
     @Test
     fun `Should curate and extract prior primary`() {

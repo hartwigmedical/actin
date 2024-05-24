@@ -103,7 +103,7 @@ private val BRAIN_AND_LUNG_LESION_TUMOR_DETAILS = TUMOR_DETAILS.copy(
     lungLesionsCount = 1
 )
 
-class ProvidedTumorDetailsExtractorTest {
+class StandardTumorDetailsExtractorTest {
 
     private val tumorCuration = mockk<CurationDatabase<PrimaryTumorConfig>>()
     private val lesionCuration = mockk<CurationDatabase<LesionLocationConfig>> {
@@ -112,7 +112,7 @@ class ProvidedTumorDetailsExtractorTest {
     private val tumorStageDeriver = mockk<TumorStageDeriver> {
         every { derive(any()) } returns null
     }
-    private val extractor = ProvidedTumorDetailsExtractor(tumorCuration, lesionCuration, tumorStageDeriver)
+    private val extractor = StandardTumorDetailsExtractor(tumorCuration, lesionCuration, tumorStageDeriver)
 
     @Test
     fun `Should curate primary tumor and extract tumor details, only drawing on curation for (sub)location, (sub)type and doids`() {

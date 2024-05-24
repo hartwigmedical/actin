@@ -20,13 +20,13 @@ import org.junit.Test
 private const val MEDICATION_NAME = "medication_name"
 private const val ATC_NAME = "atc_name"
 
-class ProvidedMedicationExtractorTest {
+class StandardMedicationExtractorTest {
 
     private val atcModel = mockk<AtcModel>()
     private val qtProlongatingRiskCuration = mockk<CurationDatabase<QTProlongatingConfig>>()
     private val cypInteractionCuration = mockk<CurationDatabase<CypInteractionConfig>>()
     private val atcClassification = atcClassification()
-    private val extractor = ProvidedMedicationExtractor(atcModel, qtProlongatingRiskCuration, cypInteractionCuration)
+    private val extractor = StandardMedicationExtractor(atcModel, qtProlongatingRiskCuration, cypInteractionCuration)
     private val providedMedication = ProvidedMedication(
         name = MEDICATION_NAME,
         atcCode = "atc",

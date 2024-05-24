@@ -33,11 +33,11 @@ private val EHR_PATIENT_RECORD_WITH_PRIOR_CONDITIONS = createEhrPatientRecord().
     )
 )
 
-class ProvidedPriorOtherConditionsExtractorTest {
+class StandardPriorOtherConditionsExtractorTest {
 
     private val priorOtherConditionsCuration = mockk<CurationDatabase<NonOncologicalHistoryConfig>>()
     private val oncologicalHistoryCuration = mockk<CurationDatabase<TreatmentHistoryEntryConfig>>()
-    private val extractor = ProvidedPriorOtherConditionsExtractor(priorOtherConditionsCuration, oncologicalHistoryCuration)
+    private val extractor = StandardPriorOtherConditionsExtractor(priorOtherConditionsCuration, oncologicalHistoryCuration)
 
 
     @Test

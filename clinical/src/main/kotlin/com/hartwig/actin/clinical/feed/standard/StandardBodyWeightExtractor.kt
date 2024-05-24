@@ -6,7 +6,7 @@ import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor.Companion.BODY_WEIGHT_EXPECTED_UNIT
 
 
-class ProvidedBodyWeightExtractor : ProvidedDataExtractor<List<BodyWeight>> {
+class StandardBodyWeightExtractor : StandardDataExtractor<List<BodyWeight>> {
     override fun extract(ehrPatientRecord: ProvidedPatientRecord): ExtractionResult<List<BodyWeight>> {
         return ExtractionResult(ehrPatientRecord.measurements
             .filter {
