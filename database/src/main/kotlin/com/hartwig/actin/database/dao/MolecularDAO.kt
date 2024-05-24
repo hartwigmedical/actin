@@ -1,19 +1,19 @@
 package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.database.Tables
+import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.Driver
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
-import com.hartwig.actin.molecular.datamodel.driver.Virus
+import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.wgs.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.PharmacoEntry
 import org.jooq.DSLContext
 import org.jooq.Record
 
@@ -223,7 +223,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeVariants(sampleId: String, variants: Set<Variant>) {
+    private fun writeVariants(sampleId: String, variants: Set<WgsVariant>) {
         for (variant in variants) {
             val variantId = context.insertInto(
                 Tables.VARIANT,
@@ -443,7 +443,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeFusions(sampleId: String, fusions: Set<Fusion>) {
+    private fun writeFusions(sampleId: String, fusions: Set<WgsFusion>) {
         for (fusion in fusions) {
             val fusionId = context.insertInto(
                 Tables.FUSION,

@@ -1,39 +1,30 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
-import com.hartwig.actin.molecular.datamodel.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.RegionType
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
-import com.hartwig.actin.molecular.datamodel.driver.VariantType
-import com.hartwig.actin.molecular.datamodel.driver.Virus
-import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
-import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.wgs.characteristics.CupPrediction
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.wgs.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
+import com.hartwig.actin.molecular.datamodel.wgs.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.wgs.immunology.HlaAllele
+import com.hartwig.actin.molecular.datamodel.wgs.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -187,7 +178,7 @@ object TestMolecularFactory {
         isAssociatedWithDrugResistance = null
     )
 
-    fun createProperVariant() = Variant(
+    fun createProperVariant() = WgsVariant(
         chromosome = "7",
         position = 140453136,
         ref = "T",
@@ -292,7 +283,7 @@ object TestMolecularFactory {
                 isAssociatedWithDrugResistance = null,
                 clusterGroup = 0
             ),
-            fusions = proper.fusions + Fusion(
+            fusions = proper.fusions + WgsFusion(
                 isReportable = true,
                 event = "EML4 - ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,

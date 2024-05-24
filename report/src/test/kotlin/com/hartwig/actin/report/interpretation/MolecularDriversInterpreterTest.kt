@@ -2,7 +2,6 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
@@ -12,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import com.hartwig.actin.molecular.datamodel.wgs.driver.MolecularDrivers
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

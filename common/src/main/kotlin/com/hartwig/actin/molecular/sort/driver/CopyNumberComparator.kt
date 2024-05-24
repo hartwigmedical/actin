@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.sort.driver
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
 
 class CopyNumberComparator : Comparator<CopyNumber> {
 

@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import java.time.LocalDate

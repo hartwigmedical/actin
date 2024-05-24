@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.panel.PanelDrivers
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction

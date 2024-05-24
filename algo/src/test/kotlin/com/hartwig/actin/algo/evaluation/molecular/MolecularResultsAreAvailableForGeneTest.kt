@@ -5,15 +5,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
 import org.junit.Test
 
 class MolecularResultsAreAvailableForGeneTest {

@@ -9,9 +9,9 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
 import org.junit.Test
 
 class HasCancerWithNeuroendocrineComponentTest {

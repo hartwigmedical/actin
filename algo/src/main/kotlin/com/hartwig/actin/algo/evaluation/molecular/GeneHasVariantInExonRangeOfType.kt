@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantType
+import com.hartwig.actin.molecular.datamodel.VariantType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
@@ -44,15 +44,15 @@ class GeneHasVariantInExonRangeOfType(
                 .map { variant ->
                     val (reportableMatches, unreportableMatches) = listOf(variant)
                         .filter { hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon) }
-                        .partition(Variant::isReportable)
+                        .partition(WgsVariant::isReportable)
 
                     val otherImpactMatches = if (!variant.isReportable) emptySet() else {
                         setOfNotNull(variant.otherImpacts.find { hasEffectInExonRange(it.affectedExon, minExon, maxExon) }
                             ?.let { variant.event })
                     }
                     Triple(
-                        reportableMatches.map(Variant::event).toSet(),
-                        unreportableMatches.map(Variant::event).toSet(),
+                        reportableMatches.map(WgsVariant::event).toSet(),
+                        unreportableMatches.map(WgsVariant::event).toSet(),
                         otherImpactMatches
                     )
                 }.fold(

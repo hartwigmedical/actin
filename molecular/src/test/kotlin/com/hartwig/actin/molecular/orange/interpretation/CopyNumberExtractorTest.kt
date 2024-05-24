@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory

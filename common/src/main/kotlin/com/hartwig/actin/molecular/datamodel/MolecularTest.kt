@@ -1,17 +1,13 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
-import com.hartwig.actin.molecular.interpreted.InterpretedDrivers
-import com.hartwig.actin.molecular.interpreted.InterpretedFusion
-import com.hartwig.actin.molecular.interpreted.InterpretedVariant
 import java.time.LocalDate
 
 const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
 const val AVL_PANEL = "AvL Panel"
 const val FREE_TEXT_PANEL = "Freetext"
 
-interface MolecularTest<D : InterpretedDrivers<out InterpretedVariant, out InterpretedFusion>> {
+interface MolecularTest<D : Drivers<out Variant, out Fusion>> {
     val type: ExperimentType
     val date: LocalDate?
     val drivers: D
@@ -48,7 +44,7 @@ data class OtherPriorMolecularTest(
     override fun isGeneTested(gene: String) = test.measure == gene
 }
 
-class UnknownDrivers : InterpretedDrivers<InterpretedVariant, InterpretedFusion> {
-    override val variants = emptySet<InterpretedVariant>()
-    override val fusions = emptySet<InterpretedFusion>()
+class UnknownDrivers : Drivers<Variant, Fusion> {
+    override val variants = emptySet<Variant>()
+    override val fusions = emptySet<Fusion>()
 }

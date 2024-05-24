@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.wgs.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
@@ -13,7 +13,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class FusionExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(linx: LinxRecord): MutableSet<Fusion> {
+    fun extract(linx: LinxRecord): MutableSet<WgsFusion> {
         return linx.allSomaticFusions().filter { fusion ->
             val included = geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())
             if (!included && fusion.reported()) {
@@ -25,7 +25,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
             included
         }
             .map { fusion ->
-                Fusion(
+                WgsFusion(
                     isReportable = fusion.reported(),
                     event = DriverEventFactory.fusionEvent(fusion),
                     driverLikelihood = determineDriverLikelihood(fusion),

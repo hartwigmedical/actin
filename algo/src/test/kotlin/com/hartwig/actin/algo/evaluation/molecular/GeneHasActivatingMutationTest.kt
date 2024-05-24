@@ -3,20 +3,20 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TEST_DATE
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.driver.Variant
 import com.hartwig.actin.molecular.datamodel.panel.PanelDrivers
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariant
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -266,7 +266,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
-    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
+    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: WgsVariant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
         // Repeat with high TML since unknown TML always results in a warning for reportable variants:
@@ -277,12 +277,12 @@ class GeneHasActivatingMutationTest {
         }
     }
 
-    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: Variant) {
+    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: WgsVariant) {
         assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, null)
         assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, true)
     }
 
-    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
+    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: WgsVariant, hasHighTML: Boolean?) {
         assertMolecularEvaluation(
             expectedResult,
             functionNotIgnoringCodons.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
@@ -292,7 +292,7 @@ class GeneHasActivatingMutationTest {
         }
     }
 
-    private fun assertResultForVariantWithTMLIgnoringCodons(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
+    private fun assertResultForVariantWithTMLIgnoringCodons(expectedResult: EvaluationResult, variant: WgsVariant, hasHighTML: Boolean?) {
         assertMolecularEvaluation(
             expectedResult,
             functionWithCodonsToIgnore.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
@@ -302,7 +302,7 @@ class GeneHasActivatingMutationTest {
     companion object {
         private const val GENE = "gene A"
         private val CODONS_TO_IGNORE = listOf("A100X", "A200X")
-        private val ACTIVATING_VARIANT: Variant = TestVariantFactory.createMinimal().copy(
+        private val ACTIVATING_VARIANT: WgsVariant = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,
@@ -314,7 +314,7 @@ class GeneHasActivatingMutationTest {
             canonicalImpact = impactWithCodon(300)
         )
 
-        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE: Variant = TestVariantFactory.createMinimal().copy(
+        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE: WgsVariant = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,

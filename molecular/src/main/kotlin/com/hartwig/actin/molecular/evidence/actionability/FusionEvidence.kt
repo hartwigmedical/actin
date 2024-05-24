@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.FusionMatching
 import com.hartwig.serve.datamodel.ActionableEvent

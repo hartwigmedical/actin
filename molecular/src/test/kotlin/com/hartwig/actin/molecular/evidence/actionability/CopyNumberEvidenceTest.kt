@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents

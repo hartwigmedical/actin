@@ -1,7 +1,7 @@
 package com.hartwig.actin
 
-import com.hartwig.actin.PatientRecordJson.fromJson
-import com.hartwig.actin.PatientRecordJson.toJson
+import com.hartwig.actin.molecular.datamodel.wgs.PatientRecordJson.fromJson
+import com.hartwig.actin.molecular.datamodel.wgs.PatientRecordJson.toJson
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Ignore
 import org.junit.Test

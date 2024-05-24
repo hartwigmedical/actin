@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.molecular.MolecularAnnotator
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.driver.VariantType
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.panel.PanelDrivers
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord

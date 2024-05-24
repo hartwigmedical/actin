@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.panel.archer
 
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
 data class ArcherVariantAnnotation(

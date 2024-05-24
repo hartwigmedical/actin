@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.driver.VariantType
-import com.hartwig.actin.molecular.datamodel.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.VariantType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.VirusType
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalDisruption
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalVirus

@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.PharmacoEntry
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
@@ -122,7 +122,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
         }
     }
 
-    private fun geneToDrivers(variants: Set<Variant>, geneToFind: String): String {
+    private fun geneToDrivers(variants: Set<WgsVariant>, geneToFind: String): String {
         val drivers = if (variants.none { it.gene == geneToFind }) {
             "Wild-type"
         } else {

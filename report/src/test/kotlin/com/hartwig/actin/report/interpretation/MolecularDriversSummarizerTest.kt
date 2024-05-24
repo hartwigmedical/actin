@@ -1,25 +1,25 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.Virus
-import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
+import com.hartwig.actin.molecular.datamodel.wgs.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -179,7 +179,7 @@ class MolecularDriversSummarizerTest {
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
         evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-    ): Variant {
+    ): WgsVariant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
             event = name,
@@ -230,7 +230,7 @@ class MolecularDriversSummarizerTest {
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
         evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-    ): Fusion {
+    ): WgsFusion {
         return TestFusionFactory.createMinimal().copy(
             event = event,
             driverLikelihood = driverLikelihood,

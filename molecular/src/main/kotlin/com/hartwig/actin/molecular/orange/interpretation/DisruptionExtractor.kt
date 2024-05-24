@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.RegionType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.DisruptionComparator
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType

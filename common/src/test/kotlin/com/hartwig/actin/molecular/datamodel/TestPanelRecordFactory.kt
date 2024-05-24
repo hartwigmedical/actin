@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.panel.PanelDrivers
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import java.time.LocalDate

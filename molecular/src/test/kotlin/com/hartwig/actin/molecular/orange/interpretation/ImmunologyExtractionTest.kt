@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
+import com.hartwig.actin.molecular.datamodel.wgs.immunology.HlaAllele
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory
 import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord

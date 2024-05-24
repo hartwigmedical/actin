@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator
 import com.hartwig.hmftools.datamodel.linx.LinxRecord

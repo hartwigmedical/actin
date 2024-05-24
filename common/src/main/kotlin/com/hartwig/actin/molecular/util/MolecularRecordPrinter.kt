@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.util
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory.create
 import com.hartwig.actin.util.DatamodelPrinter
 import com.hartwig.actin.util.DatamodelPrinter.Companion.withDefaultIndentation

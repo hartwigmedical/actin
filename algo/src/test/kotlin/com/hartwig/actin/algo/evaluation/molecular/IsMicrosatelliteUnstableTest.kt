@@ -3,12 +3,12 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -128,7 +128,7 @@ class IsMicrosatelliteUnstableTest {
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Undetermined MSI status")
     }
 
-    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
+    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): WgsVariant {
         return TestVariantFactory.createMinimal().copy(
             gene = msiGene, isReportable = isReportable, isBiallelic = isBiallelic
         )

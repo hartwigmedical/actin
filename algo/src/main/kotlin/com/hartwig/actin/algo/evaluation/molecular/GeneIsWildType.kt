@@ -4,14 +4,14 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
 
 class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
 
@@ -50,7 +50,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
             .forEach {
                 if (it.proteinEffect == ProteinEffect.NO_EFFECT || it.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED) {
                     reportableEventsWithNoEffect.add(it.event)
-                } else if ((it is Variant && it.driverLikelihood == DriverLikelihood.HIGH)
+                } else if ((it is WgsVariant && it.driverLikelihood == DriverLikelihood.HIGH)
                     || it is HomozygousDisruption || it is Disruption
                 ) {
                     reportableEventsWithEffect.add(it.event)

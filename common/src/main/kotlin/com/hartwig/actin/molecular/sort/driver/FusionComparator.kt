@@ -1,16 +1,16 @@
 package com.hartwig.actin.molecular.sort.driver
 
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
 
-class FusionComparator : Comparator<Fusion> {
+class FusionComparator : Comparator<WgsFusion> {
 
-    private val comparator = Comparator.comparing<Fusion, Fusion>({ it }, DriverComparator())
-        .thenComparing(Fusion::geneStart)
-        .thenComparing(Fusion::geneEnd)
-        .thenComparing(Fusion::geneTranscriptStart)
-        .thenComparing(Fusion::geneTranscriptEnd)
+    private val comparator = Comparator.comparing<WgsFusion, WgsFusion>({ it }, DriverComparator())
+        .thenComparing(WgsFusion::geneStart)
+        .thenComparing(WgsFusion::geneEnd)
+        .thenComparing(WgsFusion::geneTranscriptStart)
+        .thenComparing(WgsFusion::geneTranscriptEnd)
     
-    override fun compare(fusion1: Fusion, fusion2: Fusion): Int {
+    override fun compare(fusion1: WgsFusion, fusion2: WgsFusion): Int {
         return comparator.compare(fusion1, fusion2)
     }
 }

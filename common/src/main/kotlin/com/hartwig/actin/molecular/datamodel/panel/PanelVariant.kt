@@ -1,12 +1,12 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.driver.VariantType
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.Variant
+import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.interpreted.InterpretedVariant
 
 class PanelVariant(
     override val isReportable: Boolean,
@@ -24,7 +24,7 @@ class PanelVariant(
     override val type: VariantType,
     override val isHotspot: Boolean,
     override val canonicalImpact: TranscriptImpact
-) : InterpretedVariant, PanelEvent {
+) : Variant, PanelEvent {
     override val clonalLikelihood = 0.0
     override fun impactsGene(gene: String): Boolean {
         return this.gene == gene

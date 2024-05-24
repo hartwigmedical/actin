@@ -1,13 +1,13 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
-import com.hartwig.actin.molecular.datamodel.driver.VariantType
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.VariantEffect
+import com.hartwig.actin.molecular.datamodel.VariantType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager
 
 internal class VariantExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(purple: PurpleRecord): Set<Variant> {
+    fun extract(purple: PurpleRecord): Set<WgsVariant> {
         val drivers = relevantPurpleDrivers(purple)
 
         return VariantDedup.apply(relevantPurpleVariants(purple)).filter { variant ->
@@ -43,7 +43,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
                 val evidence = ActionableEvidenceFactory.createNoEvidence()
-                Variant(
+                WgsVariant(
                     chromosome = variant.chromosome(),
                     position = variant.position(),
                     ref = variant.ref(),

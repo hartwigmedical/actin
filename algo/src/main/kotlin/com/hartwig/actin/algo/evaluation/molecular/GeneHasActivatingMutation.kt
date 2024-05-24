@@ -4,13 +4,13 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.interpreted.InterpretedVariant
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.Variant
 
 data class ActivatingCharacteristics(
     val event: String,
@@ -52,7 +52,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
     }
 
     private fun evaluateVariant(
-        variant: InterpretedVariant,
+        variant: Variant,
         hasHighMutationalLoad: Boolean?
     ): ActivatingCharacteristics {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
@@ -131,7 +131,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
 
     private fun ignoredCodon(
         codonsToIgnore: List<String>?,
-        variant: InterpretedVariant
+        variant: Variant
     ) = codonsToIgnore == null || codonsToIgnore.none {
         isCodonMatch(
             variant.canonicalImpact.affectedCodon,
@@ -214,12 +214,12 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         )
     }
 
-    private fun isAssociatedWithDrugResistance(variant: InterpretedVariant): Boolean {
+    private fun isAssociatedWithDrugResistance(variant: Variant): Boolean {
         val isAssociatedWithDrugResistance = variant.isAssociatedWithDrugResistance
         return isAssociatedWithDrugResistance != null && isAssociatedWithDrugResistance
     }
 
-    private fun isMissenseOrHotspot(variant: InterpretedVariant): Boolean {
+    private fun isMissenseOrHotspot(variant: Variant): Boolean {
         return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isHotspot
     }
 

@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.characteristics
 
+import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin
+import com.hartwig.actin.molecular.datamodel.wgs.characteristics.CupPrediction
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test

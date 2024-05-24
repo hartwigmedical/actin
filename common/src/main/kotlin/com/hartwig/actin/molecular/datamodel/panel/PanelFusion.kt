@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.interpreted.InterpretedFusion
 
 data class PanelFusion(
     override val geneStart: String,
@@ -11,7 +11,7 @@ data class PanelFusion(
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
     override val evidence: ActionableEvidence
-) : InterpretedFusion, PanelEvent {
+) : Fusion, PanelEvent {
     override fun impactsGene(gene: String): Boolean {
         return this.geneStart == gene || this.geneEnd == gene
     }

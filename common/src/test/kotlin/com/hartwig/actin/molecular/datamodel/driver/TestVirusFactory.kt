@@ -1,6 +1,8 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
+import com.hartwig.actin.molecular.datamodel.wgs.driver.VirusType
 
 object TestVirusFactory {
 

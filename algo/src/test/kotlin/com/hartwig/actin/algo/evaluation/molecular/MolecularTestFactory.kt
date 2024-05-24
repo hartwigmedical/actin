@@ -3,21 +3,21 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.Driver
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.wgs.immunology.HlaAllele
+import com.hartwig.actin.molecular.datamodel.wgs.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
 
@@ -56,11 +56,11 @@ internal object MolecularTestFactory {
         return withMolecularTests(listOf(molecularTest))
     }
 
-    fun withVariant(variant: Variant): PatientRecord {
+    fun withVariant(variant: WgsVariant): PatientRecord {
         return withDriver(variant)
     }
 
-    fun withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad: Boolean?, vararg variants: Variant): PatientRecord {
+    fun withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad: Boolean?, vararg variants: WgsVariant): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
@@ -71,7 +71,7 @@ internal object MolecularTestFactory {
 
     fun withHasTumorMutationalLoadAndVariantAndDisruption(
         hasHighTumorMutationalLoad: Boolean?,
-        variant: Variant,
+        variant: WgsVariant,
         disruption: Disruption
     ): PatientRecord {
         return withMolecularRecord(
@@ -100,7 +100,7 @@ internal object MolecularTestFactory {
         return withDriver(disruption)
     }
 
-    fun withFusion(fusion: Fusion): PatientRecord {
+    fun withFusion(fusion: WgsFusion): PatientRecord {
         return withDriver(fusion)
     }
 
@@ -140,7 +140,7 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withMicrosatelliteInstabilityAndVariant(isMicrosatelliteUnstable: Boolean?, variant: Variant): PatientRecord {
+    fun withMicrosatelliteInstabilityAndVariant(isMicrosatelliteUnstable: Boolean?, variant: WgsVariant): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), variant
         )
@@ -171,7 +171,7 @@ internal object MolecularTestFactory {
 
     fun withHomologousRepairDeficiencyAndVariant(
         isHomologousRepairDeficient: Boolean?,
-        variant: Variant
+        variant: WgsVariant
     ): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), variant
@@ -261,11 +261,11 @@ internal object MolecularTestFactory {
 
     private fun withCharacteristicsAndDriver(characteristics: MolecularCharacteristics, driver: Driver?): PatientRecord {
         val drivers = when (driver) {
-            is Variant -> baseMolecular.drivers.copy(variants = setOf(driver))
+            is WgsVariant -> baseMolecular.drivers.copy(variants = setOf(driver))
             is CopyNumber -> baseMolecular.drivers.copy(copyNumbers = setOf(driver))
             is HomozygousDisruption -> baseMolecular.drivers.copy(homozygousDisruptions = setOf(driver))
             is Disruption -> baseMolecular.drivers.copy(disruptions = setOf(driver))
-            is Fusion -> baseMolecular.drivers.copy(fusions = setOf(driver))
+            is WgsFusion -> baseMolecular.drivers.copy(fusions = setOf(driver))
             else -> baseMolecular.drivers
         }
         return withMolecularRecord(baseMolecular.copy(characteristics = characteristics, drivers = drivers))

@@ -1,17 +1,17 @@
 package com.hartwig.actin.report
 
-import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.configuration.EnvironmentConfiguration
+import com.hartwig.actin.molecular.datamodel.wgs.PatientRecordJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class ReporterApplication(private val config: ReporterConfig) {
 

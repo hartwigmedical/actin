@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.Driver
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.Driver
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.wgs.driver.MolecularDrivers
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import org.apache.logging.log4j.LogManager

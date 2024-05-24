@@ -4,10 +4,10 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
@@ -18,7 +18,7 @@ class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
         val drivers = molecular.drivers
         val (biallelicMsiVariants, nonBiallelicMsiVariants) = drivers.variants
             .filter { variant -> variant.gene in MSI_GENES && variant.isReportable }
-            .partition(Variant::isBiallelic)
+            .partition(WgsVariant::isBiallelic)
 
         val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in MSI_GENES && it.type == CopyNumberType.LOSS }
         val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in MSI_GENES }
