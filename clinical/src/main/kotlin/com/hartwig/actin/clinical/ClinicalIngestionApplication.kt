@@ -4,20 +4,20 @@ import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.clinical.curation.CurationDatabaseContext
 import com.hartwig.actin.clinical.curation.CurationDoidValidator
 import com.hartwig.actin.clinical.feed.emc.EmcClinicalFeedIngestor
-import com.hartwig.actin.clinical.feed.standard.StandardEhrIngestion
+import com.hartwig.actin.clinical.feed.standard.StandardDataIngestion
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.util.json.GsonSerializer
+import java.nio.file.Files
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.nio.file.Files
-import java.nio.file.Paths
-import kotlin.system.exitProcess
 
 class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) {
 
@@ -56,7 +56,7 @@ class ClinicalIngestionApplication(private val config: ClinicalIngestionConfig) 
                 curationDatabaseContext,
                 atcModel,
                 doidModel
-            ) else StandardEhrIngestion.create(
+            ) else StandardDataIngestion.create(
             config.feedDirectory,
             curationDatabaseContext,
             atcModel,
