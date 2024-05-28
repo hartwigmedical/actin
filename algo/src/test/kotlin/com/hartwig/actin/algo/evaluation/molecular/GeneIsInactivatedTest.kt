@@ -12,8 +12,8 @@ import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
 import org.junit.Test
 
 private const val GENE = "gene A"
@@ -231,19 +231,19 @@ class GeneIsInactivatedTest {
         )
     }
 
-    private fun assertResultForVariant(result: EvaluationResult, variant: WgsVariant) {
+    private fun assertResultForVariant(result: EvaluationResult, variant: ExhaustiveVariant) {
         assertMolecularEvaluation(result, function.evaluate(MolecularTestFactory.withVariant(variant)))
     }
 
     private fun assertResultForMutationalLoadAndVariant(
-        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: WgsVariant
+        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: ExhaustiveVariant
     ) {
         assertMolecularEvaluation(
             result, function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant))
         )
     }
 
-    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): WgsVariant = TestVariantFactory.createMinimal().copy(
+    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): ExhaustiveVariant = TestVariantFactory.createMinimal().copy(
         gene = GENE,
         isReportable = true,
         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT),

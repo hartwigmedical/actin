@@ -19,20 +19,20 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFact
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withApprovedTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withPreClinicalTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.wgs.driver.RegionType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
-import com.hartwig.actin.molecular.datamodel.wgs.driver.VirusType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
-import com.hartwig.actin.molecular.datamodel.wgs.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.hmf.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
+import com.hartwig.actin.molecular.datamodel.hmf.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.hmf.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.fromJson
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.read
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.toJson
@@ -133,7 +133,7 @@ class MolecularRecordJsonTest {
         assertViruses(drivers.viruses)
     }
 
-    private fun assertVariants(variants: Set<WgsVariant>) {
+    private fun assertVariants(variants: Set<ExhaustiveVariant>) {
         assertThat(variants).hasSize(1)
         val variant = variants.first()
         assertThat(variant.isReportable).isTrue
@@ -248,7 +248,7 @@ class MolecularRecordJsonTest {
         assertThat(disruption2.clusterGroup).isEqualTo(2)
     }
 
-    private fun assertFusions(fusions: Set<WgsFusion>) {
+    private fun assertFusions(fusions: Set<ExhaustiveFusion>) {
         assertThat(fusions).hasSize(1)
         val fusion = fusions.first()
         assertThat(fusion.isReportable).isTrue

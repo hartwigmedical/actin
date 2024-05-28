@@ -2,13 +2,13 @@ package com.hartwig.actin.molecular.datamodel.driver
 
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.wgs.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 
 object TestFusionFactory {
 
-    fun createMinimal(): WgsFusion {
-        return WgsFusion(
+    fun createMinimal(): ExhaustiveFusion {
+        return ExhaustiveFusion(
             isReportable = false,
             event = "",
             driverLikelihood = null,

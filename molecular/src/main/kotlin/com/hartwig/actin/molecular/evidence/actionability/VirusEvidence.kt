@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
-import com.hartwig.actin.molecular.datamodel.wgs.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
+import com.hartwig.actin.molecular.datamodel.hmf.driver.VirusType
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType

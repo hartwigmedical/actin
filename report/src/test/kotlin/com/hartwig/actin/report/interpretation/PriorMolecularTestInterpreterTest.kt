@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSmallVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.assertj.core.api.Assertions.assertThat
@@ -43,7 +43,7 @@ class PriorMolecularTestInterpreterTest {
                 listOf(
                     TestPanelRecordFactory.empty().copy(
                         archerPanelExtraction = ArcherPanelExtraction(
-                            variants = listOf(ArcherVariant("ALK", "c.2240_2254del")),
+                            variants = listOf(ArcherSmallVariant("ALK", "c.2240_2254del")),
                             fusions = emptyList(),
                             skippedExons = emptyList()
                         )

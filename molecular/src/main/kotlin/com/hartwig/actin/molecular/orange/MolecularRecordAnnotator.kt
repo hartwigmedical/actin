@@ -5,13 +5,13 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -56,7 +56,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
 
-    private fun annotateVariant(variant: WgsVariant): WgsVariant {
+    private fun annotateVariant(variant: ExhaustiveVariant): ExhaustiveVariant {
         val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
             ActionableEvidenceFactory.create(
                 evidenceDatabase.evidenceForVariant(
@@ -79,7 +79,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun createCriteria(variant: WgsVariant) = VariantMatchCriteria(
+    private fun createCriteria(variant: ExhaustiveVariant) = VariantMatchCriteria(
         gene = variant.gene,
         chromosome = variant.chromosome,
         position = variant.position,
@@ -132,7 +132,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun annotateFusion(fusion: WgsFusion): WgsFusion {
+    private fun annotateFusion(fusion: ExhaustiveFusion): ExhaustiveFusion {
         val evidence =
             ActionableEvidenceFactory.create(
                 evidenceDatabase.evidenceForFusion(
@@ -153,7 +153,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun createFusionCriteria(fusion: WgsFusion) = FusionMatchCriteria(
+    private fun createFusionCriteria(fusion: ExhaustiveFusion) = FusionMatchCriteria(
         isReportable = fusion.isReportable,
         geneStart = fusion.geneStart,
         geneEnd = fusion.geneEnd,

@@ -9,11 +9,11 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSmallVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
 import org.junit.Test
 
 class MolecularResultsAreAvailableForGeneTest {
@@ -189,7 +189,7 @@ class MolecularResultsAreAvailableForGeneTest {
     }
 
     private fun archerPanelWithVariantForGene(gene: String) =
-        TestPanelRecordFactory.empty().copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherVariant(gene, "c.1A>T"))))
+        TestPanelRecordFactory.empty().copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherSmallVariant(gene, "c.1A>T"))))
 
     @Test
     fun `Should fail for Archer if gene is not tested in panel`() {

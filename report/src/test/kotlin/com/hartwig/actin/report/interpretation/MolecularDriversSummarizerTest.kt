@@ -11,15 +11,15 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
-import com.hartwig.actin.molecular.datamodel.wgs.driver.VirusType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
+import com.hartwig.actin.molecular.datamodel.hmf.driver.VirusType
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -179,7 +179,7 @@ class MolecularDriversSummarizerTest {
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
         evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-    ): WgsVariant {
+    ): ExhaustiveVariant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
             event = name,
@@ -230,7 +230,7 @@ class MolecularDriversSummarizerTest {
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
         evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-    ): WgsFusion {
+    ): ExhaustiveFusion {
         return TestFusionFactory.createMinimal().copy(
             event = event,
             driverLikelihood = driverLikelihood,

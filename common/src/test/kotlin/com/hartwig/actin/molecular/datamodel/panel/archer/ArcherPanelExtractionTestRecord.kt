@@ -8,7 +8,7 @@ class ArcherPanelExtractionTestRecord {
     @Test
     fun `Should identify tested genes`() {
         val archerPanel = ArcherPanelExtraction(
-            variants = listOf(ArcherVariant("KRAS", "c.1A>T")),
+            variants = listOf(ArcherSmallVariant("KRAS", "c.1A>T")),
             fusions = listOf(
                 ArcherFusion("RET"),
             ),

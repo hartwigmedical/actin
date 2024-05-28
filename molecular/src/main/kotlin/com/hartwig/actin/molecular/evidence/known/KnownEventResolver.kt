@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching

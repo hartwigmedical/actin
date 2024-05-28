@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.wgs.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
@@ -125,7 +125,10 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
     private fun findMatchingFusionsInPanels(molecularHistory: MolecularHistory): Evaluation? {
         val matchedFusions = molecularHistory.allPanels()
-            .flatMap { it.drivers.fusions }
+            .flatMap {
+                (it.archerPanelExtraction?.events() ?: emptyList()) + (it.genericPanelExtraction?.events()
+                    ?: emptyList())
+            }
             .filter { it.impactsGene(gene) }
             .map { it.display() }
             .toSet()

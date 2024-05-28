@@ -1,19 +1,19 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.Driver
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
 
 class MolecularDriversInterpreter(
     private val molecularDrivers: MolecularDrivers,
     private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
 ) {
-    fun filteredVariants(): List<WgsVariant> {
+    fun filteredVariants(): List<ExhaustiveVariant> {
         return filterDrivers(molecularDrivers.variants)
     }
 
@@ -29,7 +29,7 @@ class MolecularDriversInterpreter(
         return filterDrivers(molecularDrivers.disruptions)
     }
 
-    fun filteredFusions(): List<WgsFusion> {
+    fun filteredFusions(): List<ExhaustiveFusion> {
         return filterDrivers(molecularDrivers.fusions)
     }
 

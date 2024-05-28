@@ -5,7 +5,7 @@ import java.time.LocalDate
 val ARCHER_ALWAYS_TESTED_GENES = setOf("ALK", "ROS1", "RET", "MET", "NTRK1", "NTRK2", "NTRK3", "NRG1")
 
 data class ArcherPanelExtraction(
-    val variants: List<ArcherVariant> = emptyList(),
+    val variants: List<ArcherSmallVariant> = emptyList(),
     val fusions: List<ArcherFusion> = emptyList(),
     val skippedExons: List<ArcherSkippedExons> = emptyList(),
     val date: LocalDate? = null
@@ -21,6 +21,8 @@ data class ArcherPanelExtraction(
     fun genesWithFusions(): Set<String> {
         return fusions.flatMap { listOf(it.gene) }.toSet()
     }
+
+    fun events() = variants + fusions + skippedExons
 
     private fun genesHavingResultsInPanel(): Set<String> {
         return genesWithVariants() + genesWithFusions()

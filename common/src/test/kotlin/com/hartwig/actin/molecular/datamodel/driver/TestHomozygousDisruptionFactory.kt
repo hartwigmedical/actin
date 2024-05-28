@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.datamodel.driver
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 
 object TestHomozygousDisruptionFactory {
 

@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSmallVariant
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -16,7 +16,7 @@ class ArcherExtractorTest {
     @Test
     fun `Should parse archer variants from prior molecular tests`() {
         val result = interpreter.extract(listOf(archerPriorMolecularVariantRecord(GENE, HGVS_CODING)))
-        assertThat(result).containsExactly(ArcherPanelExtraction(variants = listOf(ArcherVariant(GENE, HGVS_CODING))))
+        assertThat(result).containsExactly(ArcherPanelExtraction(variants = listOf(ArcherSmallVariant(GENE, HGVS_CODING))))
     }
 
     @Test

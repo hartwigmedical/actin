@@ -6,8 +6,8 @@ import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
 import org.junit.Test
 
 class IsHomologousRepairDeficientTest {
@@ -88,7 +88,7 @@ class IsHomologousRepairDeficientTest {
         )
     }
 
-    private fun hrdVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): WgsVariant {
+    private fun hrdVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): ExhaustiveVariant {
         return TestVariantFactory.createMinimal().copy(
             gene = hrdGene, isReportable = isReportable, isBiallelic = isBiallelic
         )

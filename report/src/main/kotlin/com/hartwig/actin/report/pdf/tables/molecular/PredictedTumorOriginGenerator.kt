@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.wgs.characteristics.CupPrediction
+import com.hartwig.actin.molecular.datamodel.hmf.characteristics.CupPrediction
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells

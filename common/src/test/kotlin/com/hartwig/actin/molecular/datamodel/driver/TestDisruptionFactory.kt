@@ -3,10 +3,10 @@ package com.hartwig.actin.molecular.datamodel.driver
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.RegionType
 import org.apache.logging.log4j.util.Strings
 
 object TestDisruptionFactory {

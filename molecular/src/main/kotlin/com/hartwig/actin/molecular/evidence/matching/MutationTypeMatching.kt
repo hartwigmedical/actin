@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.evidence.matching
 
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
 import com.hartwig.serve.datamodel.MutationType
 import org.apache.logging.log4j.LogManager
 
@@ -29,9 +28,5 @@ object MutationTypeMatching {
                 false
             }
         }
-    }
-
-    private fun isIndel(variant: WgsVariant): Boolean {
-        return variant.type == VariantType.INSERT || variant.type == VariantType.DELETE
     }
 }

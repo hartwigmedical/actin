@@ -8,7 +8,6 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtractio
 import java.time.LocalDate
 
 data class PanelRecord(
-    val testedGenes: Set<String>,
     val archerPanelExtraction: ArcherPanelExtraction? = null,
     val genericPanelExtraction: GenericPanelExtraction? = null,
     override val type: ExperimentType,
@@ -16,10 +15,12 @@ data class PanelRecord(
     override val drivers: PanelDrivers,
     override val characteristics: MolecularCharacteristics = MolecularCharacteristics(),
     override val evidenceSource: String,
-    ) : MolecularTest<PanelDrivers> {
+) : MolecularTest<PanelDrivers> {
+
+    fun testedGenes() = archerPanelExtraction?.testedGenes() ?: genericPanelExtraction?.testedGenes() ?: emptySet()
 
     override fun isGeneTested(gene: String): Boolean {
-        return testedGenes.contains(gene)
+        return testedGenes().contains(gene)
     }
 
     fun events(): Set<PanelEvent> {

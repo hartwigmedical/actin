@@ -4,12 +4,12 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
 
 object TestVariantFactory {
 
-    fun createMinimal(): WgsVariant {
-        return WgsVariant(
+    fun createMinimal(): ExhaustiveVariant {
+        return ExhaustiveVariant(
             chromosome = "",
             position = 0,
             ref = "",

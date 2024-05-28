@@ -8,5 +8,5 @@ interface Variant : Driver, GeneAlteration {
     val type: VariantType
     val isHotspot: Boolean
     val canonicalImpact: TranscriptImpact
-    val clonalLikelihood: Double
+    val clonalLikelihood: Double?
 }

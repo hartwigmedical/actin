@@ -11,8 +11,11 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.Variant
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 
-data class ActivatingCharacteristics(
+data class ActivationProfile(
     val event: String,
     val activating: Boolean,
     val associatedWithResistance: Boolean? = null,
@@ -27,8 +30,7 @@ data class ActivatingCharacteristics(
 
 private const val CLONAL_CUTOFF = 0.5
 
-class GeneHasActivatingMutation internal constructor(private val gene: String, private val codonsToIgnore: List<String>?) :
-    MolecularEvaluationFunction {
+class GeneHasActivatingMutation(private val gene: String, private val codonsToIgnore: List<String>?) : MolecularEvaluationFunction {
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
@@ -36,47 +38,41 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
             findActivatingMutations(orangeMolecular)
         } else null
 
-        val panelEvaluations =
-            if (codonsToIgnore.isNullOrEmpty()) molecularHistory.allPanels().map { findActivatingMutations(it) } else emptyList()
+        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(molecularHistory) else null
 
-        val groupedEvaluationsByResult = (listOfNotNull(orangeMolecularEvaluation) + panelEvaluations)
-            .groupBy { evaluation -> evaluation.result }
-            .mapValues { entry ->
-                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
-            }
+        val groupedEvaluationsByResult =
+            listOfNotNull(orangeMolecularEvaluation, panelEvaluation).groupBy { evaluation -> evaluation.result }.mapValues { entry ->
+                    entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
+                }
 
-        return groupedEvaluationsByResult[EvaluationResult.PASS]
-            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
-            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
-            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+        return groupedEvaluationsByResult[EvaluationResult.PASS] ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+        ?: groupedEvaluationsByResult[EvaluationResult.FAIL] ?: EvaluationFactory.undetermined(
+            "Gene $gene not tested in molecular data",
+            "Gene $gene not tested"
+        )
     }
 
     private fun evaluateVariant(
-        variant: Variant,
-        hasHighMutationalLoad: Boolean?
-    ): ActivatingCharacteristics {
+        variant: Variant, hasHighMutationalLoad: Boolean?
+    ): ActivationProfile {
         val isNoOncogene = variant.geneRole == GeneRole.TSG
         val isGainOfFunction =
             variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED
-        val characteristics = ActivatingCharacteristics(variant.event, false)
+        val characteristics = ActivationProfile(variant.event, false)
         return if (variant.isReportable) {
             if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-                if (isAssociatedWithDrugResistance(variant)) {
-                    characteristics.copy(associatedWithResistance = true)
-                } else if (!variant.isHotspot && !isGainOfFunction) {
-                    characteristics.copy(noHotspotAndNoGainOfFunction = true)
-                } else if (isNoOncogene) {
-                    characteristics.copy(nonOncoGene = true)
-                } else if (variant.clonalLikelihood < CLONAL_CUTOFF) {
-                    characteristics.copy(subclonal = true)
-                } else {
-                    characteristics.copy(activating = true)
+                return when {
+                    isAssociatedWithDrugResistance(variant) -> characteristics.copy(associatedWithResistance = true)
+                    !variant.isHotspot && !isGainOfFunction -> characteristics.copy(noHotspotAndNoGainOfFunction = true)
+                    isNoOncogene -> characteristics.copy(nonOncoGene = true)
+                    isSubclonal(variant) -> characteristics.copy(subclonal = true)
+                    else -> characteristics.copy(activating = true)
                 }
             } else {
                 if (isGainOfFunction) {
                     characteristics.copy(nonHighDriverGainOfFunction = true)
                 } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                    return if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                    return if (isSubclonal(variant)) {
                         characteristics.copy(nonHighDriverSubclonal = true)
                     } else {
                         characteristics.copy(nonHighDriver = true)
@@ -92,18 +88,17 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         }
     }
 
+    private fun isSubclonal(variant: Variant) = variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
+
     private fun findActivatingMutations(molecular: MolecularTest<*>): Evaluation {
         val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
         val evidenceSource = molecular.evidenceSource
-        val variantCharacteristics = molecular.drivers.variants
-            .filter { it.gene == gene }
-            .filter { ignoredCodon(codonsToIgnore, it) }
-            .map { variant ->
-                evaluateVariant(variant, hasHighMutationalLoad)
-            }
+        val variantCharacteristics =
+            molecular.drivers.variants.filter { it.gene == gene }.filter { ignoredCodon(codonsToIgnore, it) }.map { variant ->
+                    evaluateVariant(variant, hasHighMutationalLoad)
+                }
 
-        val activatingVariants =
-            variantCharacteristics.filter(ActivatingCharacteristics::activating).map(ActivatingCharacteristics::event).toSet()
+        val activatingVariants = variantCharacteristics.filter(ActivationProfile::activating).map(ActivationProfile::event).toSet()
         if (activatingVariants.isNotEmpty()) {
             return EvaluationFactory.pass(
                 "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
@@ -112,8 +107,7 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
             )
         }
 
-        val potentialWarnEvaluation = evaluatePotentialWarns(
-            filteredForWarnings(variantCharacteristics) { it.associatedWithResistance },
+        val potentialWarnEvaluation = evaluatePotentialWarns(filteredForWarnings(variantCharacteristics) { it.associatedWithResistance },
             filteredForWarnings(variantCharacteristics) { it.nonOncoGene },
             filteredForWarnings(variantCharacteristics) { it.noHotspotAndNoGainOfFunction },
             filteredForWarnings(variantCharacteristics) { it.subclonal },
@@ -130,20 +124,16 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
     }
 
     private fun ignoredCodon(
-        codonsToIgnore: List<String>?,
-        variant: Variant
+        codonsToIgnore: List<String>?, variant: Variant
     ) = codonsToIgnore == null || codonsToIgnore.none {
         isCodonMatch(
-            variant.canonicalImpact.affectedCodon,
-            it
+            variant.canonicalImpact.affectedCodon, it
         )
     }
 
     private fun filteredForWarnings(
-        variantCharacteristics: List<ActivatingCharacteristics>,
-        extractor: (ActivatingCharacteristics) -> Boolean?
-    ) =
-        variantCharacteristics.filter { extractor.invoke(it) == true }.map(ActivatingCharacteristics::event).toSet()
+        variantCharacteristics: List<ActivationProfile>, extractor: (ActivationProfile) -> Boolean?
+    ) = variantCharacteristics.filter { extractor.invoke(it) == true }.map(ActivationProfile::event).toSet()
 
     private fun evaluatePotentialWarns(
         activatingVariantsAssociatedWithResistance: Set<String>,
@@ -160,54 +150,43 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
             listOf(
                 EventsWithMessages(
                     activatingVariantsAssociatedWithResistance,
-                    "Gene $gene should have activating mutation(s): ${Format.concat(activatingVariantsAssociatedWithResistance)}, "
-                            + "however, these are (also) associated with drug resistance in $evidenceSource",
+                    "Gene $gene should have activating mutation(s): ${Format.concat(activatingVariantsAssociatedWithResistance)}, " + "however, these are (also) associated with drug resistance in $evidenceSource",
                     "$gene activating mutation(s) but are associated with drug resistance in $evidenceSource"
-                ),
-                EventsWithMessages(
+                ), EventsWithMessages(
                     activatingVariantsInNonOncogene,
                     "Gene $gene has activating mutation(s) ${Format.concat(activatingVariantsInNonOncogene)} but gene known as TSG in $evidenceSource",
                     "$gene activating mutation(s) but gene known as TSG in $evidenceSource"
-                ),
-                EventsWithMessages(
+                ), EventsWithMessages(
                     activatingVariantsNoHotspotAndNoGainOfFunction,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction)
-                            + " that have high driver likelihood,"
-                            + " but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource",
-                    "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot"
-                            + " and not associated with gain-of-function protein effect evidence in $evidenceSource"
-                ),
-                EventsWithMessages(
+                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingVariantsNoHotspotAndNoGainOfFunction) + " that have high driver likelihood," + " but is not a hotspot and not associated with gain-of-function protein effect evidence in $evidenceSource",
+                    "$gene potentially activating mutation(s) with high driver likelihood but not a hotspot" + " and not associated with gain-of-function protein effect evidence in $evidenceSource"
+                ), EventsWithMessages(
                     activatingSubclonalVariants,
-                    "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                            " but have subclonal likelihood of > " + Format.percentage(1 - CLONAL_CUTOFF),
-                    gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                            " but subclonal likelihood > " + Format.percentage(1 - CLONAL_CUTOFF)
-                ),
-                EventsWithMessages(
+                    "Gene $gene potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " but have subclonal likelihood of > " + Format.percentage(
+                        1 - CLONAL_CUTOFF
+                    ),
+                    gene + " potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " but subclonal likelihood > " + Format.percentage(
+                        1 - CLONAL_CUTOFF
+                    )
+                ), EventsWithMessages(
                     nonHighDriverGainOfFunctionVariants,
-                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) +
-                            " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource",
+                    "Gene " + gene + " has potentially activating mutation(s) " + Format.concat(nonHighDriverGainOfFunctionVariants) + " that do not have high driver likelihood prediction, but annotated with having gain-of-function protein effect evidence in $evidenceSource",
                     "$gene potentially activating mutation(s) having gain-of-function protein effect evidence in $evidenceSource but without high driver prediction"
-                ),
-                EventsWithMessages(
+                ), EventsWithMessages(
                     nonHighDriverSubclonalVariants,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) +
-                            " have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)} and no high driver likelihood",
+                    "Gene $gene has potentially activating mutation(s) " + Format.concat(activatingSubclonalVariants) + " have subclonal likelihood of > ${
+                        Format.percentage(1 - CLONAL_CUTOFF)
+                    } and no high driver likelihood",
                     "$gene potentially activating mutation(s) without high driver likelihood and subclonal likelihood > " + Format.percentage(
                         1 - CLONAL_CUTOFF
                     )
-                ),
-                EventsWithMessages(
+                ), EventsWithMessages(
                     nonHighDriverVariants,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants) +
-                            " but no high driver likelihood",
+                    "Gene $gene has potentially activating mutation(s) " + Format.concat(nonHighDriverVariants) + " but no high driver likelihood",
                     "$gene potentially activating mutation(s) but no high driver likelihood"
-                ),
-                EventsWithMessages(
+                ), EventsWithMessages(
                     otherMissenseOrHotspotVariants,
-                    "Gene $gene has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants) +
-                            " that are missense or have hotspot status, but are not considered reportable",
+                    "Gene $gene has potentially activating mutation(s) " + Format.concat(otherMissenseOrHotspotVariants) + " that are missense or have hotspot status, but are not considered reportable",
                     "$gene potentially activating mutation(s) but mutation(s) not reportable"
                 )
             )
@@ -230,4 +209,25 @@ class GeneHasActivatingMutation internal constructor(private val gene: String, p
         val codonIndexToMatch = codonsToMatch.substring(1).takeWhile { it.isDigit() }.toInt()
         return codonIndexToMatch == affectedCodon
     }
+
+    private fun findActivatingMutationsInPanels(molecularHistory: MolecularHistory): Evaluation? {
+
+        val activatingVariants =
+            activatingVariants(molecularHistory.allArcherPanels().flatMap(ArcherPanelExtraction::events)) + activatingVariants(
+                molecularHistory.allGenericPanels().flatMap(GenericPanelExtraction::events)
+            )
+
+        if (activatingVariants.isNotEmpty()) return EvaluationFactory.pass(
+            "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Panel(s)",
+            "$gene activating mutation(s)",
+            inclusionEvents = activatingVariants
+        )
+
+        return if (molecularHistory.allArcherPanels()
+                .any { it.testedGenes().contains(gene) }
+        ) EvaluationFactory.fail("No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)")
+        else null
+    }
+
+    private fun activatingVariants(events: List<PanelEvent>) = events.filter { it.impactsGene(gene) }.map(PanelEvent::display).toSet()
 }

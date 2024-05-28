@@ -6,7 +6,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
@@ -17,9 +19,9 @@ class GeneHasVariantInExonRangeOfType(
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeEvaluation = molecularHistory.latestOrangeMolecularRecord()?.let { evaluateOrange(it) }
-       // val panelEvaluation = evaluatePanel(molecularHistory)
+        val panelEvaluation = evaluatePanel(molecularHistory)
 
-        val groupedEvaluationsByResult = listOfNotNull(orangeEvaluation)
+        val groupedEvaluationsByResult = listOfNotNull(orangeEvaluation, panelEvaluation)
             .groupBy { evaluation -> evaluation.result }
             .mapValues { entry ->
                 entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
@@ -44,15 +46,15 @@ class GeneHasVariantInExonRangeOfType(
                 .map { variant ->
                     val (reportableMatches, unreportableMatches) = listOf(variant)
                         .filter { hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon) }
-                        .partition(WgsVariant::isReportable)
+                        .partition(ExhaustiveVariant::isReportable)
 
                     val otherImpactMatches = if (!variant.isReportable) emptySet() else {
                         setOfNotNull(variant.otherImpacts.find { hasEffectInExonRange(it.affectedExon, minExon, maxExon) }
                             ?.let { variant.event })
                     }
                     Triple(
-                        reportableMatches.map(WgsVariant::event).toSet(),
-                        unreportableMatches.map(WgsVariant::event).toSet(),
+                        reportableMatches.map(ExhaustiveVariant::event).toSet(),
+                        unreportableMatches.map(ExhaustiveVariant::event).toSet(),
                         otherImpactMatches
                     )
                 }.fold(
@@ -99,10 +101,11 @@ class GeneHasVariantInExonRangeOfType(
         )
     }
 
-  /*  private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
+    private fun evaluatePanel(molecularHistory: MolecularHistory): Evaluation? {
         val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
             molecularHistory.allGenericPanels()
-                .flatMap(GenericPanel::exonDeletions)
+                .asSequence()
+                .flatMap(GenericPanelExtraction::exonDeletions)
                 .filter { exonDeletion -> exonDeletion.impactsGene(gene) }
                 .filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
                 .map(GenericExonDeletion::display)
@@ -137,7 +140,7 @@ class GeneHasVariantInExonRangeOfType(
                 return null
             }
         }
-    }*/
+    }
 
     companion object {
         private fun hasEffectInExonRange(affectedExon: Int?, minExon: Int, maxExon: Int): Boolean {

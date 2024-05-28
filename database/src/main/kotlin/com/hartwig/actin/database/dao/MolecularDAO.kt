@@ -6,14 +6,14 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Virus
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsFusion
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
-import com.hartwig.actin.molecular.datamodel.wgs.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
+import com.hartwig.actin.molecular.datamodel.hmf.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.PharmacoEntry
 import org.jooq.DSLContext
 import org.jooq.Record
 
@@ -223,7 +223,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeVariants(sampleId: String, variants: Set<WgsVariant>) {
+    private fun writeVariants(sampleId: String, variants: Set<ExhaustiveVariant>) {
         for (variant in variants) {
             val variantId = context.insertInto(
                 Tables.VARIANT,
@@ -443,7 +443,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeFusions(sampleId: String, fusions: Set<WgsFusion>) {
+    private fun writeFusions(sampleId: String, fusions: Set<ExhaustiveFusion>) {
         for (fusion in fusions) {
             val fusionId = context.insertInto(
                 Tables.FUSION,

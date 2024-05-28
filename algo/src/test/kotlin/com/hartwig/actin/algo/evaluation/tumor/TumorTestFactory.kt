@@ -12,7 +12,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 
 internal object TumorTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()

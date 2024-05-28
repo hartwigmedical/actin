@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import org.junit.Test
 
 private const val PLOIDY = 3.0

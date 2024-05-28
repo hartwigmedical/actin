@@ -8,8 +8,8 @@ import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.wgs.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.hmf.driver.RegionType
 import org.junit.Test
 
 private const val TARGET_GENE = "gene A"

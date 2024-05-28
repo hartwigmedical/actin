@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber
 

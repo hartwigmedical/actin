@@ -11,7 +11,6 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 class GenericPanelAnnotator : MolecularAnnotator<GenericPanelExtraction, PanelRecord> {
     override fun annotate(input: GenericPanelExtraction): PanelRecord {
         return PanelRecord(
-            testedGenes = input.testedGenes(),
             genericPanelExtraction = input,
             type = ExperimentType.GENERIC_PANEL,
             date = input.date,

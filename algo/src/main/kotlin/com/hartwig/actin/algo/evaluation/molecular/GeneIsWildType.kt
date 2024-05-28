@@ -9,9 +9,9 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.wgs.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.wgs.driver.WgsVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 
 class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
 
@@ -50,7 +50,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
             .forEach {
                 if (it.proteinEffect == ProteinEffect.NO_EFFECT || it.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED) {
                     reportableEventsWithNoEffect.add(it.event)
-                } else if ((it is WgsVariant && it.driverLikelihood == DriverLikelihood.HIGH)
+                } else if ((it is ExhaustiveVariant && it.driverLikelihood == DriverLikelihood.HIGH)
                     || it is HomozygousDisruption || it is Disruption
                 ) {
                     reportableEventsWithEffect.add(it.event)
@@ -86,9 +86,11 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
 
     private fun evaluateInPanels(molecularHistory: MolecularHistory): Evaluation {
 
-        val allPanels = molecularHistory.allPanels()
-        val isTestedInAnyPanel = allPanels.any { panel -> panel.isGeneTested(gene) }
-        val events = allPanels.flatMap { it.events() }.filter { it.impactsGene(gene) }.toSet()
+        val isTestedInAnyPanel =
+            molecularHistory.allGenericPanels().any { it.testedGenes().contains(gene) } || molecularHistory.allArcherPanels()
+                .any { it.testedGenes().contains(gene) }
+        val events =
+            molecularHistory.allGenericPanels().flatMap { it.events() } + molecularHistory.allArcherPanels().flatMap { it.events() }
         val hasResultInAnyPanel = events.isNotEmpty()
 
         return if (!isTestedInAnyPanel) {

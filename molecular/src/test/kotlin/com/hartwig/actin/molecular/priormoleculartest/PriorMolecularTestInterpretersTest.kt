@@ -2,8 +2,7 @@ package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import io.mockk.every
@@ -19,7 +18,7 @@ class PriorMolecularTestInterpretersTest {
     }
 
     @Test
-    fun `Should invoke interpret list of molecular tests`() {
+    fun `Should interpret list of molecular tests`() {
         val interpreters = PriorMolecularTestInterpreters.create(evidenceDatabase)
         val priorMolecularTests = listOf(
             archerPriorMolecularVariantRecord(),
@@ -28,8 +27,7 @@ class PriorMolecularTestInterpretersTest {
             PriorMolecularTest("Unknown", impliesPotentialIndeterminateStatus = false)
         )
         val molecularTests = interpreters.process(priorMolecularTests)
-        assertThat(molecularTests.filterIsInstance<ArcherPanelExtraction>()).hasSize(1)
-        assertThat(molecularTests.filterIsInstance<GenericPanelExtraction>()).hasSize(2)
+        assertThat(molecularTests.filterIsInstance<PanelRecord>()).hasSize(3)
         assertThat(molecularTests.filterIsInstance<OtherPriorMolecularTest>()).hasSize(1)
     }
 }

@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
-class PanelVariant(
+data class PanelVariant(
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,

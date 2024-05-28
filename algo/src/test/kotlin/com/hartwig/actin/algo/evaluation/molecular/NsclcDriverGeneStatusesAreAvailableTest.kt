@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSmallVariant
 import org.assertj.core.api.Assertions
 import org.junit.Test
 
@@ -87,7 +87,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     }
 
     private fun archerPanelWithVarientForGene(it: String) = TestPanelRecordFactory.empty()
-        .copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherVariant(it, HGVS_VARIANT))))
+        .copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherSmallVariant(it, HGVS_VARIANT))))
 
     private fun createNonWGSRecordWithOptionalPriorTests(priorTest: List<MolecularTest<*>> = emptyList()): PatientRecord {
         val history = MolecularHistory(priorTest)

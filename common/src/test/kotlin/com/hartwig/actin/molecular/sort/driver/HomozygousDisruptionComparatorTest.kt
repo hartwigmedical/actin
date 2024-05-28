@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.sort.driver
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
-import com.hartwig.actin.molecular.datamodel.wgs.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

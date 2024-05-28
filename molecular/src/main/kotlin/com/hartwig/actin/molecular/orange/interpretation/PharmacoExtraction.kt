@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.Haplotype
-import com.hartwig.actin.molecular.datamodel.wgs.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.PharmacoEntry
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype
 

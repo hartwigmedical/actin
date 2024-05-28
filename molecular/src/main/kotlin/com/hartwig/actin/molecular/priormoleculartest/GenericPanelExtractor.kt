@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericSmallVariant
 
 class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPanelExtraction> {
     override fun extract(input: List<PriorMolecularTest>): List<GenericPanelExtraction> {
@@ -30,7 +30,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
                 val (variantRecords, unknownRecords) = nonExonDeletionRecords.partition {
                     it.measure?.let { measure -> measure.startsWith("c.") || measure.startsWith("p.") } ?: false
                 }
-                val variants = variantRecords.map { record -> GenericVariant.parseVariant(record) }
+                val variants = variantRecords.map { record -> GenericSmallVariant.parseVariant(record) }
 
                 if (unknownRecords.isNotEmpty()) {
                     throw IllegalArgumentException("Unrecognized records in $type panel: ${

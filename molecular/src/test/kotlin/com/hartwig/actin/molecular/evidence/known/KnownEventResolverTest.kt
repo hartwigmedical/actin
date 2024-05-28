@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.wgs.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalDisruption
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalHomozygousDisruption
@@ -125,7 +125,7 @@ class KnownEventResolverTest {
 
     companion object {
         private fun knownGeneWithName(name: String?): ImmutableKnownGene {
-            return TestServeKnownFactory.geneBuilder().gene(name).build()
+            return TestServeKnownFactory.geneBuilder().gene(name!!).build()
         }
     }
 }

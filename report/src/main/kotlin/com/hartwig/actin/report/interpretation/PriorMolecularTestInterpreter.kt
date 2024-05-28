@@ -46,7 +46,7 @@ class PriorMolecularTestInterpreter {
     private fun interpret(test: GenericPanelExtraction) {
         interpretImpliedNegatives(
             ExperimentType.GENERIC_PANEL,
-            test.testedGenes() - (test.alwaysTestedGenes() - test.genesHavingResultsInPanel())
+            test.testedGenes() - test.genesHavingResultsInPanel()
         )
     }
 
