@@ -22,15 +22,17 @@ class StandardPriorOtherConditionsExtractor(
                 ehrPatientRecord.patientDetails.hashedId,
                 CurationCategory.NON_ONCOLOGICAL_HISTORY,
                 it.name,
-                "non-oncological history"
+                "non-oncological history",
+                false
             )
             ExtractionResult(
-                listOfNotNull(
-                    curatedPriorOtherCondition.config()?.priorOtherCondition?.copy(
+                curatedPriorOtherCondition.configs.mapNotNull { config ->
+                    config.priorOtherCondition?.copy(
                         year = it.startDate.year,
                         month = it.startDate.monthValue
                     )
-                ), curatedPriorOtherCondition.extractionEvaluation
+                },
+                curatedPriorOtherCondition.extractionEvaluation
             )
         }.fold(ExtractionResult(emptyList(), CurationExtractionEvaluation())) { acc, extractionResult ->
             ExtractionResult(acc.extracted + extractionResult.extracted, acc.evaluation + extractionResult.evaluation)
