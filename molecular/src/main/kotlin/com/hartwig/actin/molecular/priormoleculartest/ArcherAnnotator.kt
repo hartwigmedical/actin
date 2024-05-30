@@ -36,6 +36,6 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             )
         }
 
-        return input.copy(variants = annotatedVariants)
+        return input.copy(variants = annotatedVariants, fusions = input.fusions)
     }
 }
