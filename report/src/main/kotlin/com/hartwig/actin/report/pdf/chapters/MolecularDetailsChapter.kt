@@ -48,11 +48,19 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
+            if (!molecular.hasSufficientQuality) {
+                table.addCell(Cells.createContentNoBorder("Insufficient quality for reporting"))
+            }
+
+            if (!molecular.hasSufficientQualityAndPurity && molecular.hasSufficientQuality) {
+                table.addCell(Cells.createContentNoBorder(String.format("Low tumor purity (%s) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable",
+                    molecular.characteristics.purity?.let { Formats.percentage(it) })))
+            }
             val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
             val generators: MutableList<TableGenerator> = mutableListOf(
                 MolecularCharacteristicsGenerator(molecular, contentWidth())
             )
-            if (molecular.containsTumorCells) {
+            if (molecular.hasSufficientQuality) {
                 generators.add(PredictedTumorOriginGenerator(molecular, contentWidth()))
                 generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, contentWidth()))
             }
@@ -64,7 +72,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
                     table.addCell(Cells.createEmpty())
                 }
             }
-            if (!molecular.containsTumorCells) {
+            if (!molecular.hasSufficientQuality) {
                 table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy"))
             }
         } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))

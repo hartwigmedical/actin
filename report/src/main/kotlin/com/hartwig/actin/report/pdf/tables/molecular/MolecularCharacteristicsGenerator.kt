@@ -20,25 +20,24 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         val colWidth = width / 10
         val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)
 
-        listOf("Purity", "Sufficient Quality", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(
+        listOf("Purity", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })
 
         listOf(
             createPurityCell(molecular.characteristics.purity),
-            Cells.createContentYesNo(Formats.yesNoUnknown(molecular.hasSufficientQualityAndPurity)),
             createTMLStatusCell(),
             createTMBStatusCell(),
             createMSStabilityCell(),
             createHRStatusCell(),
-            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "DPYD")),
-            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "UGT1A1"))
+            createPeachSummaryForGene(molecular.pharmaco, "DPYD"),
+            createPeachSummaryForGene(molecular.pharmaco, "UGT1A1")
         ).forEach { table.addCell(it) }
 
         return table
     }
 
     private fun createPurityCell(purity: Double?): Cell {
-        if (!molecular.containsTumorCells) {
+        if (!molecular.hasSufficientQuality) {
             return Cells.createContentWarn("None")
         }
         if (purity == null) {
@@ -50,24 +49,6 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         } else {
             Cells.createContent(purityString)
         }
-    }
-
-    fun createTMLAndTMBStatusString(): String {
-        val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
-        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
-        val TMLString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
-            "TML %s (%d)",
-            if (hasHighTumorMutationalLoad) "high" else "low",
-            tumorMutationalLoad
-        )
-        val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
-        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
-        val TMBString = if (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null) Formats.VALUE_UNKNOWN else String.format(
-            "TMB %s (%s)",
-            if (hasHighTumorMutationalBurden) "high" else "low",
-            Formats.singleDigitNumber(tumorMutationalBurden)
-        )
-        return String.format("%s / %s", TMLString, TMBString)
     }
 
     private fun createTMLStatusString(): String? {
@@ -85,7 +66,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     }
 
     private fun createTMBStatusCell(): Cell {
-        if (!molecular.containsTumorCells) {
+        if (!molecular.hasSufficientQuality) {
             return Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         }
         val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
@@ -123,7 +104,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     }
 
     private fun createCellForCharacteristic(summaryString: String?, shouldHighlight: Boolean?): Cell {
-        return if (!molecular.containsTumorCells) {
+        return if (!molecular.hasSufficientQuality) {
             Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         } else {
             summaryString?.let { value: String ->
@@ -136,12 +117,16 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         }
     }
 
-    companion object {
-        private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): String {
-            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
-            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
+    private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): Cell {
+        return if (!molecular.isPure) {
+            Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
+        } else {
+            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Cells.createContentWarn(Formats.VALUE_UNKNOWN)
+            Cells.createContent(pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" })
         }
+    }
 
+    companion object {
         private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: String): PharmacoEntry? {
             return pharmaco.find { it.gene == geneToFind }
         }

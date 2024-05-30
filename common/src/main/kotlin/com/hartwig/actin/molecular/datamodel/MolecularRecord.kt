@@ -15,6 +15,7 @@ data class MolecularRecord(
     val evidenceSource: String,
     val externalTrialSource: String,
     val containsTumorCells: Boolean,
+    val isPure: Boolean,
     val hasSufficientQualityAndPurity: Boolean,
     val hasSufficientQuality: Boolean,
     val characteristics: MolecularCharacteristics,

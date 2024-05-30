@@ -50,6 +50,7 @@ object TestMolecularFactory {
             evidenceSource = "",
             externalTrialSource = "",
             containsTumorCells = true,
+            isPure = true,
             hasSufficientQualityAndPurity = true,
             hasSufficientQuality = true,
             characteristics = createMinimalTestCharacteristics(),
