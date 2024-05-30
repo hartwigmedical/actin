@@ -24,6 +24,7 @@ data class PanelRecord(
     }
 
     fun events(): Set<PanelEvent> {
-        return drivers.variants + drivers.fusions
+        return archerPanelExtraction?.events()?.toSet() ?: genericPanelExtraction?.events()?.toSet() ?: emptySet()
     }
+
 }
