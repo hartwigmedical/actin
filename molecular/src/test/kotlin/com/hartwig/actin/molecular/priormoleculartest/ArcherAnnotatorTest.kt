@@ -62,7 +62,7 @@ class ArcherAnnotatorTest {
 
     @Test
     fun `Should carry forward fusions without annotation`() {
-        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
+        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT.copy(fusions = listOf(ARCHER_FUSION)))
         assertThat(annotated.fusions).containsExactly(ARCHER_FUSION)
     }
 
