@@ -192,6 +192,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     EXON_SKIPPING_GENE_X_EXON_Y(FunctionInput.ONE_GENE_ONE_INTEGER),
     MSI_SIGNATURE(FunctionInput.NONE),
     HRD_SIGNATURE(FunctionInput.NONE),
+    HRD_SIGNATURE_WITH_BRCA_HIGH_DRIVER_MUTATION(FunctionInput.NONE),
     TMB_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     TML_OF_AT_LEAST_X(FunctionInput.ONE_INTEGER),
     TML_BETWEEN_X_AND_Y(FunctionInput.TWO_INTEGERS),
