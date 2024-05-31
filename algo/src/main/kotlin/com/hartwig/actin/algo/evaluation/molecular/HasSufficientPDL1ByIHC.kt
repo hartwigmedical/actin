@@ -32,24 +32,21 @@ class HasSufficientPDL1ByIHC (
                 }
             }
         }
-        return if (pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any {
-            test -> test.scoreValue == null}) {
-            EvaluationFactory.fail(
+
+        return when {
+            pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> EvaluationFactory.fail(
                 "No PD-L1 IHC test found with score value, only neg/pos status available",
                 "No value score available for PD-L1 IHC test"
             )
-        } else if (pdl1TestsWithRequestedMeasurement.isNotEmpty()) {
-            EvaluationFactory.fail(
+            pdl1TestsWithRequestedMeasurement.isNotEmpty() -> EvaluationFactory.fail(
                 "No PD-L1 IHC test found where level exceeds desired level of $minPDL1",
                 "PD-L1 expression below $minPDL1"
             )
-        } else if (allPDL1Tests(priorMolecularTests).isNotEmpty()) {
-            EvaluationFactory.recoverableFail(
+            allPDL1Tests(priorMolecularTests).isNotEmpty() -> EvaluationFactory.recoverableFail(
                 "No PD-L1 IHC test found with measurement type $measure",
                 "PD-L1 tests not in correct unit ($measure)"
             )
-        } else {
-            EvaluationFactory.fail("PD-L1 expression not tested by IHC",
+            else -> EvaluationFactory.fail("PD-L1 expression not tested by IHC",
                 "PD-L1 expression not tested by IHC")
         }
     }
