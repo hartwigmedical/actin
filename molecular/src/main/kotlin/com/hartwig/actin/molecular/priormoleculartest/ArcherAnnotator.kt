@@ -10,6 +10,7 @@ import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 
 
 class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<ArcherPanel> {
+
     override fun annotate(input: ArcherPanel): ArcherPanel {
         val annotatedVariants = input.variants.map {
             val criteria = VariantMatchCriteria(
@@ -36,6 +37,6 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             )
         }
 
-        return input.copy(variants = annotatedVariants, fusions = input.fusions)
+        return input.copy(variants = annotatedVariants, fusions = input.fusions, skippedExons = input.skippedExons)
     }
 }
