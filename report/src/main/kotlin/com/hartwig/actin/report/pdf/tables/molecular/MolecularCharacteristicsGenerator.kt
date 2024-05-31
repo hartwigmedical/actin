@@ -29,8 +29,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             createTMBStatusCell(),
             createMSStabilityCell(),
             createHRStatusCell(),
-            createPeachSummaryForGene(molecular.pharmaco, "DPYD"),
-            createPeachSummaryForGene(molecular.pharmaco, "UGT1A1")
+            createPeachSummaryForGeneCell(molecular.pharmaco, "DPYD"),
+            createPeachSummaryForGeneCell(molecular.pharmaco, "UGT1A1")
         ).forEach { table.addCell(it) }
 
         return table
@@ -117,7 +117,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         }
     }
 
-    private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): Cell {
+    private fun createPeachSummaryForGeneCell(pharmaco: Set<PharmacoEntry>, gene: String): Cell {
         return if (!molecular.isPure) {
             Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         } else {

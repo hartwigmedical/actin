@@ -48,10 +48,6 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
-            if (!molecular.hasSufficientQuality) {
-                table.addCell(Cells.createContentNoBorder("Insufficient quality for reporting"))
-            }
-
             if (!molecular.hasSufficientQualityAndPurity && molecular.hasSufficientQuality) {
                 table.addCell(Cells.createContentNoBorder(String.format("Low tumor purity (%s) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable",
                     molecular.characteristics.purity?.let { Formats.percentage(it) })))
@@ -73,7 +69,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
                 }
             }
             if (!molecular.hasSufficientQuality) {
-                table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy"))
+                table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))
             }
         } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))
         document.add(table)
