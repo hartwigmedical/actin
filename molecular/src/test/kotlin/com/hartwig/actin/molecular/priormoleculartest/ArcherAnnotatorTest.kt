@@ -5,6 +5,7 @@ import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantAnnotation
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
@@ -39,6 +40,7 @@ private val VARIANT_MATCH_CRITERIA = VariantMatchCriteria(
 )
 
 private val ARCHER_FUSION = ArcherFusion(GENE)
+private val ARCHER_EXON_SKIP = ArcherSkippedExons(GENE, 1, 2)
 
 class ArcherAnnotatorTest {
 
@@ -61,9 +63,11 @@ class ArcherAnnotatorTest {
     }
 
     @Test
-    fun `Should carry forward fusions without annotation`() {
-        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT.copy(fusions = listOf(ARCHER_FUSION)))
+    fun `Should carry forward fusions and exon skips without annotation`() {
+        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT.copy(fusions = listOf(ARCHER_FUSION), skippedExons = listOf(
+            ARCHER_EXON_SKIP)))
         assertThat(annotated.fusions).containsExactly(ARCHER_FUSION)
+        assertThat(annotated.skippedExons).containsExactly(ARCHER_EXON_SKIP)
     }
 
     @Test

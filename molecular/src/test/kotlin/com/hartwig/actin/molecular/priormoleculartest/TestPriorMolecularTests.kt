@@ -58,7 +58,7 @@ fun archerPriorMolecularVariantRecord(gene: String? = GENE, hgvs: String? = HGVS
 fun archerPriorMolecularFusionRecord(gene: String?, date: LocalDate? = null): PriorMolecularTest {
     return PriorMolecularTest(
         test = "Archer FP Lung Target",
-        item = gene,
+        item = null,
         measure = "$gene fusie aangetoond",
         measureDate = date,
         impliesPotentialIndeterminateStatus = false

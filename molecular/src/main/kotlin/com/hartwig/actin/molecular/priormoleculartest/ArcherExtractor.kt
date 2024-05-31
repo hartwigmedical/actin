@@ -23,8 +23,8 @@ class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
     override fun extract(input: List<PriorMolecularTest>): List<ArcherPanel> {
         return input.groupBy { it.measureDate }
             .map { (date, results) ->
-                val resultsWithItemAndMeasure = results.filter { it.item != null && it.measure != null }
-                val groupedByCategory = resultsWithItemAndMeasure.groupBy {
+                val resultsWithMeasure = results.filter { it.measure != null }
+                val groupedByCategory = resultsWithMeasure.groupBy {
                     when {
                         it.measure!!.startsWith("c.") -> ArcherVariantCategory.VARIANT
                         FUSION_REGEX.find(it.measure!!) != null -> ArcherVariantCategory.FUSION
