@@ -92,16 +92,16 @@ class OrangeExtractorTest {
     }
 
     @Test
-    fun `Should determine quality and purity to not be sufficient when other warning is present`() {
+    fun `Should determine quality and purity to be sufficient when other warning is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)
-        assertThat(OrangeExtractor.hasSufficientQuality(record)).isFalse
-        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
+        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isTrue
     }
 
     @Test
-    fun `Should determine quality excluding purity to not be sufficient when other warning is present with low purity warning`() {
+    fun `Should determine quality excluding purity to be sufficient when other warning is present with low purity warning`() {
         val record = orangeRecordWithQCStatuses(setOf(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES))
-        assertThat(OrangeExtractor.hasSufficientQuality(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
         assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isFalse
     }
 
