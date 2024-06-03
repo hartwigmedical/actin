@@ -3,7 +3,9 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSmallVariant
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -27,6 +29,9 @@ private val VARIANT_MATCH_CRITERIA = VariantMatchCriteria(
     isReportable = true,
     gene = GENE
 )
+
+private val ARCHER_FUSION = ArcherFusion(GENE)
+private val ARCHER_EXON_SKIP = ArcherSkippedExons(GENE, 1, 2)
 
 class ArcherAnnotatorTest {
 

@@ -37,6 +37,8 @@ class PriorMolecularTestInterpreter {
 
     private fun interpret(test: ArcherPanelExtraction) {
         test.variants.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.hgvsCodingImpact) }
+        test.fusions.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.display()) }
+
         interpretImpliedNegatives(
             ExperimentType.ARCHER,
             ARCHER_ALWAYS_TESTED_GENES - (test.genesWithVariants() + test.genesWithFusions())
