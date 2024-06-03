@@ -194,7 +194,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private val isHomologousRepairDeficientCreator: FunctionCreator
         get() = FunctionCreator { IsHomologousRepairDeficient() }
     private val isHomologousRepairDeficientAndHasBRCAHighDriverMutationCreator: FunctionCreator
-        get() = FunctionCreator { IsHomologousRepairDeficientAndHasBRCAHighDriverMutation() }
+        get() = FunctionCreator { IsHomologousRepairDeficientWithMutationOrWithVUSMutation() }
 
     private fun hasSufficientTumorMutationalBurdenCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->

@@ -12,8 +12,8 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.Variant
 import org.junit.Test
 
-class IsHomologousRepairDeficientAndHasBRCAHighDriverMutationTest {
-    private val function = IsHomologousRepairDeficientAndHasBRCAHighDriverMutation()
+class IsHomologousRepairDeficientWithMutationOrWithVUSMutationTest {
+    private val function = IsHomologousRepairDeficientWithMutationOrWithVUSMutation()
 
     @Test
     fun `Should fail when HRD status unknown and no mutations in BRCA1`() {
