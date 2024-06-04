@@ -48,10 +48,11 @@ object ActinTrialGeneratorFunctions {
     private fun insertTrialRow(cohortList: List<EvaluatedCohort>, table: Table, trialSubTable: Table) {
         if (cohortList.isNotEmpty()) {
             val cohort = cohortList.first()
-            val trialLabelText = listOf(
+            val trialLabelText = listOfNotNull(
                 Text(cohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
                 Text("\n"),
-                Text(cohort.acronym).addStyle(Styles.tableContentStyle())
+                Text(cohort.acronym).addStyle(Styles.tableContentStyle()),
+                cohort.phase?.let { Text("\n${it.display()}").addStyle(Styles.tableContentStyle()) }
             )
             table.addCell(createContent(Paragraph().addAll(trialLabelText)))
             val finalSubTable = if (trialSubTable.numberOfRows > 2) {

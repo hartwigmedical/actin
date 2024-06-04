@@ -4,6 +4,7 @@ class EvaluatedCohortComparator : Comparator<EvaluatedCohort> {
     override fun compare(evaluatedCohort1: EvaluatedCohort, evaluatedCohort2: EvaluatedCohort): Int {
         return compareByDescending(EvaluatedCohort::hasSlotsAvailable)
             .thenBy { it.molecularEvents.isEmpty() }
+            .thenBy(nullsLast(), EvaluatedCohort::phase)
             .thenByDescending { it.warnings.isEmpty() }
             .thenBy(EvaluatedCohort::trialId)
             .thenComparing(::compareCohortNames)

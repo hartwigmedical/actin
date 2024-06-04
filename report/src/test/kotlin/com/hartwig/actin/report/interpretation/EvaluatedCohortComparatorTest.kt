@@ -1,11 +1,14 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.trial.datamodel.TrialPhase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvaluatedCohortComparatorTest {
+    private val cohort = create("trial 3", "cohort 1", true, "Event B")
+
     @Test
-    fun canSortEvaluatedCohorts() {
+    fun `Should sort evaluated cohorts`() {
         val cohorts = listOf(
             create("trial 7", "cohort 1", true),
             create("trial 3", "cohort 2 + cohort 3", false, "Event C"),
@@ -33,17 +36,50 @@ class EvaluatedCohortComparatorTest {
         cohorts.forEach { assertThat(cohortIterator.next()).isEqualTo(it) }
     }
 
-    companion object {
-        private fun create(trialId: String, cohort: String?, hasSlotsAvailable: Boolean, vararg molecularEvents: String): EvaluatedCohort {
-            return EvaluatedCohortTestFactory.evaluatedCohort(
-                trialId = trialId,
-                acronym = "",
-                molecularEvents = setOf(*molecularEvents),
-                cohort = cohort,
-                isPotentiallyEligible = false,
-                isOpen = false,
-                hasSlotsAvailable = hasSlotsAvailable
+    @Test
+    fun `Should place cohorts with open slots before those without`() {
+        assertExpectedOrder(listOf(cohort, cohort.copy(hasSlotsAvailable = false)))
+    }
+
+    @Test
+    fun `Should place cohorts with molecular events before those without`() {
+        assertExpectedOrder(listOf(cohort, cohort.copy(molecularEvents = emptySet())))
+    }
+
+
+    @Test
+    fun `Should prioritize later phases and put null phases last when comparing cohorts with phases`() {
+        assertExpectedOrder(
+            listOf(
+                cohort.copy(phase = TrialPhase.PHASE_4),
+                cohort.copy(phase = TrialPhase.PHASE_3),
+                cohort.copy(phase = TrialPhase.PHASE_2_3),
+                cohort.copy(phase = TrialPhase.PHASE_2),
+                cohort.copy(phase = TrialPhase.PHASE_1_2),
+                cohort.copy(phase = TrialPhase.PHASE_1),
+                cohort
             )
-        }
+        )
+    }
+
+    @Test
+    fun `Should place cohorts with warnings after those without`() {
+        assertExpectedOrder(listOf(cohort, cohort.copy(warnings = setOf("Warning"))))
+    }
+
+    private fun assertExpectedOrder(expectedCohorts: List<EvaluatedCohort>) {
+        assertThat(expectedCohorts.reversed().sortedWith(EvaluatedCohortComparator())).isEqualTo(expectedCohorts)
+    }
+
+    private fun create(trialId: String, cohort: String?, hasSlotsAvailable: Boolean, vararg molecularEvents: String): EvaluatedCohort {
+        return EvaluatedCohortTestFactory.evaluatedCohort(
+            trialId = trialId,
+            acronym = "",
+            molecularEvents = setOf(*molecularEvents),
+            cohort = cohort,
+            isPotentiallyEligible = false,
+            isOpen = false,
+            hasSlotsAvailable = hasSlotsAvailable
+        )
     }
 }

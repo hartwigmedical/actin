@@ -22,22 +22,19 @@ object TestTrialConfigDatabaseFactory {
 
     private fun createTestTrialDefinitionConfigs(): List<TrialDefinitionConfig> {
         return listOf(
-            TrialDefinitionConfig(
-                trialId = TestTrialData.TEST_TRIAL_METC_1,
-                open = true,
-                acronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
-                title = "Title for " + TestTrialData.TEST_TRIAL_METC_1,
-                nctId = "nctId for " + TestTrialData.TEST_TRIAL_METC_1
-            ),
-            TrialDefinitionConfig(
-                trialId = TestTrialData.TEST_TRIAL_METC_2,
-                open = true,
-                acronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_2,
-                title = "Title for " + TestTrialData.TEST_TRIAL_METC_2,
-                nctId = "nctId for " + TestTrialData.TEST_TRIAL_METC_2
-            )
+            trialDefinitionConfig(TestTrialData.TEST_TRIAL_METC_1),
+            trialDefinitionConfig(TestTrialData.TEST_TRIAL_METC_2)
         )
     }
+
+    private fun trialDefinitionConfig(trialId: String) = TrialDefinitionConfig(
+        trialId = trialId,
+        open = true,
+        acronym = "Acronym-$trialId",
+        title = "Title for $trialId",
+        nctId = "nctId for $trialId",
+        phase = null
+    )
 
     private fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
         return listOf(

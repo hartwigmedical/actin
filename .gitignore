@@ -4,3 +4,6 @@
 
 # Ignore target directories
 target
+
+# Ignore test report
+ACTN01029999.actin.pdf
