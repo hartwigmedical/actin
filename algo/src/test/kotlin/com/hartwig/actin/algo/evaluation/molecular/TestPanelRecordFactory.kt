@@ -12,8 +12,6 @@ object TestPanelRecordFactory {
 
     fun empty() =
         PanelRecord(
-            testedGenes = emptySet(),
-            panelEvents = emptySet(),
             drivers = PanelDrivers(),
             date = TEST_DATE,
             characteristics = MolecularCharacteristics(),

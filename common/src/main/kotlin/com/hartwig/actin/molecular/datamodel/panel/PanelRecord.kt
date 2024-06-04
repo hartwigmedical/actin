@@ -3,11 +3,13 @@ package com.hartwig.actin.molecular.datamodel.panel
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import java.time.LocalDate
 
 data class PanelRecord(
-    val testedGenes: Set<String>,
-    val panelEvents: Set<PanelEvent>,
+    val archerPanelExtraction: ArcherPanelExtraction? = null,
+    val genericPanelExtraction: GenericPanelExtraction? = null,
     override val type: ExperimentType,
     override val date: LocalDate? = null,
     override val drivers: PanelDrivers,
@@ -15,13 +17,14 @@ data class PanelRecord(
     override val evidenceSource: String,
 ) : MolecularTest<PanelDrivers> {
 
-    fun testedGenes() = testedGenes
+    fun testedGenes() = archerPanelExtraction?.testedGenes() ?: genericPanelExtraction?.testedGenes() ?: emptySet()
 
     override fun testsGene(gene: String): Boolean {
         return testedGenes().contains(gene)
     }
 
     fun events(): Set<PanelEvent> {
-        return panelEvents
+        return archerPanelExtraction?.events()?.toSet() ?: genericPanelExtraction?.events()?.toSet() ?: emptySet()
     }
+
 }

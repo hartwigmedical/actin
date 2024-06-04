@@ -80,8 +80,7 @@ internal object MolecularHistoryFactory {
         )
     }
 
-    private fun archerPanelRecord(extraction: ArcherPanelExtraction) = TestPanelRecordFactory.empty().copy(
-        testedGenes = extraction.testedGenes(),
-        panelEvents = extraction.events()
+    fun archerPanelRecord(extraction: ArcherPanelExtraction) = TestPanelRecordFactory.empty().copy(
+        archerPanelExtraction = extraction
     )
 }

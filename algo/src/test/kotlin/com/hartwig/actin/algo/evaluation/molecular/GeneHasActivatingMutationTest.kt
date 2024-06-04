@@ -209,13 +209,7 @@ class GeneHasActivatingMutationTest {
             EvaluationResult.PASS,
             functionNotIgnoringCodons.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(
-                        listOf(
-                            TestPanelRecordFactory.empty().copy(
-                                panelEvents = AVL_PANEL_WITH_ACTIVATING_VARIANT.events(),
-                                testedGenes = AVL_PANEL_WITH_ACTIVATING_VARIANT.testedGenes()
-                            )
-                        )),
+                    molecularHistory = MolecularHistory(listOf(panelRecord(genericPanelExtraction = AVL_PANEL_WITH_ACTIVATING_VARIANT))),
                 )
             )
         )
@@ -338,8 +332,12 @@ class GeneHasActivatingMutationTest {
 
         private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
 
-        private fun panelRecord(extraction: ArcherPanelExtraction) =
-            TestPanelRecordFactory.empty().copy(panelEvents = extraction.events(), testedGenes = extraction.testedGenes())
+        private fun panelRecord(
+            archerPanelExtraction: ArcherPanelExtraction? = null,
+            genericPanelExtraction: GenericPanelExtraction? = null
+        ) =
+            TestPanelRecordFactory.empty()
+                .copy(archerPanelExtraction = archerPanelExtraction, genericPanelExtraction = genericPanelExtraction)
 
         private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherPanelExtraction(
             variants = listOf(

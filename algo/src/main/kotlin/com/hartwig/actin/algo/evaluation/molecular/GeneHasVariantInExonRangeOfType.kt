@@ -8,6 +8,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
@@ -104,8 +105,7 @@ class GeneHasVariantInExonRangeOfType(
         val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
             molecularHistory.allGenericPanels()
                 .asSequence()
-                .flatMap { it.events() }
-                .filterIsInstance<GenericExonDeletionExtraction>()
+                .flatMap(GenericPanelExtraction::exonDeletions)
                 .filter { exonDeletion -> exonDeletion.impactsGene(gene) }
                 .filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
                 .map(GenericExonDeletionExtraction::display)

@@ -5,10 +5,10 @@ import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.serialization.MolecularHistoryAdapter
 import com.hartwig.actin.util.Paths
 import com.hartwig.actin.util.json.GsonLocalDateAdapter
 import com.hartwig.actin.util.json.GsonLocalDateTimeAdapter
+import com.hartwig.actin.util.json.MolecularHistoryAdapter
 import com.hartwig.actin.util.json.TreatmentAdapter
 import java.io.BufferedWriter
 import java.io.File

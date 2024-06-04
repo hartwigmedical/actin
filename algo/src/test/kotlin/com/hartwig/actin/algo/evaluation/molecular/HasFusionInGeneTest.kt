@@ -11,6 +11,7 @@ import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -116,7 +117,7 @@ class HasFusionInGeneTest {
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
                         TestPanelRecordFactory.empty()
-                            .copy(panelEvents = setOf(ArcherFusionExtraction(MATCHING_GENE)))
+                            .copy(archerPanelExtraction = ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(MATCHING_GENE))))
                     )
                 )
             )

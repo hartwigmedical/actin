@@ -23,6 +23,8 @@ import com.hartwig.actin.molecular.datamodel.hmf.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -310,8 +312,11 @@ object TestMolecularFactory {
     }
 
     fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        testedGenes = setOf(geneStart, geneEnd),
-        panelEvents = setOf(GenericFusionExtraction(geneStart, geneEnd))
+        genericPanelExtraction =
+        GenericPanelExtraction(
+            fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
+            panelType = GenericPanelType.FREE_TEXT
+        )
     )
 }
 

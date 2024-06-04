@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.molecular.NsclcDriverGeneStatusesAreAva
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ARCHER_ALWAYS_TESTED_GENES
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import org.assertj.core.api.Assertions
 import org.junit.Test
@@ -40,7 +40,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                createNonWGSRecordWithOptionalPriorTests(NSCLC_DRIVER_GENE_SET.map { archerPanelWithVariantForGene(it) })
+                createNonWGSRecordWithOptionalPriorTests(NSCLC_DRIVER_GENE_SET.map { archerPanelWithVarientForGene(it) })
             )
         )
     }
@@ -70,7 +70,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail if molecular history does not contain WGS or targeted panel analysis and other panels do not cover any target gene`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(createNonWGSRecordWithOptionalPriorTests(listOf(archerPanelWithVariantForGene("GeneX"))))
+            function.evaluate(createNonWGSRecordWithOptionalPriorTests(listOf(archerPanelWithVarientForGene("GeneX"))))
         )
     }
 
@@ -78,7 +78,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail with specific message if no WGS or targeted panel analysis in history and other panels only cover part of the target genes`() {
         val evaluation = function.evaluate(
             createNonWGSRecordWithOptionalPriorTests(
-                NSCLC_DRIVER_GENE_SET.drop(1).map { archerPanelWithVariantForGene(it) })
+                NSCLC_DRIVER_GENE_SET.drop(1).map { archerPanelWithVarientForGene(it) })
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
         Assertions.assertThat(evaluation.failSpecificMessages).containsExactly(
@@ -86,9 +86,8 @@ class NsclcDriverGeneStatusesAreAvailableTest {
         )
     }
 
-    private fun archerPanelWithVariantForGene(gene: String) =
-        TestPanelRecordFactory.empty()
-            .copy(testedGenes = setOf(gene) + ARCHER_ALWAYS_TESTED_GENES, panelEvents = setOf(ArcherVariantExtraction(gene, HGVS_VARIANT)))
+    private fun archerPanelWithVarientForGene(it: String) = TestPanelRecordFactory.empty()
+        .copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherVariantExtraction(it, HGVS_VARIANT))))
 
     private fun createNonWGSRecordWithOptionalPriorTests(priorTest: List<MolecularTest<*>> = emptyList()): PatientRecord {
         val history = MolecularHistory(priorTest)
