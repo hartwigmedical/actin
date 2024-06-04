@@ -22,9 +22,7 @@ import com.hartwig.actin.molecular.datamodel.hmf.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.hmf.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.PharmacoEntry
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -312,11 +310,8 @@ object TestMolecularFactory {
     }
 
     fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        genericPanelExtraction =
-        GenericPanelExtraction(
-            fusions = listOf(GenericFusion(geneStart, geneEnd)),
-            panelType = GenericPanelType.FREE_TEXT
-        )
+        testedGenes = setOf(geneStart, geneEnd),
+        panelEvents = setOf(GenericFusionExtraction(geneStart, geneEnd))
     )
 }
 

@@ -4,11 +4,11 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericSmallVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
 
 class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPanelExtraction> {
     override fun extract(input: List<PriorMolecularTest>): List<GenericPanelExtraction> {
@@ -22,15 +22,15 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
             .map { (date, results) ->
                 val usableResults = results.filterNot { result -> isKnownIgnorableRecord(result, type) }
                 val (fusionRecords, nonFusionRecords) = usableResults.partition { it.item?.contains("::") ?: false }
-                val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusion.parseFusion(item) } }
+                val fusions = fusionRecords.mapNotNull { it.item?.let { item -> GenericFusionExtraction.parseFusion(item) } }
 
                 val (exonDeletionRecords, nonExonDeletionRecords) = nonFusionRecords.partition { it.measure?.endsWith(" del") ?: false }
-                val exonDeletions = exonDeletionRecords.map { record -> GenericExonDeletion.parse(record) }
+                val exonDeletions = exonDeletionRecords.map { record -> GenericExonDeletionExtraction.parse(record) }
 
                 val (variantRecords, unknownRecords) = nonExonDeletionRecords.partition {
                     it.measure?.let { measure -> measure.startsWith("c.") || measure.startsWith("p.") } ?: false
                 }
-                val variants = variantRecords.map { record -> GenericSmallVariant.parseVariant(record) }
+                val variants = variantRecords.map { record -> GenericVariantExtraction.parseVariant(record) }
 
                 if (unknownRecords.isNotEmpty()) {
                     throw IllegalArgumentException("Unrecognized records in $type panel: ${

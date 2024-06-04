@@ -21,5 +21,5 @@ data class MolecularRecord(
     override val characteristics: MolecularCharacteristics,
     override val evidenceSource: String,
 ) : MolecularTest<MolecularDrivers> {
-    override fun isGeneTested(gene: String) = true
+    override fun testsGene(gene: String) = true
 }

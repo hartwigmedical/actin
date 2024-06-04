@@ -54,7 +54,8 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
         }
 
         return PanelRecord(
-            archerPanelExtraction = input,
+            testedGenes = input.testedGenes(),
+            panelEvents = input.events().toSet(),
             type = ExperimentType.ARCHER,
             date = input.date,
             drivers = PanelDrivers(variants = annotatedVariants.toSet()),

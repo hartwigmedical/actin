@@ -5,16 +5,13 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.TEST_DATE
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.panel.PanelDrivers
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericSmallVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -24,17 +21,13 @@ private const val OTHER_EXON = 6
 private const val TARGET_GENE = "gene A"
 
 private val FREETEXT_PANEL_WITH_EXON_DELETION = TestPanelRecordFactory.empty().copy(
-    genericPanelExtraction = GenericPanelExtraction(
-        date = TEST_DATE,
-        panelType = GenericPanelType.FREE_TEXT,
-        variants = emptyList(),
-        fusions = emptyList(),
-        exonDeletions = listOf(
-            GenericExonDeletion(
-                gene = TARGET_GENE,
-                affectedExon = MATCHING_EXON,
-            ),
-        )
+    type = ExperimentType.GENERIC_PANEL,
+    testedGenes = setOf(TARGET_GENE),
+    panelEvents = setOf(
+        GenericExonDeletionExtraction(
+            gene = TARGET_GENE,
+            affectedExon = MATCHING_EXON,
+        ),
     )
 )
 
@@ -42,27 +35,15 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
     drivers = PanelDrivers(
         variants = setOf(PROPER_PANEL_VARIANT.copy(gene = TARGET_GENE)), fusions = emptySet()
     ),
-    genericPanelExtraction = GenericPanelExtraction(
-        date = TEST_DATE,
-        panelType = GenericPanelType.FREE_TEXT,
-        variants = listOf(
-            GenericSmallVariant(
-                gene = TARGET_GENE,
-                hgvsCodingImpact = "c.10A>T",
-            ),
+    panelEvents = setOf(
+        GenericVariantExtraction(
+            gene = TARGET_GENE,
+            hgvsCodingImpact = "c.10A>T",
         ),
-        fusions = emptyList()
     )
 )
 
-private val EMPTY_AVL_PANEL = TestPanelRecordFactory.empty().copy(
-    type = ExperimentType.GENERIC_PANEL, genericPanelExtraction = GenericPanelExtraction(
-        date = TEST_DATE,
-        panelType = GenericPanelType.AVL,
-        variants = emptyList(),
-        fusions = emptyList()
-    )
-)
+private val EMPTY_AVL_PANEL = TestPanelRecordFactory.empty().copy(type = ExperimentType.GENERIC_PANEL)
 
 class GeneHasVariantInExonRangeOfTypeTest {
     private val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INSERT)
@@ -295,7 +276,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
     fun `Should fail for gene always tested in panel but no variant`() {
         val function = GeneHasVariantInExonRangeOfType("EGFR", MATCHING_EXON, MATCHING_EXON + 1, null)
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-            molecularHistory = MolecularHistory(listOf(EMPTY_AVL_PANEL))
+            molecularHistory = MolecularHistory(listOf(EMPTY_AVL_PANEL.copy(testedGenes = setOf("EGFR"))))
         )
 
         val evaluation = function.evaluate(patient)

@@ -10,10 +10,8 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorM
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSmallVariant
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
+import com.hartwig.actin.molecular.datamodel.panel.archer.ARCHER_ALWAYS_TESTED_GENES
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import org.junit.Test
 
 class MolecularResultsAreAvailableForGeneTest {
@@ -170,7 +168,11 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestPanelRecordFactory.empty().copy(archerPanelExtraction = ArcherPanelExtraction()))
+                        listOf(
+                            TestPanelRecordFactory.empty().copy(
+                                type = ExperimentType.ARCHER, testedGenes = ARCHER_ALWAYS_TESTED_GENES
+                            )
+                        )
                     )
                 )
         )
@@ -189,7 +191,8 @@ class MolecularResultsAreAvailableForGeneTest {
     }
 
     private fun archerPanelWithVariantForGene(gene: String) =
-        TestPanelRecordFactory.empty().copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherSmallVariant(gene, "c.1A>T"))))
+        TestPanelRecordFactory.empty()
+            .copy(testedGenes = setOf(gene), panelEvents = setOf(ArcherVariantExtraction(gene, "c.1A>T")))
 
     @Test
     fun `Should fail for Archer if gene is not tested in panel`() {
@@ -205,14 +208,13 @@ class MolecularResultsAreAvailableForGeneTest {
 
     @Test
     fun `Should pass for gene that is always tested in generic panel`() {
+        val egfr = "EGFR"
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            MolecularResultsAreAvailableForGene("EGFR")
+            MolecularResultsAreAvailableForGene(egfr)
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(
-                            TestPanelRecordFactory.empty().copy(genericPanelExtraction = GenericPanelExtraction(GenericPanelType.AVL))
-                        )
+                        listOf(TestPanelRecordFactory.empty().copy(type = ExperimentType.GENERIC_PANEL, testedGenes = setOf(egfr)))
                     )
                 )
         )

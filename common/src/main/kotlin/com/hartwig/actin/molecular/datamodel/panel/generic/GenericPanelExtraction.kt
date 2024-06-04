@@ -6,16 +6,16 @@ val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 data class GenericPanelExtraction(
     val panelType: GenericPanelType,
-    val variants: List<GenericSmallVariant> = emptyList(),
-    val fusions: List<GenericFusion> = emptyList(),
-    val exonDeletions: List<GenericExonDeletion> = emptyList(),
+    val variants: List<GenericVariantExtraction> = emptyList(),
+    val fusions: List<GenericFusionExtraction> = emptyList(),
+    val exonDeletions: List<GenericExonDeletionExtraction> = emptyList(),
     val date: LocalDate? = null,
 ) {
     fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + alwaysTestedGenes()
     }
 
-    fun events() = variants + fusions + exonDeletions
+    fun events() = (variants + fusions + exonDeletions).toSet()
 
     private fun genesWithVariants(): Set<String> {
         return variants.map { it.gene }.toSet()
@@ -30,7 +30,7 @@ data class GenericPanelExtraction(
     }
 
 
-    fun alwaysTestedGenes(): Set<String> {
+    private fun alwaysTestedGenes(): Set<String> {
         return when (panelType) {
             GenericPanelType.FREE_TEXT -> emptySet()
             else -> GENERIC_PANEL_ALWAYS_TESTED_GENES

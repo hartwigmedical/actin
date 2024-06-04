@@ -125,10 +125,7 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
     private fun findMatchingFusionsInPanels(molecularHistory: MolecularHistory): Evaluation? {
         val matchedFusions = molecularHistory.allPanels()
-            .flatMap {
-                (it.archerPanelExtraction?.events() ?: emptyList()) + (it.genericPanelExtraction?.events()
-                    ?: emptyList())
-            }
+            .flatMap { it.events() }
             .filter { it.impactsGene(gene) }
             .map { it.display() }
             .toSet()

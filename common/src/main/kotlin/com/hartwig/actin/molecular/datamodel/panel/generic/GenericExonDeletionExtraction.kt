@@ -5,17 +5,17 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 private val EXON_DELETION_REGEX = Regex("ex(\\d+) del")
 
-data class GenericExonDeletion(
+data class GenericExonDeletionExtraction(
     val gene: String,
     val affectedExon: Int,
 ) : PanelEvent {
     companion object {
-        fun parse(priorMolecularTest: PriorMolecularTest): GenericExonDeletion {
+        fun parse(priorMolecularTest: PriorMolecularTest): GenericExonDeletionExtraction {
             return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
                 val exonMatch = EXON_DELETION_REGEX.find(priorMolecularTest.measure)
                 if (exonMatch != null) {
                     val exon = exonMatch.groupValues[1].toInt()
-                    GenericExonDeletion(gene = priorMolecularTest.item, affectedExon = exon)
+                    GenericExonDeletionExtraction(gene = priorMolecularTest.item, affectedExon = exon)
                 } else {
                     throw IllegalArgumentException("Failed to extract exon number for Exon deletion ${priorMolecularTest.item} ${priorMolecularTest.measure}")
                 }

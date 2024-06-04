@@ -8,12 +8,13 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.skippedExons }
+        val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.events() }.filterIsInstance<ArcherSkippedExonsExtraction>()
             .filter { it.impactsGene(gene) && exonToSkip == it.start && exonToSkip == it.end }.map { it.display() }
 
         val molecular = molecularHistory.latestOrangeMolecularRecord()

@@ -12,9 +12,9 @@ import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.panel.PanelDrivers
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariant
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSmallVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 
 val PROPER_PANEL_VARIANT = PanelVariant(
     chromosome = "7",
@@ -50,7 +50,7 @@ internal object MolecularHistoryFactory {
             molecularTests = listOf(
                 archerPanelRecord(
                     ArcherPanelExtraction(
-                        variants = listOf(ArcherSmallVariant(gene = gene, hgvsCodingImpact = hgvsCodingImpact))
+                        variants = listOf(ArcherVariantExtraction(gene = gene, hgvsCodingImpact = hgvsCodingImpact))
                     )
                 ).copy(
                     drivers = PanelDrivers(
@@ -69,7 +69,7 @@ internal object MolecularHistoryFactory {
     fun withArcherFusion(geneStart: String): MolecularHistory {
         return MolecularHistory(
             molecularTests = listOf(
-                archerPanelRecord(ArcherPanelExtraction(fusions = listOf(ArcherFusion(gene = geneStart))))
+                archerPanelRecord(ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(gene = geneStart))))
             )
         )
     }
@@ -80,7 +80,8 @@ internal object MolecularHistoryFactory {
         )
     }
 
-    fun archerPanelRecord(extraction: ArcherPanelExtraction) = TestPanelRecordFactory.empty().copy(
-        archerPanelExtraction = extraction
+    private fun archerPanelRecord(extraction: ArcherPanelExtraction) = TestPanelRecordFactory.empty().copy(
+        testedGenes = extraction.testedGenes(),
+        panelEvents = extraction.events()
     )
 }

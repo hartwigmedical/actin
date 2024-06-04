@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.sort.driver.VariantComparator
 
 data class ExhaustiveVariant(
     val variantCopyNumber: Double,
@@ -31,9 +30,4 @@ data class ExhaustiveVariant(
     override val geneRole: GeneRole,
     override val proteinEffect: ProteinEffect,
     override val isAssociatedWithDrugResistance: Boolean?,
-) : Variant, Comparable<ExhaustiveVariant> {
-
-    override fun compareTo(other: ExhaustiveVariant): Int {
-        return VariantComparator().compare(this, other)
-    }
-}
+) : Variant

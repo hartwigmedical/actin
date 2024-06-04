@@ -12,7 +12,7 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
         val (validOncoPanelOrWGSList, invalidOncoPanelOrWGSList) = molecularHistory.allOrangeMolecularRecords()
             .partition { it.containsTumorCells }
         val panelGenes =
-            (molecularHistory.allGenericPanels().map { it.testedGenes() } + molecularHistory.allArcherPanels().map { it.testedGenes() })
+            (molecularHistory.allPanels().map { it.testedGenes() })
                 .flatten()
 
         return when {

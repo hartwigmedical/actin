@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.sort.driver
 
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.Variant
 
-class VariantComparator : Comparator<ExhaustiveVariant> {
+class VariantComparator : Comparator<Variant> {
 
-    private val comparator = Comparator.comparing<ExhaustiveVariant, ExhaustiveVariant>({ it }, DriverComparator())
+    private val comparator = Comparator.comparing<Variant, Variant>({ it }, DriverComparator())
         .thenComparing({ it }, GeneAlterationComparator())
         .thenComparing({ it.canonicalImpact.hgvsProteinImpact }, String::compareTo)
         .thenComparing({ it.canonicalImpact.hgvsCodingImpact }, String::compareTo)
     
-    override fun compare(variant1: ExhaustiveVariant, variant2: ExhaustiveVariant): Int {
+    override fun compare(variant1: Variant, variant2: Variant): Int {
         return comparator.compare(variant1, variant2)
     }
 }

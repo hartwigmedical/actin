@@ -2,10 +2,10 @@ package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularExtractor
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSmallVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 
 private val FUSION_REGEX = Regex("([A-Za-z0-9 ]+)( fusie aangetoond)")
 private val EXON_SKIP_REGEX = Regex("([A-Za-z0-9 ]+)( exon )([0-9]+(-[0-9]+)?)( skipping aangetoond)")
@@ -34,16 +34,16 @@ class ArcherExtractor : MolecularExtractor<PriorMolecularTest, ArcherPanelExtrac
                 }
 
                 val variants =
-                    groupedByCategory[ArcherMutationCategory.SMALL_VARIANT]?.map { ArcherSmallVariant(it.item!!, it.measure!!) } ?: emptyList()
+                    groupedByCategory[ArcherMutationCategory.SMALL_VARIANT]?.map { ArcherVariantExtraction(it.item!!, it.measure!!) } ?: emptyList()
                 val fusions = groupedByCategory[ArcherMutationCategory.FUSION]?.mapNotNull {
                     FUSION_REGEX.find(it.measure!!)?.let { matchResult ->
-                        ArcherFusion(matchResult.groupValues[1])
+                        ArcherFusionExtraction(matchResult.groupValues[1])
                     }
                 } ?: emptyList()
                 val exonSkips = groupedByCategory[ArcherMutationCategory.EXON_SKIP]?.mapNotNull {
                     EXON_SKIP_REGEX.find(it.measure!!)?.let { matchResult ->
                         val (start, end) = parseRange(matchResult.groupValues[3])
-                        ArcherSkippedExons(matchResult.groupValues[1], start, end)
+                        ArcherSkippedExonsExtraction(matchResult.groupValues[1], start, end)
                     }
                 } ?: emptyList()
                 val unknownResults =

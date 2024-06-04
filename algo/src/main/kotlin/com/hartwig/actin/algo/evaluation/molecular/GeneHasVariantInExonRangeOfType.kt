@@ -7,8 +7,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
@@ -105,10 +104,11 @@ class GeneHasVariantInExonRangeOfType(
         val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
             molecularHistory.allGenericPanels()
                 .asSequence()
-                .flatMap(GenericPanelExtraction::exonDeletions)
+                .flatMap { it.events() }
+                .filterIsInstance<GenericExonDeletionExtraction>()
                 .filter { exonDeletion -> exonDeletion.impactsGene(gene) }
                 .filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
-                .map(GenericExonDeletion::display)
+                .map(GenericExonDeletionExtraction::display)
                 .toSet()
         } else {
             emptySet()
@@ -122,7 +122,7 @@ class GeneHasVariantInExonRangeOfType(
             val message = "Variant(s) $baseMessage"
             return EvaluationFactory.pass(message, message, inclusionEvents = matches)
         } else {
-            val geneIsTestedInAnyPanel = molecularHistory.allPanels().any { panel -> panel.isGeneTested(gene) }
+            val geneIsTestedInAnyPanel = molecularHistory.allPanels().any { panel -> panel.testsGene(gene) }
 
             val anyVariantOnGeneInAnyPanel = molecularHistory.allPanels().any { panel ->
                 panel.drivers.variants.any { it.impactsGene(gene) }

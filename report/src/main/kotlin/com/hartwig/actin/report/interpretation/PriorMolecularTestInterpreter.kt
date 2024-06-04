@@ -4,9 +4,11 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ARCHER_ALWAYS_TESTED_GENES
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GENERIC_PANEL_ALWAYS_TESTED_GENES
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
 
@@ -17,8 +19,8 @@ class PriorMolecularTestInterpreter {
 
     fun interpret(history: MolecularHistory): List<PriorMolecularTestInterpretation> {
         history.allIHCTests().forEach(::interpret)
-        history.allArcherPanels().forEach(::interpret)
-        history.allGenericPanels().forEach(::interpret)
+        history.allArcherPanels().forEach(::interpretArcher)
+        history.allGenericPanels().forEach(::interpretGeneric)
         history.allOtherTests().forEach(::interpret)
         return interpretationBuilder.build()
     }
@@ -35,20 +37,24 @@ class PriorMolecularTestInterpreter {
         }
     }
 
-    private fun interpret(test: ArcherPanelExtraction) {
-        test.variants.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.hgvsCodingImpact) }
-        test.fusions.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.display()) }
+    private fun interpretArcher(test: PanelRecord) {
+        val variants = test.events().filterIsInstance<ArcherVariantExtraction>()
+        val fusions = test.events().filterIsInstance<ArcherFusionExtraction>()
+        variants
+            .forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.hgvsCodingImpact) }
+        fusions
+            .forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.display()) }
 
         interpretImpliedNegatives(
             ExperimentType.ARCHER,
-            ARCHER_ALWAYS_TESTED_GENES - (test.genesWithVariants() + test.genesWithFusions())
+            ARCHER_ALWAYS_TESTED_GENES - (variants.map { it.gene }.toSet() + fusions.map { it.gene }.toSet())
         )
     }
 
-    private fun interpret(test: GenericPanelExtraction) {
+    private fun interpretGeneric(test: PanelRecord) {
         interpretImpliedNegatives(
             ExperimentType.GENERIC_PANEL,
-            test.testedGenes() - test.genesHavingResultsInPanel()
+            GENERIC_PANEL_ALWAYS_TESTED_GENES - (test.testedGenes().filter { test.events().any { e -> e.impactsGene(it) } }).toSet()
         )
     }
 

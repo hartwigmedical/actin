@@ -10,13 +10,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularInterpreterTest {
-    private val input = ArcherPanelExtraction()
+    private val extraction = ArcherPanelExtraction()
     private val output = mockk<OtherPriorMolecularTest>()
     var annotatorCalled: Boolean = false
 
     private val extractor = object : MolecularExtractor<PriorMolecularTest, ArcherPanelExtraction> {
         override fun extract(input: List<PriorMolecularTest>): List<ArcherPanelExtraction> {
-            return input.map { this@MolecularInterpreterTest.input }
+            return input.map { extraction }
         }
     }
     private val annotator = object : MolecularAnnotator<ArcherPanelExtraction, MolecularTest<UnknownDrivers>> {

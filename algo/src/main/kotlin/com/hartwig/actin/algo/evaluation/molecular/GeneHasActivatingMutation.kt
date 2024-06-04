@@ -12,8 +12,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
 data class ActivationProfile(
     val event: String,
@@ -42,8 +41,8 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
 
         val groupedEvaluationsByResult =
             listOfNotNull(orangeMolecularEvaluation, panelEvaluation).groupBy { evaluation -> evaluation.result }.mapValues { entry ->
-                    entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
-                }
+                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
+            }
 
         return groupedEvaluationsByResult[EvaluationResult.PASS] ?: groupedEvaluationsByResult[EvaluationResult.WARN]
         ?: groupedEvaluationsByResult[EvaluationResult.FAIL] ?: EvaluationFactory.undetermined(
@@ -95,8 +94,8 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
         val evidenceSource = molecular.evidenceSource
         val variantCharacteristics =
             molecular.drivers.variants.filter { it.gene == gene }.filter { ignoredCodon(codonsToIgnore, it) }.map { variant ->
-                    evaluateVariant(variant, hasHighMutationalLoad)
-                }
+                evaluateVariant(variant, hasHighMutationalLoad)
+            }
 
         val activatingVariants = variantCharacteristics.filter(ActivationProfile::activating).map(ActivationProfile::event).toSet()
         if (activatingVariants.isNotEmpty()) {
@@ -107,7 +106,8 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
             )
         }
 
-        val potentialWarnEvaluation = evaluatePotentialWarns(filteredForWarnings(variantCharacteristics) { it.associatedWithResistance },
+        val potentialWarnEvaluation = evaluatePotentialWarns(
+            filteredForWarnings(variantCharacteristics) { it.associatedWithResistance },
             filteredForWarnings(variantCharacteristics) { it.nonOncoGene },
             filteredForWarnings(variantCharacteristics) { it.noHotspotAndNoGainOfFunction },
             filteredForWarnings(variantCharacteristics) { it.subclonal },
@@ -213,9 +213,7 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
     private fun findActivatingMutationsInPanels(molecularHistory: MolecularHistory): Evaluation? {
 
         val activatingVariants =
-            activatingVariants(molecularHistory.allArcherPanels().flatMap(ArcherPanelExtraction::events)) + activatingVariants(
-                molecularHistory.allGenericPanels().flatMap(GenericPanelExtraction::events)
-            )
+            activatingVariants(molecularHistory.allPanels().flatMap(PanelRecord::events))
 
         if (activatingVariants.isNotEmpty()) return EvaluationFactory.pass(
             "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Panel(s)",

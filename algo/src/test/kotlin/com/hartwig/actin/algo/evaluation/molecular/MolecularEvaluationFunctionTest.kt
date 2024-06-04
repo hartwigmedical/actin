@@ -6,10 +6,10 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -61,7 +61,7 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Insufficient molecular data")
     }
 
-    private fun emptyArcher() = TestPanelRecordFactory.empty().copy(archerPanelExtraction = ArcherPanelExtraction())
+    private fun emptyArcher() = TestPanelRecordFactory.empty().copy(type = ExperimentType.ARCHER)
 
     @Test
     fun `Should execute rule when ORANGE molecular data`() {

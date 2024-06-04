@@ -14,7 +14,7 @@ interface MolecularTest<D : Drivers<out Variant, out Fusion>> {
     val characteristics: MolecularCharacteristics
     val evidenceSource: String
 
-    fun isGeneTested(gene: String): Boolean
+    fun testsGene(gene: String): Boolean
 }
 
 private const val NONE = "none"
@@ -29,7 +29,7 @@ data class IHCMolecularTest(
     override val characteristics = MolecularCharacteristics()
 
 
-    override fun isGeneTested(gene: String) = test.measure == gene
+    override fun testsGene(gene: String) = test.measure == gene
 }
 
 data class OtherPriorMolecularTest(
@@ -41,7 +41,7 @@ data class OtherPriorMolecularTest(
     override val evidenceSource = NONE
     override val characteristics = MolecularCharacteristics()
 
-    override fun isGeneTested(gene: String) = test.measure == gene
+    override fun testsGene(gene: String) = test.measure == gene
 }
 
 class UnknownDrivers : Drivers<Variant, Fusion> {

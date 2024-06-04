@@ -10,7 +10,7 @@ class GenericExhaustiveVariantTest {
     @Test
     fun `Should parse variant from prior molecular test`() {
         val priorMolecularTest = priorMolecularTest(item = "gene", measure = "c.A>T")
-        val genericVariant = GenericSmallVariant.parseVariant(priorMolecularTest)
+        val genericVariant = GenericVariantExtraction.parseVariant(priorMolecularTest)
         assertThat("gene").isEqualTo(genericVariant.gene)
         assertThat("c.A>T").isEqualTo(genericVariant.hgvsCodingImpact)
     }
@@ -24,7 +24,7 @@ class GenericExhaustiveVariantTest {
         )
 
         invalidInputs.forEach { priorMolecularTest ->
-            assertThatThrownBy { GenericSmallVariant.parseVariant(priorMolecularTest) }
+            assertThatThrownBy { GenericVariantExtraction.parseVariant(priorMolecularTest) }
                 .isInstanceOf(IllegalArgumentException::class.java)
                 .hasMessage("Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}")
         }
