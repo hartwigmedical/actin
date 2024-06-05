@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorMolecularFusionRecord
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction

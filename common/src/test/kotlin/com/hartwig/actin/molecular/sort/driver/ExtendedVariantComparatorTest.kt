@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

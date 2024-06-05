@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import org.junit.Test
 
 class HasCancerWithNeuroendocrineComponentTest {

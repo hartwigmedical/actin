@@ -21,10 +21,10 @@ private const val NONE = "none"
 
 data class IHCMolecularTest(
     val test: PriorMolecularTest
-) : MolecularTest<UnknownDrivers> {
+) : MolecularTest<EmptyDrivers> {
     override val type = ExperimentType.IHC
     override val date = test.measureDate
-    override val drivers = UnknownDrivers()
+    override val drivers = EmptyDrivers()
     override val evidenceSource = NONE
     override val characteristics = MolecularCharacteristics()
 
@@ -34,17 +34,17 @@ data class IHCMolecularTest(
 
 data class OtherPriorMolecularTest(
     val test: PriorMolecularTest
-) : MolecularTest<UnknownDrivers> {
+) : MolecularTest<EmptyDrivers> {
     override val type = ExperimentType.OTHER
     override val date = test.measureDate
-    override val drivers = UnknownDrivers()
+    override val drivers = EmptyDrivers()
     override val evidenceSource = NONE
     override val characteristics = MolecularCharacteristics()
 
     override fun testsGene(gene: String) = test.measure == gene
 }
 
-class UnknownDrivers : Drivers<Variant, Fusion> {
+class EmptyDrivers : Drivers<Variant, Fusion> {
     override val variants = emptySet<Variant>()
     override val fusions = emptySet<Fusion>()
 }

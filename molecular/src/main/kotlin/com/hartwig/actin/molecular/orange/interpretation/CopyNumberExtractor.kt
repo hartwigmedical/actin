@@ -3,8 +3,8 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation

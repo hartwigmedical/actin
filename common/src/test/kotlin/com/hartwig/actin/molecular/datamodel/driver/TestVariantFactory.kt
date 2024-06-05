@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 
 object TestVariantFactory {
 

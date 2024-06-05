@@ -1,7 +1,7 @@
 package com.hartwig.actin.database.molecular
 
 import com.hartwig.actin.database.dao.DatabaseAccess
-import com.hartwig.actin.molecular.datamodel.hmf.PatientRecordJson
+import com.hartwig.actin.molecular.datamodel.orange.PatientRecordJson
 import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter

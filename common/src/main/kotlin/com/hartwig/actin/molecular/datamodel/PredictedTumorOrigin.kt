@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.molecular.datamodel.hmf.characteristics.CupPrediction
+import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
 
 data class PredictedTumorOrigin(val predictions: List<CupPrediction>) {
     

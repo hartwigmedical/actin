@@ -12,7 +12,7 @@ import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import org.assertj.core.api.Assertions
 import org.junit.Test
 

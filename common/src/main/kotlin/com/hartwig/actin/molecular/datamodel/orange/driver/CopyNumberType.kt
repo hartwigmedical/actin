@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.hmf.driver
+package com.hartwig.actin.molecular.datamodel.orange.driver
 
 enum class CopyNumberType(val isGain: Boolean, val isLoss: Boolean) {
     FULL_GAIN(true, false),

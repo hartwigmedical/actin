@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType

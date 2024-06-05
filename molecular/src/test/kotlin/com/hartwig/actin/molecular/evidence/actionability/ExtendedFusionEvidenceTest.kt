@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType.PROMISCUOUS_3
-import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType.PROMISCUOUS_5
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType.PROMISCUOUS_3
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType.PROMISCUOUS_5
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents

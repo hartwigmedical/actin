@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
-import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create

@@ -6,8 +6,8 @@ import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import org.junit.Test
 
 class IsHomologousRepairDeficientTest {

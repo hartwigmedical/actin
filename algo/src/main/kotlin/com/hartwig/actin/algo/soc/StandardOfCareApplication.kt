@@ -11,7 +11,7 @@ import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.molecular.datamodel.hmf.PatientRecordJson
+import com.hartwig.actin.molecular.datamodel.orange.PatientRecordJson
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import java.io.IOException

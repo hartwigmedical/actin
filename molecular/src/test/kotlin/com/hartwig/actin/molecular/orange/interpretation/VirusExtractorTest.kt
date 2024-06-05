@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
-import com.hartwig.actin.molecular.datamodel.hmf.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory
 import com.hartwig.hmftools.datamodel.virus.ImmutableVirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus

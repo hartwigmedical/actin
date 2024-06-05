@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 
 data class FusionMatchCriteria(
     val isReportable: Boolean,

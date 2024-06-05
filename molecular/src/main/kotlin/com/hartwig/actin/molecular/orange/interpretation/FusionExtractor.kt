@@ -2,8 +2,8 @@ package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType

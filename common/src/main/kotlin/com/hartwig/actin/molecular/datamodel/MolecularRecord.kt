@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.hmf.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 data class MolecularRecord(

@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 

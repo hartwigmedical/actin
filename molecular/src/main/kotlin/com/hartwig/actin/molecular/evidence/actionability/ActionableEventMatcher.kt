@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 

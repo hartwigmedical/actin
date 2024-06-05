@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.hmf.characteristics
+package com.hartwig.actin.molecular.datamodel.orange.characteristics
 
 data class CupPrediction(
     val cancerType: String,

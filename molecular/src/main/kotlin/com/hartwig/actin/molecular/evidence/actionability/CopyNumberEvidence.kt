@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene

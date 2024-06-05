@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.hmf.pharmaco
+package com.hartwig.actin.molecular.datamodel.orange.pharmaco
 
 data class Haplotype(
     val name: String,

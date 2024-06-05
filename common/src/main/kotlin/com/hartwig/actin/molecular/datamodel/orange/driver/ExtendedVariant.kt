@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.hmf.driver
+package com.hartwig.actin.molecular.datamodel.orange.driver
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole

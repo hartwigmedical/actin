@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.hmf
+package com.hartwig.actin.molecular.datamodel.orange
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken

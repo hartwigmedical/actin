@@ -10,14 +10,14 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
-import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.hmf.immunology.HlaAllele
-import com.hartwig.actin.molecular.datamodel.hmf.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.hmf.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
+import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 
 internal object MolecularTestFactory {
 

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.datamodel.hmf.immunology
+package com.hartwig.actin.molecular.datamodel.orange.immunology
 
 data class MolecularImmunology(
     val isReliable: Boolean,

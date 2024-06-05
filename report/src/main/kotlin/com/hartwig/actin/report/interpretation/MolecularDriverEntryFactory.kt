@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.Driver
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
-import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 

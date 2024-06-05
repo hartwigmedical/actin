@@ -3,9 +3,9 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 
 class MolecularDriversSummarizer private constructor(
     private val molecularDrivers: MolecularDrivers,

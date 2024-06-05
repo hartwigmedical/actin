@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.sort.driver
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

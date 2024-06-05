@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularConstants.MSI_GENES
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class IsMicrosatelliteUnstable : MolecularEvaluationFunction {

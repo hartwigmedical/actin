@@ -2,7 +2,7 @@ package com.hartwig.actin.report
 
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.configuration.EnvironmentConfiguration
-import com.hartwig.actin.molecular.datamodel.hmf.PatientRecordJson
+import com.hartwig.actin.molecular.datamodel.orange.PatientRecordJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import kotlin.system.exitProcess

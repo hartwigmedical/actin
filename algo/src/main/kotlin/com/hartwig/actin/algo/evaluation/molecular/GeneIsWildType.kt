@@ -9,9 +9,9 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
-import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 
 class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
 

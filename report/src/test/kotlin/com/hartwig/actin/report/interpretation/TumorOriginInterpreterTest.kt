@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin
-import com.hartwig.actin.molecular.datamodel.hmf.characteristics.CupPrediction
+import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.greatestOmittedLikelihood
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.hasConfidentPrediction
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter.interpret

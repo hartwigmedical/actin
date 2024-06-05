@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.VariantEffect
-import com.hartwig.actin.molecular.datamodel.hmf.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
 
 class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
 

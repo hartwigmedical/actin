@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.EmptyDrivers
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.UnknownDrivers
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -19,7 +19,7 @@ class MolecularInterpreterTest {
             return input.map { extraction }
         }
     }
-    private val annotator = object : MolecularAnnotator<ArcherPanelExtraction, MolecularTest<UnknownDrivers>> {
+    private val annotator = object : MolecularAnnotator<ArcherPanelExtraction, MolecularTest<EmptyDrivers>> {
         override fun annotate(input: ArcherPanelExtraction): OtherPriorMolecularTest {
             annotatorCalled = true
             return output
