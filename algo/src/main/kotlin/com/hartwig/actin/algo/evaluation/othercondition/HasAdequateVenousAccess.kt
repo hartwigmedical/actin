@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasAdequateVenousAccess : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
-            "Undetermined if patient has adequate venous access",
-            "Undetermined if patient has adequate venous access"
+        return EvaluationFactory.notEvaluated(
+            "Assumed that patient has (adequate) venous access",
+            "Assumed that patient has (adequate) venous access"
         )
     }
 }
