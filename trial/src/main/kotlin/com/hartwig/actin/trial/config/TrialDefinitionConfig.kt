@@ -5,5 +5,6 @@ data class TrialDefinitionConfig(
     val open: Boolean?,
     val acronym: String,
     val title: String,
-    val nctId: String?
+    val nctId: String?,
+    val phase: String?
 ) : TrialConfig

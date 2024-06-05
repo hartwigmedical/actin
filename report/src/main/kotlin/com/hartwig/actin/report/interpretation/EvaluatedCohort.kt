@@ -1,5 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.trial.datamodel.TrialPhase
+
 data class EvaluatedCohort(
     val trialId: String,
     val acronym: String,
@@ -9,5 +11,6 @@ data class EvaluatedCohort(
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,
     val warnings: Set<String>,
-    val fails: Set<String>
+    val fails: Set<String>,
+    val phase: TrialPhase? = null
 )
