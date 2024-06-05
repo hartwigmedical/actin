@@ -1,13 +1,10 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantAnnotation
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
@@ -22,25 +19,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
-private const val POSITION = 123
-private const val REF = "C"
-private const val ALT = "G"
-private const val CHROMOSOME = "1"
 
 private val ARCHER_PANEL_WITH_VARIANT =
-    ArcherPanel(variants = listOf(ArcherVariant(GENE, HGVS_CODING, ref = REF, alt = ALT, position = POSITION, chromosome = CHROMOSOME)))
+    ArcherPanelExtraction(variants = listOf(ArcherVariantExtraction(GENE, HGVS_CODING)))
 
 private val VARIANT_MATCH_CRITERIA = VariantMatchCriteria(
     isReportable = true,
-    gene = GENE,
-    chromosome = CHROMOSOME,
-    ref = REF,
-    alt = ALT,
-    position = POSITION,
+    gene = GENE
 )
-
-private val ARCHER_FUSION = ArcherFusion(GENE)
-private val ARCHER_EXON_SKIP = ArcherSkippedExons(GENE, 1, 2)
 
 class ArcherAnnotatorTest {
 
@@ -53,21 +39,7 @@ class ArcherAnnotatorTest {
     @Test
     fun `Should return empty annotation when no matches found`() {
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        assertThat(annotated.variants[0].annotation).isEqualTo(
-            ArcherVariantAnnotation(
-                evidence = ActionableEvidence(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN
-            )
-        )
-    }
-
-    @Test
-    fun `Should carry forward fusions and exon skips without annotation`() {
-        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT.copy(fusions = listOf(ARCHER_FUSION), skippedExons = listOf(
-            ARCHER_EXON_SKIP)))
-        assertThat(annotated.fusions).containsExactly(ARCHER_FUSION)
-        assertThat(annotated.skippedExons).containsExactly(ARCHER_EXON_SKIP)
+        assertThat(annotated.drivers.variants.first().evidence).isEqualTo(ActionableEvidence())
     }
 
     @Test
@@ -79,14 +51,7 @@ class ArcherAnnotatorTest {
             ), offLabelEvents = emptyList()
         )
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        val annotation = annotated.variants[0].annotation
-        assertThat(annotation).isEqualTo(
-            ArcherVariantAnnotation(
-                evidence = ActionableEvidence(approvedTreatments = setOf("")),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN
-            )
-        )
+        assertThat(annotated.drivers.variants.first().evidence).isEqualTo(ActionableEvidence(approvedTreatments = setOf("")))
     }
 
     @Test
@@ -95,13 +60,7 @@ class ArcherAnnotatorTest {
             .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)
             .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
-        val annotation = annotated.variants[0].annotation
-        assertThat(annotation).isEqualTo(
-            ArcherVariantAnnotation(
-                evidence = ActionableEvidence(),
-                geneRole = GeneRole.ONCO,
-                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
-            )
-        )
+        assertThat(annotated.drivers.variants.first().geneRole).isEqualTo(GeneRole.ONCO)
+        assertThat(annotated.drivers.variants.first().proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
     }
 }

@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular
 
-import com.hartwig.actin.molecular.datamodel.MolecularTest
-
-interface MolecularExtractor<I, O : MolecularTest> {
+interface MolecularExtractor<I, O> {
     fun extract(input: List<I>): List<O>
 }

@@ -1,11 +1,15 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 
 object TestVariantFactory {
 
-    fun createMinimal(): Variant {
-        return Variant(
+    fun createMinimal(): ExtendedVariant {
+        return ExtendedVariant(
             chromosome = "",
             position = 0,
             ref = "",

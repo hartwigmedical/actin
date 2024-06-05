@@ -3,11 +3,11 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
 
@@ -23,7 +23,7 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         return when {
             fusionSkippingEvents.isNotEmpty() || archerExonSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}",
+                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents + archerExonSkippingEvents)}",
                     "Exon $exonToSkip skipping in $gene",
                     inclusionEvents = fusionSkippingEvents + archerExonSkippingEvents
                 )
@@ -47,13 +47,13 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         val isCanonicalExonAffected = variant.canonicalImpact.affectedExon != null && variant.canonicalImpact.affectedExon == exonToSkip
         variant.isReportable && variant.gene == gene && isCanonicalExonAffected && (variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion)
     }
-        .map(Variant::event)
+        .map(ExtendedVariant::event)
         .toSet()
 
     private fun findFusionSkippingEvents(molecular: MolecularRecord) = molecular.drivers.fusions.filter { fusion ->
         fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.fusedExonUp == exonToSkip - 1
                 && fusion.fusedExonDown == exonToSkip + 1
     }
-        .map(Fusion::event)
+        .map(ExtendedFusion::event)
         .toSet()
 }

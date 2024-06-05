@@ -1,11 +1,11 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.Driver
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.GeneAlteration
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.Driver
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneAlteration
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 
 class MolecularDriversSummarizer private constructor(
     private val molecularDrivers: MolecularDrivers,
@@ -34,7 +34,7 @@ class MolecularDriversSummarizer private constructor(
     }
 
     fun keyFusionEvents(): List<String> {
-        return molecularDrivers.fusions.filter(::isKeyDriver).map(Fusion::event).distinct()
+        return molecularDrivers.fusions.filter(::isKeyDriver).map(ExtendedFusion::event).distinct()
     }
 
     fun keyVirusEvents(): List<String> {

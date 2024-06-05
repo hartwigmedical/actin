@@ -1,14 +1,14 @@
 package com.hartwig.actin.database.molecular
 
-import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.database.dao.DatabaseAccess
+import com.hartwig.actin.molecular.datamodel.orange.PatientRecordJson
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class MolecularLoaderApplication(private val config: MolecularLoaderConfig) {
 

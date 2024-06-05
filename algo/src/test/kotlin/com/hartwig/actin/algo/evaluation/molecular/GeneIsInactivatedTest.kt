@@ -3,17 +3,17 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import org.junit.Test
 
 private const val GENE = "gene A"
@@ -231,19 +231,19 @@ class GeneIsInactivatedTest {
         )
     }
 
-    private fun assertResultForVariant(result: EvaluationResult, variant: Variant) {
+    private fun assertResultForVariant(result: EvaluationResult, variant: ExtendedVariant) {
         assertMolecularEvaluation(result, function.evaluate(MolecularTestFactory.withVariant(variant)))
     }
 
     private fun assertResultForMutationalLoadAndVariant(
-        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: Variant
+        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: ExtendedVariant
     ) {
         assertMolecularEvaluation(
             result, function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant))
         )
     }
 
-    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): Variant = TestVariantFactory.createMinimal().copy(
+    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): ExtendedVariant = TestVariantFactory.createMinimal().copy(
         gene = GENE,
         isReportable = true,
         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT),

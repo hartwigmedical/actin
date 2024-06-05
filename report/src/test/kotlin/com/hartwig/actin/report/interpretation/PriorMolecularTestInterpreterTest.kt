@@ -4,9 +4,10 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -40,10 +41,12 @@ class PriorMolecularTestInterpreterTest {
         val result = interpreter.interpret(
             MolecularHistory(
                 listOf(
-                    ArcherPanel(
-                        variants = listOf(ArcherVariant("ALK", "c.2240_2254del")),
-                        fusions = emptyList(),
-                        skippedExons = emptyList()
+                    TestPanelRecordFactory.empty().copy(
+                        archerPanelExtraction = ArcherPanelExtraction(
+                            variants = listOf(ArcherVariantExtraction("ALK", "c.2240_2254del")),
+                            fusions = emptyList(),
+                            skippedExons = emptyList()
+                        )
                     )
                 )
             )
@@ -68,7 +71,7 @@ class PriorMolecularTestInterpreterTest {
     fun `Should interpret generic panel tests based on implied negatives`() {
         val result = interpreter.interpret(
             MolecularHistory(
-                listOf(GenericPanel(GenericPanelType.AVL))
+                listOf(TestPanelRecordFactory.empty().copy(genericPanelExtraction = GenericPanelExtraction(GenericPanelType.AVL)))
             )
         )
         assertThat(result).containsExactly(

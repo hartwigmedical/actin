@@ -10,12 +10,11 @@ import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
-class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>() {
+class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*>>() {
 
-    override fun write(out: JsonWriter, value: MolecularTest?) {
+    override fun write(out: JsonWriter, value: MolecularTest<*>?) {
         if (value == null) {
             out.nullValue()
             return
@@ -25,16 +24,15 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>(
         gson.toJson(jsonObject, out)
     }
 
-    override fun read(input: JsonReader): MolecularTest? {
+    override fun read(input: JsonReader): MolecularTest<*>? {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
-        return when (val type = jsonObject.get("type").asString) {
-            ExperimentType.WHOLE_GENOME.toString() -> gson.fromJson(jsonObject, MolecularRecord::class.java)
-            ExperimentType.TARGETED.toString() -> gson.fromJson(jsonObject, MolecularRecord::class.java)
-            ExperimentType.IHC.toString() -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
-            ExperimentType.ARCHER.toString() -> gson.fromJson(jsonObject, ArcherPanel::class.java)
-            ExperimentType.GENERIC_PANEL.toString() -> gson.fromJson(jsonObject, GenericPanel::class.java)
-            ExperimentType.OTHER.toString() -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
-            else -> throw IllegalArgumentException("Unknown molecular test type: $type")
+        return when (ExperimentType.valueOf(jsonObject.get("type").asString)) {
+            ExperimentType.WHOLE_GENOME -> gson.fromJson(jsonObject, MolecularRecord::class.java)
+            ExperimentType.TARGETED -> gson.fromJson(jsonObject, MolecularRecord::class.java)
+            ExperimentType.IHC -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
+            ExperimentType.ARCHER -> gson.fromJson(jsonObject, PanelRecord::class.java)
+            ExperimentType.GENERIC_PANEL -> gson.fromJson(jsonObject, PanelRecord::class.java)
+            ExperimentType.OTHER -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
         }
     }
 }
