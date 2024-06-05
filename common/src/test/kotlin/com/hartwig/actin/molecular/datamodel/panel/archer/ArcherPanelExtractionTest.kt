@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.datamodel.panel.archer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ArcherPanelExtractionTestRecord {
+class ArcherPanelExtractionTest {
 
     @Test
     fun `Should identify tested genes`() {
