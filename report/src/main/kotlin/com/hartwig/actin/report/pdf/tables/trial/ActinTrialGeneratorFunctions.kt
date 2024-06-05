@@ -6,6 +6,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Cells.createContent
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
+import com.hartwig.actin.trial.datamodel.TrialPhase
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
@@ -52,7 +53,8 @@ object ActinTrialGeneratorFunctions {
                 Text(cohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
                 Text("\n"),
                 Text(cohort.acronym).addStyle(Styles.tableContentStyle()),
-                cohort.phase?.let { Text("\n${it.display()}").addStyle(Styles.tableContentStyle()) }
+                cohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
+                    ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) }
             )
             table.addCell(createContent(Paragraph().addAll(trialLabelText)))
             val finalSubTable = if (trialSubTable.numberOfRows > 2) {
