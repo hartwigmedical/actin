@@ -26,14 +26,13 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*
 
     override fun read(input: JsonReader): MolecularTest<*>? {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
-        return when (val type = jsonObject.get("type").asString) {
-            ExperimentType.WHOLE_GENOME.toString() -> gson.fromJson(jsonObject, MolecularRecord::class.java)
-            ExperimentType.TARGETED.toString() -> gson.fromJson(jsonObject, MolecularRecord::class.java)
-            ExperimentType.IHC.toString() -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
-            ExperimentType.ARCHER.toString() -> gson.fromJson(jsonObject, PanelRecord::class.java)
-            ExperimentType.GENERIC_PANEL.toString() -> gson.fromJson(jsonObject, PanelRecord::class.java)
-            ExperimentType.OTHER.toString() -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
-            else -> throw IllegalArgumentException("Unknown molecular test type: $type")
+        return when (ExperimentType.valueOf(jsonObject.get("type").asString)) {
+            ExperimentType.WHOLE_GENOME -> gson.fromJson(jsonObject, MolecularRecord::class.java)
+            ExperimentType.TARGETED -> gson.fromJson(jsonObject, MolecularRecord::class.java)
+            ExperimentType.IHC -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
+            ExperimentType.ARCHER -> gson.fromJson(jsonObject, PanelRecord::class.java)
+            ExperimentType.GENERIC_PANEL -> gson.fromJson(jsonObject, PanelRecord::class.java)
+            ExperimentType.OTHER -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
         }
     }
 }
