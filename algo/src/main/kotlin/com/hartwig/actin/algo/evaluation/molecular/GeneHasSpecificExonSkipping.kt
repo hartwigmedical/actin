@@ -7,14 +7,13 @@ import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.events() }.filterIsInstance<ArcherSkippedExonsExtraction>()
+        val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.skippedExons }
             .filter { it.impactsGene(gene) && exonToSkip == it.start && exonToSkip == it.end }.map { it.display() }
 
         val molecular = molecularHistory.latestOrangeMolecularRecord()
@@ -24,7 +23,7 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         return when {
             fusionSkippingEvents.isNotEmpty() || archerExonSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}",
+                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents + archerExonSkippingEvents)}",
                     "Exon $exonToSkip skipping in $gene",
                     inclusionEvents = fusionSkippingEvents + archerExonSkippingEvents
                 )
@@ -48,7 +47,7 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         val isCanonicalExonAffected = variant.canonicalImpact.affectedExon != null && variant.canonicalImpact.affectedExon == exonToSkip
         variant.isReportable && variant.gene == gene && isCanonicalExonAffected && (variant.canonicalImpact.codingEffect == CodingEffect.SPLICE || variant.canonicalImpact.isSpliceRegion)
     }
-        .map(ExhaustiveVariant::event)
+        .map(ExtendedVariant::event)
         .toSet()
 
     private fun findFusionSkippingEvents(molecular: MolecularRecord) = molecular.drivers.fusions.filter { fusion ->

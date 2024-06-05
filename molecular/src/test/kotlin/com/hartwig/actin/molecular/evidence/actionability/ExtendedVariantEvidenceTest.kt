@@ -13,7 +13,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class ExhaustiveVariantEvidenceTest {
+class ExtendedVariantEvidenceTest {
 
     @Test
     fun `Should determine evidence for hotpots`() {

@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 
 class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
@@ -50,7 +50,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
             .forEach {
                 if (it.proteinEffect == ProteinEffect.NO_EFFECT || it.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED) {
                     reportableEventsWithNoEffect.add(it.event)
-                } else if ((it is ExhaustiveVariant && it.driverLikelihood == DriverLikelihood.HIGH)
+                } else if ((it is ExtendedVariant && it.driverLikelihood == DriverLikelihood.HIGH)
                     || it is HomozygousDisruption || it is Disruption
                 ) {
                     reportableEventsWithEffect.add(it.event)

@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
@@ -56,7 +56,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
 
-    private fun annotateVariant(variant: ExhaustiveVariant): ExhaustiveVariant {
+    private fun annotateVariant(variant: ExtendedVariant): ExtendedVariant {
         val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
             ActionableEvidenceFactory.create(
                 evidenceDatabase.evidenceForVariant(
@@ -79,7 +79,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun createCriteria(variant: ExhaustiveVariant) = VariantMatchCriteria(
+    private fun createCriteria(variant: ExtendedVariant) = VariantMatchCriteria(
         gene = variant.gene,
         chromosome = variant.chromosome,
         position = variant.position,

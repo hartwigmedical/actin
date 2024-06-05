@@ -5,7 +5,7 @@ import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
@@ -14,7 +14,7 @@ import kotlin.math.min
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
     fun create(): List<MolecularDriverEntry> {
         return listOf(
-            molecularDriversInterpreter.filteredVariants().map { variant: ExhaustiveVariant -> fromVariant(variant) },
+            molecularDriversInterpreter.filteredVariants().map { variant: ExtendedVariant -> fromVariant(variant) },
             molecularDriversInterpreter.filteredCopyNumbers().map { copyNumber: CopyNumber -> fromCopyNumber(copyNumber) },
             molecularDriversInterpreter.filteredHomozygousDisruptions()
                 .map { homozygousDisruption: HomozygousDisruption -> fromHomozygousDisruption(homozygousDisruption) },
@@ -26,7 +26,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             .sortedWith(MolecularDriverEntryComparator())
     }
 
-    private fun fromVariant(variant: ExhaustiveVariant): MolecularDriverEntry {
+    private fun fromVariant(variant: ExtendedVariant): MolecularDriverEntry {
         val biallelicIndicator = if (variant.isBiallelic) "Biallelic " else ""
         val mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
         val driverType = "Mutation ($biallelicIndicator$mutationTypeString)"

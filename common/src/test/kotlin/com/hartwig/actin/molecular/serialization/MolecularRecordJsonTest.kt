@@ -24,7 +24,7 @@ import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.DisruptionType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
@@ -133,7 +133,7 @@ class MolecularRecordJsonTest {
         assertViruses(drivers.viruses)
     }
 
-    private fun assertVariants(variants: Set<ExhaustiveVariant>) {
+    private fun assertVariants(variants: Set<ExtendedVariant>) {
         assertThat(variants).hasSize(1)
         val variant = variants.first()
         assertThat(variant.isReportable).isTrue

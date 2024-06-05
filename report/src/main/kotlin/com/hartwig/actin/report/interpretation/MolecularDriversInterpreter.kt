@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
@@ -13,7 +13,7 @@ class MolecularDriversInterpreter(
     private val molecularDrivers: MolecularDrivers,
     private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
 ) {
-    fun filteredVariants(): List<ExhaustiveVariant> {
+    fun filteredVariants(): List<ExtendedVariant> {
         return filterDrivers(molecularDrivers.variants)
     }
 

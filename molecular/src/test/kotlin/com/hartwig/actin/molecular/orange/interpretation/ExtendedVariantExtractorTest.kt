@@ -22,7 +22,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
-class ExhaustiveVariantExtractorTest {
+class ExtendedVariantExtractorTest {
 
     @Test
     fun `Should extract set of variants successfully`() {

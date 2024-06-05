@@ -13,7 +13,7 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.hmf.immunology.MolecularImmunology
@@ -56,11 +56,11 @@ internal object MolecularTestFactory {
         return withMolecularTests(listOf(molecularTest))
     }
 
-    fun withVariant(variant: ExhaustiveVariant): PatientRecord {
+    fun withVariant(variant: ExtendedVariant): PatientRecord {
         return withDriver(variant)
     }
 
-    fun withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad: Boolean?, vararg variants: ExhaustiveVariant): PatientRecord {
+    fun withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad: Boolean?, vararg variants: ExtendedVariant): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
@@ -71,7 +71,7 @@ internal object MolecularTestFactory {
 
     fun withHasTumorMutationalLoadAndVariantAndDisruption(
         hasHighTumorMutationalLoad: Boolean?,
-        variant: ExhaustiveVariant,
+        variant: ExtendedVariant,
         disruption: Disruption
     ): PatientRecord {
         return withMolecularRecord(
@@ -140,7 +140,7 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withMicrosatelliteInstabilityAndVariant(isMicrosatelliteUnstable: Boolean?, variant: ExhaustiveVariant): PatientRecord {
+    fun withMicrosatelliteInstabilityAndVariant(isMicrosatelliteUnstable: Boolean?, variant: ExtendedVariant): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), variant
         )
@@ -171,7 +171,7 @@ internal object MolecularTestFactory {
 
     fun withHomologousRepairDeficiencyAndVariant(
         isHomologousRepairDeficient: Boolean?,
-        variant: ExhaustiveVariant
+        variant: ExtendedVariant
     ): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), variant
@@ -261,7 +261,7 @@ internal object MolecularTestFactory {
 
     private fun withCharacteristicsAndDriver(characteristics: MolecularCharacteristics, driver: Driver?): PatientRecord {
         val drivers = when (driver) {
-            is ExhaustiveVariant -> baseMolecular.drivers.copy(variants = setOf(driver))
+            is ExtendedVariant -> baseMolecular.drivers.copy(variants = setOf(driver))
             is CopyNumber -> baseMolecular.drivers.copy(copyNumbers = setOf(driver))
             is HomozygousDisruption -> baseMolecular.drivers.copy(homozygousDisruptions = setOf(driver))
             is Disruption -> baseMolecular.drivers.copy(disruptions = setOf(driver))

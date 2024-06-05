@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -25,7 +25,7 @@ class GsonSerializerTest {
         val variant5 = variant(DriverLikelihood.MEDIUM, "BRAF", "V600E", "1800")
         val variants = setOf(variant3, variant5, variant1, variant4, variant2)
 
-        val deserialized = gson.fromJson<List<ExhaustiveVariant>>(gson.toJson(variants), object : TypeToken<List<ExhaustiveVariant>>() {}.type)
+        val deserialized = gson.fromJson<List<ExtendedVariant>>(gson.toJson(variants), object : TypeToken<List<ExtendedVariant>>() {}.type)
         assertThat(deserialized).isEqualTo(variants.sortedWith(VariantComparator()))
     }
 
@@ -45,7 +45,7 @@ class GsonSerializerTest {
 
     private fun variant(
         driverLikelihood: DriverLikelihood, gene: String, hgvsProteinImpact: String, hgvsCodingImpact: String
-    ): ExhaustiveVariant {
+    ): ExtendedVariant {
         val canonicalImpact: TranscriptImpact = TestTranscriptImpactFactory.createMinimal().copy(
             hgvsProteinImpact = hgvsProteinImpact,
             hgvsCodingImpact = hgvsCodingImpact

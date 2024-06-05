@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -128,7 +128,7 @@ class IsMicrosatelliteUnstableTest {
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Undetermined MSI status")
     }
 
-    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): ExhaustiveVariant {
+    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): ExtendedVariant {
         return TestVariantFactory.createMinimal().copy(
             gene = msiGene, isReportable = isReportable, isBiallelic = isBiallelic
         )

@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 
-data class ExhaustiveVariant(
+data class ExtendedVariant(
     val variantCopyNumber: Double,
     val totalCopyNumber: Double,
     val isBiallelic: Boolean,

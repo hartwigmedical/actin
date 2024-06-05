@@ -12,7 +12,7 @@ private const val MATCHING_GENE = "gene A"
 
 private const val MATCHING_PROTEIN_IMPACT = "V600E"
 
-class GeneHasExhaustiveVariantWithProteinImpactTest {
+class GeneHasVariantWithProteinImpactTest {
     private val function = GeneHasVariantWithProteinImpact(MATCHING_GENE, listOf(MATCHING_PROTEIN_IMPACT, "V600K"))
     
     @Test

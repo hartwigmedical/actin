@@ -4,12 +4,12 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 
 object TestVariantFactory {
 
-    fun createMinimal(): ExhaustiveVariant {
-        return ExhaustiveVariant(
+    fun createMinimal(): ExtendedVariant {
+        return ExtendedVariant(
             chromosome = "",
             position = 0,
             ref = "",

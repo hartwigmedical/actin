@@ -15,7 +15,7 @@ import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
@@ -179,7 +179,7 @@ class MolecularDriversSummarizerTest {
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
         evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-    ): ExhaustiveVariant {
+    ): ExtendedVariant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
             event = name,

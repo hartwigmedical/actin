@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TEST_DATE
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
@@ -266,7 +266,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
-    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: ExhaustiveVariant) {
+    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: ExtendedVariant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
         // Repeat with high TML since unknown TML always results in a warning for reportable variants:
@@ -277,12 +277,12 @@ class GeneHasActivatingMutationTest {
         }
     }
 
-    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: ExhaustiveVariant) {
+    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: ExtendedVariant) {
         assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, null)
         assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, true)
     }
 
-    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: ExhaustiveVariant, hasHighTML: Boolean?) {
+    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: ExtendedVariant, hasHighTML: Boolean?) {
         assertMolecularEvaluation(
             expectedResult,
             functionNotIgnoringCodons.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
@@ -294,7 +294,7 @@ class GeneHasActivatingMutationTest {
 
     private fun assertResultForVariantWithTMLIgnoringCodons(
         expectedResult: EvaluationResult,
-        variant: ExhaustiveVariant,
+        variant: ExtendedVariant,
         hasHighTML: Boolean?
     ) {
         assertMolecularEvaluation(
@@ -306,7 +306,7 @@ class GeneHasActivatingMutationTest {
     companion object {
         private const val GENE = "gene A"
         private val CODONS_TO_IGNORE = listOf("A100X", "A200X")
-        private val ACTIVATING_VARIANT: ExhaustiveVariant = TestVariantFactory.createMinimal().copy(
+        private val ACTIVATING_VARIANT: ExtendedVariant = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,
@@ -318,7 +318,7 @@ class GeneHasActivatingMutationTest {
             canonicalImpact = impactWithCodon(300)
         )
 
-        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE: ExhaustiveVariant = TestVariantFactory.createMinimal().copy(
+        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE: ExtendedVariant = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,

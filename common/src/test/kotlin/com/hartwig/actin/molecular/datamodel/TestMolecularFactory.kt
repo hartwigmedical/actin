@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.DisruptionType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
@@ -178,7 +178,7 @@ object TestMolecularFactory {
         isAssociatedWithDrugResistance = null
     )
 
-    fun createProperVariant() = ExhaustiveVariant(
+    fun createProperVariant() = ExtendedVariant(
         chromosome = "7",
         position = 140453136,
         ref = "T",

@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
 import com.hartwig.actin.molecular.datamodel.hmf.immunology.MolecularImmunology
@@ -223,7 +223,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeVariants(sampleId: String, variants: Set<ExhaustiveVariant>) {
+    private fun writeVariants(sampleId: String, variants: Set<ExtendedVariant>) {
         for (variant in variants) {
             val variantId = context.insertInto(
                 Tables.VARIANT,

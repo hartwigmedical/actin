@@ -13,7 +13,7 @@ import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.DisruptionType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.RegionType
@@ -22,8 +22,8 @@ import com.hartwig.actin.molecular.datamodel.hmf.driver.VirusType
 
 object TestMolecularFactory {
 
-    fun minimalVariant(): ExhaustiveVariant {
-        return ExhaustiveVariant(
+    fun minimalVariant(): ExtendedVariant {
+        return ExtendedVariant(
             chromosome = "",
             position = 0,
             ref = "",

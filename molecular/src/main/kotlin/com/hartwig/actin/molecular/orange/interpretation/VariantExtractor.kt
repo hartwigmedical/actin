@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveVariant
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager
 
 internal class VariantExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(purple: PurpleRecord): Set<ExhaustiveVariant> {
+    fun extract(purple: PurpleRecord): Set<ExtendedVariant> {
         val drivers = relevantPurpleDrivers(purple)
 
         return VariantDedup.apply(relevantPurpleVariants(purple)).filter { variant ->
@@ -43,7 +43,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
                 val evidence = ActionableEvidenceFactory.createNoEvidence()
-                ExhaustiveVariant(
+                ExtendedVariant(
                     chromosome = variant.chromosome(),
                     position = variant.position(),
                     ref = variant.ref(),
