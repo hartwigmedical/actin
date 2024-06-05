@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
@@ -283,7 +283,7 @@ object TestMolecularFactory {
                 isAssociatedWithDrugResistance = null,
                 clusterGroup = 0
             ),
-            fusions = proper.fusions + ExhaustiveFusion(
+            fusions = proper.fusions + ExtendedFusion(
                 isReportable = true,
                 event = "EML4 - ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,

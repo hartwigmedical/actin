@@ -23,7 +23,7 @@ import com.hartwig.actin.molecular.datamodel.hmf.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
@@ -248,7 +248,7 @@ class MolecularRecordJsonTest {
         assertThat(disruption2.clusterGroup).isEqualTo(2)
     }
 
-    private fun assertFusions(fusions: Set<ExhaustiveFusion>) {
+    private fun assertFusions(fusions: Set<ExtendedFusion>) {
         assertThat(fusions).hasSize(1)
         val fusion = fusions.first()
         assertThat(fusion.isReportable).isTrue

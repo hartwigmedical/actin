@@ -14,7 +14,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
@@ -230,7 +230,7 @@ class MolecularDriversSummarizerTest {
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
         evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-    ): ExhaustiveFusion {
+    ): ExtendedFusion {
         return TestFusionFactory.createMinimal().copy(
             event = event,
             driverLikelihood = driverLikelihood,

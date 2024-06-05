@@ -7,7 +7,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-class ExhaustiveFusionLookupTest {
+class ExtendedFusionLookupTest {
 
     @Test
     fun `Should lookup fusions`() {

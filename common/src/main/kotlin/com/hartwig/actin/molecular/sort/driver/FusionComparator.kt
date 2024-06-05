@@ -1,16 +1,16 @@
 package com.hartwig.actin.molecular.sort.driver
 
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 
-class FusionComparator : Comparator<ExhaustiveFusion> {
+class FusionComparator : Comparator<ExtendedFusion> {
 
-    private val comparator = Comparator.comparing<ExhaustiveFusion, ExhaustiveFusion>({ it }, DriverComparator())
-        .thenComparing(ExhaustiveFusion::geneStart)
-        .thenComparing(ExhaustiveFusion::geneEnd)
-        .thenComparing(ExhaustiveFusion::geneTranscriptStart)
-        .thenComparing(ExhaustiveFusion::geneTranscriptEnd)
+    private val comparator = Comparator.comparing<ExtendedFusion, ExtendedFusion>({ it }, DriverComparator())
+        .thenComparing(ExtendedFusion::geneStart)
+        .thenComparing(ExtendedFusion::geneEnd)
+        .thenComparing(ExtendedFusion::geneTranscriptStart)
+        .thenComparing(ExtendedFusion::geneTranscriptEnd)
     
-    override fun compare(fusion1: ExhaustiveFusion, fusion2: ExhaustiveFusion): Int {
+    override fun compare(fusion1: ExtendedFusion, fusion2: ExtendedFusion): Int {
         return comparator.compare(fusion1, fusion2)
     }
 }

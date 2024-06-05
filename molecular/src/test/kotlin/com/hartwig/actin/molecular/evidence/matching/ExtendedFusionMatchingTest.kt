@@ -17,7 +17,7 @@ private val EXON_AWARE_FUSION =
     TestServeKnownFactory.fusionBuilder().from(GENERIC_FUSION).minExonUp(3).maxExonUp(4).minExonDown(6).maxExonDown(7).build()
 
 
-class ExhaustiveFusionMatchingTest {
+class ExtendedFusionMatchingTest {
 
     @Test
     fun `Should return false on non-matching gene`() {

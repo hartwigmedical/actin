@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.FusionDriverType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
@@ -13,7 +13,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class FusionExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(linx: LinxRecord): MutableSet<ExhaustiveFusion> {
+    fun extract(linx: LinxRecord): MutableSet<ExtendedFusion> {
         return linx.allSomaticFusions().filter { fusion ->
             val included = geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())
             if (!included && fusion.reported()) {
@@ -25,7 +25,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
             included
         }
             .map { fusion ->
-                ExhaustiveFusion(
+                ExtendedFusion(
                     isReportable = fusion.reported(),
                     event = DriverEventFactory.fusionEvent(fusion),
                     driverLikelihood = determineDriverLikelihood(fusion),

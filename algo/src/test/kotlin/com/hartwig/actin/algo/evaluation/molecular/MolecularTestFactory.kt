@@ -12,7 +12,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.immunology.HlaAllele
@@ -100,7 +100,7 @@ internal object MolecularTestFactory {
         return withDriver(disruption)
     }
 
-    fun withFusion(fusion: ExhaustiveFusion): PatientRecord {
+    fun withFusion(fusion: ExtendedFusion): PatientRecord {
         return withDriver(fusion)
     }
 
@@ -265,7 +265,7 @@ internal object MolecularTestFactory {
             is CopyNumber -> baseMolecular.drivers.copy(copyNumbers = setOf(driver))
             is HomozygousDisruption -> baseMolecular.drivers.copy(homozygousDisruptions = setOf(driver))
             is Disruption -> baseMolecular.drivers.copy(disruptions = setOf(driver))
-            is ExhaustiveFusion -> baseMolecular.drivers.copy(fusions = setOf(driver))
+            is ExtendedFusion -> baseMolecular.drivers.copy(fusions = setOf(driver))
             else -> baseMolecular.drivers
         }
         return withMolecularRecord(baseMolecular.copy(characteristics = characteristics, drivers = drivers))

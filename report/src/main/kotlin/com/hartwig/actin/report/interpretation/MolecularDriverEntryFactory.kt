@@ -4,7 +4,7 @@ import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Virus
@@ -19,7 +19,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             molecularDriversInterpreter.filteredHomozygousDisruptions()
                 .map { homozygousDisruption: HomozygousDisruption -> fromHomozygousDisruption(homozygousDisruption) },
             molecularDriversInterpreter.filteredDisruptions().map { disruption: Disruption -> fromDisruption(disruption) },
-            molecularDriversInterpreter.filteredFusions().map { fusion: ExhaustiveFusion -> fromFusion(fusion) },
+            molecularDriversInterpreter.filteredFusions().map { fusion: ExtendedFusion -> fromFusion(fusion) },
             molecularDriversInterpreter.filteredViruses().map { virus: Virus -> fromVirus(virus) }
         )
             .flatten()
@@ -65,7 +65,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         return driverEntry("Disruption", name, disruption)
     }
 
-    private fun fromFusion(fusion: ExhaustiveFusion): MolecularDriverEntry {
+    private fun fromFusion(fusion: ExtendedFusion): MolecularDriverEntry {
         val name = fusion.event + ", exon " + fusion.fusedExonUp + " - exon " + fusion.fusedExonDown
         return driverEntry(fusion.driverType.display(), name, fusion)
     }

@@ -2,11 +2,11 @@ package com.hartwig.actin.molecular.sort.driver
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ExhaustiveFusionComparatorTest {
+class ExtendedFusionComparatorTest {
 
     @Test
     fun `Should sort fusions`() {
@@ -22,7 +22,7 @@ class ExhaustiveFusionComparatorTest {
         assertThat(fusions[3]).isEqualTo(fusion4)
     }
 
-    private fun create(driverLikelihood: DriverLikelihood, geneStart: String, geneEnd: String): ExhaustiveFusion {
+    private fun create(driverLikelihood: DriverLikelihood, geneStart: String, geneEnd: String): ExtendedFusion {
         return TestFusionFactory.createMinimal().copy(
             driverLikelihood = driverLikelihood,
             geneStart = geneStart,

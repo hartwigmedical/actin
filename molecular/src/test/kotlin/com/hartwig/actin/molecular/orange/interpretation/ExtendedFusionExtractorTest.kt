@@ -12,7 +12,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ExhaustiveFusionExtractorTest {
+class ExtendedFusionExtractorTest {
 
     @Test
     fun `Should extract fusions`() {

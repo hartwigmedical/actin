@@ -3,7 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
@@ -29,7 +29,7 @@ class MolecularDriversInterpreter(
         return filterDrivers(molecularDrivers.disruptions)
     }
 
-    fun filteredFusions(): List<ExhaustiveFusion> {
+    fun filteredFusions(): List<ExtendedFusion> {
         return filterDrivers(molecularDrivers.fusions)
     }
 

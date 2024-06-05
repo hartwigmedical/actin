@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.hmf.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.hmf.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.hmf.driver.ExhaustiveFusion
+import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.hmf.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.hmf.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.hmf.driver.MolecularDrivers
@@ -132,7 +132,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun annotateFusion(fusion: ExhaustiveFusion): ExhaustiveFusion {
+    private fun annotateFusion(fusion: ExtendedFusion): ExtendedFusion {
         val evidence =
             ActionableEvidenceFactory.create(
                 evidenceDatabase.evidenceForFusion(
@@ -153,7 +153,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun createFusionCriteria(fusion: ExhaustiveFusion) = FusionMatchCriteria(
+    private fun createFusionCriteria(fusion: ExtendedFusion) = FusionMatchCriteria(
         isReportable = fusion.isReportable,
         geneStart = fusion.geneStart,
         geneEnd = fusion.geneEnd,

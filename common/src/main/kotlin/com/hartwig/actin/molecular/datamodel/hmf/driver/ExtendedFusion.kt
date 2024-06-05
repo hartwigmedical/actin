@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
 
-data class ExhaustiveFusion(
+data class ExtendedFusion(
     val geneTranscriptStart: String,
     val fusedExonUp: Int,
     val geneTranscriptEnd: String,
@@ -20,9 +20,9 @@ data class ExhaustiveFusion(
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
     override val evidence: ActionableEvidence
-) : Fusion, Comparable<ExhaustiveFusion> {
+) : Fusion, Comparable<ExtendedFusion> {
 
-    override fun compareTo(other: ExhaustiveFusion): Int {
+    override fun compareTo(other: ExtendedFusion): Int {
         return FusionComparator().compare(this, other)
     }
 }
