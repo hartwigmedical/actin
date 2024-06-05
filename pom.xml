@@ -44,7 +44,7 @@
         <mysqlconnector.version>8.0.31</mysqlconnector.version>
         <itext.version>7.2.4</itext.version>
 
-        <kotlin.version>1.8.21</kotlin.version>
+        <kotlin.version>2.0.0</kotlin.version>
         <kotlin.jvm.target>11</kotlin.jvm.target>
         <kotlin.code.style>official</kotlin.code.style>
 

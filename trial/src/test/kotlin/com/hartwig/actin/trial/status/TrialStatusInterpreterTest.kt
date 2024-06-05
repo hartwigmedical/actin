@@ -6,6 +6,9 @@ import com.hartwig.actin.trial.status.config.TestTrialStatusDatabaseEntryFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
+private const val STUDY_METC_1 = "MEC 1"
+private const val STUDY_METC_2 = "MEC 2"
+
 class TrialStatusInterpreterTest {
 
     @Test
@@ -13,7 +16,7 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(),
-                TrialDefinitionConfig("trial-1", true, "", "", "")
+                trialDefinitionConfig("trial-1", true)
             ) { it.metcStudyID }
         ).isEqualTo(null to emptyList<TrialDefinitionValidationError>())
     }
@@ -25,7 +28,7 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(openMETC1, closedMETC2),
-                TrialDefinitionConfig(openMETC1.metcStudyID, true, "", "", "")
+                trialDefinitionConfig(openMETC1.metcStudyID, true)
             ) { it.metcStudyID }.first
         ).isTrue
     }
@@ -34,7 +37,7 @@ class TrialStatusInterpreterTest {
     fun `Should resolve to closed for trials with inconsistent entries and return validation error`() {
         val openMETC1 = createEntry(STUDY_METC_1, TrialStatus.OPEN)
         val closedMETC1 = createEntry(STUDY_METC_1, TrialStatus.CLOSED)
-        val config = TrialDefinitionConfig(closedMETC1.metcStudyID, false, ",", "", "")
+        val config = trialDefinitionConfig(closedMETC1.metcStudyID, false)
         val (isOpen, validation) = TrialStatusInterpreter.isOpen(
             listOf(openMETC1, closedMETC1),
             config
@@ -55,17 +58,14 @@ class TrialStatusInterpreterTest {
         assertThat(
             TrialStatusInterpreter.isOpen(
                 listOf(closedMETC1, openMETC2),
-                TrialDefinitionConfig(closedMETC1.metcStudyID, false, "", "", "")
+                trialDefinitionConfig(closedMETC1.metcStudyID, false)
             ) { it.metcStudyID }.first
         ).isFalse
     }
 
-    companion object {
-        private const val STUDY_METC_1 = "MEC 1"
-        private const val STUDY_METC_2 = "MEC 2"
+    private fun trialDefinitionConfig(trialId: String, open: Boolean) = TrialDefinitionConfig(trialId, open, "", "", "", null)
 
-        private fun createEntry(studyMETC: String, studyStatus: TrialStatus): TrialStatusEntry {
-            return TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(metcStudyID = studyMETC, studyStatus = studyStatus)
-        }
+    private fun createEntry(studyMETC: String, studyStatus: TrialStatus): TrialStatusEntry {
+        return TestTrialStatusDatabaseEntryFactory.MINIMAL.copy(metcStudyID = studyMETC, studyStatus = studyStatus)
     }
 }

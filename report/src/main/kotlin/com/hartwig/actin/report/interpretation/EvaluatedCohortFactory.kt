@@ -13,9 +13,11 @@ object EvaluatedCohortFactory {
             val trialWarnings = extractWarnings(trialMatch.evaluations)
             val trialFails = extractFails(trialMatch.evaluations)
             val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
-            val trialId = trialMatch.identification.trialId
-            val acronym = trialMatch.identification.acronym
-            val trialIsOpen = trialMatch.identification.open
+            val identification = trialMatch.identification
+            val trialId = identification.trialId
+            val acronym = identification.acronym
+            val trialIsOpen = identification.open
+            val phase = identification.phase
             // Handle case of trial without cohorts.
             if (trialMatch.cohorts.isEmpty()) {
                 listOf(
@@ -28,7 +30,8 @@ object EvaluatedCohortFactory {
                         isOpen = trialIsOpen,
                         hasSlotsAvailable = trialIsOpen,
                         warnings = trialWarnings,
-                        fails = trialFails
+                        fails = trialFails,
+                        phase = phase
                     )
                 )
             } else {
@@ -43,7 +46,8 @@ object EvaluatedCohortFactory {
                             isOpen = trialIsOpen && cohortMatch.metadata.open && !cohortMatch.metadata.blacklist,
                             hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
                             warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
-                            fails = trialFails.union(extractFails(cohortMatch.evaluations))
+                            fails = trialFails.union(extractFails(cohortMatch.evaluations)),
+                            phase = phase
                         )
                     }
             }

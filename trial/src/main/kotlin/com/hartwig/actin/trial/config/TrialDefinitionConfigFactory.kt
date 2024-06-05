@@ -10,7 +10,8 @@ class TrialDefinitionConfigFactory : TrialConfigFactory<TrialDefinitionConfig> {
             open = ResourceFile.optionalBool(parts[fields["open"]!!]),
             acronym = parts[fields["acronym"]!!],
             title = parts[fields["title"]!!],
-            nctId = ResourceFile.optionalString(parts[fields["nctId"]!!])
+            nctId = ResourceFile.optionalString(parts[fields["nctId"]!!]),
+            phase = ResourceFile.optionalString(parts[fields["phase"]!!])
         )
     }
 }

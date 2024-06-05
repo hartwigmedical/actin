@@ -16,6 +16,7 @@ import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.Trial
 import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.trial.datamodel.TrialPhase
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.sort.CohortComparator
 import com.hartwig.actin.trial.sort.CriterionReferenceComparator
@@ -87,7 +88,8 @@ class TrialIngestion(
             open = determineOpenStatus(trialConfig),
             acronym = trialConfig.acronym,
             title = trialConfig.title,
-            nctId = trialConfig.nctId
+            nctId = trialConfig.nctId,
+            phase = trialConfig.phase?.let(TrialPhase::fromString)
         )
     }
 
@@ -97,11 +99,9 @@ class TrialIngestion(
             return openInCTC
         }
 
-        return trialConfig.open
-            ?: throw java.lang.IllegalStateException(
-                "Could not determine open status for trial, "
-                        + "either from CTC or from manual config for '" + trialConfig.trialId + "'"
-            )
+        return trialConfig.open ?: throw java.lang.IllegalStateException(
+            "Could not determine open status for trial, either from CTC or from manual config for '${trialConfig.trialId}'"
+        )
     }
 
     companion object {
