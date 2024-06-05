@@ -341,6 +341,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_CHILD_PUGH_CLASS_X_LIVER_SCORE(FunctionInput.ONE_STRING),
     HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY(FunctionInput.NONE),
     HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA(FunctionInput.NONE),
+    HAS_ADEQUATE_VENOUS_ACCESS(FunctionInput.NONE),
 
     //Rules related to cardiac function
     HAS_POTENTIAL_SIGNIFICANT_HEART_DISEASE(FunctionInput.NONE),
