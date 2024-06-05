@@ -1,8 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
+import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
+import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter
@@ -10,6 +13,7 @@ import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
@@ -20,6 +24,7 @@ class MolecularDriversGenerator(
     private val trialSource: String,
     private val molecular: MolecularRecord,
     private val cohorts: List<EvaluatedCohort>,
+    private val trialMatches: List<TrialMatch>,
     private val width: Float
 ) : TableGenerator {
 
@@ -40,13 +45,20 @@ class MolecularDriversGenerator(
 
         val molecularDriversInterpreter =
             MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+
+        val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
+            AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, trialMatches
+        )
+        val externalTrialSummarizer = ExternalTrialSummarizer()
+        val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, cohorts)
+        val test = externalTrialSummary.dutchTrials + externalTrialSummary.otherCountryTrials
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))
             table.addCell(Cells.createContent(entry.driver))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
-            table.addCell(Cells.createContent(concatEligibleTrials(entry.externalTrials)))
+            table.addCell(Cells.createContent(concatEligibleTrials(test)))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -66,10 +78,10 @@ class MolecularDriversGenerator(
             return treatments.joinToString(", ")
         }
 
-        private fun concatEligibleTrials(externalTrials: Set<ExternalTrial>): String {
+        private fun concatEligibleTrials(externalTrials: Map<String, Iterable<ExternalTrial>>): String {
             val strings = mutableSetOf<String>()
             for (externalTrial in externalTrials) {
-                strings.add(externalTrial.nctId)
+                externalTrial.value.forEach{strings.add(it.nctId)}
             }
             return strings.joinToString(", ")
         }
