@@ -51,14 +51,14 @@ class MolecularDriversGenerator(
         )
         val externalTrialSummarizer = ExternalTrialSummarizer()
         val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, cohorts)
-        val test = externalTrialSummary.dutchTrials + externalTrialSummary.otherCountryTrials
+        val externalTrialsPerEvent = externalTrialSummary.dutchTrials + externalTrialSummary.otherCountryTrials
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))
-            table.addCell(Cells.createContent(entry.driver))
+            table.addCell(Cells.createContent(entry.name))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
-            table.addCell(Cells.createContent(concatEligibleTrials(test)))
+            table.addCell(Cells.createContent(concatEligibleTrials(externalTrialsPerEvent, entry.event)))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -78,13 +78,14 @@ class MolecularDriversGenerator(
             return treatments.joinToString(", ")
         }
 
-        private fun concatEligibleTrials(externalTrials: Map<String, Iterable<ExternalTrial>>): String {
+        private fun concatEligibleTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, driver: String): String {
             val strings = mutableSetOf<String>()
-            for (externalTrial in externalTrials) {
-                externalTrial.value.forEach{strings.add(it.nctId)}
+            for (event in externalTrialsPerEvent) {
+                if (event.key.contains(driver)) {
+                    event.value.forEach { strings.add(it.nctId) }
+                }
             }
             return strings.joinToString(", ")
         }
-
     }
 }

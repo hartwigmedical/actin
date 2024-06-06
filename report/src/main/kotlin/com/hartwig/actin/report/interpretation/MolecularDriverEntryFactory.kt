@@ -78,7 +78,8 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     private fun driverEntry(driverType: String, name: String, driver: Driver): MolecularDriverEntry {
         return MolecularDriverEntry(
             driverType = driverType,
-            driver = name,
+            name = name,
+            event = driver.event,
             driverLikelihood = driver.driverLikelihood,
             actinTrials = molecularDriversInterpreter.trialsForDriver(driver).toSet(),
             externalTrials = driver.evidence.externalEligibleTrials,

@@ -54,7 +54,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
             )
             if (molecular.containsTumorCells) {
                 generators.add(PredictedTumorOriginGenerator(molecular, contentWidth()))
-                generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, report. treatmentMatch.trialMatches, contentWidth()))
+                generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, report.treatmentMatch.trialMatches, contentWidth()))
             }
             for (i in generators.indices) {
                 val generator = generators[i]
