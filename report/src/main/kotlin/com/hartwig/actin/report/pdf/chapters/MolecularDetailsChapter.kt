@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.molecular.datamodel.hasSufficientQualityButLowPurity
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
@@ -48,9 +49,8 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
-            if (!molecular.hasSufficientQualityAndPurity && molecular.hasSufficientQuality) {
-                table.addCell(Cells.createContentNoBorder(String.format("Low tumor purity (%s) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable",
-                    molecular.characteristics.purity?.let { Formats.percentage(it) })))
+            if (hasSufficientQualityButLowPurity(molecular)) {
+                table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
             }
             val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
             val generators: MutableList<TableGenerator> = mutableListOf(

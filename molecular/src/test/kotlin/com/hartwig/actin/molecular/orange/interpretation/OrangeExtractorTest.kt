@@ -41,7 +41,8 @@ class OrangeExtractorTest {
         assertThat(record.evidenceSource).isEqualTo(ActionabilityConstants.EVIDENCE_SOURCE.display())
         assertThat(record.externalTrialSource).isEqualTo(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display())
         assertThat(record.containsTumorCells).isTrue
-        assertThat(record.hasSufficientQualityAndPurity).isTrue
+        assertThat(record.isContaminated).isFalse
+        assertThat(record.hasSufficientPurity).isTrue
         assertThat(record.hasSufficientQuality).isTrue
         assertThat(record.characteristics).isNotNull()
 
@@ -81,28 +82,28 @@ class OrangeExtractorTest {
     fun `Should determine quality and purity to be sufficient when only pass status is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.PASS)
         assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isTrue
+        assertThat(OrangeExtractor.hasSufficientPurity(record)).isTrue
     }
 
     @Test
     fun `Should determine quality but not purity to be sufficient when only low purity warning is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_LOW_PURITY)
         assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientPurity(record)).isFalse
     }
 
     @Test
     fun `Should determine quality and purity to be sufficient when other warning is present`() {
         val record = orangeRecordWithQCStatus(PurpleQCStatus.WARN_DELETED_GENES)
         assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isTrue
+        assertThat(OrangeExtractor.hasSufficientPurity(record)).isTrue
     }
 
     @Test
     fun `Should determine quality excluding purity to be sufficient when other warning is present with low purity warning`() {
         val record = orangeRecordWithQCStatuses(setOf(PurpleQCStatus.WARN_LOW_PURITY, PurpleQCStatus.WARN_DELETED_GENES))
         assertThat(OrangeExtractor.hasSufficientQuality(record)).isTrue
-        assertThat(OrangeExtractor.hasSufficientQualityAndPurity(record)).isFalse
+        assertThat(OrangeExtractor.hasSufficientPurity(record)).isFalse
     }
 
     @Test(expected = IllegalStateException::class)

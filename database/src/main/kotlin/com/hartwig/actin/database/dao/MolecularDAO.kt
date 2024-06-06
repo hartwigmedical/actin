@@ -137,7 +137,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 record.evidenceSource,
                 record.externalTrialSource,
                 record.containsTumorCells,
-                record.hasSufficientQualityAndPurity,
+                record.hasSufficientQuality,
                 record.characteristics.purity,
                 record.characteristics.ploidy,
                 predictedTumorOrigin?.cancerType(),

@@ -215,13 +215,13 @@ internal object MolecularTestFactory {
 
     fun withTumorMutationalBurdenAndHasSufficientQualityAndPurity(
         tumorMutationalBurden: Double?,
-        hasSufficientQualityAndPurity: Boolean,
+        hasSufficientPurity: Boolean,
         hasSufficientQuality: Boolean
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(tumorMutationalBurden = tumorMutationalBurden),
-                hasSufficientQualityAndPurity = hasSufficientQualityAndPurity,
+                hasSufficientPurity = hasSufficientPurity,
                 hasSufficientQuality = hasSufficientQuality
             )
         )
@@ -236,12 +236,12 @@ internal object MolecularTestFactory {
     }
 
     fun withTumorMutationalLoadAndHasSufficientQualityAndPurity(
-        tumorMutationalLoad: Int?, hasSufficientQualityAndPurity: Boolean, hasSufficientQuality: Boolean
+        tumorMutationalLoad: Int?, hasSufficientPurity: Boolean, hasSufficientQuality: Boolean
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(tumorMutationalLoad = tumorMutationalLoad),
-                hasSufficientQualityAndPurity = hasSufficientQualityAndPurity,
+                hasSufficientPurity = hasSufficientPurity,
                 hasSufficientQuality = hasSufficientQuality
             )
         )

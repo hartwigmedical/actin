@@ -15,11 +15,19 @@ data class MolecularRecord(
     val evidenceSource: String,
     val externalTrialSource: String,
     val containsTumorCells: Boolean,
-    val isPure: Boolean,
-    val hasSufficientQualityAndPurity: Boolean,
+    val isContaminated: Boolean,
+    val hasSufficientPurity: Boolean,
     val hasSufficientQuality: Boolean,
     val characteristics: MolecularCharacteristics,
     val drivers: MolecularDrivers,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>
 ) : MolecularTest
+
+fun hasSufficientQualityAndPurity(molecularRecord: MolecularRecord): Boolean {
+    return molecularRecord.hasSufficientQuality && molecularRecord.hasSufficientPurity
+}
+
+fun hasSufficientQualityButLowPurity(molecularRecord: MolecularRecord): Boolean {
+    return molecularRecord.hasSufficientQuality && !molecularRecord.hasSufficientPurity
+}

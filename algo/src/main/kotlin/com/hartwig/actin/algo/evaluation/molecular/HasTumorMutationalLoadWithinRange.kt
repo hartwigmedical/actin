@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.hasSufficientQualityButLowPurity
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class HasTumorMutationalLoadWithinRange(
@@ -32,8 +33,7 @@ class HasTumorMutationalLoadWithinRange(
             }
         }
         val tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5
-        return if (tumorMutationalLoadIsAlmostAllowed && molecular.hasSufficientQuality
-            && !molecular.hasSufficientQualityAndPurity
+        return if (tumorMutationalLoadIsAlmostAllowed && hasSufficientQualityButLowPurity(molecular)
         ) {
             EvaluationFactory.warn(
                 "Tumor mutational load (TML) of sample $tumorMutationalLoad almost exceeds $minTumorMutationalLoad"

@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.hasSufficientQualityAndPurity
 import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -76,7 +77,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         }
         val interpretation = if (hasHighTumorMutationalBurden) "High" else "Low"
         val value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")"
-        val cell = if (molecular.hasSufficientQualityAndPurity) Cells.createContent(value) else Cells.createContentWarn(value)
+        val cell = if (hasSufficientQualityAndPurity(molecular)) Cells.createContent(value) else Cells.createContentWarn(value)
         if (hasHighTumorMutationalBurden) {
             cell.addStyle(Styles.tableHighlightStyle())
         }
@@ -108,7 +109,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         } else {
             summaryString?.let { value: String ->
-                val cell = if (molecular.hasSufficientQualityAndPurity) Cells.createContent(value) else Cells.createContentWarn(value)
+                val cell = if (hasSufficientQualityAndPurity(molecular)) Cells.createContent(value) else Cells.createContentWarn(value)
                 if (true == shouldHighlight) {
                     cell.addStyle(Styles.tableHighlightStyle())
                 }
@@ -118,7 +119,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     }
 
     private fun createPeachSummaryForGeneCell(pharmaco: Set<PharmacoEntry>, gene: String): Cell {
-        return if (!molecular.isPure) {
+        return if (molecular.isContaminated) {
             Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         } else {
             val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Cells.createContentWarn(Formats.VALUE_UNKNOWN)

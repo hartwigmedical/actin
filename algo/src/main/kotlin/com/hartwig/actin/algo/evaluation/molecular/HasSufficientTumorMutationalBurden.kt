@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.hasSufficientQualityButLowPurity
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: Double) : MolecularEvaluationFunction {
@@ -19,8 +20,7 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
             )
         }
         val tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5
-        return if (tumorMutationalBurdenIsAlmostAllowed && molecular.hasSufficientQuality
-            && !molecular.hasSufficientQualityAndPurity
+        return if (tumorMutationalBurdenIsAlmostAllowed && hasSufficientQualityButLowPurity(molecular)
         ) {
             EvaluationFactory.warn(
                 "Tumor mutational burden (TMB) of sample $tumorMutationalBurden almost exceeds $minTumorMutationalBurden"

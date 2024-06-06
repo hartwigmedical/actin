@@ -81,7 +81,8 @@ class MolecularRecordJsonTest {
         assertThat(molecular.evidenceSource).isEqualTo("kb")
         assertThat(molecular.externalTrialSource).isEqualTo("trial kb")
         assertThat(molecular.containsTumorCells).isTrue
-        assertThat(molecular.hasSufficientQualityAndPurity).isTrue
+        assertThat(molecular.isContaminated).isFalse
+        assertThat(molecular.hasSufficientPurity).isTrue
         assertThat(molecular.hasSufficientQuality).isTrue
         assertCharacteristics(molecular.characteristics)
         assertDrivers(molecular.drivers)

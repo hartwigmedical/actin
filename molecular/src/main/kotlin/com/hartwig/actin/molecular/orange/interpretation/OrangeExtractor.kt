@@ -31,8 +31,8 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
             containsTumorCells = containsTumorCells(record),
-            isPure = isPure(record),
-            hasSufficientQualityAndPurity = hasSufficientQualityAndPurity(record),
+            isContaminated = isContaminated(record),
+            hasSufficientPurity = hasSufficientPurity(record),
             hasSufficientQuality = hasSufficientQuality(record),
             characteristics = characteristicsExtractor.extract(record),
             drivers = driverExtractor.extract(record),
@@ -58,16 +58,20 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
             return PurpleQCStatus.FAIL_NO_TUMOR !in record.purple().fit().qc().status()
         }
 
-        fun isPure(record: OrangeRecord): Boolean {
-            return PurpleQCStatus.FAIL_CONTAMINATION !in record.purple().fit().qc().status()
+        fun isContaminated(record: OrangeRecord): Boolean {
+            return PurpleQCStatus.FAIL_CONTAMINATION in record.purple().fit().qc().status()
         }
 
         fun hasSufficientQuality(record: OrangeRecord): Boolean {
-            return containsTumorCells(record) && isPure(record)
+            return containsTumorCells(record) && !isContaminated(record)
         }
 
-        fun hasSufficientQualityAndPurity(record: OrangeRecord): Boolean {
-            return hasSufficientQuality(record) && PurpleQCStatus.WARN_LOW_PURITY !in record.purple().fit().qc().status()
+        fun hasSufficientPurity(record: OrangeRecord): Boolean {
+            return recordQCStatusesInSet(record, setOf(PurpleQCStatus.PASS, PurpleQCStatus.FAIL_CONTAMINATION, PurpleQCStatus.WARN_DELETED_GENES, PurpleQCStatus.WARN_GENDER_MISMATCH, PurpleQCStatus.WARN_HIGH_COPY_NUMBER_NOISE))
+        }
+
+        private fun recordQCStatusesInSet(record: OrangeRecord, allowableQCStatuses: Set<PurpleQCStatus>): Boolean {
+            return allowableQCStatuses.containsAll(record.purple().fit().qc().status())
         }
 
         internal fun toPatientId(sampleId: String): String {
