@@ -51,6 +51,7 @@ object PatientRecordJson {
         val gsonBuilder = GsonBuilder()
         return gsonBuilder.serializeNulls()
             .enableComplexMapKeySerialization()
+            .serializeSpecialFloatingPointValues()
             .registerTypeAdapter(object : TypeToken<LocalDate?>() {}.type, GsonLocalDateAdapter())
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter(gsonBuilder.create()))
