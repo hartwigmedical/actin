@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.orange.datamodel.purple
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleAllelicDepth

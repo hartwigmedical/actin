@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.sort.driver
 
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
-import com.hartwig.actin.molecular.datamodel.driver.Virus
-import com.hartwig.actin.molecular.datamodel.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

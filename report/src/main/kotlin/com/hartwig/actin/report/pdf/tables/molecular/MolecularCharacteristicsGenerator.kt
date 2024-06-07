@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.hasSufficientQualityAndPurity
-import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -30,8 +30,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             createTMBStatusCell(),
             createMSStabilityCell(),
             createHRStatusCell(),
-            createPeachSummaryForGeneCell(molecular.pharmaco, "DPYD"),
-            createPeachSummaryForGeneCell(molecular.pharmaco, "UGT1A1")
+            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "DPYD")),
+            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "UGT1A1"))
         ).forEach { table.addCell(it) }
 
         return table
@@ -50,6 +50,24 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         } else {
             Cells.createContent(purityString)
         }
+    }
+
+    fun createTMLAndTMBStatusString(): String {
+        val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
+        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
+        val TMLString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
+            "TML %s (%d)",
+            if (hasHighTumorMutationalLoad) "high" else "low",
+            tumorMutationalLoad
+        )
+        val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
+        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
+        val TMBString = if (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null) Formats.VALUE_UNKNOWN else String.format(
+            "TMB %s (%s)",
+            if (hasHighTumorMutationalBurden) "high" else "low",
+            Formats.singleDigitNumber(tumorMutationalBurden)
+        )
+        return String.format("%s / %s", TMLString, TMBString)
     }
 
     private fun createTMLStatusString(): String? {
@@ -118,16 +136,16 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         }
     }
 
-    private fun createPeachSummaryForGeneCell(pharmaco: Set<PharmacoEntry>, gene: String): Cell {
-        return if (molecular.isContaminated) {
-            Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
-        } else {
-            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Cells.createContentWarn(Formats.VALUE_UNKNOWN)
-            Cells.createContent(pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" })
-        }
-    }
-
     companion object {
+        private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): String {
+            if (molecular.isContaminated) {
+                return Formats.VALUE_NOT_AVAILABLE
+            } else {
+                val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
+                return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
+            }
+        }
+
         private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: String): PharmacoEntry? {
             return pharmaco.find { it.gene == geneToFind }
         }

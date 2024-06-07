@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.sort.driver
 
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 
 class HomozygousDisruptionComparator : Comparator<HomozygousDisruption> {
 

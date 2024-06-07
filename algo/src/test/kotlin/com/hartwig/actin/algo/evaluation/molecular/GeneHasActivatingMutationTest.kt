@@ -3,23 +3,22 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.TEST_DATE
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariant
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class GeneHasActivatingMutationTest {
     private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
@@ -198,7 +197,7 @@ class GeneHasActivatingMutationTest {
             EvaluationResult.PASS,
             functionNotIgnoringCodons.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)),
+                    molecularHistory = MolecularHistory(listOf(panelRecord(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT))),
                 )
             )
         )
@@ -210,7 +209,7 @@ class GeneHasActivatingMutationTest {
             EvaluationResult.PASS,
             functionNotIgnoringCodons.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(listOf(AVL_PANEL_WITH_ACTIVATING_VARIANT)),
+                    molecularHistory = MolecularHistory(listOf(panelRecord(genericPanelExtraction = AVL_PANEL_WITH_ACTIVATING_VARIANT))),
                 )
             )
         )
@@ -221,7 +220,7 @@ class GeneHasActivatingMutationTest {
 
         val evaluation = functionNotIgnoringCodons.evaluate(
             TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                molecularHistory = MolecularHistory(listOf(EMPTY_ARCHER_MOLECULAR_TEST)),
+                molecularHistory = MolecularHistory(listOf(panelRecord(EMPTY_ARCHER_MOLECULAR_TEST))),
             )
         )
 
@@ -235,7 +234,7 @@ class GeneHasActivatingMutationTest {
             EvaluationResult.FAIL,
             GeneHasActivatingMutation("ALK", null).evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(listOf(EMPTY_ARCHER_MOLECULAR_TEST)),
+                    molecularHistory = MolecularHistory(listOf(panelRecord(EMPTY_ARCHER_MOLECULAR_TEST))),
                 )
             )
         )
@@ -246,7 +245,7 @@ class GeneHasActivatingMutationTest {
         val base = MolecularTestFactory.withHasTumorMutationalLoadAndVariants(false, ACTIVATING_VARIANT)
         val patient = base.copy(
             molecularHistory = MolecularHistory(
-                base.molecularHistory.molecularTests + listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)
+                base.molecularHistory.molecularTests + listOf(panelRecord(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT))
             )
         )
 
@@ -260,24 +259,14 @@ class GeneHasActivatingMutationTest {
     @Test
     fun `Should be undetermined for Archer variant on gene but codons to ignore and no Orange molecular`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-            molecularHistory = MolecularHistory(listOf(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT))
+            molecularHistory = MolecularHistory(listOf(panelRecord(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)))
         )
 
         val evaluation = functionWithCodonsToIgnore.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
-    @Test
-    fun `Should pass for exon deletion in Panel`() {
-        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_EXON_DELETION))
-        )
-
-        val evaluation = functionNotIgnoringCodons.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
-    }
-
-    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
+    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: ExtendedVariant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
         // Repeat with high TML since unknown TML always results in a warning for reportable variants:
@@ -288,12 +277,12 @@ class GeneHasActivatingMutationTest {
         }
     }
 
-    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: Variant) {
+    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: ExtendedVariant) {
         assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, null)
         assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, true)
     }
 
-    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
+    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: ExtendedVariant, hasHighTML: Boolean?) {
         assertMolecularEvaluation(
             expectedResult,
             functionNotIgnoringCodons.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
@@ -303,7 +292,11 @@ class GeneHasActivatingMutationTest {
         }
     }
 
-    private fun assertResultForVariantWithTMLIgnoringCodons(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
+    private fun assertResultForVariantWithTMLIgnoringCodons(
+        expectedResult: EvaluationResult,
+        variant: ExtendedVariant,
+        hasHighTML: Boolean?
+    ) {
         assertMolecularEvaluation(
             expectedResult,
             functionWithCodonsToIgnore.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
@@ -313,7 +306,7 @@ class GeneHasActivatingMutationTest {
     companion object {
         private const val GENE = "gene A"
         private val CODONS_TO_IGNORE = listOf("A100X", "A200X")
-        private val ACTIVATING_VARIANT: Variant = TestVariantFactory.createMinimal().copy(
+        private val ACTIVATING_VARIANT: ExtendedVariant = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,
@@ -325,7 +318,7 @@ class GeneHasActivatingMutationTest {
             canonicalImpact = impactWithCodon(300)
         )
 
-        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE: Variant = TestVariantFactory.createMinimal().copy(
+        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE: ExtendedVariant = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,
@@ -339,11 +332,16 @@ class GeneHasActivatingMutationTest {
 
         private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
 
-        private val TEST_DATE = LocalDate.of(2023, 1, 1)
+        private fun panelRecord(
+            archerPanelExtraction: ArcherPanelExtraction? = null,
+            genericPanelExtraction: GenericPanelExtraction? = null
+        ) =
+            TestPanelRecordFactory.empty()
+                .copy(archerPanelExtraction = archerPanelExtraction, genericPanelExtraction = genericPanelExtraction)
 
-        private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherPanel(
+        private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherPanelExtraction(
             variants = listOf(
-                ArcherVariant(
+                ArcherVariantExtraction(
                     gene = GENE,
                     hgvsCodingImpact = "c.1A>T",
                 ),
@@ -353,36 +351,23 @@ class GeneHasActivatingMutationTest {
             date = TEST_DATE
         )
 
-        private val EMPTY_ARCHER_MOLECULAR_TEST = ArcherPanel(
+        private val EMPTY_ARCHER_MOLECULAR_TEST = ArcherPanelExtraction(
             variants = emptyList(),
             fusions = emptyList(),
             skippedExons = emptyList(),
             date = TEST_DATE
         )
 
-        private val AVL_PANEL_WITH_ACTIVATING_VARIANT = GenericPanel(
+        private val AVL_PANEL_WITH_ACTIVATING_VARIANT = GenericPanelExtraction(
             panelType = GenericPanelType.AVL,
             variants = listOf(
-                GenericVariant(
+                GenericVariantExtraction(
                     gene = GENE,
                     hgvsCodingImpact = "c.1A>T",
                 ),
             ),
             fusions = emptyList(),
             date = TEST_DATE
-        )
-
-        private val FREETEXT_PANEL_WITH_EXON_DELETION = GenericPanel(
-            date = TEST_DATE,
-            panelType = GenericPanelType.FREE_TEXT,
-            variants = emptyList(),
-            fusions = emptyList(),
-            exonDeletions = listOf(
-                GenericExonDeletion(
-                    gene = GENE,
-                    affectedExon = 1,
-                ),
-            )
         )
     }
 }

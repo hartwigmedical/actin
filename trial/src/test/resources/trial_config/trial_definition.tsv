@@ -1,3 +1,3 @@
-trialId	nctId	open	acronym	title
-ACTN 2021	NCT00000001	1	ACTIN-1	ACTIN is a study to evaluate a new treatment decision system in 2021
-ACTN 2022	NCT00000002		ACTIN-2	ACTIN is a study to evaluate a new treatment decision system in 2022
+trialId	nctId	open	acronym	title	phase
+ACTN 2021	NCT00000001	1	ACTIN-1	ACTIN is a study to evaluate a new treatment decision system in 2021	1
+ACTN 2022	NCT00000002		ACTIN-2	ACTIN is a study to evaluate a new treatment decision system in 2022	unknown

@@ -1,39 +1,30 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.TestPatientFactory
-import com.hartwig.actin.molecular.datamodel.characteristics.CupPrediction
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.characteristics.PredictedTumorOrigin
-import com.hartwig.actin.molecular.datamodel.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.RegionType
-import com.hartwig.actin.molecular.datamodel.driver.TranscriptImpact
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
-import com.hartwig.actin.molecular.datamodel.driver.VariantType
-import com.hartwig.actin.molecular.datamodel.driver.Virus
-import com.hartwig.actin.molecular.datamodel.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.datamodel.immunology.HlaAllele
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusion
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
+import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
+import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.pharmaco.Haplotype
-import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -188,7 +179,7 @@ object TestMolecularFactory {
         isAssociatedWithDrugResistance = null
     )
 
-    fun createProperVariant() = Variant(
+    fun createProperVariant() = ExtendedVariant(
         chromosome = "7",
         position = 140453136,
         ref = "T",
@@ -293,7 +284,7 @@ object TestMolecularFactory {
                 isAssociatedWithDrugResistance = null,
                 clusterGroup = 0
             ),
-            fusions = proper.fusions + Fusion(
+            fusions = proper.fusions + ExtendedFusion(
                 isReportable = true,
                 event = "EML4 - ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
@@ -321,10 +312,12 @@ object TestMolecularFactory {
         )
     }
 
-    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String): MolecularTest {
-        return GenericPanel(
-            fusions = listOf(GenericFusion(geneStart, geneEnd)),
+    fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
+        genericPanelExtraction =
+        GenericPanelExtraction(
+            fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
             panelType = GenericPanelType.FREE_TEXT
         )
-    }
+    )
 }
+

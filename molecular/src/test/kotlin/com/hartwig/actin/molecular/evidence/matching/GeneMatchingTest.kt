@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect.MISSENSE
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect.NONE
+import com.hartwig.actin.molecular.datamodel.CodingEffect.MISSENSE
+import com.hartwig.actin.molecular.datamodel.CodingEffect.NONE
 import com.hartwig.serve.datamodel.gene.GeneAnnotation
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat

@@ -1,7 +1,9 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.molecular.datamodel.hasSufficientQualityButLowPurity
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -53,15 +55,11 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
                 table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
             }
             val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-            val generators: MutableList<TableGenerator> = mutableListOf(
-                MolecularCharacteristicsGenerator(molecular, contentWidth())
-            )
-            if (molecular.hasSufficientQuality) {
-                generators.add(PredictedTumorOriginGenerator(molecular, contentWidth()))
-                generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, contentWidth()))
-            }
-            for (i in generators.indices) {
-                val generator = generators[i]
+
+            val generators =
+                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts)
+
+            generators.forEachIndexed { i, generator ->
                 table.addCell(Cells.createSubTitle(generator.title()))
                 table.addCell(Cells.create(generator.contents()))
                 if (i < generators.size - 1) {
@@ -73,5 +71,14 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
             }
         } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))
         document.add(table)
+    }
+
+    private fun tumorDetailsGenerators(molecular: MolecularRecord, cohorts: List<EvaluatedCohort>): List<TableGenerator> {
+        return if (molecular.hasSufficientQuality) {
+            listOf(
+                PredictedTumorOriginGenerator(molecular, contentWidth()),
+                MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, contentWidth())
+            )
+        } else emptyList()
     }
 }

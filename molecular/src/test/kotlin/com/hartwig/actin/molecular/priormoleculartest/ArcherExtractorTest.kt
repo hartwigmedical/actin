@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusion
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExons
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariant
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -16,13 +16,13 @@ class ArcherExtractorTest {
     @Test
     fun `Should parse archer variants from prior molecular tests`() {
         val result = interpreter.extract(listOf(archerPriorMolecularVariantRecord(GENE, HGVS_CODING)))
-        assertThat(result).containsExactly(ArcherPanel(variants = listOf(ArcherVariant(GENE, HGVS_CODING))))
+        assertThat(result).containsExactly(ArcherPanelExtraction(variants = listOf(ArcherVariantExtraction(GENE, HGVS_CODING))))
     }
 
     @Test
     fun `Should parse archer fusions from prior molecular tests`() {
         val result = interpreter.extract(listOf(archerPriorMolecularFusionRecord(GENE)))
-        assertThat(result).containsExactly(ArcherPanel(fusions = listOf(ArcherFusion(GENE))))
+        assertThat(result).containsExactly(ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(GENE))))
     }
 
     @Test
@@ -35,10 +35,10 @@ class ArcherExtractorTest {
                 )
             )
         assertThat(result).containsExactly(
-            ArcherPanel(
+            ArcherPanelExtraction(
                 skippedExons = listOf(
-                    ArcherSkippedExons(GENE, 1, 2),
-                    ArcherSkippedExons(GENE, 3, 3)
+                    ArcherSkippedExonsExtraction(GENE, 1, 2),
+                    ArcherSkippedExonsExtraction(GENE, 3, 3)
                 )
             )
         )
