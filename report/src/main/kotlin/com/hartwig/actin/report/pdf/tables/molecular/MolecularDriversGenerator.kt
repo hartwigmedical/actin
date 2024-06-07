@@ -35,6 +35,7 @@ class MolecularDriversGenerator(
     override fun contents(): Table {
         val colWidth = width / 8
         val table = Tables.createFixedWidthCols(colWidth, colWidth * 2, colWidth, colWidth, colWidth, colWidth, colWidth)
+
         table.addHeaderCell(Cells.createHeader("Type"))
         table.addHeaderCell(Cells.createHeader("Driver"))
         table.addHeaderCell(Cells.createHeader("Driver likelihood"))
@@ -52,16 +53,16 @@ class MolecularDriversGenerator(
         val externalTrialSummarizer = ExternalTrialSummarizer()
         val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, cohorts)
 
-        val dutchExternalTrialsPerSingleEvent = groupByEvent(externalTrialSummary.dutchTrials)
-        val otherCountriesExternalTrialsPerSingleEvent = groupByEvent(externalTrialSummary.otherCountryTrials)
+        val externalTrialsPerEvents = mergeMapsOfSets(listOf(externalTrialSummary.dutchTrials, externalTrialSummary.otherCountryTrials))
+        val externalTrialsPerSingleEvent = groupByEvent(externalTrialsPerEvents)
 
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))
-            table.addCell(Cells.createContent(entry.displayedName))
+            table.addCell(Cells.createContent(entry.eventName))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
-            table.addCell(Cells.createContent(concatEligibleTrials(dutchExternalTrialsPerSingleEvent[entry.eventName], otherCountriesExternalTrialsPerSingleEvent[entry.eventName])))
+            table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.eventName]?.let { concatEligibleTrials(it) } ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -69,6 +70,32 @@ class MolecularDriversGenerator(
             val note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal"
             table.addCell(Cells.createSpanningSubNote(note, table))
         }
+
+        table.addCell(
+            Cells.createSpanningSubNote(
+                externalTrialsPerSingleEvent.toString(),
+                table
+            )
+        )
+        table.addCell(
+            Cells.createSpanningSubNote(
+                externalTrialsPerEvents.toString(),
+                table
+            )
+        )
+        table.addCell(
+            Cells.createSpanningSubNote(
+                externalTrialSummary.dutchTrials.toString(),
+                table
+            )
+        )
+        table.addCell(
+            Cells.createSpanningSubNote(
+                externalTrialSummary.otherCountryTrials.toString(),
+                table
+            )
+        )
+
         return makeWrapping(table)
     }
 
@@ -82,20 +109,19 @@ class MolecularDriversGenerator(
         }
 
         private fun groupByEvent(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, Iterable<ExternalTrial>> {
-            return externalTrialsPerEvent.flatMap { (key, value) ->
-                key.split(",").map { it.trim() to value }
-            }.groupBy(
-                keySelector = { it.first },
-                valueTransform = { it.second }
-            ).mapValues { (_, values) ->
-                values.flatten().toSet()
-            }
+            return externalTrialsPerEvent.flatMap { (key, value) -> key.split(",").map { it.trim() to value } }
+                .groupBy({ it.first }, { it.second }).mapValues { (_, trials) -> trials.flatten().toSet() }
         }
 
-        private fun concatEligibleTrials(dutchExternalTrials: Iterable<ExternalTrial>?, otherExternalTrials: Iterable<ExternalTrial>?): String {
-            val allTrials = (dutchExternalTrials?.toSet() ?: emptySet()) + (otherExternalTrials?.toSet() ?: emptySet())
-            return if (allTrials.isEmpty()) ""
-            else allTrials.map { it.nctId }.toSet().joinToString(", ")
+        private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrial>): String {
+            return externalTrials.map { it.nctId }.toSet().joinToString(", ")
+        }
+
+        private fun mergeMapsOfSets(mapsOfSets: List<Map<String, Iterable<ExternalTrial>>>): Map<String, Set<ExternalTrial>> {
+            return mapsOfSets
+                .flatMap { it.entries }
+                .groupBy({ it.key }, { it.value })
+                .mapValues { it.value.flatten().toSet() }
         }
     }
 }
