@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
@@ -12,21 +11,17 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): MolecularEvaluation {
 
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) findMatchingFusionsInOrangeMolecular(orangeMolecular) else null
         val panelEvaluation = findMatchingFusionsInPanels(molecularHistory)
 
-        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
-            .groupBy { evaluation -> evaluation.result }
-            .mapValues { entry ->
-                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
-            }
-        return groupedEvaluationsByResult[EvaluationResult.PASS]
-            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
-            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
-            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+        return MolecularEvaluation(
+            orangeMolecularEvaluation,
+            listOfNotNull(panelEvaluation),
+            EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+        )
     }
 
     private fun findMatchingFusionsInOrangeMolecular(molecular: MolecularRecord): Evaluation {

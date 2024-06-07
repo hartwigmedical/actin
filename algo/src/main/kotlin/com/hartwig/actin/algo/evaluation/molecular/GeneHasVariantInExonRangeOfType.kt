@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
@@ -16,22 +15,16 @@ class GeneHasVariantInExonRangeOfType(
     private val requiredVariantType: VariantTypeInput?
 ) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): MolecularEvaluation {
 
         val orangeEvaluation = molecularHistory.latestOrangeMolecularRecord()?.let { evaluateOrange(it) }
         val panelEvaluation = evaluatePanel(molecularHistory)
 
-        val groupedEvaluationsByResult = listOfNotNull(orangeEvaluation, panelEvaluation)
-            .groupBy { evaluation -> evaluation.result }
-            .mapValues { entry ->
-                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
-            }
-
-        return groupedEvaluationsByResult[EvaluationResult.PASS]
-            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
-            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
-            ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED]
-            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+        return MolecularEvaluation(
+            orangeEvaluation,
+            listOfNotNull(panelEvaluation),
+            EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+        )
     }
 
     private fun evaluateOrange(molecular: MolecularRecord): Evaluation {

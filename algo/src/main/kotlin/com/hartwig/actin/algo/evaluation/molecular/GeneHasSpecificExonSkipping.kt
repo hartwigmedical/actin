@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
-import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.molecular.datamodel.CodingEffect
@@ -11,7 +10,7 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): MolecularEvaluation {
 
         val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.skippedExons }
             .filter { it.impactsGene(gene) && exonToSkip == it.start && exonToSkip == it.end }.map { it.display() }
@@ -20,26 +19,38 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         val fusionSkippingEvents = molecular?.let(::findFusionSkippingEvents) ?: emptySet()
         val exonSplicingVariants = molecular?.let(::findExonSplicingVariants) ?: emptySet()
 
-        return when {
-            fusionSkippingEvents.isNotEmpty() || archerExonSkippingEvents.isNotEmpty() -> {
-                EvaluationFactory.pass(
-                    "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents + archerExonSkippingEvents)}",
-                    "Exon $exonToSkip skipping in $gene",
-                    inclusionEvents = fusionSkippingEvents + archerExonSkippingEvents
-                )
-            }
+        val molecularEvaluation = evaluation(fusionSkippingEvents, exonSplicingVariants)
+        val panelEvaluation = evaluation(archerExonSkippingEvents.toSet(), emptySet())
 
-            exonSplicingVariants.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Exon $exonToSkip may be skipped in gene $gene due to ${concat(exonSplicingVariants)}",
-                    "Potential $gene exon $exonToSkip skipping due to splice variant",
-                    inclusionEvents = exonSplicingVariants
-                )
-            }
+        return MolecularEvaluation(
+            molecularEvaluation,
+            listOfNotNull(panelEvaluation),
+            EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+        )
+    }
 
-            else -> {
-                EvaluationFactory.fail("No $gene exon $exonToSkip skipping", "No $gene exon $exonToSkip skipping")
-            }
+    private fun evaluation(
+        fusionSkippingEvents: Set<String>,
+        exonSplicingVariants: Set<String>
+    ) = when {
+        fusionSkippingEvents.isNotEmpty() -> {
+            EvaluationFactory.pass(
+                "Exon $exonToSkip skipped in gene $gene due to ${concat(fusionSkippingEvents)}",
+                "Exon $exonToSkip skipping in $gene",
+                inclusionEvents = fusionSkippingEvents
+            )
+        }
+
+        exonSplicingVariants.isNotEmpty() -> {
+            EvaluationFactory.warn(
+                "Exon $exonToSkip may be skipped in gene $gene due to ${concat(exonSplicingVariants)}",
+                "Potential $gene exon $exonToSkip skipping due to splice variant",
+                inclusionEvents = exonSplicingVariants
+            )
+        }
+
+        else -> {
+            EvaluationFactory.fail("No $gene exon $exonToSkip skipping", "No $gene exon $exonToSkip skipping")
         }
     }
 
