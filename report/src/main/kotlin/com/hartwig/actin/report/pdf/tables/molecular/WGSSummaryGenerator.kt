@@ -2,8 +2,6 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.hasSufficientQualityAndPurity
-import com.hartwig.actin.molecular.datamodel.hasSufficientQualityButLowPurity
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -81,7 +79,7 @@ class WGSSummaryGenerator(
         return if (purity != null) {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
-            purityText.addStyle(if (hasSufficientQualityButLowPurity(molecular)) Styles.tableNoticeStyle() else Styles.tableHighlightStyle())
+            purityText.addStyle(if (molecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle() else Styles.tableHighlightStyle())
             Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
         } else {
             Cells.createValue(biopsyLocation)
@@ -91,7 +89,7 @@ class WGSSummaryGenerator(
     private fun tumorOriginPredictionCell(): Cell {
         val paragraph = Paragraph(Text(tumorOriginPrediction()).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
-        if (purity != null && hasSufficientQualityButLowPurity(molecular)) {
+        if (purity != null && molecular.hasSufficientQualityButLowPurity()) {
             val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
             paragraph.add(purityText)
         }
@@ -100,7 +98,7 @@ class WGSSummaryGenerator(
 
     private fun tumorOriginPrediction(): String {
         val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && hasSufficientQualityAndPurity(molecular)) {
+        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
             TumorOriginInterpreter.interpret(predictedTumorOrigin)
         } else if (molecular.hasSufficientQuality && predictedTumorOrigin != null) {
             val predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
@@ -123,7 +121,7 @@ class WGSSummaryGenerator(
     private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(): Cell {
         val paragraph = Paragraph(Text(tumorMutationalLoadAndTumorMutationalBurdenStatus()).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
-        if (purity != null && hasSufficientQualityButLowPurity(molecular)) {
+        if (purity != null && molecular.hasSufficientQualityButLowPurity()) {
             val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
             paragraph.add(purityText)
         }

@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.util
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.hasSufficientQualityAndPurity
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory.create
 import com.hartwig.actin.util.DatamodelPrinter
@@ -18,7 +17,7 @@ class MolecularRecordPrinter(private val printer: DatamodelPrinter) {
         printer.print("Sample: " + record.sampleId)
         printer.print(" Experiment type '" + record.type.display() + "' on " + formatDate(record.date))
         printer.print(" Contains tumor cells: " + toYesNoUnknown(record.containsTumorCells))
-        printer.print(" Has sufficient quality and purity: " + toYesNoUnknown(hasSufficientQualityAndPurity(record)))
+        printer.print(" Has sufficient quality and purity: " + toYesNoUnknown(record.hasSufficientQualityAndPurity()))
         printer.print(" Purity: " + formatPercentage(record.characteristics.purity))
         printer.print(" Predicted tumor origin: " + predictedTumorString(record.characteristics.predictedTumorOrigin))
         printer.print(" Microsatellite unstable?: " + toYesNoUnknown(record.characteristics.isMicrosatelliteUnstable))

@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.chapters
 
-import com.hartwig.actin.molecular.datamodel.hasSufficientQualityButLowPurity
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
@@ -51,7 +50,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
-            if (hasSufficientQualityButLowPurity(molecular)) {
+            if (molecular.hasSufficientQualityButLowPurity()) {
                 table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
             }
             val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)

@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.hasSufficientQualityAndPurity
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -52,24 +51,6 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         }
     }
 
-    fun createTMLAndTMBStatusString(): String {
-        val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
-        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
-        val TMLString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
-            "TML %s (%d)",
-            if (hasHighTumorMutationalLoad) "high" else "low",
-            tumorMutationalLoad
-        )
-        val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
-        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
-        val TMBString = if (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null) Formats.VALUE_UNKNOWN else String.format(
-            "TMB %s (%s)",
-            if (hasHighTumorMutationalBurden) "high" else "low",
-            Formats.singleDigitNumber(tumorMutationalBurden)
-        )
-        return String.format("%s / %s", TMLString, TMBString)
-    }
-
     private fun createTMLStatusString(): String? {
         val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
         val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
@@ -95,7 +76,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         }
         val interpretation = if (hasHighTumorMutationalBurden) "High" else "Low"
         val value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")"
-        val cell = if (hasSufficientQualityAndPurity(molecular)) Cells.createContent(value) else Cells.createContentWarn(value)
+        val cell = if (molecular.hasSufficientQualityAndPurity()) Cells.createContent(value) else Cells.createContentWarn(value)
         if (hasHighTumorMutationalBurden) {
             cell.addStyle(Styles.tableHighlightStyle())
         }
@@ -127,7 +108,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         } else {
             summaryString?.let { value: String ->
-                val cell = if (hasSufficientQualityAndPurity(molecular)) Cells.createContent(value) else Cells.createContentWarn(value)
+                val cell = if (molecular.hasSufficientQualityAndPurity()) Cells.createContent(value) else Cells.createContentWarn(value)
                 if (true == shouldHighlight) {
                     cell.addStyle(Styles.tableHighlightStyle())
                 }
@@ -136,16 +117,16 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         }
     }
 
-    companion object {
-        private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): String {
-            if (molecular.isContaminated) {
-                return Formats.VALUE_NOT_AVAILABLE
-            } else {
-                val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
-                return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
-            }
+    private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): String {
+        if (molecular.isContaminated) {
+            return Formats.VALUE_NOT_AVAILABLE
+        } else {
+            val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
+            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
         }
+    }
 
+    companion object {
         private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>, geneToFind: String): PharmacoEntry? {
             return pharmaco.find { it.gene == geneToFind }
         }

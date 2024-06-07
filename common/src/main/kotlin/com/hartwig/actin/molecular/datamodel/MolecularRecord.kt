@@ -23,12 +23,12 @@ data class MolecularRecord(
     override val evidenceSource: String,
 ) : MolecularTest<MolecularDrivers> {
     override fun testsGene(gene: String) = true
-}
 
-fun hasSufficientQualityAndPurity(molecularRecord: MolecularRecord): Boolean {
-    return molecularRecord.hasSufficientQuality && molecularRecord.hasSufficientPurity
-}
+    fun hasSufficientQualityAndPurity(): Boolean {
+        return hasSufficientQuality && hasSufficientPurity
+    }
 
-fun hasSufficientQualityButLowPurity(molecularRecord: MolecularRecord): Boolean {
-    return molecularRecord.hasSufficientQuality && !molecularRecord.hasSufficientPurity
+    fun hasSufficientQualityButLowPurity(): Boolean {
+        return hasSufficientQuality && !hasSufficientPurity
+    }
 }
