@@ -39,19 +39,27 @@ class StandardPriorOtherConditionsExtractorTest {
     private val oncologicalHistoryCuration = mockk<CurationDatabase<TreatmentHistoryEntryConfig>>()
     private val extractor = StandardPriorOtherConditionsExtractor(priorOtherConditionsCuration, oncologicalHistoryCuration)
 
-
     @Test
     fun `Should extract prior other conditions and curate the condition`() {
+        val anotherPriorCondition = "another_prior_condition"
         every { priorOtherConditionsCuration.find(PRIOR_CONDITION_NAME) } returns setOf(
             NonOncologicalHistoryConfig(
                 input = PRIOR_CONDITION_NAME,
                 ignore = false,
                 priorOtherCondition = PRIOR_OTHER_CONDITION
+            ),
+            NonOncologicalHistoryConfig(
+                input = PRIOR_CONDITION_NAME,
+                ignore = false,
+                priorOtherCondition = PRIOR_OTHER_CONDITION.copy(anotherPriorCondition)
             )
         )
         every { oncologicalHistoryCuration.find(PRIOR_CONDITION_NAME) } returns emptySet()
         val result = extractor.extract(EHR_PATIENT_RECORD_WITH_PRIOR_CONDITIONS)
-        assertThat(result.extracted).containsExactly(PRIOR_OTHER_CONDITION.copy(year = 2024, month = 2))
+        assertThat(result.extracted).containsExactly(
+            PRIOR_OTHER_CONDITION.copy(year = 2024, month = 2),
+            PRIOR_OTHER_CONDITION.copy(year = 2024, month = 2, name = anotherPriorCondition)
+        )
     }
 
     @Test
