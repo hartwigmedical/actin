@@ -4,11 +4,11 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
@@ -125,7 +125,7 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
     private fun findMatchingFusionsInPanels(molecularHistory: MolecularHistory): Evaluation? {
         val matchedFusions = molecularHistory.allPanels()
-            .flatMap { it.fusions() }
+            .flatMap { it.events() }
             .filter { it.impactsGene(gene) }
             .map { it.display() }
             .toSet()

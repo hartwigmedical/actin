@@ -5,5 +5,6 @@ data class TrialIdentification(
     val open: Boolean,
     val acronym: String,
     val title: String,
-    val nctId: String? = null
+    val nctId: String? = null,
+    val phase: TrialPhase? = null
 )

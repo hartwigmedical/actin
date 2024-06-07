@@ -1,32 +1,32 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.Driver
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.Virus
+import com.hartwig.actin.molecular.datamodel.Driver
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
 
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
     fun create(): List<MolecularDriverEntry> {
         return listOf(
-            molecularDriversInterpreter.filteredVariants().map { variant: Variant -> fromVariant(variant) },
+            molecularDriversInterpreter.filteredVariants().map { variant: ExtendedVariant -> fromVariant(variant) },
             molecularDriversInterpreter.filteredCopyNumbers().map { copyNumber: CopyNumber -> fromCopyNumber(copyNumber) },
             molecularDriversInterpreter.filteredHomozygousDisruptions()
                 .map { homozygousDisruption: HomozygousDisruption -> fromHomozygousDisruption(homozygousDisruption) },
             molecularDriversInterpreter.filteredDisruptions().map { disruption: Disruption -> fromDisruption(disruption) },
-            molecularDriversInterpreter.filteredFusions().map { fusion: Fusion -> fromFusion(fusion) },
+            molecularDriversInterpreter.filteredFusions().map { fusion: ExtendedFusion -> fromFusion(fusion) },
             molecularDriversInterpreter.filteredViruses().map { virus: Virus -> fromVirus(virus) }
         )
             .flatten()
             .sortedWith(MolecularDriverEntryComparator())
     }
 
-    private fun fromVariant(variant: Variant): MolecularDriverEntry {
+    private fun fromVariant(variant: ExtendedVariant): MolecularDriverEntry {
         val biallelicIndicator = if (variant.isBiallelic) "Biallelic " else ""
         val mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
         val driverType = "Mutation ($biallelicIndicator$mutationTypeString)"
@@ -65,7 +65,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         return driverEntry("Disruption", name, disruption)
     }
 
-    private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
+    private fun fromFusion(fusion: ExtendedFusion): MolecularDriverEntry {
         val name = fusion.event + ", exon " + fusion.fusedExonUp + " - exon " + fusion.fusedExonDown
         return driverEntry(fusion.driverType.display(), name, fusion)
     }

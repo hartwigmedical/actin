@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.driver
 
+import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+
 object TestTranscriptImpactFactory {
 
     fun createMinimal(): TranscriptImpact {

@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.config
 
 import com.hartwig.actin.trial.datamodel.EligibilityRule
+import com.hartwig.actin.trial.datamodel.TrialPhase
 import com.hartwig.actin.trial.interpretation.EligibilityFactory
 import com.hartwig.actin.trial.serialization.TrialJson
 
@@ -96,7 +97,10 @@ class TrialConfigDatabaseValidator(private val eligibilityFactory: EligibilityFa
         val duplicatedTrialFileIds = duplicatedConfigsByKey(trialDefinitions) { trialDef -> TrialJson.trialFileId(trialDef.trialId) }
             .map { TrialDefinitionValidationError(it.second, "Duplicated trial file id of ${it.first}") }
 
-        return (duplicatedTrialIds + duplicatedTrialFileIds).toSet()
+        val invalidPhases = trialDefinitions.filter { it.phase != null && TrialPhase.fromString(it.phase) == null }
+            .map { TrialDefinitionValidationError(it, "Invalid phase: '${it.phase}'") }
+
+        return (duplicatedTrialIds + duplicatedTrialFileIds + invalidPhases).toSet()
     }
 
     private fun validateCohorts(

@@ -9,6 +9,7 @@ import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.trial.datamodel.TrialPhase
 import com.hartwig.actin.trial.sort.EligibilityComparator
 import java.time.LocalDate
 
@@ -37,7 +38,8 @@ object TestTreatmentMatchFactory {
                     open = true,
                     acronym = "TEST-1",
                     title = "Example test trial 1",
-                    nctId = "NCT00000010"
+                    nctId = "NCT00000010",
+                    phase = TrialPhase.PHASE_1
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),

@@ -4,9 +4,9 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.Panel
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.archer.ARCHER_ALWAYS_TESTED_GENES
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
 
@@ -35,18 +35,21 @@ class PriorMolecularTestInterpreter {
         }
     }
 
-    private fun interpret(test: ArcherPanel) {
-        test.variants.forEach { interpretationBuilder.addInterpretation(test.type.display(), it.gene, it.hgvsCodingImpact) }
-        test.fusions.forEach { interpretationBuilder.addInterpretation(test.type.display(), it.gene, it.display()) }
+    private fun interpret(test: ArcherPanelExtraction) {
+        test.variants.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.hgvsCodingImpact) }
+        test.fusions.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.display()) }
+
         interpretImpliedNegatives(
-            test.type,
-            test,
-            test.genesWithVariants() + test.genesWithFusions()
+            ExperimentType.ARCHER,
+            ARCHER_ALWAYS_TESTED_GENES - (test.genesWithVariants() + test.genesWithFusions())
         )
     }
 
-    private fun interpret(test: GenericPanel) {
-        interpretImpliedNegatives(test.type, test)
+    private fun interpret(test: GenericPanelExtraction) {
+        interpretImpliedNegatives(
+            ExperimentType.GENERIC_PANEL,
+            test.testedGenes() - test.genesHavingResultsInPanel()
+        )
     }
 
     private fun interpret(test: OtherPriorMolecularTest) {
@@ -57,8 +60,8 @@ class PriorMolecularTestInterpreter {
         }
     }
 
-    private fun interpretImpliedNegatives(type: ExperimentType, panel: Panel, tested: Set<String> = emptySet()) {
-        (panel.testedGenes() - tested).forEach { interpretationBuilder.addInterpretation(type.display(), "Negative", it) }
+    private fun interpretImpliedNegatives(type: ExperimentType, negatives: Set<String> = emptySet()) {
+        negatives.forEach { interpretationBuilder.addInterpretation(type.display(), "Negative", it) }
     }
 
     private fun formatValueBasedPriorTest(valueTest: PriorMolecularTest): String {

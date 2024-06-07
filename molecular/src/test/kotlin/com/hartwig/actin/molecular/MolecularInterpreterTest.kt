@@ -1,23 +1,28 @@
 package com.hartwig.actin.molecular
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
+import com.hartwig.actin.molecular.datamodel.EmptyDrivers
+import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class MolecularInterpreterTest {
-    private val archerPanel = ArcherPanel()
+    private val extraction = ArcherPanelExtraction()
+    private val output = mockk<OtherPriorMolecularTest>()
     var annotatorCalled: Boolean = false
 
-    private val extractor = object : MolecularExtractor<PriorMolecularTest, ArcherPanel> {
-        override fun extract(input: List<PriorMolecularTest>): List<ArcherPanel> {
-            return input.map { archerPanel }
+    private val extractor = object : MolecularExtractor<PriorMolecularTest, ArcherPanelExtraction> {
+        override fun extract(input: List<PriorMolecularTest>): List<ArcherPanelExtraction> {
+            return input.map { extraction }
         }
     }
-    private val annotator = object : MolecularAnnotator<ArcherPanel> {
-        override fun annotate(input: ArcherPanel): ArcherPanel {
+    private val annotator = object : MolecularAnnotator<ArcherPanelExtraction, MolecularTest<EmptyDrivers>> {
+        override fun annotate(input: ArcherPanelExtraction): OtherPriorMolecularTest {
             annotatorCalled = true
-            return input
+            return output
         }
     }
 
@@ -29,7 +34,7 @@ class MolecularInterpreterTest {
             inputPredicate = { true }
         ).run(listOf(PriorMolecularTest(test = "test", impliesPotentialIndeterminateStatus = false)))
         assertThat(annotatorCalled).isTrue()
-        assertThat(result).containsExactly(archerPanel)
+        assertThat(result).containsExactly(output)
     }
 
     @Test
