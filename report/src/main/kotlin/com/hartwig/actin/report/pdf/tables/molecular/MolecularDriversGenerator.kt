@@ -51,15 +51,16 @@ class MolecularDriversGenerator(
         )
         val externalTrialSummarizer = ExternalTrialSummarizer()
         val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, cohorts)
-        val externalTrialsPerEvent = externalTrialSummary.dutchTrials + externalTrialSummary.otherCountryTrials
-        val test2 = groupByEvent(externalTrialsPerEvent)
+        val externalTrialsPerEvents = externalTrialSummary.dutchTrials + externalTrialSummary.otherCountryTrials
+        val externalTrialsPerSingleEvent = groupByEvent(externalTrialsPerEvents)
+
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))
-            table.addCell(Cells.createContent(entry.name))
+            table.addCell(Cells.createContent(entry.displayedName))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
-            table.addCell(Cells.createContent(test2[entry.event]?.let { concatEligibleTrials(it) } ?: ""))
+            table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.eventName]?.let { concatEligibleTrials(it) } ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -82,7 +83,12 @@ class MolecularDriversGenerator(
         private fun groupByEvent(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, Iterable<ExternalTrial>> {
             return externalTrialsPerEvent.flatMap { (key, value) ->
                 key.split(",").map { it.trim() to value }
-            }.toMap()
+            }.groupBy(
+                keySelector = { it.first },
+                valueTransform = { it.second }
+            ).mapValues { (_, values) ->
+                values.flatten().toSet()
+            }
         }
 
         private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrial>): String {

@@ -69,7 +69,7 @@ class MolecularDriverEntryFactoryTest {
         val firstVariant = record.drivers.variants.iterator().next()
         val driverToFind = firstVariant.event
         val entry = createFactoryWithCohortsForEvent(record, driverToFind).create()
-            .find { it.name.startsWith(driverToFind) }
+            .find { it.displayedName.startsWith(driverToFind) }
             ?: throw IllegalStateException(
                 "Could not find molecular driver entry starting with driver: $driverToFind"
             )
