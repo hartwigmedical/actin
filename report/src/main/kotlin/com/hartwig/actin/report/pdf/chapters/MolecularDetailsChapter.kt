@@ -51,9 +51,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
             val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-            val evaluated = cohorts.filter {
-                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable
-            }
+            val evaluated = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
 
             val generators =
                 listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, evaluated)
