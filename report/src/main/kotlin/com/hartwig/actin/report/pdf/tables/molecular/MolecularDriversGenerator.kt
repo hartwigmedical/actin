@@ -51,8 +51,9 @@ class MolecularDriversGenerator(
         )
         val externalTrialSummarizer = ExternalTrialSummarizer()
         val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, cohorts)
-        val externalTrialsPerEvents = externalTrialSummary.dutchTrials + externalTrialSummary.otherCountryTrials
-        val externalTrialsPerSingleEvent = groupByEvent(externalTrialsPerEvents)
+
+        val dutchExternalTrialsPerSingleEvent = groupByEvent(externalTrialSummary.dutchTrials)
+        val otherCountriesExternalTrialsPerSingleEvent = groupByEvent(externalTrialSummary.otherCountryTrials)
 
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
@@ -60,7 +61,7 @@ class MolecularDriversGenerator(
             table.addCell(Cells.createContent(entry.displayedName))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
-            table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.eventName]?.let { concatEligibleTrials(it) } ?: ""))
+            table.addCell(Cells.createContent(concatEligibleTrials(dutchExternalTrialsPerSingleEvent[entry.eventName], otherCountriesExternalTrialsPerSingleEvent[entry.eventName])))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -91,8 +92,10 @@ class MolecularDriversGenerator(
             }
         }
 
-        private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrial>): String {
-            return externalTrials.map { it.nctId }.toSet().joinToString(", ")
+        private fun concatEligibleTrials(dutchExternalTrials: Iterable<ExternalTrial>?, otherExternalTrials: Iterable<ExternalTrial>?): String {
+            val allTrials = (dutchExternalTrials?.toSet() ?: emptySet()) + (otherExternalTrials?.toSet() ?: emptySet())
+            return if (allTrials.isEmpty()) ""
+            else allTrials.map { it.nctId }.toSet().joinToString(", ")
         }
     }
 }
