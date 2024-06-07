@@ -52,13 +52,14 @@ class MolecularDriversGenerator(
         val externalTrialSummarizer = ExternalTrialSummarizer()
         val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, cohorts)
         val externalTrialsPerEvent = externalTrialSummary.dutchTrials + externalTrialSummary.otherCountryTrials
+        val test2 = groupByEvent(externalTrialsPerEvent)
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))
             table.addCell(Cells.createContent(entry.name))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
-            table.addCell(Cells.createContent(concatEligibleTrials(externalTrialsPerEvent, entry.event)))
+            table.addCell(Cells.createContent(test2[entry.event]?.let { concatEligibleTrials(it) } ?: ""))
             table.addCell(Cells.createContent(entry.bestResponsiveEvidence ?: ""))
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
@@ -78,14 +79,14 @@ class MolecularDriversGenerator(
             return treatments.joinToString(", ")
         }
 
-        private fun concatEligibleTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, driver: String): String {
-            val strings = mutableSetOf<String>()
-            for (event in externalTrialsPerEvent) {
-                if (event.key.contains(driver)) {
-                    event.value.forEach { strings.add(it.nctId) }
-                }
-            }
-            return strings.joinToString(", ")
+        private fun groupByEvent(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, Iterable<ExternalTrial>> {
+            return externalTrialsPerEvent.flatMap { (key, value) ->
+                key.split(",").map { it.trim() to value }
+            }.toMap()
+        }
+
+        private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrial>): String {
+            return externalTrials.map { it.nctId }.toSet().joinToString(", ")
         }
     }
 }

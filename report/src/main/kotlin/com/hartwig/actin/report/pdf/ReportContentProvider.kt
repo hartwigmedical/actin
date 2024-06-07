@@ -115,12 +115,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         if (molecular == null) {
             return Pair(null, null)
         } else {
-            // filter out EMC trials
             val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
                 AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
             )
             val externalTrialSummarizer = ExternalTrialSummarizer()
-            // filter out mt already present
             val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, evaluated)
             return Pair(
                 if (externalTrialSummary.dutchTrials.isNotEmpty()) {
