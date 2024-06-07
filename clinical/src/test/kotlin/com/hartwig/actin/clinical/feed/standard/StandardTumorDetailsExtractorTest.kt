@@ -37,11 +37,11 @@ private const val CONCLUSION_4 = "conclusion 4"
 
 private const val RADIOLOGY_REPORT = "Prior to conclusion:\n" +
         "Conclusie:\n" +
-        "$CONCLUSION_1.\n" +
+        "$CONCLUSION_1\r\n" +
         "$CONCLUSION_2.\n" +
         "\r\n\n\nHersenen radiologie rapport:\n" +
         "Conclusie:\n" +
-        "$CONCLUSION_3.\n" +
+        "$CONCLUSION_3\r\n" +
         "$CONCLUSION_4.\n" +
         "\r\n\n\nanother radiologie rapport:\n"
 
