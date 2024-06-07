@@ -51,9 +51,12 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
             val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+            val evaluated = cohorts.filter {
+                it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable
+            }
 
             val generators =
-                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, cohorts)
+                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, evaluated)
 
             generators.forEachIndexed { i, generator ->
                 table.addCell(Cells.createSubTitle(generator.title()))
@@ -69,11 +72,11 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
         document.add(table)
     }
 
-    private fun tumorDetailsGenerators(molecular: MolecularRecord, cohorts: List<EvaluatedCohort>): List<TableGenerator> {
+    private fun tumorDetailsGenerators(molecular: MolecularRecord, evaluated: List<EvaluatedCohort>): List<TableGenerator> {
         return if (molecular.containsTumorCells) {
             listOf(
                 PredictedTumorOriginGenerator(molecular, contentWidth()),
-                MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, report.treatmentMatch.trialMatches, contentWidth())
+                MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, evaluated, report.treatmentMatch.trialMatches, contentWidth())
             )
         } else emptyList()
     }

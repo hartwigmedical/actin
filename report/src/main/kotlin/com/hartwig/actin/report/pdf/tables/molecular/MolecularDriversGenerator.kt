@@ -59,7 +59,7 @@ class MolecularDriversGenerator(
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))
-            table.addCell(Cells.createContent(entry.eventName))
+            table.addCell(Cells.createContent(entry.displayedName))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
             table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.eventName]?.let { concatEligibleTrials(it) } ?: ""))
@@ -70,32 +70,6 @@ class MolecularDriversGenerator(
             val note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal"
             table.addCell(Cells.createSpanningSubNote(note, table))
         }
-
-        table.addCell(
-            Cells.createSpanningSubNote(
-                externalTrialsPerSingleEvent.toString(),
-                table
-            )
-        )
-        table.addCell(
-            Cells.createSpanningSubNote(
-                externalTrialsPerEvents.toString(),
-                table
-            )
-        )
-        table.addCell(
-            Cells.createSpanningSubNote(
-                externalTrialSummary.dutchTrials.toString(),
-                table
-            )
-        )
-        table.addCell(
-            Cells.createSpanningSubNote(
-                externalTrialSummary.otherCountryTrials.toString(),
-                table
-            )
-        )
-
         return makeWrapping(table)
     }
 
