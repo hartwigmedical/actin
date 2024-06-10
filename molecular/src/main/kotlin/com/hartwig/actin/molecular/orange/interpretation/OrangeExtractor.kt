@@ -67,7 +67,7 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
         }
 
         fun hasSufficientPurity(record: OrangeRecord): Boolean {
-            return PurpleQCStatus.WARN_LOW_PURITY !in record.purple().fit().qc().status()
+            return PurpleQCStatus.WARN_LOW_PURITY !in record.purple().fit().qc().status() && containsTumorCells(record)
         }
 
         internal fun toPatientId(sampleId: String): String {
