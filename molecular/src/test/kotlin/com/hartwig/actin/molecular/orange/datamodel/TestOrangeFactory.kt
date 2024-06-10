@@ -14,6 +14,8 @@ import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData
 import com.hartwig.hmftools.datamodel.flagstat.ImmutableFlagstat
 import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord
 import com.hartwig.hmftools.datamodel.hla.LilacRecord
+import com.hartwig.hmftools.datamodel.immuno.ImmuneEscapeRecord
+import com.hartwig.hmftools.datamodel.immuno.ImmutableImmuneEscapeRecord
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
@@ -64,6 +66,7 @@ object TestOrangeFactory {
             .lilac(createMinimalTestLilacRecord())
             .tumorSample(createOrangeTumorSample())
             .plots(createOrangePlots())
+            .immuneEscape(createImmuneEscapeRecord())
             .build()
     }
 
@@ -90,6 +93,7 @@ object TestOrangeFactory {
             .virusInterpreter(createTestVirusInterpreterRecord())
             .lilac(createTestLilacRecord())
             .chord(createTestChordRecord())
+            .immuneEscape(createImmuneEscapeRecord())
             .build()
     }
 
@@ -314,6 +318,17 @@ object TestOrangeFactory {
                 .pctExcCapped(0.0)
                 .pctExcTotal(0.0)
                 .build())
+            .build()
+    }
+
+    private fun createImmuneEscapeRecord(): ImmuneEscapeRecord {
+        return ImmutableImmuneEscapeRecord.builder()
+            .hasHlaEscape(false)
+            .hasAntigenPresentationPathwayEscape(false)
+            .hasIFNGammaPathwayEscape(false)
+            .hasPDL1OverexpressionEscape(false)
+            .hasCD58InactivationEscape(false)
+            .hasEpigeneticSETDB1Escape(false)
             .build()
     }
 }
