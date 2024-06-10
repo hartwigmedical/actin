@@ -41,11 +41,11 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
             findActivatingMutations(orangeMolecular)
         } else null
 
-        val panelEvaluation = if (codonsToIgnore.isNullOrEmpty()) findActivatingMutationsInPanels(molecularHistory) else null
+        val panelEvaluations =
+            if (codonsToIgnore.isNullOrEmpty()) molecularHistory.allPanels().map { findActivatingMutationsInPanels(it) } else emptyList()
 
         return MolecularEvaluation(
-            molecularRecordEvaluation = orangeMolecularEvaluation,
-            panelEvaluations = listOfNotNull(panelEvaluation),
+            listOfNotNull(orangeMolecularEvaluation) + panelEvaluations.filterNotNull(),
             EvaluationFactory.undetermined(
                 "Gene $gene not tested in molecular data",
                 "Gene $gene not tested"
@@ -97,7 +97,7 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
 
     private fun isSubclonal(variant: Variant) = variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
 
-    private fun findActivatingMutations(molecular: MolecularTest<*>): Evaluation {
+    private fun findActivatingMutations(molecular: MolecularTest<*>): Pair<MolecularTest<*>, Evaluation> {
         val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
         val evidenceSource = molecular.evidenceSource
         val variantCharacteristics =
@@ -109,7 +109,7 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
 
         val activatingVariants = variantCharacteristics.filter(ActivationProfile::activating).map(ActivationProfile::event).toSet()
         if (activatingVariants.isNotEmpty()) {
-            return EvaluationFactory.pass(
+            return molecular to EvaluationFactory.pass(
                 "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
                 "$gene activating mutation(s)",
                 inclusionEvents = activatingVariants
@@ -129,9 +129,9 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
             evidenceSource
         )
 
-        return potentialWarnEvaluation ?: EvaluationFactory.fail(
+        return molecular to (potentialWarnEvaluation ?: EvaluationFactory.fail(
             "No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)"
-        )
+        ))
     }
 
     private fun ignoredCodon(
@@ -224,22 +224,23 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
         return codonIndexToMatch == affectedCodon
     }
 
-    private fun findActivatingMutationsInPanels(molecularHistory: MolecularHistory): Evaluation? {
+    private fun findActivatingMutationsInPanels(panel: PanelRecord): Pair<PanelRecord, Evaluation>? {
 
-        val activatingVariants =
-            activatingVariants(molecularHistory.allPanels().flatMap(PanelRecord::events))
+        val activatingVariants = activatingVariants(panel.events())
 
-        if (activatingVariants.isNotEmpty()) return EvaluationFactory.pass(
+        if (activatingVariants.isNotEmpty()) return panel to EvaluationFactory.pass(
             "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)} in Panel(s)",
             "$gene activating mutation(s)",
             inclusionEvents = activatingVariants
         )
 
-        return if (molecularHistory.allPanels()
-                .any { it.testedGenes().contains(gene) }
-        ) EvaluationFactory.fail("No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)")
+        return if (panel.testsGene(gene))
+            panel to EvaluationFactory.fail(
+                "No activating mutation(s) detected in gene $gene",
+                "No $gene activating mutation(s)"
+            )
         else null
     }
 
-    private fun activatingVariants(events: List<PanelEvent>) = events.filter { it.impactsGene(gene) }.map(PanelEvent::display).toSet()
+    private fun activatingVariants(events: Set<PanelEvent>) = events.filter { it.impactsGene(gene) }.map(PanelEvent::display).toSet()
 }
