@@ -17,7 +17,15 @@ internal object PharmacoExtraction {
     private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: List<PeachGenotype>): PharmacoEntry {
         return PharmacoEntry(
             gene = gene,
-            haplotypes = peachGenotypes.map { Haplotype(name = it.haplotype(), function = it.function()) }.toSet()
+            haplotypes = peachGenotypes.map { Haplotype(name = toDisplayName(it), function = it.function()) }.toSet()
         )
+    }
+
+    private fun toDisplayName(peachGenotype: PeachGenotype): String {
+        if (peachGenotype.alleleCount() < 1 || peachGenotype.alleleCount() > 2) {
+            throw IllegalArgumentException("Invalid Peach allele count, expected 1 or 2: ${peachGenotype.alleleCount()}")
+        }
+
+        return "${peachGenotype.allele()} ${if (peachGenotype.alleleCount() < 2) "HET" else "HOM"}"
     }
 }

@@ -107,6 +107,7 @@ object TestPurpleFactory {
             .chromosome(Strings.EMPTY)
             .chromosomeBand(Strings.EMPTY)
             .minCopyNumber(0.0)
+            .maxCopyNumber(0.0)
             .minMinorAlleleCopyNumber(0.0)
     }
 
