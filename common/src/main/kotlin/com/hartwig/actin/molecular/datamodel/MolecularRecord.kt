@@ -11,7 +11,8 @@ data class MolecularRecord(
     val refGenomeVersion: RefGenomeVersion,
     val externalTrialSource: String,
     val containsTumorCells: Boolean,
-    val hasSufficientQualityAndPurity: Boolean,
+    val isContaminated: Boolean,
+    val hasSufficientPurity: Boolean,
     val hasSufficientQuality: Boolean,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>,
@@ -22,4 +23,12 @@ data class MolecularRecord(
     override val evidenceSource: String,
 ) : MolecularTest<MolecularDrivers> {
     override fun testsGene(gene: String) = true
+
+    fun hasSufficientQualityAndPurity(): Boolean {
+        return hasSufficientQuality && hasSufficientPurity
+    }
+
+    fun hasSufficientQualityButLowPurity(): Boolean {
+        return hasSufficientQuality && !hasSufficientPurity
+    }
 }
