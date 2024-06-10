@@ -59,7 +59,6 @@ object TestPurpleFactory {
 
     fun variantBuilder(): ImmutablePurpleVariant.Builder {
         return ImmutablePurpleVariant.builder()
-            .reported(true)
             .type(PurpleVariantType.SNP)
             .gene(Strings.EMPTY)
             .chromosome(Strings.EMPTY)
@@ -71,7 +70,7 @@ object TestPurpleFactory {
             .hotspot(HotspotType.NON_HOTSPOT)
             .subclonalLikelihood(0.0)
             .biallelic(false)
-            .canonicalImpact(transcriptImpactBuilder().build())
+            .canonicalImpact(transcriptImpactBuilder().reported(true).build())
             .worstCodingEffect(PurpleCodingEffect.NONE)
             .tumorDepth(ImmutablePurpleAllelicDepth.builder().totalReadCount(0).alleleReadCount(0).build())
             .adjustedVAF(0.0)
@@ -87,6 +86,7 @@ object TestPurpleFactory {
             .hgvsProteinImpact(Strings.EMPTY)
             .inSpliceRegion(false)
             .codingEffect(PurpleCodingEffect.UNDEFINED)
+            .reported(false)
     }
 
     fun gainLossBuilder(): ImmutablePurpleGainLoss.Builder {
