@@ -19,8 +19,7 @@ class HasSufficientTumorMutationalBurden(private val minTumorMutationalBurden: D
             )
         }
         val tumorMutationalBurdenIsAlmostAllowed = minTumorMutationalBurden - tumorMutationalBurden <= 0.5
-        return if (tumorMutationalBurdenIsAlmostAllowed && molecular.hasSufficientQuality
-            && !molecular.hasSufficientQualityAndPurity
+        return if (tumorMutationalBurdenIsAlmostAllowed && molecular.hasSufficientQualityButLowPurity()
         ) {
             EvaluationFactory.warn(
                 "Tumor mutational burden (TMB) of sample $tumorMutationalBurden almost exceeds $minTumorMutationalBurden"

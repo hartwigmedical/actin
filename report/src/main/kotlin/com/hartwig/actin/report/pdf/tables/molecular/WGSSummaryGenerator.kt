@@ -42,11 +42,12 @@ class WGSSummaryGenerator(
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createKey("Biopsy location"))
         table.addCell(biopsySummary())
-        if (molecular.containsTumorCells) {
+        if (molecular.hasSufficientQuality) {
             table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
             table.addCell(tumorOriginPredictionCell())
+            table.addCell(Cells.createKey("Tumor mutational load / burden"))
+            table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell())
             listOf(
-                "Tumor mutational load / burden" to characteristicsGenerator.createTMLAndTMBStatusString(),
                 "Microsatellite (in)stability" to (characteristicsGenerator.createMSStabilityString() ?: Formats.VALUE_UNKNOWN),
                 "HR status" to (characteristicsGenerator.createHRStatusString() ?: Formats.VALUE_UNKNOWN),
                 "" to "",
@@ -78,7 +79,7 @@ class WGSSummaryGenerator(
         return if (purity != null) {
             val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
             val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
-            purityText.addStyle(if (molecular.hasSufficientQualityAndPurity) Styles.tableHighlightStyle() else Styles.tableNoticeStyle())
+            purityText.addStyle(if (molecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle() else Styles.tableHighlightStyle())
             Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
         } else {
             Cells.createValue(biopsyLocation)
@@ -88,8 +89,8 @@ class WGSSummaryGenerator(
     private fun tumorOriginPredictionCell(): Cell {
         val paragraph = Paragraph(Text(tumorOriginPrediction()).addStyle(Styles.tableHighlightStyle()))
         val purity = molecular.characteristics.purity
-        if (purity != null && purity < 0.2) {
-            val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity))).addStyle(Styles.tableNoticeStyle())
+        if (purity != null && molecular.hasSufficientQualityButLowPurity()) {
+            val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
             paragraph.add(purityText)
         }
         return Cells.create(paragraph)
@@ -97,7 +98,7 @@ class WGSSummaryGenerator(
 
     private fun tumorOriginPrediction(): String {
         val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity) {
+        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && molecular.hasSufficientQualityAndPurity()) {
             TumorOriginInterpreter.interpret(predictedTumorOrigin)
         } else if (molecular.hasSufficientQuality && predictedTumorOrigin != null) {
             val predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
@@ -115,6 +116,34 @@ class WGSSummaryGenerator(
         } else {
             Formats.VALUE_UNKNOWN
         }
+    }
+
+    private fun tumorMutationalLoadAndTumorMutationalBurdenStatusCell(): Cell {
+        val paragraph = Paragraph(Text(tumorMutationalLoadAndTumorMutationalBurdenStatus()).addStyle(Styles.tableHighlightStyle()))
+        val purity = molecular.characteristics.purity
+        if (purity != null && molecular.hasSufficientQualityButLowPurity()) {
+            val purityText = Text(" (low purity)").addStyle(Styles.tableNoticeStyle())
+            paragraph.add(purityText)
+        }
+        return Cells.create(paragraph)
+    }
+
+    fun tumorMutationalLoadAndTumorMutationalBurdenStatus(): String {
+        val hasHighTumorMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
+        val tumorMutationalLoad = molecular.characteristics.tumorMutationalLoad
+        val TMLString = if (tumorMutationalLoad == null || hasHighTumorMutationalLoad == null) Formats.VALUE_UNKNOWN else String.format(
+            "TML %s (%d)",
+            if (hasHighTumorMutationalLoad) "high" else "low",
+            tumorMutationalLoad
+        )
+        val hasHighTumorMutationalBurden = molecular.characteristics.hasHighTumorMutationalBurden
+        val tumorMutationalBurden = molecular.characteristics.tumorMutationalBurden
+        val TMBString = if (tumorMutationalBurden == null || hasHighTumorMutationalBurden == null) Formats.VALUE_UNKNOWN else String.format(
+            "TMB %s (%s)",
+            if (hasHighTumorMutationalBurden) "high" else "low",
+            Formats.singleDigitNumber(tumorMutationalBurden)
+        )
+        return String.format("%s / %s", TMLString, TMBString)
     }
 
     private fun formatList(list: List<String>): String {

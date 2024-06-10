@@ -11,8 +11,9 @@
   "evidenceSource": "kb",
   "externalTrialSource": "trial kb",
   "containsTumorCells": true,
+  "isContaminated": false,
+  "hasSufficientPurity": true,
   "hasSufficientQuality": true,
-  "hasSufficientQualityAndPurity": true,
   "characteristics": {
     "purity": 0.98,
     "ploidy": 3.1,
