@@ -19,10 +19,6 @@ interface MolecularEvaluationFunction : EvaluationFunction {
         }
     }
 
-    fun combine(evaluation: List<Evaluation>) {
-
-    }
-
     fun noMolecularRecordEvaluation(): Evaluation? = null
     fun evaluate(molecularHistory: MolecularHistory): List<MolecularEvaluation>? = null
     fun evaluate(molecular: MolecularRecord): Evaluation? = null

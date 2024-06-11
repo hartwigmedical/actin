@@ -34,7 +34,7 @@ data class ActivationProfile(
 private const val CLONAL_CUTOFF = 0.5
 
 class GeneHasActivatingMutation(private val gene: String, private val codonsToIgnore: List<String>?) : MolecularEvaluationFunction {
-    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): List<MolecularEvaluation> {
 
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) {
@@ -44,9 +44,9 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
         val panelEvaluations =
             if (codonsToIgnore.isNullOrEmpty()) molecularHistory.allPanels().map { findActivatingMutationsInPanels(it) } else emptyList()
 
-        return MolecularEvaluation.combined(
-            listOfNotNull(orangeMolecularEvaluation) + panelEvaluations.filterNotNull()
-        )
+        val geneTestedEvaluation = molecularHistory.testsGene(gene)
+
+        return listOfNotNull(orangeMolecularEvaluation) + panelEvaluations.filterNotNull()
     }
 
     private fun evaluateVariant(
