@@ -27,20 +27,21 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
                 val (exonDeletionRecords, nonExonDeletionRecords) = nonFusionRecords.partition { it.measure?.endsWith(" del") ?: false }
                 val exonDeletions = exonDeletionRecords.map { record -> GenericExonDeletionExtraction.parse(record) }
 
-                val (variantRecords, unknownRecords) = nonExonDeletionRecords.partition {
+                val (variantRecords, nonVariantRecordsGene) = nonExonDeletionRecords.partition {
                     it.measure?.let { measure -> measure.startsWith("c.") || measure.startsWith("p.") } ?: false
                 }
                 val variants = variantRecords.map { record -> GenericVariantExtraction.parseVariant(record) }
 
+                val (geneWithNegativeResultsRecords, unknownRecords) = nonVariantRecordsGene.partition { it.scoreText?.lowercase() == "negative" }
+                val geneWithNegativeResults = geneWithNegativeResultsRecords.mapNotNull { it.item }.toSet()
+
                 if (unknownRecords.isNotEmpty()) {
                     throw IllegalArgumentException("Unrecognized records in $type panel: ${
-                        unknownRecords
-                            .map { "item \"${it.item}\" measure \"${it.measure}\"" }
-                            .joinToString(", ")
+                        nonVariantRecordsGene.joinToString(", ") { "item \"${it.item}\" measure \"${it.measure}\"" }
                     }")
                 }
 
-                GenericPanelExtraction(type, variants, fusions, exonDeletions, date)
+                GenericPanelExtraction(type, variants, fusions, exonDeletions, geneWithNegativeResults, date)
             }
     }
 

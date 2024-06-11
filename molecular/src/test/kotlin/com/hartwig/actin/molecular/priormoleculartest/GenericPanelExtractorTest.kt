@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class GenericPanelExtractionExtractorTestRecord {
+class GenericPanelExtractorTest {
 
     private val extractor = GenericPanelExtractor()
 
@@ -79,5 +79,20 @@ class GenericPanelExtractionExtractorTestRecord {
         Assertions.assertThatThrownBy {
             extractor.extract(priorMolecularTests)
         }.isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    fun `Should extract negative genes and add them to tested genes`() {
+        val priorMolecularTests = listOf(
+            freetextNegativeGeneVariantRecord(GENE)
+        )
+        val molecularTests = extractor.extract(priorMolecularTests)
+
+        val expected = GenericPanelExtraction(
+            GenericPanelType.FREE_TEXT,
+            genesWithNegativeResults = setOf(GENE)
+        )
+        assertThat(molecularTests).containsExactly(expected)
+        assertThat(expected.testedGenes()).contains(GENE)
     }
 }
