@@ -44,7 +44,7 @@ class PriorMolecularTestInterpreter {
         test.variants.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), VARIANT_GROUPING, it.display()) }
         test.fusions.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), FUSIONS_GROUPING, it.display()) }
 
-        interpretImpliedNegatives(
+        interpretNegatives(
             ExperimentType.ARCHER,
             ARCHER_ALWAYS_TESTED_GENES - (test.genesWithVariants() + test.genesWithFusions())
         )
@@ -66,7 +66,7 @@ class PriorMolecularTestInterpreter {
                 it.display()
             )
         }
-        interpretImpliedNegatives(
+        interpretNegatives(
             test.panelType,
             test.testedGenes() - test.genesHavingResultsInPanel()
         )
@@ -80,7 +80,7 @@ class PriorMolecularTestInterpreter {
         }
     }
 
-    private fun interpretImpliedNegatives(type: Displayable, negatives: Set<String> = emptySet()) {
+    private fun interpretNegatives(type: Displayable, negatives: Set<String> = emptySet()) {
         negatives.forEach { interpretationBuilder.addInterpretation(type.display(), "Negative", it) }
     }
 
