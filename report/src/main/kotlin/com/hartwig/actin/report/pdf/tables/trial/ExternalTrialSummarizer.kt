@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 
@@ -12,7 +13,24 @@ data class ExternalTrialSummary(
 
 class ExternalTrialSummarizer {
 
-    fun summarize(
+    fun summarize(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, trialMatches: List<TrialMatch>, evaluatedCohorts: List<EvaluatedCohort>): ExternalTrialSummary {
+        return filterMolecularCriteriaAlreadyPresent(filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches), evaluatedCohorts)
+    }
+
+    fun filterAndGroupExternalTrialsByNctIdAndEvents(
+        externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, trialMatches: List<TrialMatch>
+    ): Map<String, List<ExternalTrial>> {
+        val localTrialNctIds = trialMatches.mapNotNull { it.identification.nctId }.toSet()
+        return externalTrialsPerEvent.flatMap { (event, trials) -> trials.filter { it.nctId !in localTrialNctIds }.map { event to it } }
+            .groupBy { (_, trial) -> trial.nctId }
+            .map { (_, eventAndTrialPairs) ->
+                val (events, trials) = eventAndTrialPairs.unzip()
+                events.joinToString(",\n") to trials.first()
+            }
+            .groupBy({ it.first }, { it.second })
+    }
+
+    fun filterMolecularCriteriaAlreadyPresent(
         externalEligibleTrials: Map<String, Iterable<ExternalTrial>>,
         hospitalLocalEvaluatedCohorts: List<EvaluatedCohort>
     ): ExternalTrialSummary {

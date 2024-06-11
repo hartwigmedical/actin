@@ -5,7 +5,6 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
-import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter
@@ -44,22 +43,18 @@ class MolecularDriversGenerator(
         table.addHeaderCell(Cells.createHeader("Best evidence in ${molecular.evidenceSource}"))
         table.addHeaderCell(Cells.createHeader("Resistance in ${molecular.evidenceSource}"))
 
-        val molecularDriversInterpreter =
-            MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+        val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
 
-        val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
-            AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, trialMatches
-        )
         val externalTrialSummarizer = ExternalTrialSummarizer()
-        val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, cohorts)
+        val externalTrialSummary = externalTrialSummarizer.summarize(AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, trialMatches, cohorts)
 
         val externalTrialsPerEvents = mergeMapsOfSets(listOf(externalTrialSummary.dutchTrials, externalTrialSummary.otherCountryTrials))
-        val externalTrialsPerSingleEvent = groupByEvent(externalTrialsPerEvents)
+        val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrialsPerEvents)
 
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         factory.create().forEach { entry: MolecularDriverEntry ->
             table.addCell(Cells.createContent(entry.driverType))
-            table.addCell(Cells.createContent(entry.displayedName))
+            table.addCell(Cells.createContent(entry.display()))
             table.addCell(Cells.createContent(formatDriverLikelihood(entry.driverLikelihood)))
             table.addCell(Cells.createContent(concat(entry.actinTrials)))
             table.addCell(Cells.createContent(externalTrialsPerSingleEvent[entry.eventName]?.let { concatEligibleTrials(it) } ?: ""))
@@ -80,11 +75,6 @@ class MolecularDriversGenerator(
 
         private fun concat(treatments: Set<String>): String {
             return treatments.joinToString(", ")
-        }
-
-        private fun groupByEvent(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, Iterable<ExternalTrial>> {
-            return externalTrialsPerEvent.flatMap { (key, value) -> key.split(",").map { it.trim() to value } }
-                .groupBy({ it.first }, { it.second }).mapValues { (_, trials) -> trials.flatten().toSet() }
         }
 
         private fun concatEligibleTrials(externalTrials: Iterable<ExternalTrial>): String {
