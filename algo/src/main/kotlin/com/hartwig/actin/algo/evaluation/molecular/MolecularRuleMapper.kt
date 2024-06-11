@@ -39,6 +39,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_KNOWN_HPV_STATUS to hasKnownHPVStatusCreator(),
             EligibilityRule.OVEREXPRESSION_OF_GENE_X to geneIsOverexpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_GENE_X to geneIsNotExpressedCreator(),
+            EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to genesMeetSpecificMRNAExpressionCriteriaCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
@@ -242,6 +243,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneIsNotExpressedCreator(): FunctionCreator {
         return FunctionCreator { GeneIsNotExpressed() }
+    }
+
+    private fun genesMeetSpecificMRNAExpressionCriteriaCreator(): FunctionCreator {
+        return FunctionCreator { GenesMeetSpecificMRNAExpressionCriteria() }
     }
 
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
