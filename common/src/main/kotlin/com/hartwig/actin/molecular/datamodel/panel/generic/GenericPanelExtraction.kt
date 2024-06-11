@@ -13,7 +13,7 @@ data class GenericPanelExtraction(
     val date: LocalDate? = null,
 ) {
     fun testedGenes(): Set<String> {
-        return genesHavingResultsInPanel() + alwaysTestedGenes()
+        return genesHavingResultsInPanel() + alwaysTestedGenes() + genesWithNegativeResults
     }
 
     fun events() = (variants + fusions + exonDeletions).toSet()
@@ -38,6 +38,6 @@ data class GenericPanelExtraction(
     }
 
     fun genesHavingResultsInPanel(): Set<String> {
-        return genesWithVariants() + genesWithFusions() + genesWithExonDeletions() + genesWithNegativeResults
+        return genesWithVariants() + genesWithFusions() + genesWithExonDeletions()
     }
 }
