@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.Displayable
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
@@ -9,6 +10,10 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
+
+private const val VARIANT_GROUPING = "Variants"
+private const val FUSIONS_GROUPING = "Fusions"
+private const val EXON_DELETION_GROUPING = "Exon deletions"
 
 class PriorMolecularTestInterpreter {
     private val logger = LogManager.getLogger(PriorMolecularTestInterpreter::class.java)
@@ -36,8 +41,8 @@ class PriorMolecularTestInterpreter {
     }
 
     private fun interpret(test: ArcherPanelExtraction) {
-        test.variants.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.hgvsCodingImpact) }
-        test.fusions.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), it.gene, it.display()) }
+        test.variants.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), VARIANT_GROUPING, it.display()) }
+        test.fusions.forEach { interpretationBuilder.addInterpretation(ExperimentType.ARCHER.display(), FUSIONS_GROUPING, it.display()) }
 
         interpretImpliedNegatives(
             ExperimentType.ARCHER,
@@ -46,8 +51,23 @@ class PriorMolecularTestInterpreter {
     }
 
     private fun interpret(test: GenericPanelExtraction) {
+        test.variants.forEach { interpretationBuilder.addInterpretation(test.panelType.display(), VARIANT_GROUPING, it.display()) }
+        test.fusions.forEach {
+            interpretationBuilder.addInterpretation(
+                test.panelType.display(),
+                FUSIONS_GROUPING,
+                it.display()
+            )
+        }
+        test.exonDeletions.forEach {
+            interpretationBuilder.addInterpretation(
+                test.panelType.display(),
+                EXON_DELETION_GROUPING,
+                it.display()
+            )
+        }
         interpretImpliedNegatives(
-            ExperimentType.GENERIC_PANEL,
+            test.panelType,
             test.testedGenes() - test.genesHavingResultsInPanel()
         )
     }
@@ -60,7 +80,7 @@ class PriorMolecularTestInterpreter {
         }
     }
 
-    private fun interpretImpliedNegatives(type: ExperimentType, negatives: Set<String> = emptySet()) {
+    private fun interpretImpliedNegatives(type: Displayable, negatives: Set<String> = emptySet()) {
         negatives.forEach { interpretationBuilder.addInterpretation(type.display(), "Negative", it) }
     }
 
