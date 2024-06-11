@@ -10,29 +10,23 @@ data class MolecularEvaluation(
     val evaluation: Evaluation
 ) {
     companion object {
-        fun combined(evaluations: List<MolecularEvaluation>, defaultUndetermined: Evaluation): Evaluation {
-
+        fun combined(evaluations: List<MolecularEvaluation>): Evaluation {
             val groupedEvaluationsByResult = evaluations
                 .groupBy { evaluation -> evaluation.evaluation.result }
 
             return (groupedEvaluationsByResult[EvaluationResult.PASS]
                 ?: groupedEvaluationsByResult[EvaluationResult.WARN]
                 ?: groupedEvaluationsByResult[EvaluationResult.FAIL])
-                ?.asSequence()
-                ?.sortedByDescending { it.test.date }
+                ?.sortedBy { it.test.date }
                 ?.map { convertEvaluation(it) }
-                ?.sortedBy { it.test.type.ordinal }
-                ?.map { it.evaluation }
-                ?.first()
-                ?: defaultUndetermined
+                ?.reduce { acc, pair -> acc.addMessagesAndEvents(pair) }
+                ?: throw IllegalArgumentException("No molecular evaluations found. At least one undetermined is expected.")
         }
 
-        private fun convertEvaluation(evaluation: MolecularEvaluation): MolecularEvaluation {
-            return evaluation.copy(
-                evaluation = evaluation.evaluation.copy(
-                    inclusionMolecularEvents = convertEvents(evaluation.evaluation.inclusionMolecularEvents, evaluation.test.type),
-                    exclusionMolecularEvents = convertEvents(evaluation.evaluation.inclusionMolecularEvents, evaluation.test.type)
-                )
+        private fun convertEvaluation(evaluation: MolecularEvaluation): Evaluation {
+            return evaluation.evaluation.copy(
+                inclusionMolecularEvents = convertEvents(evaluation.evaluation.inclusionMolecularEvents, evaluation.test.type),
+                exclusionMolecularEvents = convertEvents(evaluation.evaluation.inclusionMolecularEvents, evaluation.test.type)
             )
         }
 
@@ -40,7 +34,7 @@ data class MolecularEvaluation(
             events.map { event(type, it) }.toSet()
 
         private fun event(type: ExperimentType, event: String): String {
-            return event
+            return "$event ($type)"
         }
     }
 }

@@ -45,11 +45,7 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
             if (codonsToIgnore.isNullOrEmpty()) molecularHistory.allPanels().map { findActivatingMutationsInPanels(it) } else emptyList()
 
         return MolecularEvaluation.combined(
-            listOfNotNull(orangeMolecularEvaluation) + panelEvaluations.filterNotNull(),
-            EvaluationFactory.undetermined(
-                "Gene $gene not tested in molecular data",
-                "Gene $gene not tested"
-            )
+            listOfNotNull(orangeMolecularEvaluation) + panelEvaluations.filterNotNull()
         )
     }
 

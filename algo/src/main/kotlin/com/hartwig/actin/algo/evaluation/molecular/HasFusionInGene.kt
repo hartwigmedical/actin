@@ -19,8 +19,7 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
         val panelEvaluation = molecularHistory.allPanels().mapNotNull { findMatchingFusionsInPanels(it) }
 
         return MolecularEvaluation.combined(
-            listOfNotNull(orangeMolecularEvaluation) + panelEvaluation,
-            EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+            listOfNotNull(orangeMolecularEvaluation) + panelEvaluation
         )
     }
 

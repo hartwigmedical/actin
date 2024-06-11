@@ -12,7 +12,7 @@ interface MolecularEvaluationFunction : EvaluationFunction {
         return if (!record.molecularHistory.hasMolecularData()) {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
         } else {
-            evaluate(record.molecularHistory)
+            evaluate(record.molecularHistory)?.let { MolecularEvaluation.combined(it) }
                 ?: record.molecularHistory.latestOrangeMolecularRecord()?.let(::evaluate)
                 ?: noMolecularRecordEvaluation()
                 ?: EvaluationFactory.undetermined("Insufficient molecular data", "Insufficient molecular data")
@@ -24,6 +24,6 @@ interface MolecularEvaluationFunction : EvaluationFunction {
     }
 
     fun noMolecularRecordEvaluation(): Evaluation? = null
-    fun evaluate(molecularHistory: MolecularHistory): Evaluation? = null
+    fun evaluate(molecularHistory: MolecularHistory): List<MolecularEvaluation>? = null
     fun evaluate(molecular: MolecularRecord): Evaluation? = null
 }
