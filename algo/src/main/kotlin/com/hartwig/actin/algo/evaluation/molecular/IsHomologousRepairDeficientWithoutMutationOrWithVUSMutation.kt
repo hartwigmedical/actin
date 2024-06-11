@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
 
-class IsHomologousRepairDeficientWithMutationOrWithVUSMutation : MolecularEvaluationFunction {
+class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutation : MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val brcaNonBiallelicHotspot: MutableSet<String> = mutableSetOf()
