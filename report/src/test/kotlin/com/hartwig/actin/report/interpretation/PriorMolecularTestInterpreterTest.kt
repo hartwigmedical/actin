@@ -92,7 +92,7 @@ class PriorMolecularTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                type = "AvL Panel", results = listOf(
+                type = "AvL panel", results = listOf(
                     PriorMolecularTestResultInterpretation(grouping = "Variants", details = "ALK c.2240_2254del"),
                     PriorMolecularTestResultInterpretation(grouping = "Fusions", details = "EML4-ALK fusion"),
                     PriorMolecularTestResultInterpretation(grouping = "Exon deletions", details = "EGFR exon 19 deletion"),
