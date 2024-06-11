@@ -53,7 +53,7 @@ internal object QuestionnaireCuration {
         "ye" to true,
         "possible" to null,
         "onbekend" to null,
-        "suspect" to null,
+        "suspected" to null,
     )
 
     private val STAGE_MAPPING = mapOf(
