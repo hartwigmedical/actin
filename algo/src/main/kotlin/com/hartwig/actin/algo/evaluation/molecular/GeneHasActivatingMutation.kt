@@ -44,8 +44,6 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
         val panelEvaluations =
             if (codonsToIgnore.isNullOrEmpty()) molecularHistory.allPanels().map { findActivatingMutationsInPanels(it) } else emptyList()
 
-        val geneTestedEvaluation = molecularHistory.testsGene(gene)
-
         return listOfNotNull(orangeMolecularEvaluation) + panelEvaluations.filterNotNull()
     }
 
