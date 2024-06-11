@@ -3,11 +3,11 @@ package com.hartwig.actin.molecular.datamodel
 import com.hartwig.actin.Displayable
 
 enum class ExperimentType(private val display: String) : Displayable {
-    TARGETED("Hartwig Panel"),
     WHOLE_GENOME("Hartwig WGS"),
-    IHC("IHC"),
+    TARGETED("Hartwig Panel"),
     ARCHER("Archer"),
     GENERIC_PANEL("NGS Panel"),
+    IHC("IHC"),
     OTHER("Other");
 
     override fun display(): String {

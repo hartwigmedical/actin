@@ -33,17 +33,10 @@ class MolecularEvaluationFunctionTest {
     }
 
     private val functionOnMolecularHistory = object : MolecularEvaluationFunction {
-        override fun evaluate(molecularHistory: MolecularHistory): MolecularEvaluation {
-            return MolecularEvaluation(
-                EvaluationFactory.fail(
-                    FAIL_SPECIFIC_MESSAGE,
-                    FAIL_GENERAL_MESSAGE
-                ), listOf(
-                    EvaluationFactory.fail(
-                        FAIL_SPECIFIC_MESSAGE,
-                        FAIL_GENERAL_MESSAGE
-                    )
-                ), EvaluationFactory.undetermined("")
+        override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+            return EvaluationFactory.fail(
+                FAIL_SPECIFIC_MESSAGE,
+                FAIL_GENERAL_MESSAGE
             )
         }
     }

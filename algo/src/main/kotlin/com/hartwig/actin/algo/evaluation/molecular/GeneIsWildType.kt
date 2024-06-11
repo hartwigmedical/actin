@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
@@ -14,17 +15,22 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 
 class GeneIsWildType internal constructor(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecularHistory: MolecularHistory): MolecularEvaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = orangeMolecular?.let { evaluateInOrangeMolecular(it) }
 
         val panelEvaluation = evaluateInPanels(molecularHistory)
 
-        return MolecularEvaluation(
-            orangeMolecularEvaluation,
-            listOfNotNull(panelEvaluation),
-            EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
-        )
+        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
+            .groupBy { evaluation -> evaluation.result }
+            .mapValues { entry ->
+                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
+            }
+
+        return groupedEvaluationsByResult[EvaluationResult.PASS]
+            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
     }
 
     private fun evaluateInOrangeMolecular(molecular: MolecularRecord): Evaluation {

@@ -12,19 +12,19 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecularHistory: MolecularHistory): MolecularEvaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) findMatchingFusionsInOrangeMolecular(orangeMolecular) else null
         val panelEvaluation = molecularHistory.allPanels().mapNotNull { findMatchingFusionsInPanels(it) }
 
-        return MolecularEvaluation(
+        return MolecularEvaluation.combined(
             listOfNotNull(orangeMolecularEvaluation) + panelEvaluation,
             EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
         )
     }
 
-    private fun findMatchingFusionsInOrangeMolecular(molecular: MolecularRecord): Pair<MolecularRecord, Evaluation> {
+    private fun findMatchingFusionsInOrangeMolecular(molecular: MolecularRecord): MolecularEvaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()
@@ -64,10 +64,12 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
         }
 
         if (matchingFusions.isNotEmpty()) {
-            return molecular to EvaluationFactory.pass(
-                "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
-                "Fusion(s) detected in gene $gene",
-                inclusionEvents = matchingFusions
+            return MolecularEvaluation(
+                molecular, EvaluationFactory.pass(
+                    "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
+                    "Fusion(s) detected in gene $gene",
+                    inclusionEvents = matchingFusions
+                )
             )
         }
 
@@ -79,10 +81,12 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
             evidenceSource
         )
 
-        return molecular to (potentialWarnEvaluation ?: EvaluationFactory.fail(
-            "No fusion detected with gene $gene",
-            "No fusion in gene $gene"
-        ))
+        return MolecularEvaluation(
+            molecular, (potentialWarnEvaluation ?: EvaluationFactory.fail(
+                "No fusion detected with gene $gene",
+                "No fusion in gene $gene"
+            ))
+        )
     }
 
     private fun evaluatePotentialWarns(
@@ -121,22 +125,24 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
         )
     }
 
-    private fun findMatchingFusionsInPanels(panel: PanelRecord): Pair<PanelRecord, Evaluation>? {
+    private fun findMatchingFusionsInPanels(panel: PanelRecord): MolecularEvaluation? {
         val matchedFusions = panel.events()
             .filter { it.impactsGene(gene) }
             .map { it.display() }
             .toSet()
 
         if (matchedFusions.isNotEmpty()) {
-            return panel to EvaluationFactory.pass(
-                "Fusion(s) ${concat(matchedFusions)} detected in gene $gene in panel(s)",
-                "Fusion(s) detected in gene $gene",
-                inclusionEvents = matchedFusions
+            return MolecularEvaluation(
+                panel, EvaluationFactory.pass(
+                    "Fusion(s) ${concat(matchedFusions)} detected in gene $gene in panel(s)",
+                    "Fusion(s) detected in gene $gene",
+                    inclusionEvents = matchedFusions
+                )
             )
         }
 
         return if (panel.testsGene(gene)) {
-            panel to EvaluationFactory.fail("No fusion detected with gene $gene in panel(s)", "No fusion in gene $gene")
+            MolecularEvaluation(panel, EvaluationFactory.fail("No fusion detected with gene $gene in panel(s)", "No fusion in gene $gene"))
         } else {
             null
         }
