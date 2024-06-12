@@ -84,7 +84,6 @@ class ExtendedVariantExtractorTest {
             .gene("gene 2")
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
                 .codingEffect(PurpleCodingEffect.NONE)
-                .reported(false)
                 .build())
             .build()
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
