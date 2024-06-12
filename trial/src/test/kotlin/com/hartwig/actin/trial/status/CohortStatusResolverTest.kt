@@ -25,7 +25,7 @@ class CohortStatusResolverTest {
                 message = "Invalid cohort IDs configured for cohort"
             )
         )
-        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
+        assertThat(status.trialDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -42,7 +42,7 @@ class CohortStatusResolverTest {
         )
         assertThatStatus(statusClosed, isOpen = false, hasSlotsAvailable = false)
         assertThat(statusClosed.cohortDefinitionErrors).isEmpty()
-        assertThat(statusClosed.ctcDatabaseValidationErrors).isEmpty()
+        assertThat(statusClosed.trialDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -53,7 +53,7 @@ class CohortStatusResolverTest {
         )
         assertThatStatus(status, isOpen = true, hasSlotsAvailable = true)
         assertThat(status.cohortDefinitionErrors).isEmpty()
-        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
+        assertThat(status.trialDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -64,7 +64,7 @@ class CohortStatusResolverTest {
         )
         assertThatStatus(status, isOpen = true, hasSlotsAvailable = false)
         assertThat(status.cohortDefinitionErrors).isEmpty()
-        assertThat(status.ctcDatabaseValidationErrors).isEmpty()
+        assertThat(status.trialDatabaseValidationErrors).isEmpty()
     }
 
     @Test
@@ -143,7 +143,7 @@ class CohortStatusResolverTest {
         val config = cohortDefinitionConfig(GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID, CHILD_OF_GRANDPARENT_OPEN_WITH_SLOTS_COHORT_ID)
         val statusInterpretation = CohortStatusResolver.resolve(entries, config)
         assertThatStatus(statusInterpretation, true, true)
-        assertThat(statusInterpretation.ctcDatabaseValidationErrors).isEmpty()
+        assertThat(statusInterpretation.trialDatabaseValidationErrors).isEmpty()
         assertThat(statusInterpretation.cohortDefinitionErrors).isEmpty()
     }
 
