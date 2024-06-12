@@ -32,8 +32,7 @@ class HasTumorMutationalLoadWithinRange(
             }
         }
         val tumorMutationalLoadIsAlmostAllowed = minTumorMutationalLoad - tumorMutationalLoad <= 5
-        return if (tumorMutationalLoadIsAlmostAllowed && molecular.hasSufficientQuality
-            && !molecular.hasSufficientQualityAndPurity
+        return if (tumorMutationalLoadIsAlmostAllowed && molecular.hasSufficientQualityButLowPurity()
         ) {
             EvaluationFactory.warn(
                 "Tumor mutational load (TML) of sample $tumorMutationalLoad almost exceeds $minTumorMutationalLoad"
