@@ -21,7 +21,7 @@ object ActinTrialContentFunctions {
             ContentDefinition(
                 listOf(
                     cohort.cohort ?: "",
-                    concat(cohort.molecularEvents, addNewlines = true),
+                    concat(cohort.molecularEvents),
                     concat(feedbackFunction.invoke(cohort) - commonFeedback, commonFeedback.isEmpty())
                 ),
                 !cohort.isOpen || !cohort.hasSlotsAvailable
@@ -29,8 +29,8 @@ object ActinTrialContentFunctions {
         }
     }
 
-    private fun concat(strings: Set<String>, replaceEmptyWithNone: Boolean = true, addNewlines: Boolean = false): String {
-        val joinedString = strings.sorted().joinToString(if (addNewlines) Formats.COMMA_SEPARATOR + "\n" else Formats.COMMA_SEPARATOR)
+    private fun concat(strings: Set<String>, replaceEmptyWithNone: Boolean = true): String {
+        val joinedString = strings.sorted().joinToString(Formats.COMMA_SEPARATOR)
         return if (replaceEmptyWithNone && joinedString.isEmpty()) Formats.VALUE_NONE else joinedString
     }
 }
