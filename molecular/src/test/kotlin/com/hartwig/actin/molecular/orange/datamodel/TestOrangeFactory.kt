@@ -226,7 +226,7 @@ object TestOrangeFactory {
         return ImmutablePeachGenotype.builder()
             .gene("DPYD")
             .haplotype(Strings.EMPTY)
-            .allele("1*")
+            .allele("*1")
             .alleleCount(2)
             .function("Normal function")
             .linkedDrugs(Strings.EMPTY)

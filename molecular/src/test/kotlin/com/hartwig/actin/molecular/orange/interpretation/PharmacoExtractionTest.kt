@@ -16,14 +16,14 @@ class PharmacoExtractionTest {
         val peachEntry1 = TestPeachFactory.builder()
             .gene("gene 1")
             .haplotype("deprecated")
-            .allele("1")
+            .allele("*1")
             .alleleCount(1)
             .function("function 1")
             .build()
         val peachEntry2 = TestPeachFactory.builder()
             .gene("gene 1")
             .haplotype("deprecated")
-            .allele("2")
+            .allele("*2")
             .alleleCount(2)
             .function("function 2")
             .build()
@@ -36,10 +36,10 @@ class PharmacoExtractionTest {
         assertThat(entry.gene).isEqualTo("gene 1")
         assertThat(entry.haplotypes).hasSize(2)
 
-        val haplotype1 = findByName(entry.haplotypes, "1 HET")
+        val haplotype1 = findByName(entry.haplotypes, "*1_HET")
         assertThat(haplotype1.function).isEqualTo("function 1")
 
-        val haplotype2 = findByName(entry.haplotypes, "2 HOM")
+        val haplotype2 = findByName(entry.haplotypes, "*2_HOM")
         assertThat(haplotype2.function).isEqualTo("function 2")
     }
 
@@ -50,7 +50,7 @@ class PharmacoExtractionTest {
         }
 
         private fun findByName(haplotypes: Set<Haplotype>, nameToFind: String): Haplotype {
-            return haplotypes.find { it.name == nameToFind }
+            return haplotypes.find { it.toHaplotypeString() == nameToFind }
                 ?: throw IllegalStateException("Could not find haplotype with name: $nameToFind")
         }
     }
