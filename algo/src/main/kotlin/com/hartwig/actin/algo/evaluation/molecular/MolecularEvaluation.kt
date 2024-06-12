@@ -10,37 +10,36 @@ data class MolecularEvaluation(
     val evaluation: Evaluation
 ) {
     companion object {
-        fun combine(evaluations: List<MolecularEvaluation>, defaultUndetermined: Evaluation): Evaluation {
+        fun combine(evaluations: List<MolecularEvaluation>, fallbackUndetermined: Evaluation): Evaluation {
 
             val groupedEvaluationsByResult = evaluations
                 .groupBy { evaluation -> evaluation.evaluation.result }
 
-            return (groupedEvaluationsByResult[EvaluationResult.PASS]
+            val sortedBy = (groupedEvaluationsByResult[EvaluationResult.PASS]
                 ?: groupedEvaluationsByResult[EvaluationResult.WARN]
-                ?: groupedEvaluationsByResult[EvaluationResult.FAIL])
+                ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+                ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
                 ?.asSequence()
                 ?.sortedByDescending { it.test.date }
-                ?.map { convertEvaluation(it) }
-                ?.sortedBy { it.test.type.ordinal }
-                ?.map { it.evaluation }
-                ?.first()
-                ?: defaultUndetermined
+                ?.sortedBy {
+                    when (it.test.type) {
+                        ExperimentType.WHOLE_GENOME -> 1
+                        ExperimentType.TARGETED -> 2
+                        else -> 3
+                    }
+                }
+
+            return sortedBy?.let {
+                if (isOrangeResult(it)) return it.first().evaluation else it.map { m -> m.evaluation }
+                    .reduce(Evaluation::addMessagesAndEvents)
+            } ?: fallbackUndetermined
         }
 
-        private fun convertEvaluation(evaluation: MolecularEvaluation): MolecularEvaluation {
-            return evaluation.copy(
-                evaluation = evaluation.evaluation.copy(
-                    inclusionMolecularEvents = convertEvents(evaluation.evaluation.inclusionMolecularEvents, evaluation.test.type),
-                    exclusionMolecularEvents = convertEvents(evaluation.evaluation.inclusionMolecularEvents, evaluation.test.type)
-                )
+        private fun isOrangeResult(it: Sequence<MolecularEvaluation>) =
+            it.first().test.type in setOf(
+                ExperimentType.WHOLE_GENOME,
+                ExperimentType.TARGETED
             )
-        }
 
-        private fun convertEvents(events: Set<String>, type: ExperimentType) =
-            events.map { event(type, it) }.toSet()
-
-        private fun event(type: ExperimentType, event: String): String {
-            return event
-        }
     }
 }
