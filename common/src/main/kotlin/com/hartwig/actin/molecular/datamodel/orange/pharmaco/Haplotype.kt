@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.datamodel.orange.pharmaco
 
-const val HAPLOTYPE_SEPARATOR: String = "_"
-const val HOMOZYGOUS_ZYGOSITY_STRING: String = "HOM"
-const val HETEROZYGOUS_ZYGOSITY_STRING: String = "HET"
-const val UNKNOWN_ALLELE_STRING: String = "Unresolved Haplotype"
+private const val HAPLOTYPE_SEPARATOR: String = "_"
+private const val HOMOZYGOUS_ZYGOSITY_STRING: String = "HOM"
+private const val HETEROZYGOUS_ZYGOSITY_STRING: String = "HET"
+private const val UNKNOWN_ALLELE_STRING: String = "Unresolved Haplotype"
 
 data class Haplotype(
     val allele: String,
