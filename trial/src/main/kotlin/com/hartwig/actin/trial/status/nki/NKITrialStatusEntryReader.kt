@@ -6,12 +6,15 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.hartwig.actin.trial.status.TrialStatus.CLOSED
+import com.hartwig.actin.trial.status.TrialStatus.OPEN
 import com.hartwig.actin.trial.status.TrialStatusEntry
 import com.hartwig.actin.trial.status.TrialStatusEntryReader
 import java.io.File
 
 private const val TRIALS_JSON = "trial_status.json"
-private val STATUS_TO_INCLUDE = setOf("OPEN", "CLOSED")
+private const val NKI_OPEN_STATUS = "OPEN"
+private val INTERESTING_STATUSES = setOf(NKI_OPEN_STATUS, "CLOSED", "SUSPENDED")
 
 class NKITrialStatusEntryReader : TrialStatusEntryReader {
 
@@ -26,14 +29,14 @@ class NKITrialStatusEntryReader : TrialStatusEntryReader {
     override fun read(inputPath: String): List<TrialStatusEntry> {
         return mapper.readValue(File("$inputPath/$TRIALS_JSON"), object : TypeReference<List<NKITrialStatus>>() {})
             .filter { it.studyStatus != null && it.studyMetc != null }
-            .filter { it.studyStatus in STATUS_TO_INCLUDE }
+            .filter { it.studyStatus in INTERESTING_STATUSES }
             .map {
                 TrialStatusEntry(
                     studyId = it.studyId.toInt(),
                     metcStudyID = it.studyMetc!!,
                     studyAcronym = it.studyAcronym,
                     studyTitle = it.studyTitle,
-                    studyStatus = NKIStatusResolver.resolve(it.studyStatus!!),
+                    studyStatus = if (it.studyStatus == NKI_OPEN_STATUS) OPEN else CLOSED
                 )
             }
     }
