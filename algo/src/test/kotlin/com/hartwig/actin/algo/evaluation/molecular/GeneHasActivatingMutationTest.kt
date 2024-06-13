@@ -241,7 +241,7 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should pass and aggregate findings for gene with mutation in Archer panel and also in Orange molecular`() {
+    fun `Should pass and prefer pass from Orange molecular over archer panel`() {
         val base = MolecularTestFactory.withHasTumorMutationalLoadAndVariants(false, ACTIVATING_VARIANT)
         val patient = base.copy(
             molecularHistory = MolecularHistory(
@@ -252,7 +252,7 @@ class GeneHasActivatingMutationTest {
         val evaluation = functionNotIgnoringCodons.evaluate(patient)
 
         assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).size().isEqualTo(2)
+        assertThat(evaluation.passSpecificMessages).containsExactly("Activating mutation(s) detected in gene + gene A: ")
         assertThat(evaluation.passGeneralMessages).size().isEqualTo(1)
     }
 

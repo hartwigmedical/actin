@@ -42,6 +42,10 @@ data class MolecularHistory(
         return molecularTests.isNotEmpty()
     }
 
+    fun testsGene(gene: String): Boolean {
+        return molecularTests.any { it.testsGene(gene) }
+    }
+
     companion object {
         fun empty(): MolecularHistory {
             return MolecularHistory(emptyList())
