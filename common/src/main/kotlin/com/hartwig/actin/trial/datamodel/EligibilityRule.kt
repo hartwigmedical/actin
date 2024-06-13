@@ -223,6 +223,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X(FunctionInput.ONE_GENE),
     HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES(FunctionInput.NONE),
     HAS_EGFR_PACC_MUTATION(FunctionInput.NONE),
+    HAS_CODELETION_X(FunctionInput.ONE_STRING),
 
     // Rules related to recent laboratory measurements
     HAS_LEUKOCYTES_ABS_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
