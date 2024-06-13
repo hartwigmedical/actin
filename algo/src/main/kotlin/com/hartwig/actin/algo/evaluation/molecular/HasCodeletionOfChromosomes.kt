@@ -9,7 +9,7 @@ class HasCodeletionOfChromosomes(private val chromosomes: String) : EvaluationFu
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Undetermined codeletion of chromosome $chromosomes", "Undetermined codeletion of chromosome $chromosomes"
+            "Codeletion of chromosome $chromosomes currently cannot be determined", "Undetermined codeletion of chromosome $chromosomes"
         )
     }
 }
