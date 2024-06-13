@@ -31,7 +31,7 @@ data class MolecularEvaluation(
                 ?.sortedWith(evaluationComparator)
 
             return sortedPreferredEvaluations?.let {
-                if (isOrangeResult(it)) return it.first().evaluation else
+                if (isOrangeResult(it)) it.first().evaluation else
                     it.map { m -> m.evaluation }.reduce(Evaluation::addMessagesAndEvents)
             } ?: fallbackUndetermined
         }
