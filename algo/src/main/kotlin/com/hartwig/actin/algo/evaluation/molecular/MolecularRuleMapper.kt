@@ -393,8 +393,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasCoDeletionOfChromosomeArmsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val strings = functionInputResolver().createTwoStringsInput(function)
-            HasCodeletionOfChromosomeArms(strings.string1, strings.string2)
+            val (chromosome1, chromosome2) = functionInputResolver().createTwoStringsInput(function)
+            HasCodeletionOfChromosomeArms(chromosome1, chromosome2)
         }
     }
 
