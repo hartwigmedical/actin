@@ -30,7 +30,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
             EligibilityRule.MSI_SIGNATURE to isMicrosatelliteUnstableCreator,
             EligibilityRule.HRD_SIGNATURE to isHomologousRepairDeficientCreator,
-            EligibilityRule.HRD_SIGNATURE_WITH_BRCA_HIGH_DRIVER_MUTATION to isHomologousRepairDeficientAndHasBRCAHighDriverMutationCreator,
+            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_BRCA to isHomologousRepairDeficientWithoutMutationOrWithVUSMutation,
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
@@ -193,7 +193,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         get() = FunctionCreator { IsMicrosatelliteUnstable() }
     private val isHomologousRepairDeficientCreator: FunctionCreator
         get() = FunctionCreator { IsHomologousRepairDeficient() }
-    private val isHomologousRepairDeficientAndHasBRCAHighDriverMutationCreator: FunctionCreator
+    private val isHomologousRepairDeficientWithoutMutationOrWithVUSMutation: FunctionCreator
         get() = FunctionCreator { IsHomologousRepairDeficientWithoutMutationOrWithVUSMutation() }
 
     private fun hasSufficientTumorMutationalBurdenCreator(): FunctionCreator {

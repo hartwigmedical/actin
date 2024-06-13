@@ -36,16 +36,12 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationTest {
     }
 
     @Test
-    fun `Should pass when HRD and loss of BRCA1`() {
-        val test = TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH)
-        val test2 = MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
-            true, test
-        )
-        val test3 = function.evaluate(test2)
+    fun `Should fail when HRD and loss of BRCA1`() {
         assertEvaluation(
-            EvaluationResult.PASS,
-            test3
-        )
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
+                true, TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH))
+        ))
     }
 
     @Test
@@ -61,9 +57,9 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationTest {
     }
 
     @Test
-    fun `Should warn when HRD and disruption of BRCA1`() {
+    fun `Should pass when HRD and disruption of BRCA1`() {
         assertEvaluation(
-            EvaluationResult.WARN,
+            EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
                     true, TestDisruptionFactory.createMinimal().copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
@@ -73,9 +69,9 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationTest {
     }
 
     @Test
-    fun `Should fail when HRD and non reportable mutation in BRCA1`() {
+    fun `Should pass when HRD and non reportable mutation in BRCA1`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = false)))
         )
     }
