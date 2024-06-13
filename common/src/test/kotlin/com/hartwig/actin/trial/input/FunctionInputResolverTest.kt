@@ -750,6 +750,7 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("3A4")))).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("3A4", "1", "2")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4", "1")))).isFalse
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {

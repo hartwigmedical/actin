@@ -702,7 +702,7 @@ class FunctionInputResolver(
 
     fun createOneCypOneIntegerInput(function: EligibilityFunction): OneCypOneInteger {
         assertParamConfig(function, FunctionInput.ONE_CYP_ONE_INTEGER, 2)
-        val cyp = function.parameters.first() as String
+        val cyp = parameterAsString(function, 0)
         if (!MolecularInputChecker.isCyp(cyp)) {
             throw IllegalArgumentException("Not a proper CYP: $cyp")
         }
