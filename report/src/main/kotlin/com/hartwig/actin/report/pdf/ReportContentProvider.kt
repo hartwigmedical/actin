@@ -4,7 +4,6 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEv
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
@@ -115,11 +114,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         if (molecular == null) {
             return Pair(null, null)
         } else {
-            val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
-                AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
-            )
             val externalTrialSummarizer = ExternalTrialSummarizer()
-            val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, evaluated)
+            val externalTrialSummary = externalTrialSummarizer.summarize(AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches, evaluated)
             return Pair(
                 if (externalTrialSummary.dutchTrials.isNotEmpty()) {
                     EligibleDutchExternalTrialsGenerator(
