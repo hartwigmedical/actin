@@ -314,7 +314,8 @@
       "gene": "DPYD",
       "haplotypes": [
         {
-          "name": "*1_HOM",
+          "allele": "*1",
+          "alleleCount": 2,
           "function": "Normal function"
         }
       ]

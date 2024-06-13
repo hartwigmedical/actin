@@ -14,6 +14,8 @@ import com.hartwig.hmftools.datamodel.cuppa.ImmutableCuppaData
 import com.hartwig.hmftools.datamodel.flagstat.ImmutableFlagstat
 import com.hartwig.hmftools.datamodel.hla.ImmutableLilacRecord
 import com.hartwig.hmftools.datamodel.hla.LilacRecord
+import com.hartwig.hmftools.datamodel.immuno.ImmuneEscapeRecord
+import com.hartwig.hmftools.datamodel.immuno.ImmutableImmuneEscapeRecord
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
@@ -64,6 +66,7 @@ object TestOrangeFactory {
             .lilac(createMinimalTestLilacRecord())
             .tumorSample(createOrangeTumorSample())
             .plots(createOrangePlots())
+            .immuneEscape(createImmuneEscapeRecord())
             .build()
     }
 
@@ -90,6 +93,7 @@ object TestOrangeFactory {
             .virusInterpreter(createTestVirusInterpreterRecord())
             .lilac(createTestLilacRecord())
             .chord(createTestChordRecord())
+            .immuneEscape(createImmuneEscapeRecord())
             .build()
     }
 
@@ -120,7 +124,6 @@ object TestOrangeFactory {
                 .isCanonical(true)
                 .build())
             .addAllSomaticVariants(TestPurpleFactory.variantBuilder()
-                .reported(true)
                 .gene("BRAF")
                 .adjustedCopyNumber(6.0)
                 .variantCopyNumber(4.1)
@@ -133,6 +136,7 @@ object TestOrangeFactory {
                     .inSpliceRegion(false)
                     .addEffects(PurpleVariantEffect.MISSENSE)
                     .codingEffect(PurpleCodingEffect.MISSENSE)
+                    .reported(true)
                     .build())
                 .build())
             .addAllSomaticGainsLosses(TestPurpleFactory.gainLossBuilder()
@@ -150,16 +154,19 @@ object TestOrangeFactory {
             .addAllSomaticGeneCopyNumbers(TestPurpleFactory.geneCopyNumberBuilder()
                 .gene("AR")
                 .minCopyNumber(3.2)
+                .maxCopyNumber(3.2)
                 .minMinorAlleleCopyNumber(0.0)
                 .build())
             .addAllSomaticGeneCopyNumbers(TestPurpleFactory.geneCopyNumberBuilder()
                 .gene("PTEN")
                 .minCopyNumber(0.1)
+                .maxCopyNumber(0.1)
                 .minMinorAlleleCopyNumber(0.0)
                 .build())
             .addAllSomaticGeneCopyNumbers(TestPurpleFactory.geneCopyNumberBuilder()
                 .gene("MYC")
                 .minCopyNumber(38.0)
+                .maxCopyNumber(38.0)
                 .minMinorAlleleCopyNumber(2.0)
                 .build())
             .build()
@@ -218,7 +225,9 @@ object TestOrangeFactory {
     private fun createTestPeachGenotype(): PeachGenotype {
         return ImmutablePeachGenotype.builder()
             .gene("DPYD")
-            .haplotype("1* HOM")
+            .haplotype(Strings.EMPTY)
+            .allele("*1")
+            .alleleCount(2)
             .function("Normal function")
             .linkedDrugs(Strings.EMPTY)
             .urlPrescriptionInfo(Strings.EMPTY)
@@ -228,14 +237,18 @@ object TestOrangeFactory {
     }
 
     private fun createTestCuppaRecord(): CuppaData {
+
+        val cuppaPrediction = TestCuppaFactory.builder()
+            .cancerType("Melanoma")
+            .likelihood(0.996)
+            .snvPairwiseClassifier(0.979)
+            .genomicPositionClassifier(0.99)
+            .featureClassifier(0.972)
+            .build()
+
         return ImmutableCuppaData.builder()
-            .addPredictions(TestCuppaFactory.builder()
-                .cancerType("Melanoma")
-                .likelihood(0.996)
-                .snvPairwiseClassifier(0.979)
-                .genomicPositionClassifier(0.99)
-                .featureClassifier(0.972)
-                .build())
+            .addPredictions(cuppaPrediction)
+            .bestPrediction(cuppaPrediction)
             .simpleDups32To200B(0)
             .maxComplexSize(0)
             .telomericSGLs(0)
@@ -314,6 +327,17 @@ object TestOrangeFactory {
                 .pctExcCapped(0.0)
                 .pctExcTotal(0.0)
                 .build())
+            .build()
+    }
+
+    private fun createImmuneEscapeRecord(): ImmuneEscapeRecord {
+        return ImmutableImmuneEscapeRecord.builder()
+            .hasHlaEscape(false)
+            .hasAntigenPresentationPathwayEscape(false)
+            .hasIFNGammaPathwayEscape(false)
+            .hasPDL1OverexpressionEscape(false)
+            .hasCD58InactivationEscape(false)
+            .hasEpigeneticSETDB1Escape(false)
             .build()
     }
 }
