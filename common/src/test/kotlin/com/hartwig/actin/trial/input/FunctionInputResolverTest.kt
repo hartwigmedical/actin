@@ -40,6 +40,7 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
+import com.hartwig.actin.trial.input.single.TwoStrings
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
@@ -337,6 +338,17 @@ class FunctionInputResolverTest {
         assertThat(resolver.createOneStringInput(valid)).isEqualTo("0045")
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("012", "234")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with two string inputs`() {
+        val rule = firstOfType(FunctionInput.TWO_STRINGS)
+        val valid = create(rule, listOf("string1", "string2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createTwoStringsInput(valid)).isEqualTo(TwoStrings("string1", "string2"))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(1, 2)))!!).isFalse
     }
 
     @Test

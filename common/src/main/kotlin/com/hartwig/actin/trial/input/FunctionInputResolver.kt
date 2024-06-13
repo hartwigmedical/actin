@@ -46,6 +46,7 @@ import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
+import com.hartwig.actin.trial.input.single.TwoStrings
 import java.util.Locale
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -155,6 +156,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_STRING -> {
                     createOneStringInput(function)
+                    return true
+                }
+
+                FunctionInput.TWO_STRINGS -> {
+                    createTwoStringsInput(function)
                     return true
                 }
 
@@ -442,6 +448,14 @@ class FunctionInputResolver(
     fun createOneStringInput(function: EligibilityFunction): String {
         assertParamConfig(function, FunctionInput.ONE_STRING, 1)
         return parameterAsString(function, 0)
+    }
+
+    fun createTwoStringsInput(function: EligibilityFunction): TwoStrings {
+        assertParamConfig(function, FunctionInput.TWO_STRINGS, 2)
+        return TwoStrings(
+            string1 = parameterAsString(function, 0),
+            string2 = parameterAsString(function, 1),
+        )
     }
 
     fun createOneStringOneIntegerInput(function: EligibilityFunction): OneIntegerOneString {
