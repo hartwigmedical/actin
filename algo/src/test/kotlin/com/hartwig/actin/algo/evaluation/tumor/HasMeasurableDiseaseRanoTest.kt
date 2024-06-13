@@ -9,13 +9,6 @@ import org.junit.Test
 
 class HasMeasurableDiseaseRanoTest {
     @Test
-    fun `Should pass when has measurable disease is true`() {
-        val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDisease(true))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertTrue(evaluation.recoverable)
-    }
-
-    @Test
     fun `Should pass when has measurable disease is true and brain cancer`() {
         val evaluation = FUNCTION.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true, DoidConstants.BRAIN_CANCER_DOID))
         assertEvaluation(EvaluationResult.PASS, evaluation)
@@ -48,7 +41,7 @@ class HasMeasurableDiseaseRanoTest {
     }
 
     companion object {
-        private val DOID_MODEL = TestDoidModelFactory.createWithOneParentChild("100", "200")
+        private val DOID_MODEL = TestDoidModelFactory.createWithOneParentChild(DoidConstants.CNS_CANCER_DOID, DoidConstants.BRAIN_CANCER_DOID)
         private val FUNCTION = HasMeasurableDiseaseRano(DOID_MODEL)
     }
 }

@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.othercondition.HasHadPriorConditionWithDoidsFromSet
 import com.hartwig.actin.doid.DoidModel
 
 class HasMeasurableDiseaseRano(private val doidModel: DoidModel) : EvaluationFunction {
@@ -15,10 +14,10 @@ class HasMeasurableDiseaseRano(private val doidModel: DoidModel) : EvaluationFun
             "Data regarding measurable disease is missing, unknown if measurable by RANO", "Undetermined RANO measurable disease"
         )
 
-        return if (hasMeasurableDisease && !DoidEvaluationFunctions.isOfAtLeastOneDoidType(
+        return if (hasMeasurableDisease && !DoidEvaluationFunctions.isOfDoidType(
                 doidModel,
                 record.tumor.doids,
-                setOf(DoidConstants.CNS_CANCER_DOID)
+                DoidConstants.CNS_CANCER_DOID
             )
         ) {
             EvaluationFactory.warn(

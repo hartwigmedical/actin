@@ -296,7 +296,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return FunctionCreator { HasMeasurableDiseaseRecist(doidModel()) }
     }
 
-    private fun hasMeasurableDiseaseRanoCreator()(): FunctionCreator {
+    private fun hasMeasurableDiseaseRanoCreator(): FunctionCreator {
         return FunctionCreator { HasMeasurableDiseaseRano(doidModel()) }
     }
 
