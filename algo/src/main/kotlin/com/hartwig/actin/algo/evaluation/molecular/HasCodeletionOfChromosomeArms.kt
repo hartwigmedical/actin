@@ -9,7 +9,7 @@ class HasCodeletionOfChromosomeArms(private val chromosomeArm1: String, private 
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Codeletion of chromosome $chromosomeArm1$chromosomeArm2 currently cannot be determined", "Undetermined codeletion of chromosome $chromosomeArm1$chromosomeArm2"
+            "Codeletion of chromosome arms $chromosomeArm1 and $chromosomeArm2 currently cannot be determined", "Undetermined codeletion of chromosome arms $chromosomeArm1 and $chromosomeArm2"
         )
     }
 }
