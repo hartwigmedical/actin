@@ -70,9 +70,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
                 "$gene not wild-type"
             )
         } else {
-            val potentialWarnEvaluation =
-                evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype, evidenceSource)
-            potentialWarnEvaluation
+            evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype, evidenceSource)
                 ?: EvaluationFactory.pass(
                     "Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type")
                 )
