@@ -45,7 +45,7 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
             if (codonsToIgnore.isNullOrEmpty()) molecularHistory.allPanels().map { findActivatingMutationsInPanels(it) } else emptyList()
 
         return MolecularEvaluation.combine(
-            listOfNotNull(orangeMolecularEvaluation) + panelEvaluations.filterNotNull(),
+            panelEvaluations + orangeMolecularEvaluation,
             EvaluationFactory.undetermined(
                 "Gene $gene not tested in molecular data",
                 "Gene $gene not tested"
@@ -97,11 +97,11 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
 
     private fun isSubclonal(variant: Variant) = variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
 
-    private fun findActivatingMutations(molecular: MolecularTest<*>): MolecularEvaluation {
-        val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
-        val evidenceSource = molecular.evidenceSource
+    private fun findActivatingMutations(molecularTest: MolecularTest<*>): MolecularEvaluation {
+        val hasHighMutationalLoad = molecularTest.characteristics.hasHighTumorMutationalLoad
+        val evidenceSource = molecularTest.evidenceSource
         val variantCharacteristics =
-            molecular.drivers.variants.filter { it.gene == gene }
+            molecularTest.drivers.variants.filter { it.gene == gene }
                 .filter { ignoredCodon(codonsToIgnore, it) }
                 .map { variant ->
                     evaluateVariant(variant, hasHighMutationalLoad)
@@ -110,7 +110,7 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
         val activatingVariants = variantCharacteristics.filter(ActivationProfile::activating).map(ActivationProfile::event).toSet()
         if (activatingVariants.isNotEmpty()) {
             return MolecularEvaluation(
-                molecular, EvaluationFactory.pass(
+                molecularTest, EvaluationFactory.pass(
                     "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
                     "$gene activating mutation(s)",
                     inclusionEvents = activatingVariants
@@ -132,7 +132,7 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
         )
 
         return MolecularEvaluation(
-            molecular, (potentialWarnEvaluation ?: EvaluationFactory.fail(
+            molecularTest, (potentialWarnEvaluation ?: EvaluationFactory.fail(
                 "No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)"
             ))
         )

@@ -59,20 +59,19 @@ class GeneHasVariantInExonRangeOfType(
                     Triple(allReportable + reportable, allUnreportable + unreportable, allOther + other)
                 }
 
-        return MolecularEvaluation(
-            molecular, if (canonicalReportableVariantMatches.isNotEmpty()) {
-                EvaluationFactory.pass(
-                    "Variant(s) $baseMessage in canonical transcript",
-                    "Variant(s) $baseMessage",
-                    inclusionEvents = canonicalReportableVariantMatches
-                )
-            } else {
-                val potentialWarnEvaluation =
-                    evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches, baseMessage)
-                potentialWarnEvaluation
-                    ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript", "No variant $baseMessage")
-            }
-        )
+        val evaluation = if (canonicalReportableVariantMatches.isNotEmpty()) {
+            EvaluationFactory.pass(
+                "Variant(s) $baseMessage in canonical transcript",
+                "Variant(s) $baseMessage",
+                inclusionEvents = canonicalReportableVariantMatches
+            )
+        } else {
+            val potentialWarnEvaluation =
+                evaluatePotentialWarns(canonicalUnreportableVariantMatches, reportableOtherVariantMatches, baseMessage)
+            potentialWarnEvaluation
+                ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript", "No variant $baseMessage")
+        }
+        return MolecularEvaluation(molecular, evaluation)
     }
 
     private fun evaluatePotentialWarns(

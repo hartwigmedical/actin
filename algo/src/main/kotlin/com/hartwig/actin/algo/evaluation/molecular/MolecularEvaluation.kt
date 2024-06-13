@@ -10,16 +10,15 @@ data class MolecularEvaluation(
     val evaluation: Evaluation
 ) {
     companion object {
-        fun combine(evaluations: List<MolecularEvaluation>, fallbackUndetermined: Evaluation): Evaluation {
+        fun combine(evaluations: List<MolecularEvaluation?>, fallbackUndetermined: Evaluation): Evaluation {
 
-            val groupedEvaluationsByResult = evaluations
+            val groupedEvaluationsByResult = evaluations.filterNotNull()
                 .groupBy { evaluation -> evaluation.evaluation.result }
 
-            val sortedBy = (groupedEvaluationsByResult[EvaluationResult.PASS]
+            val sortedPreferredEvaluations = (groupedEvaluationsByResult[EvaluationResult.PASS]
                 ?: groupedEvaluationsByResult[EvaluationResult.WARN]
                 ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
                 ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
-                ?.asSequence()
                 ?.sortedByDescending { it.test.date }
                 ?.sortedBy {
                     when (it.test.type) {
@@ -29,13 +28,13 @@ data class MolecularEvaluation(
                     }
                 }
 
-            return sortedBy?.let {
-                if (isOrangeResult(it)) return it.first().evaluation else it.map { m -> m.evaluation }
-                    .reduce(Evaluation::addMessagesAndEvents)
+            return sortedPreferredEvaluations?.let {
+                if (isOrangeResult(it)) return it.first().evaluation else
+                    it.map { m -> m.evaluation }.reduce(Evaluation::addMessagesAndEvents)
             } ?: fallbackUndetermined
         }
 
-        private fun isOrangeResult(it: Sequence<MolecularEvaluation>) =
+        private fun isOrangeResult(it: List<MolecularEvaluation>) =
             it.first().test.type in setOf(
                 ExperimentType.WHOLE_GENOME,
                 ExperimentType.TARGETED

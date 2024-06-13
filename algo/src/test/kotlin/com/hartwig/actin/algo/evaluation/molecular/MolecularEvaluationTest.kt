@@ -4,12 +4,13 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val ORANGE_EVENT = "orange event"
 private val PASS_ORANGE = EvaluationFactory.pass("pass orange", inclusionEvents = setOf(ORANGE_EVENT))
-private val WARN_ORANGE = EvaluationFactory.pass("warn orange", inclusionEvents = setOf(ORANGE_EVENT))
+private val WARN_ORANGE = EvaluationFactory.warn("warn orange", inclusionEvents = setOf(ORANGE_EVENT))
 private val UNDETERMINED_ORANGE = EvaluationFactory.undetermined("undetermined orange")
 private val FAIL_ORANGE = EvaluationFactory.undetermined("fail orange")
 private const val PANEL_EVENT = "panel event"
@@ -23,6 +24,21 @@ class MolecularEvaluationTest {
         combineAndAssert(
             PASS_ORANGE, MolecularEvaluation(TestPanelRecordFactory.empty(), PASS_PANEL),
             MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), PASS_ORANGE)
+        )
+    }
+
+    @Test
+    fun `Should only return most recent WGS results when rule passes`() {
+        val oldTest = MolecularEvaluation(
+            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.now().minusDays(1)),
+            PASS_ORANGE.copy(inclusionMolecularEvents = setOf("old"))
+        )
+        val recentTest = MolecularEvaluation(
+            TestMolecularFactory.createMinimalTestMolecularRecord().copy(date = LocalDate.now()),
+            PASS_ORANGE.copy(inclusionMolecularEvents = setOf("recent"))
+        )
+        combineAndAssert(
+            recentTest.evaluation, oldTest, recentTest
         )
     }
 

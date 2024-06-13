@@ -19,7 +19,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = orangeMolecular?.let { evaluateInOrangeMolecular(it) }
 
-        val panelEvaluations = molecularHistory.allPanels().map { evaluateInPanels(it) }
+        val panelEvaluations = molecularHistory.allPanels().map { evaluateInPanel(it) }
 
         return MolecularEvaluation.combine(
             listOfNotNull(orangeMolecularEvaluation) + panelEvaluations,
@@ -64,24 +64,23 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
                 }
             }
         }
-        return MolecularEvaluation(
-            molecular, if (reportableEventsWithEffect.isNotEmpty()) {
-                EvaluationFactory.fail(
-                    "Gene $gene is not considered wild-type due to ${Format.concat(reportableEventsWithEffect)}",
-                    "$gene not wild-type"
+        val evaluation = if (reportableEventsWithEffect.isNotEmpty()) {
+            EvaluationFactory.fail(
+                "Gene $gene is not considered wild-type due to ${Format.concat(reportableEventsWithEffect)}",
+                "$gene not wild-type"
+            )
+        } else {
+            val potentialWarnEvaluation =
+                evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype, evidenceSource)
+            potentialWarnEvaluation
+                ?: EvaluationFactory.pass(
+                    "Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type")
                 )
-            } else {
-                val potentialWarnEvaluation =
-                    evaluatePotentialWarns(reportableEventsWithNoEffect, reportableEventsWithEffectPotentiallyWildtype, evidenceSource)
-                potentialWarnEvaluation
-                    ?: EvaluationFactory.pass(
-                        "Gene $gene is considered wild-type", "$gene is wild-type", inclusionEvents = setOf("$gene wild-type")
-                    )
-            }
-        )
+        }
+        return MolecularEvaluation(molecular, evaluation)
     }
 
-    private fun evaluateInPanels(panelRecord: PanelRecord): MolecularEvaluation {
+    private fun evaluateInPanel(panelRecord: PanelRecord): MolecularEvaluation {
 
         val isTestedInPanel = panelRecord.testsGene(gene)
         val hasResultInAnyPanel = panelRecord.events().isNotEmpty()
