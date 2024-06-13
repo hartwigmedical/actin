@@ -36,10 +36,10 @@ class PharmacoExtractionTest {
         assertThat(entry.gene).isEqualTo("gene 1")
         assertThat(entry.haplotypes).hasSize(2)
 
-        val haplotype1 = findByName(entry.haplotypes, "*1_HET")
+        val haplotype1 = findByHaplotype(entry.haplotypes, "*1_HET")
         assertThat(haplotype1.function).isEqualTo("function 1")
 
-        val haplotype2 = findByName(entry.haplotypes, "*2_HOM")
+        val haplotype2 = findByHaplotype(entry.haplotypes, "*2_HOM")
         assertThat(haplotype2.function).isEqualTo("function 2")
     }
 
@@ -49,7 +49,7 @@ class PharmacoExtractionTest {
             return ImmutableOrangeRecord.builder().from(base).addPeach(*peachEntries).build()
         }
 
-        private fun findByName(haplotypes: Set<Haplotype>, nameToFind: String): Haplotype {
+        private fun findByHaplotype(haplotypes: Set<Haplotype>, nameToFind: String): Haplotype {
             return haplotypes.find { it.toHaplotypeString() == nameToFind }
                 ?: throw IllegalStateException("Could not find haplotype with name: $nameToFind")
         }

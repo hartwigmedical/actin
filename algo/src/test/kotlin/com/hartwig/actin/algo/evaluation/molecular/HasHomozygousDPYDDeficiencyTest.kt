@@ -32,7 +32,7 @@ class HasHomozygousDPYDDeficiencyTest {
                         gene = "DPYD",
                         haplotypes = setOf(
                             Haplotype(allele = "*1", alleleCount = 1, function = "Normal Function"),
-                            Haplotype(allele = "*1", alleleCount = 1, function = "Unexpected Function")
+                            Haplotype(allele = "*2", alleleCount = 1, function = "Unexpected Function")
                         )
                     )
                 )
@@ -62,7 +62,7 @@ class HasHomozygousDPYDDeficiencyTest {
                         gene = "DPYD",
                         haplotypes = setOf(
                             Haplotype(allele = "*1", alleleCount = 1, function = "Reduced Function"),
-                            Haplotype(allele = "*1", alleleCount = 1, function = "No Function")
+                            Haplotype(allele = "*2", alleleCount = 1, function = "No Function")
                         )
                     )
                 )
@@ -80,7 +80,7 @@ class HasHomozygousDPYDDeficiencyTest {
                         gene = "DPYD",
                         haplotypes = setOf(
                             Haplotype(allele = "*1", alleleCount = 1, function = "Normal Function"),
-                            Haplotype(allele = "*1", alleleCount = 1, function = "Reduced Function")
+                            Haplotype(allele = "*2", alleleCount = 1, function = "Reduced Function")
                         )
                     )
                 )
