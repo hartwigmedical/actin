@@ -59,6 +59,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_EVALUABLE_DISEASE to hasEvaluableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE to hasMeasurableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST to hasMeasurableDiseaseRecistCreator(),
+            EligibilityRule.HAS_MEASURABLE_DISEASE_RANO to hasMeasurableDiseaseRanoCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA to hasSpecificProgressiveDiseaseCriteriaCreator(),
             EligibilityRule.HAS_INJECTION_AMENABLE_LESION to hasInjectionAmenableLesionCreator(),
             EligibilityRule.HAS_MRI_VOLUME_MEASUREMENT_AMENABLE_LESION to hasMRIVolumeAmenableLesionCreator(),
@@ -293,6 +294,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasMeasurableDiseaseRecistCreator(): FunctionCreator {
         return FunctionCreator { HasMeasurableDiseaseRecist(doidModel()) }
+    }
+
+    private fun hasMeasurableDiseaseRanoCreator()(): FunctionCreator {
+        return FunctionCreator { HasMeasurableDiseaseRano(doidModel()) }
     }
 
     private fun hasSpecificProgressiveDiseaseCriteriaCreator(): FunctionCreator {
