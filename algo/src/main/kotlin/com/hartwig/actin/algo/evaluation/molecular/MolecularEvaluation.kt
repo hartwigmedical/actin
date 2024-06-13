@@ -15,18 +15,20 @@ data class MolecularEvaluation(
             val groupedEvaluationsByResult = evaluations.filterNotNull()
                 .groupBy { evaluation -> evaluation.evaluation.result }
 
+            val evaluationComparator = Comparator.comparing<MolecularEvaluation, Int> {
+                when (it.test.type) {
+                    ExperimentType.WHOLE_GENOME -> 1
+                    ExperimentType.TARGETED -> 2
+                    else -> 3
+                }
+            }
+                .thenByDescending { it.test.date }
+
             val sortedPreferredEvaluations = (groupedEvaluationsByResult[EvaluationResult.PASS]
                 ?: groupedEvaluationsByResult[EvaluationResult.WARN]
                 ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
                 ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
-                ?.sortedByDescending { it.test.date }
-                ?.sortedBy {
-                    when (it.test.type) {
-                        ExperimentType.WHOLE_GENOME -> 1
-                        ExperimentType.TARGETED -> 2
-                        else -> 3
-                    }
-                }
+                ?.sortedWith(evaluationComparator)
 
             return sortedPreferredEvaluations?.let {
                 if (isOrangeResult(it)) return it.first().evaluation else
