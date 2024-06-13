@@ -68,23 +68,23 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsCYPXInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCypXInducingMedication(selector, termToFind)
+            val termToFind = functionInputResolver().createOneCypInput(function)
+            CurrentlyGetsCypXInducingMedication(selector, termToFind.cyp)
         }
     }
 
     private fun hasRecentlyReceivedCYPXInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringOneIntegerInput(function)
+            val input = functionInputResolver().createOneCypOneIntegerInput(function)
             val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            HasRecentlyReceivedCypXInducingMedication(selector, input.string, maxStopDate)
+            HasRecentlyReceivedCypXInducingMedication(selector, input.cyp, maxStopDate)
         }
     }
 
     private fun getsCYPXInhibitingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCypXInhibitingMedication(selector, termToFind)
+            val termToFind = functionInputResolver().createOneCypInput(function)
+            CurrentlyGetsCypXInhibitingMedication(selector, termToFind.cyp)
         }
     }
 
@@ -94,15 +94,15 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsCYPXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, termToFind)
+            val termToFind = functionInputResolver().createOneCypInput(function)
+            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, termToFind.cyp)
         }
     }
 
     private fun getsCYPSubstrateMedicationCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
-            CurrentlyGetsCypXSubstrateMedication(selector, termToFind)
+            val termToFind = functionInputResolver().createOneCypInput(function)
+            CurrentlyGetsCypXSubstrateMedication(selector, termToFind.cyp)
         }
     }
 

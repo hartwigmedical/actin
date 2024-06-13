@@ -28,9 +28,9 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
         fun isHaplotype(string: String): Boolean {
             val asterixIndex = string.indexOf("*")
             val semicolonIndex = string.indexOf("_")
-            return asterixIndex == 0 && semicolonIndex > asterixIndex
+            return asterixIndex == 0 && semicolonIndex > asterixIndex && string[1].isDigit()
         }
-        
+
         fun isProteinImpact(string: String): Boolean {
             if (string == "?") {
                 return true
@@ -45,6 +45,10 @@ class MolecularInputChecker(private val geneFilter: GeneFilter) {
             val mid = string.substring(1, string.length - 1)
             val hasValidMid = hasSpecificValidProteinEnding(string) || mid.contains("_") || isPositiveNumber(mid)
             return hasValidStart && hasValidEnd && hasValidMid
+        }
+
+        fun isCyp(string: String): Boolean {
+            return (string.length == 3 || string.length == 4) && string[0].isDigit() && string[string.length - 1].isDigit() && string[1].isLetter()
         }
 
         private fun hasSpecificValidProteinEnding(string: String): Boolean {

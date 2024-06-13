@@ -24,6 +24,8 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
+import com.hartwig.actin.trial.input.single.OneCyp
+import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneDoidTermOneInteger
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
@@ -80,6 +82,16 @@ class FunctionInputResolver(
 
                 FunctionInput.MANY_INTEGERS -> {
                     createManyIntegersInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_CYP -> {
+                    createOneCypInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_CYP_ONE_INTEGER -> {
+                    createOneCypOneIntegerInput(function)
                     return true
                 }
 
@@ -675,6 +687,26 @@ class FunctionInputResolver(
         } catch (e: Exception) {
             throw IllegalStateException("Intent name not found: $intentName")
         }
+    }
+
+    fun createOneCypInput(function: EligibilityFunction): OneCyp {
+        assertParamConfig(function, FunctionInput.ONE_CYP, 1)
+
+        val cyp = function.parameters.first() as String
+        if (!MolecularInputChecker.isCyp(cyp)) {
+            throw IllegalArgumentException("Not a proper CYP: $cyp")
+        }
+
+        return OneCyp(cyp)
+    }
+
+    fun createOneCypOneIntegerInput(function: EligibilityFunction): OneCypOneInteger {
+        assertParamConfig(function, FunctionInput.ONE_CYP_ONE_INTEGER, 2)
+        val cyp = function.parameters.first() as String
+        if (!MolecularInputChecker.isCyp(cyp)) {
+            throw IllegalArgumentException("Not a proper CYP: $cyp")
+        }
+        return OneCypOneInteger(cyp = cyp, integer = parameterAsString(function, 1).toInt())
     }
 
     private fun parameterAsString(function: EligibilityFunction, i: Int) = function.parameters[i] as String
