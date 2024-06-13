@@ -570,7 +570,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     Tables.PHARMACO.HAPLOTYPE,
                     Tables.PHARMACO.HAPLOTYPEFUNCTION
                 )
-                    .values(sampleId, entry.gene, haplotype.toHaplotypeString(), haplotype.function)
+                    .values(sampleId, entry.gene, haplotype.name, haplotype.function)
                     .execute()
             }
         }
