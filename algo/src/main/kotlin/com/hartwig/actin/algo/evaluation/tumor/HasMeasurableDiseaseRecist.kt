@@ -21,7 +21,7 @@ class HasMeasurableDiseaseRecist(private val doidModel: DoidModel) : EvaluationF
             )
         ) {
             EvaluationFactory.warn(
-                "Patient has measurable disease, but given the patient's tumor type uncertain if this has been evaluated against RECIST?",
+                "Patient has measurable disease, but given the patient's tumor type uncertain if this has been evaluated against RECIST",
                 "Has measurable disease but with this tumor type unknown if by RECIST"
             )
         } else if (hasMeasurableDisease) {
