@@ -46,9 +46,15 @@ class TumorDetailsExtractor(
             biopsyLocation = biopsyCuration?.config()?.location,
             stage = questionnaire.stage,
             hasMeasurableDisease = questionnaire.hasMeasurableDisease,
-            hasBrainLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions),
+            hasBrainLesions = if (primaryTumorDetails.primaryTumorLocation.equals("Brain")
+                || primaryTumorDetails.primaryTumorType.equals("Glioma")) {
+                false
+            } else determineLesionPresence(lesionsToCheck, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions),
             hasActiveBrainLesions = questionnaire.hasActiveBrainLesions,
-            hasCnsLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.CNS, questionnaire.hasCnsLesions),
+            hasCnsLesions = if (primaryTumorDetails.primaryTumorLocation.equals("Brain")
+                || primaryTumorDetails.primaryTumorType.equals("Glioma")) {
+                false
+            } else determineLesionPresence(lesionsToCheck, LesionLocationCategory.CNS, questionnaire.hasCnsLesions),
             hasActiveCnsLesions = questionnaire.hasActiveCnsLesions,
             hasBoneLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.BONE, questionnaire.hasBoneLesions),
             hasLiverLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.LIVER, questionnaire.hasLiverLesions),
