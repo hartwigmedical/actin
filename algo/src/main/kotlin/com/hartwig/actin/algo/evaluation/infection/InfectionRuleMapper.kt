@@ -24,7 +24,7 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasActiveInfectionCreator(): FunctionCreator {
-        return FunctionCreator { HasActiveInfection() }
+        return FunctionCreator { HasActiveInfection(atcTree(), referenceDateProvider().date()) }
     }
 
     private fun hasKnownEBVInfectionCreator(): FunctionCreator {
