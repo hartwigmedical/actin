@@ -103,7 +103,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
-                        gene = TARGET_GENE, isReportable = true, type = VariantType.INSERT, canonicalImpact = impactWithExon(OTHER_EXON)
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        type = VariantType.INSERT,
+                        canonicalImpact = impactWithExon(OTHER_EXON),
+                        extendedVariant = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )
@@ -131,7 +135,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
-                        gene = TARGET_GENE, isReportable = true, type = VariantType.INSERT, canonicalImpact = impactWithExon(MATCHING_EXON)
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        type = VariantType.INSERT,
+                        canonicalImpact = impactWithExon(MATCHING_EXON),
+                        extendedVariant = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )
@@ -193,7 +201,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
-                        gene = TARGET_GENE, isReportable = true, type = VariantType.INSERT, canonicalImpact = impactWithExon(MATCHING_EXON)
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        type = VariantType.INSERT,
+                        canonicalImpact = impactWithExon(MATCHING_EXON),
+                        extendedVariant = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )
@@ -216,7 +228,10 @@ class GeneHasVariantInExonRangeOfTypeTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
-                        gene = TARGET_GENE, isReportable = true, canonicalImpact = impactWithExon(MATCHING_EXON)
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        canonicalImpact = impactWithExon(MATCHING_EXON),
+                        extendedVariant = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )

@@ -152,16 +152,13 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     }
 
     @Test
-    fun `Should fail for incorrect variant`() {
+    fun `Should fail for unreported variant`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     BASE_VARIANT.copy(
-                        gene = CORRECT_VARIANT_GENE,
-                        canonicalImpact = proteinImpact("1ABC2"),
-                        proteinEffect = ProteinEffect.NO_EFFECT,
-                        driverLikelihood = null
+                        isReportable = false
                     )
                 )
             )
@@ -190,7 +187,10 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
 
     @Test
     fun `Should pass for correct fusion`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(BASE_FUSION)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withFusion(BASE_FUSION.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)))
+        )
     }
 
     @Test

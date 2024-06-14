@@ -25,7 +25,10 @@ class GeneHasVariantWithProteinImpactTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(gene = MATCHING_GENE, isReportable = true))
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal()
+                        .copy(gene = MATCHING_GENE, isReportable = true, extendedVariant = TestVariantFactory.createMinimalExtended())
+                )
             )
         )
     }
