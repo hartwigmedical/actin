@@ -300,8 +300,7 @@ class MolecularRecordJsonTest {
         assertThat(entry.haplotypes).hasSize(1)
 
         val haplotype = entry.haplotypes.first()
-        assertThat(haplotype.allele).isEqualTo("*1")
-        assertThat(haplotype.alleleCount).isEqualTo(2)
+        assertThat(haplotype.name).isEqualTo("*1_HOM")
         assertThat(haplotype.function).isEqualTo("Normal function")
     }
 }

@@ -19,8 +19,8 @@ class HasUGT1A1HaplotypeTest {
                     PharmacoEntry(
                         gene = "UGT1A1",
                         haplotypes = setOf(
-                            Haplotype(allele = "*1", alleleCount = 1, function = "Normal function"),
-                            Haplotype(allele = "*18", alleleCount = 1, function = "Normal function")
+                            Haplotype(name = "*1_HET", function = "Normal function"),
+                            Haplotype(name = "*18_HET", function = "Normal function")
                         )
                     )
                 )
@@ -37,8 +37,8 @@ class HasUGT1A1HaplotypeTest {
                     PharmacoEntry(
                         gene = "UGT1A1",
                         haplotypes = setOf(
-                            Haplotype(allele = "*17", alleleCount = 1, function = "Normal function"),
-                            Haplotype(allele = "*18", alleleCount = 1, function = "Normal function")
+                            Haplotype(name = "*17_HET", function = "Normal function"),
+                            Haplotype(name = "*18_HET", function = "Normal function")
                         )
                     )
                 )
@@ -54,7 +54,7 @@ class HasUGT1A1HaplotypeTest {
                 MolecularTestFactory.withHaplotype(
                     PharmacoEntry(
                         gene = "DPYD",
-                        haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal function")),
+                        haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")),
                     )
                 )
             )

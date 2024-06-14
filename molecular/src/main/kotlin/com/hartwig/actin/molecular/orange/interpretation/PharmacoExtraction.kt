@@ -17,8 +17,7 @@ internal object PharmacoExtraction {
     private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: List<PeachGenotype>): PharmacoEntry {
         return PharmacoEntry(
             gene = gene,
-            haplotypes = peachGenotypes.map { Haplotype(allele = it.allele(), alleleCount = it.alleleCount(), function = it.function()) }
-                .toSet()
+            haplotypes = peachGenotypes.map { Haplotype(name = it.haplotype(), function = it.function()) }.toSet()
         )
     }
 }

@@ -16,7 +16,7 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    PharmacoEntry(gene = "UGT1A1", haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal Function")))
+                    PharmacoEntry(gene = "UGT1A1", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal Function")))
                 )
             )
         )
@@ -31,8 +31,8 @@ class HasHomozygousDPYDDeficiencyTest {
                     PharmacoEntry(
                         gene = "DPYD",
                         haplotypes = setOf(
-                            Haplotype(allele = "*1", alleleCount = 1, function = "Normal Function"),
-                            Haplotype(allele = "*2", alleleCount = 1, function = "Unexpected Function")
+                            Haplotype(name = "*1_HET", function = "Normal Function"),
+                            Haplotype(name = "*1_HET", function = "Unexpected Function")
                         )
                     )
                 )
@@ -46,7 +46,7 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Reduced Function")))
+                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Reduced Function")))
                 )
             )
         )
@@ -61,8 +61,8 @@ class HasHomozygousDPYDDeficiencyTest {
                     PharmacoEntry(
                         gene = "DPYD",
                         haplotypes = setOf(
-                            Haplotype(allele = "*1", alleleCount = 1, function = "Reduced Function"),
-                            Haplotype(allele = "*2", alleleCount = 1, function = "No Function")
+                            Haplotype(name = "*1_HET", function = "Reduced Function"),
+                            Haplotype(name = "*1_HET", function = "No Function")
                         )
                     )
                 )
@@ -79,8 +79,8 @@ class HasHomozygousDPYDDeficiencyTest {
                     PharmacoEntry(
                         gene = "DPYD",
                         haplotypes = setOf(
-                            Haplotype(allele = "*1", alleleCount = 1, function = "Normal Function"),
-                            Haplotype(allele = "*2", alleleCount = 1, function = "Reduced Function")
+                            Haplotype(name = "*1_HET", function = "Normal Function"),
+                            Haplotype(name = "*1_HET", function = "Reduced Function")
                         )
                     )
                 )
@@ -94,7 +94,7 @@ class HasHomozygousDPYDDeficiencyTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withHaplotype(
-                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal Function")))
+                    PharmacoEntry(gene = "DPYD", haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal Function")))
                 )
             )
         )
