@@ -11,13 +11,17 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val hrdGenesWithNonBiallelicHotspot: MutableSet<String> = mutableSetOf()
-        val hrdGenesWithLowDriver: MutableSet<String> = mutableSetOf()
-        val hrdGenesWithBiallelicNonHotspot: MutableSet<String> = mutableSetOf()
-        val hrdGenesWithNonBiallelicNonHotspot: MutableSet<String> = mutableSetOf()
         val hrdGenesWithBiallelicHotspot: MutableSet<String> = mutableSetOf()
+
+        val hrdGenesWithNonBiallelicNonHotspotHighDriver: MutableSet<String> = mutableSetOf()
+        val hrdGenesWithNonBiallelicNonHotspotLowDriver: MutableSet<String> = mutableSetOf()
+        val hrdGenesWithBiallelicNonHotspotHighDriver: MutableSet<String> = mutableSetOf()
+        val hrdGenesWithBiallelicNonHotspotLowDriver: MutableSet<String> = mutableSetOf()
+
         val hrdGenesWithDeletionOrPartialLoss: MutableSet<String> = mutableSetOf()
         val hrdGenesWithHomozygousDisruption: MutableSet<String> = mutableSetOf()
         val hrdGenesWithNonHomozygousDisruption: MutableSet<String> = mutableSetOf()
+
         for (gene in MolecularConstants.HRD_GENES) {
             for (variant in molecular.drivers.variants) {
                 if (variant.gene == gene && variant.isReportable) {
@@ -31,15 +35,19 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
                         }
 
                         variant.isBiallelic && variant.driverLikelihood == DriverLikelihood.HIGH -> {
-                            hrdGenesWithBiallelicNonHotspot.add(gene)
+                            hrdGenesWithBiallelicNonHotspotHighDriver.add(gene)
                         }
 
-                        !variant.isBiallelic && variant.driverLikelihood == DriverLikelihood.HIGH -> {
-                            hrdGenesWithNonBiallelicNonHotspot.add(gene)
+                        variant.isBiallelic -> {
+                            hrdGenesWithBiallelicNonHotspotLowDriver.add(gene)
+                        }
+
+                        variant.driverLikelihood == DriverLikelihood.HIGH -> {
+                            hrdGenesWithNonBiallelicNonHotspotHighDriver.add(gene)
                         }
 
                         else -> {
-                            hrdGenesWithLowDriver.add(gene)
+                            hrdGenesWithNonBiallelicNonHotspotLowDriver.add(gene)
                         }
                     }
                 }
@@ -61,20 +69,20 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
             }
         }
 
-        val hrdGenesWithBiallelicDriver = hrdGenesWithBiallelicHotspot + hrdGenesWithBiallelicNonHotspot + hrdGenesWithHomozygousDisruption + hrdGenesWithDeletionOrPartialLoss
-        val hrdGenesWithNonBiallelicDriver = hrdGenesWithNonBiallelicNonHotspot + hrdGenesWithNonBiallelicHotspot + hrdGenesWithNonHomozygousDisruption + hrdGenesWithLowDriver
+        val hrdGenesWithBiallelicDriver = hrdGenesWithBiallelicHotspot + hrdGenesWithBiallelicNonHotspotHighDriver + hrdGenesWithBiallelicNonHotspotLowDriver + hrdGenesWithHomozygousDisruption + hrdGenesWithDeletionOrPartialLoss
+        val hrdGenesWithNonBiallelicDriver = hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicHotspot + hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotLowDriver
 
         return when (molecular.characteristics.isHomologousRepairDeficient) {
             null -> {
                 when {
-                    hrdGenesWithBiallelicHotspot.isNotEmpty() || hrdGenesWithBiallelicNonHotspot.isNotEmpty() || hrdGenesWithHomozygousDisruption.isNotEmpty() || hrdGenesWithDeletionOrPartialLoss.isNotEmpty() -> {
+                    hrdGenesWithBiallelicDriver.isNotEmpty() -> {
                         EvaluationFactory.undetermined(
                             "Unknown homologous repair deficiency (HRD) status, but biallelic drivers in HR genes: ${concat(hrdGenesWithBiallelicDriver)} are detected; an HRD test may be recommended",
                             "Unknown HRD status but biallelic drivers in HR genes"
                         )
                     }
 
-                    hrdGenesWithNonBiallelicNonHotspot.isNotEmpty() || hrdGenesWithNonBiallelicHotspot.isNotEmpty() || hrdGenesWithNonHomozygousDisruption.isNotEmpty() || hrdGenesWithLowDriver.isNotEmpty() -> {
+                    hrdGenesWithNonBiallelicDriver.isNotEmpty() -> {
                         EvaluationFactory.undetermined(
                             "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HR genes: ${concat(hrdGenesWithNonBiallelicDriver)} are detected; an HRD test may be recommended",
                             "Unknown HRD status but non-biallelic drivers in HR genes"
@@ -103,24 +111,31 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
                         )
                     }
 
-                    containsBRCA(hrdGenesWithBiallelicNonHotspot) -> {
+                    containsBRCA(hrdGenesWithBiallelicNonHotspotHighDriver) -> {
                         EvaluationFactory.warn(
-                            "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic high driver(s) in BRCA were detected",
-                            "Tumor is HRD with non-hotspot biallelic high driver(s) in BRCA",
+                            "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic high driver(s) in BRCA which could potentially be pathogenic",
+                            "Tumor is HRD with non-hotspot biallelic high driver(s) in BRCA which could be pathogenic",
                         )
                     }
 
-                    containsBRCA(hrdGenesWithNonBiallelicNonHotspot) -> {
+                    containsBRCA(hrdGenesWithBiallelicNonHotspotLowDriver) -> {
                         EvaluationFactory.warn(
-                            "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic high driver(s) in BRCA were detected",
-                            "Tumor is HRD with non-hotspot non-biallelic high driver(s) in BRCA",
+                            "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic low driver(s) in BRCA which could potentially be pathogenic",
+                            "Tumor is HRD with non-hotspot biallelic low driver(s) in BRCA which could be pathogenic",
                         )
                     }
 
-                    containsBRCA(hrdGenesWithLowDriver) -> {
+                    containsBRCA(hrdGenesWithNonBiallelicNonHotspotHighDriver) -> {
                         EvaluationFactory.warn(
-                            "Homologous repair deficiency (HRD) detected, together with low or medium driver in BRCA",
-                            "Tumor is HRD with low or medium driver in BRCA",
+                            "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic high driver(s) in BRCA which could potentially be pathogenic",
+                            "Tumor is HRD with non-hotspot non-biallelic high driver(s) in BRCA which could be pathogenic",
+                        )
+                    }
+
+                    containsBRCA(hrdGenesWithNonBiallelicNonHotspotLowDriver) -> {
+                        EvaluationFactory.warn(
+                            "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic low driver(s) in BRCA which could potentially be pathogenic",
+                            "Tumor is HRD with non-hotspot non-biallelic low driver(s) in BRCA which could be pathogenic",
                         )
                     }
 
@@ -133,7 +148,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
 
                     hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
                         EvaluationFactory.warn(
-                            "Homologous repair deficiency (HRD) status detected, together with only non-biallelic drivers in HR genes (${concat(hrdGenesWithNonBiallelicDriver)}) were detected",
+                            "Homologous repair deficiency (HRD) status detected, together with only non-biallelic drivers in HR genes (${concat(hrdGenesWithNonBiallelicDriver)})",
                             "Tumor is HRD (but with only non-biallelic drivers in HR genes)",
                         )
                     }
@@ -147,7 +162,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
 
                     hrdGenesWithNonBiallelicDriver.isEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
                         EvaluationFactory.warn(
-                            "Homologous repair deficiency (HRD) status detected, without drivers in HR genes (${concat(hrdGenesWithNonBiallelicDriver)}) were detected",
+                            "Homologous repair deficiency (HRD) status detected, without drivers in HR genes",
                             "Tumor is HRD (but without detected drivers in HR genes)",
                         )
                     }
