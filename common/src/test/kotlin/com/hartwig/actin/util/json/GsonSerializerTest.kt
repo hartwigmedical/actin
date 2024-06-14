@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.evidence.Country
@@ -45,7 +46,7 @@ class GsonSerializerTest {
 
     private fun variant(
         driverLikelihood: DriverLikelihood, gene: String, hgvsProteinImpact: String, hgvsCodingImpact: String
-    ): ExtendedVariant {
+    ): Variant {
         val canonicalImpact: TranscriptImpact = TestTranscriptImpactFactory.createMinimal().copy(
             hgvsProteinImpact = hgvsProteinImpact,
             hgvsCodingImpact = hgvsCodingImpact

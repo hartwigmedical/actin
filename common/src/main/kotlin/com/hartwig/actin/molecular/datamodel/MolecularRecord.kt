@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import java.time.LocalDate
@@ -18,7 +17,7 @@ data class MolecularRecord(
     val pharmaco: Set<PharmacoEntry>,
     override val type: ExperimentType,
     override val date: LocalDate?,
-    override val drivers: MolecularDrivers,
+    override val drivers: Drivers,
     override val characteristics: MolecularCharacteristics,
     override val evidenceSource: String,
 ) : MolecularTest {

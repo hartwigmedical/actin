@@ -8,4 +8,5 @@ data class ExtendedVariant(
     val isBiallelic: Boolean,
     val phaseGroups: Set<Int>?,
     val otherImpacts: Set<TranscriptImpact>,
+    val clonalLikelihood: Double,
 )

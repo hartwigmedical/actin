@@ -14,7 +14,6 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
@@ -143,9 +142,10 @@ object TestMolecularFactory {
         )
     }
 
-    private fun createMinimalMolecularDrivers() = MolecularDrivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
+    private fun createMinimalMolecularDrivers() =
+        Drivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
 
-    fun createProperTestDrivers(): MolecularDrivers {
+    fun createProperTestDrivers(): Drivers {
         return createMinimalMolecularDrivers().copy(
             variants = setOf(
                 createProperVariant()
@@ -179,7 +179,7 @@ object TestMolecularFactory {
         isAssociatedWithDrugResistance = null
     )
 
-    fun createProperVariant() = ExtendedVariant(
+    fun createProperVariant() = Variant(
         chromosome = "7",
         position = 140453136,
         ref = "T",
@@ -193,11 +193,15 @@ object TestMolecularFactory {
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         isAssociatedWithDrugResistance = true,
         type = VariantType.SNV,
-        variantCopyNumber = 4.1,
-        totalCopyNumber = 6.0,
-        isBiallelic = false,
+        extendedVariant = ExtendedVariant(
+            variantCopyNumber = 4.1,
+            totalCopyNumber = 6.0,
+            isBiallelic = false,
+            otherImpacts = emptySet(),
+            phaseGroups = null,
+            clonalLikelihood = 1.0
+        ),
         isHotspot = true,
-        clonalLikelihood = 1.0,
         canonicalImpact = TranscriptImpact(
             transcriptId = "ENST00000288602",
             hgvsCodingImpact = "c.1799T>A",
@@ -207,9 +211,7 @@ object TestMolecularFactory {
             effects = setOf(VariantEffect.MISSENSE),
             codingEffect = CodingEffect.MISSENSE,
             affectedExon = null
-        ),
-        otherImpacts = emptySet(),
-        phaseGroups = null
+        )
     )
 
     private fun createProperTestImmunology(): MolecularImmunology {
@@ -235,7 +237,7 @@ object TestMolecularFactory {
         )
     }
 
-    private fun createExhaustiveTestDrivers(): MolecularDrivers {
+    private fun createExhaustiveTestDrivers(): Drivers {
         val proper = createProperTestDrivers()
         return proper.copy(
             copyNumbers = proper.copyNumbers + CopyNumber(
@@ -284,20 +286,22 @@ object TestMolecularFactory {
                 isAssociatedWithDrugResistance = null,
                 clusterGroup = 0
             ),
-            fusions = proper.fusions + ExtendedFusion(
+            fusions = proper.fusions + Fusion(
                 isReportable = true,
                 event = "EML4 - ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestActionableEvidenceFactory.createExhaustive(),
                 geneStart = "EML4",
                 geneTranscriptStart = "ENST00000318522",
-                fusedExonUp = 6,
                 geneEnd = "ALK",
                 geneTranscriptEnd = "ENST00000389048",
-                fusedExonDown = 20,
-                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                driverType = FusionDriverType.KNOWN_PAIR,
-                isAssociatedWithDrugResistance = null
+                extendedFusion = ExtendedFusion(
+                    fusedExonUp = 6,
+                    fusedExonDown = 20,
+                    proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                    driverType = FusionDriverType.KNOWN_PAIR,
+                    isAssociatedWithDrugResistance = null
+                )
             ),
             viruses = proper.viruses + Virus(
                 isReportable = true,

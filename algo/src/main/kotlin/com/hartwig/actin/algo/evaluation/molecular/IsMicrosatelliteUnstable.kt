@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
@@ -18,7 +17,7 @@ class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
         val drivers = molecular.drivers
         val (biallelicMsiVariants, nonBiallelicMsiVariants) = drivers.variants
             .filter { variant -> variant.gene in MSI_GENES && variant.isReportable }
-            .partition(ExtendedVariant::isBiallelic)
+            .partition { it.nullSafeExtendedVariant().isBiallelic }
 
         val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in MSI_GENES && it.type == CopyNumberType.LOSS }
         val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in MSI_GENES }

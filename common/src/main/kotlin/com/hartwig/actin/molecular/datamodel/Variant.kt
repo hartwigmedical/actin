@@ -12,8 +12,7 @@ data class Variant(
     val type: VariantType,
     val isHotspot: Boolean,
     val canonicalImpact: TranscriptImpact,
-    val clonalLikelihood: Double?,
-    val extendedVariant: ExtendedVariant?,
+    val extendedVariant: ExtendedVariant? = null,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
@@ -27,5 +26,8 @@ data class Variant(
     override fun compareTo(other: Variant): Int {
         return VariantComparator().compare(this, other)
     }
+
+    fun nullSafeExtendedVariant() = extendedVariant
+        ?: throw IllegalStateException("Fusion is expected to have extended properties. Is this an orange-based molecular record?")
 }
 

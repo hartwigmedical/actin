@@ -16,7 +16,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleRecord
 internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(purple: PurpleRecord): Set<CopyNumber> {
-        val drivers = VariantExtractor.relevantPurpleDrivers(purple)
+        val drivers = ExtendedVariantExtractor.relevantPurpleDrivers(purple)
         return purple.allSomaticGeneCopyNumbers()
             .map { geneCopyNumber ->
                 Pair(geneCopyNumber, findCopyNumberDriver(drivers, geneCopyNumber.gene()))

@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -46,15 +46,21 @@ class GeneHasVariantInExonRangeOfType(
                 .map { variant ->
                     val (reportableMatches, unreportableMatches) = listOf(variant)
                         .filter { hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon) }
-                        .partition(ExtendedVariant::isReportable)
+                        .partition(Variant::isReportable)
 
                     val otherImpactMatches = if (!variant.isReportable) emptySet() else {
-                        setOfNotNull(variant.otherImpacts.find { hasEffectInExonRange(it.affectedExon, minExon, maxExon) }
+                        setOfNotNull(variant.nullSafeExtendedVariant().otherImpacts.find {
+                            hasEffectInExonRange(
+                                it.affectedExon,
+                                minExon,
+                                maxExon
+                            )
+                        }
                             ?.let { variant.event })
                     }
                     Triple(
-                        reportableMatches.map(ExtendedVariant::event).toSet(),
-                        unreportableMatches.map(ExtendedVariant::event).toSet(),
+                        reportableMatches.map(Variant::event).toSet(),
+                        unreportableMatches.map(Variant::event).toSet(),
                         otherImpactMatches
                     )
                 }.fold(
@@ -125,7 +131,7 @@ class GeneHasVariantInExonRangeOfType(
             val geneIsTestedInAnyPanel = molecularHistory.allPanels().any { panel -> panel.testsGene(gene) }
 
             val anyVariantOnGeneInAnyPanel = molecularHistory.allPanels().any { panel ->
-                panel.drivers.variants.any { it.impactsGene(gene) }
+                panel.drivers.variants.any { it.gene == gene }
             }
 
             if (anyVariantOnGeneInAnyPanel) {

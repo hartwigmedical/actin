@@ -4,7 +4,9 @@ import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
@@ -12,6 +14,7 @@ import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.createExhaustiveTestMolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.createMinimalTestMolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.createProperTestMolecularRecord
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
@@ -23,11 +26,8 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
@@ -125,7 +125,7 @@ class MolecularRecordJsonTest {
         assertThat(characteristics.tumorMutationalLoadEvidence).isNull()
     }
 
-    private fun assertDrivers(drivers: MolecularDrivers) {
+    private fun assertDrivers(drivers: Drivers) {
         assertVariants(drivers.variants)
         assertCopyNumbers(drivers.copyNumbers)
         assertHomozygousDisruptions(drivers.homozygousDisruptions)
@@ -134,7 +134,7 @@ class MolecularRecordJsonTest {
         assertViruses(drivers.viruses)
     }
 
-    private fun assertVariants(variants: Set<ExtendedVariant>) {
+    private fun assertVariants(variants: Set<Variant>) {
         assertThat(variants).hasSize(1)
         val variant = variants.first()
         assertThat(variant.isReportable).isTrue
@@ -150,12 +150,12 @@ class MolecularRecordJsonTest {
         assertThat(variant.geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(variant.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
         assertThat(variant.isAssociatedWithDrugResistance!!).isTrue
-        assertThat(variant.variantCopyNumber).isEqualTo(4.1, Offset.offset(epsilon))
-        assertThat(variant.totalCopyNumber).isEqualTo(6.0, Offset.offset(epsilon))
-        assertThat(variant.isBiallelic).isFalse
+        assertThat(variant.extendedVariant?.variantCopyNumber).isEqualTo(4.1, Offset.offset(epsilon))
+        assertThat(variant.extendedVariant?.totalCopyNumber).isEqualTo(6.0, Offset.offset(epsilon))
+        assertThat(variant.extendedVariant?.isBiallelic).isFalse
         assertThat(variant.isHotspot).isTrue
-        assertThat(variant.clonalLikelihood).isEqualTo(1.0, Offset.offset(epsilon))
-        val phaseGroups = variant.phaseGroups!!
+        assertThat(variant.extendedVariant?.clonalLikelihood).isEqualTo(1.0, Offset.offset(epsilon))
+        val phaseGroups = variant.extendedVariant?.phaseGroups!!
         assertThat(phaseGroups).containsExactly(2)
 
         val canonicalImpact = variant.canonicalImpact
@@ -168,8 +168,8 @@ class MolecularRecordJsonTest {
         assertThat(canonicalImpact.effects).isEqualTo(Sets.newHashSet(VariantEffect.MISSENSE))
         assertThat(canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
 
-        assertThat(variant.otherImpacts).hasSize(1)
-        val otherImpact = variant.otherImpacts.first()
+        assertThat(variant.extendedVariant.otherImpacts).hasSize(1)
+        val otherImpact = variant.extendedVariant.otherImpacts.first()
         assertThat(otherImpact.transcriptId).isEqualTo("other trans")
         assertThat(otherImpact.hgvsCodingImpact).isEqualTo("c.other")
         assertThat(otherImpact.hgvsProteinImpact).isEqualTo("p.V601K")
@@ -249,7 +249,7 @@ class MolecularRecordJsonTest {
         assertThat(disruption2.clusterGroup).isEqualTo(2)
     }
 
-    private fun assertFusions(fusions: Set<ExtendedFusion>) {
+    private fun assertFusions(fusions: Set<Fusion>) {
         assertThat(fusions).hasSize(1)
         val fusion = fusions.first()
         assertThat(fusion.isReportable).isTrue
@@ -258,13 +258,13 @@ class MolecularRecordJsonTest {
         assertThat(fusion.evidence).isEqualTo(createEmpty())
         assertThat(fusion.geneStart).isEqualTo("EML4")
         assertThat(fusion.geneTranscriptStart).isEqualTo("ENST00000318522")
-        assertThat(fusion.fusedExonUp).isEqualTo(12)
+        assertThat(fusion.extendedFusion?.fusedExonUp).isEqualTo(12)
         assertThat(fusion.geneEnd).isEqualTo("ALK")
         assertThat(fusion.geneTranscriptEnd).isEqualTo("ENST00000389048")
-        assertThat(fusion.fusedExonDown).isEqualTo(20)
-        assertThat(fusion.driverType).isEqualTo(FusionDriverType.KNOWN_PAIR)
-        assertThat(fusion.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
-        assertThat(fusion.isAssociatedWithDrugResistance!!).isFalse
+        assertThat(fusion.extendedFusion?.fusedExonDown).isEqualTo(20)
+        assertThat(fusion.extendedFusion?.driverType).isEqualTo(FusionDriverType.KNOWN_PAIR)
+        assertThat(fusion.extendedFusion?.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
+        assertThat(fusion.extendedFusion?.isAssociatedWithDrugResistance!!).isFalse
     }
 
     private fun assertViruses(viruses: Set<Virus>) {

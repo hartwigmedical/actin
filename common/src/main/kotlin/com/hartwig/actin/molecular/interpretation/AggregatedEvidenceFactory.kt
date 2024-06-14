@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.interpretation
 
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import org.apache.logging.log4j.LogManager
 
@@ -71,7 +71,7 @@ object AggregatedEvidenceFactory {
         }
     }
 
-    private fun aggregateDriverEvidence(drivers: MolecularDrivers): List<AggregatedEvidence> {
+    private fun aggregateDriverEvidence(drivers: Drivers): List<AggregatedEvidence> {
         return listOf(
             drivers.variants, drivers.copyNumbers, drivers.homozygousDisruptions, drivers.disruptions, drivers.fusions, drivers.viruses
         ).flatMap { driverSet -> driverSet.map { createAggregatedEvidence(it.event, it.evidence) } }

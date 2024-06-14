@@ -1,20 +1,20 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.Driver
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import org.apache.logging.log4j.LogManager
 
 internal class DriverExtractor private constructor(
-    private val variantExtractor: VariantExtractor, private val copyNumberExtractor: CopyNumberExtractor,
+    private val variantExtractor: ExtendedVariantExtractor, private val copyNumberExtractor: CopyNumberExtractor,
     private val homozygousDisruptionExtractor: HomozygousDisruptionExtractor,
     private val disruptionExtractor: DisruptionExtractor, private val fusionExtractor: FusionExtractor,
     private val virusExtractor: VirusExtractor
 ) {
 
-    fun extract(record: OrangeRecord): MolecularDrivers {
+    fun extract(record: OrangeRecord): Drivers {
         val variants = variantExtractor.extract(record.purple())
         LOGGER.info(" Extracted {} variants of which {} reportable", variants.size, reportableCount(variants))
 
@@ -39,7 +39,7 @@ internal class DriverExtractor private constructor(
         val viruses = if (virusInterpreter != null) virusExtractor.extract(virusInterpreter) else emptySet()
         LOGGER.info(" Extracted {} viruses of which {} reportable", viruses.size, reportableCount(viruses))
 
-        return MolecularDrivers(
+        return Drivers(
             variants = variants,
             copyNumbers = copyNumbers,
             homozygousDisruptions = homozygousDisruptions,
@@ -54,7 +54,7 @@ internal class DriverExtractor private constructor(
 
         fun create(geneFilter: GeneFilter): DriverExtractor {
             return DriverExtractor(
-                VariantExtractor(geneFilter),
+                ExtendedVariantExtractor(geneFilter),
                 CopyNumberExtractor(geneFilter),
                 HomozygousDisruptionExtractor(geneFilter),
                 DisruptionExtractor(geneFilter),

@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import java.time.LocalDate
 
 const val ARCHER_FP_LUNG_TARGET = "Archer FP Lung Target"
@@ -11,7 +10,7 @@ const val FREE_TEXT_PANEL = "Freetext"
 interface MolecularTest {
     val type: ExperimentType
     val date: LocalDate?
-    val drivers: MolecularDrivers
+    val drivers: Drivers
     val characteristics: MolecularCharacteristics
     val evidenceSource: String
 
@@ -25,7 +24,7 @@ data class IHCMolecularTest(
 ) : MolecularTest {
     override val type = ExperimentType.IHC
     override val date = test.measureDate
-    override val drivers = MolecularDrivers()
+    override val drivers = Drivers()
     override val evidenceSource = NONE
     override val characteristics = MolecularCharacteristics()
 
@@ -38,7 +37,7 @@ data class OtherPriorMolecularTest(
 ) : MolecularTest {
     override val type = ExperimentType.OTHER
     override val date = test.measureDate
-    override val drivers = MolecularDrivers()
+    override val drivers = Drivers()
     override val evidenceSource = NONE
     override val characteristics = MolecularCharacteristics()
 

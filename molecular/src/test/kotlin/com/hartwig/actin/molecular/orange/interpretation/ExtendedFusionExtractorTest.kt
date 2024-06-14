@@ -43,11 +43,11 @@ class ExtendedFusionExtractorTest {
         assertThat(fusion.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
         assertThat(fusion.geneStart).isEqualTo("gene start")
         assertThat(fusion.geneTranscriptStart).isEqualTo("trans start")
-        assertThat(fusion.fusedExonUp.toLong()).isEqualTo(1)
+        assertThat(fusion.extendedFusion?.fusedExonUp?.toLong()).isEqualTo(1)
         assertThat(fusion.geneEnd).isEqualTo("gene end")
         assertThat(fusion.geneTranscriptEnd).isEqualTo("trans end")
-        assertThat(fusion.fusedExonDown.toLong()).isEqualTo(4)
-        assertThat(fusion.driverType).isEqualTo(FusionDriverType.PROMISCUOUS_5)
+        assertThat(fusion.extendedFusion?.fusedExonDown?.toLong()).isEqualTo(4)
+        assertThat(fusion.extendedFusion?.driverType).isEqualTo(FusionDriverType.PROMISCUOUS_5)
     }
 
     @Test(expected = IllegalStateException::class)
