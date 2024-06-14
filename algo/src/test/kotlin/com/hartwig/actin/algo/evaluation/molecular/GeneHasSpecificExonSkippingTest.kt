@@ -17,9 +17,9 @@ private const val MATCHING_GENE = "gene A"
 private val EXON_SKIPPING_FUSION = TestFusionFactory.createMinimal().copy(
     isReportable = true,
     geneStart = MATCHING_GENE,
-    fusedExonUp = 1,
     geneEnd = MATCHING_GENE,
-    fusedExonDown = 3
+    extendedFusion =
+    TestFusionFactory.createMinimalExtended().copy(fusedExonUp = 1, fusedExonDown = 3)
 )
 
 private val SPLICE_VARIANT = TestVariantFactory.createMinimal().copy(
@@ -89,7 +89,14 @@ class GeneHasSpecificExonSkippingTest {
     @Test
     fun `Should fail on fusion skipping more than the specific exon`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION.copy(fusedExonDown = 5)))
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withFusion(
+                    EXON_SKIPPING_FUSION.copy(
+                        extendedFusion = TestFusionFactory.createMinimalExtended().copy(fusedExonDown = 5)
+                    )
+                )
+            )
         )
     }
 

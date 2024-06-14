@@ -52,7 +52,7 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
                 if (!variant.isReportable) {
                     inactivationEventsThatAreUnreportable.add(variant.event)
                 } else {
-                    val extendedVariant = variant.nullSafeExtendedVariant()
+                    val extendedVariant = variant.extendedVariantOrThrow()
                     val phaseGroups: Set<Int>? = extendedVariant.phaseGroups
                     if (phaseGroups != null) {
                         if (phaseGroups.none { evaluatedPhaseGroups.contains(it) }) {

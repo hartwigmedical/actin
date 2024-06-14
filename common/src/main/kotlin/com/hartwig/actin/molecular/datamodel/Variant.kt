@@ -27,7 +27,7 @@ data class Variant(
         return VariantComparator().compare(this, other)
     }
 
-    fun nullSafeExtendedVariant() = extendedVariant
+    fun extendedVariantOrThrow() = extendedVariant
         ?: throw IllegalStateException("Fusion is expected to have extended properties. Is this an orange-based molecular record?")
 }
 

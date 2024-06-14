@@ -3,12 +3,12 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -106,7 +106,12 @@ class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    true, TestVariantFactory.createMinimal().copy(gene = "other gene", isReportable = true, isBiallelic = false)
+                    true,
+                    TestVariantFactory.createMinimal().copy(
+                        gene = "other gene",
+                        isReportable = true,
+                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(isBiallelic = false)
+                    )
                 )
             )
         )
@@ -128,9 +133,11 @@ class IsMicrosatelliteUnstableTest {
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Undetermined MSI status")
     }
 
-    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): ExtendedVariant {
+    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
         return TestVariantFactory.createMinimal().copy(
-            gene = msiGene, isReportable = isReportable, isBiallelic = isBiallelic
+            gene = msiGene,
+            isReportable = isReportable,
+            extendedVariant = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
         )
     }
 }

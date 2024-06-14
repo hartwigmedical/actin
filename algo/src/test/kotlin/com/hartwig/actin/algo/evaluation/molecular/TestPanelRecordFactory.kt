@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
@@ -11,7 +12,7 @@ object TestPanelRecordFactory {
 
     fun empty() =
         PanelRecord(
-            drivers = PanelDrivers(),
+            drivers = Drivers(),
             date = TEST_DATE,
             characteristics = MolecularCharacteristics(),
             evidenceSource = "",

@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TEST_DATE
@@ -38,7 +39,7 @@ private val FREETEXT_PANEL_WITH_EXON_DELETION = TestPanelRecordFactory.empty().c
 )
 
 private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
-    drivers = PanelDrivers(
+    drivers = Drivers(
         variants = setOf(PROPER_PANEL_VARIANT.copy(gene = TARGET_GENE)), fusions = emptySet()
     ),
     genericPanelExtraction = GenericPanelExtraction(
@@ -162,7 +163,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(OTHER_EXON),
-                        otherImpacts = setOf(impactWithExon(OTHER_EXON), impactWithExon(MATCHING_EXON))
+                        extendedVariant = TestVariantFactory.createMinimalExtended()
+                            .copy(otherImpacts = setOf(impactWithExon(OTHER_EXON), impactWithExon(MATCHING_EXON)))
                     )
                 )
             )

@@ -262,8 +262,8 @@ class MolecularRecordJsonTest {
         assertThat(fusion.geneEnd).isEqualTo("ALK")
         assertThat(fusion.geneTranscriptEnd).isEqualTo("ENST00000389048")
         assertThat(fusion.extendedFusion?.fusedExonDown).isEqualTo(20)
-        assertThat(fusion.extendedFusion?.driverType).isEqualTo(FusionDriverType.KNOWN_PAIR)
-        assertThat(fusion.extendedFusion?.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
+        assertThat(fusion.driverType).isEqualTo(FusionDriverType.KNOWN_PAIR)
+        assertThat(fusion.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
         assertThat(fusion.extendedFusion?.isAssociatedWithDrugResistance!!).isFalse
     }
 
@@ -300,7 +300,8 @@ class MolecularRecordJsonTest {
         assertThat(entry.haplotypes).hasSize(1)
 
         val haplotype = entry.haplotypes.first()
-        assertThat(haplotype.name).isEqualTo("*1_HOM")
+        assertThat(haplotype.allele).isEqualTo("*1")
+        assertThat(haplotype.alleleCount).isEqualTo(2)
         assertThat(haplotype.function).isEqualTo("Normal function")
     }
 }

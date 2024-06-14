@@ -14,7 +14,7 @@ private const val TARGET_GENE = "gene A"
 
 class GeneHasVariantInCodonTest {
     private val function = GeneHasVariantInCodon(TARGET_GENE, Lists.newArrayList("A100", "B200"))
-    
+
     @Test
     fun `Should fail when gene not present`() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
@@ -25,7 +25,10 @@ class GeneHasVariantInCodonTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(isReportable = true, gene = TARGET_GENE))
+                MolecularTestFactory.withVariant(
+                    TestVariantFactory.createMinimal()
+                        .copy(isReportable = true, gene = TARGET_GENE, extendedVariant = TestVariantFactory.createMinimalExtended())
+                )
             )
         )
     }
@@ -37,7 +40,10 @@ class GeneHasVariantInCodonTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
-                        gene = TARGET_GENE, isReportable = true, canonicalImpact = impactWithCodon(OTHER_CODON)
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        canonicalImpact = impactWithCodon(OTHER_CODON),
+                        extendedVariant = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )
@@ -51,7 +57,10 @@ class GeneHasVariantInCodonTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
-                        gene = TARGET_GENE, isReportable = true, clonalLikelihood = 1.0, canonicalImpact = impactWithCodon(MATCHING_CODON)
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
                     )
                 )
             )
@@ -79,7 +88,10 @@ class GeneHasVariantInCodonTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(
-                        gene = TARGET_GENE, isReportable = true, clonalLikelihood = 0.3, canonicalImpact = impactWithCodon(MATCHING_CODON)
+                        gene = TARGET_GENE,
+                        isReportable = true,
+                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
+                        canonicalImpact = impactWithCodon(MATCHING_CODON)
                     )
                 )
             )
@@ -96,7 +108,8 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(OTHER_CODON),
-                        otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON))
+                        extendedVariant = TestVariantFactory.createMinimalExtended()
+                            .copy(otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON))),
                     )
                 )
             )

@@ -100,14 +100,31 @@
         "proteinEffect": "GAIN_OF_FUNCTION",
         "isAssociatedWithDrugResistance": true,
         "type": "SNV",
-        "variantCopyNumber": 4.1,
-        "totalCopyNumber": 6.0,
-        "isBiallelic": false,
+        "extendedVariant": {
+          "variantCopyNumber": 4.1,
+          "totalCopyNumber": 6.0,
+          "isBiallelic": false,
+          "clonalLikelihood": 1.0,
+          "phaseGroups": [
+            2
+          ],
+          "otherImpacts": [
+            {
+              "transcriptId": "other trans",
+              "hgvsCodingImpact": "c.other",
+              "hgvsProteinImpact": "p.V601K",
+              "affectedCodon": null,
+              "affectedExon": 8,
+              "isSpliceRegion": false,
+              "effects": [
+                "MISSENSE",
+                "SPLICE_ACCEPTOR"
+              ],
+              "codingEffect": null
+            }
+          ]
+        },
         "isHotspot": true,
-        "clonalLikelihood": 1.0,
-        "phaseGroups": [
-          2
-        ],
         "canonicalImpact": {
           "transcriptId": "ENST00000288602",
           "hgvsCodingImpact": "c.1799T>A",
@@ -119,22 +136,7 @@
             "MISSENSE"
           ],
           "codingEffect": "MISSENSE"
-        },
-        "otherImpacts": [
-          {
-            "transcriptId": "other trans",
-            "hgvsCodingImpact": "c.other",
-            "hgvsProteinImpact": "p.V601K",
-            "affectedCodon": null,
-            "affectedExon": 8,
-            "isSpliceRegion": false,
-            "effects": [
-              "MISSENSE",
-              "SPLICE_ACCEPTOR"
-            ],
-            "codingEffect": null
-          }
-        ]
+        }
       }
     ],
     "copyNumbers": [
@@ -269,13 +271,15 @@
         },
         "geneStart": "EML4",
         "geneTranscriptStart": "ENST00000318522",
-        "fusedExonUp": 12,
         "geneEnd": "ALK",
         "geneTranscriptEnd": "ENST00000389048",
-        "fusedExonDown": 20,
         "driverType": "KNOWN_PAIR",
         "proteinEffect": "UNKNOWN",
-        "isAssociatedWithDrugResistance": false
+        "extendedFusion": {
+          "fusedExonUp": 12,
+          "fusedExonDown": 20,
+          "isAssociatedWithDrugResistance": false
+        }
       }
     ],
     "viruses": [
@@ -314,7 +318,8 @@
       "gene": "DPYD",
       "haplotypes": [
         {
-          "name": "*1_HOM",
+          "allele": "*1",
+          "alleleCount": 2,
           "function": "Normal function"
         }
       ]

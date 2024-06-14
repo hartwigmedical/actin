@@ -17,7 +17,7 @@ class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
         val drivers = molecular.drivers
         val (biallelicMsiVariants, nonBiallelicMsiVariants) = drivers.variants
             .filter { variant -> variant.gene in MSI_GENES && variant.isReportable }
-            .partition { it.nullSafeExtendedVariant().isBiallelic }
+            .partition { it.extendedVariantOrThrow().isBiallelic }
 
         val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in MSI_GENES && it.type == CopyNumberType.LOSS }
         val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in MSI_GENES }

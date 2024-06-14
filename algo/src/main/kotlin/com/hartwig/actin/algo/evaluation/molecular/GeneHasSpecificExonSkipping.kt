@@ -51,8 +51,8 @@ class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSk
         .toSet()
 
     private fun findFusionSkippingEvents(molecular: MolecularRecord) = molecular.drivers.fusions.filter { fusion ->
-        fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.nullSafeExtendedFusion().fusedExonUp == exonToSkip - 1
-                && fusion.nullSafeExtendedFusion().fusedExonDown == exonToSkip + 1
+        fusion.isReportable && fusion.geneStart == gene && fusion.geneEnd == gene && fusion.extendedFusionOrThrow().fusedExonUp == exonToSkip - 1
+                && fusion.extendedFusionOrThrow().fusedExonDown == exonToSkip + 1
     }
         .map(Fusion::event)
         .toSet()

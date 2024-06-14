@@ -22,6 +22,6 @@ data class Fusion(
         return FusionComparator().compare(this, other)
     }
 
-    fun nullSafeExtendedFusion() = extendedFusion
+    fun extendedFusionOrThrow() = extendedFusion
         ?: throw IllegalStateException("Fusion is expected to have extended properties. Is this an orange-based molecular record?")
 }

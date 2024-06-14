@@ -2,14 +2,14 @@ package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.database.Tables
 import com.hartwig.actin.molecular.datamodel.Driver
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
@@ -223,7 +223,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeVariants(sampleId: String, variants: Set<ExtendedVariant>) {
+    private fun writeVariants(sampleId: String, variants: Set<Variant>) {
         for (variant in variants) {
             val variantId = context.insertInto(
                 Tables.VARIANT,
@@ -261,12 +261,12 @@ internal class MolecularDAO(private val context: DSLContext) {
                     variant.proteinEffect.toString(),
                     variant.isAssociatedWithDrugResistance,
                     variant.type.toString(),
-                    variant.variantCopyNumber,
-                    variant.totalCopyNumber,
-                    variant.isBiallelic,
+                    variant.extendedVariantOrThrow().variantCopyNumber,
+                    variant.extendedVariantOrThrow().totalCopyNumber,
+                    variant.extendedVariantOrThrow().isBiallelic,
                     variant.isHotspot,
-                    variant.clonalLikelihood,
-                    DataUtil.concat(integersToStrings(variant.phaseGroups)),
+                    variant.extendedVariantOrThrow().clonalLikelihood,
+                    DataUtil.concat(integersToStrings(variant.extendedVariantOrThrow().phaseGroups)),
                     variant.canonicalImpact.transcriptId,
                     variant.canonicalImpact.hgvsCodingImpact,
                     variant.canonicalImpact.hgvsProteinImpact,
@@ -443,7 +443,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeFusions(sampleId: String, fusions: Set<ExtendedFusion>) {
+    private fun writeFusions(sampleId: String, fusions: Set<Fusion>) {
         for (fusion in fusions) {
             val fusionId = context.insertInto(
                 Tables.FUSION,
@@ -468,13 +468,13 @@ internal class MolecularDAO(private val context: DSLContext) {
                     driverLikelihood(fusion),
                     fusion.geneStart,
                     fusion.geneTranscriptStart,
-                    fusion.fusedExonUp,
+                    fusion.extendedFusionOrThrow().fusedExonUp,
                     fusion.geneEnd,
                     fusion.geneTranscriptEnd,
-                    fusion.fusedExonDown,
+                    fusion.extendedFusionOrThrow().fusedExonDown,
                     fusion.driverType.toString(),
                     fusion.proteinEffect.toString(),
-                    fusion.isAssociatedWithDrugResistance
+                    fusion.extendedFusionOrThrow().isAssociatedWithDrugResistance
                 )
                 .returning(Tables.FUSION.ID)
                 .fetchOne()!!
@@ -570,7 +570,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                     Tables.PHARMACO.HAPLOTYPE,
                     Tables.PHARMACO.HAPLOTYPEFUNCTION
                 )
-                    .values(sampleId, entry.gene, haplotype.name, haplotype.function)
+                    .values(sampleId, entry.gene, haplotype.toHaplotypeString(), haplotype.function)
                     .execute()
             }
         }

@@ -14,7 +14,7 @@ private const val MATCHING_PROTEIN_IMPACT = "V600E"
 
 class GeneHasVariantWithProteinImpactTest {
     private val function = GeneHasVariantWithProteinImpact(MATCHING_GENE, listOf(MATCHING_PROTEIN_IMPACT, "V600K"))
-    
+
     @Test
     fun `Should fail when gene not present`() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
@@ -40,7 +40,8 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         canonicalImpact = proteinImpact("V600P"),
-                        otherImpacts = setOf(proteinImpact("V600P")),
+                        extendedVariant = TestVariantFactory.createMinimalExtended()
+                            .copy(otherImpacts = setOf(proteinImpact("V600P")))
                     )
                 )
             )
@@ -73,7 +74,7 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        clonalLikelihood = 1.0,
+                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )
@@ -106,7 +107,7 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        clonalLikelihood = 0.3,
+                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )
@@ -124,7 +125,9 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         canonicalImpact = proteinImpact("V600P"),
-                        otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT))
+                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(
+                            otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT))
+                        )
                     )
                 )
             )

@@ -5,6 +5,7 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 
 object TestVariantFactory {
 
@@ -25,6 +26,17 @@ object TestVariantFactory {
             isHotspot = false,
             canonicalImpact = TestTranscriptImpactFactory.createMinimal(),
             isAssociatedWithDrugResistance = null,
+        )
+    }
+
+    fun createMinimalExtended(): ExtendedVariant {
+        return ExtendedVariant(
+            clonalLikelihood = 0.0,
+            variantCopyNumber = 0.0,
+            totalCopyNumber = 0.0,
+            isBiallelic = false,
+            otherImpacts = emptySet(),
+            phaseGroups = null,
         )
     }
 }

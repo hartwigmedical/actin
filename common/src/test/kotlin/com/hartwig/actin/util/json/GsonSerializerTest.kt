@@ -26,7 +26,7 @@ class GsonSerializerTest {
         val variant5 = variant(DriverLikelihood.MEDIUM, "BRAF", "V600E", "1800")
         val variants = setOf(variant3, variant5, variant1, variant4, variant2)
 
-        val deserialized = gson.fromJson<List<ExtendedVariant>>(gson.toJson(variants), object : TypeToken<List<ExtendedVariant>>() {}.type)
+        val deserialized = gson.fromJson<List<ExtendedVariant>>(gson.toJson(variants), object : TypeToken<List<Variant>>() {}.type)
         assertThat(deserialized).isEqualTo(variants.sortedWith(VariantComparator()))
     }
 

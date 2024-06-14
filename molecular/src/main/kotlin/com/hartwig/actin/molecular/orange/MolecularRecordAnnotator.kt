@@ -148,8 +148,8 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
 
         return fusion.copy(
             evidence = evidence,
-            extendedFusion = fusion.nullSafeExtendedFusion().copy(
-                proteinEffect = proteinEffect,
+            proteinEffect = proteinEffect,
+            extendedFusion = fusion.extendedFusionOrThrow().copy(
                 isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
             ),
         )
@@ -159,7 +159,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         isReportable = fusion.isReportable,
         geneStart = fusion.geneStart,
         geneEnd = fusion.geneEnd,
-        driverType = fusion.nullSafeExtendedFusion().driverType
+        driverType = fusion.driverType
     )
 
     private fun annotateViruse(virus: Virus): Virus {

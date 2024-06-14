@@ -3,9 +3,9 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Drivers
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
 
 class MolecularDriversSummarizer private constructor(
     private val drivers: Drivers,
@@ -34,7 +34,7 @@ class MolecularDriversSummarizer private constructor(
     }
 
     fun keyFusionEvents(): List<String> {
-        return drivers.fusions.filter(::isKeyDriver).map(ExtendedFusion::event).distinct()
+        return drivers.fusions.filter(::isKeyDriver).map(Fusion::event).distinct()
     }
 
     fun keyVirusEvents(): List<String> {

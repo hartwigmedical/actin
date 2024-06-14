@@ -2,10 +2,10 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.Drivers
+import com.hartwig.actin.molecular.datamodel.Fusion
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 
@@ -13,7 +13,7 @@ class MolecularDriversInterpreter(
     private val drivers: Drivers,
     private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
 ) {
-    fun filteredVariants(): List<ExtendedVariant> {
+    fun filteredVariants(): List<Variant> {
         return filterDrivers(drivers.variants)
     }
 
@@ -29,7 +29,7 @@ class MolecularDriversInterpreter(
         return filterDrivers(drivers.disruptions)
     }
 
-    fun filteredFusions(): List<ExtendedFusion> {
+    fun filteredFusions(): List<Fusion> {
         return filterDrivers(drivers.fusions)
     }
 
