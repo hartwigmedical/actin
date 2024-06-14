@@ -56,6 +56,7 @@ class HasActiveInfectionTest {
                 clinicalStatus = ClinicalStatus(infectionStatus = infectionStatus)
             )
         }
+
         private fun withInfectionStatusAndAtc(hasActiveInfection: Boolean?, atcCode: String, startDate: LocalDate): PatientRecord {
             return withInfectionStatus(hasActiveInfection).copy(
                 medications = listOf(

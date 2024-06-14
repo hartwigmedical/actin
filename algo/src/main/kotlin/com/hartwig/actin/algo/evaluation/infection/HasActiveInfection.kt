@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.CurrentlyGetsMedicationOfAtcLevel
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
@@ -14,11 +13,12 @@ import java.time.LocalDate
 
 class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate: LocalDate) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val currentlyUsesAntibiotics = CurrentlyGetsMedicationOfAtcLevel(
-            MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate)),
-            "Systemic antibiotics",
-            MedicationCategories.create(atcTree).resolve("Systemic antibiotics")
-        ).evaluate(record).passGeneralMessages.isNotEmpty()
+
+        val medicationSelector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate))
+        val antibioticAtcLevels = MedicationCategories.create(atcTree).resolve("Systemic antibiotics")
+        val currentlyUsesAntibiotics = record.medications?.any {
+            medicationSelector.isActive(it) && (it.allLevels() intersect antibioticAtcLevels).isNotEmpty()
+        } ?: false
 
         val infection = record.clinicalStatus.infectionStatus
 
