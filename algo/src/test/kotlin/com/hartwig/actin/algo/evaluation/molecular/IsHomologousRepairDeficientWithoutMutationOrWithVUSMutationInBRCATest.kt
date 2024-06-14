@@ -19,9 +19,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     fun `Should fail when HRD status unknown and no reportable drivers in HR genes`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant())
-            )
+            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant()))
         )
     }
 
@@ -29,18 +27,26 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     fun `Should fail when HRD with loss of BRCA1`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
-                true, TestCopyNumberFactory.createMinimal().copy(type = CopyNumberType.LOSS, gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH))
-            ))
+            function.evaluate(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndLoss(
+                    true,
+                    TestCopyNumberFactory.createMinimal()
+                        .copy(type = CopyNumberType.LOSS, gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH)
+                )
+            )
+        )
     }
 
     @Test
     fun `Should fail when HRD with BRCA1 hotspot`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
-                true, hrdVariant(isReportable = true, isHotspot = true))
-            ))
+            function.evaluate(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                    true, hrdVariant(isReportable = true, isHotspot = true)
+                )
+            )
+        )
     }
 
     @Test
@@ -56,7 +62,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true, isBiallelic = false))
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(null, hrdVariant(isReportable = true))
             )
         )
     }
@@ -65,7 +71,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     fun `Should warn when HRD and only a non reportable mutation in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = false)))
+            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant()))
         )
     }
 
@@ -73,7 +79,12 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     fun `Should warn when HRD and non-hotspot biallelic high driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isBiallelic = true, driverLikelihood = DriverLikelihood.HIGH, isReportable = true)))
+            function.evaluate(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                    true,
+                    hrdVariant(isReportable = true, isBiallelic = true, driverLikelihood = DriverLikelihood.HIGH)
+                )
+            )
         )
     }
 
@@ -81,7 +92,12 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     fun `Should warn when HRD and non-hotspot biallelic low driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isBiallelic = true, driverLikelihood = DriverLikelihood.LOW, isReportable = true)))
+            function.evaluate(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                    true,
+                    hrdVariant(isReportable = true, isBiallelic = true)
+                )
+            )
         )
     }
 
@@ -89,7 +105,12 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     fun `Should warn when HRD and non-hotspot non-biallelic high driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(driverLikelihood = DriverLikelihood.HIGH, isReportable = true)))
+            function.evaluate(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                    true,
+                    hrdVariant(isReportable = true, driverLikelihood = DriverLikelihood.HIGH)
+                )
+            )
         )
     }
 
@@ -97,7 +118,12 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     fun `Should warn when HRD and non-hotspot non-biallelic low driver in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(driverLikelihood = DriverLikelihood.LOW, isReportable = true)))
+            function.evaluate(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                    true,
+                    hrdVariant(isReportable = true)
+                )
+            )
         )
     }
 
@@ -107,7 +133,9 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
-                    true, TestDisruptionFactory.createMinimal().copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
+                    true,
+                    TestDisruptionFactory.createMinimal()
+                        .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
                 )
             )
         )
@@ -119,7 +147,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
-                    true, hrdVariant(gene = "RAD51C", isBiallelic = false, isReportable = true)
+                    true, hrdVariant(gene = "RAD51C", true)
                 )
             )
         )
@@ -131,7 +159,9 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndDisruption(
-                    true, TestDisruptionFactory.createMinimal().copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
+                    true,
+                    TestDisruptionFactory.createMinimal()
+                        .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
                 )
             )
         )
@@ -143,7 +173,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant())
-                )
+            )
         )
     }
 
@@ -153,7 +183,10 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariantAndDisruption(
-                    true, TestDisruptionFactory.createMinimal().copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true), hrdVariant("RAD51C", true, true, isHotspot = true)
+                    true,
+                    TestDisruptionFactory.createMinimal()
+                        .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true),
+                    hrdVariant("RAD51C", true, true,true)
                 )
             )
         )
@@ -165,7 +198,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
-                    true, hrdVariant("RAD51C", true, true, isHotspot = true)
+                    true, hrdVariant("RAD51C", true, true, true)
                 )
             )
         )
@@ -177,15 +210,21 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndHomozygousDisruption(
-                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH)
+                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = "BRCA1")
                 )
             )
         )
     }
 
-    private fun hrdVariant(gene: String = "BRCA1", isReportable: Boolean = false, isBiallelic: Boolean = false, driverLikelihood: DriverLikelihood = DriverLikelihood.LOW, isHotspot: Boolean = false): Variant {
+    private fun hrdVariant(
+        gene: String = "BRCA1",
+        isReportable: Boolean = false,
+        isBiallelic: Boolean = false,
+        isHotspot: Boolean = false,
+        driverLikelihood: DriverLikelihood = DriverLikelihood.LOW,
+    ): Variant {
         return TestVariantFactory.createMinimal().copy(
-            gene = gene, isReportable = isReportable, isBiallelic = isBiallelic, driverLikelihood = driverLikelihood, isHotspot = isHotspot
+            gene = gene, isReportable = isReportable, isBiallelic = isBiallelic, isHotspot = isHotspot, driverLikelihood = driverLikelihood,
         )
     }
 }
