@@ -3,6 +3,8 @@ package com.hartwig.actin.molecular.interpretation
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory.createAlwaysValid
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory.createValidForGenes
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isCodon
+import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isCyp
+import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHaplotype
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHlaAllele
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isProteinImpact
 import org.assertj.core.api.Assertions.assertThat
@@ -30,10 +32,10 @@ class MolecularInputCheckerTest {
 
     @Test
     fun `Should determine if string is haplotype`() {
-        assertThat(MolecularInputChecker.isHaplotype("*1_HOM")).isTrue
-        assertThat(isHlaAllele("UGT1A1_1_HOM")).isFalse
-        assertThat(isHlaAllele("_1*HOM")).isFalse
-        assertThat(isHlaAllele("*_HOM")).isFalse
+        assertThat(isHaplotype("*1_HOM")).isTrue
+        assertThat(isHaplotype("UGT1A1_1_HOM")).isFalse
+        assertThat(isHaplotype("_1*HOM")).isFalse
+        assertThat(isHaplotype("*_HOM")).isFalse
     }
     
     @Test
@@ -58,6 +60,15 @@ class MolecularInputCheckerTest {
         assertThat(isProteinImpact("600E")).isFalse
         assertThat(isProteinImpact("v600e")).isFalse
         assertThat(isProteinImpact("BRAF")).isFalse
+    }
+
+    @Test
+    fun `Should determine if string is CYP`() {
+        assertThat(isCyp("3A4")).isTrue
+        assertThat(isCyp("CYP3A4")).isFalse
+        assertThat(isCyp("A4")).isFalse
+        assertThat(isCyp("A4A")).isFalse
+        assertThat(isCyp("3A")).isFalse
     }
 
     @Test

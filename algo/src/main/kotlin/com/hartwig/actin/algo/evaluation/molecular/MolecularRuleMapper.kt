@@ -62,6 +62,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to nsclcDriverGeneStatusesAreAvailableCreator(),
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
+            EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator()
         )
     }
 
@@ -388,6 +389,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasEgfrPaccMutationCreator(): FunctionCreator {
         return FunctionCreator { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANT_LIST) }
+    }
+
+    private fun hasCoDeletionOfChromosomeArmsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val (chromosome1, chromosome2) = functionInputResolver().createTwoStringsInput(function)
+            HasCodeletionOfChromosomeArms(chromosome1, chromosome2)
+        }
     }
 
     private val EGFR_PACC_VARIANT_LIST =

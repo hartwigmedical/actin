@@ -9,7 +9,7 @@ import org.junit.Test
 class NKITrialStatusEntryReaderTest {
 
     @Test
-    fun `Should read all trial status from JSON and only include open and closed trials`() {
+    fun `Should read all trial status from JSON and only include open, closed and suspended trials`() {
         val reader = NKITrialStatusEntryReader()
         val status = reader.read(resourceOnClasspath("nki_config"))
         assertThat(status).containsExactly(
@@ -27,6 +27,13 @@ class NKITrialStatusEntryReaderTest {
                 studyTitle = "Closed trial",
                 studyStatus = TrialStatus.CLOSED
             ),
+            TrialStatusEntry(
+                studyId = 5,
+                metcStudyID = "MEC-005",
+                studyAcronym = "CLS-001",
+                studyTitle = "Suspended trial",
+                studyStatus = TrialStatus.CLOSED
+            )
         )
     }
 }

@@ -11,7 +11,7 @@ class MolecularDriverEntryComparator : Comparator<MolecularDriverEntry> {
         val driverTypeCompare = DRIVER_TYPE_COMPARATOR.compare(entry1.driverType, entry2.driverType)
         return if (driverTypeCompare != 0) {
             driverTypeCompare
-        } else entry1.driver.compareTo(entry2.driver)
+        } else entry1.displayedName.compareTo(entry2.displayedName)
     }
 
     private class DriverTypeComparator : Comparator<String> {
