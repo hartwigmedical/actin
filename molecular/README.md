@@ -249,20 +249,21 @@ The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 
 ### Integration of non-ORANGE molecular results
 
-Molecular results which are not orange flow via the clinical data and the prior molecular tests. These results are normalized and integrated
-into
-a single molecular history, which can be processed by downstream rules without specific knowledge about what type of test was done. This
-integration
-process is documented in the diagram below.
+Molecular results which are not ORANGE are interpreted from the clinical data, using the prior molecular test list. These results are
+normalized and integrated into the molecular history, which can be processed by downstream rules without specific knowledge about what type
+of test was done. This integration process is documented in the diagram below.
+
+Note: IHC tests are not included below as they do not provide molecular events which can be annotated. They follow a similar path, but
+have no annotation step, and cannot be used in molecular rules requiring drivers. 
 
 ![Integrating Molecular Data](integrating_molecular_data.png)
 
-The flow of data from provider to rule follows these steps:
+The flow of data from provider to rule evaluation follows these steps:
 
-- An extractor transforms the data into a model which more easily supports annotation.
+- An extractor transforms the data into a data model which more easily supports annotation.
 - An annotator adds evidence (see [Evidence annotation](#evidence-annotation)). In the case of panel tests not extracted from ORANGE
-  results, we also add genomic positional annotation (using transvar) and driver likelihood.
-- The annotators produce either a PanelRecord or MolecularRecord. These both conform to the MolecularTest interface and are combines in a
+  results, we also add genomic position and driver likelihood.
+- The annotators produce either a PanelRecord or MolecularRecord. These both conform to the MolecularTest interface and are combined in a
   single list in the molecular history.
 - Molecular rules can then evaluate the molecular history.
 
