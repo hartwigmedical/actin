@@ -2,14 +2,13 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.createFullExpandedDoidTree
 import com.hartwig.actin.algo.doid.DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID
-import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
 class HasExhaustedSOCTreatments(
     private val recommendationEngineFactory: RecommendationEngineFactory, private val doidModel: DoidModel
@@ -18,11 +17,8 @@ class HasExhaustedSOCTreatments(
     override fun evaluate(record: PatientRecord): Evaluation {
         val recommendationEngine = recommendationEngineFactory.create()
         val isNSCLC = LUNG_NON_SMALL_CELL_CARCINOMA_DOID in createFullExpandedDoidTree(doidModel, record.tumor.doids)
-        val hasReceivedPlatinumBasedDoublet = record.oncologicalHistory.any { entry ->
-            entry.treatments.any {
-                it.categories().contains(TreatmentCategory.CHEMOTHERAPY) && it.types().contains(DrugType.PLATINUM_COMPOUND)
-            }
-        }
+        val hasReceivedPlatinumBasedDoubletOrMore =
+            HasReceivedPlatinumBasedDoublet().evaluate(record).result in setOf(EvaluationResult.PASS, EvaluationResult.WARN)
 
         return when {
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
@@ -38,7 +34,7 @@ class HasExhaustedSOCTreatments(
             }
 
             isNSCLC -> {
-                if (hasReceivedPlatinumBasedDoublet) {
+                if (hasReceivedPlatinumBasedDoubletOrMore) {
                     EvaluationFactory.undetermined("Undetermined exhaustion of SOC", "Undetermined exhaustion of SOC")
                 } else EvaluationFactory.fail(
                     "Patient has not exhausted SOC (at least platinum doublet remaining)",

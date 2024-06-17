@@ -11,6 +11,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -39,9 +41,15 @@ class HasExhaustedSOCTreatmentsTest {
     @Test
     fun `Should return undetermined for patient with NSCLC and platinum doublet chemotherapy in treatment history`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
-        val treatment =
-            TreatmentTestFactory.drugTreatment("Platinum doublet", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.PLATINUM_COMPOUND))
-        val record = createHistoryWithNSCLCAndTreatment(treatment)
+        val platinumDoublet =
+            DrugTreatment(
+                name = "Carboplatin+Pemetrexed",
+                drugs = setOf(
+                    Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)),
+                    Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
+                )
+            )
+        val record = createHistoryWithNSCLCAndTreatment(platinumDoublet)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
