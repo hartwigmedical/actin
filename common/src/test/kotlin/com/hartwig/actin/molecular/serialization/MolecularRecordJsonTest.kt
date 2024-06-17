@@ -150,12 +150,12 @@ class MolecularRecordJsonTest {
         assertThat(variant.geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(variant.proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
         assertThat(variant.isAssociatedWithDrugResistance!!).isTrue
-        assertThat(variant.extendedVariant?.variantCopyNumber).isEqualTo(4.1, Offset.offset(epsilon))
-        assertThat(variant.extendedVariant?.totalCopyNumber).isEqualTo(6.0, Offset.offset(epsilon))
-        assertThat(variant.extendedVariant?.isBiallelic).isFalse
+        assertThat(variant.extendedVariantDetails?.variantCopyNumber).isEqualTo(4.1, Offset.offset(epsilon))
+        assertThat(variant.extendedVariantDetails?.totalCopyNumber).isEqualTo(6.0, Offset.offset(epsilon))
+        assertThat(variant.extendedVariantDetails?.isBiallelic).isFalse
         assertThat(variant.isHotspot).isTrue
-        assertThat(variant.extendedVariant?.clonalLikelihood).isEqualTo(1.0, Offset.offset(epsilon))
-        val phaseGroups = variant.extendedVariant?.phaseGroups!!
+        assertThat(variant.extendedVariantDetails?.clonalLikelihood).isEqualTo(1.0, Offset.offset(epsilon))
+        val phaseGroups = variant.extendedVariantDetails?.phaseGroups!!
         assertThat(phaseGroups).containsExactly(2)
 
         val canonicalImpact = variant.canonicalImpact
@@ -168,8 +168,8 @@ class MolecularRecordJsonTest {
         assertThat(canonicalImpact.effects).isEqualTo(Sets.newHashSet(VariantEffect.MISSENSE))
         assertThat(canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
 
-        assertThat(variant.extendedVariant.otherImpacts).hasSize(1)
-        val otherImpact = variant.extendedVariant.otherImpacts.first()
+        assertThat(variant.extendedVariantDetails.otherImpacts).hasSize(1)
+        val otherImpact = variant.extendedVariantDetails.otherImpacts.first()
         assertThat(otherImpact.transcriptId).isEqualTo("other trans")
         assertThat(otherImpact.hgvsCodingImpact).isEqualTo("c.other")
         assertThat(otherImpact.hgvsProteinImpact).isEqualTo("p.V601K")
@@ -258,13 +258,13 @@ class MolecularRecordJsonTest {
         assertThat(fusion.evidence).isEqualTo(createEmpty())
         assertThat(fusion.geneStart).isEqualTo("EML4")
         assertThat(fusion.geneTranscriptStart).isEqualTo("ENST00000318522")
-        assertThat(fusion.extendedFusion?.fusedExonUp).isEqualTo(12)
+        assertThat(fusion.extendedFusionDetails?.fusedExonUp).isEqualTo(12)
         assertThat(fusion.geneEnd).isEqualTo("ALK")
         assertThat(fusion.geneTranscriptEnd).isEqualTo("ENST00000389048")
-        assertThat(fusion.extendedFusion?.fusedExonDown).isEqualTo(20)
+        assertThat(fusion.extendedFusionDetails?.fusedExonDown).isEqualTo(20)
         assertThat(fusion.driverType).isEqualTo(FusionDriverType.KNOWN_PAIR)
         assertThat(fusion.proteinEffect).isEqualTo(ProteinEffect.UNKNOWN)
-        assertThat(fusion.extendedFusion?.isAssociatedWithDrugResistance!!).isFalse
+        assertThat(fusion.extendedFusionDetails?.isAssociatedWithDrugResistance!!).isFalse
     }
 
     private fun assertViruses(viruses: Set<Virus>) {

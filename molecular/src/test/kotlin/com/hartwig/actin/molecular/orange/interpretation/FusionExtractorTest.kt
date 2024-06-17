@@ -43,10 +43,10 @@ class FusionExtractorTest {
         assertThat(fusion.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
         assertThat(fusion.geneStart).isEqualTo("gene start")
         assertThat(fusion.geneTranscriptStart).isEqualTo("trans start")
-        assertThat(fusion.extendedFusion?.fusedExonUp?.toLong()).isEqualTo(1)
+        assertThat(fusion.extendedFusionDetails?.fusedExonUp?.toLong()).isEqualTo(1)
         assertThat(fusion.geneEnd).isEqualTo("gene end")
         assertThat(fusion.geneTranscriptEnd).isEqualTo("trans end")
-        assertThat(fusion.extendedFusion?.fusedExonDown?.toLong()).isEqualTo(4)
+        assertThat(fusion.extendedFusionDetails?.fusedExonDown?.toLong()).isEqualTo(4)
         assertThat(fusion.driverType).isEqualTo(FusionDriverType.PROMISCUOUS_5)
     }
 

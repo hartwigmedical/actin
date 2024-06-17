@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
@@ -35,7 +35,7 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                     geneTranscriptStart = fusion.geneTranscriptStart(),
                     proteinEffect = ProteinEffect.UNKNOWN,
                     driverType = determineDriverType(fusion),
-                    extendedFusion = ExtendedFusion(
+                    extendedFusionDetails = ExtendedFusionDetails(
                         fusedExonUp = fusion.fusedExonUp(),
                         fusedExonDown = fusion.fusedExonDown(),
                         isAssociatedWithDrugResistance = null,

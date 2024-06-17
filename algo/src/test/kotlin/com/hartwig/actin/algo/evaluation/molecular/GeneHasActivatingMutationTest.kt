@@ -134,7 +134,7 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
             ),
         )
     }
@@ -147,7 +147,7 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.LOW,
-                extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
             ),
             null
         )
@@ -161,7 +161,7 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.LOW,
-                extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
             ),
             true
         )
@@ -324,7 +324,7 @@ class GeneHasActivatingMutationTest {
             isHotspot = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(300),
-            extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
+            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
         )
 
         private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE = TestVariantFactory.createMinimal().copy(
@@ -336,7 +336,7 @@ class GeneHasActivatingMutationTest {
             isHotspot = true,
             isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(100),
-            extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
+            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
         )
 
         private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)

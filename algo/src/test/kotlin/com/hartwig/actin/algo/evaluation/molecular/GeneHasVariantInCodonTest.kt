@@ -27,7 +27,7 @@ class GeneHasVariantInCodonTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal()
-                        .copy(isReportable = true, gene = TARGET_GENE, extendedVariant = TestVariantFactory.createMinimalExtended())
+                        .copy(isReportable = true, gene = TARGET_GENE, extendedVariantDetails = TestVariantFactory.createMinimalExtended())
                 )
             )
         )
@@ -43,7 +43,7 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(OTHER_CODON),
-                        extendedVariant = TestVariantFactory.createMinimalExtended()
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )
@@ -60,7 +60,7 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(MATCHING_CODON),
-                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
                     )
                 )
             )
@@ -90,7 +90,7 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
                         canonicalImpact = impactWithCodon(MATCHING_CODON)
                     )
                 )
@@ -108,7 +108,7 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(OTHER_CODON),
-                        extendedVariant = TestVariantFactory.createMinimalExtended()
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
                             .copy(otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON))),
                     )
                 )

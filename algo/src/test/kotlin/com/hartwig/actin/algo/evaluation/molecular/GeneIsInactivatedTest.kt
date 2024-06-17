@@ -38,7 +38,7 @@ class GeneIsInactivatedTest {
         gene = GENE,
         isReportable = true,
         driverLikelihood = DriverLikelihood.HIGH,
-        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0, isBiallelic = true),
+        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0, isBiallelic = true),
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(
@@ -139,7 +139,7 @@ class GeneIsInactivatedTest {
     fun `Should warn when TSG variant is not biallelic`() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            matchingVariant.copy(extendedVariant = matchingVariant.extendedVariant?.copy(isBiallelic = false))
+            matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false))
         )
     }
 
@@ -147,7 +147,7 @@ class GeneIsInactivatedTest {
     fun `Should warn when TSG variant is subclonal`() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            matchingVariant.copy(extendedVariant = matchingVariant.extendedVariant?.copy(clonalLikelihood = 0.4))
+            matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(clonalLikelihood = 0.4))
         )
     }
 
@@ -179,7 +179,7 @@ class GeneIsInactivatedTest {
             false,
             matchingVariant.copy(
                 driverLikelihood = DriverLikelihood.LOW,
-                extendedVariant = matchingVariant.extendedVariant?.copy(isBiallelic = false)
+                extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false)
             )
         )
 
@@ -218,7 +218,7 @@ class GeneIsInactivatedTest {
     fun `Should warn with multiple low driver variants with unknown phase groups and inactivating effects`() {
         val variant1 = variantWithPhaseGroups(null)
         // Add copy number to make distinct:
-        val variant2 = variant1.copy(extendedVariant = variant1.extendedVariant?.copy(variantCopyNumber = 1.0))
+        val variant2 = variant1.copy(extendedVariantDetails = variant1.extendedVariantDetails?.copy(variantCopyNumber = 1.0))
 
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
@@ -258,6 +258,6 @@ class GeneIsInactivatedTest {
         isReportable = true,
         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT),
         driverLikelihood = DriverLikelihood.LOW,
-        extendedVariant = TestVariantFactory.createMinimalExtended().copy(phaseGroups = phaseGroups)
+        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(phaseGroups = phaseGroups)
     )
 }

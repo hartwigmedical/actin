@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.evidence.Country
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,7 +26,7 @@ class GsonSerializerTest {
         val variant5 = variant(DriverLikelihood.MEDIUM, "BRAF", "V600E", "1800")
         val variants = setOf(variant3, variant5, variant1, variant4, variant2)
 
-        val deserialized = gson.fromJson<List<ExtendedVariant>>(gson.toJson(variants), object : TypeToken<List<Variant>>() {}.type)
+        val deserialized = gson.fromJson<List<ExtendedVariantDetails>>(gson.toJson(variants), object : TypeToken<List<Variant>>() {}.type)
         assertThat(deserialized).isEqualTo(variants.sortedWith(VariantComparator()))
     }
 

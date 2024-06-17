@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 
 data class Variant(
@@ -12,7 +12,7 @@ data class Variant(
     val type: VariantType,
     val isHotspot: Boolean,
     val canonicalImpact: TranscriptImpact,
-    val extendedVariant: ExtendedVariant? = null,
+    val extendedVariantDetails: ExtendedVariantDetails? = null,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
@@ -27,7 +27,7 @@ data class Variant(
         return VariantComparator().compare(this, other)
     }
 
-    fun extendedVariantOrThrow() = extendedVariant
+    fun extendedVariantOrThrow() = extendedVariantDetails
         ?: throw IllegalStateException("Variant is expected to have extended properties. Is this an orange-based molecular record?")
 }
 

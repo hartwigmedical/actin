@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
@@ -58,7 +58,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     driverLikelihood = driverLikelihood,
                     evidence = evidence,
                     type = determineVariantType(variant),
-                    extendedVariant = ExtendedVariant(
+                    extendedVariantDetails = ExtendedVariantDetails(
                         variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
                         totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
                         isBiallelic = variant.biallelic(),

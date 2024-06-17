@@ -34,7 +34,7 @@ private val BASE_VARIANT = TestVariantFactory.createMinimal().copy(
     isReportable = true,
     driverLikelihood = DriverLikelihood.HIGH,
     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-    extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
+    extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0)
 )
 
 private val BASE_FUSION = TestFusionFactory.createMinimal().copy(
@@ -42,13 +42,13 @@ private val BASE_FUSION = TestFusionFactory.createMinimal().copy(
     geneStart = CORRECT_FUSION_GENE,
     geneEnd = "Fusion partner",
     driverLikelihood = DriverLikelihood.HIGH,
-    extendedFusion = TestFusionFactory.createMinimalExtended().copy(fusedExonUp = 5, fusedExonDown = 3)
+    extendedFusionDetails = TestFusionFactory.createMinimalExtended().copy(fusedExonUp = 5, fusedExonDown = 3)
 )
 
 private val BASE_EXON_SKIPPING_FUSION = BASE_FUSION.copy(
     geneStart = CORRECT_EXON_SKIPPING_GENE,
     geneEnd = CORRECT_EXON_SKIPPING_GENE,
-    extendedFusion = TestFusionFactory.createMinimalExtended()
+    extendedFusionDetails = TestFusionFactory.createMinimalExtended()
         .copy(fusedExonUp = CORRECT_EXON_SKIPPING_EXON.minus(1), fusedExonDown = CORRECT_EXON_SKIPPING_EXON.plus(1))
 )
 
@@ -177,7 +177,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
     fun `Should fail for incorrect exon skipping variant`() {
         val incorrectExonSkippingFusion =
             BASE_EXON_SKIPPING_FUSION.copy(
-                extendedFusion = TestFusionFactory.createMinimalExtended().copy(fusedExonUp = 1, fusedExonDown = 3)
+                extendedFusionDetails = TestFusionFactory.createMinimalExtended().copy(fusedExonUp = 1, fusedExonDown = 3)
             )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
@@ -219,7 +219,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
                         gene = CORRECT_DELETION_GENE, isReportable = true,
                         type = VariantType.DELETE,
                         canonicalImpact = impactWithExon(CORRECT_DELETION_CODON),
-                        extendedVariant = TestVariantFactory.createMinimalExtended()
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )
@@ -252,7 +252,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailableTest {
                         gene = CORRECT_INSERTION_GENE, isReportable = true,
                         type = VariantType.INSERT,
                         canonicalImpact = impactWithExon(CORRECT_INSERTION_CODON),
-                        extendedVariant = TestVariantFactory.createMinimalExtended()
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
                     )
                 )
             )

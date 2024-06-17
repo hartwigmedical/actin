@@ -15,6 +15,6 @@ class ClonalityInterpreterTest {
 
     private fun create(clonalLikelihood: Double): Variant {
         return TestVariantFactory.createMinimal()
-            .copy(extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = clonalLikelihood))
+            .copy(extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = clonalLikelihood))
     }
 }

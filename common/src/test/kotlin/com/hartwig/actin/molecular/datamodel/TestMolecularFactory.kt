@@ -10,8 +10,8 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
@@ -193,7 +193,7 @@ object TestMolecularFactory {
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         isAssociatedWithDrugResistance = true,
         type = VariantType.SNV,
-        extendedVariant = ExtendedVariant(
+        extendedVariantDetails = ExtendedVariantDetails(
             variantCopyNumber = 4.1,
             totalCopyNumber = 6.0,
             isBiallelic = false,
@@ -297,7 +297,7 @@ object TestMolecularFactory {
                 geneTranscriptEnd = "ENST00000389048",
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 driverType = FusionDriverType.KNOWN_PAIR,
-                extendedFusion = ExtendedFusion(
+                extendedFusionDetails = ExtendedFusionDetails(
                     fusedExonUp = 6,
                     fusedExonDown = 20,
                     isAssociatedWithDrugResistance = null

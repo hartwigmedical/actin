@@ -149,7 +149,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         return fusion.copy(
             evidence = evidence,
             proteinEffect = proteinEffect,
-            extendedFusion = fusion.extendedFusionOrThrow().copy(
+            extendedFusionDetails = fusion.extendedFusionOrThrow().copy(
                 isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
             ),
         )

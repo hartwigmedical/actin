@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
 
@@ -12,7 +12,7 @@ data class Fusion(
     val geneTranscriptEnd: String,
     val driverType: FusionDriverType,
     val proteinEffect: ProteinEffect,
-    val extendedFusion: ExtendedFusion? = null,
+    val extendedFusionDetails: ExtendedFusionDetails? = null,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
@@ -22,6 +22,6 @@ data class Fusion(
         return FusionComparator().compare(this, other)
     }
 
-    fun extendedFusionOrThrow() = extendedFusion
+    fun extendedFusionOrThrow() = extendedFusionDetails
         ?: throw IllegalStateException("Fusion is expected to have extended properties. Is this an orange-based molecular record?")
 }

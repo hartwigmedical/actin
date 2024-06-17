@@ -27,7 +27,7 @@ class GeneHasVariantWithProteinImpactTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal()
-                        .copy(gene = MATCHING_GENE, isReportable = true, extendedVariant = TestVariantFactory.createMinimalExtended())
+                        .copy(gene = MATCHING_GENE, isReportable = true, extendedVariantDetails = TestVariantFactory.createMinimalExtended())
                 )
             )
         )
@@ -43,7 +43,7 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         canonicalImpact = proteinImpact("V600P"),
-                        extendedVariant = TestVariantFactory.createMinimalExtended()
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended()
                             .copy(otherImpacts = setOf(proteinImpact("V600P")))
                     )
                 )
@@ -77,7 +77,7 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0),
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )
@@ -110,7 +110,7 @@ class GeneHasVariantWithProteinImpactTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = MATCHING_GENE,
                         isReportable = true,
-                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.3),
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )
@@ -128,7 +128,7 @@ class GeneHasVariantWithProteinImpactTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         canonicalImpact = proteinImpact("V600P"),
-                        extendedVariant = TestVariantFactory.createMinimalExtended().copy(
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(
                             otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT))
                         )
                     )
