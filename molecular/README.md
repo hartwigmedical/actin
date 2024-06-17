@@ -3,7 +3,8 @@
 ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. In addition, the data is written to a
 per-sample JSON file. ACTIN-Molecular supports interpretation
 of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular
-results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular tests done historically made available via the patient's clinical data.   
+results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular tests done historically made
+available via the patient's clinical data.
 
 The molecular interpreter application requires Java 11+ and can be run as follows:
 
@@ -29,20 +30,6 @@ The following assumptions are made about the inputs:
 - The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
   extract
   the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
-
-## Integration of non-orange molecular results
-
-Molecular results which are not orange flow via the clinical data and the prior molecular tests. These results are normalized and integrated into
-a single molecular history, which can be processed by downstream rules without specific knowledge about what type of test was done. This integration
-process is documented in the diagram below.
-
-![Integrating Molecular Data](integrating_molecular_data.png)
-
-The flow of data from provider to rule follows these steps:
-- An extractor transforms the data into a model which more easily supports annotation.
-- An annotator adds evidence (see [Evidence annotation](#evidence-annotation)). In the case of panel tests not extracted from ORANGE results, we also add genomic positional annotation (using transvar) and driver likelihood.
-- The annotators produce either a PanelRecord or MolecularRecord. These both conform to the MolecularTest interface and are combines in a single list in the molecular history.
-- Molecular rules can then evaluate the molecular history.
 
 ## ACTIN Molecular Datamodel
 
@@ -97,10 +84,8 @@ Furthermore, every gene driver event is assigned the following fields ('gene dri
 
 | Field                          | Example Value    | Details                                                                                                                                                                                                                |
 |--------------------------------|------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| isReportable                   |                  |                                                                                                                                                                                                                        |
 | gene                           | BRAF             | The name of the gene                                                                                                                                                                                                   |
 | geneRole                       | ONCO             | The role of the gene in cancer (either `BOTH`, `ONCO`, `TSG`, or `UNKNOWN`)                                                                                                                                            |
-| driverLikelihood               |                  |                                                                                                                                                                                                                        |
 | proteinEffect                  | GAIN_OF_FUNCTION | The effect the specific driver has on the gene (one of `UNKNOWN`, `AMBIGIOUS`, `NO_EFFECT`, `NO_EFFECT_PREDICTED`, `LOSS_OF_FUNCTION`, `LOSS_OF_FUNCTION_PREDICTED`, `GAIN_OF_FUNCTION`, `GAIN_OF_FUNCTION_PREDICTED`) |
 | isAssociatedWithDrugResistance | true             | An optional boolean indicating the specific driver event is associated with some form of drug resistance                                                                                                               |
 
@@ -110,15 +95,11 @@ In addition to the driver fields, the following data is captured for all detecte
 
 | Field                          | Example Value | Details                                                                                                  |
 |--------------------------------|---------------|----------------------------------------------------------------------------------------------------------|
-| type                           | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                            | 
-| gene                           |               |                                                                                                          |
-| geneRole                       |               |                                                                                                          |
-| chromosome                     |               |                                                                                                          |
-| position                       |               |                                                                                                          |
-| ref                            |               |                                                                                                          |
-| alt                            |               |                                                                                                          |
-| proteinEffect                  |               |                                                                                                          |
-| isAssociatedWithDrugResistance |               |                                                                                                          |
+| type                           | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                            |
+| chromosome                     | 1             | The chromosome in which the event was detected                                                           |
+| position                       | 41206120      | Genomic position in respect to chromosome and ref genome version.                                        |
+| ref                            | A             | The base(s) as found in the reference genome at this position.                                           |
+| alt                            | G             | The base(s) as found in the sample analyzed.                                                             |
 | isHotspot                      | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                                  |
 | canonicalImpact                | See impact    | The impact of this variant on the canonical transcript of the gene                                       |
 | otherImpacts                   | See impact    | A set of impacts on transcripts other than the canonical transcript of the gene                          | 
@@ -256,6 +237,25 @@ The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 
 1. Annotating all mutations and various characteristics in ORANGE with additional gene annotation and clinical evidence.
 2. Mapping all fields, annotated mutations and annotated characteristics to the ACTIN datamodel.
+
+### Integration of non-ORANGE molecular results
+
+Molecular results which are not orange flow via the clinical data and the prior molecular tests. These results are normalized and integrated
+into
+a single molecular history, which can be processed by downstream rules without specific knowledge about what type of test was done. This
+integration
+process is documented in the diagram below.
+
+![Integrating Molecular Data](integrating_molecular_data.png)
+
+The flow of data from provider to rule follows these steps:
+
+- An extractor transforms the data into a model which more easily supports annotation.
+- An annotator adds evidence (see [Evidence annotation](#evidence-annotation)). In the case of panel tests not extracted from ORANGE
+  results, we also add genomic positional annotation (using transvar) and driver likelihood.
+- The annotators produce either a PanelRecord or MolecularRecord. These both conform to the MolecularTest interface and are combines in a
+  single list in the molecular history.
+- Molecular rules can then evaluate the molecular history.
 
 #### 1. Annotation of mutations and characteristics
 
