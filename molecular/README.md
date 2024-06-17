@@ -97,16 +97,16 @@ In addition to the driver fields, the following data is captured for all detecte
 |--------------------------------|---------------|----------------------------------------------------------------------------------------------------------|
 | type                           | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                            |
 | chromosome                     | 1             | The chromosome in which the event was detected                                                           |
-| position                       | 41206120      | Genomic position in respect to chromosome and ref genome version.                                        |
-| ref                            | A             | The base(s) as found in the reference genome at this position.                                           |
-| alt                            | G             | The base(s) as found in the sample analyzed.                                                             |
+| position                       | 41206120      | Genomic position in respect to chromosome and ref genome version                                         |
+| ref                            | A             | The base(s) as found in the reference genome at this position                                            |
+| alt                            | G             | The base(s) as found in the sample analyzed                                                              |
 | isHotspot                      | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                                  |
 | canonicalImpact                | See impact    | The impact of this variant on the canonical transcript of the gene                                       |
 | otherImpacts                   | See impact    | A set of impacts on transcripts other than the canonical transcript of the gene                          | 
 | isAssociatedWithDrugResistance | true          | An optional boolean indicating the specific driver event is associated with some form of drug resistance |
+| extendedVariant                | see below     | Optional field, see below                                                                                |
 
-If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields (captured
-in `ExtendedVariant`).
+If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
 
 | Field             | Example Value | Details                                                                                             |
 |-------------------|---------------|-----------------------------------------------------------------------------------------------------|
@@ -165,13 +165,19 @@ In addition to the general driver fields, the following data is captured per fus
 |--------------------------------|------------------|---------------------------------------------------------------------------------|
 | geneStart                      | EML4             | The gene that makes up the 5' part of the fusion                                |
 | geneTranscriptStart            | ENST001          | The ensembl ID of the transcript that makes up the 5' part of the fusion        |
-| fusedExonUp                    | 10               | The last exon of the 5' gene included in the fusion                             |
 | geneEnd                        | ALK              | The gene that makes up the 3' part of the fusion                                |
 | geneTranscriptEnd              | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion        |
-| fusedExonDown                  | 22               | The first exon of the 3' gene included in the fusion                            |
 | driverType                     | KNOWN_PAIR       | The type of driver fusion                                                       |
 | proteinEffect                  | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                                |
-| isAssociatedWithDrugResistance | null             | Optional field, indicates whether the fusion is associated with drug resistance |
+| isAssociatedWithDrugResistance | true             | Optional field, indicates whether the fusion is associated with drug resistance |
+| extendedFusion                 | see below        | Optional field, see below                                                       |
+
+If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
+
+| Field                          | Example Value    | Details                                                                         |
+|--------------------------------|------------------|---------------------------------------------------------------------------------|
+| fusedExonUp                    | 10               | The last exon of the 5' gene included in the fusion                             |
+| fusedExonDown                  | 22               | The first exon of the 3' gene included in the fusion                            |
 
 #### N viruses
 
