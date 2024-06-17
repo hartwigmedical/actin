@@ -124,9 +124,11 @@ class SummaryChapter(private val report: Report) : ReportChapter {
         }
 
         fun lesions(tumor: TumorDetails): String {
+            val hasBrainOrGliomaTumor = tumor.primaryTumorLocation == "Brain" ||
+                    tumor.primaryTumorType == "Glioma"
             val categorizedLesions = listOf(
                 "CNS" to tumor.hasCnsLesions,
-                "Brain" to tumor.hasBrainLesions,
+                "Brain" to if (hasBrainOrGliomaTumor) true else tumor.hasBrainLesions,
                 "Liver" to tumor.hasLiverLesions,
                 "Bone" to tumor.hasBoneLesions,
                 "Lung" to tumor.hasLungLesions
