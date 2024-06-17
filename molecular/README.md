@@ -1,7 +1,7 @@
 ## ACTIN-Molecular
 
 ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. In addition, the data is written to a
-per-sample JSON file. ACTIN-Molecular only supports interpretation
+per-sample JSON file. ACTIN-Molecular supports interpretation
 of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular
 results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular tests done historically made available via the patient's clinical data.   
 
