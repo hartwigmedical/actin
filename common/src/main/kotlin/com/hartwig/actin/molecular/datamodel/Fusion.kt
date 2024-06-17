@@ -13,6 +13,7 @@ data class Fusion(
     val driverType: FusionDriverType,
     val proteinEffect: ProteinEffect,
     val extendedFusion: ExtendedFusion? = null,
+    val isAssociatedWithDrugResistance: Boolean?,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
