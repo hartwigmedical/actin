@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 
@@ -34,16 +35,20 @@ class HasReceivedPlatinumBasedDoublet : EvaluationFunction {
     private fun receivedPlatinumDoublet(record: PatientRecord): Boolean {
 
         return record.oncologicalHistory.any { entry ->
-            val chemotherapies = entry.treatments.filter { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
-            chemotherapies.size == 2 && chemotherapies.any { it.types().contains(DrugType.PLATINUM_COMPOUND) }
+            val chemotherapyDrugs = entry.treatments.filterIsInstance<DrugTreatment>()
+                .flatMap(DrugTreatment::drugs)
+                .filter { it.category == TreatmentCategory.CHEMOTHERAPY }
+            chemotherapyDrugs.size == 2 && chemotherapyDrugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) }
         }
     }
 
     private fun receivedPlatinumTripletOrAbove(record: PatientRecord): Boolean {
 
         return record.oncologicalHistory.any { entry ->
-            val chemotherapies = entry.treatments.filter { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
-            chemotherapies.size > 2 && chemotherapies.any { it.types().contains(DrugType.PLATINUM_COMPOUND) }
+            val chemotherapyDrugs = entry.treatments.filterIsInstance<DrugTreatment>()
+                .flatMap(DrugTreatment::drugs)
+                .filter { it.category == TreatmentCategory.CHEMOTHERAPY }
+            chemotherapyDrugs.size > 2 && chemotherapyDrugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) }
         }
     }
 }
