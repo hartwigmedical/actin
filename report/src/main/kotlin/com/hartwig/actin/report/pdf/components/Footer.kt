@@ -39,7 +39,7 @@ class Footer {
             canvas.showTextAligned(pageNumberParagraph, 0f, 0f, TextAlignment.LEFT)
             val disclaimer =
                 "All results and data described in this report are for Research Use Only and have NOT been generated " +
-                        "using a clinically validated and controlled procedure nor is it a medical validated device. " +
+                        "using a clinically validated and controlled procedure nor is it a validated medical device. " +
                         "The results should NOT be used for diagnostic or treatment purposes. " +
                         "No rights can be derived from the content of this report."
             val disclaimerParagraph = Paragraph(disclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
