@@ -37,8 +37,11 @@ class Footer {
             val canvas = Canvas(template, document)
             val pageNumberParagraph = Paragraph().add(displayString).addStyle(Styles.pageNumberStyle())
             canvas.showTextAligned(pageNumberParagraph, 0f, 0f, TextAlignment.LEFT)
-            val disclaimer = ("All results and data described in this report are for research use only and have not been generated using a "
-                    + "clinically validated and controlled procedure.")
+            val disclaimer =
+                "All results and data described in this report are for Research Use Only and have NOT been generated " +
+                        "using a clinically validated and controlled procedure nor is it a medical validated device. " +
+                        "The results should NOT be used for diagnostic or treatment purposes. " +
+                        "No rights can be derived from the content of this report."
             val disclaimerParagraph = Paragraph(disclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(disclaimerParagraph, 30f, 0f, TextAlignment.LEFT)
         }
