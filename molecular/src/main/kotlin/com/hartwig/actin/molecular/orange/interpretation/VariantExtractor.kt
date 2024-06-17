@@ -22,7 +22,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import org.apache.logging.log4j.LogManager
 
-internal class ExtendedVariantExtractor(private val geneFilter: GeneFilter) {
+internal class VariantExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(purple: PurpleRecord): Set<Variant> {
         val drivers = relevantPurpleDrivers(purple)
@@ -74,7 +74,7 @@ internal class ExtendedVariantExtractor(private val geneFilter: GeneFilter) {
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(ExtendedVariantExtractor::class.java)
+        private val LOGGER = LogManager.getLogger(VariantExtractor::class.java)
         private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
 
         private val RELEVANT_CODING_EFFECTS = setOf(

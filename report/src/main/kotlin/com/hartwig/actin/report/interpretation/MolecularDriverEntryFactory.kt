@@ -68,7 +68,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
     private fun fromFusion(fusion: Fusion): MolecularDriverEntry {
         val name =
-            fusion.event + ", exon " + fusion.extendedFusionOrThrow().fusedExonUp + " - exon " + fusion.extendedFusionOrThrow().fusedExonDown
+            "${fusion.event}, exon ${fusion.extendedFusionOrThrow().fusedExonUp} - exon ${fusion.extendedFusionOrThrow().fusedExonDown}"
         return driverEntry(fusion.driverType.display(), name, fusion)
     }
 

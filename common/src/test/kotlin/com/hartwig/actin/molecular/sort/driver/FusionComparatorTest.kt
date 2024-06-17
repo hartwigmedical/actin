@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ExtendedFusionComparatorTest {
+class FusionComparatorTest {
 
     @Test
     fun `Should sort fusions`() {

@@ -6,7 +6,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ExtendedVariantDedupTest {
+class VariantDedupTest {
 
     @Test
     fun shouldWorkOnEmptySetOfVariants() {

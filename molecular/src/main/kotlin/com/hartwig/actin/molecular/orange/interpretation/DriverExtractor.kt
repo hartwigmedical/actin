@@ -8,7 +8,7 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import org.apache.logging.log4j.LogManager
 
 internal class DriverExtractor private constructor(
-    private val variantExtractor: ExtendedVariantExtractor, private val copyNumberExtractor: CopyNumberExtractor,
+    private val variantExtractor: VariantExtractor, private val copyNumberExtractor: CopyNumberExtractor,
     private val homozygousDisruptionExtractor: HomozygousDisruptionExtractor,
     private val disruptionExtractor: DisruptionExtractor, private val fusionExtractor: FusionExtractor,
     private val virusExtractor: VirusExtractor
@@ -54,7 +54,7 @@ internal class DriverExtractor private constructor(
 
         fun create(geneFilter: GeneFilter): DriverExtractor {
             return DriverExtractor(
-                ExtendedVariantExtractor(geneFilter),
+                VariantExtractor(geneFilter),
                 CopyNumberExtractor(geneFilter),
                 HomozygousDisruptionExtractor(geneFilter),
                 DisruptionExtractor(geneFilter),

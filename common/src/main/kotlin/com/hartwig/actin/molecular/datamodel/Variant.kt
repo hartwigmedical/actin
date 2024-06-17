@@ -28,6 +28,6 @@ data class Variant(
     }
 
     fun extendedVariantOrThrow() = extendedVariant
-        ?: throw IllegalStateException("Fusion is expected to have extended properties. Is this an orange-based molecular record?")
+        ?: throw IllegalStateException("Variant is expected to have extended properties. Is this an orange-based molecular record?")
 }
 

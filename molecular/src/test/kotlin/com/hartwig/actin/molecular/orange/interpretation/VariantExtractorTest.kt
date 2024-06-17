@@ -22,7 +22,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
-class ExtendedExtendedVariantExtractorTest {
+class VariantExtractorTest {
 
     @Test
     fun `Should extract set of variants successfully`() {
@@ -92,7 +92,7 @@ class ExtendedExtendedVariantExtractorTest {
             .build()
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant1.gene(), purpleVariant2.gene())
-        val variantExtractor = ExtendedVariantExtractor(geneFilter)
+        val variantExtractor = VariantExtractor(geneFilter)
 
         val variants = variantExtractor.extract(purple)
         assertThat(variants).hasSize(1)
@@ -145,7 +145,7 @@ class ExtendedExtendedVariantExtractorTest {
             .addAllSomaticVariants(purpleVariant)
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes(purpleVariant.gene())
-        val variantExtractor = ExtendedVariantExtractor(geneFilter)
+        val variantExtractor = VariantExtractor(geneFilter)
 
         val variants = variantExtractor.extract(purple)
         assertThat(variants).hasSize(1)
@@ -169,57 +169,57 @@ class ExtendedExtendedVariantExtractorTest {
             .build()
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
-        val variantExtractor = ExtendedVariantExtractor(geneFilter)
+        val variantExtractor = VariantExtractor(geneFilter)
         variantExtractor.extract(purple)
     }
 
     @Test
     fun `Should determine correct type for all variant types`() {
         val mnp = TestPurpleFactory.variantBuilder().type(PurpleVariantType.MNP).build()
-        assertThat(ExtendedVariantExtractor.determineVariantType(mnp)).isEqualTo(VariantType.MNV)
+        assertThat(VariantExtractor.determineVariantType(mnp)).isEqualTo(VariantType.MNV)
 
         val snp = TestPurpleFactory.variantBuilder().type(PurpleVariantType.SNP).build()
-        assertThat(ExtendedVariantExtractor.determineVariantType(snp)).isEqualTo(VariantType.SNV)
+        assertThat(VariantExtractor.determineVariantType(snp)).isEqualTo(VariantType.SNV)
 
         val insert = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("A").alt("AT").build()
-        assertThat(ExtendedVariantExtractor.determineVariantType(insert)).isEqualTo(VariantType.INSERT)
+        assertThat(VariantExtractor.determineVariantType(insert)).isEqualTo(VariantType.INSERT)
 
         val delete = TestPurpleFactory.variantBuilder().type(PurpleVariantType.INDEL).ref("AT").alt("A").build()
-        assertThat(ExtendedVariantExtractor.determineVariantType(delete)).isEqualTo(VariantType.DELETE)
+        assertThat(VariantExtractor.determineVariantType(delete)).isEqualTo(VariantType.DELETE)
     }
 
     @Test
     fun `Should determine driver likelihood for all purple driver likelihoods`() {
-        assertThat(ExtendedVariantExtractor.determineDriverLikelihood(null)).isNull()
-        assertThat(ExtendedVariantExtractor.determineDriverLikelihood(withDriverLikelihood(1.0))).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(ExtendedVariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.8))).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(ExtendedVariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.5))).isEqualTo(DriverLikelihood.MEDIUM)
-        assertThat(ExtendedVariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.2))).isEqualTo(DriverLikelihood.MEDIUM)
-        assertThat(ExtendedVariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.0))).isEqualTo(DriverLikelihood.LOW)
+        assertThat(VariantExtractor.determineDriverLikelihood(null)).isNull()
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(1.0))).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.8))).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.5))).isEqualTo(DriverLikelihood.MEDIUM)
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.2))).isEqualTo(DriverLikelihood.MEDIUM)
+        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.0))).isEqualTo(DriverLikelihood.LOW)
     }
 
     @Test
     fun `Should correctly assess whether transcript is ensembl`() {
         val ensembl = TestPurpleFactory.transcriptImpactBuilder().transcript("ENST01").build()
-        assertThat(ExtendedVariantExtractor.isEnsemblTranscript(ensembl)).isTrue
+        assertThat(VariantExtractor.isEnsemblTranscript(ensembl)).isTrue
 
         val nonEnsembl = TestPurpleFactory.transcriptImpactBuilder().transcript("something else").build()
-        assertThat(ExtendedVariantExtractor.isEnsemblTranscript(nonEnsembl)).isFalse
+        assertThat(VariantExtractor.isEnsemblTranscript(nonEnsembl)).isFalse
     }
 
     @Test
     fun `Should determine an effect for all variant effects`() {
         for (variantEffect in PurpleVariantEffect.values()) {
-            assertThat(ExtendedVariantExtractor.determineVariantEffect(variantEffect)).isNotNull()
+            assertThat(VariantExtractor.determineVariantEffect(variantEffect)).isNotNull()
         }
     }
 
     @Test
     fun `Should determine an effect for all defined coding effects`() {
-        assertThat(ExtendedVariantExtractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED)).isNull()
+        assertThat(VariantExtractor.determineCodingEffect(PurpleCodingEffect.UNDEFINED)).isNull()
         PurpleCodingEffect.values().filter { it != PurpleCodingEffect.UNDEFINED }
             .forEach { codingEffect ->
-                assertThat(ExtendedVariantExtractor.determineCodingEffect(codingEffect)).isNotNull()
+                assertThat(VariantExtractor.determineCodingEffect(codingEffect)).isNotNull()
             }
     }
 
