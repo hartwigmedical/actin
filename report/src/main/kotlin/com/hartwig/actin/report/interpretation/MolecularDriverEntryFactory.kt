@@ -73,7 +73,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {
-        val name = virus.event + ", " + virus.integrations + " integrations detected"
+        val name = "${virus.event}, ${virus.integrations} integrations detected"
         return driverEntry("Virus", name, virus)
     }
 
