@@ -3,7 +3,7 @@
 ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. In addition, the data is written to a
 per-sample JSON file. ACTIN-Molecular supports interpretation
 of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular
-results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular tests done historically made
+results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular testing made
 available via the patient's clinical data.
 
 The molecular interpreter application requires Java 11+ and can be run as follows:
@@ -26,7 +26,7 @@ The following assumptions are made about the inputs:
   interpretation of the genomic findings.
 - The known genes is a TSV file with gene and geneRole columns. An example can be
   found [here](https://github.com/hartwigmedical/actin/blob/master/common/src/test/resources/known_genes/example_known_genes.tsv).
-  - This resource file will be moved into SERVE in the future.
+    - This resource file will be moved into SERVE in the future.
 - The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
   extract
   the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
@@ -35,12 +35,15 @@ The following assumptions are made about the inputs:
 
 ### Molecular History
 
-The molecular history represents all molecular testing done for a patient. This can include WGS, panels and IHC tests. It is modeled as a
-list of molecular tests.
+The molecular history represents all molecular testing done for a patient. This include ORANGE results, panel results and IHC tests.
+It is modeled as a list of molecular tests, each with a type and timestamp.
 
 ### Molecular test
 
-#### 1 base molecular test
+The molecular test is a common interface used to process results from ORANGE and external molecular testing. It is extended
+by the molecular record, panel record and IHC test.
+
+#### 1 molecular test interface
 
 | Field           | Example Value             | Details                                                                   |
 |-----------------|---------------------------|---------------------------------------------------------------------------|
@@ -97,14 +100,14 @@ In addition to the driver fields, the following data is captured for all detecte
 |--------------------------------|---------------|----------------------------------------------------------------------------------------------------------|
 | type                           | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                            |
 | chromosome                     | 1             | The chromosome in which the event was detected                                                           |
-| position                       | 41206120      | Genomic position in respect to chromosome and ref genome version                                         |
+| position                       | 41206120      | Genomic position in respect to chromosome and ref genome                                                 |
 | ref                            | A             | The base(s) as found in the reference genome at this position                                            |
 | alt                            | G             | The base(s) as found in the sample analyzed                                                              |
 | isHotspot                      | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                                  |
 | canonicalImpact                | See impact    | The impact of this variant on the canonical transcript of the gene                                       |
 | otherImpacts                   | See impact    | A set of impacts on transcripts other than the canonical transcript of the gene                          | 
 | isAssociatedWithDrugResistance | true          | An optional boolean indicating the specific driver event is associated with some form of drug resistance |
-| extendedVariant                | see below     | Optional field, see below                                                                                |
+| extendedVariantDetails         | see below     | Optional field, see below                                                                                |
 
 If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
 
@@ -170,14 +173,14 @@ In addition to the general driver fields, the following data is captured per fus
 | driverType                     | KNOWN_PAIR       | The type of driver fusion                                                       |
 | proteinEffect                  | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                                |
 | isAssociatedWithDrugResistance | true             | Optional field, indicates whether the fusion is associated with drug resistance |
-| extendedFusion                 | see below        | Optional field, see below                                                       |
+| extendedFusionDetails          | see below        | Optional field, see below                                                       |
 
 If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
 
-| Field                          | Example Value    | Details                                                                         |
-|--------------------------------|------------------|---------------------------------------------------------------------------------|
-| fusedExonUp                    | 10               | The last exon of the 5' gene included in the fusion                             |
-| fusedExonDown                  | 22               | The first exon of the 3' gene included in the fusion                            |
+| Field         | Example Value | Details                                              |
+|---------------|---------------|------------------------------------------------------|
+| fusedExonUp   | 10            | The last exon of the 5' gene included in the fusion  |
+| fusedExonDown | 22            | The first exon of the 3' gene included in the fusion |
 
 #### N viruses
 
@@ -273,20 +276,20 @@ every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistan
 The annotation algo tries to find the best matching entry from SERVE's mapping of the `CKB_EVIDENCE` database as follows:
 
 - For variants the algo searches in the following order:
-  - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
-  - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
-  - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
-  - Else, fall back to gene matching.
+    - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
+    - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
+    - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
+    - Else, fall back to gene matching.
 - For copy numbers the algo searches in the following order:
-  - Is there a copy number specific match? If yes, use copy number specific annotation.
-  - Else, fall back to gene matching.
+    - Is there a copy number specific match? If yes, use copy number specific annotation.
+    - Else, fall back to gene matching.
 - For homozygous disruptions:
-  - Is there copy number loss specific match? If yes, use copy number loss annotation.
-  - Else, fall back to gene matching.
+    - Is there copy number loss specific match? If yes, use copy number loss annotation.
+    - Else, fall back to gene matching.
 - For disruptions, a gene match is performed.
 - For fusions, the algo searches in the following order:
-  - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
-  - Else, fall back to known fusion match ignoring specific exon ranges.
+    - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
+    - Else, fall back to known fusion match ignoring specific exon ranges.
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
 
