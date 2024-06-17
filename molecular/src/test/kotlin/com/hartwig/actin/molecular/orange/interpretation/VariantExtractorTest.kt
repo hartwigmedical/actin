@@ -22,7 +22,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
 
-class ExtendedVariantExtractorTest {
+class VariantExtractorTest {
 
     @Test
     fun `Should extract set of variants successfully`() {
@@ -101,12 +101,12 @@ class ExtendedVariantExtractorTest {
         assertThat(variant.isReportable).isTrue
         assertThat(variant.driverLikelihood).isEqualTo(DriverLikelihood.MEDIUM)
         assertThat(variant.type).isEqualTo(VariantType.MNV)
-        assertThat(variant.variantCopyNumber).isEqualTo(0.4, Offset.offset(EPSILON))
-        assertThat(variant.totalCopyNumber).isEqualTo(0.8, Offset.offset(EPSILON))
-        assertThat(variant.isBiallelic).isFalse
+        assertThat(variant.extendedVariantDetails?.variantCopyNumber).isEqualTo(0.4, Offset.offset(EPSILON))
+        assertThat(variant.extendedVariantDetails?.totalCopyNumber).isEqualTo(0.8, Offset.offset(EPSILON))
+        assertThat(variant.extendedVariantDetails?.isBiallelic).isFalse
         assertThat(variant.isHotspot).isFalse
-        assertThat(variant.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
-        assertThat(variant.phaseGroups).isEqualTo(Sets.newHashSet(1))
+        assertThat(variant.extendedVariantDetails?.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
+        assertThat(variant.extendedVariantDetails?.phaseGroups).isEqualTo(Sets.newHashSet(1))
 
         val canonical = variant.canonicalImpact
         assertThat(canonical.transcriptId).isEqualTo("ENST-canonical")
@@ -117,18 +117,18 @@ class ExtendedVariantExtractorTest {
         assertThat(canonical.isSpliceRegion).isFalse
         assertThat(canonical.effects.contains(VariantEffect.MISSENSE)).isTrue
         assertThat(canonical.codingEffect).isEqualTo(CodingEffect.MISSENSE)
-        assertThat(variant.otherImpacts).hasSize(1)
+        assertThat(variant.extendedVariantDetails?.otherImpacts).hasSize(1)
 
-        val other = variant.otherImpacts.iterator().next()
-        assertThat(other.transcriptId).isEqualTo("ENST-other")
-        assertThat(other.hgvsCodingImpact).isEqualTo("other hgvs coding")
-        assertThat(other.hgvsProteinImpact).isEqualTo("other hgvs protein")
-        assertThat(other.affectedCodon).isNull()
-        assertThat(other.affectedExon).isNull()
-        assertThat(other.isSpliceRegion).isTrue
-        assertThat(other.effects.contains(VariantEffect.SPLICE_DONOR)).isTrue
-        assertThat(other.effects.contains(VariantEffect.SYNONYMOUS)).isTrue
-        assertThat(other.codingEffect).isEqualTo(CodingEffect.SPLICE)
+        val other = variant.extendedVariantDetails?.otherImpacts?.iterator()?.next()
+        assertThat(other?.transcriptId).isEqualTo("ENST-other")
+        assertThat(other?.hgvsCodingImpact).isEqualTo("other hgvs coding")
+        assertThat(other?.hgvsProteinImpact).isEqualTo("other hgvs protein")
+        assertThat(other?.affectedCodon).isNull()
+        assertThat(other?.affectedExon).isNull()
+        assertThat(other?.isSpliceRegion).isTrue
+        assertThat(other?.effects?.contains(VariantEffect.SPLICE_DONOR)).isTrue
+        assertThat(other?.effects?.contains(VariantEffect.SYNONYMOUS)).isTrue
+        assertThat(other?.codingEffect).isEqualTo(CodingEffect.SPLICE)
     }
 
     @Test
@@ -151,8 +151,8 @@ class ExtendedVariantExtractorTest {
         assertThat(variants).hasSize(1)
 
         val variant = variants.iterator().next()
-        assertThat(variant.otherImpacts).hasSize(1)
-        assertThat(variant.otherImpacts.first().transcriptId).isEqualTo("ENST-correct")
+        assertThat(variant.extendedVariantDetails?.otherImpacts).hasSize(1)
+        assertThat(variant.extendedVariantDetails?.otherImpacts?.first()?.transcriptId).isEqualTo("ENST-correct")
     }
 
     @Test(expected = IllegalStateException::class)

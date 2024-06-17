@@ -15,7 +15,7 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 
-private fun <T : MolecularTest<*>> identityAnnotator() = object : MolecularAnnotator<T, T> {
+private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotator<T, T> {
     override fun annotate(input: T): T {
         return input
     }
@@ -55,9 +55,9 @@ private fun isIHC(): (PriorMolecularTest) -> Boolean {
 private class IHCInterpreter :
     MolecularInterpreter<PriorMolecularTest, IHCMolecularTest, IHCMolecularTest>(ihcExtractor(), identityAnnotator(), isIHC())
 
-class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpreter<PriorMolecularTest, out Any, out MolecularTest<*>>>) {
+class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpreter<PriorMolecularTest, out Any, out MolecularTest>>) {
 
-    fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest<*>> {
+    fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest> {
         val otherInterpreter = MolecularInterpreter(otherExtractor(), identityAnnotator()) { test ->
             pipelines.none { it.inputPredicate.invoke(test) }
         }

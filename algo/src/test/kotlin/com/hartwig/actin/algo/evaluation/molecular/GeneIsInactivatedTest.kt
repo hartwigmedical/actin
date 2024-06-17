@@ -7,13 +7,13 @@ import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import org.junit.Test
 
 private const val GENE = "gene A"
@@ -38,8 +38,7 @@ class GeneIsInactivatedTest {
         gene = GENE,
         isReportable = true,
         driverLikelihood = DriverLikelihood.HIGH,
-        isBiallelic = true,
-        clonalLikelihood = 1.0,
+        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 1.0, isBiallelic = true),
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(
@@ -138,12 +137,18 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should warn when TSG variant is not biallelic`() {
-        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(isBiallelic = false))
+        assertResultForVariant(
+            EvaluationResult.WARN,
+            matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false))
+        )
     }
 
     @Test
     fun `Should warn when TSG variant is subclonal`() {
-        assertResultForVariant(EvaluationResult.WARN, matchingVariant.copy(clonalLikelihood = 0.4))
+        assertResultForVariant(
+            EvaluationResult.WARN,
+            matchingVariant.copy(extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(clonalLikelihood = 0.4))
+        )
     }
 
     @Test
@@ -170,7 +175,12 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in low TML sample`() {
         assertResultForMutationalLoadAndVariant(
-            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW, isBiallelic = false)
+            EvaluationResult.WARN,
+            false,
+            matchingVariant.copy(
+                driverLikelihood = DriverLikelihood.LOW,
+                extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false)
+            )
         )
 
     }
@@ -208,7 +218,7 @@ class GeneIsInactivatedTest {
     fun `Should warn with multiple low driver variants with unknown phase groups and inactivating effects`() {
         val variant1 = variantWithPhaseGroups(null)
         // Add copy number to make distinct:
-        val variant2 = variant1.copy(variantCopyNumber = 1.0)
+        val variant2 = variant1.copy(extendedVariantDetails = variant1.extendedVariantDetails?.copy(variantCopyNumber = 1.0))
 
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
@@ -231,23 +241,23 @@ class GeneIsInactivatedTest {
         )
     }
 
-    private fun assertResultForVariant(result: EvaluationResult, variant: ExtendedVariant) {
+    private fun assertResultForVariant(result: EvaluationResult, variant: Variant) {
         assertMolecularEvaluation(result, function.evaluate(MolecularTestFactory.withVariant(variant)))
     }
 
     private fun assertResultForMutationalLoadAndVariant(
-        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: ExtendedVariant
+        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: Variant
     ) {
         assertMolecularEvaluation(
             result, function.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant))
         )
     }
 
-    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?): ExtendedVariant = TestVariantFactory.createMinimal().copy(
+    private fun variantWithPhaseGroups(phaseGroups: Set<Int>?) = TestVariantFactory.createMinimal().copy(
         gene = GENE,
         isReportable = true,
         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONSENSE_OR_FRAMESHIFT),
         driverLikelihood = DriverLikelihood.LOW,
-        phaseGroups = phaseGroups
+        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(phaseGroups = phaseGroups)
     )
 }

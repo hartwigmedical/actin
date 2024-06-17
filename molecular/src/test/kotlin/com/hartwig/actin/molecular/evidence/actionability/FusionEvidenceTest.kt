@@ -13,7 +13,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class ExtendedFusionEvidenceTest {
+class FusionEvidenceTest {
 
     @Test
     fun `Should determine promiscuous fusion evidence`() {

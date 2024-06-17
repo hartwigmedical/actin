@@ -15,7 +15,7 @@ class ProteinIsExpressedByIHCTest {
     @Test
     fun canEvaluate() {
         // No prior tests
-        val priorTests = mutableListOf<MolecularTest<*>>()
+        val priorTests = mutableListOf<MolecularTest>()
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
 
         // Add test with no result
@@ -35,7 +35,7 @@ class ProteinIsExpressedByIHCTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMolecularTests(otherPriorTests)))
     }
 
-    private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null): MolecularTest<*> {
+    private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null): MolecularTest {
         return IHCMolecularTest(
             MolecularTestFactory.priorMolecularTest(
                 test = IHC, item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText

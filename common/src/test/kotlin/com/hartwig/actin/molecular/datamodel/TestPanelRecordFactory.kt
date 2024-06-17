@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.datamodel
 
-import com.hartwig.actin.molecular.datamodel.panel.PanelDrivers
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import java.time.LocalDate
 
@@ -10,7 +9,7 @@ object TestPanelRecordFactory {
 
     fun empty() =
         PanelRecord(
-            drivers = PanelDrivers(),
+            drivers = Drivers(),
             date = TEST_DATE,
             characteristics = MolecularCharacteristics(),
             evidenceSource = "",

@@ -9,9 +9,9 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TEST_DATE
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
@@ -131,7 +131,10 @@ class GeneHasActivatingMutationTest {
         assertResultForVariant(
             EvaluationResult.WARN,
             TestVariantFactory.createMinimal().copy(
-                gene = GENE, isReportable = true, driverLikelihood = DriverLikelihood.HIGH, clonalLikelihood = 0.2
+                gene = GENE,
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.HIGH,
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
             ),
         )
     }
@@ -141,7 +144,10 @@ class GeneHasActivatingMutationTest {
         assertResultForVariantWithTML(
             EvaluationResult.WARN,
             TestVariantFactory.createMinimal().copy(
-                gene = GENE, isReportable = true, driverLikelihood = DriverLikelihood.LOW, clonalLikelihood = 0.2
+                gene = GENE,
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.LOW,
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
             ),
             null
         )
@@ -152,7 +158,10 @@ class GeneHasActivatingMutationTest {
         assertResultForVariantWithTML(
             EvaluationResult.FAIL,
             TestVariantFactory.createMinimal().copy(
-                gene = GENE, isReportable = true, driverLikelihood = DriverLikelihood.LOW, clonalLikelihood = 0.2
+                gene = GENE,
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.LOW,
+                extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.2)
             ),
             true
         )
@@ -266,7 +275,7 @@ class GeneHasActivatingMutationTest {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
-    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: ExtendedVariant) {
+    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
         // Repeat with high TML since unknown TML always results in a warning for reportable variants:
@@ -277,12 +286,12 @@ class GeneHasActivatingMutationTest {
         }
     }
 
-    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: ExtendedVariant) {
+    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: Variant) {
         assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, null)
         assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, true)
     }
 
-    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: ExtendedVariant, hasHighTML: Boolean?) {
+    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
         assertMolecularEvaluation(
             expectedResult,
             functionNotIgnoringCodons.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
@@ -294,7 +303,7 @@ class GeneHasActivatingMutationTest {
 
     private fun assertResultForVariantWithTMLIgnoringCodons(
         expectedResult: EvaluationResult,
-        variant: ExtendedVariant,
+        variant: Variant,
         hasHighTML: Boolean?
     ) {
         assertMolecularEvaluation(
@@ -306,7 +315,7 @@ class GeneHasActivatingMutationTest {
     companion object {
         private const val GENE = "gene A"
         private val CODONS_TO_IGNORE = listOf("A100X", "A200X")
-        private val ACTIVATING_VARIANT: ExtendedVariant = TestVariantFactory.createMinimal().copy(
+        private val ACTIVATING_VARIANT = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,
@@ -314,11 +323,11 @@ class GeneHasActivatingMutationTest {
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
             isHotspot = true,
             isAssociatedWithDrugResistance = false,
-            clonalLikelihood = 0.8,
-            canonicalImpact = impactWithCodon(300)
+            canonicalImpact = impactWithCodon(300),
+            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
         )
 
-        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE: ExtendedVariant = TestVariantFactory.createMinimal().copy(
+        private val ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             isReportable = true,
             driverLikelihood = DriverLikelihood.HIGH,
@@ -326,8 +335,8 @@ class GeneHasActivatingMutationTest {
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
             isHotspot = true,
             isAssociatedWithDrugResistance = false,
-            clonalLikelihood = 0.8,
-            canonicalImpact = impactWithCodon(100)
+            canonicalImpact = impactWithCodon(100),
+            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(clonalLikelihood = 0.8)
         )
 
         private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
