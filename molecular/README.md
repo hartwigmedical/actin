@@ -1,14 +1,15 @@
 ## ACTIN-Molecular
 
 ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. In addition, the data is written to a
-per-sample JSON file. Currently, ACTIN-Molecular only supports interpretation
+per-sample JSON file. ACTIN-Molecular supports interpretation
 of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular
-results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum).
+results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular tests done historically made
+available via the patient's clinical data.
 
-The ORANGE interpreter application requires Java 11+ and can be run as follows:
+The molecular interpreter application requires Java 11+ and can be run as follows:
 
 ```
-java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplicationKt \
+java -cp actin.jar com.hartwig.actin.molecular.MolecularInterpreterApplication \
    -orange_json /path/to/orange.json \
    -serve_directory /path/to/serve_directory \
    -known_genes_tsv /path/to/known_genes.tsv \
@@ -25,30 +26,31 @@ The following assumptions are made about the inputs:
   interpretation of the genomic findings.
 - The known genes is a TSV file with gene and geneRole columns. An example can be
   found [here](https://github.com/hartwigmedical/actin/blob/master/common/src/test/resources/known_genes/example_known_genes.tsv).
-    - This resource file will be moved into SERVE in the future.
+  - This resource file will be moved into SERVE in the future.
 - The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
   extract
   the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
 
 ## ACTIN Molecular Datamodel
 
-### Molecular data
+### Molecular History
 
-Overall, a molecular record belongs to a `sampleId` (which belongs to a `patientId`) and has the following datamodel:
+The molecular history represents all molecular testing done for a patient. This can include WGS, panels and IHC tests. It is modeled as a
+list of molecular tests.
 
-### 1 molecular base data
+### Molecular test
 
-| Field                | Example Value | Details                                                                                                                                    |
-|----------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| type                 | WGS           | The type of molecular experiment done, either `WGS` or `PANEL`                                                                             |
-| refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                    |
-| date                 | 2022-01-14    | The date on which the molecular results were obtained                                                                                      |
-| evidenceSource       | CKB_EVIDENCE  | The name of the provider of the evidence. Currently always `CKB_EVIDENCE`                                                                  |
-| externalTrialSource  | CKB_TRIAL     | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `CKB_TRIAL` |
-| containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                              |
-| hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                             |
+#### 1 base molecular test
 
-### 1 molecular characteristics
+| Field           | Example Value             | Details                                                                   |
+|-----------------|---------------------------|---------------------------------------------------------------------------|
+| type            | WGS                       | The type of molecular experiment done, either `WGS` or `PANEL`            | 
+| date            | 2022-01-14                | The date on which the molecular results were obtained                     |
+| evidenceSource  | CKB_EVIDENCE              | The name of the provider of the evidence. Currently always `CKB_EVIDENCE` |
+| drivers         | see drivers below         |                                                                           |
+| characteristics | see characteristics below |                                                                           |
+
+#### 1 molecular characteristics
 
 | Field                         | Example Value      | Details                                                                                                              |
 |-------------------------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
@@ -57,6 +59,7 @@ Overall, a molecular record belongs to a `sampleId` (which belongs to a `patient
 | predictedTumorType            | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood                               |
 | isMicrosatelliteUnstable      | false              | If true, sample is considered microsatellite unstable. Should be empty in case experiment does not determine MSI     |
 | microsatelliteEvidence        | See evidence below | The evidence determined for the microsatellite status of specific tumor sample                                       |                                        
+| homologousRepairScore         | 0.5                | The probability of this sample being HR deficient.                                                                   |
 | isHomologousRepairDeficient   | false              | If true, sample is considered homologous repair deficient. Should be empty in case experiment does not determine HRD |
 | homologousRepairEvidence      | See evidence below | The evidence determined for the homologous repair status of specific tumor sample                                    |                                     
 | tumorMutationalBurden         | 14.2               | Number of mutations in the genome per Mb. Should be empty in case experiment does not determine TMB                  |
@@ -66,7 +69,7 @@ Overall, a molecular record belongs to a `sampleId` (which belongs to a `patient
 | hasHighTumorMutationalLoad    | false              | If true, sample is considered to have a high tumor mutational load (otherwise, low)                                  |
 | tumorMutationalLoadEvidence   | See evidence below | The evidence determined for the tumor mutational load of specific tumor sample                                       |
 
-### N driver events
+#### N driver events
 
 Every potential driver event has the following fields ('general driver fields'):
 
@@ -86,21 +89,33 @@ Furthermore, every gene driver event is assigned the following fields ('gene dri
 | proteinEffect                  | GAIN_OF_FUNCTION | The effect the specific driver has on the gene (one of `UNKNOWN`, `AMBIGIOUS`, `NO_EFFECT`, `NO_EFFECT_PREDICTED`, `LOSS_OF_FUNCTION`, `LOSS_OF_FUNCTION_PREDICTED`, `GAIN_OF_FUNCTION`, `GAIN_OF_FUNCTION_PREDICTED`) |
 | isAssociatedWithDrugResistance | true             | An optional boolean indicating the specific driver event is associated with some form of drug resistance                                                                                                               |
 
-### N variants
+#### N variants
 
 In addition to the driver fields, the following data is captured for all detected variants:
 
+| Field                          | Example Value | Details                                                                                                  |
+|--------------------------------|---------------|----------------------------------------------------------------------------------------------------------|
+| type                           | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                            |
+| chromosome                     | 1             | The chromosome in which the event was detected                                                           |
+| position                       | 41206120      | Genomic position in respect to chromosome and ref genome version                                         |
+| ref                            | A             | The base(s) as found in the reference genome at this position                                            |
+| alt                            | G             | The base(s) as found in the sample analyzed                                                              |
+| isHotspot                      | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                                  |
+| canonicalImpact                | See impact    | The impact of this variant on the canonical transcript of the gene                                       |
+| otherImpacts                   | See impact    | A set of impacts on transcripts other than the canonical transcript of the gene                          | 
+| isAssociatedWithDrugResistance | true          | An optional boolean indicating the specific driver event is associated with some form of drug resistance |
+| extendedVariant                | see below     | Optional field, see below                                                                                |
+
+If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
+
 | Field             | Example Value | Details                                                                                             |
 |-------------------|---------------|-----------------------------------------------------------------------------------------------------|
-| type              | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                       |
 | variantCopyNumber | 3.8           | The number of copies of this variant in the tumor                                                   |
 | totalCopyNumber   | 4.0           | The total number of copies in the tumor on the variant genomic position                             |
 | isBiallelic       | false         | Indicates whether all alleles in the tumor are affected by this variant or not                      |
 | isHotspot         | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                             | 
 | clonalLikelihood  | 100%          | Likelihood that the variant exists in every tumor cell (is clonal)                                  |
 | phaseGroups       | 1, 2          | The phasing groups this variant belongs to. Variants that are phased share at least one phase group |
-| canonicalImpact   | See impact    | The impact of this variant on the canonical transcript of the gene                                  |
-| otherImpacts      | See impact    | A set of impacts on transcripts other than the canonical transcript of the gene                     | 
 
 The following data is captured as impact of a variant on a specific transcript:
 
@@ -150,13 +165,19 @@ In addition to the general driver fields, the following data is captured per fus
 |--------------------------------|------------------|---------------------------------------------------------------------------------|
 | geneStart                      | EML4             | The gene that makes up the 5' part of the fusion                                |
 | geneTranscriptStart            | ENST001          | The ensembl ID of the transcript that makes up the 5' part of the fusion        |
-| fusedExonUp                    | 10               | The last exon of the 5' gene included in the fusion                             |
 | geneEnd                        | ALK              | The gene that makes up the 3' part of the fusion                                |
 | geneTranscriptEnd              | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion        |
-| fusedExonDown                  | 22               | The first exon of the 3' gene included in the fusion                            |
 | driverType                     | KNOWN_PAIR       | The type of driver fusion                                                       |
 | proteinEffect                  | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                                |
-| isAssociatedWithDrugResistance | null             | Optional field, indicates whether the fusion is associated with drug resistance |
+| isAssociatedWithDrugResistance | true             | Optional field, indicates whether the fusion is associated with drug resistance |
+| extendedFusion                 | see below        | Optional field, see below                                                       |
+
+If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
+
+| Field                          | Example Value    | Details                                                                         |
+|--------------------------------|------------------|---------------------------------------------------------------------------------|
+| fusedExonUp                    | 10               | The last exon of the 5' gene included in the fusion                             |
+| fusedExonDown                  | 22               | The first exon of the 3' gene included in the fusion                            |
 
 #### N viruses
 
@@ -168,6 +189,21 @@ In addition to the general driver fields, the following data is captured per vir
 | type         | HUMAN_PAPILLOMA_VIRUS        | The type of virus found in the tumor sample                                                  |
 | isReliable   | false                        | Boolean indicated whether the virus has reliably been found and could be considered a driver | 
 | integrations | 3                            | Number of integrations of detected virus in the tumor sample                                 |
+
+### Molecular record
+
+Overall, a molecular record belongs to a `sampleId` (which belongs to a `patientId`). The molecular record supports all fields from
+molecular test, but
+adds several additional fields which can be extracted from the comprehensive results created by Hartwig WGS and ORANGE.
+
+### 1 molecular base data
+
+| Field                | Example Value | Details                                                                                                                                    |
+|----------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                    |
+| externalTrialSource  | CKB_TRIAL     | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `CKB_TRIAL` |
+| containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                              |
+| hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                             |
 
 #### N HLA alleles (with a single `isReliable` boolean indicating whether the HLA results are reliable)
 
@@ -208,6 +244,25 @@ The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 1. Annotating all mutations and various characteristics in ORANGE with additional gene annotation and clinical evidence.
 2. Mapping all fields, annotated mutations and annotated characteristics to the ACTIN datamodel.
 
+### Integration of non-ORANGE molecular results
+
+Molecular results which are not orange flow via the clinical data and the prior molecular tests. These results are normalized and integrated
+into
+a single molecular history, which can be processed by downstream rules without specific knowledge about what type of test was done. This
+integration
+process is documented in the diagram below.
+
+![Integrating Molecular Data](integrating_molecular_data.png)
+
+The flow of data from provider to rule follows these steps:
+
+- An extractor transforms the data into a model which more easily supports annotation.
+- An annotator adds evidence (see [Evidence annotation](#evidence-annotation)). In the case of panel tests not extracted from ORANGE
+  results, we also add genomic positional annotation (using transvar) and driver likelihood.
+- The annotators produce either a PanelRecord or MolecularRecord. These both conform to the MolecularTest interface and are combines in a
+  single list in the molecular history.
+- Molecular rules can then evaluate the molecular history.
+
 #### 1. Annotation of mutations and characteristics
 
 #### Additional gene annotation
@@ -218,26 +273,27 @@ every fusion is annotated with `proteinEffect` and `isAssociatedWithDrugResistan
 The annotation algo tries to find the best matching entry from SERVE's mapping of the `CKB_EVIDENCE` database as follows:
 
 - For variants the algo searches in the following order:
-    - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
-    - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
-    - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
-    - Else, fall back to gene matching.
+  - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
+  - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
+  - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
+  - Else, fall back to gene matching.
 - For copy numbers the algo searches in the following order:
-    - Is there a copy number specific match? If yes, use copy number specific annotation.
-    - Else, fall back to gene matching.
+  - Is there a copy number specific match? If yes, use copy number specific annotation.
+  - Else, fall back to gene matching.
 - For homozygous disruptions:
-    - Is there copy number loss specific match? If yes, use copy number loss annotation.
-    - Else, fall back to gene matching.
+  - Is there copy number loss specific match? If yes, use copy number loss annotation.
+  - Else, fall back to gene matching.
 - For disruptions, a gene match is performed.
 - For fusions, the algo searches in the following order:
-    - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
-    - Else, fall back to known fusion match ignoring specific exon ranges.
+  - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
+  - Else, fall back to known fusion match ignoring specific exon ranges.
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
 
 #### Evidence annotation
 
-Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB_EVIDENCE`
+Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes
+from `CKB_EVIDENCE`
 except for
 external trials which is populated by `CKB_TRIAL`. The evidence annotations occur in the following order:
 
