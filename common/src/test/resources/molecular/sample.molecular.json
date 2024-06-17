@@ -100,7 +100,7 @@
         "proteinEffect": "GAIN_OF_FUNCTION",
         "isAssociatedWithDrugResistance": true,
         "type": "SNV",
-        "extendedVariant": {
+        "extendedVariantDetails": {
           "variantCopyNumber": 4.1,
           "totalCopyNumber": 6.0,
           "isBiallelic": false,
@@ -275,7 +275,7 @@
         "geneTranscriptEnd": "ENST00000389048",
         "driverType": "KNOWN_PAIR",
         "proteinEffect": "UNKNOWN",
-        "extendedFusion": {
+        "extendedFusionDetails": {
           "fusedExonUp": 12,
           "fusedExonDown": 20,
           "isAssociatedWithDrugResistance": false
