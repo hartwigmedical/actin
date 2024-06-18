@@ -134,7 +134,7 @@ The following data is captured as impact of a variant on a specific transcript:
 
 #### N copy numbers
 
-In addition to the driver fields, the following data is captured per copy number:
+In addition to the (gene) driver fields, the following data is captured per copy number:
 
 | Field     | Example Value | Details                                                                        |
 |-----------|---------------|--------------------------------------------------------------------------------|
@@ -144,11 +144,11 @@ In addition to the driver fields, the following data is captured per copy number
 
 #### N homozygous disruptions
 
-For homozygous disruptions, no additional data is captured beyond the driver fields.
+For homozygous disruptions, no additional data is captured beyond the (gene) driver fields.
 
 #### N disruptions
 
-In addition to the driver fields, the following data is captured per disruption:
+In addition to the (gene) driver fields, the following data is captured per disruption:
 
 | Field                 | Example Value | Details                                                                                                        |
 |-----------------------|---------------|----------------------------------------------------------------------------------------------------------------|
