@@ -8,7 +8,7 @@ the patient's clinical data.
 The molecular interpreter application requires Java 11+ and can be run as follows:
 
 ```
-java -cp actin.jar com.hartwig.actin.molecular.MolecularInterpreterApplication \
+java -cp actin.jar com.hartwig.actin.molecular.MolecularInterpreterApplicationKt \
    -clinical_json /path/to/actin_clinical.json \
    -serve_directory /path/to/serve_directory \
    -doid_json /path/to/doid.json \
