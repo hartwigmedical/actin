@@ -49,7 +49,6 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.PASS,
             HasReceivedPlatinumBasedDoublet().evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
-        println(platinumDoubletWithImmuno)
     }
 
     @Test
