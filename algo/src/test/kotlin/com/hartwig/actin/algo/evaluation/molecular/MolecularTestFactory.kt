@@ -205,6 +205,16 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun withHomologousRepairDeficiencyAndVariantAndDisruption(
+        isHomologousRepairDeficient: Boolean?,
+        disruption: Disruption,
+        variant: ExtendedVariant
+    ): PatientRecord {
+        return withMolecularRecord(
+            baseMolecular.copy(characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), drivers = baseMolecular.drivers.copy(variants = setOf(variant), disruptions = setOf(disruption))
+        ))
+    }
+
     fun withTumorMutationalBurden(tumorMutationalBurden: Double?): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
