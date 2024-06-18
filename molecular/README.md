@@ -355,16 +355,18 @@ The ACTIN datamodel is created from the ORANGE data according to below.
 
 Molecular base data:
 
-| Field                | Mapping                                        |
-|----------------------|------------------------------------------------|
-| sampleId             | The ORANGE field `sampleId`                    |
-| type                 | Hard-coded to `WGS`                            |
-| refGenomeVersion     | Extracted from ORANGE field `refGenomeVersion` | 
-| date                 | The ORANGE field `experimentDate`              |
-| evidenceSource       | Hard-coded to `CKB_EVIDENCE`                   |
-| externalTrialSource  | Hard-coded to `CKB_TRIAL`                      |
-| containsTumorCells   | The PURPLE field `containsTumorCells`          |
-| hasSufficientQuality | The PURPLE field `hasSufficientQuality`        |
+| Field                | Mapping                                                               |
+|----------------------|-----------------------------------------------------------------------|
+| sampleId             | The ORANGE field `sampleId`                                           |
+| type                 | Extracted from ORANGE field `experimentType`                          |
+| refGenomeVersion     | Extracted from ORANGE field `refGenomeVersion`                        | 
+| date                 | The ORANGE field `samplingDate`                                       |
+| evidenceSource       | Hard-coded to `CKB_EVIDENCE`                                          |
+| externalTrialSource  | Hard-coded to `CKB_TRIAL`                                             |
+| containsTumorCells   | TRUE in case `FAIL_NO_TUMOR` is one of the purple QC states           |
+| isContaminated       | TRUE in case `FAIL_CONTAMINATED` is one of the purple QC states       |
+| hasSufficientPurity  | TRUE in case 'WARN_LOW_PURITY is *not* present in purple QC states    |
+| hasSufficientQuality | Derived field, TRUE in case containsTumorCells and not isContaminated |
 
 Molecular characteristics:
 
@@ -374,6 +376,7 @@ Molecular characteristics:
 | ploidy                       | The PURPLE field `ploidy`                                       | 
 | predictedTumorOrigin         | The CUPPA best cancer-type prediction along with the likelihood |
 | isMicrosatelliteUnstable     | The interpretation of PURPLE `microsatelliteStabilityStatus`    |
+| homologousRepairScore        | The CHORD field `hrdValue`                                      |
 | isHomologousRepairDeficient  | The interpretation of CHORD `hrStatus`                          |
 | tumorMutationalBurden        | The PURPLE field `tumorMutationalBurden`                        |
 | hasHighTumorMutationalBurden | The interpretation of PURPLE `tumorMutationalBurdenStatus`      |
@@ -405,7 +408,3 @@ The HLA entries are extracted from LILAC as follows:
   , `somaticSplice` or `somaticInframeIndel` is non-zero
 
 The pharmacogenomics entries are extracted from PEACH.
-
-### Version History and Download Links
-
-- Upcoming (first release) 
