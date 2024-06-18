@@ -46,7 +46,7 @@ by the molecular record, panel record and IHC test.
 
 | Field           | Example Value             | Details                                                                   |
 |-----------------|---------------------------|---------------------------------------------------------------------------|
-| type            | WGS                       | The type of molecular experiment done, either `WGS` or `PANEL`            | 
+| type            | WGS                       | The type of molecular experiment done                                     | 
 | date            | 2022-01-14                | The date on which the molecular results were obtained                     |
 | drivers         | see drivers below         |                                                                           |
 | characteristics | see characteristics below |                                                                           |
@@ -73,16 +73,16 @@ Note that all individual characteristics are expected to be null for tests that 
 | hasHighTumorMutationalLoad    | false              | If true, sample is considered to have a high tumor mutational load (otherwise, low)     |
 | tumorMutationalLoadEvidence   | See evidence below | The evidence determined for the tumor mutational load of specific tumor sample          |
 
-#### N driver events
+#### N molecular drivers
 
 Every potential driver event has the following fields ('general driver fields'):
 
-| Field            | Example Value      | Details                                                                                                           |
-|------------------|--------------------|-------------------------------------------------------------------------------------------------------------------|
-| isReportable     | true               | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a clinical report |
-| event            | BRAF V600E         | A human readable string summarizing the driver event                                                              |
-| driverLikelihood | HIGH               | An optional field that indicates the likelihood that the event is a driver (either `HIGH`, `MEDIUM`, `LOW`)       |
-| evidence         | See evidence below | The evidence determined for this driver in the specific tumor sample                                              |
+| Field            | Example Value      | Details                                                                                                            |
+|------------------|--------------------|--------------------------------------------------------------------------------------------------------------------|
+| isReportable     | true               | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a clinical report  |
+| event            | BRAF V600E         | A human readable string summarizing the driver event                                                               |
+| driverLikelihood | HIGH               | An optional field that indicates the likelihood that the event is a driver (either `HIGH`, `MEDIUM`, `LOW` if set) |
+| evidence         | See evidence below | The evidence determined for this driver in the specific tumor sample                                               |
 
 Furthermore, every gene driver event is assigned the following fields ('gene driver fields'):
 
@@ -108,7 +108,7 @@ In addition to the (gene) driver fields, the following data is captured for all 
 | canonicalImpact        | See impact    | The impact of this variant on the canonical transcript of the gene      |
 | extendedVariantDetails | see below     | Optional field, see below                                               |
 
-If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
+If we have an ORANGE molecular result for the sample, we can annotate with the following additional fields.
 
 | Field             | Example Value | Details                                                                                             |
 |-------------------|---------------|-----------------------------------------------------------------------------------------------------|
