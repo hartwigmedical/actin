@@ -13,13 +13,13 @@ data class CopyNumber(
     val minCopies: Int,
     val maxCopies: Int,
     override val isReportable: Boolean,
-    override val isAssociatedWithDrugResistance: Boolean?,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,
     override val evidence: ActionableEvidence,
     override val gene: String,
     override val geneRole: GeneRole,
-    override val proteinEffect: ProteinEffect
+    override val proteinEffect: ProteinEffect,
+    override val isAssociatedWithDrugResistance: Boolean?
 ) : Driver, GeneAlteration, Comparable<CopyNumber> {
 
     override fun compareTo(other: CopyNumber): Int {
