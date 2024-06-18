@@ -54,22 +54,24 @@ by the molecular record, panel record and IHC test.
 
 #### 1 molecular characteristics
 
-| Field                         | Example Value      | Details                                                                                                              |
-|-------------------------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
-| purity                        | 78%                | The percentage of cells in the sequenced biopsy that originated from the tumor                                       |
-| ploidy                        | 3.1                | The average number of copies of any chromosome in the tumor                                                          |
-| predictedTumorType            | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood                               |
-| isMicrosatelliteUnstable      | false              | If true, sample is considered microsatellite unstable. Should be empty in case experiment does not determine MSI     |
-| microsatelliteEvidence        | See evidence below | The evidence determined for the microsatellite status of specific tumor sample                                       |                                        
-| homologousRepairScore         | 0.5                | The probability of this sample being HR deficient.                                                                   |
-| isHomologousRepairDeficient   | false              | If true, sample is considered homologous repair deficient. Should be empty in case experiment does not determine HRD |
-| homologousRepairEvidence      | See evidence below | The evidence determined for the homologous repair status of specific tumor sample                                    |                                     
-| tumorMutationalBurden         | 14.2               | Number of mutations in the genome per Mb. Should be empty in case experiment does not determine TMB                  |
-| hasHighTumorMutationalBurden  | true               | If true, sample is considered to have a high tumor mutational burden (otherwise, low)                                |
-| tumorMutationalBurdenEvidence | See evidence below | The evidence determined for the tumor mutational burden status of specific tumor sample.                             |
-| tumorMutationalLoad           | 115                | Number of missense mutations across the genome. Should be empty in case experiment does not determine TML            |
-| hasHighTumorMutationalLoad    | false              | If true, sample is considered to have a high tumor mutational load (otherwise, low)                                  |
-| tumorMutationalLoadEvidence   | See evidence below | The evidence determined for the tumor mutational load of specific tumor sample                                       |
+Note that all individual characteristics are expected to be null for tests that don't determine the specific characteristic.
+
+| Field                         | Example Value      | Details                                                                                 |
+|-------------------------------|--------------------|-----------------------------------------------------------------------------------------|
+| purity                        | 78%                | The percentage of cells in the sequenced biopsy that originated from the tumor          |
+| ploidy                        | 3.1                | The average number of copies of any chromosome in the tumor                             |
+| predictedTumorType            | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood  |
+| isMicrosatelliteUnstable      | false              | If true, sample is considered microsatellite unstable                                   |
+| microsatelliteEvidence        | See evidence below | The evidence determined for the microsatellite status of specific tumor sample          |                                        
+| homologousRepairScore         | 0.5                | The probability of this sample being HR deficient                                       |
+| isHomologousRepairDeficient   | false              | If true, sample is considered homologous repair deficient                               |
+| homologousRepairEvidence      | See evidence below | The evidence determined for the homologous repair status of specific tumor sample       |                                     
+| tumorMutationalBurden         | 14.2               | Number of mutations in the genome per Mb                                                |
+| hasHighTumorMutationalBurden  | true               | If true, sample is considered to have a high tumor mutational burden (otherwise, low)   |
+| tumorMutationalBurdenEvidence | See evidence below | The evidence determined for the tumor mutational burden status of specific tumor sample |
+| tumorMutationalLoad           | 115                | Number of missense mutations across the genome                                          |
+| hasHighTumorMutationalLoad    | false              | If true, sample is considered to have a high tumor mutational load (otherwise, low)     |
+| tumorMutationalLoadEvidence   | See evidence below | The evidence determined for the tumor mutational load of specific tumor sample          |
 
 #### N driver events
 
