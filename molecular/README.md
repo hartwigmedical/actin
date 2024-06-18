@@ -48,9 +48,9 @@ by the molecular record, panel record and IHC test.
 |-----------------|---------------------------|---------------------------------------------------------------------------|
 | type            | WGS                       | The type of molecular experiment done, either `WGS` or `PANEL`            | 
 | date            | 2022-01-14                | The date on which the molecular results were obtained                     |
-| evidenceSource  | CKB_EVIDENCE              | The name of the provider of the evidence. Currently always `CKB_EVIDENCE` |
 | drivers         | see drivers below         |                                                                           |
 | characteristics | see characteristics below |                                                                           |
+| evidenceSource  | CKB_EVIDENCE              | The name of the provider of the evidence. Currently always `CKB_EVIDENCE` |
 
 #### 1 molecular characteristics
 
