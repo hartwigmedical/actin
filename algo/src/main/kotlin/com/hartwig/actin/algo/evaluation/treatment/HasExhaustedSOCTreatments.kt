@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
@@ -18,7 +17,7 @@ class HasExhaustedSOCTreatments(
         val recommendationEngine = recommendationEngineFactory.create()
         val isNSCLC = LUNG_NON_SMALL_CELL_CARCINOMA_DOID in createFullExpandedDoidTree(doidModel, record.tumor.doids)
         val hasReceivedPlatinumBasedDoubletOrMore =
-            HasReceivedPlatinumBasedDoublet().evaluate(record).result in setOf(EvaluationResult.PASS, EvaluationResult.WARN)
+            TreatmentFunctions.receivedPlatinumDoublet(record) || TreatmentFunctions.receivedPlatinumTripletOrAbove(record)
 
         return when {
             recommendationEngine.standardOfCareCanBeEvaluatedForPatient(record) -> {
