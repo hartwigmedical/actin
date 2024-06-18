@@ -118,7 +118,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasExhaustedSOCTreatmentsCreator(): FunctionCreator {
-        return FunctionCreator { HasExhaustedSOCTreatments(RecommendationEngineFactory(resources)) }
+        return FunctionCreator { HasExhaustedSOCTreatments(RecommendationEngineFactory(resources), doidModel()) }
     }
 
     private fun hasHadSomeApprovedTreatmentCreator(): FunctionCreator {
