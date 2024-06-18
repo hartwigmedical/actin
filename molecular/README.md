@@ -1,35 +1,34 @@
 ## ACTIN-Molecular
 
 ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. In addition, the data is written to a
-per-sample JSON file. ACTIN-Molecular supports interpretation
-of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular
-results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular testing made
-available via the patient's clinical data.
+per-sample JSON file. ACTIN-Molecular supports interpretation of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange)
+molecular results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular testing made available via
+the patient's clinical data.
 
 The molecular interpreter application requires Java 11+ and can be run as follows:
 
 ```
 java -cp actin.jar com.hartwig.actin.molecular.MolecularInterpreterApplication \
-   -orange_json /path/to/orange.json \
-   -serve_directory /path/to/serve_directory \
-   -known_genes_tsv /path/to/known_genes.tsv \
    -clinical_json /path/to/actin_clinical.json \
+   -serve_directory /path/to/serve_directory \
+   -doid_json /path/to/doid.json \
    -output_directory /path/to/where/molecular_json_file_is_written
 ```
 
-An optional `log_debug` parameter can be provided to generate extra logging.
+Optionally, the following arguments can be passed as follows:
+
+| Argument    | Example Value        | Details                                                                 | 
+|-------------|----------------------|-------------------------------------------------------------------------|
+| orange_json | /path/to/orange.json | The path to ORANGE json in case an ORANGE record exists for the patient |
+| log_debug   |                      | If this parameter is set, additional logs will be writted to stdout.    |
 
 The following assumptions are made about the inputs:
 
+- The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
+  extract the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
 - The ORANGE JSON is the JSON output from [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange).
 - The SERVE directory is the output of [SERVE](https://github.com/hartwigmedical/serve/tree/master/algo) and is used for annotation and
   interpretation of the genomic findings.
-- The known genes is a TSV file with gene and geneRole columns. An example can be
-  found [here](https://github.com/hartwigmedical/actin/blob/master/common/src/test/resources/known_genes/example_known_genes.tsv).
-    - This resource file will be moved into SERVE in the future.
-- The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
-  extract
-  the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
 
 ## ACTIN Molecular Datamodel
 
@@ -254,7 +253,7 @@ normalized and integrated into the molecular history, which can be processed by 
 of test was done. This integration process is documented in the diagram below.
 
 Note: IHC tests are not included below as they do not provide molecular events which can be annotated. They follow a similar path, but
-have no annotation step, and cannot be used in molecular rules requiring drivers. 
+have no annotation step, and cannot be used in molecular rules requiring drivers.
 
 ![Integrating Molecular Data](integrating_molecular_data.png)
 
