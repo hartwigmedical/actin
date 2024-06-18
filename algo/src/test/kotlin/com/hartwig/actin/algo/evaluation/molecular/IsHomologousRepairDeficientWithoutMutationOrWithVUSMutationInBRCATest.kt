@@ -178,9 +178,9 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     }
 
     @Test
-    fun `Should pass when HRD and biallelic RAD51C hotspot and non-homozygous disruption of BRCA1`() {
+    fun `Should warn when HRD and biallelic RAD51C hotspot and non-homozygous disruption of BRCA1`() {
         assertEvaluation(
-            EvaluationResult.PASS,
+            EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariantAndDisruption(
                     true,
@@ -193,24 +193,24 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     }
 
     @Test
-    fun `Should pass when HRD and biallelic RAD51C hotspot and no BRCA1 variant`() {
+    fun `Should warn when HRD and homozygous disruption of BRCA1`() {
         assertEvaluation(
-            EvaluationResult.PASS,
+            EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
-                    true, hrdVariant("RAD51C", true, true, true)
+                MolecularTestFactory.withHomologousRepairDeficiencyAndHomozygousDisruption(
+                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = "BRCA1")
                 )
             )
         )
     }
 
     @Test
-    fun `Should pass when HRD and homozygous disruption of BRCA1`() {
+    fun `Should pass when HRD and biallelic RAD51C hotspot and no BRCA1 variant`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withHomologousRepairDeficiencyAndHomozygousDisruption(
-                    true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = "BRCA1")
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                    true, hrdVariant("RAD51C", true, true, true)
                 )
             )
         )
