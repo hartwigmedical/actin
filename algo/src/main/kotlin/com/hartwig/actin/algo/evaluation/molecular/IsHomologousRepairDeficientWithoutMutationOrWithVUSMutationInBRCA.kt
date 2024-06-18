@@ -20,16 +20,16 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
 
         molecular.drivers.variants.filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable }.forEach { variant ->
             when {
-                variant.isHotspot && variant.isBiallelic -> {
+                variant.isHotspot && variant.extendedVariantOrThrow().isBiallelic -> {
                     hrdGenesWithBiallelicHotspot.add(variant.gene)
                 }
                 variant.isHotspot -> {
                     hrdGenesWithNonBiallelicHotspot.add(variant.gene)
                 }
-                variant.isBiallelic && variant.driverLikelihood == DriverLikelihood.HIGH -> {
+                variant.extendedVariantOrThrow().isBiallelic && variant.driverLikelihood == DriverLikelihood.HIGH -> {
                     hrdGenesWithBiallelicNonHotspotHighDriver.add(variant.gene)
                 }
-                variant.isBiallelic -> {
+                variant.extendedVariantOrThrow().isBiallelic -> {
                     hrdGenesWithBiallelicNonHotspotNonHighDriver.add(variant.gene)
                 }
                 variant.driverLikelihood == DriverLikelihood.HIGH -> {

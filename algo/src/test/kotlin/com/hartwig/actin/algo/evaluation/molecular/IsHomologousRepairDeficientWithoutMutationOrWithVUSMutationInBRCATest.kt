@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.Variant
 import org.junit.Test
 
 class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
@@ -222,9 +222,9 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
         isBiallelic: Boolean = false,
         isHotspot: Boolean = false,
         driverLikelihood: DriverLikelihood = DriverLikelihood.LOW,
-    ): ExtendedVariant {
+    ): Variant {
         return TestVariantFactory.createMinimal().copy(
-            gene = gene, isReportable = isReportable, isBiallelic = isBiallelic, isHotspot = isHotspot, driverLikelihood = driverLikelihood,
+            gene = gene, isReportable = isReportable, isHotspot = isHotspot, driverLikelihood = driverLikelihood, extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
         )
     }
 }
