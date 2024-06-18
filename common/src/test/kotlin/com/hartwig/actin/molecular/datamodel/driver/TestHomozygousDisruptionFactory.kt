@@ -13,10 +13,10 @@ object TestHomozygousDisruptionFactory {
             event = "",
             driverLikelihood = null,
             evidence = ActionableEvidence(),
-            isAssociatedWithDrugResistance = null,
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
+            isAssociatedWithDrugResistance = null
         )
     }
 }
