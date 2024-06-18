@@ -39,7 +39,7 @@ panel results and IHC tests. The history is modeled as a list of molecular tests
 
 ### Molecular test
 
-The molecular test is a common interface used to process results from ORANGE and external molecular testing. It is extended
+The molecular test is a common interface used to process results from ORANGE and other molecular testing. It is extended
 by the molecular record, panel record and IHC test.
 
 #### 1 molecular test interface
