@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -17,20 +18,23 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         assertEvaluation(expected, functionNotIgnoringGenes.evaluate(record))
         assertEvaluation(expected, functionIgnoringGenes.evaluate(record))
     }
-    private val CORRECT_TREATMENT = TreatmentTestFactory.drugTreatment(
-        "Correct",
-        TreatmentCategory.TARGETED_THERAPY,
-        setOf(HasHadSOCTargetedTherapyForNSCLC.NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.values.flatten().first())
-    )
-    private val WRONG_TREATMENT = TreatmentTestFactory.drugTreatment(
-        "Correct",
-        TreatmentCategory.TARGETED_THERAPY,
-        setOf(DrugType.IDO1_INHIBITOR)
-    )
+    private val CORRECT_DRUG_TYPE = HasHadSOCTargetedTherapyForNSCLC.NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.values.flatten().first()
+    private val CORRECT_TREATMENT = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(CORRECT_DRUG_TYPE))
+    private val WRONG_TREATMENT = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.IDO1_INHIBITOR))
 
     @Test
     fun `Should fail for empty treatment history`(){
         assertEvaluationForAllFunctions(withTreatmentHistory(emptyList()), EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `Should fail for other category than targeted therapy`(){
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(drugTreatment("Wrong category treatment", TreatmentCategory.IMMUNOTHERAPY, setOf(CORRECT_DRUG_TYPE)))
+            )
+        )
+        assertEvaluationForAllFunctions(withTreatmentHistory(treatmentHistory), EvaluationResult.FAIL)
     }
 
     @Test
@@ -46,7 +50,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
-                    TreatmentTestFactory.drugTreatment(
+                    drugTreatment(
                     "Osimertinib",
                     TreatmentCategory.TARGETED_THERAPY,
                     HasHadSOCTargetedTherapyForNSCLC.NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES[genesToIgnore.first()]!!
