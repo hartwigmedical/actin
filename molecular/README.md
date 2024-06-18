@@ -171,15 +171,15 @@ In addition to the general driver fields, the following data is captured per fus
 | geneTranscriptEnd              | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion        |
 | driverType                     | KNOWN_PAIR       | The type of driver fusion                                                       |
 | proteinEffect                  | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                                |
-| isAssociatedWithDrugResistance | true             | Optional field, indicates whether the fusion is associated with drug resistance |
 | extendedFusionDetails          | see below        | Optional field, see below                                                       |
 
 If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
 
-| Field         | Example Value | Details                                              |
-|---------------|---------------|------------------------------------------------------|
-| fusedExonUp   | 10            | The last exon of the 5' gene included in the fusion  |
-| fusedExonDown | 22            | The first exon of the 3' gene included in the fusion |
+| Field                          | Example Value | Details                                                                         |
+|--------------------------------|---------------|---------------------------------------------------------------------------------|
+| isAssociatedWithDrugResistance | true          | Optional field, indicates whether the fusion is associated with drug resistance |
+| fusedExonUp                    | 10            | The last exon of the 5' gene included in the fusion                             |
+| fusedExonDown                  | 22            | The first exon of the 3' gene included in the fusion                            |
 
 #### N viruses
 
@@ -205,6 +205,8 @@ adds several additional fields which can be extracted from the comprehensive res
 | refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                    |
 | externalTrialSource  | CKB_TRIAL     | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `CKB_TRIAL` |
 | containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                              |
+| isContaminated       | false         | If true, significant contamination with other (human) samples has been detected in the analysed sample                                     |  
+| hasSufficientPurity  | true          | If false, a `WARN_LOW_PURITY` has been raised by the molecular pipeline                                                                    |                                                                   | 
 | hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                             |
 
 #### N HLA alleles (with a single `isReliable` boolean indicating whether the HLA results are reliable)
