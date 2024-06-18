@@ -34,8 +34,8 @@ The following assumptions are made about the inputs:
 
 ### Molecular History
 
-The molecular history represents all molecular testing done for a patient. This include ORANGE results, panel results and IHC tests.
-It is modeled as a list of molecular tests, each with a type and timestamp.
+The molecular history represents all molecular testing done for a patient. This includes WGS results, large targeted panels, archer, small
+panel results and IHC tests. The history is modeled as a list of molecular tests, each with a type and timestamp.
 
 ### Molecular test
 
