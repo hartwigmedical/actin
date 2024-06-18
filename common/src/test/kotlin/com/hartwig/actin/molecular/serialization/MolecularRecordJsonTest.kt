@@ -1,47 +1,47 @@
 package com.hartwig.actin.molecular.serialization
 
 import com.google.common.collect.Sets
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.Driver
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.createExhaustiveTestMolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.createMinimalTestMolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.createProperTestMolecularRecord
-import com.hartwig.actin.molecular.datamodel.characteristics.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.driver.CodingContext
-import com.hartwig.actin.molecular.datamodel.driver.CodingEffect
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.driver.Driver
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.FusionDriverType
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.MolecularDrivers
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.driver.RegionType
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
-import com.hartwig.actin.molecular.datamodel.driver.Virus
-import com.hartwig.actin.molecular.datamodel.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.createEmpty
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withApprovedTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory.withPreClinicalTreatment
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
+import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
+import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.fromJson
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.read
 import com.hartwig.actin.molecular.serialization.MolecularRecordJson.toJson
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.io.File
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
-import java.io.File
-import java.time.LocalDate
 
 class MolecularRecordJsonTest {
 
@@ -81,7 +81,8 @@ class MolecularRecordJsonTest {
         assertThat(molecular.evidenceSource).isEqualTo("kb")
         assertThat(molecular.externalTrialSource).isEqualTo("trial kb")
         assertThat(molecular.containsTumorCells).isTrue
-        assertThat(molecular.hasSufficientQualityAndPurity).isTrue
+        assertThat(molecular.isContaminated).isFalse
+        assertThat(molecular.hasSufficientPurity).isTrue
         assertThat(molecular.hasSufficientQuality).isTrue
         assertCharacteristics(molecular.characteristics)
         assertDrivers(molecular.drivers)
@@ -133,7 +134,7 @@ class MolecularRecordJsonTest {
         assertViruses(drivers.viruses)
     }
 
-    private fun assertVariants(variants: Set<Variant>) {
+    private fun assertVariants(variants: Set<ExtendedVariant>) {
         assertThat(variants).hasSize(1)
         val variant = variants.first()
         assertThat(variant.isReportable).isTrue
@@ -248,7 +249,7 @@ class MolecularRecordJsonTest {
         assertThat(disruption2.clusterGroup).isEqualTo(2)
     }
 
-    private fun assertFusions(fusions: Set<Fusion>) {
+    private fun assertFusions(fusions: Set<ExtendedFusion>) {
         assertThat(fusions).hasSize(1)
         val fusion = fusions.first()
         assertThat(fusion.isReportable).isTrue

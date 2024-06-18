@@ -1,6 +1,8 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -48,26 +50,35 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
             table.addCell(
                 Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
-            val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
-            val generators: MutableList<TableGenerator> = mutableListOf(
-                MolecularCharacteristicsGenerator(molecular, contentWidth())
-            )
-            if (molecular.containsTumorCells) {
-                generators.add(PredictedTumorOriginGenerator(molecular, contentWidth()))
-                generators.add(MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, cohorts, contentWidth()))
+            if (molecular.hasSufficientQualityButLowPurity()) {
+                table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))
             }
-            for (i in generators.indices) {
-                val generator = generators[i]
+            val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+            val evaluated = cohorts.filter { it.isPotentiallyEligible && it.isOpen && it.hasSlotsAvailable }
+
+            val generators =
+                listOf(MolecularCharacteristicsGenerator(molecular, contentWidth())) + tumorDetailsGenerators(molecular, evaluated)
+
+            generators.forEachIndexed { i, generator ->
                 table.addCell(Cells.createSubTitle(generator.title()))
                 table.addCell(Cells.create(generator.contents()))
                 if (i < generators.size - 1) {
                     table.addCell(Cells.createEmpty())
                 }
             }
-            if (!molecular.containsTumorCells) {
-                table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy"))
+            if (!molecular.hasSufficientQuality) {
+                table.addCell(Cells.createContent("No successful OncoAct WGS and/or tumor NGS panel could be performed on the submitted biopsy (insufficient quality for reporting)"))
             }
         } ?: table.addCell(Cells.createContent("No OncoAct WGS and/or tumor NGS panel performed"))
         document.add(table)
+    }
+
+    private fun tumorDetailsGenerators(molecular: MolecularRecord, evaluated: List<EvaluatedCohort>): List<TableGenerator> {
+        return if (molecular.hasSufficientQuality) {
+            listOf(
+                PredictedTumorOriginGenerator(molecular, contentWidth()),
+                MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, evaluated, report.treatmentMatch.trialMatches, contentWidth())
+            )
+        } else emptyList()
     }
 }

@@ -6,13 +6,13 @@ import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 
 internal object TumorTestFactory {
     private val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
@@ -49,7 +49,7 @@ internal object TumorTestFactory {
     }
 
     fun withDoidsAndAmplificationAndPriorMolecularTest(
-        doids: Set<String>, amplifiedGene: String, priorMolecularTests: List<MolecularTest>
+        doids: Set<String>, amplifiedGene: String, priorMolecularTests: List<MolecularTest<*>>
     ): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
@@ -204,11 +204,10 @@ internal object TumorTestFactory {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(type = type))))
     }
 
-    fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<MolecularTest>, doids: Set<String>?): PatientRecord {
+    fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<MolecularTest<*>>, doids: Set<String>?): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
             molecularHistory = MolecularHistory(listOf(baseMolecular) + priorMolecularTests)
-
         )
     }
 }

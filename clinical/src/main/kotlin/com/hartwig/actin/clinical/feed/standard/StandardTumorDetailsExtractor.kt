@@ -104,7 +104,7 @@ class StandardTumorDetailsExtractor(
         return radiologyReport?.substringAfter(CONCLUSIE_)?.split(CONCLUSIE_)?.flatMap { section ->
             section.substringBefore("\r\n\n\n").split("\n")
                 .filter { it.isNotBlank() }
-                .map { line -> line.substringBeforeLast(".") }
+                .map { line -> line.trim().substringBeforeLast(".") }
                 .map { line ->
                     lesionCurationResponse(patientId, line)
                 }

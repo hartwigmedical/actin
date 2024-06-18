@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
-import com.hartwig.actin.molecular.datamodel.MolecularTest
 import org.junit.Test
 
 class MolecularResultsAreAvailableForPromoterOfGeneTest {
@@ -20,7 +19,7 @@ class MolecularResultsAreAvailableForPromoterOfGeneTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTest(create("gene 2 promoter", false))))
     }
 
-    private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): MolecularTest {
+    private fun create(gene: String, impliesPotentialDeterminateStatus: Boolean): IHCMolecularTest {
         return IHCMolecularTest(
             MolecularTestFactory.priorMolecularTest(
                 test = "IHC",

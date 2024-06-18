@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
-import com.hartwig.actin.molecular.datamodel.driver.GeneRole
-import com.hartwig.actin.molecular.datamodel.driver.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.serve.datamodel.common.GeneAlteration
 
 object GeneAlterationFactory {
@@ -9,8 +9,8 @@ object GeneAlterationFactory {
     fun convertAlteration(
         gene: String,
         input: GeneAlteration?
-    ): com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
-        return object : com.hartwig.actin.molecular.datamodel.driver.GeneAlteration {
+    ): com.hartwig.actin.molecular.datamodel.GeneAlteration {
+        return object : com.hartwig.actin.molecular.datamodel.GeneAlteration {
             override val gene: String = gene
 
             override val geneRole: GeneRole = if (input != null) convertGeneRole(input.geneRole()) else GeneRole.UNKNOWN

@@ -1,13 +1,13 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.Panel
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import java.time.LocalDate
 
 data class MolecularHistory(
-    val molecularTests: List<MolecularTest>,
+    val molecularTests: List<MolecularTest<*>>
 ) {
     fun allIHCTests(): List<PriorMolecularTest> {
         return molecularTests.filterIsInstance<IHCMolecularTest>().map { it.test }
@@ -17,16 +17,16 @@ data class MolecularHistory(
         return molecularTests.filterIsInstance<MolecularRecord>()
     }
 
-    fun allPanels(): List<Panel> {
-        return molecularTests.filterIsInstance<Panel>()
+    fun allPanels(): List<PanelRecord> {
+        return molecularTests.filterIsInstance<PanelRecord>()
     }
 
-    fun allArcherPanels(): List<ArcherPanel> {
-        return molecularTests.filterIsInstance<ArcherPanel>()
+    fun allArcherPanels(): List<ArcherPanelExtraction> {
+        return molecularTests.filterIsInstance<PanelRecord>().mapNotNull { it.archerPanelExtraction }
     }
 
-    fun allGenericPanels(): List<GenericPanel> {
-        return molecularTests.filterIsInstance<GenericPanel>()
+    fun allGenericPanels(): List<GenericPanelExtraction> {
+        return molecularTests.filterIsInstance<PanelRecord>().mapNotNull { it.genericPanelExtraction }
     }
 
     fun allOtherTests(): List<OtherPriorMolecularTest> {

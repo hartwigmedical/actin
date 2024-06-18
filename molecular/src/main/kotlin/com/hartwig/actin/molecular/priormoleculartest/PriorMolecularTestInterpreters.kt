@@ -10,18 +10,19 @@ import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanel
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanel
+import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 
-private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotator<T> {
+private fun <T : MolecularTest<*>> identityAnnotator() = object : MolecularAnnotator<T, T> {
     override fun annotate(input: T): T {
         return input
     }
 }
 
-private fun otherExtractor() = object : MolecularExtractor<PriorMolecularTest, MolecularTest> {
-    override fun extract(input: List<PriorMolecularTest>): List<MolecularTest> {
+private fun otherExtractor() = object : MolecularExtractor<PriorMolecularTest, OtherPriorMolecularTest> {
+    override fun extract(input: List<PriorMolecularTest>): List<OtherPriorMolecularTest> {
         return input.map { OtherPriorMolecularTest(it) }
     }
 }
@@ -35,23 +36,28 @@ private fun ihcExtractor() = object : MolecularExtractor<PriorMolecularTest, IHC
 private fun isArcher(): (PriorMolecularTest) -> Boolean = { it.test == ARCHER_FP_LUNG_TARGET }
 
 private class ArcherInterpreter(evidenceDatabase: EvidenceDatabase) :
-    MolecularInterpreter<PriorMolecularTest, ArcherPanel>(ArcherExtractor(), ArcherAnnotator(evidenceDatabase), isArcher())
+    MolecularInterpreter<PriorMolecularTest, ArcherPanelExtraction, PanelRecord>(
+        ArcherExtractor(),
+        ArcherAnnotator(evidenceDatabase),
+        isArcher()
+    )
 
 private fun isGeneric(): (PriorMolecularTest) -> Boolean =
     { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL }
 
 private class GenericPanelInterpreter :
-    MolecularInterpreter<PriorMolecularTest, GenericPanel>(GenericPanelExtractor(), identityAnnotator(), isGeneric())
+    MolecularInterpreter<PriorMolecularTest, GenericPanelExtraction, PanelRecord>(GenericPanelExtractor(), GenericPanelAnnotator(), isGeneric())
 
 private fun isIHC(): (PriorMolecularTest) -> Boolean {
     return { it.test == "IHC" || it.item == "PD-L1" }
 }
 
-private class IHCInterpreter : MolecularInterpreter<PriorMolecularTest, IHCMolecularTest>(ihcExtractor(), identityAnnotator(), isIHC())
+private class IHCInterpreter :
+    MolecularInterpreter<PriorMolecularTest, IHCMolecularTest, IHCMolecularTest>(ihcExtractor(), identityAnnotator(), isIHC())
 
-class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpreter<PriorMolecularTest, out MolecularTest>>) {
+class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpreter<PriorMolecularTest, out Any, out MolecularTest<*>>>) {
 
-    fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest> {
+    fun process(clinicalTests: List<PriorMolecularTest>): List<MolecularTest<*>> {
         val otherInterpreter = MolecularInterpreter(otherExtractor(), identityAnnotator()) { test ->
             pipelines.none { it.inputPredicate.invoke(test) }
         }

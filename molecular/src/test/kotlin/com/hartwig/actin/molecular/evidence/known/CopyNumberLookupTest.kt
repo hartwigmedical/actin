@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.known
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalHomozygousDisruption
 import com.hartwig.serve.datamodel.gene.GeneEvent

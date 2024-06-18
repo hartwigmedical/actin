@@ -7,6 +7,7 @@ object TestTrialDefinitionConfigFactory {
         open = null,
         acronym = "",
         title = "",
-        nctId = ""
+        nctId = "",
+        phase = null
     )
 }

@@ -22,7 +22,8 @@ class TrialConfigDatabaseValidatorTest {
             TrialDefinitionValidationError(
                 config = TRIAL_DEFINITION_1,
                 message = "Duplicated trial file id of trial_1"
-            )
+            ),
+            TrialDefinitionValidationError(config = TRIAL_DEFINITION_3, message = "Invalid phase: 'invalid phase'")
         )
         assertThat(validation.cohortDefinitionValidationErrors).containsExactly(
             CohortDefinitionValidationError(
@@ -64,8 +65,10 @@ class TrialConfigDatabaseValidatorTest {
     companion object {
         private const val TRIAL_ID_1 = "trial 1"
         private const val TRIAL_ID_2 = "trial 2"
+        private const val TRIAL_ID_3 = "trial 3"
 
         val TRIAL_DEFINITION_1 = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_1, open = true)
+        val TRIAL_DEFINITION_3 = TestTrialDefinitionConfigFactory.MINIMAL.copy(trialId = TRIAL_ID_3, open = true, phase = "invalid phase")
 
         private val COHORT_DEFINITION_1 = TestCohortDefinitionConfigFactory.MINIMAL.copy(
             trialId = TRIAL_ID_1, evaluable = true, open = true, slotsAvailable = true, blacklist = false, cohortId = "A"
@@ -110,7 +113,8 @@ class TrialConfigDatabaseValidatorTest {
             return TrialConfigDatabase(
                 trialDefinitionConfigs = listOf(
                     TRIAL_DEFINITION_1,
-                    TRIAL_DEFINITION_1
+                    TRIAL_DEFINITION_1,
+                    TRIAL_DEFINITION_3
                 ),
                 cohortDefinitionConfigs = listOf(
                     COHORT_DEFINITION_1, COHORT_DEFINITION_1, TestCohortDefinitionConfigFactory.MINIMAL.copy(

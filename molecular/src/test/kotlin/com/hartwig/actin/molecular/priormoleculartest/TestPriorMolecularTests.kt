@@ -45,6 +45,15 @@ fun freetextPriorMolecularVariantRecord(gene: String, hgvs: String, date: LocalD
     )
 }
 
+fun freetextPriorMolecularNegativeGeneRecord(gene: String): PriorMolecularTest {
+    return PriorMolecularTest(
+        test = "Freetext",
+        item = gene,
+        scoreText = "Negative",
+        impliesPotentialIndeterminateStatus = false
+    )
+}
+
 fun archerPriorMolecularVariantRecord(gene: String? = GENE, hgvs: String? = HGVS_CODING, date: LocalDate? = null): PriorMolecularTest {
     return PriorMolecularTest(
         test = "Archer FP Lung Target",
@@ -58,7 +67,7 @@ fun archerPriorMolecularVariantRecord(gene: String? = GENE, hgvs: String? = HGVS
 fun archerPriorMolecularFusionRecord(gene: String?, date: LocalDate? = null): PriorMolecularTest {
     return PriorMolecularTest(
         test = "Archer FP Lung Target",
-        item = gene,
+        item = null,
         measure = "$gene fusie aangetoond",
         measureDate = date,
         impliesPotentialIndeterminateStatus = false

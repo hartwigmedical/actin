@@ -1,19 +1,19 @@
 package com.hartwig.actin.database.dao
 
 import com.hartwig.actin.database.Tables
+import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.driver.Driver
-import com.hartwig.actin.molecular.datamodel.driver.Fusion
-import com.hartwig.actin.molecular.datamodel.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.driver.Variant
-import com.hartwig.actin.molecular.datamodel.driver.VariantEffect
-import com.hartwig.actin.molecular.datamodel.driver.Virus
+import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
-import com.hartwig.actin.molecular.datamodel.immunology.MolecularImmunology
-import com.hartwig.actin.molecular.datamodel.pharmaco.PharmacoEntry
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import org.jooq.DSLContext
 import org.jooq.Record
 
@@ -137,7 +137,7 @@ internal class MolecularDAO(private val context: DSLContext) {
                 record.evidenceSource,
                 record.externalTrialSource,
                 record.containsTumorCells,
-                record.hasSufficientQualityAndPurity,
+                record.hasSufficientQuality,
                 record.characteristics.purity,
                 record.characteristics.ploidy,
                 predictedTumorOrigin?.cancerType(),
@@ -223,7 +223,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeVariants(sampleId: String, variants: Set<Variant>) {
+    private fun writeVariants(sampleId: String, variants: Set<ExtendedVariant>) {
         for (variant in variants) {
             val variantId = context.insertInto(
                 Tables.VARIANT,
@@ -443,7 +443,7 @@ internal class MolecularDAO(private val context: DSLContext) {
         inserter.execute()
     }
 
-    private fun writeFusions(sampleId: String, fusions: Set<Fusion>) {
+    private fun writeFusions(sampleId: String, fusions: Set<ExtendedFusion>) {
         for (fusion in fusions) {
             val fusionId = context.insertInto(
                 Tables.FUSION,
