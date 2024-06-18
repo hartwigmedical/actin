@@ -60,7 +60,7 @@ Note that all individual characteristics are expected to be null for tests that 
 |-------------------------------|--------------------|-----------------------------------------------------------------------------------------|
 | purity                        | 78%                | The percentage of cells in the sequenced biopsy that originated from the tumor          |
 | ploidy                        | 3.1                | The average number of copies of any chromosome in the tumor                             |
-| predictedTumorType            | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood  |
+| predictedTumorOrigin          | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood  |
 | isMicrosatelliteUnstable      | false              | If true, sample is considered microsatellite unstable                                   |
 | microsatelliteEvidence        | See evidence below | The evidence determined for the microsatellite status of specific tumor sample          |                                        
 | homologousRepairScore         | 0.5                | The probability of this sample being HR deficient                                       |
@@ -77,12 +77,12 @@ Note that all individual characteristics are expected to be null for tests that 
 
 Every potential driver event has the following fields ('general driver fields'):
 
-| Field            | Example Value      | Details                                                                                                              |
-|------------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
-| isReportable     | true               | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a report             |
-| event            | BRAF V600E         | A human readable string summarizing the driver event                                                                 |
-| driverLikelihood | HIGH               | An optional field that indicates the likelihood that the event is a driver (either `HIGH`, `MEDIUM`, `LOW` or empty) |
-| evidence         | See evidence below | The evidence determined for this driver in the specific tumor sample                                                 |
+| Field            | Example Value      | Details                                                                                                           |
+|------------------|--------------------|-------------------------------------------------------------------------------------------------------------------|
+| isReportable     | true               | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a clinical report |
+| event            | BRAF V600E         | A human readable string summarizing the driver event                                                              |
+| driverLikelihood | HIGH               | An optional field that indicates the likelihood that the event is a driver (either `HIGH`, `MEDIUM`, `LOW`)       |
+| evidence         | See evidence below | The evidence determined for this driver in the specific tumor sample                                              |
 
 Furthermore, every gene driver event is assigned the following fields ('gene driver fields'):
 
@@ -95,31 +95,29 @@ Furthermore, every gene driver event is assigned the following fields ('gene dri
 
 #### N variants
 
-In addition to the driver fields, the following data is captured for all detected variants:
+In addition to the (gene) driver fields, the following data is captured for all detected variants:
 
-| Field                          | Example Value | Details                                                                                                  |
-|--------------------------------|---------------|----------------------------------------------------------------------------------------------------------|
-| type                           | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                            |
-| chromosome                     | 1             | The chromosome in which the event was detected                                                           |
-| position                       | 41206120      | Genomic position in respect to chromosome and ref genome                                                 |
-| ref                            | A             | The base(s) as found in the reference genome at this position                                            |
-| alt                            | G             | The base(s) as found in the sample analyzed                                                              |
-| isHotspot                      | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                                  |
-| canonicalImpact                | See impact    | The impact of this variant on the canonical transcript of the gene                                       |
-| otherImpacts                   | See impact    | A set of impacts on transcripts other than the canonical transcript of the gene                          | 
-| isAssociatedWithDrugResistance | true          | An optional boolean indicating the specific driver event is associated with some form of drug resistance |
-| extendedVariantDetails         | see below     | Optional field, see below                                                                                |
+| Field                  | Example Value | Details                                                                 |
+|------------------------|---------------|-------------------------------------------------------------------------|
+| chromosome             | 1             | The chromosome in which the event was detected                          |
+| position               | 41206120      | Genomic position in respect to chromosome and ref genome                |
+| ref                    | A             | The base(s) as found in the reference genome at this position           |
+| alt                    | G             | The base(s) as found in the sample analyzed                             |
+| type                   | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)           |
+| isHotspot              | true          | Indicates whether this specific variant is a known (pathogenic) hotspot |
+| canonicalImpact        | See impact    | The impact of this variant on the canonical transcript of the gene      |
+| extendedVariantDetails | see below     | Optional field, see below                                               |
 
 If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
 
 | Field             | Example Value | Details                                                                                             |
 |-------------------|---------------|-----------------------------------------------------------------------------------------------------|
-| variantCopyNumber | 3.8           | The number of copies of this variant in the tumor                                                   |
+| variantCopyNumber | 2.3           | The number of copies of this variant in the tumor                                                   |
 | totalCopyNumber   | 4.0           | The total number of copies in the tumor on the variant genomic position                             |
 | isBiallelic       | false         | Indicates whether all alleles in the tumor are affected by this variant or not                      |
-| isHotspot         | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                             | 
-| clonalLikelihood  | 100%          | Likelihood that the variant exists in every tumor cell (is clonal)                                  |
 | phaseGroups       | 1, 2          | The phasing groups this variant belongs to. Variants that are phased share at least one phase group |
+| otherImpacts      | See impact    | The impact of this variant on other (non-canonical) transcripts of the gene                         | 
+| clonalLikelihood  | 100%          | Likelihood that the variant exists in every tumor cell (hence: is clonal)                           |
 
 The following data is captured as impact of a variant on a specific transcript:
 
