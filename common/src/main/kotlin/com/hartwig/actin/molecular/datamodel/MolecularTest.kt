@@ -25,9 +25,8 @@ data class IHCMolecularTest(
     override val type = ExperimentType.IHC
     override val date = test.measureDate
     override val drivers = Drivers()
-    override val evidenceSource = NONE
     override val characteristics = MolecularCharacteristics()
-
+    override val evidenceSource = NONE
 
     override fun testsGene(gene: String) = test.measure == gene
 }
@@ -38,8 +37,8 @@ data class OtherPriorMolecularTest(
     override val type = ExperimentType.OTHER
     override val date = test.measureDate
     override val drivers = Drivers()
-    override val evidenceSource = NONE
     override val characteristics = MolecularCharacteristics()
+    override val evidenceSource = NONE
 
     override fun testsGene(gene: String) = test.measure == gene
 }
