@@ -3,13 +3,13 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.driver.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.driver.Variant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import org.junit.Test
 
 class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
@@ -222,7 +222,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
         isBiallelic: Boolean = false,
         isHotspot: Boolean = false,
         driverLikelihood: DriverLikelihood = DriverLikelihood.LOW,
-    ): Variant {
+    ): ExtendedVariant {
         return TestVariantFactory.createMinimal().copy(
             gene = gene, isReportable = isReportable, isBiallelic = isBiallelic, isHotspot = isHotspot, driverLikelihood = driverLikelihood,
         )

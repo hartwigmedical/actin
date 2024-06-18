@@ -208,7 +208,7 @@ internal object MolecularTestFactory {
     fun withHomologousRepairDeficiencyAndVariantAndDisruption(
         isHomologousRepairDeficient: Boolean?,
         disruption: Disruption,
-        variant: Variant
+        variant: ExtendedVariant
     ): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), drivers = baseMolecular.drivers.copy(variants = setOf(variant), disruptions = setOf(disruption))
