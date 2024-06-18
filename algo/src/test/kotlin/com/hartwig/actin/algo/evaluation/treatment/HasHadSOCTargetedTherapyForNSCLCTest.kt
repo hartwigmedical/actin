@@ -14,10 +14,6 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
     private val genesToIgnore = listOf("EGFR")
     private val functionNotIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(emptyList())
     private val functionIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(genesToIgnore)
-    private fun assertEvaluationForAllFunctions(record: PatientRecord, expected: EvaluationResult) {
-        assertEvaluation(expected, functionNotIgnoringGenes.evaluate(record))
-        assertEvaluation(expected, functionIgnoringGenes.evaluate(record))
-    }
     private val CORRECT_DRUG_TYPE = HasHadSOCTargetedTherapyForNSCLC.NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.values.flatten().first()
     private val CORRECT_TREATMENT = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(CORRECT_DRUG_TYPE))
     private val WRONG_TREATMENT = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.IDO1_INHIBITOR))
@@ -67,5 +63,10 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(CORRECT_TREATMENT))
         )
         assertEvaluationForAllFunctions(withTreatmentHistory(treatmentHistory), EvaluationResult.PASS)
+    }
+
+    private fun assertEvaluationForAllFunctions(record: PatientRecord, expected: EvaluationResult) {
+        assertEvaluation(expected, functionNotIgnoringGenes.evaluate(record))
+        assertEvaluation(expected, functionIgnoringGenes.evaluate(record))
     }
 }

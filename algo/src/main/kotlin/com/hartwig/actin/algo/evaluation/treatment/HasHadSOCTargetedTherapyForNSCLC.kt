@@ -11,10 +11,11 @@ import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: List<String>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val drugTypeSet = returnDrugTypeSet(genesToIgnore)
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             record.oncologicalHistory,
             TreatmentCategory.TARGETED_THERAPY,
-            { historyEntry -> historyEntry.matchesTypeFromSet(returnDrugTypeSet(genesToIgnore)) }
+            { historyEntry -> historyEntry.matchesTypeFromSet(drugTypeSet) }
         )
         val matches = treatmentSummary.specificMatches.joinToString { it.treatmentDisplay() }
 
@@ -32,6 +33,10 @@ class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: List<String>) 
                 )
             }
         }
+    }
+
+    private fun returnDrugTypeSet(genesToIgnore: List<String>): Set<TreatmentType> {
+        return NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.filterNot { it.key in genesToIgnore }.values.flatten().toSet()
     }
 
     companion object {
@@ -81,9 +86,5 @@ class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: List<String>) 
                 DrugType.TRK_TYROSINE_KINASE_INHIBITOR
             )
         )
-
-        private fun returnDrugTypeSet(genesToIgnore: List<String>): Set<TreatmentType> {
-            return NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.filterNot { it.key in genesToIgnore }.values.flatten().toSet()
-        }
     }
 }
