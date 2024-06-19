@@ -1,2 +1,2 @@
 gene	missenseVusDriversPerSample	missensePassengersPerMutation	nonsenseVusDriversPerSample	nonsensePassengersPerMutation	spliceVusDriversPerSample	splicePassengersPerMutation	indelVusDriversPerSample	indelPassengersPerMutation
-A1BG	0	2.22948235047018e-07	0	8.57493211719301e-09	0	0	0	2.76956831569534e-08
+BRAF	0.00672046974511682	1.92104643622481e-07	9.26041369655672e-05	1.36527615093287e-08	0	1.7149864234386e-08	0.00210551308242288	1.03230684407681e-07

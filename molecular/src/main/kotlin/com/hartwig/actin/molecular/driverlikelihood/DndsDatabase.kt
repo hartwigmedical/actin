@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.driverlikelihood
 
 import com.fasterxml.jackson.databind.ObjectReader
-import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import java.io.File
 import org.apache.commons.math3.distribution.PoissonDistribution
@@ -14,7 +14,6 @@ enum class DndsDriverType {
 
 data class DndsDatabaseEntry(
     val driversPerSample: Double = 0.0,
-    val passengersPerMutation: Double = 0.0,
     val probabilityVariantNonDriver: Double = 0.0
 )
 
@@ -44,13 +43,11 @@ class DndsDatabase(
 
     companion object {
         fun create(oncoDndFilePath: String, tsgDndFilePath: String): DndsDatabase {
-            val reader = CsvMapper().apply {
-                setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-            }.readerFor(DndsGeneEntry::class.java).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
-
+            val reader =
+                CsvMapper().apply { registerModule(KotlinModule.Builder().build()) }.readerFor(DndsGeneEntry::class.java)
+                    .with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
             val oncoGeneLookup = geneLookup(reader, oncoDndFilePath)
             val tsgGeneLookup = geneLookup(reader, tsgDndFilePath)
-
             return DndsDatabase(oncoGeneLookup, tsgGeneLookup)
         }
 
@@ -60,37 +57,34 @@ class DndsDatabase(
         ) = reader.readValues<DndsGeneEntry>(File(oncoDndFilePath)).readAll().groupBy { it.gene }.mapValues {
             it.value.flatMap { geneEntry ->
                 listOf(
-                    DndsDriverType.NONESENSE to listOf(
-                        DndsDatabaseEntry(
-                            geneEntry.nonsenseVusDriversPerSample,
-                            geneEntry.nonsensePassengersPerMutation,
-                            probabilityVariantNonDriver(30000, geneEntry.nonsensePassengersPerMutation)
-                        )
+                    DndsDriverType.NONESENSE to createEntry(
+                        geneEntry.nonsenseVusDriversPerSample,
+                        geneEntry.nonsensePassengersPerMutation,
+                        30000
                     ),
-                    DndsDriverType.INDEL to listOf(
-                        DndsDatabaseEntry(
-                            geneEntry.indelVusDriversPerSample,
-                            geneEntry.indelPassengersPerMutation,
-                            probabilityVariantNonDriver(1000, geneEntry.indelPassengersPerMutation)
-                        )
+                    DndsDriverType.INDEL to createEntry(
+                        geneEntry.indelVusDriversPerSample,
+                        geneEntry.indelPassengersPerMutation,
+                        1000,
                     ),
-                    DndsDriverType.MISSENSE to listOf(
-                        DndsDatabaseEntry(
-                            geneEntry.missenseVusDriversPerSample,
-                            geneEntry.missensePassengersPerMutation,
-                            probabilityVariantNonDriver(30000, geneEntry.missensePassengersPerMutation)
-                        )
+                    DndsDriverType.MISSENSE to createEntry(
+                        geneEntry.missenseVusDriversPerSample,
+                        geneEntry.missensePassengersPerMutation,
+                        30000,
                     ),
-                    DndsDriverType.SPLICE to listOf(
-                        DndsDatabaseEntry(
-                            geneEntry.spliceVusDriversPerSample,
-                            geneEntry.splicePassengersPerMutation,
-                            probabilityVariantNonDriver(30000, geneEntry.splicePassengersPerMutation)
-                        )
+                    DndsDriverType.SPLICE to createEntry(
+                        geneEntry.spliceVusDriversPerSample,
+                        geneEntry.splicePassengersPerMutation,
+                        30000
                     )
                 )
-            }.groupBy { databaseEntries -> databaseEntries.first }.mapValues { entry -> entry.value.first().second.first() }
+            }.groupBy { databaseEntries -> databaseEntries.first }.mapValues { entry -> entry.value.first().second }
         }
+
+        private fun createEntry(driversBySample: Double, passengersPerMutation: Double, estimatedMutationCount: Int) = DndsDatabaseEntry(
+            driversBySample,
+            probabilityVariantNonDriver(estimatedMutationCount, passengersPerMutation),
+        )
 
         private fun probabilityVariantNonDriver(estimatedMutationCount: Int, passengersPerMutation: Double): Double {
             return 1 - PoissonDistribution(estimatedMutationCount * passengersPerMutation).probability(0)

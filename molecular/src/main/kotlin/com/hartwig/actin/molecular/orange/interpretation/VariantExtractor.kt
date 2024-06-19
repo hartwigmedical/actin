@@ -114,23 +114,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
         }
 
         fun determineDriverLikelihood(driver: PurpleDriver?): DriverLikelihood? {
-            return when {
-                driver == null -> {
-                    null
-                }
-
-                driver.driverLikelihood() >= 0.8 -> {
-                    DriverLikelihood.HIGH
-                }
-
-                driver.driverLikelihood() >= 0.2 -> {
-                    DriverLikelihood.MEDIUM
-                }
-
-                else -> {
-                    DriverLikelihood.LOW
-                }
-            }
+            return DriverLikelihood.from(driver?.driverLikelihood())
         }
 
         private fun findBestMutationDriver(

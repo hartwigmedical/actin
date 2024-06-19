@@ -6,6 +6,8 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.orange.PatientRecordJson
+import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
+import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -55,7 +57,10 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Loading evidence database for prior molecular tests")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
         LOGGER.info("Interpreting prior molecular tests")
-        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(evidenceDatabase).process(clinical.priorMolecularTests)
+        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
+            evidenceDatabase,
+            GeneDriverLikelihoodModel(DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath))
+        ).process(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)

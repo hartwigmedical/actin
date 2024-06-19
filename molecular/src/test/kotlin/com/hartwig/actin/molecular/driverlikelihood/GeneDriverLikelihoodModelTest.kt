@@ -1,16 +1,47 @@
 package com.hartwig.actin.molecular.driverlikelihood
 
-import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.CodingEffect
+import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.Variant
+import com.hartwig.actin.molecular.datamodel.VariantType
+import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset
 import org.junit.Test
 
 private const val GENE = "gene"
 
+private val ENTRY = DndsDatabaseEntry(0.1, 0.5)
+
+private const val DRIVER_LIKELIHOOD = 0.181
+private const val HIGHER_DRIVER_LIKELIHOOD = 0.526
+
 class GeneDriverLikelihoodModelTest {
 
-    private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase(mapOf(GENE to DndsDatabaseEntry())))
+    private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(
+        DndsDatabase(
+            mapOf(GENE to mapOf(DndsDriverType.NONESENSE to DndsDatabaseEntry())),
+            mapOf(GENE to mapOf(DndsDriverType.NONESENSE to DndsDatabaseEntry()))
+        )
+    )
+
+    @Test
+    fun `Should load proper dnds database and return expected likelihood for BRAF VUS`() {
+        val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
+        val result = geneDriverLikelihoodModel.evaluate(
+            "BRAF",
+            GeneRole.ONCO,
+            listOf(
+                TestVariantFactory.createMinimal().copy(
+                    type = VariantType.SNV,
+                    canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
+                )
+            )
+        )
+        assertThat(result.driverLikelihood).isEqualTo(0.4841874750460783)
+    }
 
     @Test
     fun `Should assign driver likelihood of high and hotspot true when gene has loss of function or gain of function (and predicted)`() {
@@ -21,33 +52,165 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should assign null driver likelihood when gene is unknown to serve`() {
-        evaluateAndAssertGene(GENE)
-        evaluateAndAssertGene("another_gene")
+    fun `Should assign null driver likelihood when gene role is unknown`() {
+        val annotatedVariants = geneDriverLikelihoodModel.evaluate(
+            GENE,
+            GeneRole.UNKNOWN,
+            listOf(TestVariantFactory.createMinimal())
+        )
+        assertThat(annotatedVariants.isHotspot).isNull()
+        assertThat(annotatedVariants.driverLikelihood).isNull()
     }
 
     @Test
-    fun `Should discard VUS`() {
-        evaluateAndAssertGene(GENE)
-        evaluateAndAssertGene("another_gene")
+    fun `Should evaluate single VUS nonesense in onco and tsg gene`() {
+        val model = GeneDriverLikelihoodModel(DndsDatabase(dndsMap(DndsDriverType.NONESENSE), dndsMap(DndsDriverType.NONESENSE)))
+        evaluateAndAssertVUS(
+            model, GeneRole.ONCO, DRIVER_LIKELIHOOD, createVariant(
+                VariantType.SNV,
+                CodingEffect.NONSENSE_OR_FRAMESHIFT
+            )
+        )
+        evaluateAndAssertVUS(
+            model, GeneRole.TSG, DRIVER_LIKELIHOOD, createVariant(
+                VariantType.SNV,
+                CodingEffect.NONSENSE_OR_FRAMESHIFT
+            )
+        )
     }
 
-    private fun evaluateAndAssertGene(gene: String) {
-        val annotatedVariants = geneDriverLikelihoodModel.evaluate(
-            gene,
-            listOf(TestVariantFactory.createMinimal())
+    @Test
+    fun `Should evaluate single VUS missense in onco and tsg gene`() {
+        val model = GeneDriverLikelihoodModel(DndsDatabase(dndsMap(DndsDriverType.MISSENSE), dndsMap(DndsDriverType.MISSENSE)))
+        evaluateAndAssertVUS(
+            model, GeneRole.ONCO, DRIVER_LIKELIHOOD, createVariant(
+                VariantType.SNV,
+                CodingEffect.MISSENSE
+            )
         )
-        assertThat(annotatedVariants.isHotspot).isFalse()
-        assertThat(annotatedVariants.driverLikelihood).isNull()
+        evaluateAndAssertVUS(
+            model, GeneRole.TSG, DRIVER_LIKELIHOOD, createVariant(
+                VariantType.SNV,
+                CodingEffect.MISSENSE
+            )
+        )
     }
+
+    @Test
+    fun `Should evaluate single VUS indel in onco and tsg gene`() {
+        val model = GeneDriverLikelihoodModel(DndsDatabase(dndsMap(DndsDriverType.INDEL), dndsMap(DndsDriverType.INDEL)))
+        evaluateAndAssertVUS(
+            model, GeneRole.ONCO, DRIVER_LIKELIHOOD, createVariant(
+                VariantType.INSERT,
+                CodingEffect.NONSENSE_OR_FRAMESHIFT
+            )
+        )
+        evaluateAndAssertVUS(
+            model, GeneRole.TSG, DRIVER_LIKELIHOOD, createVariant(
+                VariantType.DELETE,
+                CodingEffect.NONSENSE_OR_FRAMESHIFT
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate single VUS splice in onco and tsg gene`() {
+        val model = GeneDriverLikelihoodModel(DndsDatabase(dndsMap(DndsDriverType.SPLICE), dndsMap(DndsDriverType.SPLICE)))
+        evaluateAndAssertVUS(
+            model, GeneRole.ONCO, DRIVER_LIKELIHOOD, createVariant(
+                VariantType.DELETE,
+                CodingEffect.SPLICE
+            )
+        )
+        evaluateAndAssertVUS(
+            model, GeneRole.TSG, DRIVER_LIKELIHOOD, createVariant(
+                VariantType.DELETE,
+                CodingEffect.SPLICE
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate single VUS in genes with both roles`() {
+        val model = GeneDriverLikelihoodModel(
+            DndsDatabase(
+                dndsMap(DndsDriverType.NONESENSE),
+                mapOf(GENE to mapOf(DndsDriverType.NONESENSE to ENTRY.copy(probabilityVariantNonDriver = 0.1)))
+            )
+        )
+        evaluateAndAssertVUS(
+            model, GeneRole.BOTH, HIGHER_DRIVER_LIKELIHOOD, createVariant(
+                VariantType.SNV,
+                CodingEffect.NONSENSE_OR_FRAMESHIFT
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate multi VUS in onco genes by taking max`() {
+        val model = GeneDriverLikelihoodModel(
+            DndsDatabase(
+                dndsMap(DndsDriverType.NONESENSE) + mapOf(GENE to mapOf(DndsDriverType.MISSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.1))),
+                emptyMap()
+            )
+        )
+        evaluateAndAssertVUS(
+            model, GeneRole.ONCO, HIGHER_DRIVER_LIKELIHOOD, createVariant(
+                VariantType.SNV,
+                CodingEffect.NONSENSE_OR_FRAMESHIFT
+            ), createVariant(VariantType.SNV, CodingEffect.MISSENSE)
+        )
+    }
+
+    @Test
+    fun `Should evaluate multi VUS in tsg genes by taking joint probability of 2 most impactful variants`() {
+        val model = GeneDriverLikelihoodModel(
+            DndsDatabase(
+                emptyMap(),
+                mapOf(
+                    GENE to mapOf(
+                        DndsDriverType.NONESENSE to ENTRY.copy(probabilityVariantNonDriver = 0.5, driversPerSample = 0.7),
+                        DndsDriverType.MISSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.01, driversPerSample = 0.6),
+                        DndsDriverType.INDEL to ENTRY.copy(probabilityVariantNonDriver = 0.1, driversPerSample = 0.5),
+                    )
+                )
+            )
+        )
+        evaluateAndAssertVUS(
+            model, GeneRole.TSG, 0.795, createVariant(
+                VariantType.SNV,
+                CodingEffect.NONSENSE_OR_FRAMESHIFT
+            ), createVariant(VariantType.SNV, CodingEffect.MISSENSE), createVariant(VariantType.INSERT, CodingEffect.NONSENSE_OR_FRAMESHIFT)
+        )
+    }
+
+    private fun evaluateAndAssertVUS(
+        model: GeneDriverLikelihoodModel,
+        geneRole: GeneRole,
+        expectedLikelihood: Double,
+        vararg variants: Variant
+    ) {
+        val result = model.evaluate(
+            GENE, geneRole, variants.toList()
+        )
+        assertThat(result.driverLikelihood).isEqualTo(expectedLikelihood, Offset.offset(0.001))
+    }
+
+    private fun createVariant(variantType: VariantType, codingEffect: CodingEffect) = TestVariantFactory.createMinimal().copy(
+        type = variantType,
+        canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = codingEffect)
+    )
+
+    private fun dndsMap(dndsDriverType: DndsDriverType) = mapOf(GENE to mapOf(dndsDriverType to ENTRY))
 
     private fun evaluateAndAssert(geneDriverLikelihoodModel: GeneDriverLikelihoodModel, proteinEffect: ProteinEffect) {
         val annotatedVariants = geneDriverLikelihoodModel.evaluate(
             GENE,
+            GeneRole.ONCO,
             listOf(TestVariantFactory.createMinimal().copy(proteinEffect = proteinEffect))
         )
         assertThat(annotatedVariants.isHotspot).isTrue()
-        assertThat(annotatedVariants.driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+        assertThat(annotatedVariants.driverLikelihood).isEqualTo(1.0)
     }
 
 }
