@@ -37,7 +37,7 @@ class DndsDatabase(
         return when (geneRole) {
             GeneRole.ONCO -> oncoGeneLookup[gene]?.get(driverType)
             GeneRole.TSG -> tsgGeneLookup[gene]?.get(driverType)
-            else -> throw IllegalArgumentException("Can only look up TSG ")
+            else -> throw IllegalArgumentException("Can only look up TSG or ONCO genes. Other gene roles are not supported")
         }
     }
 
