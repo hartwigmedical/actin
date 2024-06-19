@@ -27,5 +27,4 @@ data class PanelRecord(
     fun events(): Set<PanelEvent> {
         return archerPanelExtraction?.events()?.toSet() ?: genericPanelExtraction?.events()?.toSet() ?: emptySet()
     }
-
 }

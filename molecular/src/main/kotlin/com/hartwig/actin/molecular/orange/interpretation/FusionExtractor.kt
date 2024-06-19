@@ -32,16 +32,16 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
                     driverLikelihood = determineDriverLikelihood(fusion),
                     evidence = ActionableEvidenceFactory.createNoEvidence(),
                     geneStart = fusion.geneStart(),
+                    geneEnd = fusion.geneEnd(),
                     geneTranscriptStart = fusion.geneTranscriptStart(),
-                    proteinEffect = ProteinEffect.UNKNOWN,
+                    geneTranscriptEnd = fusion.geneTranscriptEnd(),
                     driverType = determineDriverType(fusion),
+                    proteinEffect = ProteinEffect.UNKNOWN,
                     extendedFusionDetails = ExtendedFusionDetails(
                         fusedExonUp = fusion.fusedExonUp(),
                         fusedExonDown = fusion.fusedExonDown(),
                         isAssociatedWithDrugResistance = null,
-                    ),
-                    geneEnd = fusion.geneEnd(),
-                    geneTranscriptEnd = fusion.geneTranscriptEnd()
+                    )
                 )
             }
             .toSortedSet(FusionComparator())
