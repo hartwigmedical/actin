@@ -29,6 +29,8 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             val geneAlteration = GeneAlterationFactory.convertAlteration(
                 it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
             )
+
+
             Variant(
                 isReportable = true,
                 event = "${it.gene} ${it.hgvsCodingImpact}",

@@ -53,6 +53,7 @@
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
         <jackson.version>2.16.1</jackson.version>
         <kotlinx-serialization-json.version>1.6.2</kotlinx-serialization-json.version>
+        <commons-math3.version>3.6.1</commons-math3.version>
     </properties>
 
     <distributionManagement>
@@ -273,6 +274,11 @@
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-kotlin</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>${commons-math3.version}</version>
             </dependency>
 
             <dependency>
