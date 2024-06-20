@@ -95,9 +95,9 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
     private fun profile(event: String, warningType: ActivationWarningType? = null, activating: Boolean = false) =
         ActivationProfile(event = event, activating = activating, warningType = warningType)
 
-    private fun isSubclonal(variant: Variant) = variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
+    private fun isSubclonal(variant: Variant) = variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
 
-    private fun findActivatingMutations(molecularTest: MolecularTest<*>): MolecularEvaluation {
+    private fun findActivatingMutations(molecularTest: MolecularTest): MolecularEvaluation {
         val hasHighMutationalLoad = molecularTest.characteristics.hasHighTumorMutationalLoad
         val evidenceSource = molecularTest.evidenceSource
         val variantCharacteristics =

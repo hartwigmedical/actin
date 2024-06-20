@@ -1,14 +1,22 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.PatientRecord
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import io.mockk.every
@@ -20,7 +28,7 @@ class HasExhaustedSOCTreatmentsTest {
 
     private val recommendationEngine = mockk<RecommendationEngine>()
     private val recommendationEngineFactory = mockk<RecommendationEngineFactory> { every { create() } returns recommendationEngine }
-    private val function = HasExhaustedSOCTreatments(recommendationEngineFactory)
+    private val function = HasExhaustedSOCTreatments(recommendationEngineFactory, TestDoidModelFactory.createMinimalTestDoidModel())
     private val nonEmptyTreatmentList = listOf(
         EvaluatedTreatment(
             TreatmentCandidate(
@@ -29,6 +37,41 @@ class HasExhaustedSOCTreatmentsTest {
             ), listOf(EvaluationFactory.pass("Has MSI"))
         )
     )
+
+    @Test
+    fun `Should return undetermined for patient with NSCLC and platinum doublet chemotherapy in treatment history`() {
+        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
+        val platinumDoublet =
+            DrugTreatment(
+                name = "Carboplatin+Pemetrexed",
+                drugs = setOf(
+                    Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)),
+                    Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
+                )
+            )
+        val record = createHistoryWithNSCLCAndTreatment(platinumDoublet)
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for patient with NSCLC with other treatment than platinum doublet chemotherapy in treatment history`() {
+        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
+        val treatment =
+            TreatmentTestFactory.drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
+        val record = createHistoryWithNSCLCAndTreatment(treatment)
+        val evaluation = function.evaluate(record)
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failGeneralMessages).containsExactly("SOC not exhausted: at least platinum doublet remaining")
+    }
+
+    @Test
+    fun `Should fail for patient with NSCLC with empty treatment history`() {
+        every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
+        val record = createHistoryWithNSCLCAndTreatment(null)
+        val evaluation = function.evaluate(record)
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failGeneralMessages).containsExactly("SOC not exhausted: at least platinum doublet remaining")
+    }
 
     @Test
     fun `Should return undetermined for empty treatment list when SOC cannot be evaluated`() {
@@ -61,5 +104,17 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
         assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failGeneralMessages)
             .containsExactly("Patient has not exhausted SOC (remaining options: pembrolizumab)")
+    }
+
+    private fun createHistoryWithNSCLCAndTreatment(drugTreatment: Treatment?): PatientRecord {
+        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
+        return base.copy(
+            tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            oncologicalHistory = if (drugTreatment != null) {
+                listOf(
+                    TreatmentTestFactory.treatmentHistoryEntry(listOf(drugTreatment))
+                )
+            } else emptyList()
+        )
     }
 }

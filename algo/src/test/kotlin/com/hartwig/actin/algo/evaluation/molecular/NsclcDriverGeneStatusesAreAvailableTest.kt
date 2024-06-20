@@ -89,7 +89,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     private fun archerPanelWithVarientForGene(it: String) = TestPanelRecordFactory.empty()
         .copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherVariantExtraction(it, HGVS_VARIANT))))
 
-    private fun createNonWGSRecordWithOptionalPriorTests(priorTest: List<MolecularTest<*>> = emptyList()): PatientRecord {
+    private fun createNonWGSRecordWithOptionalPriorTests(priorTest: List<MolecularTest> = emptyList()): PatientRecord {
         val history = MolecularHistory(priorTest)
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularHistory = history)
     }

@@ -4,6 +4,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentStage
+import com.hartwig.actin.clinical.datamodel.treatment.Drug
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.Radiotherapy
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -11,18 +13,37 @@ import org.junit.Test
 
 class HasReceivedPlatinumBasedDoubletTest {
 
+    private val platinumDoublet =
+        DrugTreatment(
+            name = "Carboplatin+Pemetrexed",
+            drugs = setOf(
+                Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)),
+                Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
+            )
+        )
+    private val platinumDoubletWithImmuno =
+        platinumDoublet.copy(
+            name = platinumDoublet.name.plus("+Pembrolizumab"),
+            drugs = platinumDoublet.drugs
+                .plus(Drug(name = "Pembrolizumab", category = TreatmentCategory.IMMUNOTHERAPY, drugTypes = setOf(DrugType.ANTI_PD_1)))
+        )
+    private val platinumTriplet =
+        platinumDoublet.copy(
+            name = platinumDoublet.name.plus("+Paclitaxel"),
+            drugs = platinumDoublet.drugs
+                .plus(Drug(name = "Paclitaxel", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.TAXANE)))
+        )
+
     private val platinumChemoDrug =
         TreatmentTestFactory.drugTreatment("Carboplatin", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.PLATINUM_COMPOUND))
     private val otherChemoDrug =
-        TreatmentTestFactory.drugTreatment("Pemetrexed", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTIMETABOLITE))
-    private val anotherChemoDrug =
         TreatmentTestFactory.drugTreatment("Paclitaxel", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.TAXANE))
     private val otherCategoryDrug =
         TreatmentTestFactory.drugTreatment("Nivolumab", TreatmentCategory.IMMUNOTHERAPY)
 
     @Test
     fun `Should pass if treatment history contains platinum doublet`() {
-        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumChemoDrug, otherChemoDrug)))
+        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet)))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -32,16 +53,7 @@ class HasReceivedPlatinumBasedDoubletTest {
 
     @Test
     fun `Should pass if treatment history contains platinum doublet in combination with treatment of other category`() {
-        val history =
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = setOf(
-                        platinumChemoDrug,
-                        otherChemoDrug,
-                        otherCategoryDrug
-                    )
-                )
-            )
+        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoubletWithImmuno)))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -54,11 +66,7 @@ class HasReceivedPlatinumBasedDoubletTest {
         val history =
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = setOf(
-                        platinumChemoDrug,
-                        otherChemoDrug
-                    ),
-                    maintenanceTreatment = treatmentStage(anotherChemoDrug)
+                    treatments = setOf(platinumDoublet), maintenanceTreatment = treatmentStage(otherChemoDrug)
                 )
             )
 
@@ -70,16 +78,7 @@ class HasReceivedPlatinumBasedDoubletTest {
 
     @Test
     fun `Should warn if treatment history contains platinum triplet`() {
-        val history =
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = setOf(
-                        platinumChemoDrug,
-                        otherChemoDrug,
-                        anotherChemoDrug
-                    )
-                )
-            )
+        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumTriplet)))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
@@ -93,9 +92,7 @@ class HasReceivedPlatinumBasedDoubletTest {
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
                     treatments = setOf(
-                        platinumChemoDrug,
-                        otherChemoDrug,
-                        anotherChemoDrug,
+                        platinumTriplet,
                         otherCategoryDrug
                     )
                 )

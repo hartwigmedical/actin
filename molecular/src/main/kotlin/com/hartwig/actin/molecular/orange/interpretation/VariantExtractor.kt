@@ -5,9 +5,10 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
@@ -23,7 +24,7 @@ import org.apache.logging.log4j.LogManager
 
 internal class VariantExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(purple: PurpleRecord): Set<ExtendedVariant> {
+    fun extract(purple: PurpleRecord): Set<Variant> {
         val drivers = relevantPurpleDrivers(purple)
 
         return VariantDedup.apply(relevantPurpleVariants(purple)).filter { variant ->
@@ -43,11 +44,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val driver = findBestMutationDriver(drivers, variant.gene(), variant.canonicalImpact().transcript())
                 val driverLikelihood = determineDriverLikelihood(driver)
                 val evidence = ActionableEvidenceFactory.createNoEvidence()
-                ExtendedVariant(
-                    chromosome = variant.chromosome(),
-                    position = variant.position(),
-                    ref = variant.ref(),
-                    alt = variant.alt(),
+                Variant(
                     gene = variant.gene(),
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
@@ -56,15 +53,21 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     event = event,
                     driverLikelihood = driverLikelihood,
                     evidence = evidence,
+                    chromosome = variant.chromosome(),
+                    position = variant.position(),
+                    ref = variant.ref(),
+                    alt = variant.alt(),
                     type = determineVariantType(variant),
-                    variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
-                    totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
-                    isBiallelic = variant.biallelic(),
                     isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
-                    clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
-                    phaseGroups = variant.localPhaseSets()?.toSet(),
                     canonicalImpact = extractCanonicalImpact(variant),
-                    otherImpacts = extractOtherImpacts(variant)
+                    extendedVariantDetails = ExtendedVariantDetails(
+                        variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
+                        totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
+                        isBiallelic = variant.biallelic(),
+                        phaseGroups = variant.localPhaseSets()?.toSet(),
+                        otherImpacts = extractOtherImpacts(variant),
+                        clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
+                    ),
                 )
             }
             .toSortedSet(VariantComparator())

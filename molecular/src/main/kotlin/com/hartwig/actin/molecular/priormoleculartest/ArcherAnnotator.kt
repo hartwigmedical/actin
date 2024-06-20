@@ -2,14 +2,14 @@ package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
-import com.hartwig.actin.molecular.datamodel.panel.PanelDrivers
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.datamodel.panel.PanelVariant
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -29,7 +29,7 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             val geneAlteration = GeneAlterationFactory.convertAlteration(
                 it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
             )
-            PanelVariant(
+            Variant(
                 isReportable = true,
                 event = "${it.gene} ${it.hgvsCodingImpact}",
                 driverLikelihood = DriverLikelihood.HIGH,
@@ -57,7 +57,7 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase) : Molecula
             archerPanelExtraction = input,
             type = ExperimentType.ARCHER,
             date = input.date,
-            drivers = PanelDrivers(variants = annotatedVariants.toSet()),
+            drivers = Drivers(variants = annotatedVariants.toSet()),
             characteristics = MolecularCharacteristics(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
         )

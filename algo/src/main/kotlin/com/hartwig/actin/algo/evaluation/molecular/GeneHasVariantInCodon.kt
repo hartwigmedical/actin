@@ -21,7 +21,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                     if (isCodonMatch(variant.canonicalImpact.affectedCodon, codon)) {
                         canonicalCodonMatches.add(codon)
                         if (variant.isReportable) {
-                            if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                            if (variant.extendedVariantOrThrow().clonalLikelihood < CLONAL_CUTOFF) {
                                 canonicalReportableSubclonalVariantMatches.add(variant.event)
                             } else {
                                 canonicalReportableVariantMatches.add(variant.event)
@@ -31,7 +31,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                         }
                     }
                     if (variant.isReportable) {
-                        for (otherImpact in variant.otherImpacts) {
+                        for (otherImpact in variant.extendedVariantOrThrow().otherImpacts) {
                             if (isCodonMatch(otherImpact.affectedCodon, codon)) {
                                 reportableOtherVariantMatches.add(variant.event)
                                 reportableOtherCodonMatches.add(codon)

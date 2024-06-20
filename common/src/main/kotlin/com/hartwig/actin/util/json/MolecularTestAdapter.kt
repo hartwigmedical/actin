@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.serialization
+package com.hartwig.actin.util.json
 
 import com.google.gson.Gson
 import com.google.gson.JsonParser
@@ -12,9 +12,9 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
-class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*>>() {
+class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>() {
 
-    override fun write(out: JsonWriter, value: MolecularTest<*>?) {
+    override fun write(out: JsonWriter, value: MolecularTest?) {
         if (value == null) {
             out.nullValue()
             return
@@ -24,7 +24,7 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest<*
         gson.toJson(jsonObject, out)
     }
 
-    override fun read(input: JsonReader): MolecularTest<*>? {
+    override fun read(input: JsonReader): MolecularTest? {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
         return when (ExperimentType.valueOf(jsonObject.get("type").asString)) {
             ExperimentType.WHOLE_GENOME -> gson.fromJson(jsonObject, MolecularRecord::class.java)

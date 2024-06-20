@@ -2,13 +2,13 @@ package com.hartwig.actin.molecular.sort.driver
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class ExtendedVariantComparatorTest {
+class VariantComparatorTest {
 
     @Test
     fun `Should sort variants`() {
@@ -29,7 +29,7 @@ class ExtendedVariantComparatorTest {
     private fun create(
         driverLikelihood: DriverLikelihood, gene: String, hgvsProteinImpact: String,
         hgvsCodingImpact: String
-    ): ExtendedVariant {
+    ): Variant {
         val canonicalImpact: TranscriptImpact = TestTranscriptImpactFactory.createMinimal().copy(
             hgvsProteinImpact = hgvsProteinImpact,
             hgvsCodingImpact = hgvsCodingImpact

@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularTest
@@ -12,10 +13,10 @@ data class PanelRecord(
     val genericPanelExtraction: GenericPanelExtraction? = null,
     override val type: ExperimentType,
     override val date: LocalDate? = null,
-    override val drivers: PanelDrivers,
+    override val drivers: Drivers,
     override val characteristics: MolecularCharacteristics = MolecularCharacteristics(),
     override val evidenceSource: String,
-) : MolecularTest<PanelDrivers> {
+) : MolecularTest {
 
     fun testedGenes() = archerPanelExtraction?.testedGenes() ?: genericPanelExtraction?.testedGenes() ?: emptySet()
 
@@ -26,5 +27,4 @@ data class PanelRecord(
     fun events(): Set<PanelEvent> {
         return archerPanelExtraction?.events()?.toSet() ?: genericPanelExtraction?.events()?.toSet() ?: emptySet()
     }
-
 }

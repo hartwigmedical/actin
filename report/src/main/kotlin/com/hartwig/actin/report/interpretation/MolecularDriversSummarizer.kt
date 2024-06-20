@@ -2,21 +2,21 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 
 class MolecularDriversSummarizer private constructor(
-    private val molecularDrivers: MolecularDrivers,
+    private val drivers: Drivers,
     private val evaluatedCohortsInterpreter: EvaluatedCohortsInterpreter
 ) {
     fun keyGenesWithVariants(): List<String> {
-        return keyGenesForAlterations(molecularDrivers.variants)
+        return keyGenesForAlterations(drivers.variants)
     }
 
     fun keyAmplifiedGenes(): List<String> {
-        return molecularDrivers.copyNumbers
+        return drivers.copyNumbers
             .asSequence()
             .filter { it.type.isGain }
             .filter(::isKeyDriver)
@@ -26,19 +26,19 @@ class MolecularDriversSummarizer private constructor(
     }
 
     fun keyDeletedGenes(): List<String> {
-        return keyGenesForAlterations(molecularDrivers.copyNumbers.filter { it.type.isLoss })
+        return keyGenesForAlterations(drivers.copyNumbers.filter { it.type.isLoss })
     }
 
     fun keyHomozygouslyDisruptedGenes(): List<String> {
-        return keyGenesForAlterations(molecularDrivers.homozygousDisruptions)
+        return keyGenesForAlterations(drivers.homozygousDisruptions)
     }
 
     fun keyFusionEvents(): List<String> {
-        return molecularDrivers.fusions.filter(::isKeyDriver).map(ExtendedFusion::event).distinct()
+        return drivers.fusions.filter(::isKeyDriver).map(Fusion::event).distinct()
     }
 
     fun keyVirusEvents(): List<String> {
-        return molecularDrivers.viruses
+        return drivers.viruses
             .filter(::isKeyDriver)
             .map { String.format("%s (%s int. detected)", it.event, it.integrations) }
             .distinct()
@@ -46,13 +46,13 @@ class MolecularDriversSummarizer private constructor(
 
     fun actionableEventsThatAreNotKeyDrivers(): List<String> {
         val nonDisruptionDrivers = listOf(
-            molecularDrivers.variants,
-            molecularDrivers.copyNumbers,
-            molecularDrivers.fusions,
-            molecularDrivers.homozygousDisruptions,
-            molecularDrivers.viruses
+            drivers.variants,
+            drivers.copyNumbers,
+            drivers.fusions,
+            drivers.homozygousDisruptions,
+            drivers.viruses
         ).flatten().filterNot(::isKeyDriver)
-        return (nonDisruptionDrivers + molecularDrivers.disruptions.toList())
+        return (nonDisruptionDrivers + drivers.disruptions.toList())
             .filter(evaluatedCohortsInterpreter::driverIsActionable)
             .map(Driver::event)
             .distinct()
@@ -60,10 +60,10 @@ class MolecularDriversSummarizer private constructor(
 
     companion object {
         fun fromMolecularDriversAndEvaluatedCohorts(
-            molecularDrivers: MolecularDrivers,
+            drivers: Drivers,
             cohorts: List<EvaluatedCohort>
         ): MolecularDriversSummarizer {
-            return MolecularDriversSummarizer(molecularDrivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+            return MolecularDriversSummarizer(drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
         }
 
         private fun isKeyDriver(driver: Driver): Boolean {
