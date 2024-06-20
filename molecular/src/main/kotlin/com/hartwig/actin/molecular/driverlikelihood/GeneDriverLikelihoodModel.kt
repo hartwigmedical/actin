@@ -81,7 +81,7 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
         val firstVariant = topTwo[0]
         val secondVariant = topTwo[1]
         val driversPerSample = max(firstVariant.driversPerSample, secondVariant.driversPerSample)
-        val probabilityVariantNonDriver = firstVariant.probabilityVariantNonDriver + secondVariant.probabilityVariantNonDriver
+        val probabilityVariantNonDriver = firstVariant.probabilityVariantNonDriver * secondVariant.probabilityVariantNonDriver
         return getLikelihood(driversPerSample, probabilityVariantNonDriver)
     }
 

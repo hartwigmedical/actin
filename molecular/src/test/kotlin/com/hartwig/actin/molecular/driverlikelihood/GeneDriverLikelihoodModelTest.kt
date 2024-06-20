@@ -33,14 +33,23 @@ class GeneDriverLikelihoodModelTest {
         val result = geneDriverLikelihoodModel.evaluate(
             "BRAF",
             GeneRole.ONCO,
+            listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE))
+        )
+        assertThat(result.driverLikelihood).isEqualTo(0.484, Offset.offset(0.001))
+    }
+
+    @Test
+    fun `Should load proper dnds database and return expected likelihood for ARID1B VUS`() {
+        val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
+        val result = geneDriverLikelihoodModel.evaluate(
+            "ARID1B",
+            GeneRole.TSG,
             listOf(
-                TestVariantFactory.createMinimal().copy(
-                    type = VariantType.SNV,
-                    canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
-                )
+                createVariant(VariantType.SNV, CodingEffect.MISSENSE),
+                createVariant(VariantType.SNV, CodingEffect.NONSENSE_OR_FRAMESHIFT)
             )
         )
-        assertThat(result.driverLikelihood).isEqualTo(0.4841874750460783)
+        assertThat(result.driverLikelihood).isEqualTo(0.961, Offset.offset(0.001))
     }
 
     @Test
