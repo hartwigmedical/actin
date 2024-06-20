@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.serialization
+package com.hartwig.actin.util.json
 
 import com.google.gson.Gson
 import com.google.gson.JsonParser

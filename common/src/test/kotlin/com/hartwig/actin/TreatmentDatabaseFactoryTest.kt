@@ -19,7 +19,7 @@ class TreatmentDatabaseFactoryTest {
 
     @Test
     fun `Should throw exception on create when files are missing`() {
-        assertThatThrownBy { createFromPath(resourceOnClasspath("molecular")) }
+        assertThatThrownBy { createFromPath(resourceOnClasspath("clinical/treatment_db_missing_files")) }
             .isInstanceOf(NoSuchFileException::class.java)
     }
 
