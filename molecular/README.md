@@ -1,10 +1,9 @@
 ## ACTIN-Molecular
 
-ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. In addition, the data is written to a
-per-sample JSON file. ACTIN-Molecular supports interpretation of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange)
-molecular results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular testing made available via
-the patient's clinical data.
-
+ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. The interpreted molecular data
+is combined with the clinical data to produce a single comprehensive patient record JSON file. ACTIN-Molecular supports interpretation
+of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular results as produced
+by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular testing made available via the patient's clinical data.
 The molecular interpreter application requires Java 11+ and can be run as follows:
 
 ```
@@ -24,8 +23,7 @@ Optionally, the following arguments can be passed as follows:
 
 The following assumptions are made about the inputs:
 
-- The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
-  extract the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
+- The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical).
 - The ORANGE JSON is the JSON output from [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange).
 - The SERVE directory is the output of [SERVE](https://github.com/hartwigmedical/serve/tree/master/algo) and is used for annotation and
   interpretation of the genomic findings.
@@ -35,7 +33,7 @@ The following assumptions are made about the inputs:
 ### Molecular History
 
 The molecular history represents all molecular testing done for a patient. This includes WGS results, large targeted panels, archer, small
-panel results and IHC tests. The history is modeled as a list of molecular tests, each with a type and timestamp.
+panel results and IHC tests. The history is modeled as a list of molecular tests, each with a type and date.
 
 ### Molecular test
 
@@ -48,8 +46,8 @@ by the molecular record, panel record and IHC test.
 |-----------------|---------------------------|---------------------------------------------------------------------------|
 | type            | WGS                       | The type of molecular experiment done                                     | 
 | date            | 2022-01-14                | The date on which the molecular results were obtained                     |
-| drivers         | see drivers below         |                                                                           |
-| characteristics | see characteristics below |                                                                           |
+| drivers         | See drivers below         |                                                                           |
+| characteristics | See characteristics below |                                                                           |
 | evidenceSource  | CKB_EVIDENCE              | The name of the provider of the evidence. Currently always `CKB_EVIDENCE` |
 
 #### 1 molecular characteristics
@@ -77,12 +75,12 @@ Note that all individual characteristics are expected to be null for tests that 
 
 Every potential driver event has the following fields ('general driver fields'):
 
-| Field            | Example Value      | Details                                                                                                            |
-|------------------|--------------------|--------------------------------------------------------------------------------------------------------------------|
-| isReportable     | true               | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a clinical report  |
-| event            | BRAF V600E         | A human readable string summarizing the driver event                                                               |
-| driverLikelihood | HIGH               | An optional field that indicates the likelihood that the event is a driver (either `HIGH`, `MEDIUM`, `LOW` if set) |
-| evidence         | See evidence below | The evidence determined for this driver in the specific tumor sample                                               |
+| Field            | Example Value      | Details                                                                                                                |
+|------------------|--------------------|------------------------------------------------------------------------------------------------------------------------|
+| isReportable     | true               | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a clinical report      |
+| event            | BRAF V600E         | A human readable string summarizing the driver event                                                                   |
+| driverLikelihood | HIGH               | An optional field that indicates the likelihood of the mutation being a driver (either `HIGH`, `MEDIUM`, `LOW` if set) |
+| evidence         | See evidence below | The evidence determined for this driver in the specific tumor sample                                                   |
 
 Furthermore, every gene driver event is assigned the following fields ('gene driver fields'):
 
@@ -106,9 +104,9 @@ In addition to the (gene) driver fields, the following data is captured for all 
 | type                   | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)           |
 | isHotspot              | true          | Indicates whether this specific variant is a known (pathogenic) hotspot |
 | canonicalImpact        | See impact    | The impact of this variant on the canonical transcript of the gene      |
-| extendedVariantDetails | see below     | Optional field, see below                                               |
+| extendedVariantDetails | See below     | Optional field with extended details on the variant                     | 
 
-If we have an ORANGE molecular result for the sample, we can annotate with the following additional fields.
+Depending on the type of molecular test, more details may be available for a variant as follows:
 
 | Field             | Example Value | Details                                                                                             |
 |-------------------|---------------|-----------------------------------------------------------------------------------------------------|
@@ -163,17 +161,17 @@ In addition to the (gene) driver fields, the following data is captured per disr
 
 In addition to the general driver fields, the following data is captured per fusion:
 
-| Field                          | Example Value    | Details                                                                         |
-|--------------------------------|------------------|---------------------------------------------------------------------------------|
-| geneStart                      | EML4             | The gene that makes up the 5' part of the fusion                                |
-| geneTranscriptStart            | ENST001          | The ensembl ID of the transcript that makes up the 5' part of the fusion        |
-| geneEnd                        | ALK              | The gene that makes up the 3' part of the fusion                                |
-| geneTranscriptEnd              | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion        |
-| driverType                     | KNOWN_PAIR       | The type of driver fusion                                                       |
-| proteinEffect                  | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                                |
-| extendedFusionDetails          | see below        | Optional field, see below                                                       |
+| Field                 | Example Value    | Details                                                                  |
+|-----------------------|------------------|--------------------------------------------------------------------------|
+| geneStart             | EML4             | The gene that makes up the 5' part of the fusion                         |
+| geneTranscriptStart   | ENST001          | The ensembl ID of the transcript that makes up the 5' part of the fusion |
+| geneEnd               | ALK              | The gene that makes up the 3' part of the fusion                         |
+| geneTranscriptEnd     | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion |
+| driverType            | KNOWN_PAIR       | The type of driver fusion                                                |
+| proteinEffect         | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                         |
+| extendedFusionDetails | see below        | Optional field, see below                                                |
 
-If we have an ORANGE molecular test done for the sample, we can annotate with the following additional fields.
+Depending on the type of molecular test, more details may be available for a fusion as follows:
 
 | Field                          | Example Value | Details                                                                         |
 |--------------------------------|---------------|---------------------------------------------------------------------------------|
@@ -195,8 +193,7 @@ In addition to the general driver fields, the following data is captured per vir
 ### Molecular record
 
 Overall, a molecular record belongs to a `sampleId` (which belongs to a `patientId`). The molecular record supports all fields from
-molecular test, but
-adds several additional fields which can be extracted from the comprehensive results created by Hartwig WGS and ORANGE.
+molecular test, but adds several additional fields which can be extracted from the comprehensive results created by Hartwig WGS and ORANGE.
 
 ### 1 molecular base data
 
@@ -217,7 +214,7 @@ adds several additional fields which can be extracted from the comprehensive res
 | tumorCopyNumber     | 1.2           | The number of copies of this HLA allele in the tumor sample.                         |
 | hasSomaticMutations | false         | A boolean indicating whether any mutations have occurred in this allele in the tumor |
 
-#### N pharmaco
+#### N pharmacogenomic entries
 
 | Field             | Example Value   | Details                                             |
 |-------------------|-----------------|-----------------------------------------------------|
@@ -245,7 +242,7 @@ Evidence is assigned to molecular driver events and characteristics using the fo
 
 The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 
-1. Annotating all mutations and various characteristics in ORANGE with additional gene annotation and clinical evidence.
+1. Generic annotating of all mutations and various characteristics in ORANGE with additional gene annotation and clinical evidence.
 2. Mapping all fields, annotated mutations and annotated characteristics to the ACTIN datamodel.
 
 ### Integration of non-ORANGE molecular results
@@ -298,9 +295,7 @@ Do note that gene matching only ever populates the `geneRole` field. Any gene-le
 #### Evidence annotation
 
 Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes
-from `CKB_EVIDENCE`
-except for
-external trials which is populated by `CKB_TRIAL`. The evidence annotations occur in the following order:
+from `CKB_EVIDENCE` except for external trials which is populated by `CKB_TRIAL`. The evidence annotations occur in the following order:
 
 1. Collect all on-label and off-label applicable evidences that match with the driver / characteristic
 2. Map the evidences to the ACTIN evidence datamodel (above).
@@ -308,7 +303,7 @@ external trials which is populated by `CKB_TRIAL`. The evidence annotations occu
 Evidence is considered on-label in case the applicable evidence tumor DOID is equal to or a parent of the patient's tumor doids, and none of
 the patient's tumor DOIDs (or parents thereof) is blacklisted by the evidence.
 
-Evidence from SERVE is collected per driver / characteristic according as follows:
+Evidence from SERVE is collected per driver / characteristic as follows:
 
 | Driver / Characteristic        | Evidence collected                                                                                                                                                                                                                        |
 |--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -365,7 +360,7 @@ Molecular base data:
 | externalTrialSource  | Hard-coded to `CKB_TRIAL`                                             |
 | containsTumorCells   | TRUE in case `FAIL_NO_TUMOR` is one of the purple QC states           |
 | isContaminated       | TRUE in case `FAIL_CONTAMINATED` is one of the purple QC states       |
-| hasSufficientPurity  | TRUE in case 'WARN_LOW_PURITY is *not* present in purple QC states    |
+| hasSufficientPurity  | TRUE in case `WARN_LOW_PURITY` is *not* present in purple QC states   |
 | hasSufficientQuality | Derived field, TRUE in case containsTumorCells and not isContaminated |
 
 Molecular characteristics:

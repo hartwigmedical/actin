@@ -13,9 +13,10 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(record.oncologicalHistory, category)
 
         return if (treatmentSummary.numSpecificMatches() >= minTreatmentLines) {
+            val treatmentDisplay = treatmentSummary.specificMatches.joinToString(", ") { it.treatmentDisplay() }
             EvaluationFactory.pass(
-                "Patient has received at least $minTreatmentLines line(s) of ${category.display()}",
-                "Has received at least $minTreatmentLines line(s) of ${category.display()}"
+                "Patient has received at least $minTreatmentLines line(s) of ${category.display()} ($treatmentDisplay)",
+                "Has received at least $minTreatmentLines line(s) of ${category.display()} ($treatmentDisplay)"
             )
         } else if (treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines) {
             EvaluationFactory.undetermined(

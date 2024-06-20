@@ -15,8 +15,8 @@ object TestFusionFactory {
             driverLikelihood = null,
             evidence = ActionableEvidence(),
             geneStart = "",
-            geneTranscriptStart = "",
             geneEnd = "",
+            geneTranscriptStart = "",
             geneTranscriptEnd = "",
             driverType = FusionDriverType.KNOWN_PAIR,
             proteinEffect = ProteinEffect.NO_EFFECT
@@ -25,9 +25,9 @@ object TestFusionFactory {
 
     fun createMinimalExtended(): ExtendedFusionDetails {
         return ExtendedFusionDetails(
-            isAssociatedWithDrugResistance = null,
             fusedExonDown = 0,
-            fusedExonUp = 0
+            fusedExonUp = 0,
+            isAssociatedWithDrugResistance = null
         )
     }
 }

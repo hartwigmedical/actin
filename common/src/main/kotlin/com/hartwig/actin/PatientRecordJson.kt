@@ -1,8 +1,7 @@
-package com.hartwig.actin.molecular.datamodel.orange
+package com.hartwig.actin
 
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.util.Paths

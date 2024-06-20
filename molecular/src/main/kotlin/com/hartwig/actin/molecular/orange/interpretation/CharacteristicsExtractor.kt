@@ -29,6 +29,7 @@ internal class CharacteristicsExtractor() {
             predictedTumorOrigin = predictedTumorOrigin,
             isMicrosatelliteUnstable = isMicrosatelliteUnstable,
             microsatelliteEvidence = createNoEvidence(),
+            homologousRepairScore = homologousRepairScore,
             isHomologousRepairDeficient = isHomologousRepairDeficient,
             homologousRepairEvidence = createNoEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
@@ -36,8 +37,7 @@ internal class CharacteristicsExtractor() {
             tumorMutationalBurdenEvidence = createNoEvidence(),
             tumorMutationalLoad = purple.characteristics().tumorMutationalLoad(),
             hasHighTumorMutationalLoad = hasHighTumorMutationalLoad,
-            tumorMutationalLoadEvidence = createNoEvidence(),
-            homologousRepairScore = homologousRepairScore
+            tumorMutationalLoadEvidence = createNoEvidence()
         )
     }
 
