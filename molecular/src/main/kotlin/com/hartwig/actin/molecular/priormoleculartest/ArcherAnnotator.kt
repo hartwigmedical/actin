@@ -45,8 +45,7 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase, private va
         }.flatMap {
             it.second.map { variant ->
                 variant.copy(
-                    driverLikelihood = DriverLikelihood.from(it.first.driverLikelihood),
-                    isHotspot = it.first.isHotspot ?: variant.isHotspot
+                    driverLikelihood = DriverLikelihood.from(it.first)
                 )
             }
         }

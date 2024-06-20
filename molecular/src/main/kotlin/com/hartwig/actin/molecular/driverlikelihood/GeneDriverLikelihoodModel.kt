@@ -9,7 +9,7 @@ import kotlin.math.max
 
 class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
 
-    fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>): GeneDriverLikelihood {
+    fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
         val hasGainOrLossOfFunction = variants.any {
             it.proteinEffect in setOf(
                 ProteinEffect.GAIN_OF_FUNCTION,
@@ -19,28 +19,26 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
             )
         }
         return if (variants.isEmpty()) {
-            return GeneDriverLikelihood()
+            return null
         } else if (hasGainOrLossOfFunction) {
-            GeneDriverLikelihood(1.0, true)
+            return 1.0
         } else {
             handleVariantsOfUnknownSignificance(gene, geneRole, variants)
         }
     }
 
-    private fun handleVariantsOfUnknownSignificance(gene: String, geneRole: GeneRole, variants: List<Variant>): GeneDriverLikelihood {
+    private fun handleVariantsOfUnknownSignificance(gene: String, geneRole: GeneRole, variants: List<Variant>): Double? {
         return when (geneRole) {
-            GeneRole.ONCO -> GeneDriverLikelihood(oncoLikelihood(lookupDndsPerVariant(variants, gene, geneRole)))
+            GeneRole.ONCO -> oncoLikelihood(lookupDndsPerVariant(variants, gene, geneRole))
 
-            GeneRole.TSG -> GeneDriverLikelihood(tsgLikelihood(lookupDndsPerVariant(variants, gene, geneRole)))
+            GeneRole.TSG -> tsgLikelihood(lookupDndsPerVariant(variants, gene, geneRole))
 
-            GeneRole.BOTH -> GeneDriverLikelihood(
-                max(
-                    oncoLikelihood(lookupDndsPerVariant(variants, gene, GeneRole.ONCO)),
-                    tsgLikelihood(lookupDndsPerVariant(variants, gene, GeneRole.TSG))
-                )
+            GeneRole.BOTH -> max(
+                oncoLikelihood(lookupDndsPerVariant(variants, gene, GeneRole.ONCO)),
+                tsgLikelihood(lookupDndsPerVariant(variants, gene, GeneRole.TSG))
             )
 
-            GeneRole.UNKNOWN -> GeneDriverLikelihood()
+            GeneRole.UNKNOWN -> null
         }
     }
 
@@ -67,14 +65,14 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
         dndsDatabase.find(gene, geneRole, it)
     }
 
-    private fun oncoLikelihood(dndEntries: List<DndsDatabaseEntry>) =
-        dndEntries.maxOf { getLikelihood(it.driversPerSample, it.probabilityVariantNonDriver) }
+    private fun oncoLikelihood(dndsEntries: List<DndsDatabaseEntry>) =
+        dndsEntries.maxOf { getLikelihood(it.driversPerSample, it.probabilityVariantNonDriver) }
 
-    private fun tsgLikelihood(dndEntries: List<DndsDatabaseEntry>) =
-        if (dndEntries.size == 1) getLikelihood(
-            dndEntries.first().driversPerSample,
-            dndEntries.first().probabilityVariantNonDriver
-        ) else jointProbability(dndEntries.take(2))
+    private fun tsgLikelihood(dndsEntries: List<DndsDatabaseEntry>) =
+        if (dndsEntries.size == 1) getLikelihood(
+            dndsEntries.first().driversPerSample,
+            dndsEntries.first().probabilityVariantNonDriver
+        ) else jointProbability(dndsEntries.take(2))
 
 
     private fun jointProbability(topTwo: List<DndsDatabaseEntry>): Double {

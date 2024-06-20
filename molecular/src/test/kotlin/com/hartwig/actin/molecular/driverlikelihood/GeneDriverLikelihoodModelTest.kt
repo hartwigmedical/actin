@@ -35,7 +35,7 @@ class GeneDriverLikelihoodModelTest {
             GeneRole.ONCO,
             listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE))
         )
-        assertThat(result.driverLikelihood).isEqualTo(0.484, Offset.offset(0.001))
+        assertThat(result).isEqualTo(0.484, Offset.offset(0.001))
     }
 
     @Test
@@ -49,7 +49,7 @@ class GeneDriverLikelihoodModelTest {
                 createVariant(VariantType.SNV, CodingEffect.NONSENSE_OR_FRAMESHIFT)
             )
         )
-        assertThat(result.driverLikelihood).isEqualTo(0.961, Offset.offset(0.001))
+        assertThat(result).isEqualTo(0.961, Offset.offset(0.001))
     }
 
     @Test
@@ -62,13 +62,12 @@ class GeneDriverLikelihoodModelTest {
 
     @Test
     fun `Should assign null driver likelihood when gene role is unknown`() {
-        val annotatedVariants = geneDriverLikelihoodModel.evaluate(
+        val result = geneDriverLikelihoodModel.evaluate(
             GENE,
             GeneRole.UNKNOWN,
             listOf(TestVariantFactory.createMinimal())
         )
-        assertThat(annotatedVariants.isHotspot).isNull()
-        assertThat(annotatedVariants.driverLikelihood).isNull()
+        assertThat(result).isNull()
     }
 
     @Test
@@ -202,7 +201,7 @@ class GeneDriverLikelihoodModelTest {
         val result = model.evaluate(
             GENE, geneRole, variants.toList()
         )
-        assertThat(result.driverLikelihood).isEqualTo(expectedLikelihood, Offset.offset(0.001))
+        assertThat(result).isEqualTo(expectedLikelihood, Offset.offset(0.001))
     }
 
     private fun createVariant(variantType: VariantType, codingEffect: CodingEffect) = TestVariantFactory.createMinimal().copy(
@@ -213,13 +212,12 @@ class GeneDriverLikelihoodModelTest {
     private fun dndsMap(dndsDriverType: DndsDriverType) = mapOf(GENE to mapOf(dndsDriverType to ENTRY))
 
     private fun evaluateAndAssert(geneDriverLikelihoodModel: GeneDriverLikelihoodModel, proteinEffect: ProteinEffect) {
-        val annotatedVariants = geneDriverLikelihoodModel.evaluate(
+        val result = geneDriverLikelihoodModel.evaluate(
             GENE,
             GeneRole.ONCO,
             listOf(TestVariantFactory.createMinimal().copy(proteinEffect = proteinEffect))
         )
-        assertThat(annotatedVariants.isHotspot).isTrue()
-        assertThat(annotatedVariants.driverLikelihood).isEqualTo(1.0)
+        assertThat(result).isEqualTo(1.0)
     }
 
 }
