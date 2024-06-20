@@ -47,7 +47,6 @@ class VariantExtractorTest {
             .build()
 
         val purpleVariant1: PurpleVariant = TestPurpleFactory.variantBuilder()
-            .reported(true)
             .type(PurpleVariantType.MNP)
             .gene("gene 1")
             .variantCopyNumber(0.4)
@@ -65,6 +64,7 @@ class VariantExtractorTest {
                     .inSpliceRegion(false)
                     .addEffects(PurpleVariantEffect.MISSENSE)
                     .codingEffect(PurpleCodingEffect.MISSENSE)
+                    .reported(true)
                     .build()
             )
             .addOtherImpacts(
@@ -81,9 +81,10 @@ class VariantExtractorTest {
             .build()
 
         val purpleVariant2: PurpleVariant = TestPurpleFactory.variantBuilder()
-            .reported(false)
             .gene("gene 2")
-            .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(PurpleCodingEffect.NONE).build())
+            .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
+                .codingEffect(PurpleCodingEffect.NONE)
+                .build())
             .build()
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
             .from(TestOrangeFactory.createMinimalTestOrangeRecord().purple())
@@ -134,8 +135,7 @@ class VariantExtractorTest {
     @Test
     fun `Should retain ensembl transcripts only`() {
         val purpleVariant = TestPurpleFactory.variantBuilder()
-            .reported(true)
-            .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().build())
+            .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().reported(true).build())
             .addOtherImpacts(TestPurpleFactory.transcriptImpactBuilder().transcript("ENST-correct").build())
             .addOtherImpacts(TestPurpleFactory.transcriptImpactBuilder().transcript("weird one").build())
             .build()
@@ -158,9 +158,11 @@ class VariantExtractorTest {
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception when filtering reported variant`() {
         val purpleVariant: PurpleVariant = TestPurpleFactory.variantBuilder()
-            .reported(true)
             .gene("gene 1")
-            .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder().codingEffect(PurpleCodingEffect.SPLICE).build())
+            .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
+                .codingEffect(PurpleCodingEffect.SPLICE)
+                .reported(true)
+                .build())
             .build()
 
         val purple: PurpleRecord = ImmutablePurpleRecord.builder()
