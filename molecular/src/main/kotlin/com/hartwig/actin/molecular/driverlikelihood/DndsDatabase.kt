@@ -90,8 +90,7 @@ class DndsDatabase(
         )
 
         private fun probabilityVariantNonDriver(estimatedMutationCount: Int, passengersPerMutation: Double): Double {
-            val passengersInSample = estimatedMutationCount * passengersPerMutation
-            return 1 - PoissonDistribution(passengersInSample).cumulativeProbability(0)
+            return 1 - PoissonDistribution(estimatedMutationCount * passengersPerMutation).cumulativeProbability(0)
         }
     }
 }
