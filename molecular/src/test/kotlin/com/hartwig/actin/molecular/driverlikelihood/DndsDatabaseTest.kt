@@ -15,7 +15,7 @@ class DndsDatabaseTest {
     @Test
     fun `Should load database from onco and tsg dnd TSVs and calculate probability of non-driver`() {
         assertThat(database.find("BRAF", GeneRole.ONCO, DndsDriverType.INDEL)).isEqualTo(DndsDatabaseEntry(0.0, 8.308359783759656E-5))
-        assertThat(database.find("BRAF", GeneRole.ONCO, DndsDriverType.NONESENSE)).isEqualTo(
+        assertThat(database.find("BRAF", GeneRole.ONCO, DndsDriverType.NONSENSE)).isEqualTo(
             DndsDatabaseEntry(
                 9.26041369655672E-5,
                 4.0949897767694754E-4
@@ -37,7 +37,7 @@ class DndsDatabaseTest {
 
     @Test
     fun `Should return null for unknown genes`() {
-        assertThat(database.find("EGFR", GeneRole.TSG, DndsDriverType.NONESENSE)).isNull()
+        assertThat(database.find("EGFR", GeneRole.TSG, DndsDriverType.NONSENSE)).isNull()
     }
 
     @Test
@@ -46,7 +46,7 @@ class DndsDatabaseTest {
             database.find(
                 "BRAF",
                 GeneRole.BOTH,
-                DndsDriverType.NONESENSE
+                DndsDriverType.NONSENSE
             )
         }.isInstanceOf(IllegalArgumentException::class.java)
     }

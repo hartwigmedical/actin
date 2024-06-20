@@ -51,14 +51,14 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
     ) = variants.mapNotNull {
         when {
             (it.type == VariantType.INSERT || it.type == VariantType.DELETE) && it.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT -> DndsDriverType.INDEL
-            (it.type == VariantType.SNV || it.type == VariantType.MNV) && it.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT -> DndsDriverType.NONESENSE
+            (it.type == VariantType.SNV || it.type == VariantType.MNV) && it.canonicalImpact.codingEffect == CodingEffect.NONSENSE_OR_FRAMESHIFT -> DndsDriverType.NONSENSE
             it.canonicalImpact.codingEffect == CodingEffect.MISSENSE -> DndsDriverType.MISSENSE
             it.canonicalImpact.codingEffect == CodingEffect.SPLICE -> DndsDriverType.SPLICE
             else -> null
         }
     }.sortedBy {
         when (it) {
-            DndsDriverType.NONESENSE -> 1
+            DndsDriverType.NONSENSE -> 1
             DndsDriverType.INDEL -> 2
             DndsDriverType.SPLICE -> 3
             DndsDriverType.MISSENSE -> 4

@@ -9,7 +9,7 @@ import java.io.File
 import org.apache.commons.math3.distribution.PoissonDistribution
 
 enum class DndsDriverType {
-    INDEL, NONESENSE, MISSENSE, SPLICE
+    INDEL, NONSENSE, MISSENSE, SPLICE
 }
 
 data class DndsDatabaseEntry(
@@ -29,6 +29,9 @@ data class DndsGeneEntry(
     val indelPassengersPerMutation: Double
 )
 
+private const val ESTIMATED_MUTATION_COUNT_SNV = 30000
+private const val ESTIMATED_MUTATION_COUNT_FRAMESHIFT = 1000
+
 class DndsDatabase(
     private val oncoGeneLookup: Map<String, Map<DndsDriverType, DndsDatabaseEntry>>,
     private val tsgGeneLookup: Map<String, Map<DndsDriverType, DndsDatabaseEntry>>,
@@ -42,12 +45,12 @@ class DndsDatabase(
     }
 
     companion object {
-        fun create(oncoDndFilePath: String, tsgDndFilePath: String): DndsDatabase {
+        fun create(oncoDndsFilePath: String, tsgDndsFilePath: String): DndsDatabase {
             val reader =
                 CsvMapper().apply { registerModule(KotlinModule.Builder().build()) }.readerFor(DndsGeneEntry::class.java)
                     .with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
-            val oncoGeneLookup = geneLookup(reader, oncoDndFilePath)
-            val tsgGeneLookup = geneLookup(reader, tsgDndFilePath)
+            val oncoGeneLookup = geneLookup(reader, oncoDndsFilePath)
+            val tsgGeneLookup = geneLookup(reader, tsgDndsFilePath)
             return DndsDatabase(oncoGeneLookup, tsgGeneLookup)
         }
 
@@ -57,25 +60,25 @@ class DndsDatabase(
         ) = reader.readValues<DndsGeneEntry>(File(oncoDndFilePath)).readAll().groupBy { it.gene }.mapValues {
             it.value.flatMap { geneEntry ->
                 listOf(
-                    DndsDriverType.NONESENSE to createEntry(
+                    DndsDriverType.NONSENSE to createEntry(
                         geneEntry.nonsenseVusDriversPerSample,
                         geneEntry.nonsensePassengersPerMutation,
-                        30000
+                        ESTIMATED_MUTATION_COUNT_SNV
                     ),
                     DndsDriverType.INDEL to createEntry(
                         geneEntry.indelVusDriversPerSample,
                         geneEntry.indelPassengersPerMutation,
-                        1000,
+                        ESTIMATED_MUTATION_COUNT_FRAMESHIFT,
                     ),
                     DndsDriverType.MISSENSE to createEntry(
                         geneEntry.missenseVusDriversPerSample,
                         geneEntry.missensePassengersPerMutation,
-                        30000,
+                        ESTIMATED_MUTATION_COUNT_SNV,
                     ),
                     DndsDriverType.SPLICE to createEntry(
                         geneEntry.spliceVusDriversPerSample,
                         geneEntry.splicePassengersPerMutation,
-                        30000
+                        ESTIMATED_MUTATION_COUNT_SNV
                     )
                 )
             }.groupBy { databaseEntries -> databaseEntries.first }.mapValues { entry -> entry.value.first().second }
@@ -87,7 +90,8 @@ class DndsDatabase(
         )
 
         private fun probabilityVariantNonDriver(estimatedMutationCount: Int, passengersPerMutation: Double): Double {
-            return 1 - PoissonDistribution(estimatedMutationCount * passengersPerMutation).probability(0)
+            val passengersInSample = estimatedMutationCount * passengersPerMutation
+            return 1 - PoissonDistribution(passengersInSample).cumulativeProbability(0)
         }
     }
 }

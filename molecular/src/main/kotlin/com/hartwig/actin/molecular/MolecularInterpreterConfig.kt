@@ -13,9 +13,9 @@ data class MolecularInterpreterConfig(
     val serveDirectory: String,
     val clinicalJson: String,
     val doidJson: String,
-    val outputDirectory: String,
     val oncoDndsDatabasePath: String,
-    val tsgDndsDatabasePath: String
+    val tsgDndsDatabasePath: String,
+    val outputDirectory: String
 ) {
 
     companion object {

@@ -23,6 +23,7 @@ import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 
 class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase, private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel) :
     MolecularAnnotator<ArcherPanelExtraction, PanelRecord> {
+
     override fun annotate(input: ArcherPanelExtraction): PanelRecord {
         val annotatedVariants = input.variants.map {
             val criteria = VariantMatchCriteria(
@@ -73,7 +74,7 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase, private va
         geneRole = geneAlteration.geneRole,
         proteinEffect = geneAlteration.proteinEffect,
         isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-        isHotspot = true,
+        isHotspot = false,
         ref = "",
         alt = "",
         canonicalImpact = TranscriptImpact(

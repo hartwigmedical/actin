@@ -22,8 +22,8 @@ class GeneDriverLikelihoodModelTest {
 
     private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(
         DndsDatabase(
-            mapOf(GENE to mapOf(DndsDriverType.NONESENSE to DndsDatabaseEntry())),
-            mapOf(GENE to mapOf(DndsDriverType.NONESENSE to DndsDatabaseEntry()))
+            mapOf(GENE to mapOf(DndsDriverType.NONSENSE to DndsDatabaseEntry())),
+            mapOf(GENE to mapOf(DndsDriverType.NONSENSE to DndsDatabaseEntry()))
         )
     )
 
@@ -47,7 +47,7 @@ class GeneDriverLikelihoodModelTest {
     fun `Should assign driver likelihood of high and hotspot true when gene has loss of function or gain of function (and predicted)`() {
         evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.LOSS_OF_FUNCTION)
         evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)
-        evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.LOSS_OF_FUNCTION)
+        evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.GAIN_OF_FUNCTION)
         evaluateAndAssert(geneDriverLikelihoodModel, ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
     }
 
@@ -63,8 +63,8 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should evaluate single VUS nonesense in onco and tsg gene`() {
-        val model = GeneDriverLikelihoodModel(DndsDatabase(dndsMap(DndsDriverType.NONESENSE), dndsMap(DndsDriverType.NONESENSE)))
+    fun `Should evaluate single VUS nonsense in onco and tsg gene`() {
+        val model = GeneDriverLikelihoodModel(DndsDatabase(dndsMap(DndsDriverType.NONSENSE), dndsMap(DndsDriverType.NONSENSE)))
         evaluateAndAssertVUS(
             model, GeneRole.ONCO, DRIVER_LIKELIHOOD, createVariant(
                 VariantType.SNV,
@@ -134,8 +134,8 @@ class GeneDriverLikelihoodModelTest {
     fun `Should evaluate single VUS in genes with both roles`() {
         val model = GeneDriverLikelihoodModel(
             DndsDatabase(
-                dndsMap(DndsDriverType.NONESENSE),
-                mapOf(GENE to mapOf(DndsDriverType.NONESENSE to ENTRY.copy(probabilityVariantNonDriver = 0.1)))
+                dndsMap(DndsDriverType.NONSENSE),
+                mapOf(GENE to mapOf(DndsDriverType.NONSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.1)))
             )
         )
         evaluateAndAssertVUS(
@@ -150,7 +150,7 @@ class GeneDriverLikelihoodModelTest {
     fun `Should evaluate multi VUS in onco genes by taking max`() {
         val model = GeneDriverLikelihoodModel(
             DndsDatabase(
-                dndsMap(DndsDriverType.NONESENSE) + mapOf(GENE to mapOf(DndsDriverType.MISSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.1))),
+                dndsMap(DndsDriverType.NONSENSE) + mapOf(GENE to mapOf(DndsDriverType.MISSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.1))),
                 emptyMap()
             )
         )
@@ -169,7 +169,7 @@ class GeneDriverLikelihoodModelTest {
                 emptyMap(),
                 mapOf(
                     GENE to mapOf(
-                        DndsDriverType.NONESENSE to ENTRY.copy(probabilityVariantNonDriver = 0.5, driversPerSample = 0.7),
+                        DndsDriverType.NONSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.5, driversPerSample = 0.7),
                         DndsDriverType.MISSENSE to ENTRY.copy(probabilityVariantNonDriver = 0.01, driversPerSample = 0.6),
                         DndsDriverType.INDEL to ENTRY.copy(probabilityVariantNonDriver = 0.1, driversPerSample = 0.5),
                     )
