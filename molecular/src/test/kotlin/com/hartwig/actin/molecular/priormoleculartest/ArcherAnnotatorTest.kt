@@ -6,7 +6,6 @@ import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihood
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -38,7 +37,7 @@ class ArcherAnnotatorTest {
         every { geneAlterationForVariant(any()) } returns null
     }
     private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
-        every { evaluate(any(), any(), any()) } returns GeneDriverLikelihood()
+        every { evaluate(any(), any(), any()) } returns null
     }
     private val annotator = ArcherAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
 
@@ -75,7 +74,7 @@ class ArcherAnnotatorTest {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns TestServeKnownFactory.hotspotBuilder().build()
             .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)
             .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
-        every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, any()) } returns GeneDriverLikelihood(0.9, true)
+        every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, any()) } returns 0.9
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
         assertThat(annotated.drivers.variants.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
         assertThat(annotated.drivers.variants.first().isHotspot).isEqualTo(true)

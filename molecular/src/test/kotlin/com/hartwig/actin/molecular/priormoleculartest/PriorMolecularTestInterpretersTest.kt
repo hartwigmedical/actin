@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihood
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -19,7 +18,7 @@ class PriorMolecularTestInterpretersTest {
         every { geneAlterationForVariant(any()) } returns null
     }
     private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
-        every { evaluate(any(), any(), any()) } returns GeneDriverLikelihood()
+        every { evaluate(any(), any(), any()) } returns null
     }
 
     @Test
