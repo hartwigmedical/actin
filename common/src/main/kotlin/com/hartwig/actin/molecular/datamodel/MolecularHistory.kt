@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtractio
 import java.time.LocalDate
 
 data class MolecularHistory(
-    val molecularTests: List<MolecularTest<*>>
+    val molecularTests: List<MolecularTest>
 ) {
     fun allIHCTests(): List<PriorMolecularTest> {
         return molecularTests.filterIsInstance<IHCMolecularTest>().map { it.test }

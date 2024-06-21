@@ -15,7 +15,7 @@ class IsHomologousRepairDeficient : MolecularEvaluationFunction {
         for (gene in MolecularConstants.HRD_GENES) {
             for (variant in molecular.drivers.variants) {
                 if (variant.gene == gene && variant.isReportable) {
-                    if (variant.isBiallelic) {
+                    if (variant.extendedVariantOrThrow().isBiallelic) {
                         hrdGenesWithBiallelicDriver.add(gene)
                     } else {
                         hrdGenesWithNonBiallelicDriver.add(gene)
@@ -49,7 +49,7 @@ class IsHomologousRepairDeficient : MolecularEvaluationFunction {
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
                         "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HR genes: "
-                                + concat(hrdGenesWithBiallelicDriver) + " are detected; an HRD test may be recommended",
+                                + concat(hrdGenesWithNonBiallelicDriver) + " are detected; an HRD test may be recommended",
                         "Unknown HRD status but non-biallelic drivers in HR genes"
                     )
                 } else {

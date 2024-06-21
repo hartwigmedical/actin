@@ -49,7 +49,7 @@ internal object TumorTestFactory {
     }
 
     fun withDoidsAndAmplificationAndPriorMolecularTest(
-        doids: Set<String>, amplifiedGene: String, priorMolecularTests: List<MolecularTest<*>>
+        doids: Set<String>, amplifiedGene: String, priorMolecularTests: List<MolecularTest>
     ): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
@@ -204,7 +204,7 @@ internal object TumorTestFactory {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(type = type))))
     }
 
-    fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<MolecularTest<*>>, doids: Set<String>?): PatientRecord {
+    fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<MolecularTest>, doids: Set<String>?): PatientRecord {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
             molecularHistory = MolecularHistory(listOf(baseMolecular) + priorMolecularTests)

@@ -6,7 +6,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 
 data class MolecularEvaluation(
-    val test: MolecularTest<*>,
+    val test: MolecularTest,
     val evaluation: Evaluation
 ) {
     companion object {

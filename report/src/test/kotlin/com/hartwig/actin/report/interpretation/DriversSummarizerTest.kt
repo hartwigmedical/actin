@@ -1,7 +1,10 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestFusionFactory
@@ -14,10 +17,7 @@ import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.report.interpretation.EvaluatedCohortTestFactory.evaluatedCohort
@@ -27,7 +27,7 @@ import org.junit.Test
 private const val EXPECTED_GENE = "found"
 private const val VIRUS_INTEGRATIONS = 3
 
-class MolecularDriversSummarizerTest {
+class DriversSummarizerTest {
     private val minimalDrivers = TestMolecularFactory.createMinimalTestMolecularRecord().drivers
     
     @Test
@@ -159,7 +159,7 @@ class MolecularDriversSummarizerTest {
             virus("key virus", DriverLikelihood.HIGH, true)
         )
 
-        val molecularDrivers = MolecularDrivers(
+        val drivers = Drivers(
             variants = variants,
             copyNumbers = copyNumbers,
             homozygousDisruptions = homozygousDisruptions,
@@ -168,7 +168,7 @@ class MolecularDriversSummarizerTest {
             viruses = viruses
         )
 
-        val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, cohorts)
+        val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(drivers, cohorts)
         val otherActionableEvents = summarizer.actionableEventsThatAreNotKeyDrivers().toSet()
         assertThat(otherActionableEvents).hasSize(12)
         assertThat(otherActionableEvents).allSatisfy { it.startsWith("expected") }
@@ -179,7 +179,7 @@ class MolecularDriversSummarizerTest {
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
         evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-    ): ExtendedVariant {
+    ): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = name,
             event = name,
@@ -230,7 +230,7 @@ class MolecularDriversSummarizerTest {
         driverLikelihood: DriverLikelihood,
         isReportable: Boolean,
         evidence: ActionableEvidence = TestActionableEvidenceFactory.createEmpty()
-    ): ExtendedFusion {
+    ): Fusion {
         return TestFusionFactory.createMinimal().copy(
             event = event,
             driverLikelihood = driverLikelihood,
@@ -249,8 +249,8 @@ class MolecularDriversSummarizerTest {
         )
     }
 
-    private fun summarizer(molecularDrivers: MolecularDrivers): MolecularDriversSummarizer {
-        return MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecularDrivers, emptyList())
+    private fun summarizer(drivers: Drivers): MolecularDriversSummarizer {
+        return MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(drivers, emptyList())
     }
 
     private fun assertExpectedListResult(keyEntryList: List<String>) {
