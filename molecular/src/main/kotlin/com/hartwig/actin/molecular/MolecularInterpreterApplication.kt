@@ -115,7 +115,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
-        const val APPLICATION: String = "ACTIN ORANGE Interpreter"
+        const val APPLICATION: String = "ACTIN Molecular Interpreter"
         private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion
     }
 }
