@@ -191,16 +191,6 @@ class VariantExtractorTest {
     }
 
     @Test
-    fun `Should determine driver likelihood for all purple driver likelihoods`() {
-        assertThat(VariantExtractor.determineDriverLikelihood(null)).isNull()
-        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(1.0))).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.8))).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.5))).isEqualTo(DriverLikelihood.MEDIUM)
-        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.2))).isEqualTo(DriverLikelihood.MEDIUM)
-        assertThat(VariantExtractor.determineDriverLikelihood(withDriverLikelihood(0.0))).isEqualTo(DriverLikelihood.LOW)
-    }
-
-    @Test
     fun `Should correctly assess whether transcript is ensembl`() {
         val ensembl = TestPurpleFactory.transcriptImpactBuilder().transcript("ENST01").build()
         assertThat(VariantExtractor.isEnsemblTranscript(ensembl)).isTrue

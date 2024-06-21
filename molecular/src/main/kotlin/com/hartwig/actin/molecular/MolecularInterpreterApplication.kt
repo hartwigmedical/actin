@@ -6,6 +6,8 @@ import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
+import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
+import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -19,13 +21,13 @@ import com.hartwig.serve.datamodel.ActionableEventsLoader
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.KnownEventsLoader
 import com.hartwig.serve.datamodel.RefGenome
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
@@ -55,7 +57,10 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Loading evidence database for prior molecular tests")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
         LOGGER.info("Interpreting prior molecular tests")
-        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(evidenceDatabase).process(clinical.priorMolecularTests)
+        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
+            evidenceDatabase,
+            GeneDriverLikelihoodModel(DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath))
+        ).process(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
