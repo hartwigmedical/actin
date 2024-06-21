@@ -35,6 +35,7 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
 
+        <!-- SLF4J implementation is required by iTextPDF -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-reload4j</artifactId>
