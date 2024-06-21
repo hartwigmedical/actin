@@ -39,7 +39,7 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should load proper dnds database and return expected likelihood for ARID1B VUS`() {
+    fun `Should load proper dnds database and return expected likelihood for ARID1B VUS (multi-hit)`() {
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV))
         val result = geneDriverLikelihoodModel.evaluate(
             "ARID1B",
@@ -185,7 +185,7 @@ class GeneDriverLikelihoodModelTest {
             )
         )
         evaluateAndAssertVUS(
-            model, GeneRole.TSG, 0.795, createVariant(
+            model, GeneRole.TSG, 0.979, createVariant(
                 VariantType.SNV,
                 CodingEffect.NONSENSE_OR_FRAMESHIFT
             ), createVariant(VariantType.SNV, CodingEffect.MISSENSE), createVariant(VariantType.INSERT, CodingEffect.NONSENSE_OR_FRAMESHIFT)

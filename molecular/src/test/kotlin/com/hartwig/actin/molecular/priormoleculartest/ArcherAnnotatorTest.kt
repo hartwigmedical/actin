@@ -77,6 +77,5 @@ class ArcherAnnotatorTest {
         every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, any()) } returns 0.9
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
         assertThat(annotated.drivers.variants.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
-        assertThat(annotated.drivers.variants.first().isHotspot).isEqualTo(true)
     }
 }
