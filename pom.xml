@@ -25,6 +25,8 @@
         <serve.version>3.0.0</serve.version>
         <orange-datamodel.version>2.0.0</orange-datamodel.version>
 
+        <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
@@ -96,6 +98,11 @@
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
