@@ -214,11 +214,6 @@
                 <version>${apache.log4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-reload4j</artifactId>
-                <version>${slf4j-reload4j.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq</artifactId>
                 <version>${jooq.version}</version>
@@ -277,6 +272,13 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-reload4j</artifactId>
+                <version>${slf4j-reload4j.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>
