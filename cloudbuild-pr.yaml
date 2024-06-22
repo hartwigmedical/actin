@@ -12,7 +12,7 @@ steps:
         name: 'm2_cache'
 
   - id: 'Compile, package, release'
-    name: 'maven:3.9.7'
+    name: 'maven:3.9.2-eclipse-temurin-11'
     entrypoint: mvn
     args: [ 'test', '-B' ]
     volumes:
