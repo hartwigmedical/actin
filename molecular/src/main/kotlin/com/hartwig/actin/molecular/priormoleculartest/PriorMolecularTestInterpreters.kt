@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
+import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 
 private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotator<T, T> {
@@ -35,10 +36,10 @@ private fun ihcExtractor() = object : MolecularExtractor<PriorMolecularTest, IHC
 
 private fun isArcher(): (PriorMolecularTest) -> Boolean = { it.test == ARCHER_FP_LUNG_TARGET }
 
-private class ArcherInterpreter(evidenceDatabase: EvidenceDatabase) :
+private class ArcherInterpreter(evidenceDatabase: EvidenceDatabase, geneDriverLikelihoodModel: GeneDriverLikelihoodModel) :
     MolecularInterpreter<PriorMolecularTest, ArcherPanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        ArcherAnnotator(evidenceDatabase),
+        ArcherAnnotator(evidenceDatabase, geneDriverLikelihoodModel),
         isArcher()
     )
 
@@ -46,7 +47,11 @@ private fun isGeneric(): (PriorMolecularTest) -> Boolean =
     { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL }
 
 private class GenericPanelInterpreter :
-    MolecularInterpreter<PriorMolecularTest, GenericPanelExtraction, PanelRecord>(GenericPanelExtractor(), GenericPanelAnnotator(), isGeneric())
+    MolecularInterpreter<PriorMolecularTest, GenericPanelExtraction, PanelRecord>(
+        GenericPanelExtractor(),
+        GenericPanelAnnotator(),
+        isGeneric()
+    )
 
 private fun isIHC(): (PriorMolecularTest) -> Boolean {
     return { it.test == "IHC" || it.item == "PD-L1" }
@@ -65,12 +70,13 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
     }
 
     companion object {
-        fun create(evidenceDatabase: EvidenceDatabase) = PriorMolecularTestInterpreters(
-            setOf(
-                ArcherInterpreter(evidenceDatabase),
-                GenericPanelInterpreter(),
-                IHCInterpreter()
+        fun create(evidenceDatabase: EvidenceDatabase, geneDriverLikelihoodModel: GeneDriverLikelihoodModel) =
+            PriorMolecularTestInterpreters(
+                setOf(
+                    ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel),
+                    GenericPanelInterpreter(),
+                    IHCInterpreter()
+                )
             )
-        )
     }
 }

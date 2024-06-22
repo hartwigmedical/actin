@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.priormoleculartest
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
+import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import io.mockk.every
@@ -16,10 +17,13 @@ class PriorMolecularTestInterpretersTest {
         every { evidenceForVariant(any()) } returns ActionabilityMatch(emptyList(), emptyList())
         every { geneAlterationForVariant(any()) } returns null
     }
+    private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
+        every { evaluate(any(), any(), any()) } returns null
+    }
 
     @Test
     fun `Should interpret list of molecular tests`() {
-        val interpreters = PriorMolecularTestInterpreters.create(evidenceDatabase)
+        val interpreters = PriorMolecularTestInterpreters.create(evidenceDatabase, geneDriverLikelihoodModel)
         val priorMolecularTests = listOf(
             archerPriorMolecularVariantRecord(),
             avlPanelPriorMolecularVariantRecord(),

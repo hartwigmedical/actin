@@ -25,10 +25,8 @@
         <serve.version>3.0.0</serve.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
 
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-
-        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+        <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
@@ -53,6 +51,7 @@
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
         <jackson.version>2.16.1</jackson.version>
         <kotlinx-serialization-json.version>1.6.2</kotlinx-serialization-json.version>
+        <commons-math3.version>3.6.1</commons-math3.version>
     </properties>
 
     <distributionManagement>
@@ -273,6 +272,11 @@
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-kotlin</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>${commons-math3.version}</version>
             </dependency>
 
             <dependency>
