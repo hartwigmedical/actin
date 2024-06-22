@@ -1,11 +1,11 @@
 steps:
 
   - id: 'Set version for maven'
-    name: 'maven:3.9.7'
+    name: 'eu.gcr.io/hmf-build/maven-cache'
     args: [ 'versions:set -DnewVersion=$TAG_NAME --batch-mode' ]
 
   - id: 'Maven build using cache'
-    name: 'maven:3.9.7'
+    name: 'eu.gcr.io/hmf-build/maven-cache'
     args: [ '-T 1C deploy --batch-mode' ]
 
   - id: 'Build and push the molecular image with tag'
