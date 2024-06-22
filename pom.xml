@@ -24,6 +24,8 @@
 
         <serve.version>3.0.0</serve.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
+        <actin-transvar.version>0.2.0-beta.2</actin-transvar.version>
+        <actin-pave-lite.version>0.2.0-beta.2</actin-pave-lite.version>
 
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -189,6 +191,16 @@
                 <groupId>com.hartwig</groupId>
                 <artifactId>orange-datamodel</artifactId>
                 <version>${orange-datamodel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>actin-transvar</artifactId>
+                <version>${actin-transvar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>actin-pave-lite</artifactId>
+                <version>${actin-pave-lite.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>

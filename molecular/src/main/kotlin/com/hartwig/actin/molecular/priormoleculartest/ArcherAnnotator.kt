@@ -19,21 +19,34 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
+import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.actin.tools.variant.VariantAnnotator
 
 
-class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase, private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel) :
+class ArcherAnnotator(
+    private val evidenceDatabase: EvidenceDatabase,
+    private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    private val transcriptAnnotator: VariantAnnotator,
+    private val paveLite: PaveLite
+) :
     MolecularAnnotator<ArcherPanelExtraction, PanelRecord> {
 
     override fun annotate(input: ArcherPanelExtraction): PanelRecord {
         val annotatedVariants = input.variants.map {
+            val transcriptAnnotation = transcriptAnnotator.resolve(it.gene, it.transcript, it.hgvsCodingImpact)
+            val paveAnnotation = paveLite.run(it.gene, transcriptAnnotation.transcript(), transcriptAnnotation?.position())
             val criteria = VariantMatchCriteria(
-                true,
-                it.gene
+                isReportable = true,
+                gene = it.gene,
+                chromosome = transcriptAnnotation?.chromosome(),
+                ref = transcriptAnnotation?.ref(),
+                alt = transcriptAnnotation?.alt(),
             )
             val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
             val geneAlteration = GeneAlterationFactory.convertAlteration(
                 it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
             )
+
             createVariantWithEvidence(it, evidence, geneAlteration)
         }
 
@@ -63,7 +76,7 @@ class ArcherAnnotator(private val evidenceDatabase: EvidenceDatabase, private va
     private fun createVariantWithEvidence(
         it: ArcherVariantExtraction,
         evidence: ActionableEvidence?,
-        geneAlteration: GeneAlteration
+        geneAlteration: GeneAlteration,
     ) = Variant(
         isReportable = true,
         event = "${it.gene} ${it.hgvsCodingImpact}",
