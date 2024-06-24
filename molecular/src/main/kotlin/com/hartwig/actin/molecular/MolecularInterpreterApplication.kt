@@ -60,25 +60,19 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Loading evidence database for prior molecular tests")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
 
-        LOGGER.info("Creating ensemble cache")
+        LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
         val ensemblDataCache = EnsemblDataLoader.load(config.ensemblCachePath, com.hartwig.actin.tools.ensemblcache.RefGenome.V37)
-
-        LOGGER.info("Creating transvar instance")
-        val transvarAnnotator = TransvarVariantAnnotator.withRefGenome(
-            com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
-            config.referenceGenomeFastaPath,
-            ensemblDataCache
-        )
-
-        LOGGER.info("Creating pave lite")
-        val paveLite = PaveLite(ensemblDataCache, false)
 
         LOGGER.info("Interpreting prior molecular tests")
         val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
             evidenceDatabase,
             GeneDriverLikelihoodModel(DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)),
-            transvarAnnotator,
-            paveLite
+            TransvarVariantAnnotator.withRefGenome(
+                com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
+                config.referenceGenomeFastaPath,
+                ensemblDataCache
+            ),
+            PaveLite(ensemblDataCache, false)
         ).process(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)

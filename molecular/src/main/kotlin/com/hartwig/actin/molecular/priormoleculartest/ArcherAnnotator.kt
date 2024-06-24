@@ -35,25 +35,17 @@ class ArcherAnnotator(
 
     override fun annotate(input: ArcherPanelExtraction): PanelRecord {
         val annotatedVariants = input.variants.map {
-
-            val transcriptAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)
+            val transcriptPositionAndVariationAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)
                 ?: throw RuntimeException("Unable to resolve variant in variant annotator. See prior warnings.")
-            val paveAnnotation = paveLite.run(it.gene, transcriptAnnotation.transcript(), transcriptAnnotation.position())
-
-            val criteria = VariantMatchCriteria(
-                isReportable = true,
-                gene = it.gene,
-                chromosome = transcriptAnnotation.chromosome(),
-                ref = transcriptAnnotation.ref(),
-                alt = transcriptAnnotation.alt(),
-                position = transcriptAnnotation.position()
-            )
-            val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
-            val geneAlteration = GeneAlterationFactory.convertAlteration(
-                it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
+            val transcriptImpactAnnotation = paveLite.run(
+                it.gene,
+                transcriptPositionAndVariationAnnotation.transcript(),
+                transcriptPositionAndVariationAnnotation.position()
             )
 
-            createVariantWithEvidence(it, evidence, geneAlteration, transcriptAnnotation, paveAnnotation)
+            val (evidence, geneAlteration) = serveEvidence(it, transcriptPositionAndVariationAnnotation)
+
+            createVariantWithEvidence(it, evidence, geneAlteration, transcriptPositionAndVariationAnnotation, transcriptImpactAnnotation)
         }
 
         val variantsByGene = annotatedVariants.groupBy { it.gene }
@@ -77,6 +69,25 @@ class ArcherAnnotator(
             characteristics = MolecularCharacteristics(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
         )
+    }
+
+    private fun serveEvidence(
+        it: ArcherVariantExtraction,
+        transcriptPositionAndVariationAnnotation: com.hartwig.actin.tools.variant.Variant
+    ): Pair<ActionableEvidence?, GeneAlteration> {
+        val criteria = VariantMatchCriteria(
+            isReportable = true,
+            gene = it.gene,
+            chromosome = transcriptPositionAndVariationAnnotation.chromosome(),
+            ref = transcriptPositionAndVariationAnnotation.ref(),
+            alt = transcriptPositionAndVariationAnnotation.alt(),
+            position = transcriptPositionAndVariationAnnotation.position()
+        )
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
+        val geneAlteration = GeneAlterationFactory.convertAlteration(
+            it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
+        )
+        return Pair(evidence, geneAlteration)
     }
 
     private fun createVariantWithEvidence(
