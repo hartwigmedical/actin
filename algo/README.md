@@ -433,6 +433,7 @@ _Hormones_
 | Rule                                          | When does a patient pass evaluation?      | Note |
 |-----------------------------------------------|-------------------------------------------|------|
 | HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X | Serum testosterone (T.B.D.) in ng/dL <= X |      |
+| HAS_MORNING_CORTISOL_LLN_OF_AT_MOST_X         | Cortisol in nmol/L <= X*LLN               |      |
 
 _Tumor markers_
 

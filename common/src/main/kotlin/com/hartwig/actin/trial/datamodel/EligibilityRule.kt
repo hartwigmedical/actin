@@ -286,6 +286,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_POTENTIAL_HYPOMAGNESEMIA(FunctionInput.NONE),
     HAS_POTENTIAL_HYPOCALCEMIA(FunctionInput.NONE),
     HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
+    HAS_MORNING_CORTISOL_LLN_OF_AT_MOST_X(FunctionInput.ONE_DOUBLE),
     HAS_AFP_ULN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_CA125_ULN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
     HAS_HCG_ULN_OF_AT_LEAST_X(FunctionInput.ONE_DOUBLE),
