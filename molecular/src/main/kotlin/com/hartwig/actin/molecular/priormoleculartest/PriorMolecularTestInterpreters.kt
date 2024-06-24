@@ -15,6 +15,8 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.actin.tools.variant.VariantAnnotator
 
 private fun <T : MolecularTest> identityAnnotator() = object : MolecularAnnotator<T, T> {
     override fun annotate(input: T): T {
@@ -36,10 +38,15 @@ private fun ihcExtractor() = object : MolecularExtractor<PriorMolecularTest, IHC
 
 private fun isArcher(): (PriorMolecularTest) -> Boolean = { it.test == ARCHER_FP_LUNG_TARGET }
 
-private class ArcherInterpreter(evidenceDatabase: EvidenceDatabase, geneDriverLikelihoodModel: GeneDriverLikelihoodModel) :
+private class ArcherInterpreter(
+    evidenceDatabase: EvidenceDatabase,
+    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    variantAnnotator: VariantAnnotator,
+    paveLite: PaveLite
+) :
     MolecularInterpreter<PriorMolecularTest, ArcherPanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        ArcherAnnotator(evidenceDatabase, geneDriverLikelihoodModel),
+        ArcherAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
         isArcher()
     )
 
@@ -70,10 +77,15 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
     }
 
     companion object {
-        fun create(evidenceDatabase: EvidenceDatabase, geneDriverLikelihoodModel: GeneDriverLikelihoodModel) =
+        fun create(
+            evidenceDatabase: EvidenceDatabase,
+            geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+            variantAnnotator: VariantAnnotator,
+            paveLite: PaveLite
+        ) =
             PriorMolecularTestInterpreters(
                 setOf(
-                    ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel),
+                    ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
                     GenericPanelInterpreter(),
                     IHCInterpreter()
                 )

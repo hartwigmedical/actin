@@ -15,6 +15,8 @@ data class MolecularInterpreterConfig(
     val doidJson: String,
     val oncoDndsDatabasePath: String,
     val tsgDndsDatabasePath: String,
+    val referenceGenomeFastaPath: String,
+    val ensemblCachePath: String,
     val outputDirectory: String
 ) {
 
@@ -44,7 +46,9 @@ data class MolecularInterpreterConfig(
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 oncoDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, ONCO_DNDS_DATABASE_PATH),
-                tsgDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, TSG_DNDS_DATABASE_PATH)
+                tsgDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, TSG_DNDS_DATABASE_PATH),
+                referenceGenomeFastaPath = ApplicationConfig.nonOptionalFile(cmd, REFERENCE_GENOME_FASTA_PATH),
+                ensemblCachePath = ApplicationConfig.nonOptionalDir(cmd, ENSEMBL_CACHE_PATH)
             )
         }
 
@@ -57,6 +61,8 @@ data class MolecularInterpreterConfig(
         private const val OUTPUT_DIRECTORY: String = "output_directory"
         private const val ONCO_DNDS_DATABASE_PATH: String = "onco_dnds_database_path"
         private const val TSG_DNDS_DATABASE_PATH: String = "tsg_dnds_database_path"
+        private const val REFERENCE_GENOME_FASTA_PATH = "reference_genome_fasta_path"
+        private const val ENSEMBL_CACHE_PATH = "ensembl_cache_path"
         private const val LOG_DEBUG: String = "log_debug"
     }
 }

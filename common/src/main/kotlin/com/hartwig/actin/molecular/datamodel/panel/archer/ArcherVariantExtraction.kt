@@ -4,7 +4,6 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
 
 data class ArcherVariantExtraction(
     val gene: String,
-    val transcript: String,
     val hgvsCodingImpact: String
 ) : PanelEvent {
     override fun impactsGene(gene: String) = this.gene == gene

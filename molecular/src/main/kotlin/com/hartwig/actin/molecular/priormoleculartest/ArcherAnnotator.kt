@@ -20,7 +20,9 @@ import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.actin.tools.pave.VariantTranscriptImpact
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 
 
 class ArcherAnnotator(
@@ -33,21 +35,25 @@ class ArcherAnnotator(
 
     override fun annotate(input: ArcherPanelExtraction): PanelRecord {
         val annotatedVariants = input.variants.map {
-            val transcriptAnnotation = transcriptAnnotator.resolve(it.gene, it.transcript, it.hgvsCodingImpact)
-            val paveAnnotation = paveLite.run(it.gene, transcriptAnnotation.transcript(), transcriptAnnotation?.position())
+
+            val transcriptAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)
+                ?: throw RuntimeException("Unable to resolve variant in variant annotator. See prior warnings.")
+            val paveAnnotation = paveLite.run(it.gene, transcriptAnnotation.transcript(), transcriptAnnotation.position())
+
             val criteria = VariantMatchCriteria(
                 isReportable = true,
                 gene = it.gene,
-                chromosome = transcriptAnnotation?.chromosome(),
-                ref = transcriptAnnotation?.ref(),
-                alt = transcriptAnnotation?.alt(),
+                chromosome = transcriptAnnotation.chromosome(),
+                ref = transcriptAnnotation.ref(),
+                alt = transcriptAnnotation.alt(),
+                position = transcriptAnnotation.position()
             )
             val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
             val geneAlteration = GeneAlterationFactory.convertAlteration(
                 it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
             )
 
-            createVariantWithEvidence(it, evidence, geneAlteration)
+            createVariantWithEvidence(it, evidence, geneAlteration, transcriptAnnotation, paveAnnotation)
         }
 
         val variantsByGene = annotatedVariants.groupBy { it.gene }
@@ -77,26 +83,30 @@ class ArcherAnnotator(
         it: ArcherVariantExtraction,
         evidence: ActionableEvidence?,
         geneAlteration: GeneAlteration,
+        transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
+        paveAnnotation: VariantTranscriptImpact?
     ) = Variant(
         isReportable = true,
         event = "${it.gene} ${it.hgvsCodingImpact}",
-        driverLikelihood = DriverLikelihood.HIGH,
+        driverLikelihood = DriverLikelihood.LOW,
         evidence = evidence ?: ActionableEvidence(),
         gene = it.gene,
         geneRole = geneAlteration.geneRole,
         proteinEffect = geneAlteration.proteinEffect,
         isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-        isHotspot = false,
-        ref = "",
-        alt = "",
+        isHotspot = geneAlteration is KnownHotspot,
+        ref = transcriptAnnotation.ref(),
+        alt = transcriptAnnotation.alt(),
         canonicalImpact = TranscriptImpact(
-            transcriptId = "",
+            transcriptId = transcriptAnnotation.transcript(),
             hgvsCodingImpact = it.hgvsCodingImpact,
             hgvsProteinImpact = "",
-            isSpliceRegion = false
+            isSpliceRegion = false,
+            affectedExon = paveAnnotation?.affectedExon(),
+            affectedCodon = paveAnnotation?.affectedCodon()
         ),
-        chromosome = "",
-        position = 0,
+        chromosome = transcriptAnnotation.chromosome(),
+        position = transcriptAnnotation.position(),
         type = VariantType.SNV
     )
 }
