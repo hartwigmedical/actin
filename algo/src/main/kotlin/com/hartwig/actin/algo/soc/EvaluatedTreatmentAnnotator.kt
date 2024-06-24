@@ -1,17 +1,21 @@
-package com.hartwig.actin.algo.interpretation
+package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.efficacy.EfficacyEntry
+import com.hartwig.actin.personalization.datamodel.Measurement
 
 class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>) {
 
-    fun annotate(evaluatedTreatments: List<EvaluatedTreatment>): List<AnnotatedTreatmentMatch> {
+    fun annotate(
+        evaluatedTreatments: List<EvaluatedTreatment>, pfsByTreatmentName: Map<String, Measurement>? = null
+    ): List<AnnotatedTreatmentMatch> {
         return evaluatedTreatments.map { evaluatedTreatment ->
             AnnotatedTreatmentMatch(
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
-                annotations = lookUp(evaluatedTreatment)
+                annotations = lookUp(evaluatedTreatment),
+                generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase())
             )
         }
     }
@@ -29,6 +33,7 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
                         .mapNotNull { it.treatment }.map { it.name.lowercase() to entry }
                 }
                 .groupBy({ it.first }, { it.second })
+
             return EvaluatedTreatmentAnnotator(evidenceByTreatmentName)
         }
     }

@@ -10,7 +10,7 @@ import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.interpretation.EvaluatedTreatmentAnnotator
+import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
@@ -41,6 +41,7 @@ class TreatmentMatcherTest {
         recommendationEngine,
         trials,
         CurrentDateProvider(),
+        treatmentDatabase,
         EvaluatedTreatmentAnnotator.create(evidenceEntries),
         EMC_TRIAL_SOURCE
     )
@@ -88,8 +89,13 @@ class TreatmentMatcherTest {
             every { determineEligibility(patientWithoutMolecular, trials) } returns trialMatches
         }
         val treatmentMatcher = TreatmentMatcher(
-            trialMatcher, recommendationEngine, trials, CurrentDateProvider(),
-            EvaluatedTreatmentAnnotator.create(evidenceEntries), EMC_TRIAL_SOURCE
+            trialMatcher,
+            recommendationEngine,
+            trials,
+            CurrentDateProvider(),
+            treatmentDatabase,
+            EvaluatedTreatmentAnnotator.create(evidenceEntries),
+            EMC_TRIAL_SOURCE
         )
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
         val expectedTreatmentMatchWithoutMolecular = expectedTreatmentMatch.copy(sampleId = "N/A")

@@ -13,5 +13,6 @@ data class RuleMappingResources(
     val functionInputResolver: FunctionInputResolver,
     val atcTree: AtcTree,
     val treatmentDatabase: TreatmentDatabase,
+    val personalizationDataPath: String?,
     val algoConfiguration: AlgoConfiguration
 )

@@ -20,6 +20,7 @@ data class TreatmentMatcherConfig(
     val extendedEfficacyJson: String,
     val outputDirectory: String,
     val runHistorically: Boolean,
+    val personalizationDataPath: String?,
     val overridesYaml: String?
 ) {
 
@@ -44,6 +45,7 @@ data class TreatmentMatcherConfig(
                 true,
                 "Hospital managing trials provided. Currently only a single hospital is supported, and defaults to EMC"
             )
+            options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             return options
@@ -66,10 +68,11 @@ data class TreatmentMatcherConfig(
                 trialDatabaseDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
-                runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                runHistorically = runHistorically,
+                personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
@@ -85,5 +88,6 @@ data class TreatmentMatcherConfig(
         private const val RUN_HISTORICALLY = "run_historically"
         private const val TRIAL_SOURCE = "trial_source"
         private const val LOG_DEBUG = "log_debug"
+        private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
     }
 }
