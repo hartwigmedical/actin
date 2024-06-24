@@ -19,7 +19,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
         val treatmentAssessment = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val categoryAndTypeMatch = treatmentHistoryEntry.categories().contains(category)
-                    && ignoreTypes.none { treatmentHistoryEntry.isOfType(it) == true }
+                    && treatmentHistoryEntry.matchesTypeFromSet(ignoreTypes) != true
             TreatmentAssessment(
                 hasHadValidTreatment = categoryAndTypeMatch && startedPastMinDate == true,
                 hasInconclusiveDate = categoryAndTypeMatch && startedPastMinDate == null,
