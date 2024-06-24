@@ -19,7 +19,7 @@ CREATE TABLE `tumor`
     `primaryTumorLocation` varchar(100),
     `primaryTumorSubLocation` varchar(50),
     `primaryTumorType` varchar(50),
-    `primaryTumorSubType` varchar(50),
+    `primaryTumorSubType` varchar(100),
     `primaryTumorExtraDetails` varchar(100),
     `doids` varchar(50),
     `stage` varchar(50),
