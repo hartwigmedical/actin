@@ -19,6 +19,7 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_KNOWN_TUBERCULOSIS_INFECTION to hasSpecificInfectionCreator(DoidConstants.TUBERCULOSIS_DOID),
             EligibilityRule.MEETS_COVID_19_INFECTION_REQUIREMENTS to meetsCovid19InfectionRequirementsCreator(),
             EligibilityRule.HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS to hasReceivedLiveVaccineWithinMonthsCreator(),
+            EligibilityRule.HAS_RECEIVED_NON_LIVE_VACCINE_WITHIN_X_WEEKS to hasReceivedNonLiveVaccineWithinWeeksCreator(),
             EligibilityRule.ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE to canAdhereToAttenuatedVaccineUseCreator(),
         )
     }
