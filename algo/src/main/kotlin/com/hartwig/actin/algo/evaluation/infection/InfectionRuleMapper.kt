@@ -43,6 +43,10 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { HasReceivedLiveVaccineWithinMonths() }
     }
 
+    private fun hasReceivedNonLiveVaccineWithinWeeksCreator(): FunctionCreator {
+        return FunctionCreator { HasReceivedNonLiveVaccineWithinWeeks() }
+    }
+
     private fun canAdhereToAttenuatedVaccineUseCreator(): FunctionCreator {
         return FunctionCreator { CanAdhereToAttenuatedVaccineUse() }
     }

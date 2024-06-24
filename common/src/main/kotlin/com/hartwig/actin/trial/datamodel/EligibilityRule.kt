@@ -373,6 +373,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_KNOWN_TUBERCULOSIS_INFECTION(FunctionInput.NONE),
     MEETS_COVID_19_INFECTION_REQUIREMENTS(FunctionInput.NONE),
     HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS(FunctionInput.ONE_INTEGER),
+    HAS_RECEIVED_NON_LIVE_VACCINE_WITHIN_X_WEEKS(FunctionInput.ONE_INTEGER),
     ADHERENCE_TO_PROTOCOL_REGARDING_ATTENUATED_VACCINE_USE(FunctionInput.NONE),
 
     // Rules depending on current medication

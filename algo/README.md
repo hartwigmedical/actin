@@ -559,6 +559,7 @@ isContraindicationForTherapy=0), the condition is ignored for evaluation.
 | HAS_KNOWN_TUBERCULOSIS_INFECTION                        | Prior other conditions > configured doid should be equal or be a child of DOID 399     |                                                                       |
 | MEETS_COVID_19_INFECTION_REQUIREMENTS                   | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
 | HAS_RECEIVED_LIVE_VACCINE_WITHIN_X_MONTHS               | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
+| HAS_RECEIVED_NON_LIVE_VACCINE_WITHIN_X_WEEKS            | Currently resolves to `UNDETERMINED`                                                   |                                                                       |
 | ADHERENCE_TO_PROTOCOL_REGARDING_ ATTENUATED_VACCINE_USE | Won't be evaluated                                                                     |                                                                       |
 
 ##### Rules related to current medication
