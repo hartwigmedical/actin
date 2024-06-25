@@ -233,5 +233,37 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
                 TRK_TYROSINE_KINASE_INHIBITOR
             )
         )
+
+        val rasMekMapkDirectlyTargetingDrugSet = setOf(
+            KRAS_G12C_INHIBITOR,
+            BRAF_INHIBITOR,
+            BRAF_TYROSINE_KINASE_INHIBITOR,
+            MEK_INHIBITOR,
+            MEK1_INHIBITOR,
+            MEK2_INHIBITOR
+        )
+
+        val rasMekMapkIndirectlyTargetingDrugSet = setOf(
+            ERBB2_INHIBITOR,
+            HER2_INHIBITOR,
+            HER2_ANTIBODY,
+            HER3_ANTIBODY,
+            HER_INHIBITOR,
+            HER_TYROSINE_KINASE_INHIBITOR,
+            PDGFR_INHIBITOR,
+            PDGFRA_INHIBITOR,
+            PDGFRB_INHIBITOR,
+            PDGFR_TYROSINE_KINASE_INHIBITOR,
+            PDGFRA_TYROSINE_KINASE_INHIBITOR,
+            PDGFRB_TYROSINE_KINASE_INHIBITOR,
+            FGFR_INHIBITOR,
+            FGFR1_INHIBITOR,
+            FGFR2_INHIBITOR,
+            FGFR3_INHIBITOR,
+            FGFR_TYROSINE_KINASE_INHIBITOR,
+            FGFR1_TYROSINE_KINASE_INHIBITOR,
+            FGFR2_TYROSINE_KINASE_INHIBITOR,
+            FGFR3_TYROSINE_KINASE_INHIBITOR
+        )
     }
 }
