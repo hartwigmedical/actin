@@ -122,7 +122,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             return Formats.VALUE_NOT_AVAILABLE
         } else {
             val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
-            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
+            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.toHaplotypeString()} (${it.function})" }
         }
     }
 

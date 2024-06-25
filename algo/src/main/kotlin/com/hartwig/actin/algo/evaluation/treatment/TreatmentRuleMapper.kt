@@ -41,6 +41,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_FIRST_LINE_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadFirstLineTreatmentCategoryOfTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_WITHIN_Z_WEEKS to hasHadTreatmentCategoryOfTypesWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPES_Y to hasHadTreatmentCategoryIgnoringTypesCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_TYPES_Y_WITHIN_Z_WEEKS to hasHadTreatmentCategoryIgnoringTypesWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_IGNORING_DRUGS_Y to hasHadTreatmentCategoryIgnoringDrugsCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_LEAST_Y_LINES to hasHadSomeTreatmentsOfCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_AND_AT_MOST_Y_LINES to hasHadLimitedTreatmentsOfCategoryCreator(),
@@ -50,8 +51,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     to hasHadLimitedTreatmentsOfCategoryWithTypesAndStopReasonNotPDCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfTypesAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to hasHadAdjuvantTreatmentWithCategoryCreator(),
-            EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITHIN_X_MONTHS to hasHadSystemicTherapyWithinMonthsCreator(),
-            EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_MONTHS to hasHadSystemicTherapyWithIntentsWithinMonthsCreator(),
+            EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITHIN_X_WEEKS to hasHadSystemicTherapyWithinWeeksCreator(),
+            EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_WEEKS to hasHadSystemicTherapyWithIntentsWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_NAME_X_TREATMENT to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT to hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(),
@@ -265,6 +266,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadTreatmentCategoryIgnoringTypesWithinWeeksCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
+            val minDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
+            HasHadTreatmentWithCategoryButNotOfTypesRecently(input.category, input.types, minDate)
+        }
+    }
+
     private fun hasHadTreatmentCategoryIgnoringDrugsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyDrugsInput(function)
@@ -341,20 +350,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadSystemicTherapyWithIntentsWithinMonthsCreator(): FunctionCreator {
+    private fun hasHadSystemicTherapyWithIntentsWithinWeeksCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createManyIntentsOneIntegerInput(function)
-            val monthsAgo = input.integer
-            val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
-            HasHadSystemicTherapyWithAnyIntent(input.intents, minDate, monthsAgo)
+            val weeksAgo = input.integer
+            val minDate = referenceDateProvider().date().minusWeeks(weeksAgo.toLong())
+            HasHadSystemicTherapyWithAnyIntent(input.intents, minDate, weeksAgo)
         }
     }
 
-    private fun hasHadSystemicTherapyWithinMonthsCreator(): FunctionCreator {
+    private fun hasHadSystemicTherapyWithinWeeksCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val monthsAgo = functionInputResolver().createOneIntegerInput(function)
-            val minDate = referenceDateProvider().date().minusMonths(monthsAgo.toLong())
-            HasHadSystemicTherapyWithAnyIntent(null, minDate, monthsAgo)
+            val weeksAgo = functionInputResolver().createOneIntegerInput(function)
+            val minDate = referenceDateProvider().date().minusWeeks(weeksAgo.toLong())
+            HasHadSystemicTherapyWithAnyIntent(null, minDate, weeksAgo)
         }
     }
 

@@ -112,6 +112,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     IDO1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "IDO1 inhibitor"),
     IL_15_CYTOKINE(TreatmentCategory.IMMUNOTHERAPY, "IL-15 cytokine"),
     IL_2_CYTOKINE(TreatmentCategory.IMMUNOTHERAPY, "IL-2 cytokine"),
+    IMMTAC(TreatmentCategory.TARGETED_THERAPY, "ImmTAC"),
     IMMUNE_AGONIST(TreatmentCategory.IMMUNOTHERAPY),
     IMMUNE_CHECKPOINT_INHIBITOR(TreatmentCategory.IMMUNOTHERAPY),
     IMMUNOMODULATOR(TreatmentCategory.IMMUNOTHERAPY),
@@ -182,5 +183,55 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
 
     override fun display(): String {
         return display ?: toString().replace("_", " ").lowercase()
+    }
+
+    companion object {
+        val NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES = mapOf(
+            "ALK" to setOf(
+                ALK_INHIBITOR,
+                ALK_TYROSINE_KINASE_INHIBITOR,
+                ALK_INHIBITOR_GEN_1,
+                ALK_INHIBITOR_GEN_2,
+                ALK_INHIBITOR_GEN_3
+            ),
+            "EGFR" to setOf(
+                EGFR_INHIBITOR,
+                EGFR_EXON_20_INS_TARGETED_THERAPY,
+                EGFR_C797X_TKI,
+                EGFR_INHIBITOR_GEN_1,
+                EGFR_INHIBITOR_GEN_2,
+                EGFR_INHIBITOR_GEN_3,
+                EGFR_EXON_20_INS_TARGETED_THERAPY,
+                EGFR_TYROSINE_KINASE_INHIBITOR
+            ),
+            "MET" to setOf(
+                MET_INHIBITOR,
+                MET_TYROSINE_KINASE_INHIBITOR
+            ),
+            "RET" to setOf(
+                RET_INHIBITOR,
+                RET_TYROSINE_KINASE_INHIBITOR
+            ),
+            "ROS1" to setOf(
+                ROS1_INHIBITOR,
+                ROS1_TYROSINE_KINASE_INHIBITOR
+            ),
+            "BRAF" to setOf(
+                BRAF_INHIBITOR,
+                BRAF_TYROSINE_KINASE_INHIBITOR
+            ),
+            "NTRK1" to setOf(
+                TRK_RECEPTOR_INHIBITOR,
+                TRK_TYROSINE_KINASE_INHIBITOR
+            ),
+            "NTRK2" to setOf(
+                TRK_RECEPTOR_INHIBITOR,
+                TRK_TYROSINE_KINASE_INHIBITOR
+            ),
+            "NTRK3" to setOf(
+                TRK_RECEPTOR_INHIBITOR,
+                TRK_TYROSINE_KINASE_INHIBITOR
+            )
+        )
     }
 }
