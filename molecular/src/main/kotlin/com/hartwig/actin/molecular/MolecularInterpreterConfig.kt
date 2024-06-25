@@ -61,8 +61,8 @@ data class MolecularInterpreterConfig(
         private const val OUTPUT_DIRECTORY: String = "output_directory"
         private const val ONCO_DNDS_DATABASE_PATH: String = "onco_dnds_database_path"
         private const val TSG_DNDS_DATABASE_PATH: String = "tsg_dnds_database_path"
-        private const val REFERENCE_GENOME_FASTA_PATH = "reference_genome_fasta_path"
-        private const val ENSEMBL_CACHE_PATH = "ensembl_cache_path"
+        private const val REFERENCE_GENOME_FASTA_PATH = "ref_genome_fasta_file"
+        private const val ENSEMBL_CACHE_PATH = "ensembl_data_dir"
         private const val LOG_DEBUG: String = "log_debug"
     }
 }
