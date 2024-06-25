@@ -1,11 +1,12 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
@@ -31,14 +32,14 @@ private const val TRANSCRIPT = "transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
-private val ARCHER_VARIANT = ArcherVariantExtraction(GENE, HGVS_CODING)
+private val ARCHER_VARIANT = PanelVariantExtraction(GENE, HGVS_CODING)
 private val ARCHER_PANEL_WITH_VARIANT = ArcherPanelExtraction(variants = listOf(ARCHER_VARIANT))
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(isReportable = true, gene = GENE, chromosome = CHROMOSOME, ref = REF, alt = ALT, position = POSITION)
 private val TRANSCRIPT_ANNOTATION =
     ImmutableVariant.builder().alt(ALT).ref(REF).transcript(TRANSCRIPT).chromosome(CHROMOSOME).position(POSITION).build()
 
-class ArcherAnnotatorTest {
+class PanelAnnotatorTest {
 
     private val evidenceDatabase = mockk<EvidenceDatabase> {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
@@ -54,7 +55,7 @@ class ArcherAnnotatorTest {
         every { run(GENE, TRANSCRIPT, POSITION) } returns null
     }
 
-    private val annotator = ArcherAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paveLite)
+    private val annotator = PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paveLite)
 
     @Test
     fun `Should return empty annotation when no matches found`() {

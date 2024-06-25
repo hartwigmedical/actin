@@ -4,14 +4,15 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
 
-class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPanelExtraction> {
-    override fun extract(input: List<PriorMolecularTest>): List<GenericPanelExtraction> {
+class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
+    override fun extract(input: List<PriorMolecularTest>): List<PanelExtraction> {
         return input.groupBy { it.test }
             .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
     }
@@ -30,7 +31,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
                 val (variantRecords, nonVariantRecordsGene) = nonExonDeletionRecords.partition {
                     it.measure?.let { measure -> measure.startsWith("c.") || measure.startsWith("p.") } ?: false
                 }
-                val variants = variantRecords.map { record -> GenericVariantExtraction.parseVariant(record) }
+                val variants = variantRecords.map { record -> parseVariant(record) }
 
                 val (geneWithNegativeResultsRecords, unknownRecords) = nonVariantRecordsGene.partition { it.scoreText?.lowercase() == "negative" }
                 val geneWithNegativeResults = geneWithNegativeResultsRecords.mapNotNull { it.item }.toSet()
@@ -41,7 +42,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
                     }")
                 }
 
-                GenericPanelExtraction(type, variants, fusions, exonDeletions, geneWithNegativeResults, date)
+                GenericPanelExtraction(type, fusions, exonDeletions, geneWithNegativeResults, variants, date)
             }
     }
 
@@ -57,6 +58,14 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, GenericPane
             AVL_PANEL -> GenericPanelType.AVL
             FREE_TEXT_PANEL -> GenericPanelType.FREE_TEXT
             else -> throw IllegalArgumentException("Unknown generic panel type: $type")
+        }
+    }
+
+    private fun parseVariant(priorMolecularTest: PriorMolecularTest): PanelVariantExtraction {
+        return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
+            PanelVariantExtraction(gene = priorMolecularTest.item!!, hgvsCodingImpact = priorMolecularTest.measure!!)
+        } else {
+            throw IllegalArgumentException("Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}")
         }
     }
 }

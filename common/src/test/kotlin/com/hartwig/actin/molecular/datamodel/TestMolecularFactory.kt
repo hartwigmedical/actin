@@ -317,7 +317,7 @@ object TestMolecularFactory {
     }
 
     fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        genericPanelExtraction =
+        panelExtraction =
         GenericPanelExtraction(
             fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
             panelType = GenericPanelType.FREE_TEXT

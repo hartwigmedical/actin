@@ -6,13 +6,13 @@ import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.MolecularInterpreter
 import com.hartwig.actin.molecular.datamodel.ARCHER_FP_LUNG_TARGET
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
+import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.tools.pave.PaveLite
@@ -44,19 +44,24 @@ private class ArcherInterpreter(
     variantAnnotator: VariantAnnotator,
     paveLite: PaveLite
 ) :
-    MolecularInterpreter<PriorMolecularTest, ArcherPanelExtraction, PanelRecord>(
+    MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        ArcherAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
+        PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
         isArcher()
     )
 
 private fun isGeneric(): (PriorMolecularTest) -> Boolean =
     { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL }
 
-private class GenericPanelInterpreter :
-    MolecularInterpreter<PriorMolecularTest, GenericPanelExtraction, PanelRecord>(
+private class GenericPanelInterpreter(
+    evidenceDatabase: EvidenceDatabase,
+    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    variantAnnotator: VariantAnnotator,
+    paveLite: PaveLite
+) :
+    MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         GenericPanelExtractor(),
-        GenericPanelAnnotator(),
+        PanelAnnotator(ExperimentType.GENERIC_PANEL, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
         isGeneric()
     )
 
@@ -86,7 +91,7 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
             PriorMolecularTestInterpreters(
                 setOf(
                     ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
-                    GenericPanelInterpreter(),
+                    GenericPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
                     IHCInterpreter()
                 )
             )

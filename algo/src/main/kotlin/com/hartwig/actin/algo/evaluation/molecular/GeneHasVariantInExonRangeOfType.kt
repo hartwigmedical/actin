@@ -8,6 +8,7 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
@@ -102,15 +103,16 @@ class GeneHasVariantInExonRangeOfType(
     }
 
     private fun evaluatePanel(panelRecord: PanelRecord): MolecularEvaluation? {
-        val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
-            panelRecord.genericPanelExtraction?.exonDeletions
-                ?.filter { exonDeletion -> exonDeletion.impactsGene(gene) }
-                ?.filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
-                ?.map(GenericExonDeletionExtraction::display)
-                ?.toSet() ?: emptySet()
-        } else {
-            emptySet()
-        }
+        val matches =
+            if (panelRecord.panelExtraction is GenericPanelExtraction && (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE)) {
+                (panelRecord.panelExtraction as GenericPanelExtraction).exonDeletions
+                    .filter { exonDeletion -> exonDeletion.impactsGene(gene) }
+                    .filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
+                    .map(GenericExonDeletionExtraction::display)
+                    .toSet()
+            } else {
+                emptySet()
+            }
 
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)

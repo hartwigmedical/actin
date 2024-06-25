@@ -10,9 +10,9 @@ import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -25,15 +25,16 @@ import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 
 
-class ArcherAnnotator(
+class PanelAnnotator(
+    private val experimentType: ExperimentType,
     private val evidenceDatabase: EvidenceDatabase,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
     private val transcriptAnnotator: VariantAnnotator,
     private val paveLite: PaveLite
 ) :
-    MolecularAnnotator<ArcherPanelExtraction, PanelRecord> {
+    MolecularAnnotator<PanelExtraction, PanelRecord> {
 
-    override fun annotate(input: ArcherPanelExtraction): PanelRecord {
+    override fun annotate(input: PanelExtraction): PanelRecord {
         val annotatedVariants = input.variants.map {
             val transcriptPositionAndVariationAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)
                 ?: throw RuntimeException("Unable to resolve variant in variant annotator. See prior warnings.")
@@ -62,8 +63,8 @@ class ArcherAnnotator(
         }
 
         return PanelRecord(
-            archerPanelExtraction = input,
-            type = ExperimentType.ARCHER,
+            panelExtraction = input,
+            type = experimentType,
             date = input.date,
             drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet()),
             characteristics = MolecularCharacteristics(),
@@ -72,7 +73,7 @@ class ArcherAnnotator(
     }
 
     private fun serveEvidence(
-        it: ArcherVariantExtraction,
+        it: PanelVariantExtraction,
         transcriptPositionAndVariationAnnotation: com.hartwig.actin.tools.variant.Variant
     ): Pair<ActionableEvidence?, GeneAlteration> {
         val criteria = VariantMatchCriteria(
@@ -91,7 +92,7 @@ class ArcherAnnotator(
     }
 
     private fun createVariantWithEvidence(
-        it: ArcherVariantExtraction,
+        it: PanelVariantExtraction,
         evidence: ActionableEvidence?,
         geneAlteration: GeneAlteration,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,

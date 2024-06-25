@@ -1,8 +1,6 @@
-package com.hartwig.actin.molecular.datamodel.panel.archer
+package com.hartwig.actin.molecular.datamodel.panel
 
-import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
-
-data class ArcherVariantExtraction(
+data class PanelVariantExtraction(
     val gene: String,
     val hgvsCodingImpact: String
 ) : PanelEvent {
