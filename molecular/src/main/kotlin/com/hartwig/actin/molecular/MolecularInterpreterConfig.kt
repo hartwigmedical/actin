@@ -30,6 +30,8 @@ data class MolecularInterpreterConfig(
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
             options.addOption(ONCO_DNDS_DATABASE_PATH, true, "Path to DNDS values for ONCO genes")
             options.addOption(TSG_DNDS_DATABASE_PATH, true, "Path to DNDS values for TSG genes")
+            options.addOption(REFERENCE_GENOME_FASTA_PATH, true, "Path to reference genome fasta file")
+            options.addOption(ENSEMBL_CACHE_PATH, true, "Path to ensemble data cache directory")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
         }
