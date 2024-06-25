@@ -14,7 +14,7 @@ import java.time.LocalDate
 class HasHadSystemicTherapyWithAnyIntent(
     private val intents: Set<Intent>?,
     private val minDate: LocalDate?,
-    private val monthsAgo: Int?
+    private val weeksAgo: Int?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -27,14 +27,14 @@ class HasHadSystemicTherapyWithAnyIntent(
         val intentsLowercase = intents?.let { concatItemsWithOr(it).lowercase() } ?: ""
 
         return when {
-            monthsAgo == null && matchingTreatments.containsKey(true) -> {
+            weeksAgo == null && matchingTreatments.containsKey(true) -> {
                 EvaluationFactory.pass("Patient has had $intentsLowercase systemic therapy", "Received $intentsLowercase systemic therapy")
             }
 
             matchingTreatments[true]?.any { treatmentSinceMinDate(it, false) } ?: false -> {
                 EvaluationFactory.pass(
-                    "Patient has had $intentsLowercase systemic therapy within the last $monthsAgo months",
-                    "Received $intentsLowercase systemic therapy within the last $monthsAgo months"
+                    "Patient has had $intentsLowercase systemic therapy within the last $weeksAgo weeks",
+                    "Received $intentsLowercase systemic therapy within the last $weeksAgo weeks"
                 )
             }
 
@@ -45,7 +45,7 @@ class HasHadSystemicTherapyWithAnyIntent(
                 )
             }
 
-            (monthsAgo == null && matchingTreatments.containsKey(key = null)) || matchingTreatments[null]?.any {
+            (weeksAgo == null && matchingTreatments.containsKey(key = null)) || matchingTreatments[null]?.any {
                 treatmentSinceMinDate(
                     it,
                     true
@@ -63,8 +63,8 @@ class HasHadSystemicTherapyWithAnyIntent(
 
             else ->
                 EvaluationFactory.fail(
-                    "All $intentsLowercase systemic therapy is administered more than $monthsAgo months ago",
-                    "No $intentsLowercase systemic therapy within $monthsAgo months"
+                    "All $intentsLowercase systemic therapy is administered more than $weeksAgo weeks ago",
+                    "No $intentsLowercase systemic therapy within $weeksAgo weeks"
                 )
         }
 
