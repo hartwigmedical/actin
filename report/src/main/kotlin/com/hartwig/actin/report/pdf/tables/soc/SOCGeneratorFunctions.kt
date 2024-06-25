@@ -16,6 +16,8 @@ import com.itextpdf.layout.element.Table
 const val NA = "NA"
 
 object SOCGeneratorFunctions {
+    private val annotatedTreatmentComparator = Comparator.nullsLast(compareByDescending<AnnotatedTreatmentMatch> { it.generalPfs?.value }
+        .thenByDescending { it.annotations.size })
 
     fun addEndPointsToTable(analysisGroup: AnalysisGroup?, endPointName: String, subTable: Table) {
         val primaryEndPoint = analysisGroup?.endPoints?.find { it.name == endPointName }
@@ -58,7 +60,7 @@ object SOCGeneratorFunctions {
     }
 
     fun approvedTreatmentCells(treatments: List<AnnotatedTreatmentMatch>): List<Cell> {
-        return treatments.sortedByDescending { it.annotations.size }
+        return treatments.sortedWith(annotatedTreatmentComparator)
             .flatMap { treatment: AnnotatedTreatmentMatch ->
                 val nameCell = Cells.createContentBold(treatment.treatmentCandidate.treatment.name)
 
@@ -76,8 +78,9 @@ object SOCGeneratorFunctions {
                 val warningsCell = Cells.createContent(
                     warningMessages.sorted().distinct().joinToString(Formats.COMMA_SEPARATOR)
                 )
+                val pfsCell = Cells.createContent(treatment.generalPfs?.let { "${it.value} (${it.min}-${it.max})" } ?: NA)
 
-                sequenceOf(nameCell, annotationsCell, warningsCell)
+                sequenceOf(nameCell, annotationsCell, warningsCell, pfsCell)
             }
     }
 

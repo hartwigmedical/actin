@@ -23,10 +23,7 @@ object TestReportWriterApplication {
         PatientPrinter.printRecord(report.patientRecord)
 
         val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
-            LOGGER.info(
-                "Loading treatment matches from {}",
-                OPTIONAL_TREATMENT_MATCH_JSON
-            )
+            LOGGER.info("Loading treatment matches from {}", OPTIONAL_TREATMENT_MATCH_JSON)
             val match = TreatmentMatchJson.read(OPTIONAL_TREATMENT_MATCH_JSON)
             report.copy(treatmentMatch = match)
         } else {
@@ -40,7 +37,7 @@ object TestReportWriterApplication {
 }
 
 fun main(args: Array<String>) {
-    val skipMolecular: Boolean = args.contains("--no-molecular")
+    val skipMolecular = args.contains("--no-molecular")
     val writer = createProductionReportWriter(WORK_DIRECTORY)
     val report = TestReportWriterApplication.createTestReport(skipMolecular)
     writer.write(report)

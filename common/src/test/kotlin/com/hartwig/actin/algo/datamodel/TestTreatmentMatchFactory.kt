@@ -2,7 +2,13 @@ package com.hartwig.actin.algo.datamodel
 
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
+import com.hartwig.actin.personalization.datamodel.Measurement
+import com.hartwig.actin.personalization.datamodel.MeasurementType
+import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
+import com.hartwig.actin.personalization.datamodel.TreatmentMeasurementCollection
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
@@ -27,7 +33,11 @@ object TestTreatmentMatchFactory {
     }
 
     fun createProperTreatmentMatch(): TreatmentMatch {
-        return createMinimalTreatmentMatch().copy(trialMatches = createTestTrialMatches(), standardOfCareMatches = createSocMatches())
+        return createMinimalTreatmentMatch().copy(
+            trialMatches = createTestTrialMatches(),
+            standardOfCareMatches = createSocMatches(),
+            personalizedDataAnalysis = createPersonalizedDataAnalysis()
+        )
     }
 
     private fun createTestTrialMatches(): List<TrialMatch> {
@@ -76,7 +86,8 @@ object TestTreatmentMatchFactory {
                         passGeneralMessages = setOf("Active CNS metastases")
                     )
                 ),
-                annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries()
+                annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
+                generalPfs = Measurement(136.5, 98, 74, 281)
             )
         )
     }
@@ -256,4 +267,32 @@ object TestTreatmentMatchFactory {
             }
         }
     }
+
+    private fun createPersonalizedDataAnalysis(): List<SubPopulationAnalysis> {
+        val pembrolizumab = TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY)
+        return listOf(
+            subPopulationAnalysis("All", pembrolizumab, 236.5, 0.3),
+            subPopulationAnalysis("Age 45-55", pembrolizumab, 356.5, 0.4),
+            subPopulationAnalysis("WHO 1", pembrolizumab, 321.0, 0.25),
+        )
+    }
+
+    private fun subPopulationAnalysis(name: String, treatment: Treatment, medianPfs: Double, decision: Double) = SubPopulationAnalysis(
+        name = name,
+        treatments = listOf(treatment),
+        treatmentMeasurements = mapOf(
+            MeasurementType.PROGRESSION_FREE_SURVIVAL to TreatmentMeasurementCollection(
+                measurementsByTreatment = mapOf(
+                    treatment to Measurement(medianPfs, 100, (medianPfs / 2).toInt(), (medianPfs * 2).toInt())
+                ),
+                numPatients = 1000
+            ),
+            MeasurementType.TREATMENT_DECISION to TreatmentMeasurementCollection(
+                measurementsByTreatment = mapOf(
+                    treatment to Measurement(decision, 100)
+                ),
+                numPatients = 1000
+            )
+        ),
+    )
 }

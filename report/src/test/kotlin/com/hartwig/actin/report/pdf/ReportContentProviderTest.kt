@@ -7,6 +7,7 @@ import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
@@ -66,6 +67,7 @@ class ReportContentProviderTest {
         val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
         assertThat(chapters.map { it::class }).containsExactly(
             SummaryChapter::class,
+            PersonalizedEvidenceChapter::class,
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
             TrialMatchingChapter::class
@@ -81,6 +83,7 @@ class ReportContentProviderTest {
         val chapters = ReportContentProvider(report, enableExtendedMode).provideChapters()
         assertThat(chapters.map { it::class }).containsExactly(
             SummaryChapter::class,
+            PersonalizedEvidenceChapter::class,
             EfficacyEvidenceChapter::class,
             ClinicalDetailsChapter::class,
             EfficacyEvidenceDetailsChapter::class,

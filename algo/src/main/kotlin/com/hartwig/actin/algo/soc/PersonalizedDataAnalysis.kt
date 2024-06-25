@@ -10,6 +10,7 @@ import com.hartwig.actin.personalization.datamodel.MeasurementType
 import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
 import com.hartwig.actin.personalization.datamodel.TreatmentMeasurementCollection
 import com.hartwig.actin.personalization.similarity.PersonalizedDataInterpreter
+import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_SUB_POPULATION_NAME
 import com.hartwig.actin.personalization.similarity.population.Measurement as PopulationMeasurement
 import com.hartwig.actin.personalization.similarity.population.MeasurementType as PopulationMeasurementType
 import com.hartwig.actin.personalization.similarity.population.SubPopulationAnalysis as PopulationAnalysis
@@ -17,7 +18,7 @@ import com.hartwig.actin.personalization.similarity.population.SubPopulationAnal
 class PersonalizedDataAnalysis(private val analyses: List<PopulationAnalysis>, private val treatmentDatabase: TreatmentDatabase) {
 
     fun pfsByTreatmentName(): Map<String, Measurement> {
-        return analyses.single { it.name == "All" }
+        return analyses.single { it.name == ALL_PATIENTS_SUB_POPULATION_NAME }
             .treatmentMeasurements[PopulationMeasurementType.PROGRESSION_FREE_SURVIVAL]!!.measurementsByTreatment
             .mapNotNull { (treatment, measurement) ->
                 treatmentDatabase.findTreatmentByName(treatment.display)?.let { treatment ->
