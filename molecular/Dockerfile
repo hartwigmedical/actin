@@ -7,4 +7,5 @@ RUN python2 -m pip install TransVar==2.3.4.20161215
 
 COPY target/molecular-${VERSION}-jar-with-dependencies.jar /usr/local/actin.jar
 
+ENV TRANSVAR_CFG=/opt/app/transvar.cfg
 ENTRYPOINT ["java", "-cp", "/usr/local/actin.jar", "com.hartwig.actin.molecular.MolecularInterpreterApplicationKt"]
