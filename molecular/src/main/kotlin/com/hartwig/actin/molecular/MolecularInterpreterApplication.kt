@@ -17,7 +17,7 @@ import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpre
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.transvar.TransvarVariantAnnotator
+import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ActionableEventsLoader
@@ -67,7 +67,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
             evidenceDatabase,
             GeneDriverLikelihoodModel(DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)),
-            TransvarVariantAnnotator.withRefGenome(
+            TransvarVariantAnnotatorFactory.withRefGenome(
                 com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
                 config.referenceGenomeFastaPath,
                 ensemblDataCache

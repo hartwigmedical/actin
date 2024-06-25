@@ -15,8 +15,10 @@ import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.actin.tools.variant.CodingEffect
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
+import com.hartwig.actin.tools.variant.VariantType
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
@@ -37,7 +39,9 @@ private val ARCHER_PANEL_WITH_VARIANT = ArcherPanelExtraction(variants = listOf(
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(isReportable = true, gene = GENE, chromosome = CHROMOSOME, ref = REF, alt = ALT, position = POSITION)
 private val TRANSCRIPT_ANNOTATION =
-    ImmutableVariant.builder().alt(ALT).ref(REF).transcript(TRANSCRIPT).chromosome(CHROMOSOME).position(POSITION).build()
+    ImmutableVariant.builder().alt(ALT).ref(REF).transcript(TRANSCRIPT).chromosome(CHROMOSOME).position(POSITION)
+        .hgvsProteinImpact(HGVS_PROTEIN).isSpliceRegion(false)
+        .type(VariantType.SNV).codingEffect(CodingEffect.MISSENSE).isCanonical(true).build()
 
 class PanelAnnotatorTest {
 
@@ -98,10 +102,13 @@ class PanelAnnotatorTest {
         val annotatedVariant = annotated.drivers.variants.first()
         assertThat(annotatedVariant.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
         assertThat(annotatedVariant.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
+        assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(com.hartwig.actin.molecular.datamodel.CodingEffect.MISSENSE)
+        assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN)
         assertThat(annotatedVariant.chromosome).isEqualTo(CHROMOSOME)
         assertThat(annotatedVariant.position).isEqualTo(POSITION)
         assertThat(annotatedVariant.ref).isEqualTo(REF)
         assertThat(annotatedVariant.alt).isEqualTo(ALT)
+        assertThat(annotatedVariant.type).isEqualTo(com.hartwig.actin.molecular.datamodel.VariantType.SNV)
     }
 
     @Test

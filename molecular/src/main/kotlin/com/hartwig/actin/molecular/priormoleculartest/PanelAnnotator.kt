@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.molecular.MolecularAnnotator
+import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
@@ -112,13 +113,33 @@ class PanelAnnotator(
         canonicalImpact = TranscriptImpact(
             transcriptId = transcriptAnnotation.transcript(),
             hgvsCodingImpact = it.hgvsCodingImpact,
-            hgvsProteinImpact = "",
-            isSpliceRegion = false,
+            hgvsProteinImpact = transcriptAnnotation.hgvsProteinImpact() ?: "",
+            isSpliceRegion = transcriptAnnotation.isSpliceRegion,
             affectedExon = paveAnnotation?.affectedExon(),
-            affectedCodon = paveAnnotation?.affectedCodon()
+            affectedCodon = paveAnnotation?.affectedCodon(),
+            codingEffect = codingEffect(transcriptAnnotation),
         ),
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
-        type = VariantType.SNV
+        type = variantType(transcriptAnnotation)
     )
+
+    private fun variantType(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant) = when (transcriptAnnotation.type()) {
+        com.hartwig.actin.tools.variant.VariantType.SNV -> VariantType.SNV
+        com.hartwig.actin.tools.variant.VariantType.INS -> VariantType.INSERT
+        com.hartwig.actin.tools.variant.VariantType.DEL -> VariantType.DELETE
+        com.hartwig.actin.tools.variant.VariantType.MNV -> VariantType.MNV
+        else -> VariantType.UNDEFINED
+    }
+
+    private fun codingEffect(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant) =
+        when (transcriptAnnotation.codingEffect() ?: com.hartwig.actin.tools.variant.CodingEffect.UNDEFINED) {
+            com.hartwig.actin.tools.variant.CodingEffect.NONE -> CodingEffect.NONE
+            com.hartwig.actin.tools.variant.CodingEffect.MISSENSE -> CodingEffect.MISSENSE
+            com.hartwig.actin.tools.variant.CodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
+            com.hartwig.actin.tools.variant.CodingEffect.SPLICE -> CodingEffect.SPLICE
+            com.hartwig.actin.tools.variant.CodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
+            else -> null
+        }
+
 }
