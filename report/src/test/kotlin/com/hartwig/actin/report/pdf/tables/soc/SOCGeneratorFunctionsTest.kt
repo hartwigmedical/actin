@@ -71,7 +71,7 @@ class SOCGeneratorFunctionsTest {
                     evaluation(EvaluationResult.WARN, setOf("no data", "not recommended")),
                     evaluation(EvaluationResult.PASS, setOf("approved"))
                 ),
-                Measurement(103.0, 100, 52, 390)
+                Measurement(103.0, 100, 52, 390, 100.0)
             ),
             annotatedTreatmentMatch("t2", listOf(evaluation(EvaluationResult.WARN, setOf("no data"))), Measurement(116.5, 94, 78, 431)),
             annotatedTreatmentMatch("t3", listOf(evaluation(EvaluationResult.FAIL, setOf("lab value out of range"), recoverable = true)))
@@ -82,11 +82,11 @@ class SOCGeneratorFunctionsTest {
             "t2",
             "No literature efficacy evidence available yet",
             "no data",
-            "116.5 (78-431)",
+            "116.5",
             "t1",
             "No literature efficacy evidence available yet",
             "no data, not recommended",
-            "103.0 (52-390)",
+            "103.0 (IQR: 100.0)",
             "t3",
             "No literature efficacy evidence available yet",
             "lab value out of range",

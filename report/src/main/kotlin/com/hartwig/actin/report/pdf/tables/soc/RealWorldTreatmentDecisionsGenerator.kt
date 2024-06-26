@@ -2,8 +2,6 @@ package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.personalization.datamodel.MeasurementType
 import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
-import com.hartwig.actin.personalization.similarity.report.SOCPersonalizedTableContent
-import com.hartwig.actin.personalization.similarity.report.TableElement
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables

@@ -1,15 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
+import com.hartwig.actin.personalization.datamodel.MIN_PATIENT_COUNT
 import com.hartwig.actin.personalization.datamodel.MeasurementType
 import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
-import com.hartwig.actin.personalization.similarity.report.SOCPersonalizedTableContent
-import com.hartwig.actin.personalization.similarity.report.TableElement
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
-
-const val MIN_PATIENT_COUNT = 20
 
 class RealWorldPFSOutcomesGenerator(
     private val analysis: List<SubPopulationAnalysis>,
@@ -18,7 +15,7 @@ class RealWorldPFSOutcomesGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return "Progression-free survival (median (range)) in NCR real-world data set"
+        return "Median progression-free survival (days) in NCR real-world data set"
     }
 
     override fun contents(): Table {

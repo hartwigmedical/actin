@@ -1,4 +1,4 @@
-package com.hartwig.actin.personalization.similarity.report
+package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.personalization.datamodel.Measurement
 import com.hartwig.actin.personalization.datamodel.MeasurementType
