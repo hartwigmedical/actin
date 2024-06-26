@@ -5,11 +5,11 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import org.junit.Test
 
-class MmrStatusIsGenerallyAvailableTest {
-    private val function = MmrStatusIsGenerallyAvailable()
+class MmrStatusIsAvailableTest {
+    private val function = MmrStatusIsAvailable()
 
     @Test
-    fun `Should fail when unknown MSI status`() {
+    fun `Should fail when unknown MMR status`() {
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIsMicrosatelliteUnstable(null)))
     }
 

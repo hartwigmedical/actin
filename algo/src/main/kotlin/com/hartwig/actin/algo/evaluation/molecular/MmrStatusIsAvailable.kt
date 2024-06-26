@@ -5,21 +5,21 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
-class MmrStatusIsGenerallyAvailable : MolecularEvaluationFunction {
+class MmrStatusIsAvailable : MolecularEvaluationFunction {
 
     override fun noMolecularRecordEvaluation() =
-        EvaluationFactory.fail("No molecular data to determine microsatellite instability (MSI) status", "No molecular data to determine MSI status")
+        EvaluationFactory.fail("No molecular data to determine mismatch repair (MMR) status", "No molecular data to determine MMR status")
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         return when (molecular.characteristics.isMicrosatelliteUnstable) {
             null -> {
-                EvaluationFactory.fail("Unknown microsatellite instability (MSI) status", "Unknown MSI status")
+                EvaluationFactory.fail("Unknown mismatch repair (MMR) status", "Unknown MMR status")
             }
 
             true, false -> {
                 EvaluationFactory.pass(
-                    "Microsatellite instability (MSI) status is known",
-                    "MSI status is known",
+                    "Mismatch repair (MMR) status is known",
+                    "MMR status is known",
                     inclusionEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
                 )
             }
