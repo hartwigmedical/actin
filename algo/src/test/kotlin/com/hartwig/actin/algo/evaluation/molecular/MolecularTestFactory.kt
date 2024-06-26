@@ -223,6 +223,14 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun withMicrosatelliteSatus(microsatelliteStatus: Boolean?): PatientRecord {
+        return withMolecularRecord(
+            baseMolecular.copy(
+                characteristics = baseMolecular.characteristics.copy(isMicrosatelliteUnstable = microsatelliteStatus)
+            )
+        )
+    }
+
     fun withTumorMutationalBurdenAndHasSufficientQualityAndPurity(
         tumorMutationalBurden: Double?,
         hasSufficientPurity: Boolean,
