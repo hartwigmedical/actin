@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientPrinter
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
@@ -12,7 +13,6 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.molecular.datamodel.orange.PatientRecordJson
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson

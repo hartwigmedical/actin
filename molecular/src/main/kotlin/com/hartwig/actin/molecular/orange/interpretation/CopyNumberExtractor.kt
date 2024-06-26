@@ -62,8 +62,7 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         evidence = ActionableEvidenceFactory.createNoEvidence(),
                         type = CopyNumberType.NONE,
                         minCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt(),
-                        // TODO (DvB): maxCopies should be retrievable from ORANGE datamodel.
-                        maxCopies = Math.round(geneCopyNumber.minCopyNumber()).toInt()
+                        maxCopies = Math.round(geneCopyNumber.maxCopyNumber()).toInt()
                     )
                 }
             }.toSortedSet(CopyNumberComparator())

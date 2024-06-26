@@ -1,10 +1,12 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
+import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
+import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
@@ -34,7 +36,10 @@ class ArcherAnnotatorTest {
         every { evidenceForVariant(any()) } returns EMPTY_MATCH
         every { geneAlterationForVariant(any()) } returns null
     }
-    private val annotator = ArcherAnnotator(evidenceDatabase)
+    private val geneDriverLikelihoodModel = mockk<GeneDriverLikelihoodModel> {
+        every { evaluate(any(), any(), any()) } returns null
+    }
+    private val annotator = ArcherAnnotator(evidenceDatabase, geneDriverLikelihoodModel)
 
     @Test
     fun `Should return empty annotation when no matches found`() {
@@ -62,5 +67,15 @@ class ArcherAnnotatorTest {
         val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
         assertThat(annotated.drivers.variants.first().geneRole).isEqualTo(GeneRole.ONCO)
         assertThat(annotated.drivers.variants.first().proteinEffect).isEqualTo(ProteinEffect.GAIN_OF_FUNCTION)
+    }
+
+    @Test
+    fun `Should annotate variants with driver likelihood`() {
+        every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns TestServeKnownFactory.hotspotBuilder().build()
+            .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)
+            .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
+        every { geneDriverLikelihoodModel.evaluate(GENE, GeneRole.ONCO, any()) } returns 0.9
+        val annotated = annotator.annotate(ARCHER_PANEL_WITH_VARIANT)
+        assertThat(annotated.drivers.variants.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
     }
 }

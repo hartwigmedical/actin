@@ -13,8 +13,20 @@ class PharmacoExtractionTest {
 
     @Test
     fun `Should extract pharmaco`() {
-        val peachEntry1 = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 1").function("function 1").build()
-        val peachEntry2 = TestPeachFactory.builder().gene("gene 1").haplotype("haplotype 2").function("function 2").build()
+        val peachEntry1 = TestPeachFactory.builder()
+            .gene("gene 1")
+            .haplotype("deprecated")
+            .allele("*1")
+            .alleleCount(1)
+            .function("function 1")
+            .build()
+        val peachEntry2 = TestPeachFactory.builder()
+            .gene("gene 1")
+            .haplotype("deprecated")
+            .allele("*2")
+            .alleleCount(2)
+            .function("function 2")
+            .build()
         val orange = withPeachEntries(peachEntry1, peachEntry2)
 
         val entries = PharmacoExtraction.extract(orange)
@@ -24,10 +36,10 @@ class PharmacoExtractionTest {
         assertThat(entry.gene).isEqualTo("gene 1")
         assertThat(entry.haplotypes).hasSize(2)
 
-        val haplotype1 = findByName(entry.haplotypes, "haplotype 1")
+        val haplotype1 = findByHaplotype(entry.haplotypes, "*1_HET")
         assertThat(haplotype1.function).isEqualTo("function 1")
 
-        val haplotype2 = findByName(entry.haplotypes, "haplotype 2")
+        val haplotype2 = findByHaplotype(entry.haplotypes, "*2_HOM")
         assertThat(haplotype2.function).isEqualTo("function 2")
     }
 
@@ -37,8 +49,8 @@ class PharmacoExtractionTest {
             return ImmutableOrangeRecord.builder().from(base).addPeach(*peachEntries).build()
         }
 
-        private fun findByName(haplotypes: Set<Haplotype>, nameToFind: String): Haplotype {
-            return haplotypes.find { it.name == nameToFind }
+        private fun findByHaplotype(haplotypes: Set<Haplotype>, nameToFind: String): Haplotype {
+            return haplotypes.find { it.toHaplotypeString() == nameToFind }
                 ?: throw IllegalStateException("Could not find haplotype with name: $nameToFind")
         }
     }
