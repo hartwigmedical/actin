@@ -9,6 +9,8 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
+const val MIN_PATIENT_COUNT = 20
+
 class RealWorldPFSOutcomesGenerator(
     private val analysis: List<SubPopulationAnalysis>,
     private val eligibleTreatments: Set<String>,
@@ -30,9 +32,14 @@ class RealWorldPFSOutcomesGenerator(
                 when {
                     it.value.isNaN() -> TableElement.regular("-")
 
-                    it.numPatients <= 5 -> TableElement.regular("n≤5")
+                    it.numPatients <= MIN_PATIENT_COUNT -> TableElement.regular("n≤$MIN_PATIENT_COUNT")
 
-                    else -> with(it) { TableElement(value.toString(), " (${min}-${max}) \n(n=${numPatients})") }
+                    else -> with(it) {
+                        val iqrString = if (iqr != null && iqr != Double.NaN) {
+                            "IQR: $iqr, "
+                        } else ""
+                        TableElement(value.toString(), "\n(${iqrString}n=$numPatients)")
+                    }
                 }
             }
             content.check()

@@ -31,7 +31,7 @@ data class TableElement(val boldContent: String? = null, val content: String? = 
     }
 }
 
-data class SOCPersonalizedTableContent(val headers: List<String>, val rows: List<List<TableElement>>) {
+class SOCPersonalizedTableContent(val headers: List<String>, val rows: List<List<TableElement>>) {
 
     fun check() {
         if (rows.any { it.size != headers.size }) {

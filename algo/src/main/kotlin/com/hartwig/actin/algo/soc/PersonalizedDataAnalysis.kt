@@ -20,8 +20,8 @@ class PersonalizedDataAnalysis(private val analyses: List<PopulationAnalysis>, p
     fun pfsByTreatmentName(): Map<String, Measurement> {
         return analyses.single { it.name == ALL_PATIENTS_SUB_POPULATION_NAME }
             .treatmentMeasurements[PopulationMeasurementType.PROGRESSION_FREE_SURVIVAL]!!.measurementsByTreatment
-            .mapNotNull { (treatment, measurement) ->
-                treatmentDatabase.findTreatmentByName(treatment.display)?.let { treatment ->
+            .mapNotNull { (measuredTreatment, measurement) ->
+                treatmentDatabase.findTreatmentByName(measuredTreatment.display)?.let { treatment ->
                     treatment.name.lowercase() to convertMeasurement(measurement)
                 }
             }
@@ -45,7 +45,8 @@ class PersonalizedDataAnalysis(private val analyses: List<PopulationAnalysis>, p
         }
     }
 
-    private fun convertMeasurement(measurement: PopulationMeasurement) = with(measurement) { Measurement(value, numPatients, min, max) }
+    private fun convertMeasurement(measurement: PopulationMeasurement) =
+        with(measurement) { Measurement(value, numPatients, min, max, iqr) }
 
     companion object {
         fun create(
