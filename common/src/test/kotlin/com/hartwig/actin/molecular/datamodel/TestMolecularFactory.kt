@@ -79,7 +79,7 @@ object TestMolecularFactory {
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord()))
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), TestPanelRecordFactory.empty()))
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
