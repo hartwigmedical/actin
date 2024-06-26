@@ -24,8 +24,8 @@
 
         <serve.version>3.0.0</serve.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
-        <actin-transvar.version>0.2.0-beta.4</actin-transvar.version>
-        <actin-pave-lite.version>0.2.0-beta.4</actin-pave-lite.version>
+        <actin-transvar.version>0.2.0-beta.5</actin-transvar.version>
+        <actin-pave-lite.version>0.2.0-beta.5</actin-pave-lite.version>
 
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
