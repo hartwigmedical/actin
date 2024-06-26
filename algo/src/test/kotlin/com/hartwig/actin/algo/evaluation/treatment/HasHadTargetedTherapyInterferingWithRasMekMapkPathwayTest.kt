@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
 import com.hartwig.actin.clinical.datamodel.treatment.DrugType
-import com.hartwig.actin.clinical.datamodel.treatment.DrugType.Companion.rasMekMapkDirectlyTargetingDrugSet
-import com.hartwig.actin.clinical.datamodel.treatment.DrugType.Companion.rasMekMapkIndirectlyTargetingDrugSet
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType.Companion.RAS_MEK_MAPK_DIRECTLY_TARGETING_DRUG_SET
+import com.hartwig.actin.clinical.datamodel.treatment.DrugType.Companion.RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions
 import org.junit.Test
@@ -30,11 +30,11 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
     }
 
     @Test
-    fun `Should pass for correct treatment category`() {
+    fun `Should pass for specific drug type`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
-                    TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TARGETED_THERAPY, rasMekMapkDirectlyTargetingDrugSet)
+                    TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TARGETED_THERAPY, RAS_MEK_MAPK_DIRECTLY_TARGETING_DRUG_SET)
                 )
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
@@ -45,17 +45,17 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
     }
 
     @Test
-    fun `Should resolve to undetermined for drug type with indirect interference with pathway`() {
+    fun `Should warn for drug type with indirect interference with pathway`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(
-                    TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TARGETED_THERAPY, rasMekMapkIndirectlyTargetingDrugSet)
+                    TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TARGETED_THERAPY, RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET)
                 )
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        Assertions.assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
-            "Has had targeted therapy (Test) - undetermined interference with RAS/MEK/MAPK pathway"
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
+        Assertions.assertThat(evaluation.warnGeneralMessages).containsExactly(
+            "Has had targeted therapy (Test) - indirectly interfering with RAS/MEK/MAPK pathway"
         )
     }
 

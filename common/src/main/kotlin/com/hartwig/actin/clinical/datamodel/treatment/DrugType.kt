@@ -234,7 +234,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
             )
         )
 
-        val rasMekMapkDirectlyTargetingDrugSet = setOf(
+        val RAS_MEK_MAPK_DIRECTLY_TARGETING_DRUG_SET = setOf(
             KRAS_G12C_INHIBITOR,
             BRAF_INHIBITOR,
             BRAF_TYROSINE_KINASE_INHIBITOR,
@@ -243,7 +243,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
             MEK2_INHIBITOR
         )
 
-        val rasMekMapkIndirectlyTargetingDrugSet = setOf(
+        val RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET = setOf(
             ERBB2_INHIBITOR,
             HER2_INHIBITOR,
             HER2_ANTIBODY,
