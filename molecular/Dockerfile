@@ -2,7 +2,7 @@ FROM eclipse-temurin:11-jre
 
 ARG VERSION=local-SNAPSHOT
 
-RUN apt-get update && apt-get install -fy unzip python3-pip zlib1g-dev libncurses5-dev
+RUN apt-get update && apt-get install -fy unzip python-pip python2-dev zlib1g-dev libncurses5-dev
 RUN python2 -m pip install TransVar==2.3.4.20161215
 
 COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/reference-genome-37-resources:1.0.0 /data/resources/reference_genome /data/resources/reference_genome
