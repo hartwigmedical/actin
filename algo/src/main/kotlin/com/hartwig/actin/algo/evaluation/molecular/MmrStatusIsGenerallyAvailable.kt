@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 class MmrStatusIsGenerallyAvailable : MolecularEvaluationFunction {
 
     override fun noMolecularRecordEvaluation() =
-        EvaluationFactory.undetermined("Undetermined microsatellite instability (MSI) status", "Undetermined MSI status")
+        EvaluationFactory.undetermined("No molecular data to determine microsatellite instability (MSI) status", "No molecular data to determined MSI status")
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         return when (molecular.characteristics.isMicrosatelliteUnstable) {
