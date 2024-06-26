@@ -24,15 +24,15 @@ class HasSufficientMorningCortisolLNNTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if comparison to LLN cannot be made due to missing reference limit`() {
-        assertUndetermined(80.0, null, EvaluationResult.UNDETERMINED)
-        assertRecoverable(80.0, null)
-    }
-
-    @Test
     fun `Should evaluate to recoverable undetermined if cortisol is under requested fold of LLN and outside margin of error`() {
         assertUndetermined(100.0, 200.0, EvaluationResult.UNDETERMINED)
         assertRecoverable(100.0, 200.0)
+    }
+
+    @Test
+    fun `Should evaluate to recoverable undetermined if comparison to LLN cannot be made due to missing reference limit`() {
+        assertUndetermined(80.0, null, EvaluationResult.UNDETERMINED)
+        assertRecoverable(80.0, null)
     }
 
     private fun assertUndetermined(

@@ -128,7 +128,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_TSH_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.THYROID_STIMULATING_HORMONE
             ),
-            EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE to undeterminedLabValueCreator("HLA-antibodies against PDC line"),
+            EligibilityRule.HAS_ANTI_HLA_ANTIBODIES_AGAINST_PDC_LINE to undeterminedLabValueCreator("HLA-antibodies against PDC line")
         )
     }
 
