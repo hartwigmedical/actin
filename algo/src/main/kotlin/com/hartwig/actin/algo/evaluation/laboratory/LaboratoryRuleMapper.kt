@@ -105,7 +105,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_POTENTIAL_HYPOMAGNESEMIA to hasPotentialHypomagnesemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOCALCEMIA to hasPotentialHypocalcemiaCreator(),
             EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X to undeterminedLabValueCreator("serum testosterone"),
-            EligibilityRule.HAS_MORNING_CORTISOL_LLN_OF_AT_MOST_X to hasMorningCortisolLLNCreator(LabMeasurement.CORTISOL),
+            EligibilityRule.HAS_MORNING_CORTISOL_LLN_OF_AT_LEAST_X to hasSufficientMorningCortisolLLNCreator(),
             EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.ALPHA_FETOPROTEIN),
             EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.CARBOHYDRATE_ANTIGEN_125),
             EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.HCG_AND_BETA_HCG),
@@ -148,6 +148,13 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             createLabEvaluator(measurement, HasSufficientLabValueLLN(minLLNFactor))
         }
     }
+
+    private fun hasSufficientMorningCortisolLLNCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val minLLNFactor = functionInputResolver().createOneDoubleInput(function)
+            LabMeasurementEvaluator(LabMeasurement.CORTISOL, HasSufficientMorningCortisol(minLLNFactor), minValidLabDate(), minPassLabDate())
+    }
+}
 
     private fun hasLimitedLabValueCreator(measurement: LabMeasurement, targetUnit: LabUnit = measurement.defaultUnit): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
@@ -259,12 +266,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 DoidConstants.AUTOSOMAL_DOMINANT_HYPOCALCEMIA_DOID
             )
             Or(listOf(calciumBelowLLN, hasHadPriorHypocalcemia))
-        }
-    }
-
-    private val hasMorningCortisolLLNCreator(measurement: LabMeasurement): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
-            HasMorningCortisolLNNOfAtMost(hasSufficientLabValueLLNCreator(measurement))
         }
     }
 
