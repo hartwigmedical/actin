@@ -223,7 +223,7 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withMicrosatelliteSatus(microsatelliteStatus: Boolean?): PatientRecord {
+    fun withIsMicrosatelliteUnstable(microsatelliteStatus: Boolean?): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(isMicrosatelliteUnstable = microsatelliteStatus)

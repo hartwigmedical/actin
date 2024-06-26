@@ -9,22 +9,22 @@ class MmrStatusIsGenerallyAvailableTest {
     private val function = MmrStatusIsGenerallyAvailable()
 
     @Test
-    fun `Should evaluate to undetermined when unknown MSI status`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMicrosatelliteSatus(null)))
+    fun `Should fail when unknown MSI status`() {
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIsMicrosatelliteUnstable(null)))
     }
 
     @Test
-    fun `Should evaluate to undetermined when molecular record not available`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord()))
+    fun `Should fail when molecular record not available`() {
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord()))
     }
 
     @Test
     fun `Should pass with MSI true`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteSatus(true)))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIsMicrosatelliteUnstable(true)))
     }
 
     @Test
     fun `Should pass with MSI false`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteSatus(false)))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIsMicrosatelliteUnstable(false)))
     }
 }
