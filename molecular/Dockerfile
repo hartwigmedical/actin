@@ -9,6 +9,6 @@ COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/common
 COPY --from=europe-west4-docker.pkg.dev/actin-build/build-registry-docker/crunch-resources:1.0.1 /data/resources/crunch/transvar_db /data/resources/transvar_db
 
 COPY target/molecular-${VERSION}-jar-with-dependencies.jar /usr/local/actin.jar
-COPY target/transvar.cfg /home/root/.transvar.cfg
+COPY target/classes/transvar.cfg /home/root/.transvar.cfg
 
 ENTRYPOINT ["java", "-cp", "/usr/local/actin.jar", "com.hartwig.actin.molecular.MolecularInterpreterApplicationKt"]
