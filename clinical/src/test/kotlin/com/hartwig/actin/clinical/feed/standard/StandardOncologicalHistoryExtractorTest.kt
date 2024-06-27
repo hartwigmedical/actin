@@ -42,7 +42,7 @@ private val TREATMENT_HISTORY_ENTRY_CONFIG = TreatmentHistoryEntryConfig(
         treatmentHistoryDetails = TreatmentHistoryDetails(
             bodyLocations = setOf("bone"),
             bodyLocationCategories = setOf(BodyLocationCategory.BONE),
-            maintenanceTreatment = TreatmentStage(treatment = TREATMENT, cycles = 1, startYear = 2024, startMonth = 2),
+            maintenanceTreatment = TreatmentStage(treatment = TREATMENT, cycles = 1, startYear = 2024, startMonth = 2)
         ),
         trialAcronym = "trialAcronym",
     )
@@ -83,13 +83,13 @@ private val TREATMENT_HISTORY_FALLBACK = TREATMENT_HISTORY_ENTRY.copy(
     )
 )
 
-class StandardTreatmentHistoryExtractorTest {
+class StandardOncologicalHistoryExtractorTest {
 
     private val treatmentCurationDatabase = mockk<CurationDatabase<TreatmentHistoryEntryConfig>>()
     private val nonOncologicalHistoryCuration = mockk<CurationDatabase<NonOncologicalHistoryConfig>> {
         every { find(any()) } returns emptySet()
     }
-    private val extractor = StandardTreatmentHistoryExtractor(treatmentCurationDatabase, nonOncologicalHistoryCuration)
+    private val extractor = StandardOncologicalHistoryExtractor(treatmentCurationDatabase, nonOncologicalHistoryCuration)
 
     @Test
     fun `Should filter treatment history entry and warn when no curation for treatment name`() {
@@ -113,7 +113,7 @@ class StandardTreatmentHistoryExtractorTest {
     }
 
     @Test
-    fun `Should extract treatment with modifications using curated treatment`() {
+    fun `Should extract treatment with modifications using curated treatment and use provided response, stop reason and dates when provided`() {
         every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(TREATMENT_HISTORY_ENTRY_CONFIG)
         every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(
             TREATMENT_HISTORY_ENTRY_CONFIG.copy(
@@ -133,6 +133,39 @@ class StandardTreatmentHistoryExtractorTest {
                 TREATMENT_HISTORY_ENTRY
             )
         )
+    }
+
+    @Test
+    fun `Should extract treatment with modifications using curated treatment and use curated provided response, stop reason and dates if configured`() {
+        every { treatmentCurationDatabase.find(TREATMENT_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(
+                curated = TREATMENT_HISTORY_ENTRY_CONFIG.curated?.copy(
+                    treatmentHistoryDetails = TREATMENT_HISTORY_ENTRY_CONFIG.curated.treatmentHistoryDetails?.copy(
+                        stopYear = 2020,
+                        stopMonth = 7,
+                        stopReason = StopReason.PROGRESSIVE_DISEASE,
+                        bestResponse = TreatmentResponse.MIXED
+                    )
+                )
+            )
+        )
+        every { treatmentCurationDatabase.find(MODIFICATION_NAME) } returns setOf(
+            TREATMENT_HISTORY_ENTRY_CONFIG.copy(
+                curated = TREATMENT_HISTORY_ENTRY.copy(
+                    treatments = setOf(MODIFICATION_TREATMENT)
+                )
+            )
+        )
+        val result = extractor.extract(
+            EHR_PATIENT_RECORD.copy(
+                treatmentHistory = listOf(TREATMENT_HISTORY.copy(stopReason = null, response = null, endDate = null))
+            )
+        )
+        assertThat(result.evaluation.warnings).isEmpty()
+        assertThat(result.extracted[0].treatmentHistoryDetails?.stopYear).isEqualTo(2020)
+        assertThat(result.extracted[0].treatmentHistoryDetails?.stopMonth).isEqualTo(7)
+        assertThat(result.extracted[0].treatmentHistoryDetails?.stopReason).isEqualTo(StopReason.PROGRESSIVE_DISEASE)
+        assertThat(result.extracted[0].treatmentHistoryDetails?.bestResponse).isEqualTo(TreatmentResponse.MIXED)
     }
 
     @Test
