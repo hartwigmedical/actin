@@ -112,6 +112,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     IDO1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "IDO1 inhibitor"),
     IL_15_CYTOKINE(TreatmentCategory.IMMUNOTHERAPY, "IL-15 cytokine"),
     IL_2_CYTOKINE(TreatmentCategory.IMMUNOTHERAPY, "IL-2 cytokine"),
+    IMMTAC(TreatmentCategory.TARGETED_THERAPY, "ImmTAC"),
     IMMUNE_AGONIST(TreatmentCategory.IMMUNOTHERAPY),
     IMMUNE_CHECKPOINT_INHIBITOR(TreatmentCategory.IMMUNOTHERAPY),
     IMMUNOMODULATOR(TreatmentCategory.IMMUNOTHERAPY),

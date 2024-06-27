@@ -27,10 +27,8 @@
         <actin-transvar.version>0.2.0-beta.6</actin-transvar.version>
         <actin-pave-lite.version>0.2.0-beta.6</actin-pave-lite.version>
 
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-
-        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+        <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
@@ -40,7 +38,7 @@
         <commons.cli.version>1.5.0</commons.cli.version>
         <google.gson.version>2.10</google.gson.version>
         <apache.log4j.version>2.18.0</apache.log4j.version>
-        <apache.log4j-slf4j18.version>2.18.0</apache.log4j-slf4j18.version>
+        <slf4j-reload4j.version>1.7.36</slf4j-reload4j.version>
 
         <jooq.version>3.15.5</jooq.version>
         <mysqlconnector.version>8.0.31</mysqlconnector.version>
@@ -228,11 +226,6 @@
                 <version>${apache.log4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j18-impl</artifactId>
-                <version>${apache.log4j-slf4j18.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq</artifactId>
                 <version>${jooq.version}</version>
@@ -291,6 +284,13 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-reload4j</artifactId>
+                <version>${slf4j-reload4j.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>
