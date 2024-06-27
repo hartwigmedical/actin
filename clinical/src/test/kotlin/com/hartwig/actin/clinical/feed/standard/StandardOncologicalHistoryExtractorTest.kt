@@ -21,9 +21,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
-private val PROVIDED_TREATMENT_START = LocalDate.of(2021, 5, 1)
-private val PROVIDED_TREATMENT_END = LocalDate.of(2021, 6, 1)
-private val PROVIDED_MODIFICATION_START = LocalDate.of(2021, 7, 1)
+private val PROVIDED_TREATMENT_START = LocalDate.of(2021, 4, 1)
+private val PROVIDED_TREATMENT_END = LocalDate.of(2021, 5, 1)
+private val PROVIDED_MODIFICATION_START = LocalDate.of(2021, 6, 1)
 private val PROVIDED_EHR_PATIENT_RECORD = createEhrPatientRecord()
 private val PROVIDED_TREATMENT_HISTORY = EhrTestData.createEhrTreatmentHistory()
     .copy(
