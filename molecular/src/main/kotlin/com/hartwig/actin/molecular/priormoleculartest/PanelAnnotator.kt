@@ -24,6 +24,8 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.pave.VariantTranscriptImpact
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 
 class PanelAnnotator(
@@ -36,18 +38,22 @@ class PanelAnnotator(
     MolecularAnnotator<PanelExtraction, PanelRecord> {
 
     override fun annotate(input: PanelExtraction): PanelRecord {
-        val annotatedVariants = input.variants.map {
-            val transcriptPositionAndVariationAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)
-                ?: throw RuntimeException("Unable to resolve variant in variant annotator. See prior warnings.")
-            val transcriptImpactAnnotation = paveLite.run(
-                it.gene,
-                transcriptPositionAndVariationAnnotation.transcript(),
-                transcriptPositionAndVariationAnnotation.position()
-            )
+        val annotatedVariants = input.variants.mapNotNull {
+            val externalVariantAnnotation = externalAnnotation(it)
 
-            val (evidence, geneAlteration) = serveEvidence(it, transcriptPositionAndVariationAnnotation)
+            if (externalVariantAnnotation != null) {
+                val transcriptImpactAnnotation = paveLite.run(
+                    it.gene,
+                    externalVariantAnnotation.transcript(),
+                    externalVariantAnnotation.position()
+                )
 
-            createVariantWithEvidence(it, evidence, geneAlteration, transcriptPositionAndVariationAnnotation, transcriptImpactAnnotation)
+                val (evidence, geneAlteration) = serveEvidence(it, externalVariantAnnotation)
+
+                createVariantWithEvidence(it, evidence, geneAlteration, externalVariantAnnotation, transcriptImpactAnnotation)
+            } else {
+                null
+            }
         }
 
         val variantsByGene = annotatedVariants.groupBy { it.gene }
@@ -71,6 +77,24 @@ class PanelAnnotator(
             characteristics = MolecularCharacteristics(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
         )
+    }
+
+    private fun externalAnnotation(it: PanelVariantExtraction): com.hartwig.actin.tools.variant.Variant? {
+        val externalVariantAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)
+
+        if (externalVariantAnnotation == null) {
+            LOGGER.error("Unable to resolve variant '$it' in variant annotator. See prior warnings.")
+            return null
+        }
+
+        if (!externalVariantAnnotation.isCanonical) {
+            LOGGER.error(
+                "Annotator deems variant '$it' as on the non-canonical transcript '${externalVariantAnnotation.transcript()}. " +
+                        "It cannot be annotated, filtering this variant from panel record"
+            )
+            return null
+        }
+        return externalVariantAnnotation
     }
 
     private fun serveEvidence(
@@ -133,7 +157,7 @@ class PanelAnnotator(
     }
 
     private fun codingEffect(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant) =
-        when (transcriptAnnotation.codingEffect() ?: com.hartwig.actin.tools.variant.CodingEffect.UNDEFINED) {
+        when (transcriptAnnotation.codingEffect()) {
             com.hartwig.actin.tools.variant.CodingEffect.NONE -> CodingEffect.NONE
             com.hartwig.actin.tools.variant.CodingEffect.MISSENSE -> CodingEffect.MISSENSE
             com.hartwig.actin.tools.variant.CodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
@@ -142,4 +166,7 @@ class PanelAnnotator(
             else -> null
         }
 
+    companion object {
+        val LOGGER: Logger = LogManager.getLogger(PanelAnnotator::class.java)
+    }
 }

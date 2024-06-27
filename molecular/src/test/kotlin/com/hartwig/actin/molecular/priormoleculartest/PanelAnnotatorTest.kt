@@ -25,7 +25,6 @@ import com.hartwig.serve.datamodel.Knowledgebase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 private const val ALT = "T"
@@ -112,9 +111,18 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should throw on null output from transcript annotator`() {
+    fun `Should filter variant on null output from transcript annotator`() {
         every { transvarAnnotator.resolve(GENE, null, HGVS_CODING) } returns null
-        assertThatThrownBy { annotator.annotate(ARCHER_PANEL_WITH_VARIANT) }.isInstanceOf(RuntimeException::class.java)
+        assertThat(annotator.annotate(ARCHER_PANEL_WITH_VARIANT).drivers.variants).isEmpty()
+    }
+
+    @Test
+    fun `Should filter variant on non-canonical output from transcript annotator`() {
+        every { transvarAnnotator.resolve(GENE, null, HGVS_CODING) } returns mockk {
+            every { isCanonical } returns false
+            every { transcript() } returns TRANSCRIPT
+        }
+        assertThat(annotator.annotate(ARCHER_PANEL_WITH_VARIANT).drivers.variants).isEmpty()
     }
 
     @Test
