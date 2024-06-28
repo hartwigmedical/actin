@@ -430,10 +430,10 @@ _Minerals_
 
 _Hormones_
 
-| Rule                                          | When does a patient pass evaluation?      | Note |
-|-----------------------------------------------|-------------------------------------------|------|
-| HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X | Serum testosterone (T.B.D.) in ng/dL <= X |      |
-| HAS_MORNING_CORTISOL_LLN_OF_AT_LEAST_X        | Cortisol in nmol/L => X*LLN               |      |
+| Rule                                          | When does a patient pass evaluation?      | Note                                              |
+|-----------------------------------------------|-------------------------------------------|---------------------------------------------------|
+| HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X | Serum testosterone (T.B.D.) in ng/dL <= X |                                                   |
+| HAS_CORTISOL_LLN_OF_AT_LEAST_X                | Cortisol in nmol/L => X*LLN               | Cortisol values should be measured in the morning |
 
 _Tumor markers_
 
