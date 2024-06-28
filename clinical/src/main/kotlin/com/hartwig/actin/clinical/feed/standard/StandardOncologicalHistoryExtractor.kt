@@ -27,7 +27,7 @@ class StandardOncologicalHistoryExtractor(
 
         return ExtractionResult(
             oncologicalTreatmentHistory.extracted + oncologicalPreviousConditions.extracted,
-            oncologicalTreatmentHistory.evaluation + oncologicalPreviousConditions.evaluation
+            oncologicalTreatmentHistory.evaluation
         )
     }
 
