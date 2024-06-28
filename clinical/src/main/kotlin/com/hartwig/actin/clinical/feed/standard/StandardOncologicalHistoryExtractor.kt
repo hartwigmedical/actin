@@ -52,8 +52,7 @@ class StandardOncologicalHistoryExtractor(
                                 intents = curatedTreatment.intents,
                                 treatmentHistoryDetails = TreatmentHistoryDetails(
                                     stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrPreviousCondition.endDate?.year,
-                                    stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth
-                                        ?: ehrPreviousCondition.endDate?.monthValue,
+                                    stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth?: ehrPreviousCondition.endDate?.monthValue,
                                     stopReason = curatedTreatment.treatmentHistoryDetails?.stopReason,
                                     bestResponse = curatedTreatment.treatmentHistoryDetails?.bestResponse,
                                     switchToTreatments = curatedTreatment.treatmentHistoryDetails?.switchToTreatments,

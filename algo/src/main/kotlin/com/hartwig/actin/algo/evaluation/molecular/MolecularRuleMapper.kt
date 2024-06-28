@@ -61,6 +61,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
+            EligibilityRule.MMR_STATUS_IS_AVAILABLE to mmrStatusIsAvailableCreator(),
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to nsclcDriverGeneStatusesAreAvailableCreator(),
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
             EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator()
@@ -382,6 +383,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val gene = functionInputResolver().createOneGeneInput(function)
             MolecularResultsAreAvailableForPromoterOfGene(gene.geneName)
         }
+    }
+
+    private fun mmrStatusIsAvailableCreator(): FunctionCreator {
+        return FunctionCreator { MmrStatusIsAvailable() }
     }
 
     private fun nsclcDriverGeneStatusesAreAvailableCreator(): FunctionCreator {
