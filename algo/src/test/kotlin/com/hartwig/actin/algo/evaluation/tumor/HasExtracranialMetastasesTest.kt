@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.clinical.datamodel.TumorDetails
 import org.junit.Test
 
 class HasExtracranialMetastasesTest {
@@ -17,6 +19,35 @@ class HasExtracranialMetastasesTest {
     }
 
     @Test
+    fun `Should pass when uncategorized lesion with certain extracranial location present`() {
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withOtherLesions(listOf("intestine"))))
+    }
+
+    @Test
+    fun `Should pass for biopsy location with certain extracranial location`() {
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = TumorDetails(
+                hasBoneLesions = false,
+                hasLymphNodeLesions = false,
+                hasLiverLesions = false,
+                hasLungLesions = false,
+                hasCnsLesions = false,
+                hasBrainLesions = false,
+                otherLesions = emptyList(),
+                biopsyLocation = "bladder"
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when only uncategorized lesions with uncertain extracranial location present`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("gland")))
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined when only cns metastases present`() {
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withCnsLesions(true)))
     }
@@ -29,12 +60,53 @@ class HasExtracranialMetastasesTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined when data is missing for one of the lesion categories`() {
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = TumorDetails(
+                hasBoneLesions = null,
+                hasLymphNodeLesions = false,
+                hasLiverLesions = false,
+                hasLungLesions = false,
+                hasCnsLesions = false,
+                hasBrainLesions = false,
+                otherLesions = emptyList(),
+                biopsyLocation = ""
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+    }
+
+    @Test
     fun `Should fail when only brain metastases present`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBrainLesions(true)))
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = TumorDetails(
+                hasBoneLesions = false,
+                hasLymphNodeLesions = false,
+                hasLiverLesions = false,
+                hasLungLesions = false,
+                hasCnsLesions = false,
+                hasBrainLesions = true,
+                otherLesions = emptyList(),
+                biopsyLocation = ""
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 
     @Test
     fun `Should fail when no metastases present`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withBoneLesions(false)))
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = TumorDetails(
+                hasBoneLesions = false,
+                hasLymphNodeLesions = false,
+                hasLiverLesions = false,
+                hasLungLesions = false,
+                hasCnsLesions = false,
+                hasBrainLesions = false,
+                otherLesions = emptyList(),
+                biopsyLocation = ""
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 }
