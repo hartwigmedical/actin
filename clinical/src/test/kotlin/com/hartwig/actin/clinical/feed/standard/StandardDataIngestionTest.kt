@@ -64,7 +64,7 @@ class StandardDataIngestionTest {
                 curationDatabase.intoleranceCuration
             ),
             complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
-            treatmentHistoryExtractor = StandardTreatmentHistoryExtractor(
+            treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration,
                 curationDatabase.nonOncologicalHistoryCuration
             ),
