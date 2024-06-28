@@ -10,7 +10,7 @@ data class MolecularEvaluation(
     val evaluation: Evaluation
 ) {
     companion object {
-        fun combine(evaluations: List<MolecularEvaluation?>, fallbackUndetermined: Evaluation): Evaluation {
+        fun combine(evaluations: List<MolecularEvaluation?>): Evaluation {
 
             val groupedEvaluationsByResult = evaluations.filterNotNull()
                 .groupBy { evaluation -> evaluation.evaluation.result }
@@ -33,7 +33,7 @@ data class MolecularEvaluation(
             return sortedPreferredEvaluations?.let {
                 if (isOrangeResult(it)) it.first().evaluation else
                     it.map { m -> m.evaluation }.reduce(Evaluation::addMessagesAndEvents)
-            } ?: fallbackUndetermined
+            } ?: throw IllegalStateException("Unable to combine molecular evaluations [$evaluations]")
         }
 
         private fun isOrangeResult(it: List<MolecularEvaluation>) =

@@ -7,6 +7,8 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherSkippedExonsExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
@@ -19,11 +21,10 @@ class GeneHasVariantInExonRangeOfType(
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeEvaluation = molecularHistory.latestOrangeMolecularRecord()?.let { evaluateOrange(it) }
-        val panelEvaluations = molecularHistory.allPanels().map { evaluatePanel(it) }
+        val panelEvaluations = molecularHistory.allPanels().map { evaluatePanel(it)?.let { e -> MolecularEvaluation(it, e) } }
 
         return MolecularEvaluation.combine(
-            listOfNotNull(orangeEvaluation) + panelEvaluations.filterNotNull(),
-            EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+            listOfNotNull(orangeEvaluation) + panelEvaluations.filterNotNull()
         )
     }
 
@@ -102,44 +103,37 @@ class GeneHasVariantInExonRangeOfType(
         )
     }
 
-    private fun evaluatePanel(panelRecord: PanelRecord): MolecularEvaluation? {
-        val matches =
-            if (panelRecord.panelExtraction is GenericPanelExtraction && (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE)) {
-                (panelRecord.panelExtraction as GenericPanelExtraction).exonDeletions
-                    .filter { exonDeletion -> exonDeletion.impactsGene(gene) }
-                    .filter { exonDeletion -> hasEffectInExonRange(exonDeletion.affectedExon, minExon, maxExon) }
-                    .map(GenericExonDeletionExtraction::display)
-                    .toSet()
-            } else {
-                emptySet()
-            }
+    private fun evaluatePanel(panelRecord: PanelRecord): Evaluation? {
+        val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
+            val generic = genericExtraction(panelRecord)?.exonDeletions
+                ?.filter { it.impactsGene(gene) }
+                ?.filter { hasEffectInExonRange(it.affectedExon, minExon, maxExon) }
+                ?.map(GenericExonDeletionExtraction::display)?.toSet()
+            val archer = archerExtraction(panelRecord)?.skippedExons?.filter { it.impactsGene(gene) }?.filter {
+                IntRange(it.start, it.end).any { exon -> hasEffectInExonRange(exon, minExon, maxExon) }
+            }?.map(ArcherSkippedExonsExtraction::display)?.toSet()
+            generic ?: archer ?: emptySet()
+        } else {
+            emptySet()
+        }
 
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
         val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected in Panel(s)"
 
-        val evaluation = if (matches.isNotEmpty()) {
+        return if (matches.isNotEmpty()) {
             val message = "Variant(s) $baseMessage"
             EvaluationFactory.pass(message, message, inclusionEvents = matches)
         } else {
-            val geneIsTestedInPanel = panelRecord.testsGene(gene)
-
-            val anyVariantOnGeneInPanel = panelRecord.drivers.variants.any { it.gene == gene }
-
-            if (anyVariantOnGeneInPanel) {
-                EvaluationFactory.undetermined(
-                    "Variant in gene $gene detected in Panel, but unable to determine exon impact",
-                    "Unclassified variant detected in gene $gene in Panel"
-                )
-            } else if (geneIsTestedInPanel) {
-                val message = "No variant $baseMessage"
-                EvaluationFactory.fail(message, message)
-            } else {
-                null
-            }
+            null
         }
-        return evaluation?.let { MolecularEvaluation(panelRecord, it) }
     }
+
+    private fun genericExtraction(panelRecord: PanelRecord): GenericPanelExtraction? =
+        if (panelRecord.panelExtraction is GenericPanelExtraction) panelRecord.panelExtraction as GenericPanelExtraction else null
+
+    private fun archerExtraction(panelRecord: PanelRecord): ArcherPanelExtraction? =
+        if (panelRecord.panelExtraction is ArcherPanelExtraction) panelRecord.panelExtraction as ArcherPanelExtraction else null
 
     companion object {
         private fun hasEffectInExonRange(affectedExon: Int?, minExon: Int, maxExon: Int): Boolean {

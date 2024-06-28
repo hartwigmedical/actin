@@ -3,14 +3,14 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
+import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 
 class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(test: MolecularTest): Evaluation {
         val hrdGenesWithNonBiallelicHotspot: MutableSet<String> = mutableSetOf()
         val hrdGenesWithBiallelicHotspot: MutableSet<String> = mutableSetOf()
         val hrdGenesWithNonBiallelicNonHotspotHighDriver: MutableSet<String> = mutableSetOf()
@@ -18,7 +18,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
         val hrdGenesWithBiallelicNonHotspotHighDriver: MutableSet<String> = mutableSetOf()
         val hrdGenesWithBiallelicNonHotspotNonHighDriver: MutableSet<String> = mutableSetOf()
 
-        molecular.drivers.variants.filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable }.forEach { variant ->
+        test.drivers.variants.filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable }.forEach { variant ->
             when {
                 variant.isHotspot && variant.extendedVariantOrThrow().isBiallelic -> {
                     hrdGenesWithBiallelicHotspot.add(variant.gene)
@@ -41,21 +41,21 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
             }
         }
 
-        val hrdGenesWithDeletionOrPartialLoss = molecular.drivers.copyNumbers
+        val hrdGenesWithDeletionOrPartialLoss = test.drivers.copyNumbers
             .filter { it.type == CopyNumberType.LOSS && it.gene in MolecularConstants.HRD_GENES }
             .map(GeneAlteration::gene)
             .toSet()
-        val hrdGenesWithHomozygousDisruption = molecular.drivers.homozygousDisruptions.filter { it.gene in MolecularConstants.HRD_GENES }
+        val hrdGenesWithHomozygousDisruption = test.drivers.homozygousDisruptions.filter { it.gene in MolecularConstants.HRD_GENES }
             .map(GeneAlteration::gene)
             .toSet()
-        val hrdGenesWithNonHomozygousDisruption = molecular.drivers.disruptions
+        val hrdGenesWithNonHomozygousDisruption = test.drivers.disruptions
             .filter { it.gene in MolecularConstants.HRD_GENES && it.isReportable }
             .map(GeneAlteration::gene)
             .toSet()
 
         val hrdGenesWithBiallelicDriver = hrdGenesWithBiallelicHotspot + hrdGenesWithBiallelicNonHotspotHighDriver + hrdGenesWithBiallelicNonHotspotNonHighDriver + hrdGenesWithHomozygousDisruption + hrdGenesWithDeletionOrPartialLoss
         val hrdGenesWithNonBiallelicDriver = hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicHotspot + hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotNonHighDriver
-        val isHRD = molecular.characteristics.isHomologousRepairDeficient
+        val isHRD = test.characteristics.isHomologousRepairDeficient
 
         return when {
                 isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() -> {

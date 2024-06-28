@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 
@@ -54,7 +54,11 @@ private enum class CopyNumberEvaluation {
 
 class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun evaluate(test: MolecularTest): Evaluation {
+        return evaluateAmplification(test, requestedMinCopyNumber)
+    }
+
+    private fun evaluateAmplification(molecular: MolecularTest, requestedMinCopyNumber: Int?): Evaluation {
         val ploidy = molecular.characteristics.ploidy
             ?: return EvaluationFactory.fail(
                 "Cannot determine amplification for gene $gene without ploidy", "Undetermined amplification for $gene"
