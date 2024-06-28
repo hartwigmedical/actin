@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.complication.PatternMatcher
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 
 class HasExtracranialMetastases : EvaluationFunction {
 
@@ -16,14 +16,14 @@ class HasExtracranialMetastases : EvaluationFunction {
             hasBoneLesions == null || hasLungLesions == null || hasLiverLesions == null || hasLymphNodeLesions == null
         }
         val uncategorizedLesions = record.tumor.otherLesions ?: emptyList()
-        val biopsyLocation = record.tumor.biopsyLocation ?: ""
+        val biopsyLocation = record.tumor.biopsyLocation
 
         return when {
-            hasNonCnsMetastases || isExtraCranialLesion(biopsyLocation) || uncategorizedLesions.any(::isExtraCranialLesion) -> {
+            hasNonCnsMetastases || biopsyLocation?.let { isExtraCranialLesion(it) } == true || uncategorizedLesions.any(::isExtraCranialLesion) -> {
                 EvaluationFactory.pass("Patient has extracranial metastases", "Extracranial metastases present")
             }
 
-            uncategorizedLesions.isNotEmpty() || record.tumor.hasCnsLesions == true || categorizedLesionsUnknown -> {
+            uncategorizedLesions.isNotEmpty() || categorizedLesionsUnknown || biopsyLocation == null -> {
                 val message = "Undetermined if extracranial metastases present"
                 EvaluationFactory.undetermined(message, message)
             }
@@ -35,29 +35,31 @@ class HasExtracranialMetastases : EvaluationFunction {
     }
 
     companion object {
-        private val EXTRACRANIAL_LESION_PATTERNS = setOf(
-            listOf("bone", "marrow"),
-            listOf("peritoneum"),
-            listOf("peritoneal"),
-            listOf("adrenal"),
-            listOf("kidney"),
-            listOf("pancreas"),
-            listOf("pancreatic"),
-            listOf("skin"),
-            listOf("ovary"),
-            listOf("spleen"),
-            listOf("intestine"),
-            listOf("colon"),
-            listOf("thyroid"),
-            listOf("salivary"),
-            listOf("bladder"),
-            listOf("breast"),
-            listOf("esophagus"),
-            listOf("stomach")
+        private val EXTRACRANIAL_LESION_TERMS = listOf(
+            "marrow",
+            "peritoneum",
+            "peritoneal",
+            "adrenal",
+            "kidney",
+            "pancreas",
+            "pancreatic",
+            "skin",
+            "ovary",
+            "spleen",
+            "spine",
+            "spinal",
+            "intestine",
+            "colon",
+            "thyroid",
+            "salivary",
+            "bladder",
+            "breast",
+            "esophagus",
+            "stomach"
         )
 
         private fun isExtraCranialLesion(lesion: String): Boolean {
-            return PatternMatcher.isMatch(lesion, EXTRACRANIAL_LESION_PATTERNS)
+            return stringCaseInsensitivelyMatchesQueryCollection(lesion, EXTRACRANIAL_LESION_TERMS)
         }
     }
 }

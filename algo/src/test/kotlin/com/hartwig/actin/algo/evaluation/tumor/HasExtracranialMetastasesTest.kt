@@ -48,11 +48,6 @@ class HasExtracranialMetastasesTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when only cns metastases present`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withCnsLesions(true)))
-    }
-
-    @Test
     fun `Should evaluate to undetermined when only uncategorized metastases present`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("unknown site")))
