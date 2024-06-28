@@ -86,6 +86,12 @@ class HasSufficientPDL1ByIHCTest {
     }
 
     @Test
+    fun `Should pass when test value is larger then or equal to minimum value`() {
+        val test = IHCMolecularTest(pdl1Test.copy(scoreValuePrefix = ValueComparison.LARGER_THAN_OR_EQUAL, scoreValue = 2.0))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(test))))
+    }
+
+    @Test
     fun `Should pass when test value is over limit`() {
         assertEvaluation(
             EvaluationResult.PASS,

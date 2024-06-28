@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
@@ -22,8 +21,8 @@ class HasLimitedPDL1ByIHC(
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {
-                val evaluation = evaluateVersusMaxValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, maxPDL1)
-                if (evaluation == EvaluationResult.PASS) {
+                val isBelowMaxValue = evaluateVersusMaxValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, maxPDL1)
+                if (isBelowMaxValue == true) {
                     val measureMessage = if (measure != null) " measured by $measure" else ""
                     return EvaluationFactory.pass(
                         "PD-L1 expression$measureMessage does not exceed maximum of $maxPDL1", "PD-L1 expression below $maxPDL1"

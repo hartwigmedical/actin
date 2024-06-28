@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
@@ -22,8 +21,8 @@ class HasSufficientPDL1ByIHC (
         for (ihcTest in pdl1TestsWithRequestedMeasurement) {
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {
-                val evaluation = evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minPDL1)
-                if (evaluation == EvaluationResult.PASS) {
+                val isAboveMinValue = evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minPDL1)
+                if (isAboveMinValue == true) {
                     val measureMessage = if (measure != null) " measured by $measure" else ""
                     return EvaluationFactory.pass(
                         "PD-L1 expression$measureMessage meets at least desired level of $minPDL1",

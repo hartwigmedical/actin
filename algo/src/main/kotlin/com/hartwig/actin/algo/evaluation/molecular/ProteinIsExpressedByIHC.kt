@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
@@ -34,5 +33,5 @@ class ProteinIsExpressedByIHC internal constructor(private val protein: String) 
 
     private fun testScoredAboveZero(ihcTest: PriorMolecularTest) = ihcTest.scoreValue?.let { scoreValue ->
         evaluateVersusMinValue(scoreValue, ihcTest.scoreValuePrefix, 0.0)
-    } == EvaluationResult.PASS
+    } == true
 }
