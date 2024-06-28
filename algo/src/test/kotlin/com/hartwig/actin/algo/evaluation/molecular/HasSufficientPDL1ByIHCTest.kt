@@ -78,6 +78,14 @@ class HasSufficientPDL1ByIHCTest {
     }
 
     @Test
+    fun `Should pass when test value is equal to minimum value`() {
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 2.0)))))
+        )
+    }
+
+    @Test
     fun `Should pass when test value is over limit`() {
         assertEvaluation(
             EvaluationResult.PASS,
