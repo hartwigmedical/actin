@@ -1,5 +1,6 @@
-package com.hartwig.actin.algo.evaluation.util
+package com.hartwig.actin.util
 
+import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import org.apache.logging.log4j.util.Strings
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert
