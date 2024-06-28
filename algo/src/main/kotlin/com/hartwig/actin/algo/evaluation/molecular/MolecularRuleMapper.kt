@@ -46,6 +46,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIHCCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
+            EligibilityRule.HAS_HER2_EXPRESSION_BY_IHC_OF_AT_LEAST_X to hasSufficientHER2ExpressionByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByCPSByIHCCreator(),
@@ -278,6 +279,16 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return FunctionCreator { function: EligibilityFunction ->
             ProteinIsWildTypeByIHC(
                 functionInputResolver().createOneStringInput(
+                    function
+                )
+            )
+        }
+    }
+
+    private fun hasSufficientHER2ExpressionByIHCCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            HasSufficientHER2ExpressionByIHC(
+                functionInputResolver().createOneDoubleInput(
                     function
                 )
             )
