@@ -15,6 +15,9 @@ import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
+import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ActionableEventsLoader
@@ -57,13 +60,24 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Loading evidence database for prior molecular tests")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
 
+        LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
+        val ensemblDataCache = EnsemblDataLoader.load(config.ensemblCachePath, com.hartwig.actin.tools.ensemblcache.RefGenome.V37)
+
+
         LOGGER.info("Loading dnds database for driver likelihood annotation from ${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}")
         val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
 
         LOGGER.info("Interpreting prior molecular tests")
         val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
             evidenceDatabase,
-            GeneDriverLikelihoodModel(dndsDatabase)
+            GeneDriverLikelihoodModel(dndsDatabase),
+            TransvarVariantAnnotatorFactory.withRefGenome(
+                com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
+                config.referenceGenomeFastaPath,
+                ensemblDataCache
+            ),
+            PaveLite(ensemblDataCache, false)
+
         ).process(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)

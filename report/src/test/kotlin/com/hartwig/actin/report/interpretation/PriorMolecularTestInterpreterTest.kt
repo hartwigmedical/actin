@@ -5,14 +5,13 @@ import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -46,8 +45,8 @@ class PriorMolecularTestInterpreterTest {
             MolecularHistory(
                 listOf(
                     TestPanelRecordFactory.empty().copy(
-                        archerPanelExtraction = ArcherPanelExtraction(
-                            variants = listOf(ArcherVariantExtraction("ALK", "c.2240_2254del")),
+                        panelExtraction = ArcherPanelExtraction(
+                            variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
                             fusions = listOf(ArcherFusionExtraction("ALK")),
                             skippedExons = emptyList()
                         )
@@ -78,10 +77,10 @@ class PriorMolecularTestInterpreterTest {
             MolecularHistory(
                 listOf(
                     TestPanelRecordFactory.empty().copy(
-                        genericPanelExtraction =
+                        panelExtraction =
                         GenericPanelExtraction(
                             GenericPanelType.AVL,
-                            variants = listOf(GenericVariantExtraction("ALK", "c.2240_2254del")),
+                            variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
                             fusions = listOf(GenericFusionExtraction("EML4", "ALK")),
                             exonDeletions = listOf(GenericExonDeletionExtraction("EGFR", 19)),
                             genesWithNegativeResults = setOf("RET")

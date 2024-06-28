@@ -10,7 +10,6 @@ import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
 class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>() {
 
@@ -30,8 +29,8 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>(
             ExperimentType.WHOLE_GENOME -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.TARGETED -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.IHC -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)
-            ExperimentType.ARCHER -> gson.fromJson(jsonObject, PanelRecord::class.java)
-            ExperimentType.GENERIC_PANEL -> gson.fromJson(jsonObject, PanelRecord::class.java)
+            ExperimentType.ARCHER -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
+            ExperimentType.GENERIC_PANEL -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
             ExperimentType.OTHER -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
         }
     }
