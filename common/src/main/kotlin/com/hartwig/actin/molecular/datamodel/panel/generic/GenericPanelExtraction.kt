@@ -1,22 +1,24 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
 
 val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 data class GenericPanelExtraction(
     val panelType: GenericPanelType,
-    val variants: List<GenericVariantExtraction> = emptyList(),
     val fusions: List<GenericFusionExtraction> = emptyList(),
     val exonDeletions: List<GenericExonDeletionExtraction> = emptyList(),
     val genesWithNegativeResults: Set<String> = emptySet(),
-    val date: LocalDate? = null,
-) {
-    fun testedGenes(): Set<String> {
+    override val variants: List<PanelVariantExtraction> = emptyList(),
+    override val date: LocalDate? = null,
+) : PanelExtraction {
+    override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + alwaysTestedGenes() + genesWithNegativeResults
     }
 
-    fun events() = (variants + fusions + exonDeletions).toSet()
+    override fun events() = (variants + fusions + exonDeletions).toSet()
 
     private fun genesWithVariants(): Set<String> {
         return variants.map { it.gene }.toSet()

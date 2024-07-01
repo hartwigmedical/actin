@@ -26,8 +26,7 @@ class StandardTumorDetailsExtractor(
             primaryTumorConfigCurationDatabase.find(input),
             ehrPatientRecord.patientDetails.hashedId, CurationCategory.PRIMARY_TUMOR, input, "primary tumor", true
         )
-        val lesionCurationResponse =
-            extractLesions(ehrPatientRecord)
+        val lesionCurationResponse = extractLesions(ehrPatientRecord)
         val curatedLesions = lesionCurationResponse.flatMap { it.configs }
         val tumorDetailsFromEhr = tumorDetails(ehrPatientRecord, curatedLesions)
         return curatedTumorResponse.config()?.let {

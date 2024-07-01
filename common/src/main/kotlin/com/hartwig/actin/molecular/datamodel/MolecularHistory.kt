@@ -22,11 +22,11 @@ data class MolecularHistory(
     }
 
     fun allArcherPanels(): List<ArcherPanelExtraction> {
-        return molecularTests.filterIsInstance<PanelRecord>().mapNotNull { it.archerPanelExtraction }
+        return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<ArcherPanelExtraction>()
     }
 
     fun allGenericPanels(): List<GenericPanelExtraction> {
-        return molecularTests.filterIsInstance<PanelRecord>().mapNotNull { it.genericPanelExtraction }
+        return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<GenericPanelExtraction>()
     }
 
     fun allOtherTests(): List<OtherPriorMolecularTest> {
@@ -40,10 +40,6 @@ data class MolecularHistory(
 
     fun hasMolecularData(): Boolean {
         return molecularTests.isNotEmpty()
-    }
-
-    fun testsGene(gene: String): Boolean {
-        return molecularTests.any { it.testsGene(gene) }
     }
 
     companion object {
