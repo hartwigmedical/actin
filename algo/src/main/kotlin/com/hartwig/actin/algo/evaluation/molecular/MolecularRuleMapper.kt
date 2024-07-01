@@ -47,6 +47,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIHCCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
             EligibilityRule.HAS_HER2_EXPRESSION_BY_IHC_OF_AT_LEAST_X to hasSufficientHER2ExpressionByIHCCreator(),
+            EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByIHCCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByCPSByIHCCreator(),
@@ -292,6 +293,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     function
                 )
             )
+        }
+    }
+
+    private fun hasPositiveHER2ExpressionByIHCCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            HasPositiveHER2ExpressionByIHC()
         }
     }
 
