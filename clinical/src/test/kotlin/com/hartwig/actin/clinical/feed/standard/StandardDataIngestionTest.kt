@@ -64,7 +64,7 @@ class StandardDataIngestionTest {
                 curationDatabase.intoleranceCuration
             ),
             complicationExtractor = StandardComplicationExtractor(curationDatabase.complicationCuration),
-            treatmentHistoryExtractor = StandardTreatmentHistoryExtractor(
+            treatmentHistoryExtractor = StandardOncologicalHistoryExtractor(
                 curationDatabase.treatmentHistoryEntryCuration,
                 curationDatabase.nonOncologicalHistoryCuration
             ),
@@ -148,15 +148,6 @@ class StandardDataIngestionTest {
                         feedInput = "MORFINE",
                         message = "Could not find intolerance config for input 'MORFINE'"
                     ), CurationRequirement(feedInput = "Nikkel", message = "Could not find intolerance config for input 'Nikkel'")
-                )
-            ),
-            CurationResult(
-                categoryName = "Oncological History",
-                requirements = listOf(
-                    CurationRequirement(
-                        feedInput = "aandoening van mitralis-, aorta- en tricuspidalisklep",
-                        message = "Could not find treatment history config for input 'aandoening van mitralis-, aorta- en tricuspidalisklep'"
-                    )
                 )
             )
         )

@@ -4,5 +4,6 @@ enum class VariantType {
     SNV,
     MNV,
     INSERT,
-    DELETE
+    DELETE,
+    UNDEFINED
 }

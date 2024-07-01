@@ -12,11 +12,11 @@ import com.hartwig.actin.molecular.datamodel.TEST_DATE
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -218,7 +218,7 @@ class GeneHasActivatingMutationTest {
             EvaluationResult.PASS,
             functionNotIgnoringCodons.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(listOf(panelRecord(genericPanelExtraction = AVL_PANEL_WITH_ACTIVATING_VARIANT))),
+                    molecularHistory = MolecularHistory(listOf(panelRecord(AVL_PANEL_WITH_ACTIVATING_VARIANT))),
                 )
             )
         )
@@ -342,15 +342,14 @@ class GeneHasActivatingMutationTest {
         private fun impactWithCodon(affectedCodon: Int) = TestTranscriptImpactFactory.createMinimal().copy(affectedCodon = affectedCodon)
 
         private fun panelRecord(
-            archerPanelExtraction: ArcherPanelExtraction? = null,
-            genericPanelExtraction: GenericPanelExtraction? = null
+            panelExtraction: PanelExtraction
         ) =
             TestPanelRecordFactory.empty()
-                .copy(archerPanelExtraction = archerPanelExtraction, genericPanelExtraction = genericPanelExtraction)
+                .copy(panelExtraction = panelExtraction)
 
         private val ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT = ArcherPanelExtraction(
             variants = listOf(
-                ArcherVariantExtraction(
+                PanelVariantExtraction(
                     gene = GENE,
                     hgvsCodingImpact = "c.1A>T",
                 ),
@@ -370,10 +369,7 @@ class GeneHasActivatingMutationTest {
         private val AVL_PANEL_WITH_ACTIVATING_VARIANT = GenericPanelExtraction(
             panelType = GenericPanelType.AVL,
             variants = listOf(
-                GenericVariantExtraction(
-                    gene = GENE,
-                    hgvsCodingImpact = "c.1A>T",
-                ),
+                PanelVariantExtraction(gene = GENE, hgvsCodingImpact = "c.1A>T"),
             ),
             fusions = emptyList(),
             date = TEST_DATE

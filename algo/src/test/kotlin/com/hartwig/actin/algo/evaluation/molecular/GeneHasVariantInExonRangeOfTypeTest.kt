@@ -11,10 +11,10 @@ import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericVariantExtraction
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -24,7 +24,7 @@ private const val OTHER_EXON = 6
 private const val TARGET_GENE = "gene A"
 
 private val FREETEXT_PANEL_WITH_EXON_DELETION = TestPanelRecordFactory.empty().copy(
-    genericPanelExtraction = GenericPanelExtraction(
+    panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
         panelType = GenericPanelType.FREE_TEXT,
         variants = emptyList(),
@@ -42,11 +42,11 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
     drivers = Drivers(
         variants = setOf(PROPER_PANEL_VARIANT.copy(gene = TARGET_GENE)), fusions = emptySet()
     ),
-    genericPanelExtraction = GenericPanelExtraction(
+    panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
         panelType = GenericPanelType.FREE_TEXT,
         variants = listOf(
-            GenericVariantExtraction(
+            PanelVariantExtraction(
                 gene = TARGET_GENE,
                 hgvsCodingImpact = "c.10A>T",
             ),
@@ -56,7 +56,7 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
 )
 
 private val EMPTY_AVL_PANEL = TestPanelRecordFactory.empty().copy(
-    type = ExperimentType.GENERIC_PANEL, genericPanelExtraction = GenericPanelExtraction(
+    type = ExperimentType.GENERIC_PANEL, panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
         panelType = GenericPanelType.AVL,
         variants = emptyList(),

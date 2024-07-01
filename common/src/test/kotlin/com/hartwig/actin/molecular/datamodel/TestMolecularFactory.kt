@@ -79,7 +79,7 @@ object TestMolecularFactory {
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord()))
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), TestPanelRecordFactory.empty()))
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
@@ -317,7 +317,7 @@ object TestMolecularFactory {
     }
 
     fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        genericPanelExtraction =
+        panelExtraction =
         GenericPanelExtraction(
             fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
             panelType = GenericPanelType.FREE_TEXT
