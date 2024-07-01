@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.doid.DoidConstants.SMALL_CELL_LUNG_CANCER_DOIDS
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -28,7 +29,7 @@ class HasKnownSCLCTransformationTest {
     fun `Should resolve to undetermined if tumor has small cell doid configured`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withDoids(HasKnownSCLCTransformation.SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next()))
+            function.evaluate(TumorTestFactory.withDoids(SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next()))
         )
     }
 
