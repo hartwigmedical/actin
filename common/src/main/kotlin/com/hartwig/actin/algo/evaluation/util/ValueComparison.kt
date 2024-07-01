@@ -1,5 +1,10 @@
 package com.hartwig.actin.algo.evaluation.util
 
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.datamodel.EvaluationResult.FAIL
+import com.hartwig.actin.algo.datamodel.EvaluationResult.PASS
+import com.hartwig.actin.algo.datamodel.EvaluationResult.UNDETERMINED
+
 object ValueComparison {
 
     const val LARGER_THAN = ">"
@@ -7,21 +12,21 @@ object ValueComparison {
     const val SMALLER_THAN = "<"
     const val SMALLER_THAN_OR_EQUAL = "<="
 
-    fun evaluateVersusMinValue(value: Double, comparator: String?, minValue: Double): Boolean? {
+    fun evaluateVersusMinValue(value: Double, comparator: String?, minValue: Double): EvaluationResult {
         return when (comparator) {
-            LARGER_THAN, LARGER_THAN_OR_EQUAL -> if (value >= minValue) true else null
-            SMALLER_THAN -> if (value <= minValue) false else null
-            SMALLER_THAN_OR_EQUAL -> if (value < minValue) false else null
-            else -> if (value >= minValue) true else false
+            LARGER_THAN, LARGER_THAN_OR_EQUAL -> if (value >= minValue) PASS else UNDETERMINED
+            SMALLER_THAN -> if (value <= minValue) FAIL else UNDETERMINED
+            SMALLER_THAN_OR_EQUAL -> if (value < minValue) FAIL else UNDETERMINED
+            else -> if (value >= minValue) PASS else FAIL
         }
     }
 
-    fun evaluateVersusMaxValue(value: Double, comparator: String?, maxValue: Double): Boolean? {
+    fun evaluateVersusMaxValue(value: Double, comparator: String?, maxValue: Double): EvaluationResult {
         return when (comparator) {
-            SMALLER_THAN, SMALLER_THAN_OR_EQUAL -> if (value <= maxValue) true else null
-            LARGER_THAN -> if (value >= maxValue) false else null
-            LARGER_THAN_OR_EQUAL -> if (value > maxValue) false else null
-            else -> if (value <= maxValue) true else false
+            SMALLER_THAN, SMALLER_THAN_OR_EQUAL -> if (value <= maxValue) PASS else UNDETERMINED
+            LARGER_THAN -> if (value >= maxValue) FAIL else UNDETERMINED
+            LARGER_THAN_OR_EQUAL -> if (value > maxValue) FAIL else UNDETERMINED
+            else -> if (value <= maxValue) PASS else FAIL
         }
     }
 

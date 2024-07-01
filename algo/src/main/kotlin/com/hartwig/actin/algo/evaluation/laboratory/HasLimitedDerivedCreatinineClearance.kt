@@ -55,12 +55,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
             creatinine
         )
 
-        val valueUnderMax = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator, maxCreatinineClearance)
-        val result = when (valueUnderMax) {
-            true -> EvaluationResult.PASS
-            null -> EvaluationResult.UNDETERMINED
-            false -> EvaluationResult.FAIL
-        }
+        val result = evaluateVersusMaxValue(cockcroftGault, creatinine.comparator, maxCreatinineClearance)
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.recoverableUndetermined(
@@ -93,16 +88,7 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
     }
 
     private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
-        val evaluations = values
-            .map { evaluateVersusMaxValue(it, comparator, maxCreatinineClearance) }
-            .map {
-                when (it) {
-                    true -> EvaluationResult.PASS
-                    null -> EvaluationResult.UNDETERMINED
-                    false -> EvaluationResult.FAIL
-                }
-            }
-            .toSet()
+        val evaluations = values.map { evaluateVersusMaxValue(it, comparator, maxCreatinineClearance) }.toSet()
 
         return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {

@@ -11,14 +11,9 @@ class ProteinHasSufficientExpressionByIHC(private val protein: String, private v
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTests = PriorMolecularTestFunctions.allIHCTestsForProtein(record.molecularHistory.allIHCTests(), protein)
-        val evaluationsVersusReference = ihcTests.map { ihcTest ->
-            val ihcTestIsAboveMin = ihcTest.scoreValue?.let { scoreValue ->
+        val evaluationsVersusReference = ihcTests.mapNotNull { ihcTest ->
+            ihcTest.scoreValue?.let { scoreValue ->
                 evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minExpressionLevel.toDouble())
-            }
-            when {
-                ihcTestIsAboveMin == true -> EvaluationResult.PASS
-                (ihcTestIsAboveMin == false) || (ihcTest.scoreValue == null)-> EvaluationResult.FAIL
-                else -> EvaluationResult.UNDETERMINED
             }
         }.toSet()
 

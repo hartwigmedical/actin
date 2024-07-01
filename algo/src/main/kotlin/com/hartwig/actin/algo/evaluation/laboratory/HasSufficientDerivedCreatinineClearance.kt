@@ -55,12 +55,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             creatinine
         )
 
-        val valueAboveMin = evaluateVersusMinValue(cockcroftGault, creatinine.comparator, minCreatinineClearance)
-        val result = when (valueAboveMin) {
-            true -> EvaluationResult.PASS
-            null -> EvaluationResult.UNDETERMINED
-            false -> EvaluationResult.FAIL
-        }
+        val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator, minCreatinineClearance)
         val unit = LabMeasurement.CREATININE.defaultUnit.display()
 
         return when {
@@ -94,16 +89,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
     }
 
     private fun evaluateValues(code: String, values: List<Double>, comparator: String): Evaluation {
-        val evaluations = values
-            .map { evaluateVersusMinValue(it, comparator, minCreatinineClearance) }
-            .map {
-                when (it) {
-                    true -> EvaluationResult.PASS
-                    null -> EvaluationResult.UNDETERMINED
-                    false -> EvaluationResult.FAIL
-                }
-            }
-            .toSet()
+        val evaluations = values.map { evaluateVersusMinValue(it, comparator, minCreatinineClearance) }.toSet()
 
         return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {
