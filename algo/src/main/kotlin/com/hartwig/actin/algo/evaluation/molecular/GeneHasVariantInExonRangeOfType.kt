@@ -23,10 +23,12 @@ class GeneHasVariantInExonRangeOfType(
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeEvaluation = molecularHistory.latestOrangeMolecularRecord()?.let { evaluateOrange(it) }
-        val panelEvaluations = molecularHistory.allPanels().map { evaluatePanel(it)?.let { e -> MolecularEvaluation(it, e) } }
+        val panelEvaluations =
+            if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) molecularHistory.allPanels()
+                .map { MolecularEvaluation(it, evaluatePanel(it)) } else emptyList()
 
         return MolecularEvaluation.combine(
-            listOfNotNull(orangeEvaluation) + panelEvaluations.filterNotNull()
+            listOfNotNull(orangeEvaluation) + panelEvaluations
         )
     }
 
@@ -106,30 +108,26 @@ class GeneHasVariantInExonRangeOfType(
     }
 
     private fun evaluatePanel(panelRecord: PanelRecord): Evaluation {
-        val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
-            val generic = genericExonDeletions(panelRecord)
-            val archer = archerExonSkips(panelRecord)
-            generic ?: archer ?: emptySet()
-        } else {
-            emptySet()
-        }
+        val matches = when (panelRecord.panelExtraction) {
+            is GenericPanelExtraction -> genericExonDeletions(panelRecord)
+            is ArcherPanelExtraction -> archerExonSkips(panelRecord)
+            else -> null
+        } ?: emptySet()
 
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
         val baseMessage = "in exon $exonRangeMessage in gene $gene$variantTypeMessage detected in Panel(s)"
 
         return if (matches.isNotEmpty()) {
-            val message = "Variant(s) $baseMessage"
-            EvaluationFactory.pass(message, message, inclusionEvents = matches)
+            EvaluationFactory.pass("Variant(s) $baseMessage", inclusionEvents = matches)
         } else {
-            val message = "No variant $baseMessage"
-            EvaluationFactory.fail(message, message)
+            EvaluationFactory.fail("No variant $baseMessage")
         }
     }
 
     private fun archerExonSkips(panelRecord: PanelRecord) =
         archerExtraction(panelRecord)?.skippedExons?.filter { it.impactsGene(gene) }?.filter {
-            IntRange(it.start, it.end).any { exon -> hasEffectInExonRange(exon, minExon, maxExon) }
+            it.start <= maxExon && it.end >= minExon
         }?.map(ArcherSkippedExonsExtraction::display)?.toSet()
 
     private fun genericExonDeletions(panelRecord: PanelRecord) = genericExtraction(panelRecord)?.exonDeletions

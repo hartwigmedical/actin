@@ -35,11 +35,12 @@ data class MolecularEvaluation(
                 .thenByDescending { it.test.date }
 
             val sortedPreferredEvaluations = precedence.invoke(groupedEvaluationsByResult)?.sortedWith(evaluationComparator)
+                ?: throw IllegalStateException("Unable to combine molecular evaluations [$evaluations]")
 
-            return sortedPreferredEvaluations?.let {
+            return sortedPreferredEvaluations.let {
                 if (isOrangeResult(it)) it.first().evaluation else
                     it.map { m -> m.evaluation }.reduce(Evaluation::addMessagesAndEvents)
-            } ?: throw IllegalStateException("Unable to combine molecular evaluations [$evaluations]")
+            }
         }
 
         private fun isOrangeResult(it: List<MolecularEvaluation>) =

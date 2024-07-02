@@ -35,7 +35,40 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
     override fun genes() = listOf(gene)
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        return findActivatingMutations(test)
+        val hasHighMutationalLoad = test.characteristics.hasHighTumorMutationalLoad
+        val evidenceSource = test.evidenceSource
+        val variantCharacteristics =
+            test.drivers.variants.filter { it.gene == gene }
+                .filter { ignoredCodon(codonsToIgnore, it) }
+                .map { variant ->
+                    evaluateVariant(variant, hasHighMutationalLoad)
+                }
+
+        val activatingVariants = variantCharacteristics.filter(ActivationProfile::activating).map(ActivationProfile::event).toSet()
+        if (activatingVariants.isNotEmpty()) {
+            return EvaluationFactory.pass(
+                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
+                "$gene activating mutation(s)",
+                inclusionEvents = activatingVariants
+            )
+        }
+        val warningsByType =
+            variantCharacteristics.groupBy { it.warningType }.mapValues { entry -> entry.value.map(ActivationProfile::event).toSet() }
+        val potentialWarnEvaluation = evaluatePotentialWarns(
+            warningsByType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE] ?: emptySet(),
+            warningsByType[ActivationWarningType.NON_ONCOGENE] ?: emptySet(),
+            warningsByType[ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION] ?: emptySet(),
+            warningsByType[ActivationWarningType.SUBCLONAL] ?: emptySet(),
+            warningsByType[ActivationWarningType.NON_HIGH_DRIVER_GAIN_OF_FUNCTION] ?: emptySet(),
+            warningsByType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL] ?: emptySet(),
+            warningsByType[ActivationWarningType.NON_HIGH_DRIVER] ?: emptySet(),
+            warningsByType[ActivationWarningType.OTHER_MISSENSE_OR_HOTSPOT] ?: emptySet(),
+            evidenceSource
+        )
+
+        return potentialWarnEvaluation ?: EvaluationFactory.fail(
+            "No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)"
+        )
     }
 
     private fun evaluateVariant(
@@ -81,43 +114,6 @@ class GeneHasActivatingMutation(private val gene: String, private val codonsToIg
         ActivationProfile(event = event, activating = activating, warningType = warningType)
 
     private fun isSubclonal(variant: Variant) = variant.extendedVariantDetails?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
-
-    private fun findActivatingMutations(molecularTest: MolecularTest): Evaluation {
-        val hasHighMutationalLoad = molecularTest.characteristics.hasHighTumorMutationalLoad
-        val evidenceSource = molecularTest.evidenceSource
-        val variantCharacteristics =
-            molecularTest.drivers.variants.filter { it.gene == gene }
-                .filter { ignoredCodon(codonsToIgnore, it) }
-                .map { variant ->
-                    evaluateVariant(variant, hasHighMutationalLoad)
-                }
-
-        val activatingVariants = variantCharacteristics.filter(ActivationProfile::activating).map(ActivationProfile::event).toSet()
-        if (activatingVariants.isNotEmpty()) {
-            return EvaluationFactory.pass(
-                "Activating mutation(s) detected in gene + $gene: ${Format.concat(activatingVariants)}",
-                "$gene activating mutation(s)",
-                inclusionEvents = activatingVariants
-            )
-        }
-        val warningsByType =
-            variantCharacteristics.groupBy { it.warningType }.mapValues { entry -> entry.value.map(ActivationProfile::event).toSet() }
-        val potentialWarnEvaluation = evaluatePotentialWarns(
-            warningsByType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE] ?: emptySet(),
-            warningsByType[ActivationWarningType.NON_ONCOGENE] ?: emptySet(),
-            warningsByType[ActivationWarningType.NO_HOTSPOT_AND_NO_GAIN_OF_FUNCTION] ?: emptySet(),
-            warningsByType[ActivationWarningType.SUBCLONAL] ?: emptySet(),
-            warningsByType[ActivationWarningType.NON_HIGH_DRIVER_GAIN_OF_FUNCTION] ?: emptySet(),
-            warningsByType[ActivationWarningType.NON_HIGH_DRIVER_SUBCLONAL] ?: emptySet(),
-            warningsByType[ActivationWarningType.NON_HIGH_DRIVER] ?: emptySet(),
-            warningsByType[ActivationWarningType.OTHER_MISSENSE_OR_HOTSPOT] ?: emptySet(),
-            evidenceSource
-        )
-
-        return potentialWarnEvaluation ?: EvaluationFactory.fail(
-            "No activating mutation(s) detected in gene $gene", "No $gene activating mutation(s)"
-        )
-    }
 
     private fun ignoredCodon(
         codonsToIgnore: List<String>?, variant: Variant

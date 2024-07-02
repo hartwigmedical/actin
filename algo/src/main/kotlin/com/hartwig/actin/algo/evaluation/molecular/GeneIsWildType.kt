@@ -86,11 +86,11 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
     private fun evaluatePanel(panelRecord: PanelRecord): Evaluation {
 
         val isGeneTestedInPanel = panelRecord.testsGene(gene)
-        val hasEventInGene = panelRecord.events().any { it.impactsGene(gene) }
+        val eventsInGene = panelRecord.events().filter { it.impactsGene(gene) }
 
         return if (!isGeneTestedInPanel) {
             EvaluationFactory.undetermined("Gene $gene is not tested in panel", "$gene not tested")
-        } else if (!hasEventInGene) {
+        } else if (eventsInGene.isEmpty()) {
             EvaluationFactory.pass(
                 "Gene $gene is considered wild-type",
                 "$gene is wild-type",
@@ -98,7 +98,7 @@ class GeneIsWildType internal constructor(private val gene: String) : MolecularE
             )
         } else {
             EvaluationFactory.fail(
-                "Gene $gene is not considered wild-type due to ${Format.concatItems(panelRecord.events())}",
+                "Gene $gene is not considered wild-type due to ${Format.concatItems(eventsInGene)}",
                 "$gene not wild-type"
             )
         }
