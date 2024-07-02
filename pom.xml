@@ -26,6 +26,7 @@
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
         <actin-transvar.version>0.2.2</actin-transvar.version>
         <actin-pave-lite.version>0.2.2</actin-pave-lite.version>
+        <pave.version>1.6</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
@@ -199,6 +200,11 @@
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>actin-pave-lite</artifactId>
                 <version>${actin-pave-lite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>pave</artifactId>
+                <version>${pave.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
