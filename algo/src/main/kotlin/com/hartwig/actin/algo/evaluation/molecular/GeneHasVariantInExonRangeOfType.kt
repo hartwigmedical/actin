@@ -105,15 +105,10 @@ class GeneHasVariantInExonRangeOfType(
         )
     }
 
-    private fun evaluatePanel(panelRecord: PanelRecord): Evaluation? {
+    private fun evaluatePanel(panelRecord: PanelRecord): Evaluation {
         val matches = if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) {
-            val generic = genericExtraction(panelRecord)?.exonDeletions
-                ?.filter { it.impactsGene(gene) }
-                ?.filter { hasEffectInExonRange(it.affectedExon, minExon, maxExon) }
-                ?.map(GenericExonDeletionExtraction::display)?.toSet()
-            val archer = archerExtraction(panelRecord)?.skippedExons?.filter { it.impactsGene(gene) }?.filter {
-                IntRange(it.start, it.end).any { exon -> hasEffectInExonRange(exon, minExon, maxExon) }
-            }?.map(ArcherSkippedExonsExtraction::display)?.toSet()
+            val generic = genericExonDeletions(panelRecord)
+            val archer = archerExonSkips(panelRecord)
             generic ?: archer ?: emptySet()
         } else {
             emptySet()
@@ -131,6 +126,16 @@ class GeneHasVariantInExonRangeOfType(
             EvaluationFactory.fail(message, message)
         }
     }
+
+    private fun archerExonSkips(panelRecord: PanelRecord) =
+        archerExtraction(panelRecord)?.skippedExons?.filter { it.impactsGene(gene) }?.filter {
+            IntRange(it.start, it.end).any { exon -> hasEffectInExonRange(exon, minExon, maxExon) }
+        }?.map(ArcherSkippedExonsExtraction::display)?.toSet()
+
+    private fun genericExonDeletions(panelRecord: PanelRecord) = genericExtraction(panelRecord)?.exonDeletions
+        ?.filter { it.impactsGene(gene) }
+        ?.filter { hasEffectInExonRange(it.affectedExon, minExon, maxExon) }
+        ?.map(GenericExonDeletionExtraction::display)?.toSet()
 
     private fun genericExtraction(panelRecord: PanelRecord): GenericPanelExtraction? =
         if (panelRecord.panelExtraction is GenericPanelExtraction) panelRecord.panelExtraction as GenericPanelExtraction else null
