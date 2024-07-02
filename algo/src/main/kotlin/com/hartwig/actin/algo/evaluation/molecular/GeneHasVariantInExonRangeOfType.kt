@@ -18,6 +18,8 @@ class GeneHasVariantInExonRangeOfType(
     private val requiredVariantType: VariantTypeInput?
 ) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeEvaluation = molecularHistory.latestOrangeMolecularRecord()?.let { evaluateOrange(it) }
@@ -125,7 +127,8 @@ class GeneHasVariantInExonRangeOfType(
             val message = "Variant(s) $baseMessage"
             EvaluationFactory.pass(message, message, inclusionEvents = matches)
         } else {
-            null
+            val message = "No variant $baseMessage"
+            EvaluationFactory.fail(message, message)
         }
     }
 

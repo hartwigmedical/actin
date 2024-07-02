@@ -8,6 +8,8 @@ import com.hartwig.actin.molecular.datamodel.MolecularTest
 
 class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(test: MolecularTest): Evaluation {
         val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()

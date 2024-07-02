@@ -12,6 +12,8 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()

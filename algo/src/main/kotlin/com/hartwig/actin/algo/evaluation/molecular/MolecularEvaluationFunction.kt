@@ -14,7 +14,7 @@ interface MolecularEvaluationFunction : EvaluationFunction {
             noMolecularRecordEvaluation() ?: EvaluationFactory.undetermined("No molecular data", "No molecular data")
         } else {
 
-            if (genes().any { record.molecularHistory.molecularTests.any { t -> t.testsGene(it) } })
+            if (genes().isNotEmpty() && genes().none { record.molecularHistory.molecularTests.any { t -> t.testsGene(it) } })
                 return EvaluationFactory.undetermined(
                     "Gene(s) ${genes()} not tested in molecular data",
                     "Gene(s) ${genes()} not tested"

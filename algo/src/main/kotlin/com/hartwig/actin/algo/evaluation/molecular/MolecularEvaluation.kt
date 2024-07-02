@@ -10,7 +10,17 @@ data class MolecularEvaluation(
     val evaluation: Evaluation
 ) {
     companion object {
-        fun combine(evaluations: List<MolecularEvaluation?>): Evaluation {
+
+        private fun defaultEvaluationPrecedence(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
+            (groupedEvaluationsByResult[EvaluationResult.PASS]
+                ?: groupedEvaluationsByResult[EvaluationResult.WARN]
+                ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
+                ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
+
+        fun combine(
+            evaluations: List<MolecularEvaluation?>,
+            precedence: (Map<EvaluationResult, List<MolecularEvaluation>>) -> List<MolecularEvaluation>? = ::defaultEvaluationPrecedence
+        ): Evaluation {
 
             val groupedEvaluationsByResult = evaluations.filterNotNull()
                 .groupBy { evaluation -> evaluation.evaluation.result }
@@ -24,11 +34,7 @@ data class MolecularEvaluation(
             }
                 .thenByDescending { it.test.date }
 
-            val sortedPreferredEvaluations = (groupedEvaluationsByResult[EvaluationResult.PASS]
-                ?: groupedEvaluationsByResult[EvaluationResult.WARN]
-                ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
-                ?: groupedEvaluationsByResult[EvaluationResult.UNDETERMINED])
-                ?.sortedWith(evaluationComparator)
+            val sortedPreferredEvaluations = precedence.invoke(groupedEvaluationsByResult)?.sortedWith(evaluationComparator)
 
             return sortedPreferredEvaluations?.let {
                 if (isOrangeResult(it)) it.first().evaluation else

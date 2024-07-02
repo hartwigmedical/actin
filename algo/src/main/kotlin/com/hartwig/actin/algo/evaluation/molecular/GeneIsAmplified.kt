@@ -54,6 +54,8 @@ private enum class CopyNumberEvaluation {
 
 class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(test: MolecularTest): Evaluation {
         return evaluateAmplification(test, requestedMinCopyNumber)
     }

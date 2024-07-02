@@ -13,6 +13,8 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 
 class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(test: MolecularTest): Evaluation {
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()

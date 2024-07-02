@@ -11,6 +11,8 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
 
 class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(test: MolecularTest): Evaluation {
 
         val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = test.drivers.variants.filter { variant ->

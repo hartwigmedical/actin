@@ -13,6 +13,8 @@ import org.apache.logging.log4j.LogManager
 class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) :
     MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(test: MolecularTest): Evaluation {
         val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()

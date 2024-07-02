@@ -32,6 +32,8 @@ private const val CLONAL_CUTOFF = 0.5
 
 class GeneHasActivatingMutation(private val gene: String, private val codonsToIgnore: List<String>?) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(test: MolecularTest): Evaluation {
         return findActivatingMutations(test)
     }
