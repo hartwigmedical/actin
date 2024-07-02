@@ -10,9 +10,10 @@ import java.time.LocalDate
 
 class HasHadSystemicTherapyWithAnyIntentTest {
 
-    private val minDate = LocalDate.now().minusMonths(6)
-    private val recentDate = LocalDate.now().minusMonths(3)
-    private val olderDate = LocalDate.now().minusMonths(14)
+    private val referenceDate = LocalDate.of(2024, 1, 25)
+    private val minDate = referenceDate.minusMonths(6)
+    private val recentDate = referenceDate.minusMonths(3)
+    private val olderDate = referenceDate.minusMonths(14)
     private val functionWithDate = HasHadSystemicTherapyWithAnyIntent(setOf(Intent.NEOADJUVANT, Intent.ADJUVANT), minDate, 6)
     private val functionWithoutDate = HasHadSystemicTherapyWithAnyIntent(setOf(Intent.NEOADJUVANT, Intent.ADJUVANT), null, null)
     private val functionWithoutIntents = HasHadSystemicTherapyWithAnyIntent(null, minDate, 6)

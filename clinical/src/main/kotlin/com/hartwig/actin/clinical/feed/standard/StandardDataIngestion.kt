@@ -31,7 +31,7 @@ class StandardDataIngestion(
     private val toxicityExtractor: StandardToxicityExtractor,
     private val complicationExtractor: StandardComplicationExtractor,
     private val priorOtherConditionsExtractor: StandardPriorOtherConditionsExtractor,
-    private val treatmentHistoryExtractor: StandardTreatmentHistoryExtractor,
+    private val treatmentHistoryExtractor: StandardOncologicalHistoryExtractor,
     private val clinicalStatusExtractor: StandardClinicalStatusExtractor,
     private val tumorDetailsExtractor: StandardTumorDetailsExtractor,
     private val secondPrimaryExtractor: StandardPriorPrimariesExtractor,
@@ -156,7 +156,7 @@ class StandardDataIngestion(
                 curationDatabaseContext.nonOncologicalHistoryCuration,
                 curationDatabaseContext.treatmentHistoryEntryCuration
             ),
-            StandardTreatmentHistoryExtractor(
+            StandardOncologicalHistoryExtractor(
                 curationDatabaseContext.treatmentHistoryEntryCuration,
                 curationDatabaseContext.nonOncologicalHistoryCuration
             ),

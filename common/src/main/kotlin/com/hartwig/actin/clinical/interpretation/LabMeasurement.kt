@@ -17,6 +17,7 @@ enum class LabMeasurement(val code: String, val display: String, val defaultUnit
     CALCIUM("Ca", "calcium", LabUnit.MILLIMOLES_PER_LITER),
     CARCINOEMBRYONIC_ANTIGEN("CEA", "CEA", LabUnit.MICROGRAMS_PER_LITER),
     CORRECTED_CALCIUM("Ca_C", "corrected calcium", LabUnit.MILLIMOLES_PER_LITER),
+    CORTISOL("COR", "cortisol", LabUnit.NANOMOLES_PER_LITER),
     CREATININE("CREA", "creatinine", LabUnit.MICROMOLES_PER_LITER),
     CREATININE_CLEARANCE_CG("CGCRCL", "creatinine clearance (Cockcroft-Gault)", LabUnit.NONE),
     DDIMER("DDIM", "D-dimer", LabUnit.MILLIGRAMS_PER_LITER),
