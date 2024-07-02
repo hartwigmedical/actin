@@ -278,14 +278,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadTreatmentCategoryIgnoringDrugsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyDrugsInput(function)
-            HasHadTreatmentWithCategoryButNotWithDrugs(input.category, null, input.drugs)
+            HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(input.category, null, input.drugs)
         }
     }
 
     private fun hasHadTreatmentCategoryOfTypesIgnoringDrugsCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             val input = functionInputResolver().createOneTreatmentCategoryManyTypesManyDrugsInput(function)
-            HasHadTreatmentWithCategoryButNotWithDrugs(input.category, input.types, input.drugs)
+            HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(input.category, input.types, input.drugs)
         }
     }
 

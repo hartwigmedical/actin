@@ -13,7 +13,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.DrugType
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import org.junit.Test
 
-class HasHadTreatmentWithCategoryButNotWithDrugsTest {
+class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
     @Test
     fun `Should fail for no treatments`() {
         evaluateFunctions(EvaluationResult.FAIL, withTreatmentHistory(emptyList()))
@@ -47,8 +47,8 @@ class HasHadTreatmentWithCategoryButNotWithDrugsTest {
 
     @Test
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
-        val functionWithoutTypes = HasHadTreatmentWithCategoryButNotWithDrugs(TreatmentCategory.TRANSPLANTATION, null, IGNORE_DRUG_SET)
-        val functionWithTypes = HasHadTreatmentWithCategoryButNotWithDrugs(TreatmentCategory.TRANSPLANTATION, MATCHING_TYPES, IGNORE_DRUG_SET)
+        val functionWithoutTypes = HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(TreatmentCategory.TRANSPLANTATION, null, IGNORE_DRUG_SET)
+        val functionWithTypes = HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(TreatmentCategory.TRANSPLANTATION, MATCHING_TYPES, IGNORE_DRUG_SET)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", false)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, functionWithoutTypes.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
@@ -72,7 +72,7 @@ class HasHadTreatmentWithCategoryButNotWithDrugsTest {
         private val IGNORE_DRUG_SET = setOf(
             Drug(name = IGNORE_DRUG_NAME, category = MATCHING_CATEGORY, drugTypes = setOf(MATCHING_TYPES.iterator().next()))
         )
-        private val FUNCTION_WITHOUT_TYPES = HasHadTreatmentWithCategoryButNotWithDrugs(MATCHING_CATEGORY, null, IGNORE_DRUG_SET)
-        private val FUNCTION_WITH_TYPES = HasHadTreatmentWithCategoryButNotWithDrugs(MATCHING_CATEGORY, MATCHING_TYPES, IGNORE_DRUG_SET)
+        private val FUNCTION_WITHOUT_TYPES = HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(MATCHING_CATEGORY, null, IGNORE_DRUG_SET)
+        private val FUNCTION_WITH_TYPES = HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(MATCHING_CATEGORY, MATCHING_TYPES, IGNORE_DRUG_SET)
     }
 }

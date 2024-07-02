@@ -11,7 +11,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentType
 
-class HasHadTreatmentWithCategoryButNotWithDrugs(
+class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>?,
     private val ignoreDrugs: Set<Drug>
