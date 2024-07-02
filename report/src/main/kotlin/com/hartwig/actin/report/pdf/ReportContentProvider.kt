@@ -29,6 +29,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGene
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
+import com.hartwig.actin.trial.datamodel.TrialPhase
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -56,7 +57,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EfficacyEvidenceChapter(report, include = report.config.showSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
-            TrialMatchingChapter(report, enableExtendedMode, include = report.config.showIneligibleTrialsInSummary),
+            TrialMatchingChapter(report, enableExtendedMode, report.config.showIneligibleTrialsInSummary),
             TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
         ).filter(ReportChapter::include)
     }
@@ -76,10 +77,15 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     fun provideSummaryTables(keyWidth: Float, valueWidth: Float, contentWidth: Float): List<TableGenerator> {
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+        val cohorts = if (report.config.showIneligibleTrialsInSummary) {
+            EvaluatedCohortFactory.create(report.treatmentMatch)
+                .filter { it.phase != TrialPhase.PHASE_1 && it.phase != TrialPhase.PHASE_1_2 && it.trialId != "16-758"}
+        } else {
+            EvaluatedCohortFactory.create(report.treatmentMatch)
+        }
 
         val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
-            PatientClinicalHistoryWithOverviewGenerator(report, keyWidth, valueWidth)
+            PatientClinicalHistoryWithOverviewGenerator(report, cohorts, keyWidth, valueWidth)
         } else {
             PatientClinicalHistoryGenerator(report, false, keyWidth, valueWidth)
         }

@@ -10,7 +10,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class TrialMatchingChapter(private val report: Report, private val enableExtendedMode: Boolean, override val include: Boolean) : ReportChapter {
+class TrialMatchingChapter(private val report: Report, private val enableExtendedMode: Boolean, private val showIneligibleTrialsInSummary: Boolean) : ReportChapter {
     override fun name(): String {
         return "Trial Matching Summary"
     }
@@ -28,7 +28,7 @@ class TrialMatchingChapter(private val report: Report, private val enableExtende
         val table = Tables.createSingleColWithWidth(contentWidth())
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
         val generators = mutableListOf<TableGenerator>(EligibleActinTrialsGenerator.forClosedCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode))
-        if (!include) {generators.add(IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+        if (!showIneligibleTrialsInSummary) {generators.add(IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
             cohorts,
             report.treatmentMatch.trialSource,
             contentWidth(),

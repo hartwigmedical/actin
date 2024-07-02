@@ -44,6 +44,7 @@ class EnvironmentConfigurationTest {
                 report = defaultConfig.report.copy(
                     includeOverviewWithClinicalHistorySummary = true,
                     includeMolecularDetailsChapter = false,
+                    showIneligibleTrialsInSummary = true,
                     showApprovedTreatmentsInSummary = false,
                     showSOCLiteratureEfficacyEvidence = true,
                     showEligibleSOCTreatmentSummary = true,
