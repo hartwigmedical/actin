@@ -33,11 +33,11 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
 
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
 
-        val matchingDrugTypes = treatmentSummary.specificMatches
+        val matchingTreatmentTypes = treatmentSummary.specificMatches
             .map { it.treatments.flatMap(Treatment::types).map { t -> t.display() }.toSet() }
             .flatten()
             .joinToString(", ")
-        val typeMessage = if (types != null && matchingDrugTypes.isNotEmpty()) " of types $matchingDrugTypes" else ""
+        val typeMessage = if (types != null && matchingTreatmentTypes.isNotEmpty()) " of types $matchingTreatmentTypes" else ""
         val messageEnding = "received ${category.display()}$typeMessage ignoring $ignoreDrugsList"
 
         return when {
