@@ -15,6 +15,7 @@ enum class ConfigurationProfile {
 data class ReportConfiguration(
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
     val includeMolecularDetailsChapter: Boolean = true,
+    val showIneligibleTrialsInSummary: Boolean = false,
     val showSOCLiteratureEfficacyEvidence: Boolean = false,
     val showEligibleSOCTreatmentSummary: Boolean = false,
     val showMolecularSummary: Boolean = true,
@@ -62,6 +63,7 @@ data class EnvironmentConfiguration(
                     report = rawConfig.report.copy(
                         includeOverviewWithClinicalHistorySummary = true,
                         includeMolecularDetailsChapter = false,
+                        showIneligibleTrialsInSummary = true,
                         showApprovedTreatmentsInSummary = false,
                         showSOCLiteratureEfficacyEvidence = true,
                         showEligibleSOCTreatmentSummary = true,
