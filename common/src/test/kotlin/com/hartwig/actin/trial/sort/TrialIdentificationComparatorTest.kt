@@ -8,10 +8,10 @@ class TrialIdentificationComparatorTest {
 
     @Test
     fun `Should sort trial identifications`() {
-        val identification1 = TrialIdentification(trialId = "1", open = true, acronym = "First", title = "Real First", nctId = null)
-        val identification2 = TrialIdentification(trialId = "1", open = true, acronym = "First", title = "Wants to be first", nctId = null)
-        val identification3 = TrialIdentification(trialId = "1", open = true, acronym = "Second", title = "Second", nctId = null)
-        val identification4 = TrialIdentification(trialId = "2", open = true, acronym = "Third", title = "Third", nctId = null)
+        val identification1 = TrialIdentification(trialId = "1", open = true, acronym = "First", title = "Real First", nctId = null, mainTumorTypes = null)
+        val identification2 = TrialIdentification(trialId = "1", open = true, acronym = "First", title = "Wants to be first", nctId = null, mainTumorTypes =  null)
+        val identification3 = TrialIdentification(trialId = "1", open = true, acronym = "Second", title = "Second", nctId = null, mainTumorTypes = null)
+        val identification4 = TrialIdentification(trialId = "2", open = true, acronym = "Third", title = "Third", nctId = null, mainTumorTypes = null)
         val identifications = listOf(identification1, identification2, identification3, identification4)
             .sortedWith(TrialIdentificationComparator())
 

@@ -8,6 +8,7 @@ object TestTrialDefinitionConfigFactory {
         acronym = "",
         title = "",
         nctId = "",
-        phase = null
+        phase = null,
+        mainTumorTypes = null
     )
 }

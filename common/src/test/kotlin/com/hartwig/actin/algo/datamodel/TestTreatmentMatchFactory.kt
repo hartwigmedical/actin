@@ -39,7 +39,8 @@ object TestTreatmentMatchFactory {
                     acronym = "TEST-1",
                     title = "Example test trial 1",
                     nctId = "NCT00000010",
-                    phase = TrialPhase.PHASE_1
+                    phase = TrialPhase.PHASE_1,
+                    mainTumorTypes = setOf("Solid tumors")
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial1(),
@@ -51,7 +52,8 @@ object TestTreatmentMatchFactory {
                     open = true,
                     acronym = "TEST-2",
                     title = "Example test trial 2",
-                    nctId = "NCT00000002"
+                    nctId = "NCT00000002",
+                    mainTumorTypes = setOf("Solid tumors")
                 ),
                 isPotentiallyEligible = true,
                 evaluations = createTestGeneralEvaluationsTrial2(),

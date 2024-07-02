@@ -14,13 +14,13 @@ private val TRIAL_1 = ExternalTrial("1", setOf(Country.NETHERLANDS), "url", "NCT
 private val TRIAL_2 = ExternalTrial("2", setOf(Country.BELGIUM), "url", "NCT002")
 private val trialMatches = listOf(
     TrialMatch(
-        identification = TrialIdentification("TRIAL-1", true, "TR-1", "Different title of same trial 1", "NCT00000001"),
+        identification = TrialIdentification("TRIAL-1", true, "TR-1", "Different title of same trial 1", "NCT00000001", null, null),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
         cohorts = emptyList()
     ),
     TrialMatch(
-        identification = TrialIdentification("TRIAL-2", true, "TR-2", "Different trial 2", "NCT00000003"),
+        identification = TrialIdentification("TRIAL-2", true, "TR-2", "Different trial 2", "NCT00000003", null,null),
         isPotentiallyEligible = true,
         evaluations = emptyMap(),
         cohorts = emptyList()
