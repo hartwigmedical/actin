@@ -17,7 +17,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentStage
 
 private const val TREATMENT_HISTORY = "treatment history"
 
-class StandardTreatmentHistoryExtractor(
+class StandardOncologicalHistoryExtractor(
     private val treatmentCuration: CurationDatabase<TreatmentHistoryEntryConfig>,
     private val nonOncologicalHistoryCuration: CurationDatabase<NonOncologicalHistoryConfig>
 ) : StandardDataExtractor<List<TreatmentHistoryEntry>> {
@@ -27,7 +27,7 @@ class StandardTreatmentHistoryExtractor(
 
         return ExtractionResult(
             oncologicalTreatmentHistory.extracted + oncologicalPreviousConditions.extracted,
-            oncologicalTreatmentHistory.evaluation + oncologicalPreviousConditions.evaluation
+            oncologicalTreatmentHistory.evaluation
         )
     }
 
@@ -51,8 +51,8 @@ class StandardTreatmentHistoryExtractor(
                                 treatments = curatedTreatment.treatments,
                                 intents = curatedTreatment.intents,
                                 treatmentHistoryDetails = TreatmentHistoryDetails(
-                                    stopYear = ehrPreviousCondition.endDate?.year,
-                                    stopMonth = ehrPreviousCondition.endDate?.monthValue,
+                                    stopYear = curatedTreatment.treatmentHistoryDetails?.stopYear ?: ehrPreviousCondition.endDate?.year,
+                                    stopMonth = curatedTreatment.treatmentHistoryDetails?.stopMonth?: ehrPreviousCondition.endDate?.monthValue,
                                     stopReason = curatedTreatment.treatmentHistoryDetails?.stopReason,
                                     bestResponse = curatedTreatment.treatmentHistoryDetails?.bestResponse,
                                     switchToTreatments = curatedTreatment.treatmentHistoryDetails?.switchToTreatments,
@@ -101,10 +101,14 @@ class StandardTreatmentHistoryExtractor(
                                 intents = ehrTreatmentHistory.intention?.let { intent -> setOf(parseIntent(intent)) },
                                 treatments = curatedTreatment.curated!!.treatments,
                                 treatmentHistoryDetails = TreatmentHistoryDetails(
-                                    stopYear = ehrTreatmentHistory.endDate?.year,
-                                    stopMonth = ehrTreatmentHistory.endDate?.monthValue,
-                                    stopReason = ehrTreatmentHistory.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
-                                    bestResponse = ehrTreatmentHistory.response?.let { response -> TreatmentResponse.valueOf(response) },
+                                    stopYear = curatedTreatment.curated.treatmentHistoryDetails?.stopYear
+                                        ?: ehrTreatmentHistory.endDate?.year,
+                                    stopMonth = curatedTreatment.curated.treatmentHistoryDetails?.stopMonth
+                                        ?: ehrTreatmentHistory.endDate?.monthValue,
+                                    stopReason = curatedTreatment.curated.treatmentHistoryDetails?.stopReason
+                                        ?: ehrTreatmentHistory.stopReason?.let { stopReason -> StopReason.valueOf(stopReason) },
+                                    bestResponse = curatedTreatment.curated.treatmentHistoryDetails?.bestResponse
+                                        ?: ehrTreatmentHistory.response?.let { response -> TreatmentResponse.valueOf(response) },
                                     switchToTreatments = switchToTreatments.extracted,
                                     cycles = ehrTreatmentHistory.administeredCycles,
                                     bodyLocations = curatedTreatment.curated.treatmentHistoryDetails?.bodyLocations,

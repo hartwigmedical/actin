@@ -12,9 +12,9 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 
 val PROPER_PANEL_VARIANT = Variant(
     chromosome = "7",
@@ -50,7 +50,7 @@ internal object MolecularHistoryFactory {
             molecularTests = listOf(
                 archerPanelRecord(
                     ArcherPanelExtraction(
-                        variants = listOf(ArcherVariantExtraction(gene = gene, hgvsCodingImpact = hgvsCodingImpact))
+                        variants = listOf(PanelVariantExtraction(gene = gene, hgvsCodingImpact = hgvsCodingImpact))
                     )
                 ).copy(
                     drivers = Drivers(
@@ -81,6 +81,6 @@ internal object MolecularHistoryFactory {
     }
 
     fun archerPanelRecord(extraction: ArcherPanelExtraction) = TestPanelRecordFactory.empty().copy(
-        archerPanelExtraction = extraction
+        panelExtraction = extraction
     )
 }

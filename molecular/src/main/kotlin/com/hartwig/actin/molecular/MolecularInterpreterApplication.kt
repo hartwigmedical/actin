@@ -1,11 +1,13 @@
 package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.orange.PatientRecordJson
+import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
+import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -13,6 +15,9 @@ import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
+import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ActionableEventsLoader
@@ -54,8 +59,26 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         }
         LOGGER.info("Loading evidence database for prior molecular tests")
         val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
+
+        LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
+        val ensemblDataCache = EnsemblDataLoader.load(config.ensemblCachePath, com.hartwig.actin.tools.ensemblcache.RefGenome.V37)
+
+
+        LOGGER.info("Loading dnds database for driver likelihood annotation from ${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}")
+        val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
+
         LOGGER.info("Interpreting prior molecular tests")
-        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(evidenceDatabase).process(clinical.priorMolecularTests)
+        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
+            evidenceDatabase,
+            GeneDriverLikelihoodModel(dndsDatabase),
+            TransvarVariantAnnotatorFactory.withRefGenome(
+                com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
+                config.referenceGenomeFastaPath,
+                ensemblDataCache
+            ),
+            PaveLite(ensemblDataCache, false)
+
+        ).process(clinical.priorMolecularTests)
 
         val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)
         MolecularHistoryPrinter.printRecord(history)
@@ -115,7 +138,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
-        const val APPLICATION: String = "ACTIN ORANGE Interpreter"
+        const val APPLICATION: String = "ACTIN Molecular Interpreter"
         private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion
     }
 }

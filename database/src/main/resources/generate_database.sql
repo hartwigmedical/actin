@@ -19,7 +19,7 @@ CREATE TABLE `tumor`
     `primaryTumorLocation` varchar(100),
     `primaryTumorSubLocation` varchar(50),
     `primaryTumorType` varchar(50),
-    `primaryTumorSubType` varchar(50),
+    `primaryTumorSubType` varchar(100),
     `primaryTumorExtraDetails` varchar(100),
     `doids` varchar(50),
     `stage` varchar(50),
@@ -523,8 +523,9 @@ CREATE TABLE `pharmaco`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `sampleId` varchar(50) NOT NULL,
     `gene` varchar(50) NOT NULL,
-    `haplotype` varchar(50) NOT NULL,
-    `haplotypeFunction` varchar(50) NOT NULL,
+    `allele` varchar(50) NOT NULL,
+    `alleleCount` int NOT NULL,
+    `function` varchar(50) NOT NULL,
     PRIMARY KEY (`id`)
 );
 

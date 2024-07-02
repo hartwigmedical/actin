@@ -79,7 +79,7 @@ object TestMolecularFactory {
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord()))
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), TestPanelRecordFactory.empty()))
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
@@ -225,13 +225,13 @@ object TestMolecularFactory {
         return setOf(
             PharmacoEntry(
                 gene = "DPYD",
-                haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")),
+                haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal function")),
             ),
             PharmacoEntry(
                 gene = "UGT1A1",
                 haplotypes = setOf(
-                    Haplotype(name = "*1_HET", function = "Normal function"),
-                    Haplotype(name = "*28_HET", function = "Reduced function"),
+                    Haplotype(allele = "*1", alleleCount = 1, function = "Normal function"),
+                    Haplotype(allele = "*28", alleleCount = 1, function = "Reduced function"),
                 )
             )
         )
@@ -317,7 +317,7 @@ object TestMolecularFactory {
     }
 
     fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        genericPanelExtraction =
+        panelExtraction =
         GenericPanelExtraction(
             fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
             panelType = GenericPanelType.FREE_TEXT

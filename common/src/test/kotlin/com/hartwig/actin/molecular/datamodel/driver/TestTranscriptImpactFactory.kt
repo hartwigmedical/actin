@@ -9,11 +9,11 @@ object TestTranscriptImpactFactory {
             transcriptId = "",
             hgvsCodingImpact = "",
             hgvsProteinImpact = "",
-            isSpliceRegion = false,
             affectedCodon = null,
             affectedExon = null,
-            codingEffect = null,
-            effects = emptySet()
+            isSpliceRegion = false,
+            effects = emptySet(),
+            codingEffect = null
         )
     }
 }

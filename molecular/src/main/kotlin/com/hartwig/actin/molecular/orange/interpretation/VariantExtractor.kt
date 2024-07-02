@@ -45,10 +45,6 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 val driverLikelihood = determineDriverLikelihood(driver)
                 val evidence = ActionableEvidenceFactory.createNoEvidence()
                 Variant(
-                    chromosome = variant.chromosome(),
-                    position = variant.position(),
-                    ref = variant.ref(),
-                    alt = variant.alt(),
                     gene = variant.gene(),
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
@@ -57,7 +53,13 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     event = event,
                     driverLikelihood = driverLikelihood,
                     evidence = evidence,
+                    chromosome = variant.chromosome(),
+                    position = variant.position(),
+                    ref = variant.ref(),
+                    alt = variant.alt(),
                     type = determineVariantType(variant),
+                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
+                    canonicalImpact = extractCanonicalImpact(variant),
                     extendedVariantDetails = ExtendedVariantDetails(
                         variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
                         totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
@@ -66,8 +68,6 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                         otherImpacts = extractOtherImpacts(variant),
                         clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     ),
-                    isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
-                    canonicalImpact = extractCanonicalImpact(variant),
                 )
             }
             .toSortedSet(VariantComparator())
@@ -114,23 +114,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
         }
 
         fun determineDriverLikelihood(driver: PurpleDriver?): DriverLikelihood? {
-            return when {
-                driver == null -> {
-                    null
-                }
-
-                driver.driverLikelihood() >= 0.8 -> {
-                    DriverLikelihood.HIGH
-                }
-
-                driver.driverLikelihood() >= 0.2 -> {
-                    DriverLikelihood.MEDIUM
-                }
-
-                else -> {
-                    DriverLikelihood.LOW
-                }
-            }
+            return DriverLikelihood.from(driver?.driverLikelihood())
         }
 
         private fun findBestMutationDriver(

@@ -11,10 +11,6 @@ object TestVariantFactory {
 
     fun createMinimal(): Variant {
         return Variant(
-            chromosome = "",
-            position = 0,
-            ref = "",
-            alt = "",
             isReportable = false,
             event = "",
             driverLikelihood = null,
@@ -22,10 +18,14 @@ object TestVariantFactory {
             gene = "",
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
+            isAssociatedWithDrugResistance = null,
+            chromosome = "",
+            position = 0,
+            ref = "",
+            alt = "",
             type = VariantType.SNV,
             isHotspot = false,
             canonicalImpact = TestTranscriptImpactFactory.createMinimal(),
-            isAssociatedWithDrugResistance = null,
         )
     }
 

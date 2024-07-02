@@ -7,9 +7,9 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 
 data class Drivers(
     val variants: Set<Variant> = emptySet(),
-    val fusions: Set<Fusion> = emptySet(),
     val copyNumbers: Set<CopyNumber> = emptySet(),
     val homozygousDisruptions: Set<HomozygousDisruption> = emptySet(),
     val disruptions: Set<Disruption> = emptySet(),
+    val fusions: Set<Fusion> = emptySet(),
     val viruses: Set<Virus> = emptySet()
 )
