@@ -183,8 +183,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadFirstLineTreatmentNameCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringInput(function)
-            HasHadFirstLineTreatmentName(input)
+            val input = functionInputResolver().createOneSpecificTreatmentInput(function)
+            HasHadFirstLineTreatmentName(input.name)
         }
     }
 
