@@ -43,6 +43,7 @@ import com.hartwig.actin.trial.input.single.OneSpecificDrugOneTreatmentCategoryM
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypes
+import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryOrTypeOneInteger
 import com.hartwig.actin.trial.input.single.TwoDoubles
@@ -148,6 +149,11 @@ class FunctionInputResolver(
 
                 FunctionInput.ONE_TREATMENT_CATEGORY_MANY_DRUGS -> {
                     createOneTreatmentCategoryManyDrugsInput(function)
+                    return true
+                }
+
+                FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_MANY_DRUGS -> {
+                    createOneTreatmentCategoryManyTypesManyDrugsInput(function)
                     return true
                 }
 
@@ -431,6 +437,15 @@ class FunctionInputResolver(
         return OneTreatmentCategoryManyDrugs(
             category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
             drugs = toDrugSet(function.parameters[1])
+        )
+    }
+
+    fun createOneTreatmentCategoryManyTypesManyDrugsInput(function: EligibilityFunction): OneTreatmentCategoryManyTypesManyDrugs {
+        assertParamConfig(function, FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_MANY_DRUGS, 3)
+        return OneTreatmentCategoryManyTypesManyDrugs(
+            category = TreatmentCategoryResolver.fromString(parameterAsString(function, 0)),
+            types = toTreatmentTypeSet(function.parameters[1]),
+            drugs = toDrugSet(function.parameters[2])
         )
     }
 

@@ -95,6 +95,14 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
                 listOf(TreatmentCategory.CHEMOTHERAPY.display(), "CAPECITABINE;OXALIPLATIN")
             }
 
+            FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_MANY_DRUGS -> {
+                listOf(
+                    TreatmentCategory.CHEMOTHERAPY.display(),
+                    "${DrugType.ALKYLATING_AGENT};${DrugType.ANTIMETABOLITE}",
+                    "CAPECITABINE;OXALIPLATIN"
+                )
+            }
+
             FunctionInput.MANY_DRUGS -> {
                 listOf("CAPECITABINE;OXALIPLATIN")
             }
@@ -230,7 +238,7 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String) {
     }
 
     private fun firstNonComposite(): EligibilityRule {
-        return EligibilityRule.values().find { rule ->
+        return EligibilityRule.entries.find { rule ->
             !CompositeRules.isComposite(rule)
         } ?: throw IllegalStateException("Only composite functions defined!")
     }
