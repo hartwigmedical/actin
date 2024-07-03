@@ -125,9 +125,10 @@ class GeneHasVariantInExonRangeOfType(
     }
 
     private fun archerExonSkips(panelRecord: PanelRecord) =
-        archerExtraction(panelRecord)?.skippedExons?.filter { it.impactsGene(gene) }?.filter {
-            it.start <= maxExon && it.end >= minExon
-        }?.map(ArcherSkippedExonsExtraction::display)?.toSet()
+        archerExtraction(panelRecord)?.skippedExons
+            ?.filter { it.impactsGene(gene) }
+            ?.filter { it.start <= maxExon && it.end >= minExon }
+            ?.map(ArcherSkippedExonsExtraction::display)?.toSet()
 
     private fun genericExonDeletions(panelRecord: PanelRecord) = genericExtraction(panelRecord)?.exonDeletions
         ?.filter { it.impactsGene(gene) }
