@@ -34,7 +34,9 @@ class HasExhaustedSOCTreatments(
 
             isNSCLC -> {
                 if (hasReceivedPlatinumBasedDoubletOrMore) {
-                    EvaluationFactory.undetermined("Undetermined exhaustion of SOC", "Undetermined exhaustion of SOC")
+                    EvaluationFactory.pass(
+                        "SOC considered exhausted since platinum doublet in treatment history", "SOC considered exhausted"
+                    )
                 } else EvaluationFactory.fail(
                     "Patient has not exhausted SOC (at least platinum doublet remaining)",
                     "SOC not exhausted: at least platinum doublet remaining"

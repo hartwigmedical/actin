@@ -39,7 +39,7 @@ class HasExhaustedSOCTreatmentsTest {
     )
 
     @Test
-    fun `Should return undetermined for patient with NSCLC and platinum doublet chemotherapy in treatment history`() {
+    fun `Should pass for patient with NSCLC and platinum doublet chemotherapy in treatment history`() {
         every { recommendationEngine.standardOfCareCanBeEvaluatedForPatient(any()) } returns false
         val platinumDoublet =
             DrugTreatment(
@@ -50,7 +50,7 @@ class HasExhaustedSOCTreatmentsTest {
                 )
             )
         val record = createHistoryWithNSCLCAndTreatment(platinumDoublet)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
