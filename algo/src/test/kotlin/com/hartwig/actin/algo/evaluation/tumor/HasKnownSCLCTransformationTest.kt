@@ -82,7 +82,7 @@ class HasKnownSCLCTransformationTest {
         val record = base.copy(
             tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
             molecularHistory = MolecularTestFactory.withCopyNumber(copyNumber).molecularHistory
-            )
+        )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         Assertions.assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
