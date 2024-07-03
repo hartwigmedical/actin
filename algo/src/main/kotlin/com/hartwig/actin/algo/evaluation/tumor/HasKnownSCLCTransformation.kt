@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.doid.DoidConstants.SMALL_CELL_LUNG_CANCER_DOIDS
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
@@ -12,6 +13,12 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel) : EvaluationF
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
+        val isNSCLC = DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID in DoidEvaluationFunctions.createFullExpandedDoidTree(
+            doidModel,
+            record.tumor.doids
+        )
+        val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor,setOf("small cell", "mixed"))
+        val hasNonSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor,setOf("non-small cell", "non small cell"))
         val hasMixedOrSmallCellDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
             doidModel, record.tumor.doids, SMALL_CELL_LUNG_CANCER_DOIDS
         )
@@ -19,10 +26,17 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel) : EvaluationF
         val amplifiedGenes = listOf("MYC").filter { MolecularRuleEvaluator.geneIsAmplifiedForPatient(it, record) }
 
         return when {
-            hasMixedOrSmallCellDoid -> {
+            !isNSCLC -> {
+                EvaluationFactory.fail(
+                    "Patient does not have lung cancer and therefore no SCLC transformation",
+                    "No lung cancer thus no SCLC transformation"
+                )
+            }
+
+            (hasSmallCellDetails && !hasNonSmallCellDetails) || hasMixedOrSmallCellDoid -> {
                 EvaluationFactory.undetermined(
-                    "Patient has tumor with (mixed) small cell histology - undetermined if small cell transformation",
-                    "Tumor has (mixed) small cell histology - undetermined if small cell transformation",
+                    "Patient has NSCLC with mixed histology - undetermined if small cell transformation",
+                    "NSCLC with mixed histology - undetermined if small cell transformation",
                 )
             }
 
