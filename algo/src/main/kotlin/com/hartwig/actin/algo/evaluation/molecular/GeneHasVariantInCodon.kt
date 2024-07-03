@@ -4,18 +4,20 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 
 class GeneHasVariantInCodon(private val gene: String, private val codons: List<String>) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun genes() = listOf(gene)
+
+    override fun evaluate(test: MolecularTest): Evaluation {
         val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalUnreportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalCodonMatches: MutableSet<String> = mutableSetOf()
         val reportableOtherVariantMatches: MutableSet<String> = mutableSetOf()
         val reportableOtherCodonMatches: MutableSet<String> = mutableSetOf()
-        for (variant in molecular.drivers.variants) {
+        for (variant in test.drivers.variants) {
             if (variant.gene == gene) {
                 for (codon in codons) {
                     if (isCodonMatch(variant.canonicalImpact.affectedCodon, codon)) {

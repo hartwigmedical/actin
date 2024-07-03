@@ -27,6 +27,6 @@ data class ArcherPanelExtraction(
     override fun events() = (variants + fusions + skippedExons).toSet()
 
     private fun genesHavingResultsInPanel(): Set<String> {
-        return genesWithVariants() + genesWithFusions()
+        return genesWithVariants() + genesWithFusions() + skippedExons.map { it.gene }.toSet()
     }
 }

@@ -11,6 +11,8 @@ import com.hartwig.actin.molecular.datamodel.Variant
 
 class GeneHasSpecificExonSkipping(private val gene: String, private val exonToSkip: Int) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val archerExonSkippingEvents = molecularHistory.allArcherPanels().flatMap { it.skippedExons }

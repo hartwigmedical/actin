@@ -12,16 +12,15 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
 
+    override fun genes() = listOf(gene)
+
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) findMatchingFusionsInOrangeMolecular(orangeMolecular) else null
         val panelEvaluation = molecularHistory.allPanels().mapNotNull { findMatchingFusionsInPanels(it) }
 
-        return MolecularEvaluation.combine(
-            listOfNotNull(orangeMolecularEvaluation) + panelEvaluation,
-            EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
-        )
+        return MolecularEvaluation.combine(listOfNotNull(orangeMolecularEvaluation) + panelEvaluation)
     }
 
     private fun findMatchingFusionsInOrangeMolecular(molecular: MolecularRecord): MolecularEvaluation {

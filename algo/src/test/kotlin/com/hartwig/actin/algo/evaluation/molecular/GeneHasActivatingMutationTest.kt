@@ -8,7 +8,6 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.TEST_DATE
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestTranscriptImpactFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
@@ -17,7 +16,6 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class GeneHasActivatingMutationTest {
@@ -198,81 +196,6 @@ class GeneHasActivatingMutationTest {
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularHistory = MolecularHistory.empty())
             )
         )
-    }
-
-    @Test
-    fun `Should pass for gene with mutation in Archer panel and no Orange molecular`() {
-        assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            functionNotIgnoringCodons.evaluate(
-                TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(listOf(panelRecord(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT))),
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should pass for gene with mutation in Generic panel and no Orange molecular`() {
-        assertMolecularEvaluation(
-            EvaluationResult.PASS,
-            functionNotIgnoringCodons.evaluate(
-                TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(listOf(panelRecord(AVL_PANEL_WITH_ACTIVATING_VARIANT))),
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should be undetermined for gene not in Archer panel with no Orange molecular`() {
-
-        val evaluation = functionNotIgnoringCodons.evaluate(
-            TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                molecularHistory = MolecularHistory(listOf(panelRecord(EMPTY_ARCHER_MOLECULAR_TEST))),
-            )
-        )
-
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Gene $GENE not tested")
-    }
-
-    @Test
-    fun `Should fail for gene always tested but not returned in Archer panel and no Orange molecular`() {
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            GeneHasActivatingMutation("ALK", null).evaluate(
-                TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-                    molecularHistory = MolecularHistory(listOf(panelRecord(EMPTY_ARCHER_MOLECULAR_TEST))),
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should pass and prefer pass from Orange molecular over archer panel`() {
-        val base = MolecularTestFactory.withHasTumorMutationalLoadAndVariants(false, ACTIVATING_VARIANT)
-        val patient = base.copy(
-            molecularHistory = MolecularHistory(
-                base.molecularHistory.molecularTests + listOf(panelRecord(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT))
-            )
-        )
-
-        val evaluation = functionNotIgnoringCodons.evaluate(patient)
-
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages).containsExactly("Activating mutation(s) detected in gene + gene A: ")
-        assertThat(evaluation.passGeneralMessages).size().isEqualTo(1)
-    }
-
-    @Test
-    fun `Should be undetermined for Archer variant on gene but codons to ignore and no Orange molecular`() {
-        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-            molecularHistory = MolecularHistory(listOf(panelRecord(ARCHER_MOLECULAR_TEST_WITH_ACTIVATING_VARIANT)))
-        )
-
-        val evaluation = functionWithCodonsToIgnore.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
 
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
