@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 
@@ -54,13 +54,15 @@ private enum class CopyNumberEvaluation {
 
 class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumber: Int?) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
-        val ploidy = molecular.characteristics.ploidy
+    override fun genes() = listOf(gene)
+
+    override fun evaluate(test: MolecularTest): Evaluation {
+        val ploidy = test.characteristics.ploidy
             ?: return EvaluationFactory.fail(
                 "Cannot determine amplification for gene $gene without ploidy", "Undetermined amplification for $gene"
             )
 
-        val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = molecular.drivers.copyNumbers.filter { copyNumber ->
+        val evaluatedCopyNumbers: Map<CopyNumberEvaluation, Set<String>> = test.drivers.copyNumbers.filter { copyNumber ->
             copyNumber.gene == gene && (requestedMinCopyNumber == null || copyNumber.minCopies >= requestedMinCopyNumber)
         }
             .groupBy({ copyNumber -> CopyNumberEvaluation.fromCopyNumber(copyNumber, ploidy) }, valueTransform = CopyNumber::event)
@@ -81,7 +83,7 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
                     inclusionEvents = ampsThatAreUnreportable
                 )
             }
-            ?: evaluatePotentialWarns(evaluatedCopyNumbers, molecular.evidenceSource)
+            ?: evaluatePotentialWarns(evaluatedCopyNumbers, test.evidenceSource)
             ?: EvaluationFactory.fail(
                 "No amplification detected of gene $gene$minCopyMessage",
                 if (requestedMinCopyNumber == null) "No amplification of $gene" else "Insufficient copies of $gene"

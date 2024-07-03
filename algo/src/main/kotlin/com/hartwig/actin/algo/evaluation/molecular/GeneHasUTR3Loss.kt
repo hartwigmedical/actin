@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
@@ -11,9 +11,11 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
 
 class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun genes() = listOf(gene)
 
-        val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = molecular.drivers.variants.filter { variant ->
+    override fun evaluate(test: MolecularTest): Evaluation {
+
+        val (hotspotsIn3UTR, hotspotsIn3UTRUnreportable, vusIn3UTR) = test.drivers.variants.filter { variant ->
             variant.gene == gene && variant.canonicalImpact.effects.contains(VariantEffect.THREE_PRIME_UTR)
         }
             .fold(Triple(emptySet<String>(), emptySet<String>(), emptySet<String>())) { acc, variant ->
@@ -26,7 +28,7 @@ class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
                 }
             }
 
-        val disruptionsIn3UTR = molecular.drivers.disruptions.filter { disruption ->
+        val disruptionsIn3UTR = test.drivers.disruptions.filter { disruption ->
             disruption.gene == gene && disruption.codingContext == CodingContext.UTR_3P && disruption.regionType == RegionType.EXONIC
         }
             .map(Disruption::event)
@@ -40,8 +42,10 @@ class GeneHasUTR3Loss(private val gene: String) : MolecularEvaluationFunction {
             )
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(hotspotsIn3UTRUnreportable, vusIn3UTR, disruptionsIn3UTR)
-        return potentialWarnEvaluation
-            ?: EvaluationFactory.fail("No variants detected in 3' UTR region of $gene", "No 3' UTR loss of $gene")
+        return potentialWarnEvaluation ?: EvaluationFactory.fail(
+            "No variants detected in 3' UTR region of $gene",
+            "No 3' UTR loss of $gene"
+        )
     }
 
     private fun evaluatePotentialWarns(

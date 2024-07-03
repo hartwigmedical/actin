@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
 import org.apache.logging.log4j.LogManager
@@ -13,7 +13,9 @@ import org.apache.logging.log4j.LogManager
 class GeneHasVariantWithProteinImpact(private val gene: String, private val allowedProteinImpacts: List<String>) :
     MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun genes() = listOf(gene)
+
+    override fun evaluate(test: MolecularTest): Evaluation {
         val canonicalReportableVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalReportableSubclonalVariantMatches: MutableSet<String> = mutableSetOf()
         val canonicalUnreportableVariantMatches: MutableSet<String> = mutableSetOf()
@@ -21,7 +23,7 @@ class GeneHasVariantWithProteinImpact(private val gene: String, private val allo
         val reportableOtherVariantMatches: MutableSet<String> = mutableSetOf()
         val reportableOtherProteinImpactMatches: MutableSet<String> = mutableSetOf()
 
-        for (variant in molecular.drivers.variants) {
+        for (variant in test.drivers.variants) {
             if (variant.gene == gene) {
                 val canonicalProteinImpact = toProteinImpact(variant.canonicalImpact.hgvsProteinImpact)
                 for (allowedProteinImpact in allowedProteinImpacts) {
