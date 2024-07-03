@@ -13,7 +13,10 @@ class HasKnownSCLCTransformation(private val doidModel: DoidModel) : EvaluationF
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val isNSCLC = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+        val isNSCLC = DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID in DoidEvaluationFunctions.createFullExpandedDoidTree(
+            doidModel,
+            record.tumor.doids
+        )
         val hasSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor,setOf("small cell", "mixed"))
         val hasNonSmallCellDetails = TumorTypeEvaluationFunctions.hasTumorWithDetails(record.tumor,setOf("non-small cell", "non small cell"))
         val hasMixedOrSmallCellDoid = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
