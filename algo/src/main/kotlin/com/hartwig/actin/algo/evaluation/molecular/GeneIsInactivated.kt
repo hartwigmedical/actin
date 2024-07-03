@@ -80,7 +80,7 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
                     } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
                         if (extendedVariant.isBiallelic) {
                             reportableNonDriverBiallelicVariantsOther.add(variant.event)
-                        } else {
+                        } else if (variant.gene in MolecularConstants.HRD_GENES || variant.gene in MolecularConstants.MSI_GENES) {
                             reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                         }
                     }
