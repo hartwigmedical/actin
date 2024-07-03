@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
@@ -22,17 +22,17 @@ class GeneHasVariantInExonRangeOfType(
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
-        val orangeEvaluation = molecularHistory.latestOrangeMolecularRecord()?.let { evaluateOrange(it) }
-        val panelEvaluations =
+        val molecularTestEvaluations = molecularHistory.molecularTests.map { MolecularEvaluation(it, evaluateMolecularTest(it)) }
+        val additionalPanelEvaluations =
             if (requiredVariantType == null || requiredVariantType == VariantTypeInput.DELETE) molecularHistory.allPanels()
                 .map { MolecularEvaluation(it, evaluatePanel(it)) } else emptyList()
 
         return MolecularEvaluation.combine(
-            listOfNotNull(orangeEvaluation) + panelEvaluations
+            molecularTestEvaluations + additionalPanelEvaluations
         )
     }
 
-    private fun evaluateOrange(molecular: MolecularRecord): MolecularEvaluation {
+    private fun evaluateMolecularTest(test: MolecularTest): Evaluation {
 
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
@@ -40,7 +40,7 @@ class GeneHasVariantInExonRangeOfType(
         val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
 
         val (canonicalReportableVariantMatches, canonicalUnreportableVariantMatches, reportableOtherVariantMatches) =
-            molecular.drivers.variants.filter { it.gene == gene && allowedVariantTypes.contains(it.type) }
+            test.drivers.variants.filter { it.gene == gene && allowedVariantTypes.contains(it.type) }
                 .map { variant ->
                     val (reportableMatches, unreportableMatches) = listOf(variant)
                         .filter { hasEffectInExonRange(variant.canonicalImpact.affectedExon, minExon, maxExon) }
@@ -71,7 +71,7 @@ class GeneHasVariantInExonRangeOfType(
                     Triple(allReportable + reportable, allUnreportable + unreportable, allOther + other)
                 }
 
-        val evaluation = if (canonicalReportableVariantMatches.isNotEmpty()) {
+        return if (canonicalReportableVariantMatches.isNotEmpty()) {
             EvaluationFactory.pass(
                 "Variant(s) $baseMessage in canonical transcript",
                 "Variant(s) $baseMessage",
@@ -83,7 +83,6 @@ class GeneHasVariantInExonRangeOfType(
             potentialWarnEvaluation
                 ?: EvaluationFactory.fail("No variant $baseMessage in canonical transcript", "No variant $baseMessage")
         }
-        return MolecularEvaluation(molecular, evaluation)
     }
 
     private fun evaluatePotentialWarns(
