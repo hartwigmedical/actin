@@ -81,7 +81,7 @@ class EfficacyEvidenceDetailsGenerator(
             "Mutations" to PatientPopulation::mutations,
             "Metastatic sites" to PatientPopulation::formatMetastaticSites,
             "Time of metastases" to { it.timeOfMetastases?.display() },
-            "Previous systemic therapy" to { "${it.priorSystemicTherapy}/${it.numberOfPatients} ?: NA}" },
+            "Previous systemic therapy" to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
             "Prior therapies" to PatientPopulation::priorTherapies
         )
             .flatMap { (characteristic, extractAsString) -> contentForCharacteristic(characteristic, extractAsString, patientPopulations) }
@@ -112,7 +112,7 @@ class EfficacyEvidenceDetailsGenerator(
         endPointsById.values.filter { endPoint -> endPoint.type == endPointType && endPoint.derivedMetrics.isNotEmpty() }
             .flatMap { endPoint ->
                 val otherEndpoint = endPointsById[endPoint.derivedMetrics.first().relativeMetricId]
-                val pValue = endPoint.derivedMetrics.first().pValue
+                val pValue = endPoint.derivedMetrics.first().pValue ?: NA
                 listOf(
                     "${endPoint.name} (95% CI)",
                     "${endPoint.value} ${formatConfidenceInterval(endPoint.confidenceInterval)}",
@@ -120,7 +120,7 @@ class EfficacyEvidenceDetailsGenerator(
                             formatConfidenceInterval(otherEndpoint?.confidenceInterval),
                     "${endPoint.derivedMetrics.first().value} " +
                             formatConfidenceInterval(endPoint.derivedMetrics.first().confidenceInterval),
-                    if (pValue!!.startsWith("<")) {"p $pValue"} else {"p = $pValue]"}
+                    if (pValue.startsWith("<")) {"p $pValue"} else {"p = $pValue"}
                 )
             }
             .forEach { table.addCell(Cells.createContent(it)) }

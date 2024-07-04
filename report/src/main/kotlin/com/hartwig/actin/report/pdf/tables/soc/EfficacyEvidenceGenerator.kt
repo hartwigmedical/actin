@@ -22,7 +22,7 @@ class EfficacyEvidenceGenerator(
         "Primary tumor location" to { it.formatTumorLocation(", ") },
         "Mutations" to PatientPopulation::mutations,
         "Metastatic sites" to PatientPopulation::formatMetastaticSites,
-        "Previous systemic therapy" to { "${it.priorSystemicTherapy}/${it.numberOfPatients} ?: NA}" },
+        "Previous systemic therapy" to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
         "Prior therapies" to PatientPopulation::priorTherapies
     )
 
