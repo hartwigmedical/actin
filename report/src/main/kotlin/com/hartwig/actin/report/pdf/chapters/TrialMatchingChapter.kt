@@ -26,7 +26,7 @@ class TrialMatchingChapter(private val report: Report, private val enableExtende
 
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, null)
         val generators = mutableListOf<TableGenerator>(EligibleActinTrialsGenerator.forClosedCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode))
         if (!showIneligibleTrialsInSummary) {generators.add(IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
             cohorts,

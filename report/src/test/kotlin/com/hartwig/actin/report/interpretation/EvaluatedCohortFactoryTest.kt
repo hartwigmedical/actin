@@ -10,13 +10,13 @@ import org.junit.Test
 class EvaluatedCohortFactoryTest {
     @Test
     fun shouldCreateEvaluatedCohortsFromMinimalMatch() {
-        val cohorts = create(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
+        val cohorts = create(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), null)
         assertThat(cohorts).isEmpty()
     }
 
     @Test
     fun shouldCreateEvaluatedCohortsFromProperMatch() {
-        val cohorts = create(TestTreatmentMatchFactory.createProperTreatmentMatch())
+        val cohorts = create(TestTreatmentMatchFactory.createProperTreatmentMatch(), null)
         assertThat(cohorts).hasSize(5)
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
@@ -70,7 +70,8 @@ class EvaluatedCohortFactoryTest {
                 open = true,
                 acronym = "test-1",
                 title = "Example test trial 1",
-                nctId = null
+                nctId = null,
+                mainTumorTypes = null
             ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),
@@ -78,7 +79,7 @@ class EvaluatedCohortFactoryTest {
         )
 
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(trialMatches = listOf(trialMatchWithoutCohort))
-        val cohorts = create(treatmentMatch)
+        val cohorts = create(treatmentMatch, null)
         assertThat(cohorts).hasSize(1)
     }
 

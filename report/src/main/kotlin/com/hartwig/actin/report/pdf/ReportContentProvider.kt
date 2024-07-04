@@ -76,7 +76,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     fun provideSummaryTables(keyWidth: Float, valueWidth: Float, contentWidth: Float): List<TableGenerator> {
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+        val cohorts = if (report.config.showIneligibleTrialsInSummary) {
+            EvaluatedCohortFactory.create(report.treatmentMatch, "Colorectal")
+        } else {
+            EvaluatedCohortFactory.create(report.treatmentMatch, null)
+        }
 
         val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
             PatientClinicalHistoryWithOverviewGenerator(report, cohorts, keyWidth, valueWidth)
