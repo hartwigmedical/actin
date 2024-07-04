@@ -11,8 +11,7 @@ class TrialDefinitionConfigFactory : TrialConfigFactory<TrialDefinitionConfig> {
             acronym = parts[fields["acronym"]!!],
             title = parts[fields["title"]!!],
             nctId = ResourceFile.optionalString(parts[fields["nctId"]!!]),
-            phase = ResourceFile.optionalString(parts[fields["phase"]!!]),
-            mainTumorTypes = parts[fields["mainTumorTypes"]!!].split(",").toSet()
+            phase = ResourceFile.optionalString(parts[fields["phase"]!!])
         )
     }
 }

@@ -33,8 +33,7 @@ object TestTrialConfigDatabaseFactory {
         acronym = "Acronym-$trialId",
         title = "Title for $trialId",
         nctId = "nctId for $trialId",
-        phase = null,
-        mainTumorTypes = null
+        phase = null
     )
 
     private fun createTestCohortDefinitionConfigs(): List<CohortDefinitionConfig> {
