@@ -2,13 +2,14 @@ package com.hartwig.actin.algo.datamodel
 
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory
-import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
 import com.hartwig.actin.personalization.datamodel.Measurement
 import com.hartwig.actin.personalization.datamodel.MeasurementType
-import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
-import com.hartwig.actin.personalization.datamodel.TreatmentMeasurementCollection
+import com.hartwig.actin.personalization.datamodel.PersonalizedDataAnalysis
+import com.hartwig.actin.personalization.datamodel.SubPopulation
+import com.hartwig.actin.personalization.datamodel.TreatmentAnalysis
+import com.hartwig.actin.personalization.datamodel.TreatmentGroup
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.datamodel.CriterionReference
 import com.hartwig.actin.trial.datamodel.Eligibility
@@ -87,7 +88,7 @@ object TestTreatmentMatchFactory {
                     )
                 ),
                 annotations = TestExtendedEvidenceEntryFactory.createProperTestExtendedEvidenceEntries(),
-                generalPfs = Measurement(136.5, 98, 74, 281)
+                generalPfs = Measurement(136.5, 98, 74, 281, 46.0)
             )
         )
     }
@@ -268,31 +269,34 @@ object TestTreatmentMatchFactory {
         }
     }
 
-    private fun createPersonalizedDataAnalysis(): List<SubPopulationAnalysis> {
+    private fun createPersonalizedDataAnalysis(): PersonalizedDataAnalysis {
         val pembrolizumab = TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY)
-        return listOf(
-            subPopulationAnalysis("All", pembrolizumab, 236.5, 0.3),
-            subPopulationAnalysis("Age 45-55", pembrolizumab, 356.5, 0.4),
-            subPopulationAnalysis("WHO 1", pembrolizumab, 321.0, 0.25),
+        val populationPfsAndDecision = listOf(
+            Triple("All", 236.5, 0.3),
+            Triple("Age 45-55", 356.5, 0.4),
+            Triple("WHO 1", 321.0, 0.25)
         )
-    }
 
-    private fun subPopulationAnalysis(name: String, treatment: Treatment, medianPfs: Double, decision: Double) = SubPopulationAnalysis(
-        name = name,
-        treatments = listOf(treatment),
-        treatmentMeasurements = mapOf(
-            MeasurementType.PROGRESSION_FREE_SURVIVAL to TreatmentMeasurementCollection(
-                measurementsByTreatment = mapOf(
-                    treatment to Measurement(medianPfs, 100, (medianPfs / 2).toInt(), (medianPfs * 2).toInt())
-                ),
-                numPatients = 1000
-            ),
-            MeasurementType.TREATMENT_DECISION to TreatmentMeasurementCollection(
-                measurementsByTreatment = mapOf(
-                    treatment to Measurement(decision, 100)
-                ),
-                numPatients = 1000
+        val pfsMap = populationPfsAndDecision.map { (name, pfs, _) ->
+            name to Measurement(pfs, 100, (pfs / 2).toInt(), (pfs * 2).toInt(), pfs * 0.4)
+        }.toMap()
+
+        val decisionMap = populationPfsAndDecision.map { (name, _, decision) -> name to Measurement(decision, 100) }.toMap()
+
+        val treatmentAnalyses = listOf(
+            TreatmentAnalysis(
+                TreatmentGroup.fromTreatmentName(pembrolizumab.name)!!,
+                mapOf(
+                    MeasurementType.PROGRESSION_FREE_SURVIVAL to pfsMap,
+                    MeasurementType.TREATMENT_DECISION to decisionMap
+                )
             )
-        ),
-    )
+        )
+
+        val subPopulations = populationPfsAndDecision.map { (name, _, _) ->
+            SubPopulation(name, MeasurementType.entries.associateWith { 1000 })
+        }
+
+        return PersonalizedDataAnalysis(treatmentAnalyses, subPopulations)
+    }
 }

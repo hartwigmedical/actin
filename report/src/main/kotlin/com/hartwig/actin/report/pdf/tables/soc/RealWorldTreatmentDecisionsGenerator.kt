@@ -1,14 +1,15 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.personalization.datamodel.MeasurementType
-import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
+import com.hartwig.actin.personalization.datamodel.PersonalizedDataAnalysis
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
 class RealWorldTreatmentDecisionsGenerator(
-    private val analysis: List<SubPopulationAnalysis>,
+    private val analysis: PersonalizedDataAnalysis,
     private val eligibleTreatments: Set<String>,
     private val width: Float
 ) : TableGenerator {
@@ -22,9 +23,9 @@ class RealWorldTreatmentDecisionsGenerator(
             Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
-            val content = SOCPersonalizedTableContent.fromSubPopulationAnalyses(
+            val content = SOCPersonalizedTableContent.fromPersonalizedDataAnalysis(
                 analysis, eligibleTreatments, MeasurementType.TREATMENT_DECISION
-            ) { TableElement.regular(String.format("%.1f%%", 100.0 * it.value)) }
+            ) { TableElement.regular(Formats.singleDigitPercentage(it.value)) }
             content.check()
             content.render(width)
         }

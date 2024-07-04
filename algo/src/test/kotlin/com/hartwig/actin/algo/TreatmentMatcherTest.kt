@@ -41,7 +41,6 @@ class TreatmentMatcherTest {
         recommendationEngine,
         trials,
         CurrentDateProvider(),
-        treatmentDatabase,
         EvaluatedTreatmentAnnotator.create(evidenceEntries),
         EMC_TRIAL_SOURCE
     )
@@ -93,7 +92,6 @@ class TreatmentMatcherTest {
             recommendationEngine,
             trials,
             CurrentDateProvider(),
-            treatmentDatabase,
             EvaluatedTreatmentAnnotator.create(evidenceEntries),
             EMC_TRIAL_SOURCE
         )

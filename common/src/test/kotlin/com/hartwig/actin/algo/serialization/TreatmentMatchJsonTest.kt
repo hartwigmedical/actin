@@ -86,7 +86,7 @@ class TreatmentMatchJsonTest {
                 + "{\"relativeMetricId\":1,\"value\":16.0,\"type\":\"PRIMARY\",\"confidenceInterval\":{\"lowerLimit\":14.0,"
                 + "\"upperLimit\":18.8},\"pValue\":\"0.0002\"}]}]}],\"priorTherapies\":\"5-FU\",\"patientsPerRace\":null,"
                 + "\"patientsPerRegion\":null}],\"url\":\"http://www.ncbi.nlm.nih.gov/pubmed/12345678\"}]}],"
-                + "\"generalPfs\":{\"value\":136.5,\"numPatients\":98,\"min\":74,\"max\":281,\"iqr\":null}}],"
+                + "\"generalPfs\":{\"value\":136.5,\"numPatients\":98,\"min\":74,\"max\":281,\"iqr\":46.0}}],"
                 + "\"personalizedDataAnalysis\":null}")
         assertThat(toJson(match)).isEqualTo(expectedJson)
     }

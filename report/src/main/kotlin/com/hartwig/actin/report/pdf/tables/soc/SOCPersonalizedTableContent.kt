@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.personalization.datamodel.Measurement
 import com.hartwig.actin.personalization.datamodel.MeasurementType
-import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
+import com.hartwig.actin.personalization.datamodel.PersonalizedDataAnalysis
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Styles.BORDER
@@ -56,24 +56,23 @@ class SOCPersonalizedTableContent(val headers: List<String>, val rows: List<List
     }
 
     companion object {
-        fun fromSubPopulationAnalyses(
-            subPopulationAnalyses: List<SubPopulationAnalysis>,
+        fun fromPersonalizedDataAnalysis(
+            analysis: PersonalizedDataAnalysis,
             eligibleTreatments: Set<String>,
             measurementType: MeasurementType,
             createTableElement: (Measurement) -> TableElement
         ): SOCPersonalizedTableContent {
-            val headers = listOf("") + subPopulationAnalyses.map {
-                "${it.name} (n=${it.treatmentMeasurements[measurementType]?.numPatients})"
+            val headers = listOf("") + analysis.subPopulations.map { pop ->
+                pop.name + (pop.patientCountByMeasurementType[measurementType]?.let { " (n=$it)" } ?: "")
             }
-            val measurementsBySubPopulationName = subPopulationAnalyses.associate { (name, treatmentMeasurements) ->
-                name to treatmentMeasurements[measurementType]!!.measurementsByTreatment
+            val rows = analysis.treatmentAnalyses.filter { (treatmentGroup, _) ->
+                treatmentGroup.memberTreatmentNames.any(eligibleTreatments::contains)
             }
-            val rows = subPopulationAnalyses.first().treatments.filter { it.name.lowercase() in eligibleTreatments }
-                .map { treatment ->
-                    val rowValues = subPopulationAnalyses.map { subPopulation ->
-                        createTableElement(measurementsBySubPopulationName[subPopulation.name]!![treatment]!!)
+                .map { (treatmentGroup, measurementsByType) ->
+                    val rowValues = analysis.subPopulations.map { subPopulation ->
+                        createTableElement(measurementsByType[measurementType]!![subPopulation.name]!!)
                     }
-                    listOf(TableElement.regular(treatment.display())) + rowValues
+                    listOf(TableElement.regular(treatmentGroup.display)) + rowValues
                 }
             return SOCPersonalizedTableContent(headers, rows)
         }

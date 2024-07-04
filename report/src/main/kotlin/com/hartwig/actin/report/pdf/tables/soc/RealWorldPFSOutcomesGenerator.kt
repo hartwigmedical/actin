@@ -2,14 +2,15 @@ package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.personalization.datamodel.MIN_PATIENT_COUNT
 import com.hartwig.actin.personalization.datamodel.MeasurementType
-import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
+import com.hartwig.actin.personalization.datamodel.PersonalizedDataAnalysis
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
 class RealWorldPFSOutcomesGenerator(
-    private val analysis: List<SubPopulationAnalysis>,
+    private val analysis: PersonalizedDataAnalysis,
     private val eligibleTreatments: Set<String>,
     private val width: Float
 ) : TableGenerator {
@@ -23,7 +24,7 @@ class RealWorldPFSOutcomesGenerator(
             Tables.createSingleColWithWidth(width)
                 .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
         } else {
-            val content = SOCPersonalizedTableContent.fromSubPopulationAnalyses(
+            val content = SOCPersonalizedTableContent.fromPersonalizedDataAnalysis(
                 analysis, eligibleTreatments, MeasurementType.PROGRESSION_FREE_SURVIVAL
             ) {
                 when {
@@ -32,10 +33,8 @@ class RealWorldPFSOutcomesGenerator(
                     it.numPatients <= MIN_PATIENT_COUNT -> TableElement.regular("n≤$MIN_PATIENT_COUNT")
 
                     else -> with(it) {
-                        val iqrString = if (iqr != null && iqr != Double.NaN) {
-                            "IQR: $iqr, "
-                        } else ""
-                        TableElement(value.toString(), "\n(${iqrString}n=$numPatients)")
+                        val iqrString = iqr?.takeUnless(Double::isNaN)?.let { ", IQR: " + Formats.singleDigitNumber(it) } ?: ""
+                        TableElement(Formats.singleDigitNumber(value), "$iqrString\n(n=$numPatients)")
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.datamodel
 
-import com.hartwig.actin.personalization.datamodel.SubPopulationAnalysis
+import com.hartwig.actin.personalization.datamodel.PersonalizedDataAnalysis
 import java.time.LocalDate
 
 data class TreatmentMatch(
@@ -11,5 +11,5 @@ data class TreatmentMatch(
     val referenceDateIsLive: Boolean,
     val trialMatches: List<TrialMatch>,
     val standardOfCareMatches: List<AnnotatedTreatmentMatch>? = null,
-    val personalizedDataAnalysis: List<SubPopulationAnalysis>? = null
+    val personalizedDataAnalysis: PersonalizedDataAnalysis? = null
 )
