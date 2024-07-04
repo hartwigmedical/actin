@@ -69,32 +69,6 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withHasTumorMutationalLoadAndMicrosatelliteStatusAndVariants(
-        hasHighTumorMutationalLoad: Boolean?, microsatelliteUnstable: Boolean?, vararg variants: Variant
-    ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        val molecularRecord = base.copy(
-            drivers = base.drivers.copy(variants = setOf(*variants)),
-            characteristics = base.characteristics.copy(
-                isMicrosatelliteUnstable = microsatelliteUnstable, hasHighTumorMutationalLoad = hasHighTumorMutationalLoad
-            )
-        )
-        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularHistory = MolecularHistory(listOf(molecularRecord)))
-    }
-
-    fun withHasTumorMutationalLoadAndHomologousRecombinationStatusAndVariants(
-        hasHighTumorMutationalLoad: Boolean?, homologousRepairDeficient: Boolean?, vararg variants: Variant
-    ): PatientRecord {
-        val base = TestMolecularFactory.createMinimalTestMolecularRecord()
-        val molecularRecord = base.copy(
-            drivers = base.drivers.copy(variants = setOf(*variants)),
-            characteristics = base.characteristics.copy(
-                isHomologousRepairDeficient = homologousRepairDeficient, hasHighTumorMutationalLoad = hasHighTumorMutationalLoad
-            )
-        )
-        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularHistory = MolecularHistory(listOf(molecularRecord)))
-    }
-
     fun withHasTumorMutationalLoadAndVariantAndDisruption(
         hasHighTumorMutationalLoad: Boolean?,
         variant: Variant,

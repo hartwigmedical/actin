@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHasTumorMutationalLoadAndHomologousRecombinationStatusAndVariants
-import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHasTumorMutationalLoadAndMicrosatelliteStatusAndVariants
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHomologousRepairDeficiencyAndVariant
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withMicrosatelliteInstabilityAndVariant
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
@@ -172,80 +172,53 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun `Should fail when TSG variant has no high driver likelihood in high TML sample`() {
-        assertResultForMutationalLoadAndVariant(
-            EvaluationResult.FAIL, true, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
-        )
-    }
-
-    @Test
-    fun `Should fail when TSG variant is non biallelic and non high driver and not in MSI or HRD gene in low TML sample`() {
-        assertResultForMutationalLoadAndVariant(EvaluationResult.FAIL, false, nonHighDriverNonBiallelicMatchingVariant)
-    }
-
-    @Test
-    fun `Should fail when TSG variant is non biallelic and non high driver in MSI gene in high TML sample`() {
-        val msiGene = MolecularConstants.MSI_GENES.iterator().next()
-        val function = GeneIsInactivated(msiGene)
+    fun `Should fail when TSG variant is non biallelic and non high driver`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
-                    true,
-                    nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene)
-                )
-            )
+            function.evaluate(MolecularTestFactory.withVariant(nonHighDriverNonBiallelicMatchingVariant))
         )
     }
 
     @Test
-    fun `Should warn when TSG variant is non biallelic and non high driver in MSI gene in low TML MSI sample`() {
+    fun `Should warn when TSG variant is non biallelic and non high driver in MSI gene in MSI sample`() {
         val msiGene = MolecularConstants.MSI_GENES.iterator().next()
         val function = GeneIsInactivated(msiGene)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                withHasTumorMutationalLoadAndMicrosatelliteStatusAndVariants(
-                    false, true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene)
-                )
+                withMicrosatelliteInstabilityAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene))
             )
         )
     }
 
     @Test
-    fun `Should fail when TSG variant is non biallelic and non high driver in MSI gene in low TML MS-Stable sample`() {
+    fun `Should fail when TSG variant is non biallelic and non high driver in MSI gene in MS-Stable sample`() {
         val msiGene = MolecularConstants.MSI_GENES.iterator().next()
         val function = GeneIsInactivated(msiGene)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                withHasTumorMutationalLoadAndMicrosatelliteStatusAndVariants(
-                    false, false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene)
-                )
+                withMicrosatelliteInstabilityAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene))
             )
         )
     }
 
     @Test
-    fun `Should warn when TSG variant is non biallelic and non high driver in HRD gene in low TML HRD sample`() {
+    fun `Should warn when TSG variant is non biallelic and non high driver in HRD gene in HRD sample`() {
         val hrdGene = MolecularConstants.HRD_GENES.iterator().next()
         val function = GeneIsInactivated(hrdGene)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
-                withHasTumorMutationalLoadAndHomologousRecombinationStatusAndVariants(
-                    false, true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene)
-                )
+                withHomologousRepairDeficiencyAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
             )
         )
     }
 
     @Test
-    fun `Should fail when TSG variant is non biallelic and non high driver in HRD gene in low TML HR-Proficient sample`() {
+    fun `Should fail when TSG variant is non biallelic and non high driver in HRD gene in HR-Proficient sample`() {
         val hrdGene = MolecularConstants.HRD_GENES.iterator().next()
         val function = GeneIsInactivated(hrdGene)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                withHasTumorMutationalLoadAndHomologousRecombinationStatusAndVariants(
-                    false, false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene)
-                )
+                withHomologousRepairDeficiencyAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
             )
         )
     }

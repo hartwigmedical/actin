@@ -46,7 +46,7 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
         val inactivationSubclonalVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
-        val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
+
         for (variant in drivers.variants) {
             if (variant.gene == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
                 if (!variant.isReportable) {
@@ -77,15 +77,13 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
                         } else {
                             inactivationEventsThatQualify.add(variant.event)
                         }
-                    } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                        if (extendedVariant.isBiallelic) {
-                            reportableNonDriverBiallelicVariantsOther.add(variant.event)
-                        } else if (
-                            (variant.gene in MolecularConstants.HRD_GENES && molecular.characteristics.isHomologousRepairDeficient == true)
-                            || (variant.gene in MolecularConstants.MSI_GENES && molecular.characteristics.isMicrosatelliteUnstable == true)
+                    } else if (extendedVariant.isBiallelic) {
+                        reportableNonDriverBiallelicVariantsOther.add(variant.event)
+                    } else if (
+                        (variant.gene in MolecularConstants.HRD_GENES && molecular.characteristics.isHomologousRepairDeficient == true)
+                        || (variant.gene in MolecularConstants.MSI_GENES && molecular.characteristics.isMicrosatelliteUnstable == true)
                         ) {
-                            reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
-                        }
+                        reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                     }
                 }
             }
