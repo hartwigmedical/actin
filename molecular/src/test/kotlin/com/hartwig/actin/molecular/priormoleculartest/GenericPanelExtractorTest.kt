@@ -21,7 +21,6 @@ class GenericPanelExtractorTest {
         )
         val molecularTests = extractor.extract(genericPanelTests)
         assertThat(molecularTests).hasSize(2)
-
     }
 
     @Test

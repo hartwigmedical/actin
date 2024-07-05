@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtractio
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 
 class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
+
     override fun extract(input: List<PriorMolecularTest>): List<PanelExtraction> {
         return input.groupBy { it.test }
             .flatMap { (test, results) -> groupedByTestDate(results, classify(test)) }
@@ -33,7 +34,8 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtrac
                 }
                 val variants = variantRecords.map { record -> parseVariant(record) }
 
-                val (geneWithNegativeResultsRecords, unknownRecords) = nonVariantRecordsGene.partition { it.scoreText?.lowercase() == "negative" }
+                val (geneWithNegativeResultsRecords, unknownRecords) =
+                    nonVariantRecordsGene.partition { it.scoreText?.lowercase() == "negative" }
                 val geneWithNegativeResults = geneWithNegativeResultsRecords.mapNotNull { it.item }.toSet()
 
                 if (unknownRecords.isNotEmpty()) {
@@ -65,7 +67,9 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtrac
         return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
             PanelVariantExtraction(gene = priorMolecularTest.item!!, hgvsCodingImpact = priorMolecularTest.measure!!)
         } else {
-            throw IllegalArgumentException("Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}")
+            throw IllegalArgumentException(
+                "Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}"
+            )
         }
     }
 }

@@ -35,7 +35,8 @@ class ArcherExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> 
                 }
 
                 val variants =
-                    groupedByCategory[ArcherMutationCategory.SMALL_VARIANT]?.map { PanelVariantExtraction(it.item!!, it.measure!!) } ?: emptyList()
+                    groupedByCategory[ArcherMutationCategory.SMALL_VARIANT]?.map { PanelVariantExtraction(it.item!!, it.measure!!) }
+                        ?: emptyList()
                 val fusions = groupedByCategory[ArcherMutationCategory.FUSION]?.mapNotNull {
                     FUSION_REGEX.find(it.measure!!)?.let { matchResult ->
                         ArcherFusionExtraction(matchResult.groupValues[1])
