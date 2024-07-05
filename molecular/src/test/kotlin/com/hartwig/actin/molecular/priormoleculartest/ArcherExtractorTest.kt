@@ -9,8 +9,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
-
 class ArcherExtractorTest {
+
     private val interpreter = ArcherExtractor()
 
     @Test

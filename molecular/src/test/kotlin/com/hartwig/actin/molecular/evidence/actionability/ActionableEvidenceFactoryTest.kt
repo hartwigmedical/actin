@@ -119,7 +119,7 @@ class ActionableEvidenceFactoryTest {
     }
 
     @Test
-    fun ignoresEvidenceWithNoBenefit() {
+    fun `Should ignore evidence with no benefit`() {
         val match = ActionabilityMatch(
             onLabelEvents = listOf(
                 evidence("A on-label no-benefit", EvidenceLevel.A, EvidenceDirection.NO_BENEFIT)

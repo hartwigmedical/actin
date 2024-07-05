@@ -13,6 +13,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+private val actionableRange: ImmutableActionableRange = TestServeActionabilityFactory.rangeBuilder()
+    .gene("gene 1")
+    .chromosome("X")
+    .start(4)
+    .end(8)
+    .applicableMutationType(MutationType.ANY)
+    .build()
+
 class VariantEvidenceTest {
 
     @Test
@@ -42,41 +50,17 @@ class VariantEvidenceTest {
     }
 
     @Test
-    fun shouldDetermineEvidenceForCodons() {
-        assertEvidenceDeterminedForRange(ImmutableActionableEvents.builder().addCodons(ACTIONABLE_RANGE).build())
+    fun `Should determine evidence for codons`() {
+        assertEvidenceDeterminedForRange(ImmutableActionableEvents.builder().addCodons(actionableRange).build())
     }
 
     @Test
-    fun shouldDetermineEvidenceForExons() {
-        assertEvidenceDeterminedForRange(ImmutableActionableEvents.builder().addExons(ACTIONABLE_RANGE).build())
-    }
-
-    private fun assertEvidenceDeterminedForRange(actionable: ActionableEvents) {
-        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
-
-        val variantGene1 = VARIANT_CRITERIA.copy(
-            gene = "gene 1",
-            chromosome = "X",
-            position = 6,
-            isReportable = true,
-            codingEffect = CodingEffect.MISSENSE
-        )
-        val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertEquals(1, matchesVariant1.size.toLong())
-        assertTrue(matchesVariant1.contains(ACTIONABLE_RANGE))
-
-        val otherVariantGene1 = VARIANT_CRITERIA.copy(
-            gene = "gene 1",
-            chromosome = "X",
-            position = 2,
-            isReportable = true,
-            codingEffect = CodingEffect.MISSENSE
-        )
-        assertTrue(variantEvidence.findMatches(otherVariantGene1).isEmpty())
+    fun `Should determine evidence for exons`() {
+        assertEvidenceDeterminedForRange(ImmutableActionableEvents.builder().addExons(actionableRange).build())
     }
 
     @Test
-    fun shouldDetermineEvidenceForGenes() {
+    fun `Should determine evidence for genes`() {
         val gene1: ActionableGene = TestServeActionabilityFactory.geneBuilder().gene("gene 1").event(GeneEvent.ANY_MUTATION).build()
         val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.ACTIVATION).build()
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().gene("gene 2").event(GeneEvent.AMPLIFICATION).build()
@@ -102,13 +86,27 @@ class VariantEvidenceTest {
         assertTrue(matchesVariant2.contains(gene2))
     }
 
-    companion object {
-        val ACTIONABLE_RANGE: ImmutableActionableRange = TestServeActionabilityFactory.rangeBuilder()
-            .gene("gene 1")
-            .chromosome("X")
-            .start(4)
-            .end(8)
-            .applicableMutationType(MutationType.ANY)
-            .build()
+    private fun assertEvidenceDeterminedForRange(actionable: ActionableEvents) {
+        val variantEvidence: VariantEvidence = VariantEvidence.create(actionable)
+
+        val variantGene1 = VARIANT_CRITERIA.copy(
+            gene = "gene 1",
+            chromosome = "X",
+            position = 6,
+            isReportable = true,
+            codingEffect = CodingEffect.MISSENSE
+        )
+        val matchesVariant1 = variantEvidence.findMatches(variantGene1)
+        assertEquals(1, matchesVariant1.size.toLong())
+        assertTrue(matchesVariant1.contains(actionableRange))
+
+        val otherVariantGene1 = VARIANT_CRITERIA.copy(
+            gene = "gene 1",
+            chromosome = "X",
+            position = 2,
+            isReportable = true,
+            codingEffect = CodingEffect.MISSENSE
+        )
+        assertTrue(variantEvidence.findMatches(otherVariantGene1).isEmpty())
     }
 }

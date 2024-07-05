@@ -13,8 +13,9 @@ import org.junit.Test
 class VirusEvidenceTest {
 
     @Test
-    fun canDetermineEvidenceForHPV() {
-        val hpv: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.HPV_POSITIVE).build()
+    fun `Should determine evidence for HPV`() {
+        val hpv: ActionableCharacteristic =
+            TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.HPV_POSITIVE).build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(hpv).build()
         val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
 
@@ -34,8 +35,9 @@ class VirusEvidenceTest {
     }
 
     @Test
-    fun canDetermineEvidenceForEBV() {
-        val ebv: ActionableCharacteristic = TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.EBV_POSITIVE).build()
+    fun `Should determine evidence for EBV`() {
+        val ebv: ActionableCharacteristic =
+            TestServeActionabilityFactory.characteristicBuilder().type(TumorCharacteristicType.EBV_POSITIVE).build()
         val actionable: ActionableEvents = ImmutableActionableEvents.builder().addCharacteristics(ebv).build()
         val virusEvidence: VirusEvidence = VirusEvidence.create(actionable)
 
