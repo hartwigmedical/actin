@@ -4,6 +4,7 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.HomozygousDisruptionComparator
 import com.hartwig.hmftools.datamodel.linx.LinxRecord

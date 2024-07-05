@@ -217,10 +217,5 @@ class VariantExtractorTest {
 
     companion object {
         private const val EPSILON = 1.0E-10
-
-        private fun withDriverLikelihood(driverLikelihood: Double): PurpleDriver {
-            return TestPurpleFactory.driverBuilder().driverLikelihood(driverLikelihood).build()
-        }
-
     }
 }
