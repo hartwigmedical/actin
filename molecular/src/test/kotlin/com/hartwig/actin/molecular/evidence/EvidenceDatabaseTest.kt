@@ -1,13 +1,14 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.molecular.TestMolecularFactory
+import com.hartwig.actin.molecular.TestMolecularFactory.minimalCopyNumber
+import com.hartwig.actin.molecular.TestMolecularFactory.minimalDisruption
+import com.hartwig.actin.molecular.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalDisruption
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
@@ -20,7 +21,7 @@ class EvidenceDatabaseTest {
 
     @Test
     fun canMatchEvidenceForSignatures() {
-        // TODO (KZP): review EvidenceDatabase api to see if reasonable to remove nullability, then clean up !!'s here
+        // TODO (KZ): review EvidenceDatabase api to see if reasonable to remove nullability, then clean up !!'s here
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
         assertNull(database.evidenceForMicrosatelliteStatus(null))
         assertEquals(0, evidenceCount(database.evidenceForMicrosatelliteStatus(false)!!).toLong())
@@ -80,9 +81,7 @@ class EvidenceDatabaseTest {
         assertEquals(1, evidenceCount(database.evidenceForVirus(virus)).toLong())
     }
 
-    companion object {
-        private fun evidenceCount(match: ActionabilityMatch): Int {
-            return match.onLabelEvents.size + match.offLabelEvents.size
-        }
+    private fun evidenceCount(match: ActionabilityMatch): Int {
+        return match.onLabelEvents.size + match.offLabelEvents.size
     }
 }

@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
 import com.google.common.collect.Lists
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalHomozygousDisruption
+import com.hartwig.actin.molecular.TestMolecularFactory.minimalHomozygousDisruption
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
