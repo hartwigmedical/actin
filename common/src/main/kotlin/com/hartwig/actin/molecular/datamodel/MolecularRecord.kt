@@ -21,7 +21,7 @@ data class MolecularRecord(
     override val characteristics: MolecularCharacteristics,
     override val evidenceSource: String,
 ) : MolecularTest {
-    override fun testsGene(gene: String) = true
+    override fun testsGene(gene: String) = if (type == ExperimentType.TARGETED) drivers.copyNumbers.any { gene == it.gene } else true
 
     fun hasSufficientQualityAndPurity(): Boolean {
         return hasSufficientQuality && hasSufficientPurity

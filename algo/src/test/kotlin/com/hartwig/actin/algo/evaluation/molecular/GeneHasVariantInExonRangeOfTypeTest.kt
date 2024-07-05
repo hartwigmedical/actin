@@ -285,18 +285,6 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should pass but currently undetermined for panel variant on same gene`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON + 1, null)
-        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-            molecularHistory = MolecularHistory(listOf(FREETEXT_PANEL_WITH_VARIANT))
-        )
-
-        val evaluation = function.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedSpecificMessages.first()).contains("but unable to determine exon impact")
-    }
-
-    @Test
     fun `Should be undetermined for gene not tested in panel data`() {
         val function = GeneHasVariantInExonRangeOfType("ANOTHER_GENE", MATCHING_EXON, MATCHING_EXON + 1, null)
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(

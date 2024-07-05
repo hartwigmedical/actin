@@ -49,7 +49,7 @@ data class ProvidedTumorDetail(
     @JsonPropertyDescription("Tumor localization details (eg. Lung)") val tumorLocation: String,
     @JsonPropertyDescription("Tumor type details (eg. Adenocarcinoma)") val tumorType: String,
     @JsonPropertyDescription("Tumor grade/differentiation details (eg. Poorly differentiated)") val tumorGradeDifferentiation: String?,
-    @JsonPropertyDescription("Tumor stage (eg. 4, IV)") val tumorStage: String? = null,
+    @JsonPropertyDescription("Tumor stage (roman numeral, eg. IV)") val tumorStage: String? = null,
     @JsonPropertyDescription("Date associated with tumor stage diagnosis") val tumorStageDate: LocalDate? = null,
     @JsonPropertyDescription("Has measurable disease") val measurableDisease: Boolean? = null,
     val measurableDiseaseDate: LocalDate? = null,

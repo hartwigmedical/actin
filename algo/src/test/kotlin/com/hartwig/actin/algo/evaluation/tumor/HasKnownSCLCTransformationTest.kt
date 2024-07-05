@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.doid.DoidConstants.SMALL_CELL_LUNG_CANCER_DOIDS
@@ -19,6 +20,14 @@ class HasKnownSCLCTransformationTest {
     private val function = HasKnownSCLCTransformation(doidModel)
 
     @Test
+
+    fun `Should fail if tumor type not NSCLC`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LIVER_CANCER_DOID))
+        )
+    }
+
+    @Test
     fun `Should fail if tumor doids and molecular profile do not indicate a possible small cell transformation`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
@@ -26,10 +35,37 @@ class HasKnownSCLCTransformationTest {
     }
 
     @Test
-    fun `Should resolve to undetermined if tumor has small cell doid configured`() {
+    fun `Should fail if tumor has small cell doid but no NSCLC doid`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withDoids(SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next()))
+        )
+    }
+
+    @Test
+    fun `Should resolve to undetermined if tumor has both NSCLC and small cell doid configured`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withDoids(SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next()))
+            function.evaluate(TumorTestFactory.withDoids(
+                SMALL_CELL_LUNG_CANCER_DOIDS.iterator().next(),
+                DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+            )
+        )
+    }
+
+    @Test
+    fun `Should resolve to undetermined if tumor is NSCLC and small cell or mixed in tumor extra details`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withDoidAndDetails(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID, "small cell"))
+        )
+    }
+
+    @Test
+    fun `Should fail if tumor is NSCLC and non-small cell in tumor extra details`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withDoidAndDetails(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID, "non-small cell"))
         )
     }
 
@@ -42,7 +78,12 @@ class HasKnownSCLCTransformationTest {
             proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
             type = CopyNumberType.LOSS
         )
-        val evaluation = function.evaluate(MolecularTestFactory.withCopyNumber(copyNumber))
+        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
+        val record = base.copy(
+            tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            molecularHistory = MolecularTestFactory.withCopyNumber(copyNumber).molecularHistory
+        )
+        val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         Assertions.assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
             "Undetermined small cell transformation (RB1 loss detected)"
