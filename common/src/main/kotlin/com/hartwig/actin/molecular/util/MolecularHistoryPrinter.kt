@@ -1,9 +1,8 @@
 package com.hartwig.actin.molecular.util
 
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.util.DatamodelPrinter
 
-class MolecularHistoryPrinter(private val printer: DatamodelPrinter) {
+class MolecularHistoryPrinter() {
 
     fun print(molecularHistory: MolecularHistory) {
         // TODO (kz): print all records in history
@@ -12,7 +11,7 @@ class MolecularHistoryPrinter(private val printer: DatamodelPrinter) {
 
     companion object {
         fun printRecord(molecularHistory: MolecularHistory) {
-            MolecularHistoryPrinter(DatamodelPrinter.withDefaultIndentation()).print(molecularHistory)
+            MolecularHistoryPrinter().print(molecularHistory)
         }
     }
 }
