@@ -14,7 +14,7 @@ import org.junit.Test
 class CopyNumberEvidenceTest {
 
     @Test
-    fun canDetermineCopyNumberEvidence() {
+    fun `Should determine copy number evidence`() {
         val gene1: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).gene("gene 1").build()
         val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.DELETION).gene("gene 2").build()
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()

@@ -168,22 +168,20 @@ class ActionableEvidenceFactoryTest {
         assertThat(filtered.suspectResistantTreatments).contains("suspect resistant")
     }
 
-    companion object {
-        private fun evidence(treatment: String, level: EvidenceLevel, direction: EvidenceDirection): ActionableEvent {
-            return TestServeActionabilityFactory.geneBuilder()
-                .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
-                .source(ActionabilityConstants.EVIDENCE_SOURCE)
-                .level(level)
-                .direction(direction)
-                .build()
-        }
+    private fun evidence(treatment: String, level: EvidenceLevel, direction: EvidenceDirection): ActionableEvent {
+        return TestServeActionabilityFactory.geneBuilder()
+            .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
+            .source(ActionabilityConstants.EVIDENCE_SOURCE)
+            .level(level)
+            .direction(direction)
+            .build()
+    }
 
-        private fun trial(treatment: String, direction: EvidenceDirection): ActionableEvent {
-            return TestServeActionabilityFactory.geneBuilder()
-                .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
-                .source(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
-                .direction(direction)
-                .build()
-        }
+    private fun trial(treatment: String, direction: EvidenceDirection): ActionableEvent {
+        return TestServeActionabilityFactory.geneBuilder()
+            .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
+            .source(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
+            .direction(direction)
+            .build()
     }
 }

@@ -20,7 +20,7 @@ import org.junit.Test
 class EvidenceDatabaseTest {
 
     @Test
-    fun canMatchEvidenceForSignatures() {
+    fun `Should match evidence to signatures`() {
         // TODO (KZ): review EvidenceDatabase api to see if reasonable to remove nullability, then clean up !!'s here
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
         assertNull(database.evidenceForMicrosatelliteStatus(null))
@@ -38,7 +38,7 @@ class EvidenceDatabaseTest {
     }
 
     @Test
-    fun canMatchEvidenceForDrivers() {
+    fun `Should match evidence to drivers`() {
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
         // Assume default objects match with default SERVE objects
         val variant = VariantMatchCriteria(

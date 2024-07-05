@@ -8,7 +8,7 @@ import org.junit.Test
 class OrangeJsonTest {
 
     @Test
-    fun canReadRealOrangeRecordJson() {
+    fun `Should be able to deserialize real orange json`() {
         assertNotNull(OrangeJson.getInstance().read(REAL_ORANGE_JSON))
     }
 

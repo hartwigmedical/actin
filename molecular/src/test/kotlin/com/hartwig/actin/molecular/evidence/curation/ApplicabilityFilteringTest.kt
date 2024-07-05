@@ -9,7 +9,7 @@ import org.junit.Test
 class ApplicabilityFilteringTest {
 
     @Test
-    fun canFilterHotspots() {
+    fun `Should filter hotspots on non-applicable gene`() {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertFalse(
             ApplicabilityFiltering.isApplicable(
@@ -20,7 +20,7 @@ class ApplicabilityFilteringTest {
     }
 
     @Test
-    fun canFilterRanges() {
+    fun `Should filter ranges on non-applicable gene`() {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertFalse(
             ApplicabilityFiltering.isApplicable(
@@ -31,7 +31,7 @@ class ApplicabilityFilteringTest {
     }
 
     @Test
-    fun canFilterGenes() {
+    fun `Should filter non-applicable genes`() {
         val nonApplicableGene = TestApplicabilityFilteringUtil.nonApplicableGene()
         assertFalse(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.geneBuilder().gene(nonApplicableGene).build()))
         assertTrue(ApplicabilityFiltering.isApplicable(TestServeActionabilityFactory.geneBuilder().gene("other").build()))

@@ -5,8 +5,8 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 
 class GenericPanelExtractorTest {
@@ -76,7 +76,7 @@ class GenericPanelExtractorTest {
             impliesPotentialIndeterminateStatus = false
         )
         val priorMolecularTests = listOf(record)
-        Assertions.assertThatThrownBy {
+        assertThatThrownBy {
             extractor.extract(priorMolecularTests)
         }.isInstanceOf(IllegalArgumentException::class.java)
     }

@@ -19,9 +19,6 @@ import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
 import com.hartwig.serve.datamodel.range.KnownExon
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Test
 
 class KnownEventResolverTest {
@@ -58,23 +55,23 @@ class KnownEventResolverTest {
             codingEffect = CodingEffect.MISSENSE
         )
 
-        assertEquals(hotspot, resolver.resolveForVariant(hotspotMatch))
+        assertThat(resolver.resolveForVariant(hotspotMatch)).isEqualTo(hotspot)
 
         val codonMatch = hotspotMatch.copy(position = 9)
-        assertEquals(codon, resolver.resolveForVariant(codonMatch))
+        assertThat(resolver.resolveForVariant(codonMatch)).isEqualTo(codon)
 
         val exonMatch = hotspotMatch.copy(position = 6)
-        assertEquals(exon, resolver.resolveForVariant(exonMatch))
+        assertThat(resolver.resolveForVariant(exonMatch)).isEqualTo(exon)
 
         val geneMatch = hotspotMatch.copy(position = 1)
-        assertNotNull(resolver.resolveForVariant(geneMatch))
+        assertThat(resolver.resolveForVariant(geneMatch)).isNotNull
 
         val wrongGene = hotspotMatch.copy(gene = "other")
         assertThat(resolver.resolveForVariant(wrongGene)).isNull()
     }
 
     @Test
-    fun canResolveKnownEventsForGeneMutations() {
+    fun `Should resolve known events for gene mutations`() {
         val knownAmp: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
         val knownDel: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build()
         val knownGene1: KnownGene = knownGeneWithName("gene 1")
@@ -83,49 +80,47 @@ class KnownEventResolverTest {
         val resolver = KnownEventResolver(known, known.genes())
 
         val ampGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.FULL_GAIN)
-        assertEquals(knownAmp, resolver.resolveForCopyNumber(ampGene1))
+        assertThat(resolver.resolveForCopyNumber(ampGene1)).isEqualTo(knownAmp)
 
         val ampGene2 = ampGene1.copy(gene = "gene 2")
-        assertNotNull(resolver.resolveForCopyNumber(ampGene2))
+        assertThat(resolver.resolveForCopyNumber(ampGene2)).isNotNull
 
         val ampGene3 = ampGene1.copy(gene = "gene 3")
-        assertNull(resolver.resolveForCopyNumber(ampGene3))
+        assertThat(resolver.resolveForCopyNumber(ampGene3)).isNull()
 
         val homDisruptionGene1 = minimalHomozygousDisruption().copy(gene = "gene 1")
-        assertEquals(knownDel, resolver.resolveForHomozygousDisruption(homDisruptionGene1))
+        assertThat(resolver.resolveForHomozygousDisruption(homDisruptionGene1)).isEqualTo(knownDel)
 
         val homDisruptionGene2 = homDisruptionGene1.copy(gene = "gene 2")
-        assertNotNull(resolver.resolveForHomozygousDisruption(homDisruptionGene2))
+        assertThat(resolver.resolveForHomozygousDisruption(homDisruptionGene2)).isNotNull
 
         val homDisruptionGene3 = homDisruptionGene1.copy(gene = "gene 3")
-        assertNull(resolver.resolveForHomozygousDisruption(homDisruptionGene3))
+        assertThat(resolver.resolveForHomozygousDisruption(homDisruptionGene3)).isNull()
 
         val disruptionGene1 = minimalDisruption().copy(gene = "gene 1")
-        assertNotNull(resolver.resolveForBreakend(disruptionGene1))
+        assertThat(resolver.resolveForBreakend(disruptionGene1)).isNotNull
 
         val disruptionGene2 = disruptionGene1.copy(gene = "gene 2")
-        assertNotNull(resolver.resolveForBreakend(disruptionGene2))
+        assertThat(resolver.resolveForBreakend(disruptionGene2)).isNotNull
 
         val disruptionGene3 = disruptionGene1.copy(gene = "gene 3")
-        assertNull(resolver.resolveForBreakend(disruptionGene3))
+        assertThat(resolver.resolveForBreakend(disruptionGene3)).isNull()
     }
 
     @Test
-    fun canResolveKnownEventsForFusions() {
+    fun `Should resolve known events for fusions`() {
         val fusion: KnownFusion = TestServeKnownFactory.fusionBuilder().geneUp("up").geneDown("down").build()
         val known: KnownEvents = ImmutableKnownEvents.builder().addFusions(fusion).build()
         val resolver = KnownEventResolver(known, known.genes())
 
         val fusionMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down")
-        assertEquals(fusion, resolver.resolveForFusion(fusionMatch))
+        assertThat(resolver.resolveForFusion(fusionMatch)).isEqualTo(fusion)
 
         val fusionMismatch = FUSION_CRITERIA.copy(geneStart = "down", geneEnd = "up")
-        assertNull(resolver.resolveForFusion(fusionMismatch))
+        assertThat(resolver.resolveForFusion(fusionMismatch)).isNull()
     }
 
-    companion object {
-        private fun knownGeneWithName(name: String?): ImmutableKnownGene {
-            return TestServeKnownFactory.geneBuilder().gene(name!!).build()
-        }
+    private fun knownGeneWithName(name: String?): ImmutableKnownGene {
+        return TestServeKnownFactory.geneBuilder().gene(name!!).build()
     }
 }

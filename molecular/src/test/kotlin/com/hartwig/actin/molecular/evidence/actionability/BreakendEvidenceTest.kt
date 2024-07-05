@@ -6,14 +6,13 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class BreakendEvidenceTest {
 
     @Test
-    fun canDetermineBreakendEvidence() {
+    fun `Should determine breakend evidence`() {
         val gene1: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).gene("gene 1").build()
         val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.AMPLIFICATION).gene("gene 2").build()
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()
@@ -22,15 +21,15 @@ class BreakendEvidenceTest {
 
         val disruption = minimalDisruption().copy(gene = "gene 1", isReportable = true)
         val evidencesMatch = breakendEvidence.findMatches(disruption)
-        assertEquals(1, evidencesMatch.size.toLong())
-        assertTrue(evidencesMatch.contains(gene1))
+        assertThat(evidencesMatch.size).isEqualTo(1)
+        assertThat(evidencesMatch).contains(gene1)
 
         // Not reported
         val notReportedDisruption = disruption.copy(isReportable = false)
-        assertTrue(breakendEvidence.findMatches(notReportedDisruption).isEmpty())
+        assertThat(breakendEvidence.findMatches(notReportedDisruption)).isEmpty()
 
         // Wrong event
         val wrongEventDisruption = disruption.copy(gene = "gene 2")
-        assertTrue(breakendEvidence.findMatches(wrongEventDisruption).isEmpty())
+        assertThat(breakendEvidence.findMatches(wrongEventDisruption)).isEmpty()
     }
 }

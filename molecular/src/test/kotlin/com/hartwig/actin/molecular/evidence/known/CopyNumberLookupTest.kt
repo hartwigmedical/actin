@@ -13,7 +13,7 @@ import org.junit.Test
 class CopyNumberLookupTest {
 
     @Test
-    fun canLookupCopyNumbers() {
+    fun `Should lookup copy numbers`() {
         val amp: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
         val del: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 2").event(GeneEvent.DELETION).build()
         val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
@@ -32,7 +32,7 @@ class CopyNumberLookupTest {
     }
 
     @Test
-    fun canLookupHomozygousDisruptions() {
+    fun `Should lookup homozygous disruptions`() {
         val amp: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
         val del: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build()
         val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
