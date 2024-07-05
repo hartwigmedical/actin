@@ -1,8 +1,12 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
+import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import java.time.LocalDate
 
 internal object LabEvaluation {
     val REF_LIMIT_UP_OVERRIDES = mapOf(LabMeasurement.INTERNATIONAL_NORMALIZED_RATIO.code to 1.1)
@@ -37,6 +41,32 @@ internal object LabEvaluation {
         value: Double, comparator: String?, maxValue: Double
     ): LabEvaluationResult {
         return evaluateVersusValueWithMargin(value, comparator, maxValue, false, LAB_VALUE_POSITIVE_MARGIN_OF_ERROR)
+    }
+
+    fun isValid(value: LabValue?, measurement: LabMeasurement, minValidDate: LocalDate): Boolean {
+        return value != null && value.unit == measurement.defaultUnit && !value.date.isBefore(minValidDate)
+    }
+
+    fun evaluateInvalidLabValue(measurement: LabMeasurement, mostRecent: LabValue?, minValidDate: LocalDate) : Evaluation {
+        return when {
+            mostRecent == null -> {
+                EvaluationFactory.recoverableUndeterminedNoGeneral("No measurement found for ${measurement.display()}")
+            }
+
+            mostRecent.unit != measurement.defaultUnit -> {
+                EvaluationFactory.recoverableUndeterminedNoGeneral(
+                    "Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit}"
+                )
+            }
+
+            mostRecent.date.isBefore(minValidDate) -> {
+                EvaluationFactory.recoverableUndeterminedNoGeneral("Most recent measurement too old for ${measurement.display()}")
+            }
+
+            else -> {
+                Evaluation(result = EvaluationResult.UNDETERMINED, recoverable = true)
+            }
+        }
     }
 
     private fun evaluateVersusValueWithMargin(
