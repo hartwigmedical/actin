@@ -19,7 +19,7 @@ class LabMeasurementEvaluator(
         val interpretation = LabInterpreter.interpret(record.labValues)
         val mostRecent = interpretation.mostRecentValue(measurement)
         if (!LabEvaluation.isValid(mostRecent, measurement, minValidDate)) {
-            evaluateInvalidLabValue(measurement, mostRecent, minValidDate)
+            return evaluateInvalidLabValue(measurement, mostRecent, minValidDate)
         }
         
         val evaluation = function.evaluate(record, measurement, mostRecent!!)
