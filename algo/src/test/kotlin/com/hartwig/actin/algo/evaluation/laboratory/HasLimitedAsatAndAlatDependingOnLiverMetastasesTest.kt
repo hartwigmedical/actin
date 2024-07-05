@@ -45,7 +45,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastasesTest {
         val labValues = listOf(ASAT_1_ULN, ALAT_6_ULN)
         evaluateForAllLiverLesionStates(EvaluationResult.FAIL, labValues)
         assertThat(function.evaluate(recordWithLiverLesions.copy(labValues = labValues)).failSpecificMessages)
-            .containsExactly("ALAT 600,0 exceeds maximum of 5.0*ULN (5.0*100.0)")
+            .containsExactly("ALAT 600.0 exceeds maximum of 5.0*ULN (5.0*100.0)")
     }
 
     @Test
@@ -54,7 +54,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastasesTest {
         val evaluation = function.evaluate(recordWithUnknownLiverLesions.copy(labValues = labValues))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedSpecificMessages)
-            .containsExactly("ALAT 300,0 exceeds maximum of 2.0*ULN (2.0*100.0) if no liver metastases present (liver lesion data missing)")
+            .containsExactly("ALAT 300.0 exceeds maximum of 2.0*ULN (2.0*100.0) if no liver metastases present (liver lesion data missing)")
     }
 
     @Test
@@ -63,7 +63,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastasesTest {
         val evaluation = function.evaluate(recordWithUnknownLiverLesions.copy(labValues = labValues))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedSpecificMessages)
-            .containsExactly("ALAT 210,0 exceeds maximum of 2.0*ULN (2.0*100.0)")
+            .containsExactly("ALAT 210.0 exceeds maximum of 2.0*ULN (2.0*100.0)")
     }
 
     @Test

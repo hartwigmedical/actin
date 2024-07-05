@@ -16,6 +16,7 @@ import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.clinical.interpretation.LabMeasurement.ASPARTATE_AMINOTRANSFERASE
 import com.hartwig.actin.clinical.interpretation.LabMeasurement.ALANINE_AMINOTRANSFERASE
 import java.time.LocalDate
+import java.util.Locale
 
 class HasLimitedAsatAndAlatDependingOnLiverMetastases(
     private val maxULNWithoutLiverMetastases: Double,
@@ -112,7 +113,6 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
     }
 
     private fun createLabValueString(measurement: LabMeasurement, mostRecent: LabValue?): String {
-        return "${measurement.display().replaceFirstChar { it.uppercase() }} ${String.format("%.1f", mostRecent?.value)}"
+        return "${measurement.display().replaceFirstChar { it.uppercase() }} ${String.format(Locale.ENGLISH, "%.1f", mostRecent?.value)}"
     }
-
 }
