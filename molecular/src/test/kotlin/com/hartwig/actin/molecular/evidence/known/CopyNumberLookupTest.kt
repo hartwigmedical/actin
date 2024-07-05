@@ -6,8 +6,7 @@ import com.hartwig.actin.molecular.TestMolecularFactory.minimalHomozygousDisrupt
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.gene.KnownCopyNumber
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CopyNumberLookupTest {
@@ -19,16 +18,16 @@ class CopyNumberLookupTest {
         val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
 
         val ampOnGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.FULL_GAIN)
-        assertEquals(amp, CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene1))
+        assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene1)).isEqualTo(amp)
 
         val ampOnGene2 = minimalCopyNumber().copy(gene = "gene 2", type = CopyNumberType.FULL_GAIN)
-        assertNull(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene2))
+        assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene2)).isNull()
 
         val delOnGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.LOSS)
-        assertNull(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene1))
+        assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene1)).isNull()
 
         val delOnGene2 = minimalCopyNumber().copy(gene = "gene 2", type = CopyNumberType.LOSS)
-        assertEquals(del, CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene2))
+        assertThat(CopyNumberLookup.findForCopyNumber(knownCopyNumbers, delOnGene2)).isEqualTo(del)
     }
 
     @Test
@@ -39,7 +38,7 @@ class CopyNumberLookupTest {
 
         val homDisruptionGene1 = minimalHomozygousDisruption().copy(gene = "gene 1")
         val homDisruptionGene2 = minimalHomozygousDisruption().copy(gene = "gene 2")
-        assertEquals(del, CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene1))
-        assertNull(CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene2))
+        assertThat(CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene1)).isEqualTo(del)
+        assertThat(CopyNumberLookup.findForHomozygousDisruption(knownCopyNumbers, homDisruptionGene2)).isNull()
     }
 }

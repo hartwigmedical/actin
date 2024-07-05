@@ -3,7 +3,6 @@ package com.hartwig.actin.molecular.evidence.matching
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertFalse
 import org.junit.Test
 
 val FUSION_CRITERIA = FusionMatchCriteria(
@@ -21,8 +20,8 @@ class FusionMatchingTest {
     @Test
     fun `Should return false on non-matching gene`() {
         val noMatch = FUSION_CRITERIA.copy(geneStart = "down", geneEnd = "up")
-        assertFalse(FusionMatching.isGeneMatch(GENERIC_FUSION, noMatch))
-        assertFalse(FusionMatching.isGeneMatch(EXON_AWARE_FUSION, noMatch))
+        assertThat(FusionMatching.isGeneMatch(GENERIC_FUSION, noMatch)).isFalse()
+        assertThat(FusionMatching.isGeneMatch(EXON_AWARE_FUSION, noMatch)).isFalse()
     }
 
     @Test

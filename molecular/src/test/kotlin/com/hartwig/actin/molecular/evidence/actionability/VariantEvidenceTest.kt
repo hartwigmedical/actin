@@ -9,19 +9,19 @@ import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val actionableRange: ImmutableActionableRange = TestServeActionabilityFactory.rangeBuilder()
-    .gene("gene 1")
-    .chromosome("X")
-    .start(4)
-    .end(8)
-    .applicableMutationType(MutationType.ANY)
-    .build()
 
 class VariantEvidenceTest {
+
+    private val actionableRange: ImmutableActionableRange = TestServeActionabilityFactory.rangeBuilder()
+        .gene("gene 1")
+        .chromosome("X")
+        .start(4)
+        .end(8)
+        .applicableMutationType(MutationType.ANY)
+        .build()
 
     @Test
     fun `Should determine evidence for hotpots`() {
@@ -36,17 +36,17 @@ class VariantEvidenceTest {
 
         val variantGene1 = VARIANT_CRITERIA.copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertEquals(1, matchesVariant1.size.toLong())
-        assertTrue(matchesVariant1.contains(hotspot1))
+        assertThat(matchesVariant1.size).isEqualTo(1)
+        assertThat(matchesVariant1).contains(hotspot1)
 
         val variantGene2 = VARIANT_CRITERIA.copy(gene = "gene 2", chromosome = "X", position = 2, ref = "A", alt = "G", isReportable = true)
         val matchesVariant2 = variantEvidence.findMatches(variantGene2)
-        assertEquals(1, matchesVariant2.size.toLong())
-        assertTrue(matchesVariant2.contains(hotspot2))
+        assertThat(matchesVariant2.size).isEqualTo(1)
+        assertThat(matchesVariant2).contains(hotspot2)
 
         val otherVariantGene1 =
             VARIANT_CRITERIA.copy(gene = "gene 1", chromosome = "X", position = 2, ref = "A", alt = "T", isReportable = true)
-        assertTrue(variantEvidence.findMatches(otherVariantGene1).isEmpty())
+        assertThat(variantEvidence.findMatches(otherVariantGene1)).isEmpty()
     }
 
     @Test
@@ -73,8 +73,8 @@ class VariantEvidenceTest {
             isReportable = true
         )
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertEquals(1, matchesVariant1.size.toLong())
-        assertTrue(matchesVariant1.contains(gene1))
+        assertThat(matchesVariant1.size).isEqualTo(1)
+        assertThat(matchesVariant1).contains(gene1)
 
         val variantGene2 = VARIANT_CRITERIA.copy(
             gene = "gene 2",
@@ -82,8 +82,8 @@ class VariantEvidenceTest {
             isReportable = true
         )
         val matchesVariant2 = variantEvidence.findMatches(variantGene2)
-        assertEquals(1, matchesVariant2.size.toLong())
-        assertTrue(matchesVariant2.contains(gene2))
+        assertThat(matchesVariant2.size).isEqualTo(1)
+        assertThat(matchesVariant2).contains(gene2)
     }
 
     private fun assertEvidenceDeterminedForRange(actionable: ActionableEvents) {
@@ -97,8 +97,8 @@ class VariantEvidenceTest {
             codingEffect = CodingEffect.MISSENSE
         )
         val matchesVariant1 = variantEvidence.findMatches(variantGene1)
-        assertEquals(1, matchesVariant1.size.toLong())
-        assertTrue(matchesVariant1.contains(actionableRange))
+        assertThat(matchesVariant1.size).isEqualTo(1)
+        assertThat(matchesVariant1).contains(actionableRange)
 
         val otherVariantGene1 = VARIANT_CRITERIA.copy(
             gene = "gene 1",
@@ -107,6 +107,6 @@ class VariantEvidenceTest {
             isReportable = true,
             codingEffect = CodingEffect.MISSENSE
         )
-        assertTrue(variantEvidence.findMatches(otherVariantGene1).isEmpty())
+        assertThat(variantEvidence.findMatches(otherVariantGene1)).isEmpty()
     }
 }

@@ -11,100 +11,71 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
 import org.apache.logging.log4j.util.Strings
-import org.junit.Assert.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class DriverEventFactoryTest {
 
     @Test
     fun `Should generate events for variants`() {
-        assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "p.Val600Glu")))
-        assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "p.V600E")))
-        assertEquals("BRAF V600E", DriverEventFactory.variantEvent(variant("BRAF", "V600E")))
+        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.Val600Glu"))).isEqualTo("BRAF V600E")
+        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "p.V600E"))).isEqualTo("BRAF V600E")
+        assertThat(DriverEventFactory.variantEvent(variant("BRAF", "V600E"))).isEqualTo("BRAF V600E")
 
-        assertEquals(
-            "BRAF c.1587-5delT splice",
+        assertThat(
             DriverEventFactory.variantEvent(
-                variant(
-                    "BRAF",
-                    "p.?",
-                    "c.1587-5delT",
-                    PurpleVariantEffect.SPLICE_ACCEPTOR,
-                    PurpleCodingEffect.SPLICE
-                )
+                variant("BRAF", "p.?", "c.1587-5delT", PurpleVariantEffect.SPLICE_ACCEPTOR, PurpleCodingEffect.SPLICE)
             )
-        )
+        ).isEqualTo("BRAF c.1587-5delT splice")
 
-        assertEquals(
-            "BRAF n.271-7395delT",
+        assertThat(
             DriverEventFactory.variantEvent(
-                variant(
-                    "BRAF",
-                    Strings.EMPTY,
-                    "n.271-7395delT",
-                    PurpleVariantEffect.INTRONIC,
-                    PurpleCodingEffect.NONE
-                )
+                variant("BRAF", Strings.EMPTY, "n.271-7395delT", PurpleVariantEffect.INTRONIC, PurpleCodingEffect.NONE)
             )
-        )
+        ).isEqualTo("BRAF n.271-7395delT")
 
-        assertEquals(
-            "BRAF upstream",
+        assertThat(
             DriverEventFactory.variantEvent(
-                variant(
-                    "BRAF",
-                    Strings.EMPTY,
-                    Strings.EMPTY,
-                    PurpleVariantEffect.UPSTREAM_GENE,
-                    PurpleCodingEffect.NONE
-                )
+                variant("BRAF", Strings.EMPTY, Strings.EMPTY, PurpleVariantEffect.UPSTREAM_GENE, PurpleCodingEffect.NONE)
             )
-        )
+        ).isEqualTo("BRAF upstream")
 
-        assertEquals(
-            "BRAF NON_CODING_TRANSCRIPT",
+        assertThat(
             DriverEventFactory.variantEvent(
-                variant(
-                    "BRAF",
-                    Strings.EMPTY,
-                    Strings.EMPTY,
-                    PurpleVariantEffect.NON_CODING_TRANSCRIPT,
-                    PurpleCodingEffect.NONE
-                )
+                variant("BRAF", Strings.EMPTY, Strings.EMPTY, PurpleVariantEffect.NON_CODING_TRANSCRIPT, PurpleCodingEffect.NONE)
             )
-        )
+        ).isEqualTo("BRAF NON_CODING_TRANSCRIPT")
     }
 
     @Test
     fun `Should generate events for copy numbers`() {
-        assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.FULL_GAIN)))
-        assertEquals("MYC amp", DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.PARTIAL_GAIN)))
-        assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.FULL_LOSS)))
-        assertEquals("PTEN del", DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.PARTIAL_LOSS)))
+        assertThat(DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.FULL_GAIN))).isEqualTo("MYC amp")
+        assertThat(DriverEventFactory.gainLossEvent(gainLoss("MYC", CopyNumberInterpretation.PARTIAL_GAIN))).isEqualTo("MYC amp")
+        assertThat(DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.FULL_LOSS))).isEqualTo("PTEN del")
+        assertThat(DriverEventFactory.gainLossEvent(gainLoss("PTEN", CopyNumberInterpretation.PARTIAL_LOSS))).isEqualTo("PTEN del")
     }
 
     @Test
     fun `Should generate events for disruptions`() {
-        assertEquals(
-            "TP53 hom disruption",
+        assertThat(
             DriverEventFactory.homozygousDisruptionEvent(TestLinxFactory.homozygousDisruptionBuilder().gene("TP53").build())
-        )
-        assertEquals("TP53 disruption", DriverEventFactory.disruptionEvent(TestLinxFactory.breakendBuilder().gene("TP53").build()))
+        ).isEqualTo("TP53 hom disruption")
+
+        assertThat(DriverEventFactory.disruptionEvent(TestLinxFactory.breakendBuilder().gene("TP53").build())).isEqualTo("TP53 disruption")
     }
 
     @Test
     fun `Should generate events for fusions`() {
-        assertEquals(
-            "EML4 - ALK fusion",
+        assertThat(
             DriverEventFactory.fusionEvent(TestLinxFactory.fusionBuilder().geneStart("EML4").geneEnd("ALK").build())
-        )
+        ).isEqualTo("EML4 - ALK fusion")
     }
 
     @Test
     fun `Should generate events for viruses`() {
-        assertEquals("HPV (Papilloma) positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.HPV)))
-        assertEquals("EBV positive", DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.EBV)))
-        assertEquals("Papilloma positive", DriverEventFactory.virusEvent(virus("Papilloma", null)))
+        assertThat(DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.HPV))).isEqualTo("HPV (Papilloma) positive")
+        assertThat(DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.EBV))).isEqualTo("EBV positive")
+        assertThat(DriverEventFactory.virusEvent(virus("Papilloma", null))).isEqualTo("Papilloma positive")
     }
 
     private fun variant(gene: String, hgvsProteinImpact: String): PurpleVariant {

@@ -6,8 +6,7 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.characteristic.ActionableCharacteristic
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class VirusEvidenceTest {
@@ -21,17 +20,17 @@ class VirusEvidenceTest {
 
         val virusMatch = minimalVirus().copy(type = VirusType.HUMAN_PAPILLOMA_VIRUS, isReportable = true)
         val matches = virusEvidence.findMatches(virusMatch)
-        assertEquals(1, matches.size.toLong())
-        assertTrue(matches.contains(hpv))
+        assertThat(matches.size).isEqualTo(1)
+        assertThat(matches).contains(hpv)
 
         val noInterpretation = minimalVirus().copy(type = VirusType.OTHER, isReportable = true)
-        assertTrue(virusEvidence.findMatches(noInterpretation).isEmpty())
+        assertThat(virusEvidence.findMatches(noInterpretation)).isEmpty()
 
         val otherInterpretation = minimalVirus().copy(type = VirusType.MERKEL_CELL_VIRUS, isReportable = true)
-        assertTrue(virusEvidence.findMatches(otherInterpretation).isEmpty())
+        assertThat(virusEvidence.findMatches(otherInterpretation)).isEmpty()
 
         val notReported = minimalVirus().copy(type = VirusType.HUMAN_PAPILLOMA_VIRUS, isReportable = false)
-        assertTrue(virusEvidence.findMatches(notReported).isEmpty())
+        assertThat(virusEvidence.findMatches(notReported)).isEmpty()
     }
 
     @Test
@@ -43,16 +42,16 @@ class VirusEvidenceTest {
 
         val virusMatch = minimalVirus().copy(type = VirusType.EPSTEIN_BARR_VIRUS, isReportable = true)
         val matches = virusEvidence.findMatches(virusMatch)
-        assertEquals(1, matches.size.toLong())
-        assertTrue(matches.contains(ebv))
+        assertThat(matches.size).isEqualTo(1)
+        assertThat(matches).contains(ebv)
 
         val noInterpretation = minimalVirus().copy(type = VirusType.OTHER, isReportable = true)
-        assertTrue(virusEvidence.findMatches(noInterpretation).isEmpty())
+        assertThat(virusEvidence.findMatches(noInterpretation)).isEmpty()
 
         val otherInterpretation = minimalVirus().copy(type = VirusType.MERKEL_CELL_VIRUS, isReportable = true)
-        assertTrue(virusEvidence.findMatches(otherInterpretation).isEmpty())
+        assertThat(virusEvidence.findMatches(otherInterpretation)).isEmpty()
 
         val notReported = minimalVirus().copy(type = VirusType.EPSTEIN_BARR_VIRUS, isReportable = false)
-        assertTrue(virusEvidence.findMatches(notReported).isEmpty())
+        assertThat(virusEvidence.findMatches(notReported)).isEmpty()
     }
 }

@@ -7,8 +7,7 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CopyNumberEvidenceTest {
@@ -23,15 +22,15 @@ class CopyNumberEvidenceTest {
 
         val ampGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.FULL_GAIN)
         val ampMatches = copyNumberEvidence.findMatches(ampGene1)
-        assertEquals(1, ampMatches.size.toLong())
-        assertTrue(ampMatches.contains(gene1))
+        assertThat(ampMatches.size).isEqualTo(1)
+        assertThat(ampMatches).contains(gene1)
 
         val lossGene2 = minimalCopyNumber().copy(gene = "gene 2", type = CopyNumberType.LOSS)
         val delMatches = copyNumberEvidence.findMatches(lossGene2)
-        assertEquals(1, delMatches.size.toLong())
-        assertTrue(delMatches.contains(gene2))
+        assertThat(delMatches.size).isEqualTo(1)
+        assertThat(delMatches).contains(gene2)
 
         val lossGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.LOSS)
-        assertTrue(copyNumberEvidence.findMatches(lossGene1).isEmpty())
+        assertThat(copyNumberEvidence.findMatches(lossGene1)).isEmpty()
     }
 }

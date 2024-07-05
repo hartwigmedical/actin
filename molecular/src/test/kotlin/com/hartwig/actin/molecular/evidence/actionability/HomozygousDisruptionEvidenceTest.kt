@@ -6,8 +6,7 @@ import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
 import com.hartwig.serve.datamodel.gene.ActionableGene
 import com.hartwig.serve.datamodel.gene.GeneEvent
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HomozygousDisruptionEvidenceTest {
@@ -22,10 +21,10 @@ class HomozygousDisruptionEvidenceTest {
 
         val disruption1 = minimalHomozygousDisruption().copy(gene = "gene 1")
         val matchGene1 = homozygousDisruptionEvidence.findMatches(disruption1)
-        assertEquals(1, matchGene1.size.toLong())
-        assertTrue(matchGene1.contains(gene1))
+        assertThat(matchGene1.size).isEqualTo(1)
+        assertThat(matchGene1).contains(gene1)
 
         val nonMatchDisruption = minimalHomozygousDisruption().copy(gene = "gene 3")
-        assertTrue(homozygousDisruptionEvidence.findMatches(nonMatchDisruption).isEmpty())
+        assertThat(homozygousDisruptionEvidence.findMatches(nonMatchDisruption)).isEmpty()
     }
 }
