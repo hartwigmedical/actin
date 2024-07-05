@@ -25,14 +25,6 @@ class HomozygousDisruptionEvidenceTest {
         assertEquals(1, matchGene1.size.toLong())
         assertTrue(matchGene1.contains(gene1))
 
-        // TODO why is this not a duplicate of the previous test?
-//        val matchGene2 = homozygousDisruptionEvidence.findMatches(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 2").build())
-        val disruption2 = minimalHomozygousDisruption().copy(gene = "gene 2")
-        val matchGene2 = homozygousDisruptionEvidence.findMatches(disruption2)
-        assertEquals(1, matchGene2.size.toLong())
-        assertTrue(matchGene2.contains(gene2))
-
-//        assertTrue(homozygousDisruptionEvidence.findMatches(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 3").build()).isEmpty())
         val nonMatchDisruption = minimalHomozygousDisruption().copy(gene = "gene 3")
         assertTrue(homozygousDisruptionEvidence.findMatches(nonMatchDisruption).isEmpty())
     }
