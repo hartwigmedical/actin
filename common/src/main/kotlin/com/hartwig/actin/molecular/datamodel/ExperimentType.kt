@@ -8,7 +8,8 @@ enum class ExperimentType(private val display: String) : Displayable {
     ARCHER("Archer"),
     GENERIC_PANEL("NGS Panel"),
     IHC("IHC"),
-    OTHER("Other");
+    OTHER("Other"),
+    CDX("CDx");
 
     override fun display(): String {
         return display

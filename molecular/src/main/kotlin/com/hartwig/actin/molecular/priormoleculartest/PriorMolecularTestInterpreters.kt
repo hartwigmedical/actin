@@ -53,6 +53,9 @@ private class ArcherInterpreter(
 private fun isGeneric(): (PriorMolecularTest) -> Boolean =
     { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL }
 
+private fun isMcgi(): (PriorMolecularTest) -> Boolean =
+    { it.test.contains("CDx") }
+
 private class GenericPanelInterpreter(
     evidenceDatabase: EvidenceDatabase,
     geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
@@ -63,6 +66,18 @@ private class GenericPanelInterpreter(
         GenericPanelExtractor(),
         PanelAnnotator(ExperimentType.GENERIC_PANEL, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
         isGeneric()
+    )
+
+private class McgiPanelInterpreter(
+    evidenceDatabase: EvidenceDatabase,
+    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    variantAnnotator: VariantAnnotator,
+    paveLite: PaveLite
+) :
+    MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
+        McgiExtractor(),
+        PanelAnnotator(ExperimentType.CDX, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
+        isMcgi()
     )
 
 private fun isIHC(): (PriorMolecularTest) -> Boolean {
@@ -92,7 +107,8 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
                 setOf(
                     ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
                     GenericPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
-                    IHCInterpreter()
+                    IHCInterpreter(),
+                    McgiPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite)
                 )
             )
     }

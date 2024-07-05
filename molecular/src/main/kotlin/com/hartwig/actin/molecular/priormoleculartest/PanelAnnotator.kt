@@ -74,7 +74,7 @@ class PanelAnnotator(
             type = experimentType,
             date = input.date,
             drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet()),
-            characteristics = MolecularCharacteristics(),
+            characteristics = MolecularCharacteristics(isMicrosatelliteUnstable = input.msi, tumorMutationalBurden = input.tmb),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
         )
     }

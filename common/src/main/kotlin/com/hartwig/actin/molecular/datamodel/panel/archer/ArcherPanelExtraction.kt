@@ -10,7 +10,9 @@ data class ArcherPanelExtraction(
     override val variants: List<PanelVariantExtraction> = emptyList(),
     val fusions: List<ArcherFusionExtraction> = emptyList(),
     val skippedExons: List<ArcherSkippedExonsExtraction> = emptyList(),
-    override val date: LocalDate? = null
+    override val date: LocalDate? = null,
+    override val msi: Boolean? = null,
+    override val tmb: Double? = null
 ) : PanelExtraction {
     override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + ARCHER_ALWAYS_TESTED_GENES

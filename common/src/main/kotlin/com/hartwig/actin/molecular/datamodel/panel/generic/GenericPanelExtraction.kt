@@ -12,8 +12,9 @@ data class GenericPanelExtraction(
     val exonDeletions: List<GenericExonDeletionExtraction> = emptyList(),
     val genesWithNegativeResults: Set<String> = emptySet(),
     override val variants: List<PanelVariantExtraction> = emptyList(),
-    override val date: LocalDate? = null,
-) : PanelExtraction {
+    override val date: LocalDate? = null, override val tmb: Double? = null, override val msi: Boolean? = null,
+
+    ) : PanelExtraction {
     override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + alwaysTestedGenes() + genesWithNegativeResults
     }

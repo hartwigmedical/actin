@@ -3,9 +3,11 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.molecular.datamodel.GeneRole
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.panel.McgiExtraction
 
 private const val PLOIDY_FACTOR = 3.0
 
@@ -56,7 +58,28 @@ class GeneIsAmplified(private val gene: String, private val requestedMinCopyNumb
 
     override fun genes() = listOf(gene)
 
-    override fun evaluate(test: MolecularTest): Evaluation {
+    override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
+        val amplificationsInGene =
+            molecularHistory.allPanels().filter { it.panelExtraction is McgiExtraction }
+                .map { it to (it.panelExtraction as McgiExtraction).amplifications.filter { event -> event.impactsGene(gene) } }
+                .map {
+                    MolecularEvaluation(
+                        it.first, if (it.second.isNotEmpty())
+                            EvaluationFactory.pass("Gene $gene is amplified [${it.second.map { event -> event.display() }}]") else EvaluationFactory.fail(
+                            "Gene $gene is not amplified"
+                        )
+                    )
+                }
+
+        return MolecularEvaluation.combine(molecularHistory.molecularTests.map {
+            MolecularEvaluation(
+                it,
+                evaluateTest(it)
+            )
+        } + amplificationsInGene)
+    }
+
+    private fun evaluateTest(test: MolecularTest): Evaluation {
         val ploidy = test.characteristics.ploidy
             ?: return EvaluationFactory.fail(
                 "Cannot determine amplification for gene $gene without ploidy", "Undetermined amplification for $gene"
