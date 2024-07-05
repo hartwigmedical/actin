@@ -36,9 +36,7 @@ internal class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter)
             .toSortedSet(HomozygousDisruptionComparator())
     }
 
-    companion object {
-        private fun relevantHomozygousDisruptions(linx: LinxRecord): Set<com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption> {
-            return listOfNotNull(linx.somaticHomozygousDisruptions(), linx.germlineHomozygousDisruptions()).flatten().toSet()
-        }
+    private fun relevantHomozygousDisruptions(linx: LinxRecord): Set<com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption> {
+        return listOfNotNull(linx.somaticHomozygousDisruptions(), linx.germlineHomozygousDisruptions()).flatten().toSet()
     }
 }

@@ -42,7 +42,6 @@ internal class CharacteristicsExtractor() {
     }
 
     companion object {
-
         private fun isMSI(microsatelliteStatus: PurpleMicrosatelliteStatus): Boolean? {
             return when (microsatelliteStatus) {
                 PurpleMicrosatelliteStatus.MSI -> true
@@ -80,7 +79,7 @@ internal class CharacteristicsExtractor() {
         }
 
         private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
-            // TODO (KZ): the classifiers are nullable in the CuppaPrediction class, is there a sane default or should we error out?
+            // The classifiers are assumed to be tested for not-null at an earlier stage.
             return CupPrediction(
                 cancerType = cuppaPrediction.cancerType(),
                 likelihood = cuppaPrediction.likelihood(),
