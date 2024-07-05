@@ -24,13 +24,13 @@ import com.hartwig.serve.datamodel.ActionableEventsLoader
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.KnownEventsLoader
 import com.hartwig.serve.datamodel.RefGenome
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
@@ -41,7 +41,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
 
         val orangeMolecularRecord = if (config.orangeJson != null) {
-
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
             val orange = OrangeJson.getInstance().read(config.orangeJson)
 
@@ -63,8 +62,10 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
         val ensemblDataCache = EnsemblDataLoader.load(config.ensemblCachePath, com.hartwig.actin.tools.ensemblcache.RefGenome.V37)
 
-
-        LOGGER.info("Loading dnds database for driver likelihood annotation from ${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}")
+        LOGGER.info(
+            "Loading dnds database for driver likelihood annotation from " +
+                    "${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}"
+        )
         val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
 
         LOGGER.info("Interpreting prior molecular tests")
