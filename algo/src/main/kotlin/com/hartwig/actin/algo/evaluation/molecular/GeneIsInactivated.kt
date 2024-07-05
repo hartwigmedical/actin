@@ -79,11 +79,13 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
                         } else {
                             inactivationEventsThatQualify.add(variant.event)
                         }
-                    } else if (extendedVariant.isBiallelic) {
-                        reportableNonDriverBiallelicVariantsOther.add(variant.event)
+                    } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
+                        if (extendedVariant.isBiallelic) {
+                            reportableNonDriverBiallelicVariantsOther.add(variant.event)
+                        }
                     } else if (
-                        (variant.gene in MolecularConstants.HRD_GENES && molecular.characteristics.isHomologousRepairDeficient == true)
-                        || (variant.gene in MolecularConstants.MSI_GENES && molecular.characteristics.isMicrosatelliteUnstable == true)
+                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.isHomologousRepairDeficient == true)
+                        || (variant.gene in MolecularConstants.MSI_GENES && test.characteristics.isMicrosatelliteUnstable == true)
                         ) {
                         reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                     }

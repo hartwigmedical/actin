@@ -180,6 +180,20 @@ class GeneIsInactivatedTest {
     }
 
     @Test
+    fun `Should fail when TSG variant has no high driver likelihood in high TML sample`() {
+        assertResultForMutationalLoadAndVariant(
+            EvaluationResult.FAIL, true, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
+        )
+    }
+
+    @Test
+    fun `Should warn when TSG variant has no high driver likelihood in low TML sample`() {
+        assertResultForMutationalLoadAndVariant(
+            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
+        )
+    }
+
+    @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in MSI gene in MSI sample`() {
         val msiGene = MolecularConstants.MSI_GENES.iterator().next()
         val function = GeneIsInactivated(msiGene)
