@@ -70,7 +70,7 @@ class EvaluatedCohortFactoryTest {
                 open = true,
                 acronym = "test-1",
                 title = "Example test trial 1",
-                nctId = null,
+                nctId = null
             ),
             isPotentiallyEligible = true,
             cohorts = emptyList(),
