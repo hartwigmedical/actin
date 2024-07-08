@@ -15,9 +15,9 @@ class McgiExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
                     results.filter { it.scoreText == "variant" }.map { PanelVariantExtraction(it.item!!, it.measure!!) }
                 val amplification =
                     results.filter { it.scoreText == "amplification" }.map { McgiAmplification(it.item!!, it.measure!!) }
-                val msi = results.filter { it.scoreText == "msi" }.map { it.measure?.toBoolean() }.first()
-                val tmb = results.filter { it.scoreText == "tmb" }.map { it.measure?.toDouble() }.first()
-                McgiExtraction(date = date, variants = variants, amplifications = amplification, msi = msi!!, tmb = tmb!!)
+                val msi = results.filter { it.scoreText == "msi" }.map { it.measure?.toBoolean() }.firstOrNull()
+                val tmb = results.filter { it.scoreText == "tmb" }.map { it.measure?.toDouble() }.firstOrNull()
+                McgiExtraction(date = date, variants = variants, amplifications = amplification, msi = msi, tmb = tmb)
             }
     }
 }

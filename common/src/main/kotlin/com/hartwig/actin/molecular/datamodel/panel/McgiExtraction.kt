@@ -16,8 +16,8 @@ data class McgiExtraction(
     override val date: LocalDate?,
     override val variants: List<PanelVariantExtraction>,
     val amplifications: List<McgiAmplification>,
-    override val msi: Boolean,
-    override val tmb: Double,
+    override val msi: Boolean?,
+    override val tmb: Double?,
 ) : PanelExtraction {
     override fun testedGenes(): Set<String> {
         return (variants.map { it.gene } + amplifications.map { it.gene }).toSet()
