@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.panel.McgiExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
@@ -32,7 +33,8 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
 
         val panelExtraction: PanelExtraction = when (experimentType) {
             ExperimentType.ARCHER -> gson.fromJson(jsonObject.get("panelExtraction"), ArcherPanelExtraction::class.java)
-            else -> gson.fromJson(jsonObject.get("panelExtraction"), GenericPanelExtraction::class.java)
+            ExperimentType.GENERIC_PANEL -> gson.fromJson(jsonObject.get("panelExtraction"), GenericPanelExtraction::class.java)
+            else -> gson.fromJson(jsonObject.get("panelExtraction"), McgiExtraction::class.java)
         }
 
         return PanelRecord(
