@@ -43,7 +43,9 @@ class Paver(val config: PaverConfig) {
         val response = loadPaveOutputVcf(paveVcfResponseFile)
 
         File(paveVcfQueryFile).delete()
+        File(indexForVcf(paveVcfQueryFile)).delete()
         File(paveVcfResponseFile).delete()
+        File(indexForVcf(paveVcfResponseFile)).delete()
 
         return response
     }
@@ -63,6 +65,7 @@ class Paver(val config: PaverConfig) {
                 .source("TransVar")
                 .chr(query.chromosome)
                 .start(query.position.toLong())
+                .id(query.id)
                 .alleles(alleles)
                 .computeEndFromAlleles(alleles, query.position)
                 .make()
@@ -132,6 +135,10 @@ class Paver(val config: PaverConfig) {
 
     private fun paveVcfResponseFilename(runId: String): String {
         return Paths.get(config.tempDir, "actin-$runId.pave.vcf.gz").toString()
+    }
+
+    private fun indexForVcf(vcfFilename: String): String {
+        return "$vcfFilename.tbi"
     }
 }
 

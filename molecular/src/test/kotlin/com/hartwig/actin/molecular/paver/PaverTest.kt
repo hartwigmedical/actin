@@ -1,12 +1,11 @@
 package com.hartwig.actin.molecular.paver
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
 import org.junit.Test
 
 class PaverTest {
 
-    @Ignore
+    //    @Ignore
     @Test
     fun `Should run paver`() {
         val paverConfig = PaverConfig(
@@ -39,6 +38,8 @@ class PaverTest {
         )
         val response = paver.pave(queries)
         assertThat(response.size).isEqualTo(2)
+        assertThat(response.get(0).id).isEqualTo("1")
+        assertThat(response.get(1).id).isEqualTo("2")
         println(response)
     }
 }
