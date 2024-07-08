@@ -102,7 +102,7 @@ object TestTreatmentMatchFactory {
                 references = setOf(
                     CriterionReference(
                         id = "I-02",
-                        text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases\n 2. Patient has exhausted SOC"
+                        text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases\n 2. Patient has not exhausted SOC"
                     )
                 )
             ) to unrecoverable(EvaluationResult.PASS, "Patient has no known brain metastases", "No known brain metastases"),
@@ -111,11 +111,11 @@ object TestTreatmentMatchFactory {
                 references = setOf(
                     CriterionReference(
                         id = "I-02",
-                        text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has exhausted SOC."
+                        text = "This rule has 2 conditions:\n 1. Patient has no active brain metastases.\n 2. Patient has not exhausted SOC."
                     )
                 )
             ) to unrecoverable(
-                EvaluationResult.UNDETERMINED, "Could not be determined if patient has exhausted SOC", "Undetermined SOC exhaustion"
+                EvaluationResult.FAIL, "Patient has not exhausted SOC (remaining options capecitabine)", "Patient has not exhausted SOC (remaining options capecitabine)"
             )
         )
     }
