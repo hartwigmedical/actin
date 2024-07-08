@@ -12,7 +12,6 @@ object TestTrialFactory {
                 acronym = "",
                 title = "",
                 nctId = null,
-                mainTumorTypes = null
             ),
             cohorts = emptyList(),
             generalEligibility = emptyList()

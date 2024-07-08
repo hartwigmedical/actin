@@ -6,6 +6,5 @@ data class TrialDefinitionConfig(
     val acronym: String,
     val title: String,
     val nctId: String?,
-    val phase: String?,
-    val mainTumorTypes: Set<String>?
+    val phase: String?
 ) : TrialConfig

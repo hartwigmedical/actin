@@ -89,8 +89,7 @@ class TrialIngestion(
             acronym = trialConfig.acronym,
             title = trialConfig.title,
             nctId = trialConfig.nctId,
-            phase = trialConfig.phase?.let(TrialPhase::fromString),
-            mainTumorTypes = trialConfig.mainTumorTypes
+            phase = trialConfig.phase?.let(TrialPhase::fromString)
         )
     }
 

@@ -49,7 +49,8 @@ class EnvironmentConfigurationTest {
                     showSOCLiteratureEfficacyEvidence = true,
                     showEligibleSOCTreatmentSummary = true,
                     showMolecularSummary = false,
-                    showPatientHeader = false
+                    showPatientHeader = false,
+                    filterSOCExhaustionAndTumorType = true
                 )
             )
         )
