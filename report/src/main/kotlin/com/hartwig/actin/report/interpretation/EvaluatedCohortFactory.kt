@@ -8,10 +8,10 @@ import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.trial.datamodel.Eligibility
 
 object EvaluatedCohortFactory {
-    fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
+    fun create(treatmentMatch: TreatmentMatch, filterSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
         return treatmentMatch.trialMatches.filter { trialMatch: TrialMatch ->
             val trialWarningsAndFails = extractWarnings(trialMatch.evaluations) + extractFails(trialMatch.evaluations)
-            if (filterOnSOCExhaustionAndTumorType) {"Patient has not exhausted SOC" !in trialWarningsAndFails && "Tumor type" !in trialWarningsAndFails}
+            if (filterSOCExhaustionAndTumorType) {!trialWarningsAndFails.any{it.contains("Patient has not exhausted SOC")} && "Tumor type" !in trialWarningsAndFails}
             else true
         }.flatMap { trialMatch: TrialMatch ->
             val trialWarnings = extractWarnings(trialMatch.evaluations)
