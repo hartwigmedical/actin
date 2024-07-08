@@ -23,7 +23,7 @@ data class ReportConfiguration(
     val showPatientHeader: Boolean = true,
     val showRelevantNonOncologicalHistoryInSummary: Boolean = true,
     val showApprovedTreatmentsInSummary: Boolean = true,
-    val filterSOCExhaustionAndTumorType: Boolean = false,
+    val filterOnSOCExhaustionAndTumorType: Boolean = false,
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
@@ -70,7 +70,7 @@ data class EnvironmentConfiguration(
                         showEligibleSOCTreatmentSummary = true,
                         showMolecularSummary = false,
                         showPatientHeader = false,
-                        filterSOCExhaustionAndTumorType = true
+                        filterOnSOCExhaustionAndTumorType = true
                     )
                 )
 

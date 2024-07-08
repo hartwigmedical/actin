@@ -50,7 +50,7 @@ class EnvironmentConfigurationTest {
                     showEligibleSOCTreatmentSummary = true,
                     showMolecularSummary = false,
                     showPatientHeader = false,
-                    filterSOCExhaustionAndTumorType = true
+                    filterOnSOCExhaustionAndTumorType = true
                 )
             )
         )
