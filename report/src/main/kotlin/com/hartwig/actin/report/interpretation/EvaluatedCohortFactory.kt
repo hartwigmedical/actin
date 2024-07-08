@@ -8,11 +8,9 @@ import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.trial.datamodel.Eligibility
 
 object EvaluatedCohortFactory {
-    fun create(treatmentMatch: TreatmentMatch, filterSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
+    fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
         return treatmentMatch.trialMatches.filter { trialMatch: TrialMatch ->
-            val trialWarningsAndFails = extractWarnings(trialMatch.evaluations).union(extractFails(trialMatch.evaluations))
-            if (filterSOCExhaustionAndTumorType) {!trialWarningsAndFails.any{it.contains("Patient has not exhausted SOC")} && "Tumor type" !in trialWarningsAndFails}
-            else true
+            filterOnSOCExhaustionAndTumorType(trialMatch.evaluations, filterOnSOCExhaustionAndTumorType)
         }.flatMap { trialMatch: TrialMatch ->
             val trialWarnings = extractWarnings(trialMatch.evaluations)
             val trialFails = extractFails(trialMatch.evaluations)
@@ -40,10 +38,8 @@ object EvaluatedCohortFactory {
                 )
             } else {
                 trialMatch.cohorts
-                    .filter{ cohortMatches ->
-                        val cohortMatchesWarningsAndFails = extractWarnings(cohortMatches.evaluations).union(extractFails(cohortMatches.evaluations))
-                        if (filterSOCExhaustionAndTumorType) {!cohortMatchesWarningsAndFails.any{it.contains("Patient has not exhausted SOC")} && "Tumor type" !in cohortMatchesWarningsAndFails}
-                        else true
+                    .filter { cohortMatches ->
+                        filterOnSOCExhaustionAndTumorType(cohortMatches.evaluations, filterOnSOCExhaustionAndTumorType)
                     }.map { cohortMatch: CohortMatch ->
                         EvaluatedCohort(
                             trialId = trialId,
@@ -81,6 +77,16 @@ object EvaluatedCohortFactory {
                 else -> emptySet()
             }
         }.toSet()
+    }
+
+    private fun filterOnSOCExhaustionAndTumorType(
+        evaluations: Map<Eligibility, Evaluation>,
+        filterOnSOCExhaustionAndTumorType: Boolean
+    ): Boolean {
+        val trialWarningsAndFails = extractWarnings(evaluations).union(extractFails(evaluations))
+        return if (filterOnSOCExhaustionAndTumorType) {
+            !trialWarningsAndFails.any { it.contains("Patient has not exhausted SOC") } && "Tumor type" !in trialWarningsAndFails
+        } else true
     }
 
     private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<String> {
