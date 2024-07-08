@@ -41,7 +41,15 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastasesTest {
     }
 
     @Test
-    fun `Should fail with specific message when one lab value is above requested fold of ULN for both with or without liver metastases`() {
+    fun `Should fail with specific message when ASAT is above requested fold of ULN for both with or without liver metastases`() {
+        val labValues = listOf(ASAT_6_ULN, ALAT_1_ULN)
+        evaluateForAllLiverLesionStates(EvaluationResult.FAIL, labValues)
+        assertThat(function.evaluate(recordWithLiverLesions.copy(labValues = labValues)).failSpecificMessages)
+            .containsExactly("ASAT 600.0 exceeds maximum of 5.0*ULN (5.0*100.0)")
+    }
+
+    @Test
+    fun `Should fail with specific message when ALAT is above requested fold of ULN for both with or without liver metastases`() {
         val labValues = listOf(ASAT_1_ULN, ALAT_6_ULN)
         evaluateForAllLiverLesionStates(EvaluationResult.FAIL, labValues)
         assertThat(function.evaluate(recordWithLiverLesions.copy(labValues = labValues)).failSpecificMessages)
