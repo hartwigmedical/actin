@@ -107,7 +107,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
 
         LOGGER.info("Interpreting clinical molecular tests")
-        return PriorMolecularTestInterpreters.create(
+        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
             evidenceDatabase,
             GeneDriverLikelihoodModel(dndsDatabase),
             TransvarVariantAnnotatorFactory.withRefGenome(
@@ -118,6 +118,9 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             PaveLite(ensemblDataCache, false)
 
         ).process(priorMolecularTests)
+        LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)
+
+        return clinicalMolecularTests
     }
 
     private fun loadEvidence(
