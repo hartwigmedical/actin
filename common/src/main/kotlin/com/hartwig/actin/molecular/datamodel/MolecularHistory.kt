@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.McgiExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
@@ -27,6 +28,10 @@ data class MolecularHistory(
 
     fun allGenericPanels(): List<GenericPanelExtraction> {
         return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<GenericPanelExtraction>()
+    }
+
+    fun allMcgiPanels(): List<McgiExtraction> {
+        return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<McgiExtraction>()
     }
 
     fun allOtherTests(): List<OtherPriorMolecularTest> {

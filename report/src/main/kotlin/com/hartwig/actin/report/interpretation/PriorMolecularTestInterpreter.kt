@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.panel.McgiExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ARCHER_ALWAYS_TESTED_GENES
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
@@ -24,6 +25,7 @@ class PriorMolecularTestInterpreter {
         history.allIHCTests().forEach(::interpret)
         history.allArcherPanels().forEach(::interpret)
         history.allGenericPanels().forEach(::interpret)
+        history.allMcgiPanels().forEach(::interpret)
         history.allOtherTests().forEach(::interpret)
         return interpretationBuilder.build()
     }
@@ -70,6 +72,11 @@ class PriorMolecularTestInterpreter {
             test.panelType,
             test.testedGenes() - test.genesHavingResultsInPanel()
         )
+    }
+
+    private fun interpret(test: McgiExtraction) {
+        test.variants.forEach { interpretationBuilder.addInterpretation("MCGI", VARIANT_GROUPING, it.display()) }
+        test.amplifications.forEach { interpretationBuilder.addInterpretation("MCGI", "Amplification", it.display()) }
     }
 
     private fun interpret(test: OtherPriorMolecularTest) {
