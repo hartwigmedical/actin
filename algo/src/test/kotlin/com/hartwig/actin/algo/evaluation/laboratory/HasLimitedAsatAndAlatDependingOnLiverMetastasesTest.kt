@@ -66,12 +66,21 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastasesTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if lab value is above requested fold of ULN but within margin of error`() {
+    fun `Should evaluate to undetermined if ALAT is above requested fold of ULN but within margin of error`() {
         val labValues = listOf(LabTestFactory.create(ALAT, value = 210.0, refDate, refLimitUp = 100.0), ASAT_1_ULN)
         val evaluation = function.evaluate(recordWithUnknownLiverLesions.copy(labValues = labValues))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedSpecificMessages)
-            .containsExactly("ALAT 210.0 exceeds maximum of 2.0*ULN (2.0*100.0)")
+            .containsExactly("ALAT 210.0 exceeds maximum of 2.0*ULN (2.0*100.0) but within margin of error")
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if ASAT is above requested fold of ULN but within margin of error`() {
+        val labValues = listOf(LabTestFactory.create(ASAT, value = 210.0, refDate, refLimitUp = 100.0), ALAT_1_ULN)
+        val evaluation = function.evaluate(recordWithUnknownLiverLesions.copy(labValues = labValues))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedSpecificMessages)
+            .containsExactly("ASAT 210.0 exceeds maximum of 2.0*ULN (2.0*100.0) but within margin of error")
     }
 
     @Test

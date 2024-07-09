@@ -10,6 +10,7 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationR
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMaxULN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD
+import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateInvalidLabValue
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -31,13 +32,6 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
         val mostRecentASAT = interpreter.mostRecentValue(ASPARTATE_AMINOTRANSFERASE)
         val mostRecentALAT = interpreter.mostRecentValue(ALANINE_AMINOTRANSFERASE)
 
-        if (!isValid(mostRecentASAT, ASPARTATE_AMINOTRANSFERASE, minValidLabDate) || mostRecentASAT?.date?.isAfter(minPassLabDate) == false) {
-            return LabEvaluation.evaluateInvalidLabValue(ASPARTATE_AMINOTRANSFERASE, mostRecentASAT, minValidLabDate)
-        }
-        if (!isValid(mostRecentALAT, ALANINE_AMINOTRANSFERASE, minValidLabDate) || mostRecentALAT?.date?.isAfter(minPassLabDate) == false) {
-            return LabEvaluation.evaluateInvalidLabValue(ALANINE_AMINOTRANSFERASE, mostRecentALAT, minValidLabDate)
-        }
-
         val ASATLimitEvaluation = evaluateMeasurement(mostRecentASAT, hasLiverMetastases)
         val ALATLimitEvaluation = evaluateMeasurement(mostRecentALAT, hasLiverMetastases)
 
@@ -50,64 +44,64 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
         val ALATReferenceString = createReferenceString(mostRecentALAT, hasLiverMetastases)
 
         return when {
-            ASATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN || ALATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
-                if (ALATLimitEvaluation != EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN) {
-                    val message = "$ASATLabValueString exceeds maximum of $ASATReferenceString"
-                    if (ASATWithinLiverMetastasisLimit && hasLiverMetastases == null) {
-                        val messageEnding = " if no liver metastases present (liver lesion data missing)"
-                        EvaluationFactory.undetermined(message + messageEnding, message + messageEnding)
-                    } else {
-                        EvaluationFactory.recoverableFail(message, message)
-                    }
-                } else if (ASATLimitEvaluation != EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN) {
-                    val message = "$ALATLabValueString exceeds maximum of $ALATReferenceString"
-                    if (ALATWithinLiverMetastasisLimit && hasLiverMetastases == null) {
-                        val messageEnding = " if no liver metastases present (liver lesion data missing)"
-                        EvaluationFactory.undetermined(message + messageEnding, message + messageEnding)
-                    } else {
-                        EvaluationFactory.recoverableFail(message, message)
-                    }
-                } else {
-                    val message = "ASAT ($ASATLabValueString) and ALAT ($ALATLabValueString) exceed maximum allowed value"
-                    if (ASATWithinLiverMetastasisLimit && ALATWithinLiverMetastasisLimit && hasLiverMetastases == null) {
-                        val messageEnding = " if no liver metastases present (liver lesion data missing)"
-                        EvaluationFactory.undetermined(message + messageEnding, message + messageEnding)
-                    } else {
-                        EvaluationFactory.recoverableFail(message, message)
-                    }
-                }
+            !checkValidity(mostRecentASAT, ASPARTATE_AMINOTRANSFERASE) -> {
+                evaluateInvalidLabValue(ASPARTATE_AMINOTRANSFERASE, mostRecentASAT, minValidLabDate)
+            }
+
+            !checkValidity(mostRecentALAT, ALANINE_AMINOTRANSFERASE) -> {
+                evaluateInvalidLabValue(ALANINE_AMINOTRANSFERASE, mostRecentALAT, minValidLabDate)
+            }
+
+            ASATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN && ALATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
+                val message = "ASAT ($ASATLabValueString) and ALAT ($ALATLabValueString) exceed maximum allowed value"
+                evaluateOutsideMargin((ASATWithinLiverMetastasisLimit && ALATWithinLiverMetastasisLimit), hasLiverMetastases, message)
+            }
+
+            ASATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
+                val message = "$ASATLabValueString exceeds maximum of $ASATReferenceString"
+                evaluateOutsideMargin(ASATWithinLiverMetastasisLimit, hasLiverMetastases, message)
+            }
+
+            ALATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
+                val message = "$ALATLabValueString exceeds maximum of $ALATReferenceString"
+                evaluateOutsideMargin(ALATWithinLiverMetastasisLimit, hasLiverMetastases, message)
             }
 
             ASATLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN && ALATLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
-                val message = "ASAT ($ASATLabValueString) and ALAT ($ALATLabValueString) exceed maximum allowed value"
+                val message = "ASAT ($ASATLabValueString) and ALAT ($ALATLabValueString) exceed max fold of ULN but within margin of error"
                 EvaluationFactory.recoverableUndetermined(message, message)
             }
 
             ASATLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
-                val message = "$ASATLabValueString exceeds maximum of $ASATReferenceString"
+                val message = "$ASATLabValueString exceeds maximum of $ASATReferenceString but within margin of error"
                 EvaluationFactory.recoverableUndetermined(message, message)
             }
 
             ALATLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
-                val message = "$ALATLabValueString exceeds maximum of $ALATReferenceString"
+                val message = "$ALATLabValueString exceeds maximum of $ALATReferenceString but within margin of error"
                 EvaluationFactory.recoverableUndetermined(message, message)
             }
 
-            (ASATLimitEvaluation == WITHIN_THRESHOLD && ALATLimitEvaluation == WITHIN_THRESHOLD) -> {
+            ASATLimitEvaluation == WITHIN_THRESHOLD && ALATLimitEvaluation == WITHIN_THRESHOLD -> {
                 val message = "$ASATLabValueString and $ALATLabValueString below max of $ASATReferenceString and $ALATReferenceString"
                 EvaluationFactory.recoverablePass(message, message)
             }
 
             ASATLimitEvaluation == CANNOT_BE_DETERMINED -> {
                 val message = "${ASPARTATE_AMINOTRANSFERASE.display().replaceFirstChar { it.uppercase() }} undetermined"
-                EvaluationFactory.undetermined(message, message)
+                EvaluationFactory.recoverableUndetermined(message, message)
             }
 
             else -> {
                 val message = "${ALANINE_AMINOTRANSFERASE.display().replaceFirstChar { it.uppercase() }} undetermined"
-                EvaluationFactory.undetermined(message, message)
+                EvaluationFactory.recoverableUndetermined(message, message)
             }
         }
+    }
+
+    private fun checkValidity(
+        mostRecent: LabValue?, measurement: LabMeasurement): Boolean {
+        return (isValid(mostRecent, measurement, minValidLabDate) && mostRecent?.date?.isAfter(minPassLabDate) == true)
     }
 
     private fun evaluateMeasurement(mostRecent: LabValue?, hasLiverMetastases: Boolean?): LabEvaluation.LabEvaluationResult {
@@ -125,5 +119,14 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
 
     private fun createLabValueString(measurement: LabMeasurement, mostRecent: LabValue?): String {
         return "${measurement.display().replaceFirstChar { it.uppercase() }} ${String.format(Locale.ENGLISH, "%.1f", mostRecent?.value)}"
+    }
+
+    private fun evaluateOutsideMargin(measurementsWithinLimit: Boolean, hasLiverMetastases: Boolean?, message: String): Evaluation {
+        return if (measurementsWithinLimit && hasLiverMetastases == null) {
+            val messageEnding = " if no liver metastases present (liver lesion data missing)"
+            EvaluationFactory.undetermined(message + messageEnding, message + messageEnding)
+        } else {
+            EvaluationFactory.recoverableFail(message, message)
+        }
     }
 }
