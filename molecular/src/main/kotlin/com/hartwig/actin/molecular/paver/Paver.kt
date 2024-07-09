@@ -92,6 +92,9 @@ class Paver(val config: PaverConfig) {
     private fun extractPaveImpact(variant: VariantContext): PaveImpact {
         val parts = variant.getAttributeAsStringList("IMPACT", "")
         // TODO use vcf header attributes to make this safer?
+        if (parts.size != 10) {
+            throw RuntimeException("Unexpected number of parts in PAVE impact field: ${parts.size}")
+        }
         return PaveImpact(
             gene = parts[0],
             transcript = parts[1],
