@@ -31,24 +31,20 @@ class TrialMatchingChapter(
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-        val generators = mutableListOf<TableGenerator>(
+        val generators = listOfNotNull(
             EligibleActinTrialsGenerator.forClosedCohorts(
                 cohorts,
                 report.treatmentMatch.trialSource,
                 contentWidth(),
                 enableExtendedMode
-            )
-        )
-        if (!showIneligibleTrialsInSummary) {
-            generators.add(
+            ),
+            if (showIneligibleTrialsInSummary) null else {
                 IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
-                    cohorts,
-                    report.treatmentMatch.trialSource,
-                    contentWidth(),
-                    enableExtendedMode
+                    cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode
                 )
-            )
-        }
+            }
+        )
+
 
         for (i in generators.indices) {
             val generator = generators[i]
