@@ -7,15 +7,15 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN
-import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMaxULN
-import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateInvalidLabValue
+import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMaxULN
+import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import com.hartwig.actin.clinical.interpretation.LabMeasurement.ASPARTATE_AMINOTRANSFERASE
 import com.hartwig.actin.clinical.interpretation.LabMeasurement.ALANINE_AMINOTRANSFERASE
+import com.hartwig.actin.clinical.interpretation.LabMeasurement.ASPARTATE_AMINOTRANSFERASE
 import java.time.LocalDate
 import java.util.Locale
 

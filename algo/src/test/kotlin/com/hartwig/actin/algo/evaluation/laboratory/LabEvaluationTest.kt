@@ -9,9 +9,9 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationR
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class LabEvaluationTest {
 

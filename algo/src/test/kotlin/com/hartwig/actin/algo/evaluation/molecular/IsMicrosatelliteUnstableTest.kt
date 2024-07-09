@@ -133,6 +133,22 @@ class IsMicrosatelliteUnstableTest {
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Undetermined MSI status")
     }
 
+    @Test
+    fun `Should return undetermined when MSI variant with allelic status unknown`() {
+        val evaluation = function.evaluate(
+            MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
+                null,
+                TestVariantFactory.createMinimal().copy(gene = msiGene, isReportable = true)
+            )
+        )
+        assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly(
+            "Unknown microsatellite instability (MSI) status but drivers with unknown allelic status in MSI genes: " +
+                    "MLH1 are detected - an MSI test may be recommended"
+        )
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Unknown MSI status but drivers drivers with unknown allelic status in MSI genes")
+    }
+
     private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
         return TestVariantFactory.createMinimal().copy(
             gene = msiGene,
