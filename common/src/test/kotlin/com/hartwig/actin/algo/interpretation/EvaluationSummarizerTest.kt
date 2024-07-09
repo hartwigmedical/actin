@@ -23,7 +23,8 @@ class EvaluationSummarizerTest {
             EvaluationSummary(
                 count = 3,
                 passedCount = 2,
-                undeterminedCount = 1
+                failedCount = 1,
+                undeterminedCount = 0
             )
         )
     }
