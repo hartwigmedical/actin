@@ -54,8 +54,8 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
                 if (!variant.isReportable) {
                     inactivationEventsThatAreUnreportable.add(variant.event)
                 } else {
-                    val extendedVariant = variant.extendedVariantOrThrow()
-                    val phaseGroups: Set<Int>? = extendedVariant.phaseGroups
+                    val extendedVariant = variant.extendedVariantDetails
+                    val phaseGroups: Set<Int>? = extendedVariant?.phaseGroups
                     if (phaseGroups != null) {
                         if (phaseGroups.none { evaluatedPhaseGroups.contains(it) }) {
                             eventsThatMayBeTransPhased.add(variant.event)
@@ -70,21 +70,22 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
                                 || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
                         if (variant.geneRole == GeneRole.ONCO) {
                             inactivationEventsNoTSG.add(variant.event)
-                        } else if (!extendedVariant.isBiallelic) {
+                        } else if (extendedVariant?.isBiallelic == false) {
                             inactivationHighDriverNonBiallelicVariants.add(variant.event)
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event)
-                        } else if (extendedVariant.clonalLikelihood < CLONAL_CUTOFF) {
+                        } else if (extendedVariant?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
                             inactivationSubclonalVariants.add(variant.event)
                         } else {
                             inactivationEventsThatQualify.add(variant.event)
                         }
-                    } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                        if (extendedVariant.isBiallelic) {
-                            reportableNonDriverBiallelicVariantsOther.add(variant.event)
-                        } else {
-                            reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
-                        }
+                    } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && extendedVariant?.isBiallelic == true) {
+                        reportableNonDriverBiallelicVariantsOther.add(variant.event)
+                    } else if (
+                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.isHomologousRepairDeficient == true)
+                        || (variant.gene in MolecularConstants.MSI_GENES && test.characteristics.isMicrosatelliteUnstable == true)
+                    ) {
+                        reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                     }
                 }
             }

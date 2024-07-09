@@ -26,8 +26,5 @@ data class Variant(
     override fun compareTo(other: Variant): Int {
         return VariantComparator().compare(this, other)
     }
-
-    fun extendedVariantOrThrow() = extendedVariantDetails
-        ?: throw IllegalStateException("Variant is expected to have extended properties. Is this an orange-based molecular record?")
 }
 

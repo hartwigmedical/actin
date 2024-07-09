@@ -52,6 +52,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.ALBUMIN),
             EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE),
             EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE),
+            EligibilityRule.HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT to hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(),
             EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN),
@@ -176,6 +177,16 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasLimitedPTTCreator(): FunctionCreator {
         return FunctionCreator { HasLimitedPTT() }
+    }
+
+    private fun hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxULNWithoutLiverMetastases = functionInputResolver().createTwoDoublesInput(function).double1
+            val maxULNWithLiverMetastases = functionInputResolver().createTwoDoublesInput(function).double2
+            HasLimitedAsatAndAlatDependingOnLiverMetastases(
+                maxULNWithoutLiverMetastases, maxULNWithLiverMetastases, minValidLabDate(), minPassLabDate()
+            )
+        }
     }
 
     private fun hasLimitedBilirubinPercentageCreator(): FunctionCreator {
