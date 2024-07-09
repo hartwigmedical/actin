@@ -48,7 +48,7 @@ class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
                 } else if (msiGenesWithUnknownBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
                         "Unknown microsatellite instability (MSI) status but drivers with unknown allelic status in MSI genes: "
-                                + Format.concat(msiGenesWithNonBiallelicDriver) + " are detected - an MSI test may be recommended",
+                                + Format.concat(msiGenesWithUnknownBiallelicDriver) + " are detected - an MSI test may be recommended",
                         "Unknown MSI status but drivers drivers with unknown allelic status in MSI genes"
                     )
                 } else {
