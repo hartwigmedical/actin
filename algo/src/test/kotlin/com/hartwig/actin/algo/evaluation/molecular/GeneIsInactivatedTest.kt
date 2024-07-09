@@ -3,6 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHomologousRepairDeficiencyAndVariant
+import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withMicrosatelliteInstabilityAndVariant
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
@@ -44,6 +46,10 @@ class GeneIsInactivatedTest {
         canonicalImpact = TestTranscriptImpactFactory.createMinimal().copy(
             codingEffect = GeneIsInactivated.INACTIVATING_CODING_EFFECTS.first()
         )
+    )
+    private val nonHighDriverNonBiallelicMatchingVariant = matchingVariant.copy(
+        driverLikelihood = DriverLikelihood.LOW,
+        extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false),
     )
 
     @Test
@@ -166,6 +172,14 @@ class GeneIsInactivatedTest {
     }
 
     @Test
+    fun `Should fail when TSG variant is non biallelic and non high driver`() {
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withVariant(nonHighDriverNonBiallelicMatchingVariant))
+        )
+    }
+
+    @Test
     fun `Should fail when TSG variant has no high driver likelihood in high TML sample`() {
         assertResultForMutationalLoadAndVariant(
             EvaluationResult.FAIL, true, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
@@ -173,16 +187,54 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun `Should warn when TSG variant is non biallelic and non high driver in low TML sample`() {
+    fun `Should warn when TSG variant has no high driver likelihood in low TML sample`() {
         assertResultForMutationalLoadAndVariant(
-            EvaluationResult.WARN,
-            false,
-            matchingVariant.copy(
-                driverLikelihood = DriverLikelihood.LOW,
-                extendedVariantDetails = matchingVariant.extendedVariantDetails?.copy(isBiallelic = false)
+            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
+        )
+    }
+
+    @Test
+    fun `Should warn when TSG variant is non biallelic and non high driver in MSI gene in MSI sample`() {
+        val msiGene = MolecularConstants.MSI_GENES.iterator().next()
+        val function = GeneIsInactivated(msiGene)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, function.evaluate(
+                withMicrosatelliteInstabilityAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene))
             )
         )
+    }
 
+    @Test
+    fun `Should fail when TSG variant is non biallelic and non high driver in MSI gene in MS-Stable sample`() {
+        val msiGene = MolecularConstants.MSI_GENES.iterator().next()
+        val function = GeneIsInactivated(msiGene)
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                withMicrosatelliteInstabilityAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = msiGene))
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when TSG variant is non biallelic and non high driver in HRD gene in HRD sample`() {
+        val hrdGene = MolecularConstants.HRD_GENES.iterator().next()
+        val function = GeneIsInactivated(hrdGene)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN, function.evaluate(
+                withHomologousRepairDeficiencyAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail when TSG variant is non biallelic and non high driver in HRD gene in HR-Proficient sample`() {
+        val hrdGene = MolecularConstants.HRD_GENES.iterator().next()
+        val function = GeneIsInactivated(hrdGene)
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                withHomologousRepairDeficiencyAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrdGene))
+            )
+        )
     }
 
     @Test
