@@ -6,7 +6,9 @@ import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.ActionableEvent
+import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.serve.datamodel.Treatment
 
 object ActionableEvidenceFactory {
 
@@ -14,12 +16,7 @@ object ActionableEvidenceFactory {
         return ActionableEvidence()
     }
 
-    fun create(actionabilityMatch: ActionabilityMatch?): ActionableEvidence? {
-        // TODO try removing the optionals in the param/return and fixup breakage
-        if (actionabilityMatch == null) {
-            return null
-        }
-
+    fun create(actionabilityMatch: ActionabilityMatch): ActionableEvidence {
         val onLabelEvidence = createOnLabelEvidence(actionabilityMatch.onLabelEvents)
         val offLabelEvidence = createOffLabelEvidence(actionabilityMatch.offLabelEvents)
         val externalTrialEvidence = createExternalTrialEvidence(actionabilityMatch.onLabelEvents)
@@ -56,13 +53,12 @@ object ActionableEvidenceFactory {
                 onLabelEvent.source() == ActionabilityConstants.EXTERNAL_TRIAL_SOURCE && onLabelEvent.direction().isResponsive
             }
                 .map { onLabelEvent ->
-                    val nctUrl = extractNctUrl(onLabelEvent)
+                    val trial = onLabelEvent.intervention() as ClinicalTrial
                     ExternalTrial(
-                        title = onLabelEvent.treatment().name(),
-                        // evidenceUrls() contains a set of countries
-                        countries = onLabelEvent.evidenceUrls().map(::determineCountry).toSet(),
-                        url = nctUrl,
-                        nctId = nctUrl.takeLast(11),
+                        title = trial.studyAcronym() ?: trial.studyTitle(),
+                        countries = trial.countriesOfStudy().map(::determineCountry).toSet(),
+                        url = extractNctUrl(onLabelEvent),
+                        nctId = trial.studyNctId(),
                     )
                 }
                 .toSet()
@@ -83,8 +79,10 @@ object ActionableEvidenceFactory {
             ?: throw IllegalStateException("Found no URL ending with a NCT id: " + event.sourceUrls().joinToString { ", " })
     }
 
+    private fun ActionableEvent.treatmentName(): String = (this.intervention() as Treatment).name()
+
     private fun responsiveOnLabelEvidence(onLabelResponsiveEvent: ActionableEvent): ActionableEvidence {
-        val treatment = onLabelResponsiveEvent.treatment().name()
+        val treatment = onLabelResponsiveEvent.treatmentName()
         return when (onLabelResponsiveEvent.level()) {
             EvidenceLevel.A -> {
                 if (onLabelResponsiveEvent.direction().isCertain) {
@@ -109,7 +107,7 @@ object ActionableEvidenceFactory {
     }
 
     private fun responsiveOffLabelEvidence(offLabelResponsiveEvent: ActionableEvent): ActionableEvidence {
-        val treatment = offLabelResponsiveEvent.treatment().name()
+        val treatment = offLabelResponsiveEvent.treatmentName()
         return when (offLabelResponsiveEvent.level()) {
             EvidenceLevel.A -> {
                 ActionableEvidence(onLabelExperimentalTreatments = setOf(treatment))
@@ -130,7 +128,7 @@ object ActionableEvidenceFactory {
     }
 
     private fun resistantEvidence(resistanceEvent: ActionableEvent): ActionableEvidence {
-        val treatment = resistanceEvent.treatment().name()
+        val treatment = resistanceEvent.treatmentName()
         return when (resistanceEvent.level()) {
             EvidenceLevel.A, EvidenceLevel.B -> {
                 if (resistanceEvent.direction().isCertain) {

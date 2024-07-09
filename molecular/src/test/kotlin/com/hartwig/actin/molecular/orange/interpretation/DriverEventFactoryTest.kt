@@ -10,7 +10,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
-import org.apache.logging.log4j.util.Strings
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -40,7 +39,7 @@ class DriverEventFactoryTest {
             DriverEventFactory.variantEvent(
                 variant(
                     "BRAF",
-                    Strings.EMPTY,
+                    "",
                     "n.271-7395delT",
                     PurpleVariantEffect.INTRONIC,
                     PurpleCodingEffect.NONE
@@ -53,8 +52,8 @@ class DriverEventFactoryTest {
             DriverEventFactory.variantEvent(
                 variant(
                     "BRAF",
-                    Strings.EMPTY,
-                    Strings.EMPTY,
+                    "",
+                    "",
                     PurpleVariantEffect.UPSTREAM_GENE,
                     PurpleCodingEffect.NONE
                 )
@@ -66,8 +65,8 @@ class DriverEventFactoryTest {
             DriverEventFactory.variantEvent(
                 variant(
                     "BRAF",
-                    Strings.EMPTY,
-                    Strings.EMPTY,
+                    "",
+                    "",
                     PurpleVariantEffect.NON_CODING_TRANSCRIPT,
                     PurpleCodingEffect.NONE
                 )

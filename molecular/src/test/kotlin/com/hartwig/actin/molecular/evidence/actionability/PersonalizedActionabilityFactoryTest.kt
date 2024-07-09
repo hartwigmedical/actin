@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.google.common.collect.Lists
-import com.google.common.collect.Sets
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.serve.datamodel.ActionableEvent
 import org.junit.Assert.assertEquals
@@ -13,13 +11,13 @@ class PersonalizedActionabilityFactoryTest {
     @Test
     fun canDistinguishOnLabelOffLabel() {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-        val tumorDoids: MutableSet<String> = Sets.newHashSet("child", "blacklist")
+        val tumorDoids = setOf("child", "blacklist")
         val factory: PersonalizedActionabilityFactory = PersonalizedActionabilityFactory.create(doidModel, tumorDoids)
 
         val event1 = create("parent", "not blacklisted")
         val event2 = create("other doid")
         val event3 = create("parent", "blacklist")
-        val events: MutableList<ActionableEvent> = Lists.newArrayList(event1, event2, event3)
+        val events = listOf(event1, event2, event3)
         val match = factory.create(events)
         assertEquals(1, match.onLabelEvents.size.toLong())
         assertTrue(match.onLabelEvents.contains(event1))
@@ -36,7 +34,7 @@ class PersonalizedActionabilityFactoryTest {
         val event1 = create("doid 1")
         val event2 = create("doid 2")
         val event3 = create("doid 1", "blacklist")
-        val events: MutableList<ActionableEvent> = Lists.newArrayList(event1, event2, event3)
+        val events = listOf(event1, event2, event3)
         val match = factory.create(events)
         assertEquals(0, match.onLabelEvents.size.toLong())
         assertEquals(3, match.offLabelEvents.size.toLong())

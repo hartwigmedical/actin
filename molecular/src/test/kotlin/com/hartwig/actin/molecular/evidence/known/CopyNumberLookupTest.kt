@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.evidence.known
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
 import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalHomozygousDisruption
@@ -16,7 +15,7 @@ class CopyNumberLookupTest {
     fun canLookupCopyNumbers() {
         val amp: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
         val del: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 2").event(GeneEvent.DELETION).build()
-        val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
+        val knownCopyNumbers = listOf(amp, del)
 
         val ampOnGene1 = minimalCopyNumber().copy(gene = "gene 1", type = CopyNumberType.FULL_GAIN)
         assertEquals(amp, CopyNumberLookup.findForCopyNumber(knownCopyNumbers, ampOnGene1))
@@ -35,7 +34,7 @@ class CopyNumberLookupTest {
     fun canLookupHomozygousDisruptions() {
         val amp: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.AMPLIFICATION).build()
         val del: KnownCopyNumber = TestServeKnownFactory.copyNumberBuilder().gene("gene 1").event(GeneEvent.DELETION).build()
-        val knownCopyNumbers: MutableList<KnownCopyNumber> = Lists.newArrayList(amp, del)
+        val knownCopyNumbers = listOf(amp, del)
 
         val homDisruptionGene1 = minimalHomozygousDisruption().copy(gene = "gene 1")
         val homDisruptionGene2 = minimalHomozygousDisruption().copy(gene = "gene 2")
