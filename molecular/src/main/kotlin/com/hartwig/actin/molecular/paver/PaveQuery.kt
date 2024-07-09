@@ -7,7 +7,6 @@ data class PaveQuery(
     val ref: String,
     val alt: String,
     val gene: String,
-    val mutation: String,
     val transcript: String? = null,
 )
 

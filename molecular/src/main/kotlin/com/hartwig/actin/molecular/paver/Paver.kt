@@ -16,8 +16,8 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.nio.file.Paths
 
-class Paver(val config: PaverConfig) {
-    private val LOGGER: Logger = LogManager.getLogger(Paver::class.java)
+class Paver(private val config: PaverConfig) {
+    private val logger: Logger = LogManager.getLogger(Paver::class.java)
 
     fun pave(queries: List<PaveQuery>): List<PaveResponse> {
         val configBuilder = ConfigBuilder("Pave")
@@ -51,7 +51,7 @@ class Paver(val config: PaverConfig) {
     }
 
     private fun buildPaveInputVcf(vcfFile: String, queries: List<PaveQuery>) {
-        LOGGER.debug("Writing {} variants to {}", queries.size, vcfFile)
+        logger.debug("Writing {} variants to {}", queries.size, vcfFile)
         val refSequence: IndexedFastaSequenceFile = IndexedFastaSequenceFile(File(config.refGenomeFasta))
         val writer = VCFWriterFactory.openIndexedVCFWriter(vcfFile, refSequence);
 

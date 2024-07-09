@@ -31,7 +31,6 @@ class PaverTest {
                 position = 320,
                 ref = "T",
                 alt = "C",
-                mutation = "c.320_321T>C"
             )
         )
 
