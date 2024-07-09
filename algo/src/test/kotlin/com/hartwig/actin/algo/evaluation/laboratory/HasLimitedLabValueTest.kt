@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HasLimitedLabValueTest {
@@ -46,7 +45,7 @@ class HasLimitedLabValueTest {
     fun `Should fail if lab value is above maximum value and outside error margin`() {
         val actual = function.evaluate(record, measurement, LabTestFactory.create(measurement, 2.0))
         assertEvaluation(EvaluationResult.FAIL, actual)
-        assertTrue(actual.recoverable)
+        assertThat(actual.recoverable).isTrue()
     }
 
     @Test
