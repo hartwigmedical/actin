@@ -104,8 +104,8 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
             }
 
             else -> {
-                val message = "Undetermined if ASAT and ALAT within requested fold of ULN"
-                EvaluationFactory.recoverableUndetermined(message, message)
+                val message = "Unable to determine if ASAT and ALAT within requested fold of ULN."
+                EvaluationFactory.undetermined(message, message)
             }
         }
     }
