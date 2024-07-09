@@ -9,9 +9,10 @@ import com.hartwig.actin.trial.datamodel.Eligibility
 
 object EvaluatedCohortFactory {
     fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
-        return treatmentMatch.trialMatches.filter { trialMatch: TrialMatch ->
-            filterOnSOCExhaustionAndTumorType(trialMatch.evaluations, filterOnSOCExhaustionAndTumorType)
-        }.flatMap { trialMatch: TrialMatch ->
+        return filteredMatches(
+            treatmentMatch.trialMatches,
+            filterOnSOCExhaustionAndTumorType
+        ) { it.evaluations }.flatMap { trialMatch: TrialMatch ->
             val trialWarnings = extractWarnings(trialMatch.evaluations)
             val trialFails = extractFails(trialMatch.evaluations)
             val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
@@ -37,23 +38,20 @@ object EvaluatedCohortFactory {
                     )
                 )
             } else {
-                trialMatch.cohorts
-                    .filter { cohortMatches ->
-                        filterOnSOCExhaustionAndTumorType(cohortMatches.evaluations, filterOnSOCExhaustionAndTumorType)
-                    }.map { cohortMatch: CohortMatch ->
-                        EvaluatedCohort(
-                            trialId = trialId,
-                            acronym = acronym,
-                            cohort = cohortMatch.metadata.description,
-                            molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
-                            isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
-                            isOpen = trialIsOpen && cohortMatch.metadata.open && !cohortMatch.metadata.blacklist,
-                            hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
-                            warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
-                            fails = trialFails.union(extractFails(cohortMatch.evaluations)),
-                            phase = phase
-                        )
-                    }
+                filteredMatches(trialMatch.cohorts, filterOnSOCExhaustionAndTumorType) { it.evaluations }.map { cohortMatch: CohortMatch ->
+                    EvaluatedCohort(
+                        trialId = trialId,
+                        acronym = acronym,
+                        cohort = cohortMatch.metadata.description,
+                        molecularEvents = trialInclusionEvents.union(extractInclusionEvents(cohortMatch.evaluations)),
+                        isPotentiallyEligible = cohortMatch.isPotentiallyEligible,
+                        isOpen = trialIsOpen && cohortMatch.metadata.open && !cohortMatch.metadata.blacklist,
+                        hasSlotsAvailable = cohortMatch.metadata.slotsAvailable,
+                        warnings = trialWarnings.union(extractWarnings(cohortMatch.evaluations)),
+                        fails = trialFails.union(extractFails(cohortMatch.evaluations)),
+                        phase = phase
+                    )
+                }
             }
         }.sortedWith(EvaluatedCohortComparator())
     }
@@ -79,14 +77,13 @@ object EvaluatedCohortFactory {
         }.toSet()
     }
 
-    private fun filterOnSOCExhaustionAndTumorType(
-        evaluations: Map<Eligibility, Evaluation>,
-        filterOnSOCExhaustionAndTumorType: Boolean
-    ): Boolean {
-        val trialWarningsAndFails = extractWarnings(evaluations).union(extractFails(evaluations))
-        return if (filterOnSOCExhaustionAndTumorType) {
-            !trialWarningsAndFails.any { it.contains("Patient has not exhausted SOC") } && "Tumor type" !in trialWarningsAndFails
-        } else true
+    private fun <T> filteredMatches(
+        matches: List<T>, filterOnSOCExhaustionAndTumorType: Boolean, evaluations: (T) -> Map<Eligibility, Evaluation>
+    ) = if (!filterOnSOCExhaustionAndTumorType) matches else {
+        matches.filter {
+            val trialWarningsAndFails = extractWarnings(evaluations(it)) + extractFails(evaluations(it))
+            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Patient has not exhausted SOC") } && "Tumor type" !in trialWarningsAndFails
+        }
     }
 
     private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<String> {

@@ -63,7 +63,7 @@ class EvaluatedCohortFactoryTest {
     }
 
     @Test
-    fun `Can evaluate trials without cohort`() {
+    fun `Should evaluate trials without cohort`() {
         val trialMatchWithoutCohort = TrialMatch(
             identification = TrialIdentification(
                 trialId = "test",

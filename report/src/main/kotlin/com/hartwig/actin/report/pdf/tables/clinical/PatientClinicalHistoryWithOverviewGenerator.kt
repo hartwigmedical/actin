@@ -127,9 +127,8 @@ class PatientClinicalHistoryWithOverviewGenerator(
     }
 
     private fun geneToDrivers(drivers: List<MolecularDriverEntry>, geneToFind: String): String {
-        val events = drivers.filter {it.eventName.contains(geneToFind)}.joinToString {it.displayedName}
-        return if (events.isEmpty()) "$geneToFind: No reportable events"
-        else events
+        val events = drivers.filter { it.eventName.contains(geneToFind) }.joinToString { it.displayedName }
+        return events.ifEmpty { "$geneToFind: No reportable events" }
     }
 
     private fun msStatus(molecular: MolecularRecord): String {
@@ -154,7 +153,8 @@ class PatientClinicalHistoryWithOverviewGenerator(
     }
 
     private fun molecularResults(molecular: MolecularRecord): String {
-        val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+        val molecularDriversInterpreter =
+            MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
         val driverEntries = factory.create()
         val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(driverEntries, it) }

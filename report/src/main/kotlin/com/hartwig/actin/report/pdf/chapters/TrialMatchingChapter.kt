@@ -10,7 +10,11 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class TrialMatchingChapter(private val report: Report, private val enableExtendedMode: Boolean, private val showIneligibleTrialsInSummary: Boolean) : ReportChapter {
+class TrialMatchingChapter(
+    private val report: Report,
+    private val enableExtendedMode: Boolean,
+    private val showIneligibleTrialsInSummary: Boolean
+) : ReportChapter {
     override fun name(): String {
         return "Trial Matching Summary"
     }
@@ -27,13 +31,24 @@ class TrialMatchingChapter(private val report: Report, private val enableExtende
     private fun addTrialMatchingOverview(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
-        val generators = mutableListOf<TableGenerator>(EligibleActinTrialsGenerator.forClosedCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth(), enableExtendedMode))
-        if (!showIneligibleTrialsInSummary) {generators.add(IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
-            cohorts,
-            report.treatmentMatch.trialSource,
-            contentWidth(),
-            enableExtendedMode
-        ))}
+        val generators = mutableListOf<TableGenerator>(
+            EligibleActinTrialsGenerator.forClosedCohorts(
+                cohorts,
+                report.treatmentMatch.trialSource,
+                contentWidth(),
+                enableExtendedMode
+            )
+        )
+        if (!showIneligibleTrialsInSummary) {
+            generators.add(
+                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+                    cohorts,
+                    report.treatmentMatch.trialSource,
+                    contentWidth(),
+                    enableExtendedMode
+                )
+            )
+        }
 
         for (i in generators.indices) {
             val generator = generators[i]
