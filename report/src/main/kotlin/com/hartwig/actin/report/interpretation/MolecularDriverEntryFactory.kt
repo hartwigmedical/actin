@@ -27,15 +27,15 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
     }
 
     private fun fromVariant(variant: Variant): MolecularDriverEntry {
-        val biallelicIndicator = if (variant.extendedVariantOrThrow().isBiallelic) "Biallelic " else ""
+        val biallelicIndicator = if (variant.extendedVariantDetails?.isBiallelic == true) "Biallelic " else ""
         val mutationTypeString = if (variant.isHotspot) "Hotspot" else "VUS"
         val driverType = "Mutation ($biallelicIndicator$mutationTypeString)"
 
         val boundedVariantCopies =
-            min(variant.extendedVariantOrThrow().variantCopyNumber, variant.extendedVariantOrThrow().totalCopyNumber).coerceAtLeast(0.0)
+            variant.extendedVariantDetails?.let { min(it.variantCopyNumber, it.totalCopyNumber).coerceAtLeast(0.0) } ?: 0.0
         val variantCopyString =
             if (boundedVariantCopies < 1) Formats.singleDigitNumber(boundedVariantCopies) else Formats.noDigitNumber(boundedVariantCopies)
-        val boundedTotalCopies = variant.extendedVariantOrThrow().totalCopyNumber.coerceAtLeast(0.0)
+        val boundedTotalCopies = variant.extendedVariantDetails?.totalCopyNumber?.coerceAtLeast(0.0) ?: 0.0
         val totalCopyString =
             if (boundedTotalCopies < 1) Formats.singleDigitNumber(boundedTotalCopies) else Formats.noDigitNumber(boundedTotalCopies)
         val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""

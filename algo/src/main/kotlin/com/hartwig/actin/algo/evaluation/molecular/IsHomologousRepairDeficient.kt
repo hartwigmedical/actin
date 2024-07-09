@@ -15,7 +15,7 @@ class IsHomologousRepairDeficient : MolecularEvaluationFunction {
         for (gene in MolecularConstants.HRD_GENES) {
             for (variant in test.drivers.variants) {
                 if (variant.gene == gene && variant.isReportable) {
-                    if (variant.extendedVariantOrThrow().isBiallelic) {
+                    if (variant.extendedVariantDetails?.isBiallelic == true) {
                         hrdGenesWithBiallelicDriver.add(gene)
                     } else {
                         hrdGenesWithNonBiallelicDriver.add(gene)
