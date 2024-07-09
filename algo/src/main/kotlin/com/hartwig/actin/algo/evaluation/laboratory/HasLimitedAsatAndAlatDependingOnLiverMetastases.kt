@@ -54,7 +54,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
 
             ASATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN && ALATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
                 val message = "ASAT ($ASATLabValueString) and ALAT ($ALATLabValueString) exceed maximum allowed value"
-                evaluateOutsideMargin((ASATWithinLiverMetastasisLimit && ALATWithinLiverMetastasisLimit), hasLiverMetastases, message)
+                evaluateOutsideMargin(ASATWithinLiverMetastasisLimit && ALATWithinLiverMetastasisLimit, hasLiverMetastases, message)
             }
 
             ASATLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
@@ -87,13 +87,24 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
                 EvaluationFactory.recoverablePass(message, message)
             }
 
+            ASATLimitEvaluation == CANNOT_BE_DETERMINED && ALATLimitEvaluation == CANNOT_BE_DETERMINED -> {
+                val message = "${createMeasurementString(ASPARTATE_AMINOTRANSFERASE)} " +
+                        "and ${createMeasurementString(ALANINE_AMINOTRANSFERASE)} undetermined"
+                EvaluationFactory.recoverableUndetermined(message, message)
+            }
+
             ASATLimitEvaluation == CANNOT_BE_DETERMINED -> {
-                val message = "${ASPARTATE_AMINOTRANSFERASE.display().replaceFirstChar { it.uppercase() }} undetermined"
+                val message = "${createMeasurementString(ASPARTATE_AMINOTRANSFERASE)} undetermined"
+                EvaluationFactory.recoverableUndetermined(message, message)
+            }
+
+            ALATLimitEvaluation == CANNOT_BE_DETERMINED -> {
+                val message = "${createMeasurementString(ALANINE_AMINOTRANSFERASE)} undetermined"
                 EvaluationFactory.recoverableUndetermined(message, message)
             }
 
             else -> {
-                val message = "${ALANINE_AMINOTRANSFERASE.display().replaceFirstChar { it.uppercase() }} undetermined"
+                val message = "Undetermined if ASAT and ALAT within requested fold of ULN"
                 EvaluationFactory.recoverableUndetermined(message, message)
             }
         }
@@ -101,7 +112,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
 
     private fun checkValidity(
         mostRecent: LabValue?, measurement: LabMeasurement): Boolean {
-        return (isValid(mostRecent, measurement, minValidLabDate) && mostRecent?.date?.isAfter(minPassLabDate) == true)
+        return isValid(mostRecent, measurement, minValidLabDate) && mostRecent?.date?.isAfter(minPassLabDate) == true
     }
 
     private fun evaluateMeasurement(mostRecent: LabValue?, hasLiverMetastases: Boolean?): LabEvaluation.LabEvaluationResult {
@@ -112,13 +123,17 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
         }
     }
 
+    private fun createMeasurementString(measurement: LabMeasurement): String {
+        return measurement.display().replaceFirstChar { it.uppercase() }
+    }
+
     private fun createReferenceString(mostRecent: LabValue?, hasLiverMetastases: Boolean?): String {
         val max = if (hasLiverMetastases == true) maxULNWithLiverMetastases else maxULNWithoutLiverMetastases
         return "$max*ULN ($max*${mostRecent?.refLimitUp})"
     }
 
     private fun createLabValueString(measurement: LabMeasurement, mostRecent: LabValue?): String {
-        return "${measurement.display().replaceFirstChar { it.uppercase() }} ${String.format(Locale.ENGLISH, "%.1f", mostRecent?.value)}"
+        return "${createMeasurementString(measurement)} ${String.format(Locale.ENGLISH, "%.1f", mostRecent?.value)}"
     }
 
     private fun evaluateOutsideMargin(measurementsWithinLimit: Boolean, hasLiverMetastases: Boolean?, message: String): Evaluation {
