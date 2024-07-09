@@ -79,7 +79,7 @@ class Paver(private val config: PaverConfig) {
         val reader =
             AbstractFeatureReader.getFeatureReader<VariantContext, LineIterator>(paveVcfFile, VCFCodec(), false)
 
-        var response = mutableListOf<PaveResponse>()
+        val response = mutableListOf<PaveResponse>()
         for (variant in reader) {
             val paveImpact = extractPaveImpact(variant)
             val paveTranscriptImpact = extractPaveTranscriptImpact(variant)
@@ -91,10 +91,14 @@ class Paver(private val config: PaverConfig) {
 
     private fun extractPaveImpact(variant: VariantContext): PaveImpact {
         val parts = variant.getAttributeAsStringList("IMPACT", "")
-        // TODO use vcf header attributes to make this safer?
+        if (parts == null || parts.isEmpty()) {
+            throw RuntimeException("Missing PAVE impact field")
+        }
+
         if (parts.size != 10) {
             throw RuntimeException("Unexpected number of parts in PAVE impact field: ${parts.size}")
         }
+
         return PaveImpact(
             gene = parts[0],
             transcript = parts[1],
@@ -110,10 +114,17 @@ class Paver(private val config: PaverConfig) {
     }
 
     private fun extractPaveTranscriptImpact(variant: VariantContext): List<PaveTranscriptImpact> {
-        return variant.getAttributeAsStringList("PAVE_TI", "")
-            .map { it.split("|") }
+        val impacts = variant.getAttributeAsStringList("PAVE_TI", "")
+        if (impacts == null || impacts.isEmpty()) {
+            throw RuntimeException("Missing PAVE_TI field")
+        }
+
+        return impacts.map { it.split("|") }
             .map {
-                // TODO use vcf header?
+                if (it.size != 7) {
+                    throw RuntimeException("Unexpected number of parts in PAVE_TI field: ${it.size}")
+                }
+
                 PaveTranscriptImpact(
                     gene = it[0],
                     geneName = it[1],
@@ -149,6 +160,7 @@ private fun chromToIndex(chrom: String): Int {
     return when (chrom) {
         "X" -> 23
         "Y" -> 24
+        "MT" -> 25
         else -> chrom.toInt()
     }
 }
