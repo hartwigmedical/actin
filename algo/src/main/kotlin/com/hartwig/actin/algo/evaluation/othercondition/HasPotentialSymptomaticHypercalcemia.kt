@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation
 import com.hartwig.actin.clinical.interpretation.LabInterpreter
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
 import com.hartwig.actin.clinical.interpretation.LabMeasurement.CALCIUM
+import com.hartwig.actin.clinical.interpretation.LabMeasurement.CORRECTED_CALCIUM
 import com.hartwig.actin.clinical.interpretation.LabMeasurement.IONIZED_CALCIUM
 import java.time.LocalDate
 
@@ -17,11 +18,14 @@ class HasPotentialSymptomaticHypercalcemia(private val minValidDate: LocalDate) 
 
         val calciumEvaluation = evaluateLabValue(record, CALCIUM)
         val ionizedCalciumEvaluation = evaluateLabValue(record, IONIZED_CALCIUM)
-        val correctedCalciumEvaluation = evaluateLabValue(record, IONIZED_CALCIUM)
+        val correctedCalciumEvaluation = evaluateLabValue(record, CORRECTED_CALCIUM)
         val evaluations = listOf(calciumEvaluation, ionizedCalciumEvaluation, correctedCalciumEvaluation)
 
         return when {
-            evaluations.any { it == LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN } -> {
+            evaluations.any {
+                it == LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN ||
+                        it == LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN
+            } -> {
                 EvaluationFactory.warn(
                     "Patient may have symptomatic hypercalcemia (calcium above ULN)",
                     "Possible symptomatic hypercalcemia (calcium above ULN)"
@@ -43,7 +47,7 @@ class HasPotentialSymptomaticHypercalcemia(private val minValidDate: LocalDate) 
     private fun evaluateLabValue(record: PatientRecord, measurement: LabMeasurement): LabEvaluation.LabEvaluationResult {
         val interpretation = LabInterpreter.interpret(record.labValues)
         val mostRecent = interpretation.mostRecentValue(measurement)
-        return if (LabEvaluation.isValid(value, measurement, minValidDate) && mostRecent != null) {
+        return if (LabEvaluation.isValid(mostRecent, measurement, minValidDate) && mostRecent != null) {
             LabEvaluation.evaluateVersusMaxULN(mostRecent, 1.0)
         } else LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED
     }
