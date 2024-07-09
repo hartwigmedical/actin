@@ -82,7 +82,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             val orangeRecordMolecularRecordMolecularInterpreter =
                 MolecularInterpreter(OrangeExtractor(geneFilter), MolecularRecordAnnotator(evidenceDatabase))
 
-            return orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
+            orangeRecordMolecularRecordMolecularInterpreter.run(listOf(orange))
         } else {
             emptyList()
         }
