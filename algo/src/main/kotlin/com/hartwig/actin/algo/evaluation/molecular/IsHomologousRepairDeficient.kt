@@ -12,13 +12,16 @@ class IsHomologousRepairDeficient : MolecularEvaluationFunction {
     override fun evaluate(test: MolecularTest): Evaluation {
         val hrdGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()
         val hrdGenesWithNonBiallelicDriver: MutableSet<String> = mutableSetOf()
+        val hrdGenesWithUnknownAllelicDriver: MutableSet<String> = mutableSetOf()
         for (gene in MolecularConstants.HRD_GENES) {
             for (variant in test.drivers.variants) {
                 if (variant.gene == gene && variant.isReportable) {
                     if (variant.extendedVariantDetails?.isBiallelic == true) {
                         hrdGenesWithBiallelicDriver.add(gene)
-                    } else {
+                    } else if (variant.extendedVariantDetails?.isBiallelic == false) {
                         hrdGenesWithNonBiallelicDriver.add(gene)
+                    } else {
+                        hrdGenesWithUnknownAllelicDriver.add(gene)
                     }
                 }
             }
@@ -51,6 +54,12 @@ class IsHomologousRepairDeficient : MolecularEvaluationFunction {
                         "Unknown homologous repair deficiency (HRD) status, but non-biallelic drivers in HR genes: "
                                 + concat(hrdGenesWithNonBiallelicDriver) + " are detected; an HRD test may be recommended",
                         "Unknown HRD status but non-biallelic drivers in HR genes"
+                    )
+                } else if (hrdGenesWithUnknownAllelicDriver.isNotEmpty()) {
+                    EvaluationFactory.undetermined(
+                        "Unknown homologous repair deficiency (HRD) status, but drivers with unknown allelic status in HR genes: "
+                                + concat(hrdGenesWithNonBiallelicDriver) + " are detected; an HRD test may be recommended",
+                        "Unknown HRD status but drivers unknown allelic status in HR genes"
                     )
                 } else {
                     EvaluationFactory.fail("Unknown homologous repair deficiency (HRD) status", "Unknown HRD status")
