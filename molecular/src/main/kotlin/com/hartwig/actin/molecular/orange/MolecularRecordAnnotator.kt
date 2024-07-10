@@ -30,24 +30,28 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateCharacteristics(characteristics: MolecularCharacteristics): MolecularCharacteristics {
-        return characteristics.copy(
-            microsatelliteEvidence = createEvidenceForNullableMatch(
-                characteristics.isMicrosatelliteUnstable?.let(evidenceDatabase::evidenceForMicrosatelliteStatus)
-            ),
-            homologousRepairEvidence = createEvidenceForNullableMatch(
-                characteristics.isHomologousRepairDeficient?.let(evidenceDatabase::evidenceForHomologousRepairStatus)
-            ),
-            tumorMutationalBurdenEvidence = createEvidenceForNullableMatch(
-                characteristics.hasHighTumorMutationalBurden?.let(evidenceDatabase::evidenceForTumorMutationalBurdenStatus)
-            ),
-            tumorMutationalLoadEvidence = createEvidenceForNullableMatch(
-                characteristics.hasHighTumorMutationalLoad?.let(evidenceDatabase::evidenceForTumorMutationalLoadStatus)
+        return with(characteristics) {
+            copy(
+                microsatelliteEvidence = createEvidenceForNullableMatch(
+                    isMicrosatelliteUnstable, evidenceDatabase::evidenceForMicrosatelliteStatus
+                ),
+                homologousRepairEvidence = createEvidenceForNullableMatch(
+                    isHomologousRepairDeficient, evidenceDatabase::evidenceForHomologousRepairStatus
+                ),
+                tumorMutationalBurdenEvidence = createEvidenceForNullableMatch(
+                    hasHighTumorMutationalBurden, evidenceDatabase::evidenceForTumorMutationalBurdenStatus
+                ),
+                tumorMutationalLoadEvidence = createEvidenceForNullableMatch(
+                    hasHighTumorMutationalLoad, evidenceDatabase::evidenceForTumorMutationalLoadStatus
+                )
             )
-        )
+        }
     }
 
-    private fun createEvidenceForNullableMatch(actionabilityMatch: ActionabilityMatch?): ActionableEvidence {
-        return actionabilityMatch?.let { ActionableEvidenceFactory.create(it) } ?: ActionableEvidenceFactory.createNoEvidence()
+    private fun createEvidenceForNullableMatch(
+        nullableCharacteristic: Boolean?, lookUpEvidence: (Boolean) -> ActionabilityMatch
+    ): ActionableEvidence? {
+        return nullableCharacteristic?.let { characteristic -> ActionableEvidenceFactory.create(lookUpEvidence(characteristic)) }
     }
 
     private fun annotateDrivers(drivers: Drivers): Drivers {

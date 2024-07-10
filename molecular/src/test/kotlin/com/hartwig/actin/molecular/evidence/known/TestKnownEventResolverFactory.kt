@@ -6,7 +6,7 @@ import com.hartwig.serve.datamodel.KnownEvents
 object TestKnownEventResolverFactory {
 
     fun createEmpty(): KnownEventResolver {
-        return KnownEventResolver(ImmutableKnownEvents.builder().build(), mutableSetOf())
+        return KnownEventResolver(ImmutableKnownEvents.builder().build(), emptySet())
     }
 
     fun createProper(): KnownEventResolver {
