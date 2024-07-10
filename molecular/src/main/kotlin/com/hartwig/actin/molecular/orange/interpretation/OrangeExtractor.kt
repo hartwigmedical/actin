@@ -97,7 +97,8 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
 
         private fun throwIfGermlineFieldNonEmpty(orange: OrangeRecord) {
             val message =
-                ("must be null or empty because ACTIN only accepts ORANGE output that has been " + "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
+                ("must be null or empty because ACTIN only accepts ORANGE output that has been " +
+                        "scrubbed of germline data. Please use the JSON output from the 'orange_no_germline' directory.")
             val allGermlineStructuralVariants = orange.linx().allGermlineStructuralVariants()
             check(allGermlineStructuralVariants.isNullOrEmpty()) { "allGermlineStructuralVariants $message" }
             val allGermlineBreakends = orange.linx().allGermlineBreakends()

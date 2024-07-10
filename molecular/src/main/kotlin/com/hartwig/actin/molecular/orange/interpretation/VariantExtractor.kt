@@ -9,6 +9,7 @@ import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.VariantComparator
 import com.hartwig.hmftools.datamodel.purple.HotspotType
@@ -141,7 +142,6 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                 .filter { purpleTranscriptImpact: PurpleTranscriptImpact -> isEnsemblTranscript(purpleTranscriptImpact) }
                 .map { purpleTranscriptImpact: PurpleTranscriptImpact -> toTranscriptImpact(purpleTranscriptImpact) }
                 .toSet()
-
         }
 
         internal fun isEnsemblTranscript(purpleTranscriptImpact: PurpleTranscriptImpact): Boolean {

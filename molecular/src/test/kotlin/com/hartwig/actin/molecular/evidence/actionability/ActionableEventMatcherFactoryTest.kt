@@ -8,7 +8,6 @@ import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.Treatment
 import com.hartwig.serve.datamodel.hotspot.ActionableHotspot
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ActionableEventMatcherFactoryTest {
@@ -26,7 +25,7 @@ class ActionableEventMatcherFactoryTest {
     }
 
     @Test
-    fun `Should filter external trials`() {
+    fun `Should be able to filter external trials`() {
         val base = TestServeActionabilityFactory.createActionableEvent(Knowledgebase.CKB_TRIAL, "external")
 
         val actionable = ImmutableActionableEvents.builder()
@@ -45,13 +44,13 @@ class ActionableEventMatcherFactoryTest {
 
         val filteredOnSource =
             ActionableEventMatcherFactory.filterForSources(actionable, ActionableEventMatcherFactory.ACTIONABLE_EVENT_SOURCES)
-        assertEquals(4, filteredOnSource.hotspots().size.toLong())
+        assertThat(filteredOnSource.hotspots().size).isEqualTo(4)
 
         val filteredOnApplicability = ActionableEventMatcherFactory.filterForApplicability(filteredOnSource)
-        assertEquals(3, filteredOnApplicability.hotspots().size.toLong())
+        assertThat(filteredOnApplicability.hotspots()).hasSize(3)
 
-        assertEquals("internal", findByGene(filteredOnApplicability.hotspots(), "gene 2"))
-        assertEquals("external", findByGene(filteredOnApplicability.hotspots(), "gene 3"))
+        assertThat(findByGene(filteredOnApplicability.hotspots(), "gene 2")).isEqualTo("internal")
+        assertThat(findByGene(filteredOnApplicability.hotspots(), "gene 3")).isEqualTo("external")
     }
 
     private fun findByGene(hotspots: List<ActionableHotspot>, geneToFind: String): String {

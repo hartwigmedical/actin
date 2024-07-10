@@ -15,6 +15,7 @@ private val RANGE = TestServeKnownFactory.codonBuilder()
     .build()
 
 class RangeMatchingTest {
+
     @Test
     fun `Should return true on matching range`() {
         assertThat(RangeMatching.isMatch(RANGE, VARIANT_CRITERIA)).isTrue()

@@ -1,10 +1,8 @@
-package com.hartwig.actin.molecular.orange.interpretation
+package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.ClinicalTrial
 import com.hartwig.serve.datamodel.EvidenceLevel
@@ -25,11 +23,11 @@ object ActionableEvidenceFactory {
     }
 
     private fun createOnLabelEvidence(onLabelEvents: List<ActionableEvent>): ActionableEvidence {
-        return sourcedEvidence(onLabelEvents, ::responsiveOnLabelEvidence)
+        return sourcedEvidence(onLabelEvents, ActionableEvidenceFactory::responsiveOnLabelEvidence)
     }
 
     private fun createOffLabelEvidence(offLabelEvents: List<ActionableEvent>): ActionableEvidence {
-        return sourcedEvidence(offLabelEvents, ::responsiveOffLabelEvidence)
+        return sourcedEvidence(offLabelEvents, ActionableEvidenceFactory::responsiveOffLabelEvidence)
     }
 
     private fun sourcedEvidence(

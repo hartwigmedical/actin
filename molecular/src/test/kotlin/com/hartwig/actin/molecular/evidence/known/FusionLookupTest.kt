@@ -2,8 +2,7 @@ package com.hartwig.actin.molecular.evidence.known
 
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
 import com.hartwig.serve.datamodel.fusion.KnownFusion
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class FusionLookupTest {
@@ -24,18 +23,18 @@ class FusionLookupTest {
         val knownFusions = listOf(fusion1, fusion2, fusion3, fusion4)
 
         val broadMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 2, fusedExonDown = 5)
-        assertEquals(fusion1, FusionLookup.find(knownFusions, broadMatch))
+        assertThat(FusionLookup.find(knownFusions, broadMatch)).isEqualTo(fusion1)
 
         val specificUpMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 3, fusedExonDown = 5)
-        assertEquals(fusion2, FusionLookup.find(knownFusions, specificUpMatch))
+        assertThat(FusionLookup.find(knownFusions, specificUpMatch)).isEqualTo(fusion2)
 
         val specificDownMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 2, fusedExonDown = 4)
-        assertEquals(fusion3, FusionLookup.find(knownFusions, specificDownMatch))
+        assertThat(FusionLookup.find(knownFusions, specificDownMatch)).isEqualTo(fusion3)
 
         val specificMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 3, fusedExonDown = 4)
-        assertEquals(fusion4, FusionLookup.find(knownFusions, specificMatch))
+        assertThat(FusionLookup.find(knownFusions, specificMatch)).isEqualTo(fusion4)
 
         val noMatch = FUSION_CRITERIA.copy(geneStart = "down", geneEnd = "up")
-        assertNull(FusionLookup.find(knownFusions, noMatch))
+        assertThat(FusionLookup.find(knownFusions, noMatch)).isNull()
     }
 }

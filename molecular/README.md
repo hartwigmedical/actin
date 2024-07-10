@@ -19,7 +19,7 @@ Optionally, the following arguments can be passed as follows:
 | Argument    | Example Value        | Details                                                                 | 
 |-------------|----------------------|-------------------------------------------------------------------------|
 | orange_json | /path/to/orange.json | The path to ORANGE json in case an ORANGE record exists for the patient |
-| log_debug   |                      | If this parameter is set, additional logs will be writted to stdout.    |
+| log_debug   |                      | If this parameter is set, additional logs will be written to stdout.    |
 
 The following assumptions are made about the inputs:
 

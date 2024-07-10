@@ -369,19 +369,20 @@ _Blood clotting factors_
 
 _Liver function_
 
-| Rule                                                  | When does a patient pass evaluation?                        | Note                                                                                |
-|-------------------------------------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X                    | Albumin (ALB) in g/dL => X.                                 | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10. |
-| HAS_ALBUMIN_LLN_OF_AT_LEAST_X                         | Albumin (ALB) > X*ULN                                       |                                                                                     |
-| HAS_ASAT_ULN_OF_AT_MOST_X                             | Aspartate aminotransferase (ASAT) <= X*ULN                  |                                                                                     |
-| HAS_ALAT_ULN_OF_AT_MOST_X                             | Alanine aminotransferase (ALAT) <= X*ULN                    |                                                                                     |
-| HAS_ALP_ULN_OF_AT_MOST_X                              | Alkaline phosphatase (ALP) <= X*ULN                         |                                                                                     |
-| HAS_ALP_ULN_OF_AT_LEAST_X                             | Alkaline phosphatase (ALP) => X*ULN                         |                                                                                     |
-| HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X                  | Total Bilirubin (TBIL) <= X*ULN                             |                                                                                     |
-| HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X           | Total Bilirubin (TBIL) in umol/L <= X                       |                                                                                     |
-| HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                 | Direct Bilirubin (DBIL) <= X*ULN                            | Direct Bilirubin = Conjugated bilirubin                                             |
-| HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X | Direct Bilirubin (DBIL) / Total Bilirubin (TBIL) * 100 <= X |                                                                                     |
-| HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X               | Currently resolves to `UNDETERMINED`                        | Indirect Bilirubin = Unconjugated bilirubin                                         |
+| Rule                                                                          | When does a patient pass evaluation?                         | Note                                                                                |
+|-------------------------------------------------------------------------------|--------------------------------------------------------------|-------------------------------------------------------------------------------------|
+| HAS_ALBUMIN_G_PER_DL_OF_AT_LEAST_X                                            | Albumin (ALB) in g/dL => X.                                  | In case ALB is measured in g/L, the value is converted using ALB[g/dL]=ALB[g/L]/10. |
+| HAS_ALBUMIN_LLN_OF_AT_LEAST_X                                                 | Albumin (ALB) > X*ULN                                        |                                                                                     |
+| HAS_ASAT_ULN_OF_AT_MOST_X                                                     | Aspartate aminotransferase (ASAT) <= X*ULN                   |                                                                                     |
+| HAS_ALAT_ULN_OF_AT_MOST_X                                                     | Alanine aminotransferase (ALAT) <= X*ULN                     |                                                                                     |
+| HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT | ALAT + ASAT <= X*ULN or <= Y*ULN if liver metastases present |
+| HAS_ALP_ULN_OF_AT_MOST_X                                                      | Alkaline phosphatase (ALP) <= X*ULN                          |                                                                                     |
+| HAS_ALP_ULN_OF_AT_LEAST_X                                                     | Alkaline phosphatase (ALP) => X*ULN                          |                                                                                     |
+| HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X                                          | Total Bilirubin (TBIL) <= X*ULN                              |                                                                                     |
+| HAS_TOTAL_BILIRUBIN_UMOL_PER_L_OF_AT_MOST_X                                   | Total Bilirubin (TBIL) in umol/L <= X                        |                                                                                     |
+| HAS_DIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                         | Direct Bilirubin (DBIL) <= X*ULN                             | Direct Bilirubin = Conjugated bilirubin                                             |
+| HAS_DIRECT_BILIRUBIN_PERCENTAGE_OF_TOTAL_OF_AT_MOST_X                         | Direct Bilirubin (DBIL) / Total Bilirubin (TBIL) * 100 <= X  |                                                                                     |
+| HAS_INDIRECT_BILIRUBIN_ULN_OF_AT_MOST_X                                       | Currently resolves to `UNDETERMINED`                         | Indirect Bilirubin = Unconjugated bilirubin                                         |
 
 _Kidney function_
 

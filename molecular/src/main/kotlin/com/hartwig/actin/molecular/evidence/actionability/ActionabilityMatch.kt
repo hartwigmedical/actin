@@ -4,5 +4,5 @@ import com.hartwig.serve.datamodel.ActionableEvent
 
 data class ActionabilityMatch(
     val onLabelEvents: List<ActionableEvent>,
-    val offLabelEvents: List<ActionableEvent>,
+    val offLabelEvents: List<ActionableEvent>
 )
