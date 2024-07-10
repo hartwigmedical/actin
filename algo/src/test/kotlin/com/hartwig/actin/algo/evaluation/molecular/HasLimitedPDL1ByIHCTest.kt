@@ -44,12 +44,6 @@ class HasLimitedPDL1ByIHCTest {
     }
 
     @Test
-    fun `Should fail when test value has non-matching prefix`() {
-        val priorTests = listOf(IHCMolecularTest(pdl1Test.copy(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 1.0)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
-    }
-
-    @Test
     fun `Should fail with specific message when molecular history only contains tests with other measure types `() {
         val molecular = listOf(
             IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = "wrong")),
@@ -75,6 +69,19 @@ class HasLimitedPDL1ByIHCTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withMolecularTests(listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 1.0)))))
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when it is unclear if test value is under limit due to its comparator`() {
+        val evaluation = function.evaluate(
+            MolecularTestFactory.withMolecularTests(
+                listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 1.0, scoreValuePrefix = ValueComparison.LARGER_THAN)))
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        Assertions.assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
+            "Undetermined if PD-L1 expression (> 1.0) exceeds maximum of 2.0"
         )
     }
 

@@ -23,20 +23,28 @@ class HasLimitedPDL1ByIHC(
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {
                 val evaluation = evaluateVersusMaxValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, maxPDL1)
-                if (evaluation == EvaluationResult.PASS) {
-                    val measureMessage = if (measure != null) " measured by $measure" else ""
-                    return EvaluationFactory.pass(
-                        "PD-L1 expression$measureMessage does not exceed maximum of $maxPDL1", "PD-L1 expression below $maxPDL1"
-                    )
+                val measureMessage = if (measure != null) " measured by $measure" else ""
+                when (evaluation) {
+                    EvaluationResult.PASS -> {
+                        return EvaluationFactory.pass(
+                            "PD-L1 expression$measureMessage does not exceed maximum of $maxPDL1", "PD-L1 expression below $maxPDL1"
+                        )
+                    }
+                    EvaluationResult.UNDETERMINED -> {
+                        return EvaluationFactory.undetermined(
+                            "Undetermined if PD-L1 expression (${ihcTest.let { "${it.scoreValuePrefix} " }}$scoreValue) " +
+                                    "exceeds maximum of $maxPDL1"
+                        )
+                    }
+                    else -> {
+                        return EvaluationFactory.fail(
+                            "PD-L1 expression$measureMessage exceeds maximum of $maxPDL1", "PD-L1 expression exceeds $maxPDL1"
+                        )
+                    }
                 }
             }
         }
-        return if (pdl1TestsWithRequestedMeasurement.isNotEmpty()) {
-            EvaluationFactory.fail(
-                "At least one PD-L1 IHC tests measured by $measure found where level exceeds maximum of $maxPDL1",
-                "PD-L1 expression exceeds $maxPDL1"
-            )
-        } else if (PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty()) {
+        return if (PriorMolecularTestFunctions.allPDL1Tests(priorMolecularTests).isNotEmpty()) {
             EvaluationFactory.recoverableFail(
                 "No PD-L1 IHC test found with measurement type $measure", "PD-L1 tests not in correct unit ($measure)"
             )

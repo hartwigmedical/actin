@@ -23,12 +23,25 @@ class HasSufficientPDL1ByIHC (
             val scoreValue = ihcTest.scoreValue
             if (scoreValue != null) {
                 val evaluation = evaluateVersusMinValue(Math.round(scoreValue).toDouble(), ihcTest.scoreValuePrefix, minPDL1)
-                if (evaluation == EvaluationResult.PASS) {
-                    val measureMessage = if (measure != null) " measured by $measure" else ""
-                    return EvaluationFactory.pass(
-                        "PD-L1 expression$measureMessage meets at least desired level of $minPDL1",
-                        "PD-L1 expression exceeds $minPDL1"
-                    )
+                val measureMessage = if (measure != null) " measured by $measure" else ""
+                when (evaluation) {
+                    EvaluationResult.PASS -> {
+                        return EvaluationFactory.pass(
+                            "PD-L1 expression$measureMessage meets at least desired level of $minPDL1",
+                            "PD-L1 expression exceeds $minPDL1"
+                        )
+                    }
+                    EvaluationResult.UNDETERMINED -> {
+                        return EvaluationFactory.undetermined(
+                            "Undetermined if PD-L1 expression (${ihcTest.let { "${it.scoreValuePrefix} " }}$scoreValue) " +
+                                    "above minimum of $minPDL1"
+                        )
+                    }
+                    else -> {
+                        return EvaluationFactory.fail(
+                            "PD-L1 expression$measureMessage below minimum of $minPDL1", "PD-L1 expression below $minPDL1"
+                        )
+                    }
                 }
             }
         }

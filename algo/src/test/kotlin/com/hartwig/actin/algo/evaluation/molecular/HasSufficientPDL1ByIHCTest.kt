@@ -72,9 +72,16 @@ class HasSufficientPDL1ByIHCTest {
     }
 
     @Test
-    fun `Should fail when test value has non-matching prefix`() {
-        val priorTests = listOf(IHCMolecularTest(pdl1Test.copy(scoreValuePrefix = ValueComparison.SMALLER_THAN, scoreValue = 3.0)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))
+    fun `Should evaluate to undetermined when it is unclear if test value is above minimum due to its comparator`() {
+        val evaluation = function.evaluate(
+            MolecularTestFactory.withMolecularTests(
+                listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 3.0, scoreValuePrefix = ValueComparison.SMALLER_THAN)))
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        Assertions.assertThat(evaluation.undeterminedGeneralMessages).containsExactly(
+            "Undetermined if PD-L1 expression (< 3.0) above minimum of 2.0"
+        )
     }
 
     @Test
