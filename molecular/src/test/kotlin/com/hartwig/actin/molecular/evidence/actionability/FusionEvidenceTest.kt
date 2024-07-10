@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType.PROMISCUOUS_3
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType.PROMISCUOUS_5
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
@@ -19,7 +18,7 @@ class FusionEvidenceTest {
         val gene1: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.FUSION).gene("gene 1").build()
         val gene2: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.ANY_MUTATION).gene("gene 2").build()
         val gene3: ActionableGene = TestServeActionabilityFactory.geneBuilder().event(GeneEvent.INACTIVATION).gene("gene 1").build()
-        val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(Lists.newArrayList(gene1, gene2, gene3)).build()
+        val actionable: ActionableEvents = ImmutableActionableEvents.builder().genes(listOf(gene1, gene2, gene3)).build()
         val fusionEvidence: FusionEvidence = FusionEvidence.create(actionable)
 
         val reportedFusionGene1 = FUSION_CRITERIA.copy(geneStart = "gene 1", driverType = PROMISCUOUS_5, isReportable = true)

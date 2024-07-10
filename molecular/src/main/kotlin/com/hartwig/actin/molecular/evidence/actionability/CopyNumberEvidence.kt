@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.serve.datamodel.ActionableEvent
@@ -24,22 +23,21 @@ internal class CopyNumberEvidence private constructor(
             }
 
             else -> {
-                Lists.newArrayList()
+                emptyList()
             }
         }
     }
 
     companion object {
         fun create(actionableEvents: ActionableEvents): CopyNumberEvidence {
-            val actionableAmplifications: MutableList<ActionableGene> = Lists.newArrayList()
-            val actionableLosses: MutableList<ActionableGene> = Lists.newArrayList()
-            for (actionableGene in actionableEvents.genes()) {
-                if (actionableGene.event() == GeneEvent.AMPLIFICATION) {
-                    actionableAmplifications.add(actionableGene)
-                } else if (actionableGene.event() == GeneEvent.DELETION) {
-                    actionableLosses.add(actionableGene)
+            val (actionableAmplifications, actionableLosses) = actionableEvents.genes()
+                .fold(Pair(emptyList<ActionableGene>(), emptyList<ActionableGene>())) { acc, actionableGene ->
+                    when (actionableGene.event()) {
+                        GeneEvent.AMPLIFICATION -> Pair(acc.first + actionableGene, acc.second)
+                        GeneEvent.DELETION -> Pair(acc.first, acc.second + actionableGene)
+                        else -> acc
+                    }
                 }
-            }
             return CopyNumberEvidence(actionableAmplifications, actionableLosses)
         }
 

@@ -10,7 +10,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterEntry
-import org.apache.logging.log4j.util.Strings
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -30,19 +29,19 @@ class DriverEventFactoryTest {
 
         assertThat(
             DriverEventFactory.variantEvent(
-                variant("BRAF", Strings.EMPTY, "n.271-7395delT", PurpleVariantEffect.INTRONIC, PurpleCodingEffect.NONE)
+                variant("BRAF", "", "n.271-7395delT", PurpleVariantEffect.INTRONIC, PurpleCodingEffect.NONE)
             )
         ).isEqualTo("BRAF n.271-7395delT")
 
         assertThat(
             DriverEventFactory.variantEvent(
-                variant("BRAF", Strings.EMPTY, Strings.EMPTY, PurpleVariantEffect.UPSTREAM_GENE, PurpleCodingEffect.NONE)
+                variant("BRAF", "", "", PurpleVariantEffect.UPSTREAM_GENE, PurpleCodingEffect.NONE)
             )
         ).isEqualTo("BRAF upstream")
 
         assertThat(
             DriverEventFactory.variantEvent(
-                variant("BRAF", Strings.EMPTY, Strings.EMPTY, PurpleVariantEffect.NON_CODING_TRANSCRIPT, PurpleCodingEffect.NONE)
+                variant("BRAF", "", "", PurpleVariantEffect.NON_CODING_TRANSCRIPT, PurpleCodingEffect.NONE)
             )
         ).isEqualTo("BRAF NON_CODING_TRANSCRIPT")
     }

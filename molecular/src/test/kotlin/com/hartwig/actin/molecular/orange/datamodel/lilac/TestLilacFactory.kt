@@ -1,13 +1,12 @@
 package com.hartwig.actin.molecular.orange.datamodel.lilac
 
 import com.hartwig.hmftools.datamodel.hla.ImmutableLilacAllele
-import org.apache.logging.log4j.util.Strings
 
 object TestLilacFactory {
 
     fun builder(): ImmutableLilacAllele.Builder {
         return ImmutableLilacAllele.builder()
-            .allele(Strings.EMPTY)
+            .allele("")
             .tumorCopyNumber(0.0)
             .somaticMissense(0.0)
             .somaticNonsenseOrFrameshift(0.0)
