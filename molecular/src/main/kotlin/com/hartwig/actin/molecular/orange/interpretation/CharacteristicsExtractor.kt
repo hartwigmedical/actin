@@ -82,7 +82,10 @@ internal class CharacteristicsExtractor() {
             if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
                 cuppaPrediction.featureClassifier() == null
             ) {
-                throw IllegalStateException("CUPPA classifiers are not supposed to be missing in cuppa prediction: $cuppaPrediction")
+                throw IllegalStateException(
+                    "CUPPA classifiers are not supposed to be missing at this point " +
+                            "in cuppa prediction: $cuppaPrediction"
+                )
             }
 
             return CupPrediction(
