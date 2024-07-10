@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.paver
 
+import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
@@ -28,16 +29,21 @@ class PaverTest {
                 id = "1",
                 gene = "gene",
                 chromosome = "1",
-                position = 320,
-                ref = "T",
+                position = 14,
+                ref = "A",
                 alt = "C",
             )
         )
 
         val paver = Paver(paverConfig)
 
-        val response = paver.pave(queries)
-        assertThat(response.size).isEqualTo(1)
-        assertThat(response.get(0).id).isEqualTo("1")
+        val responses = paver.pave(queries)
+        assertThat(responses.size).isEqualTo(1)
+        val response = responses.get(0)
+        assertThat(response.id).isEqualTo("1")
+        assertThat(response.impact.hgvsCodingImpact).isEqualTo("c.6A>C")
+        assertThat(response.impact.hgvsProteinImpact).isEqualTo("p.Lys2Asn")
+        assertThat(response.impact.canonicalCodingEffect).isEqualTo(CodingEffect.MISSENSE)
+        assertThat(response.impact.spliceRegion).isEqualTo(false)
     }
 }

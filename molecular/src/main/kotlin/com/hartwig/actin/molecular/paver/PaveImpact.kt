@@ -7,7 +7,7 @@ data class PaveImpact(
     val transcript: String,
     val canonicalEffect: String,
     val canonicalCodingEffect: CodingEffect,
-    val spliceRegion: String,
+    val spliceRegion: Boolean,
     val hgvsCodingImpact: String,
     val hgvsProteinImpact: String,
     val worstCodingEffect: CodingEffect,

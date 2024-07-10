@@ -110,7 +110,7 @@ class Paver(private val config: PaverConfig) {
             transcript = parts[1],
             canonicalEffect = parts[2],
             canonicalCodingEffect = interpretCodingEffect(parts[3]),
-            spliceRegion = parts[4],
+            spliceRegion = interpretSpliceRegion(parts[4]),
             hgvsCodingImpact = parts[5],
             hgvsProteinImpact = parts[6],
             worstCodingEffect = interpretCodingEffect(parts[8]),
@@ -150,6 +150,17 @@ class Paver(private val config: PaverConfig) {
             else -> {
                 logger.warn("Unexpected coding effect, using NONE: {}", codingEffect)
                 CodingEffect.NONE
+            }
+        }
+    }
+
+    private fun interpretSpliceRegion(spliceRegion: String): Boolean {
+        return when (spliceRegion) {
+            "true" -> true
+            "false" -> false
+            else -> {
+                logger.warn("Unexpected splice region value, using false: {}", spliceRegion)
+                false
             }
         }
     }

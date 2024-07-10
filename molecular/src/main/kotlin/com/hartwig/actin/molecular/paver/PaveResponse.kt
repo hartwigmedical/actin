@@ -6,4 +6,3 @@ data class PaveResponse(
     val transcriptImpact: List<PaveTranscriptImpact>,
 )
 
-
