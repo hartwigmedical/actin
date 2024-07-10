@@ -27,7 +27,6 @@ class PaverTest {
         val queries = listOf(
             PaveQuery(
                 id = "1",
-                gene = "gene",
                 chromosome = "1",
                 position = 14,
                 ref = "A",
@@ -41,6 +40,7 @@ class PaverTest {
         assertThat(responses.size).isEqualTo(1)
         val response = responses.get(0)
         assertThat(response.id).isEqualTo("1")
+        assertThat(response.impact.gene).isEqualTo("gene1")
         assertThat(response.impact.hgvsCodingImpact).isEqualTo("c.6A>C")
         assertThat(response.impact.hgvsProteinImpact).isEqualTo("p.Lys2Asn")
         assertThat(response.impact.canonicalCodingEffect).isEqualTo(CodingEffect.MISSENSE)
