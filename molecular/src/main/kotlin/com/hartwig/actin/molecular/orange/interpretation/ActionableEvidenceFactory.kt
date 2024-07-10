@@ -74,6 +74,7 @@ object ActionableEvidenceFactory {
             "Netherlands" -> Country.NETHERLANDS
             "Belgium" -> Country.BELGIUM
             "Germany" -> Country.GERMANY
+            "United States" -> Country.US
             else -> Country.OTHER
         }
     }

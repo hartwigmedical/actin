@@ -8,12 +8,12 @@ import com.itextpdf.layout.element.Table
 
 object EligibleExternalTrialGeneratorFunctions {
 
-    fun dutchTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, List<ExternalTrial>> {
-        return filterMapOfExternalTrials(externalTrialsPerEvent) { it.countries.contains(Country.NETHERLANDS) }
+    fun localTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, List<ExternalTrial>> {
+        return filterMapOfExternalTrials(externalTrialsPerEvent) { it.countries.contains(Country.US) }
     }
 
-    fun nonDutchTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, List<ExternalTrial>> {
-        return filterMapOfExternalTrials(externalTrialsPerEvent) { !it.countries.contains(Country.NETHERLANDS) }
+    fun nonLocalTrials(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>): Map<String, List<ExternalTrial>> {
+        return filterMapOfExternalTrials(externalTrialsPerEvent) { !it.countries.contains(Country.US) }
     }
 
     fun shortenTitle(title: String): String {

@@ -38,11 +38,11 @@ class ExternalTrialSummarizer {
         val hospitalTrialMolecularEvents = hospitalLocalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()
         val (dutchTrials, dutchTrialsFiltered) = filteredMolecularEvents(
             hospitalTrialMolecularEvents,
-            EligibleExternalTrialGeneratorFunctions.dutchTrials(externalEligibleTrials)
+            EligibleExternalTrialGeneratorFunctions.localTrials(externalEligibleTrials)
         )
         val (otherTrials, otherTrialsFiltered) = filteredMolecularEvents(
             hospitalTrialMolecularEvents + dutchTrials.keys.flatMap { splitMolecularEvents(it) },
-            EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalEligibleTrials)
+            EligibleExternalTrialGeneratorFunctions.nonLocalTrials(externalEligibleTrials)
         )
         return ExternalTrialSummary(dutchTrials, dutchTrialsFiltered, otherTrials, otherTrialsFiltered)
     }
