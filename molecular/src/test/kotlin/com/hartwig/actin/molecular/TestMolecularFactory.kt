@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.evidence
+package com.hartwig.actin.molecular
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole

@@ -33,5 +33,4 @@ object KnownEventResolverFactory {
     private fun <T : KnownEvent> filterKnown(knowns: Set<T>): Set<T> {
         return knowns.filter { it.sources().intersect(KNOWN_EVENT_SOURCES).isNotEmpty() }.toSet()
     }
-
 }

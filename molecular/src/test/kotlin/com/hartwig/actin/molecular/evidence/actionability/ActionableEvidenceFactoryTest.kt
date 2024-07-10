@@ -1,11 +1,8 @@
-package com.hartwig.actin.molecular.orange.interpretation
+package com.hartwig.actin.molecular.evidence.actionability
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
-import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
@@ -122,7 +119,7 @@ class ActionableEvidenceFactoryTest {
     }
 
     @Test
-    fun ignoresEvidenceWithNoBenefit() {
+    fun `Should ignore evidence with no benefit`() {
         val match = ActionabilityMatch(
             onLabelEvents = listOf(
                 evidence("A on-label no-benefit", EvidenceLevel.A, EvidenceDirection.NO_BENEFIT)
@@ -171,22 +168,20 @@ class ActionableEvidenceFactoryTest {
         assertThat(filtered.suspectResistantTreatments).contains("suspect resistant")
     }
 
-    companion object {
-        private fun evidence(treatment: String, level: EvidenceLevel, direction: EvidenceDirection): ActionableEvent {
-            return TestServeActionabilityFactory.geneBuilder()
-                .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
-                .source(ActionabilityConstants.EVIDENCE_SOURCE)
-                .level(level)
-                .direction(direction)
-                .build()
-        }
+    private fun evidence(treatment: String, level: EvidenceLevel, direction: EvidenceDirection): ActionableEvent {
+        return TestServeActionabilityFactory.geneBuilder()
+            .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
+            .source(ActionabilityConstants.EVIDENCE_SOURCE)
+            .level(level)
+            .direction(direction)
+            .build()
+    }
 
-        private fun trial(treatment: String, direction: EvidenceDirection): ActionableEvent {
-            return TestServeActionabilityFactory.geneBuilder()
-                .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
-                .source(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
-                .direction(direction)
-                .build()
-        }
+    private fun trial(treatment: String, direction: EvidenceDirection): ActionableEvent {
+        return TestServeActionabilityFactory.geneBuilder()
+            .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
+            .source(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
+            .direction(direction)
+            .build()
     }
 }

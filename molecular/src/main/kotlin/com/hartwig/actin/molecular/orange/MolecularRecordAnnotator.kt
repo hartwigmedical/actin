@@ -13,9 +13,9 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
@@ -51,7 +51,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
             homozygousDisruptions = drivers.homozygousDisruptions.map { annotateHomozygousDisruption(it) }.toSet(),
             disruptions = drivers.disruptions.map { annotateDisruption(it) }.toSet(),
             fusions = drivers.fusions.map { annotateFusion(it) }.toSet(),
-            viruses = drivers.viruses.map { annotateViruse(it) }.toSet()
+            viruses = drivers.viruses.map { annotateVirus(it) }.toSet()
         )
     }
 
@@ -162,7 +162,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         driverType = fusion.driverType
     )
 
-    private fun annotateViruse(virus: Virus): Virus {
+    private fun annotateVirus(virus: Virus): Virus {
         val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))!!
         return virus.copy(evidence = evidence)
     }

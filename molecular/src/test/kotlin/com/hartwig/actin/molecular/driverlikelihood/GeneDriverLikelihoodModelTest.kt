@@ -219,5 +219,4 @@ class GeneDriverLikelihoodModelTest {
         )
         assertThat(result).isEqualTo(1.0)
     }
-
 }

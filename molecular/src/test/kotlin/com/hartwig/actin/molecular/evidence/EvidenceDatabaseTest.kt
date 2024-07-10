@@ -1,43 +1,45 @@
 package com.hartwig.actin.molecular.evidence
 
+import com.hartwig.actin.molecular.TestMolecularFactory
+import com.hartwig.actin.molecular.TestMolecularFactory.minimalCopyNumber
+import com.hartwig.actin.molecular.TestMolecularFactory.minimalDisruption
+import com.hartwig.actin.molecular.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalCopyNumber
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalDisruption
-import com.hartwig.actin.molecular.evidence.TestMolecularFactory.minimalVirus
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class EvidenceDatabaseTest {
 
     @Test
-    fun canMatchEvidenceForSignatures() {
-        // TODO (KZP): review EvidenceDatabase api to see if reasonable to remove nullability, then clean up !!'s here
+    fun `Should match evidence to signatures`() {
+        // TODO (KZ): review EvidenceDatabase api to see if reasonable to remove nullability, then clean up !!'s here
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
-        assertNull(database.evidenceForMicrosatelliteStatus(null))
-        assertEquals(0, evidenceCount(database.evidenceForMicrosatelliteStatus(false)!!).toLong())
-        assertEquals(1, evidenceCount(database.evidenceForMicrosatelliteStatus(true)!!).toLong())
-        assertNull(database.evidenceForHomologousRepairStatus(null))
-        assertEquals(0, evidenceCount(database.evidenceForHomologousRepairStatus(false)!!).toLong())
-        assertEquals(1, evidenceCount(database.evidenceForHomologousRepairStatus(true)!!).toLong())
-        assertNull(database.evidenceForTumorMutationalBurdenStatus(null))
-        assertEquals(0, evidenceCount(database.evidenceForTumorMutationalBurdenStatus(false)!!).toLong())
-        assertEquals(1, evidenceCount(database.evidenceForTumorMutationalBurdenStatus(true)!!).toLong())
-        assertNull(database.evidenceForTumorMutationalLoadStatus(null))
-        assertEquals(0, evidenceCount(database.evidenceForTumorMutationalLoadStatus(false)!!).toLong())
-        assertEquals(1, evidenceCount(database.evidenceForTumorMutationalLoadStatus(true)!!).toLong())
+        assertThat(database.evidenceForMicrosatelliteStatus(null)).isNull()
+        assertThat(evidenceCount(database.evidenceForMicrosatelliteStatus(false)!!)).isEqualTo(0)
+        assertThat(evidenceCount(database.evidenceForMicrosatelliteStatus(true)!!)).isEqualTo(1)
+
+        assertThat(database.evidenceForHomologousRepairStatus(null)).isNull()
+        assertThat(evidenceCount(database.evidenceForHomologousRepairStatus(false)!!)).isEqualTo(0)
+        assertThat(evidenceCount(database.evidenceForHomologousRepairStatus(true)!!)).isEqualTo(1)
+
+        assertThat(database.evidenceForTumorMutationalBurdenStatus(null)).isNull()
+        assertThat(evidenceCount(database.evidenceForTumorMutationalBurdenStatus(false)!!)).isEqualTo(0)
+        assertThat(evidenceCount(database.evidenceForTumorMutationalBurdenStatus(true)!!)).isEqualTo(1)
+
+        assertThat(database.evidenceForTumorMutationalLoadStatus(null)).isNull()
+        assertThat(evidenceCount(database.evidenceForTumorMutationalLoadStatus(false)!!)).isEqualTo(0)
+        assertThat(evidenceCount(database.evidenceForTumorMutationalLoadStatus(true)!!)).isEqualTo(1)
     }
 
     @Test
-    fun canMatchEvidenceForDrivers() {
+    fun `Should match evidence to drivers`() {
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
         // Assume default objects match with default SERVE objects
         val variant = VariantMatchCriteria(
@@ -50,20 +52,20 @@ class EvidenceDatabaseTest {
             gene = "",
             codingEffect = CodingEffect.NONE,
         )
-        assertNotNull(database.geneAlterationForVariant(variant))
-        assertEquals(1, evidenceCount(database.evidenceForVariant(variant)).toLong())
+        assertThat(database.geneAlterationForVariant(variant)).isNotNull
+        assertThat(evidenceCount(database.evidenceForVariant(variant))).isEqualTo(1)
 
         val gainLoss = minimalCopyNumber().copy(type = CopyNumberType.LOSS)
-        assertNotNull(database.geneAlterationForCopyNumber(gainLoss))
-        assertEquals(1, evidenceCount(database.evidenceForCopyNumber(gainLoss)).toLong())
+        assertThat(database.geneAlterationForCopyNumber(gainLoss)).isNotNull()
+        assertThat(evidenceCount(database.evidenceForCopyNumber(gainLoss))).isEqualTo(1)
 
         val homozygousDisruption = TestMolecularFactory.minimalHomozygousDisruption()
-        assertNotNull(database.geneAlterationForHomozygousDisruption(homozygousDisruption))
-        assertEquals(2, evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption)).toLong())
+        assertThat(database.geneAlterationForHomozygousDisruption(homozygousDisruption)).isNotNull()
+        assertThat(evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption))).isEqualTo(2)
 
         val disruption = minimalDisruption().copy(isReportable = true)
-        assertNotNull(database.geneAlterationForBreakend(disruption))
-        assertEquals(1, evidenceCount(database.evidenceForBreakend(disruption)).toLong())
+        assertThat(database.geneAlterationForBreakend(disruption)).isNotNull()
+        assertThat(evidenceCount(database.evidenceForBreakend(disruption))).isEqualTo(1)
 
         val fusion = FusionMatchCriteria(
             geneStart = "",
@@ -73,16 +75,14 @@ class EvidenceDatabaseTest {
             driverType = FusionDriverType.NONE,
             isReportable = true,
         )
-        assertNotNull(database.lookupKnownFusion(fusion))
-        assertEquals(2, evidenceCount(database.evidenceForFusion(fusion)).toLong())
+        assertThat(database.lookupKnownFusion(fusion)).isNotNull()
+        assertThat(evidenceCount(database.evidenceForFusion(fusion))).isEqualTo(2)
 
         val virus = minimalVirus().copy(isReportable = true, type = VirusType.HUMAN_PAPILLOMA_VIRUS)
-        assertEquals(1, evidenceCount(database.evidenceForVirus(virus)).toLong())
+        assertThat(evidenceCount(database.evidenceForVirus(virus))).isEqualTo(1)
     }
 
-    companion object {
-        private fun evidenceCount(match: ActionabilityMatch): Int {
-            return match.onLabelEvents.size + match.offLabelEvents.size
-        }
+    private fun evidenceCount(match: ActionabilityMatch): Int {
+        return match.onLabelEvents.size + match.offLabelEvents.size
     }
 }
