@@ -79,7 +79,12 @@ internal class CharacteristicsExtractor() {
         }
 
         private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
-            // The classifiers are assumed to be tested for not-null at an earlier stage.
+            if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
+                cuppaPrediction.featureClassifier() == null
+            ) {
+                throw IllegalStateException("CUPPA classifiers are not supposed to be missing in cuppa prediction: $cuppaPrediction")
+            }
+
             return CupPrediction(
                 cancerType = cuppaPrediction.cancerType(),
                 likelihood = cuppaPrediction.likelihood(),
