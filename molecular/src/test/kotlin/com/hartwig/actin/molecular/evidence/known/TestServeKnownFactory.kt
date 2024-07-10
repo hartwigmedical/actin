@@ -10,6 +10,7 @@ import com.hartwig.serve.datamodel.gene.ImmutableKnownGene
 import com.hartwig.serve.datamodel.hotspot.ImmutableKnownHotspot
 import com.hartwig.serve.datamodel.range.ImmutableKnownCodon
 import com.hartwig.serve.datamodel.range.ImmutableKnownExon
+import org.apache.logging.log4j.util.Strings
 
 object TestServeKnownFactory {
 
@@ -17,14 +18,14 @@ object TestServeKnownFactory {
         return ImmutableKnownHotspot.builder()
             .from(createEmptyGeneAlteration())
             .from(TestServeFactory.createEmptyHotspot())
-            .inputProteinAnnotation("")
+            .inputProteinAnnotation(Strings.EMPTY)
     }
 
     fun codonBuilder(): ImmutableKnownCodon.Builder {
         return ImmutableKnownCodon.builder()
             .from(createEmptyGeneAlteration())
             .from(TestServeFactory.createEmptyRangeAnnotation())
-            .inputTranscript("")
+            .inputTranscript(Strings.EMPTY)
             .inputCodonRank(0)
     }
 
@@ -32,12 +33,12 @@ object TestServeKnownFactory {
         return ImmutableKnownExon.builder()
             .from(createEmptyGeneAlteration())
             .from(TestServeFactory.createEmptyRangeAnnotation())
-            .inputTranscript("")
+            .inputTranscript(Strings.EMPTY)
             .inputExonRank(0)
     }
 
     fun geneBuilder(): ImmutableKnownGene.Builder {
-        return ImmutableKnownGene.builder().gene("").geneRole(GeneRole.UNKNOWN)
+        return ImmutableKnownGene.builder().gene(Strings.EMPTY).geneRole(GeneRole.UNKNOWN)
     }
 
     fun copyNumberBuilder(): ImmutableKnownCopyNumber.Builder {

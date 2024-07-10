@@ -51,6 +51,7 @@ import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
 import com.hartwig.hmftools.datamodel.virus.VirusInterpreterData
 import com.hartwig.hmftools.datamodel.virus.VirusLikelihoodType
 import java.time.LocalDate
+import org.apache.logging.log4j.util.Strings
 
 object TestOrangeFactory {
 
@@ -79,7 +80,7 @@ object TestOrangeFactory {
     }
 
     private fun createMinimalTestLilacRecord(): LilacRecord {
-        return ImmutableLilacRecord.builder().qc("").build()
+        return ImmutableLilacRecord.builder().qc(Strings.EMPTY).build()
     }
 
     fun createProperTestOrangeRecord(): OrangeRecord {
@@ -224,14 +225,14 @@ object TestOrangeFactory {
     private fun createTestPeachGenotype(): PeachGenotype {
         return ImmutablePeachGenotype.builder()
             .gene("DPYD")
-            .haplotype("")
+            .haplotype(Strings.EMPTY)
             .allele("*1")
             .alleleCount(2)
             .function("Normal function")
-            .linkedDrugs("")
-            .urlPrescriptionInfo("")
-            .panelVersion("")
-            .repoVersion("")
+            .linkedDrugs(Strings.EMPTY)
+            .urlPrescriptionInfo(Strings.EMPTY)
+            .panelVersion(Strings.EMPTY)
+            .repoVersion(Strings.EMPTY)
             .build()
     }
 
@@ -288,20 +289,20 @@ object TestOrangeFactory {
             .brca1Value(0.0)
             .brca2Value(0.0)
             .hrdValue(0.45)
-            .hrdType("")
+            .hrdType(Strings.EMPTY)
             .build()
     }
 
     private fun createOrangePlots(): OrangePlots {
         return ImmutableOrangePlots.builder()
-            .sageTumorBQRPlot("")
-            .purpleInputPlot("")
-            .purpleFinalCircosPlot("")
-            .purpleClonalityPlot("")
-            .purpleCopyNumberPlot("")
-            .purpleVariantCopyNumberPlot("")
-            .purplePurityRangePlot("")
-            .purpleKataegisPlot("")
+            .sageTumorBQRPlot(Strings.EMPTY)
+            .purpleInputPlot(Strings.EMPTY)
+            .purpleFinalCircosPlot(Strings.EMPTY)
+            .purpleClonalityPlot(Strings.EMPTY)
+            .purpleCopyNumberPlot(Strings.EMPTY)
+            .purpleVariantCopyNumberPlot(Strings.EMPTY)
+            .purplePurityRangePlot(Strings.EMPTY)
+            .purpleKataegisPlot(Strings.EMPTY)
             .build()
     }
 

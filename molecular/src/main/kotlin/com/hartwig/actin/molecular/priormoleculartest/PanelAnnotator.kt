@@ -27,6 +27,7 @@ import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+
 class PanelAnnotator(
     private val experimentType: ExperimentType,
     private val evidenceDatabase: EvidenceDatabase,
@@ -99,7 +100,7 @@ class PanelAnnotator(
     private fun serveEvidence(
         it: PanelVariantExtraction,
         transcriptPositionAndVariationAnnotation: com.hartwig.actin.tools.variant.Variant
-    ): Pair<ActionableEvidence, GeneAlteration> {
+    ): Pair<ActionableEvidence?, GeneAlteration> {
         val criteria = VariantMatchCriteria(
             isReportable = true,
             gene = it.gene,
@@ -117,7 +118,7 @@ class PanelAnnotator(
 
     private fun createVariantWithEvidence(
         it: PanelVariantExtraction,
-        evidence: ActionableEvidence,
+        evidence: ActionableEvidence?,
         geneAlteration: GeneAlteration,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveAnnotation: VariantTranscriptImpact?
@@ -125,7 +126,7 @@ class PanelAnnotator(
         isReportable = true,
         event = "${it.gene} ${it.hgvsCodingImpact}",
         driverLikelihood = DriverLikelihood.LOW,
-        evidence = evidence,
+        evidence = evidence ?: ActionableEvidence(),
         gene = it.gene,
         geneRole = geneAlteration.geneRole,
         proteinEffect = geneAlteration.proteinEffect,

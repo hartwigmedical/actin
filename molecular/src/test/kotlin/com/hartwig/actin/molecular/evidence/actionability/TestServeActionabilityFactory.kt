@@ -1,15 +1,15 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
+import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.CancerType
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.ImmutableCancerType
-import com.hartwig.serve.datamodel.ImmutableClinicalTrial
 import com.hartwig.serve.datamodel.ImmutableTreatment
-import com.hartwig.serve.datamodel.Intervention
 import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.Treatment
 import com.hartwig.serve.datamodel.characteristic.ImmutableActionableCharacteristic
 import com.hartwig.serve.datamodel.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.fusion.ImmutableActionableFusion
@@ -17,6 +17,7 @@ import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
 import com.hartwig.serve.datamodel.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.range.ImmutableActionableRange
+import org.apache.logging.log4j.util.Strings
 
 object TestServeActionabilityFactory {
 
@@ -43,56 +44,45 @@ object TestServeActionabilityFactory {
     }
 
     fun hlaBuilder(): ImmutableActionableHLA.Builder {
-        return ImmutableActionableHLA.builder().from(createEmptyActionableEvent()).hlaAllele("")
+        return ImmutableActionableHLA.builder().from(createEmptyActionableEvent()).hlaAllele(Strings.EMPTY)
     }
 
     fun treatmentBuilder(): ImmutableTreatment.Builder {
-        return ImmutableTreatment.builder().name("")
+        return ImmutableTreatment.builder().name(Strings.EMPTY)
     }
 
     fun cancerTypeBuilder(): ImmutableCancerType.Builder {
-        return ImmutableCancerType.builder().name("").doid("")
+        return ImmutableCancerType.builder().name(Strings.EMPTY).doid(Strings.EMPTY)
     }
 
     private fun createEmptyActionableEvent(): ActionableEvent {
-        return createActionableEvent(Knowledgebase.CKB_EVIDENCE, "")
+        return createActionableEvent(Knowledgebase.UNKNOWN, Strings.EMPTY)
     }
 
-    fun createActionableEvent(source: Knowledgebase, interventionName: String): ActionableEvent {
-        val nctId = "NCT00000001"
-        val isTrial = source == Knowledgebase.CKB_TRIAL
+    fun createActionableEvent(source: Knowledgebase, treatment: String): ActionableEvent {
         return object : ActionableEvent {
             override fun source(): Knowledgebase {
                 return source
             }
 
             override fun sourceEvent(): String {
-                return ""
+                return Strings.EMPTY
             }
 
             override fun sourceUrls(): Set<String> {
-                return setOf("https://ckbhome.jax.org/profileResponse/advancedEvidenceFind?molecularProfileId=29716")
+                return Sets.newHashSet("https://clinicaltrials.gov/study/NCT00000001")
             }
 
-            override fun intervention(): Intervention {
-                return if (isTrial) {
-                    ImmutableClinicalTrial.builder()
-                        .studyAcronym(interventionName)
-                        .studyNctId(nctId)
-                        .studyTitle("")
-                        .countriesOfStudy(setOf("country"))
-                        .build()
-                } else {
-                    ImmutableTreatment.builder().name(interventionName).build()
-                }
+            override fun treatment(): Treatment {
+                return treatmentBuilder().name(treatment).build()
             }
 
             override fun applicableCancerType(): CancerType {
                 return cancerTypeBuilder().build()
             }
 
-            override fun blacklistCancerTypes(): Set<CancerType> {
-                return emptySet()
+            override fun blacklistCancerTypes(): MutableSet<CancerType?> {
+                return Sets.newHashSet()
             }
 
             override fun level(): EvidenceLevel {
@@ -103,8 +93,9 @@ object TestServeActionabilityFactory {
                 return EvidenceDirection.NO_BENEFIT
             }
 
-            override fun evidenceUrls(): Set<String> {
-                return if (isTrial) setOf("https://clinicaltrials.gov/study/$nctId") else emptySet()
+            override fun evidenceUrls(): MutableSet<String?> {
+                // evidenceUrls() contains a set of countries
+                return Sets.newHashSet("country")
             }
         }
     }

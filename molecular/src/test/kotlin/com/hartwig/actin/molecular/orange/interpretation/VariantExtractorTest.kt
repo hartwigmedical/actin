@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
+import com.google.common.collect.Lists
+import com.google.common.collect.Sets
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.VariantEffect
@@ -19,8 +21,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
-
-private const val EPSILON = 1.0E-10
 
 class VariantExtractorTest {
 
@@ -54,7 +54,7 @@ class VariantExtractorTest {
             .biallelic(false)
             .hotspot(HotspotType.NON_HOTSPOT)
             .subclonalLikelihood(0.3)
-            .localPhaseSets(listOf(1))
+            .localPhaseSets(Lists.newArrayList(1))
             .canonicalImpact(
                 TestPurpleFactory.transcriptImpactBuilder().transcript("ENST-canonical")
                     .hgvsCodingImpact("canonical hgvs coding")
@@ -107,7 +107,7 @@ class VariantExtractorTest {
         assertThat(variant.extendedVariantDetails?.isBiallelic).isFalse
         assertThat(variant.isHotspot).isFalse
         assertThat(variant.extendedVariantDetails?.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
-        assertThat(variant.extendedVariantDetails?.phaseGroups).isEqualTo(setOf(1))
+        assertThat(variant.extendedVariantDetails?.phaseGroups).isEqualTo(Sets.newHashSet(1))
 
         val canonical = variant.canonicalImpact
         assertThat(canonical.transcriptId).isEqualTo("ENST-canonical")
@@ -213,5 +213,9 @@ class VariantExtractorTest {
             .forEach { codingEffect ->
                 assertThat(VariantExtractor.determineCodingEffect(codingEffect)).isNotNull()
             }
+    }
+
+    companion object {
+        private const val EPSILON = 1.0E-10
     }
 }

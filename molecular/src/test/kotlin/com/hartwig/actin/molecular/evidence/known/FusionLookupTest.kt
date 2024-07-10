@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.evidence.known
 
+import com.google.common.collect.Lists
 import com.hartwig.actin.molecular.evidence.matching.FUSION_CRITERIA
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 import org.assertj.core.api.Assertions.assertThat
@@ -20,7 +21,7 @@ class FusionLookupTest {
             .minExonDown(4)
             .maxExonDown(4)
             .build()
-        val knownFusions = listOf(fusion1, fusion2, fusion3, fusion4)
+        val knownFusions: MutableList<KnownFusion> = Lists.newArrayList(fusion1, fusion2, fusion3, fusion4)
 
         val broadMatch = FUSION_CRITERIA.copy(geneStart = "up", geneEnd = "down", fusedExonUp = 2, fusedExonDown = 5)
         assertThat(FusionLookup.find(knownFusions, broadMatch)).isEqualTo(fusion1)

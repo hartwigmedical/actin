@@ -18,20 +18,28 @@ import org.junit.Test
 class EvidenceDatabaseTest {
 
     @Test
-    fun `Should match evidence for signatures`() {
+    fun `Should match evidence to signatures`() {
+        // TODO (KZ): review EvidenceDatabase api to see if reasonable to remove nullability, then clean up !!'s here
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
-        assertEvidenceCountMatchesExpected(database.evidenceForMicrosatelliteStatus(false), 0)
-        assertEvidenceCountMatchesExpected(database.evidenceForMicrosatelliteStatus(true), 1)
-        assertEvidenceCountMatchesExpected(database.evidenceForHomologousRepairStatus(false), 0)
-        assertEvidenceCountMatchesExpected(database.evidenceForHomologousRepairStatus(true), 1)
-        assertEvidenceCountMatchesExpected(database.evidenceForTumorMutationalBurdenStatus(false), 0)
-        assertEvidenceCountMatchesExpected(database.evidenceForTumorMutationalBurdenStatus(true), 1)
-        assertEvidenceCountMatchesExpected(database.evidenceForTumorMutationalLoadStatus(false), 0)
-        assertEvidenceCountMatchesExpected(database.evidenceForTumorMutationalLoadStatus(true), 1)
+        assertThat(database.evidenceForMicrosatelliteStatus(null)).isNull()
+        assertThat(evidenceCount(database.evidenceForMicrosatelliteStatus(false)!!)).isEqualTo(0)
+        assertThat(evidenceCount(database.evidenceForMicrosatelliteStatus(true)!!)).isEqualTo(1)
+
+        assertThat(database.evidenceForHomologousRepairStatus(null)).isNull()
+        assertThat(evidenceCount(database.evidenceForHomologousRepairStatus(false)!!)).isEqualTo(0)
+        assertThat(evidenceCount(database.evidenceForHomologousRepairStatus(true)!!)).isEqualTo(1)
+
+        assertThat(database.evidenceForTumorMutationalBurdenStatus(null)).isNull()
+        assertThat(evidenceCount(database.evidenceForTumorMutationalBurdenStatus(false)!!)).isEqualTo(0)
+        assertThat(evidenceCount(database.evidenceForTumorMutationalBurdenStatus(true)!!)).isEqualTo(1)
+
+        assertThat(database.evidenceForTumorMutationalLoadStatus(null)).isNull()
+        assertThat(evidenceCount(database.evidenceForTumorMutationalLoadStatus(false)!!)).isEqualTo(0)
+        assertThat(evidenceCount(database.evidenceForTumorMutationalLoadStatus(true)!!)).isEqualTo(1)
     }
 
     @Test
-    fun `Should match evidence for drivers`() {
+    fun `Should match evidence to drivers`() {
         val database = TestEvidenceDatabaseFactory.createProperDatabase()
         // Assume default objects match with default SERVE objects
         val variant = VariantMatchCriteria(
@@ -45,19 +53,19 @@ class EvidenceDatabaseTest {
             codingEffect = CodingEffect.NONE,
         )
         assertThat(database.geneAlterationForVariant(variant)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForVariant(variant), 1)
+        assertThat(evidenceCount(database.evidenceForVariant(variant))).isEqualTo(1)
 
         val gainLoss = minimalCopyNumber().copy(type = CopyNumberType.LOSS)
-        assertThat(database.geneAlterationForCopyNumber(gainLoss)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForCopyNumber(gainLoss), 1)
+        assertThat(database.geneAlterationForCopyNumber(gainLoss)).isNotNull()
+        assertThat(evidenceCount(database.evidenceForCopyNumber(gainLoss))).isEqualTo(1)
 
         val homozygousDisruption = TestMolecularFactory.minimalHomozygousDisruption()
-        assertThat(database.geneAlterationForHomozygousDisruption(homozygousDisruption)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForHomozygousDisruption(homozygousDisruption), 2)
+        assertThat(database.geneAlterationForHomozygousDisruption(homozygousDisruption)).isNotNull()
+        assertThat(evidenceCount(database.evidenceForHomozygousDisruption(homozygousDisruption))).isEqualTo(2)
 
         val disruption = minimalDisruption().copy(isReportable = true)
-        assertThat(database.geneAlterationForBreakend(disruption)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForBreakend(disruption), 1)
+        assertThat(database.geneAlterationForBreakend(disruption)).isNotNull()
+        assertThat(evidenceCount(database.evidenceForBreakend(disruption))).isEqualTo(1)
 
         val fusion = FusionMatchCriteria(
             geneStart = "",
@@ -67,14 +75,14 @@ class EvidenceDatabaseTest {
             driverType = FusionDriverType.NONE,
             isReportable = true,
         )
-        assertThat(database.lookupKnownFusion(fusion)).isNotNull
-        assertEvidenceCountMatchesExpected(database.evidenceForFusion(fusion), 2)
+        assertThat(database.lookupKnownFusion(fusion)).isNotNull()
+        assertThat(evidenceCount(database.evidenceForFusion(fusion))).isEqualTo(2)
 
         val virus = minimalVirus().copy(isReportable = true, type = VirusType.HUMAN_PAPILLOMA_VIRUS)
-        assertEvidenceCountMatchesExpected(database.evidenceForVirus(virus), 1)
+        assertThat(evidenceCount(database.evidenceForVirus(virus))).isEqualTo(1)
     }
 
-    private fun assertEvidenceCountMatchesExpected(match: ActionabilityMatch, expectedCount: Int) {
-        assertThat(match.onLabelEvents.size + match.offLabelEvents.size).isEqualTo(expectedCount)
+    private fun evidenceCount(match: ActionabilityMatch): Int {
+        return match.onLabelEvents.size + match.offLabelEvents.size
     }
 }

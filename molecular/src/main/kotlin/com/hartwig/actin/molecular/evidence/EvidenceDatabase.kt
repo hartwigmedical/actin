@@ -12,25 +12,41 @@ import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.serve.datamodel.common.GeneAlteration
 import com.hartwig.serve.datamodel.fusion.KnownFusion
 
-class EvidenceDatabase(
+class EvidenceDatabase internal constructor(
     private val knownEventResolver: KnownEventResolver,
     private val actionableEventMatcher: ActionableEventMatcher
 ) {
 
-    fun evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean): ActionabilityMatch {
-        return actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
+    fun evidenceForMicrosatelliteStatus(isMicrosatelliteUnstable: Boolean?): ActionabilityMatch? {
+        return if (isMicrosatelliteUnstable == null) {
+            null
+        } else {
+            actionableEventMatcher.matchForMicrosatelliteStatus(isMicrosatelliteUnstable)
+        }
     }
 
-    fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean): ActionabilityMatch {
-        return actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
+    fun evidenceForHomologousRepairStatus(isHomologousRepairDeficient: Boolean?): ActionabilityMatch? {
+        return if (isHomologousRepairDeficient == null) {
+            null
+        } else {
+            actionableEventMatcher.matchForHomologousRepairStatus(isHomologousRepairDeficient)
+        }
     }
 
-    fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean): ActionabilityMatch {
-        return actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden)
+    fun evidenceForTumorMutationalBurdenStatus(hasHighTumorMutationalBurden: Boolean?): ActionabilityMatch? {
+        return if (hasHighTumorMutationalBurden == null) {
+            null
+        } else {
+            actionableEventMatcher.matchForHighTumorMutationalBurden(hasHighTumorMutationalBurden)
+        }
     }
 
-    fun evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad: Boolean): ActionabilityMatch {
-        return actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
+    fun evidenceForTumorMutationalLoadStatus(hasHighTumorMutationalLoad: Boolean?): ActionabilityMatch? {
+        return if (hasHighTumorMutationalLoad == null) {
+            null
+        } else {
+            actionableEventMatcher.matchForHighTumorMutationalLoad(hasHighTumorMutationalLoad)
+        }
     }
 
     fun geneAlterationForVariant(variant: VariantMatchCriteria): GeneAlteration? {
