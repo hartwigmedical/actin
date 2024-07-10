@@ -11,7 +11,7 @@ class MutationTypeMatchingTest {
     @Test
     fun `Should not match for all mutation types when coding effect is none`() {
         val nonCoding = VARIANT_CRITERIA.copy(codingEffect = CodingEffect.NONE)
-        val nothing = setOf<MutationType>()
+        val nothing = emptySet<MutationType>()
         shouldMatch(nonCoding, nothing)
     }
 

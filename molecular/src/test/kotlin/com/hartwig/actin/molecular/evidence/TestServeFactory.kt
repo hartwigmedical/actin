@@ -6,26 +6,25 @@ import com.hartwig.serve.datamodel.gene.GeneAnnotation
 import com.hartwig.serve.datamodel.gene.GeneEvent
 import com.hartwig.serve.datamodel.hotspot.VariantHotspot
 import com.hartwig.serve.datamodel.range.RangeAnnotation
-import org.apache.logging.log4j.util.Strings
 
 object TestServeFactory {
 
     fun createEmptyHotspot(): VariantHotspot {
         return object : VariantHotspot {
             override fun gene(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun ref(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun alt(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun chromosome(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun position(): Int {
@@ -37,7 +36,7 @@ object TestServeFactory {
     fun createEmptyRangeAnnotation(): RangeAnnotation {
         return object : RangeAnnotation {
             override fun gene(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun applicableMutationType(): MutationType {
@@ -45,7 +44,7 @@ object TestServeFactory {
             }
 
             override fun chromosome(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun start(): Int {
@@ -61,7 +60,7 @@ object TestServeFactory {
     fun createEmptyGeneAnnotation(): GeneAnnotation {
         return object : GeneAnnotation {
             override fun gene(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun event(): GeneEvent {
@@ -73,7 +72,7 @@ object TestServeFactory {
     fun createEmptyFusionPair(): FusionPair {
         return object : FusionPair {
             override fun geneUp(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun minExonUp(): Int? {
@@ -85,7 +84,7 @@ object TestServeFactory {
             }
 
             override fun geneDown(): String {
-                return Strings.EMPTY
+                return ""
             }
 
             override fun minExonDown(): Int? {
