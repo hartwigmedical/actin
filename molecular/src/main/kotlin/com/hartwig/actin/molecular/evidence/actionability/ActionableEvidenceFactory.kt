@@ -73,8 +73,8 @@ object ActionableEvidenceFactory {
     }
 
     private fun extractNctUrl(event: ActionableEvent): String {
-        return event.sourceUrls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
-            ?: throw IllegalStateException("Found no URL ending with a NCT id: " + event.sourceUrls().joinToString { ", " })
+        return event.evidenceUrls().find { it.length > 11 && it.takeLast(11).substring(0, 3) == "NCT" }
+            ?: throw IllegalStateException("Found no URL ending with a NCT id: " + event.sourceUrls().joinToString(", "))
     }
 
     private fun ActionableEvent.treatmentName(): String = (this.intervention() as Treatment).name()

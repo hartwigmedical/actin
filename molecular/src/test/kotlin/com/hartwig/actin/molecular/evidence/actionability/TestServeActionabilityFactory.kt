@@ -60,6 +60,7 @@ object TestServeActionabilityFactory {
 
     fun createActionableEvent(source: Knowledgebase, interventionName: String): ActionableEvent {
         val nctId = "NCT00000001"
+        val isTrial = source == Knowledgebase.CKB_TRIAL
         return object : ActionableEvent {
             override fun source(): Knowledgebase {
                 return source
@@ -70,11 +71,11 @@ object TestServeActionabilityFactory {
             }
 
             override fun sourceUrls(): Set<String> {
-                return setOf("https://clinicaltrials.gov/study/$nctId")
+                return setOf("https://ckbhome.jax.org/profileResponse/advancedEvidenceFind?molecularProfileId=29716")
             }
 
             override fun intervention(): Intervention {
-                return if (source == Knowledgebase.CKB_TRIAL) {
+                return if (isTrial) {
                     ImmutableClinicalTrial.builder()
                         .studyAcronym(interventionName)
                         .studyNctId(nctId)
@@ -103,7 +104,7 @@ object TestServeActionabilityFactory {
             }
 
             override fun evidenceUrls(): Set<String> {
-                return emptySet()
+                return if (isTrial) setOf("https://clinicaltrials.gov/study/$nctId") else emptySet()
             }
         }
     }
