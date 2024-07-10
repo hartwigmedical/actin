@@ -5,6 +5,7 @@ import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.CopyNumberComparator
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
@@ -94,7 +95,8 @@ internal class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
         private fun findCopyNumberDriver(drivers: Set<PurpleDriver>, geneToFind: String): PurpleDriver? {
             return drivers.find { driver ->
-                (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) && driver.gene() == geneToFind && driver.isCanonical
+                (DEL_DRIVERS.contains(driver.type()) || AMP_DRIVERS.contains(driver.type())) &&
+                        driver.gene() == geneToFind && driver.isCanonical
             }
         }
 

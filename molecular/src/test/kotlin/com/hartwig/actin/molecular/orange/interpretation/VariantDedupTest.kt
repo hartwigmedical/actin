@@ -9,13 +9,13 @@ import org.junit.Test
 class VariantDedupTest {
 
     @Test
-    fun shouldWorkOnEmptySetOfVariants() {
+    fun `Should work on empty set of variants`() {
         val dedup = VariantDedup.apply(mutableSetOf())
         assertThat(dedup).isEmpty()
     }
 
     @Test
-    fun shouldDedupVariantsThatAreInterpretedAsPhasedInframe() {
+    fun `Should dedup variants that are interpreted as phased inframe`() {
         val variant1: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("EGFR")
             .canonicalImpact(TestPurpleFactory.transcriptImpactBuilder()
@@ -58,7 +58,7 @@ class VariantDedupTest {
     }
 
     @Test
-    fun shouldNotDedupUnrelatedVariants() {
+    fun `Should not dedup unrelated variants`() {
         val variant1: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 1").build()
         val variant2: PurpleVariant = TestPurpleFactory.variantBuilder().gene("gene 2").build()
         val variants = setOf(variant1, variant2)

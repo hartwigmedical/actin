@@ -48,22 +48,22 @@ class ImmunologyExtractionTest {
         assertThat(hlaAllele2.hasSomaticMutations).isFalse
     }
 
+    private fun findByName(hlaAlleles: Set<HlaAllele>, nameToFind: String): HlaAllele {
+        return hlaAlleles.find { it.name == nameToFind }
+            ?: throw IllegalStateException("Could not find hla allele with name: $nameToFind")
+    }
+
+    private fun withLilacData(vararg alleles: LilacAllele): OrangeRecord {
+        val base = TestOrangeFactory.createMinimalTestOrangeRecord()
+        return ImmutableOrangeRecord.builder()
+            .from(base)
+            .lilac(
+                ImmutableLilacRecord.builder().from(base.lilac()).qc(ImmunologyExtraction.LILAC_QC_PASS).addAlleles(*alleles).build()
+            )
+            .build()
+    }
+
     companion object {
         private const val EPSILON = 1.0E-10
-
-        private fun findByName(hlaAlleles: Set<HlaAllele>, nameToFind: String): HlaAllele {
-            return hlaAlleles.find { it.name == nameToFind }
-                ?: throw IllegalStateException("Could not find hla allele with name: $nameToFind")
-        }
-
-        private fun withLilacData(vararg alleles: LilacAllele): OrangeRecord {
-            val base = TestOrangeFactory.createMinimalTestOrangeRecord()
-            return ImmutableOrangeRecord.builder()
-                .from(base)
-                .lilac(
-                    ImmutableLilacRecord.builder().from(base.lilac()).qc(ImmunologyExtraction.LILAC_QC_PASS).addAlleles(*alleles).build()
-                )
-                .build()
-        }
     }
 }
