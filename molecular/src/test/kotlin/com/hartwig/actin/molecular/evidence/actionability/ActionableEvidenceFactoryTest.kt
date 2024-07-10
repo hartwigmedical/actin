@@ -3,9 +3,11 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.TestExternalTrialFactory
+import com.hartwig.actin.molecular.evidence.TestServeFactory
 import com.hartwig.serve.datamodel.ActionableEvent
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
+import com.hartwig.serve.datamodel.gene.ImmutableActionableGene
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -14,11 +16,6 @@ class ActionableEvidenceFactoryTest {
     @Test
     fun `Should create no evidence`() {
         assertThat(ActionableEvidenceFactory.createNoEvidence()).isNotNull()
-    }
-
-    @Test
-    fun `Should return null for no match`() {
-        assertThat(ActionableEvidenceFactory.create(null)).isNull()
     }
 
     @Test
@@ -44,23 +41,23 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
-        assertThat(evidence!!.approvedTreatments).hasSize(1)
-        assertThat(evidence.approvedTreatments).contains("A on-label responsive")
+        assertThat(evidence.approvedTreatments).containsExactly("A on-label responsive")
         assertThat(evidence.externalEligibleTrials).isEmpty()
-        assertThat(evidence.onLabelExperimentalTreatments).hasSize(4)
-        assertThat(evidence.onLabelExperimentalTreatments).contains("A on-label predicted responsive")
-        assertThat(evidence.onLabelExperimentalTreatments).contains("B on-label responsive")
-        assertThat(evidence.onLabelExperimentalTreatments).contains("A off-label responsive")
-        assertThat(evidence.onLabelExperimentalTreatments).contains("A off-label predicted responsive")
-        assertThat(evidence.offLabelExperimentalTreatments).hasSize(1)
-        assertThat(evidence.offLabelExperimentalTreatments).contains("B off-label responsive")
-        assertThat(evidence.preClinicalTreatments).hasSize(6)
-        assertThat(evidence.preClinicalTreatments).contains("B on-label predicted responsive")
-        assertThat(evidence.preClinicalTreatments).contains("C on-label responsive")
-        assertThat(evidence.preClinicalTreatments).contains("C on-label predicted responsive")
-        assertThat(evidence.preClinicalTreatments).contains("B off-label predicted responsive")
-        assertThat(evidence.preClinicalTreatments).contains("C off-label responsive")
-        assertThat(evidence.preClinicalTreatments).contains("C off-label predicted responsive")
+        assertThat(evidence.onLabelExperimentalTreatments).containsExactlyInAnyOrder(
+            "A on-label predicted responsive",
+            "B on-label responsive",
+            "A off-label responsive",
+            "A off-label predicted responsive"
+        )
+        assertThat(evidence.offLabelExperimentalTreatments).containsExactly("B off-label responsive")
+        assertThat(evidence.preClinicalTreatments).containsExactlyInAnyOrder(
+            "B on-label predicted responsive",
+            "C on-label responsive",
+            "C on-label predicted responsive",
+            "B off-label predicted responsive",
+            "C off-label responsive",
+            "C off-label predicted responsive"
+        )
         assertThat(evidence.knownResistantTreatments).isEmpty()
         assertThat(evidence.suspectResistantTreatments).isEmpty()
     }
@@ -83,11 +80,8 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
-        assertThat(evidence!!.knownResistantTreatments).hasSize(1)
-        assertThat(evidence.knownResistantTreatments).contains("On-label responsive A")
-        assertThat(evidence.suspectResistantTreatments).hasSize(2)
-        assertThat(evidence.suspectResistantTreatments).contains("Off-label responsive")
-        assertThat(evidence.suspectResistantTreatments).contains("On-label responsive C")
+        assertThat(evidence.knownResistantTreatments).containsExactly("On-label responsive A")
+        assertThat(evidence.suspectResistantTreatments).containsExactlyInAnyOrder("Off-label responsive", "On-label responsive C")
     }
 
     @Test
@@ -105,7 +99,7 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
-        assertThat(evidence!!.approvedTreatments).isEmpty()
+        assertThat(evidence.approvedTreatments).isEmpty()
         assertThat(evidence.externalEligibleTrials).containsExactly(
             TestExternalTrialFactory.create(
                 "On-label responsive trial", setOf(Country.OTHER), "https://clinicaltrials.gov/study/NCT00000001", "NCT00000001"
@@ -133,7 +127,7 @@ class ActionableEvidenceFactoryTest {
 
         val evidence = ActionableEvidenceFactory.create(match)
         assertThat(evidence).isNotNull()
-        assertThat(evidence!!.approvedTreatments).isEmpty()
+        assertThat(evidence.approvedTreatments).isEmpty()
         assertThat(evidence.externalEligibleTrials).isEmpty()
         assertThat(evidence.onLabelExperimentalTreatments).isEmpty()
         assertThat(evidence.offLabelExperimentalTreatments).isEmpty()
@@ -154,33 +148,27 @@ class ActionableEvidenceFactoryTest {
         )
 
         val filtered = ActionableEvidenceFactory.filterRedundantLowerEvidence(evidence)
-        assertThat(filtered.approvedTreatments).hasSize(1)
-        assertThat(filtered.approvedTreatments).contains("approved")
-        assertThat(filtered.onLabelExperimentalTreatments).hasSize(1)
-        assertThat(filtered.onLabelExperimentalTreatments).contains("on-label experimental")
-        assertThat(filtered.offLabelExperimentalTreatments).hasSize(1)
-        assertThat(filtered.offLabelExperimentalTreatments).contains("off-label experimental")
-        assertThat(filtered.preClinicalTreatments).hasSize(1)
-        assertThat(filtered.preClinicalTreatments).contains("pre-clinical")
-        assertThat(filtered.knownResistantTreatments).hasSize(1)
-        assertThat(filtered.knownResistantTreatments).contains("known resistant")
-        assertThat(filtered.suspectResistantTreatments).hasSize(1)
-        assertThat(filtered.suspectResistantTreatments).contains("suspect resistant")
+        assertThat(filtered.approvedTreatments).containsExactly("approved")
+        assertThat(filtered.onLabelExperimentalTreatments).containsExactly("on-label experimental")
+        assertThat(filtered.offLabelExperimentalTreatments).containsExactly("off-label experimental")
+        assertThat(filtered.preClinicalTreatments).containsExactly("pre-clinical")
+        assertThat(filtered.knownResistantTreatments).containsExactly("known resistant")
+        assertThat(filtered.suspectResistantTreatments).containsExactly("suspect resistant")
     }
 
     private fun evidence(treatment: String, level: EvidenceLevel, direction: EvidenceDirection): ActionableEvent {
         return TestServeActionabilityFactory.geneBuilder()
-            .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
+            .intervention(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
             .source(ActionabilityConstants.EVIDENCE_SOURCE)
             .level(level)
             .direction(direction)
             .build()
     }
 
-    private fun trial(treatment: String, direction: EvidenceDirection): ActionableEvent {
-        return TestServeActionabilityFactory.geneBuilder()
-            .treatment(TestServeActionabilityFactory.treatmentBuilder().name(treatment).build())
-            .source(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE)
+    private fun trial(acronym: String, direction: EvidenceDirection): ActionableEvent {
+        return ImmutableActionableGene.builder()
+            .from(TestServeActionabilityFactory.createActionableEvent(ActionabilityConstants.EXTERNAL_TRIAL_SOURCE, acronym))
+            .from(TestServeFactory.createEmptyGeneAnnotation())
             .direction(direction)
             .build()
     }

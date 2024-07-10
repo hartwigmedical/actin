@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.evidence.actionability
 
-import com.google.common.collect.Sets
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.serve.datamodel.ActionableEvents
 import com.hartwig.serve.datamodel.ImmutableActionableEvents
@@ -12,7 +11,7 @@ object TestActionableEventMatcherFactory {
 
     fun createProper(): ActionableEventMatcher {
         val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-        val applicableDoids: MutableSet<String> = Sets.newHashSet("parent")
+        val applicableDoids = setOf("parent")
         val personalizedActionabilityFactory = PersonalizedActionabilityFactory(doidModel, applicableDoids)
         val actionableEvents: ActionableEvents = ImmutableActionableEvents.builder()
             .addHotspots(TestServeActionabilityFactory.hotspotBuilder().build())
