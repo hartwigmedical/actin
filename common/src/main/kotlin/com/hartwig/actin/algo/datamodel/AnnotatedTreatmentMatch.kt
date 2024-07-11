@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.datamodel
 
 import com.hartwig.actin.efficacy.EfficacyEntry
-import com.hartwig.actin.personalization.datamodel.Measurement
+import com.hartwig.actin.personalized.datamodel.Measurement
 
 data class AnnotatedTreatmentMatch(
     val treatmentCandidate: TreatmentCandidate,

@@ -5,7 +5,7 @@ import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.efficacy.TrialReference
-import com.hartwig.actin.personalization.datamodel.MIN_PATIENT_COUNT
+import com.hartwig.actin.personalized.datamodel.MIN_PATIENT_COUNT
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles

@@ -3,9 +3,9 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.efficacy.EfficacyEntry
-import com.hartwig.actin.personalization.datamodel.MeasurementType
-import com.hartwig.actin.personalization.datamodel.TreatmentAnalysis
 import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_SUB_POPULATION_NAME
+import com.hartwig.actin.personalized.datamodel.MeasurementType
+import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
 
 class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>) {
 

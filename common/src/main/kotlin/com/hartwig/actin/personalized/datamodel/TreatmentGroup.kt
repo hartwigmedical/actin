@@ -1,4 +1,4 @@
-package com.hartwig.actin.personalization.datamodel
+package com.hartwig.actin.personalized.datamodel
 
 enum class TreatmentGroup(val display: String, val memberTreatmentNames: List<String>) {
     CAPECITABINE_OR_FLUOROURACIL("Capecitabine / Fluorouracil", listOf("capecitabine", "fluorouracil")),

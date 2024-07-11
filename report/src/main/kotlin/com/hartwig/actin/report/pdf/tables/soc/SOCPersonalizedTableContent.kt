@@ -1,8 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
-import com.hartwig.actin.personalization.datamodel.Measurement
-import com.hartwig.actin.personalization.datamodel.MeasurementType
-import com.hartwig.actin.personalization.datamodel.PersonalizedDataAnalysis
+import com.hartwig.actin.personalized.datamodel.Measurement
+import com.hartwig.actin.personalized.datamodel.MeasurementType
+import com.hartwig.actin.personalized.datamodel.PersonalizedDataAnalysis
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Styles.BORDER

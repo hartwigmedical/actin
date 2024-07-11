@@ -4,13 +4,13 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
 import com.hartwig.actin.personalization.datamodel.LocationGroup
-import com.hartwig.actin.personalization.datamodel.Measurement
-import com.hartwig.actin.personalization.datamodel.MeasurementType
-import com.hartwig.actin.personalization.datamodel.PersonalizedDataAnalysis
-import com.hartwig.actin.personalization.datamodel.SubPopulation
-import com.hartwig.actin.personalization.datamodel.TreatmentAnalysis
-import com.hartwig.actin.personalization.datamodel.TreatmentGroup
-import com.hartwig.actin.personalization.similarity.PersonalizedDataInterpreter
+import com.hartwig.actin.personalized.datamodel.Measurement
+import com.hartwig.actin.personalized.datamodel.MeasurementType
+import com.hartwig.actin.personalized.datamodel.PersonalizedDataAnalysis
+import com.hartwig.actin.personalized.datamodel.SubPopulation
+import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
+import com.hartwig.actin.personalized.datamodel.TreatmentGroup
+import com.hartwig.actin.personalization.similarity.PersonalizedDataInterpreter as PersonalizationDataInterpreter
 import com.hartwig.actin.personalization.similarity.population.Measurement as PopulationMeasurement
 import com.hartwig.actin.personalization.similarity.population.PersonalizedDataAnalysis as ActinPersonalizationAnalysis
 
@@ -46,8 +46,8 @@ class PersonalizedDataInterpreter(private val analysis: ActinPersonalizationAnal
         with(measurement) { Measurement(value, numPatients, min, max, iqr) }
 
     companion object {
-        fun create(personalizationDataPath: String, patient: PatientRecord): com.hartwig.actin.algo.soc.PersonalizedDataInterpreter {
-            val personalizedDataInterpreter = PersonalizedDataInterpreter.createFromFile(personalizationDataPath)
+        fun create(personalizationDataPath: String, patient: PatientRecord): PersonalizedDataInterpreter {
+            val personalizationDataInterpreter = PersonalizationDataInterpreter.createFromFile(personalizationDataPath)
             val hasKrasMutation = GeneHasActivatingMutation("KRAS", null).evaluate(patient).result == EvaluationResult.PASS
             val metastasisLocationGroups = with(patient.tumor) {
                 sequenceOf(
@@ -60,7 +60,7 @@ class PersonalizedDataInterpreter(private val analysis: ActinPersonalizationAnal
                 ).filter { it.first == true }.map { it.second }.toSet()
             }
 
-            val analysis = personalizedDataInterpreter.analyzePatient(
+            val analysis = personalizationDataInterpreter.analyzePatient(
                 patient.patient.registrationDate.year - patient.patient.birthYear,
                 patient.clinicalStatus.who!!,
                 hasKrasMutation,

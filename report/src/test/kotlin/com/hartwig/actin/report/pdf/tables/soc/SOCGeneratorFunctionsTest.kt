@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.datamodel.TreatmentCandidate
 import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatment
 import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.PatientPopulation
-import com.hartwig.actin.personalization.datamodel.Measurement
+import com.hartwig.actin.personalized.datamodel.Measurement
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text

@@ -1,4 +1,4 @@
-package com.hartwig.actin.personalization.datamodel
+package com.hartwig.actin.personalized.datamodel
 
 const val MIN_PATIENT_COUNT = 20
 

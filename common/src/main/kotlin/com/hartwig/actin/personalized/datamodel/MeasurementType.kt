@@ -1,4 +1,4 @@
-package com.hartwig.actin.personalization.datamodel
+package com.hartwig.actin.personalized.datamodel
 
 enum class MeasurementType {
     TREATMENT_DECISION,

@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.datamodel
 
-import com.hartwig.actin.personalization.datamodel.PersonalizedDataAnalysis
+import com.hartwig.actin.personalized.datamodel.PersonalizedDataAnalysis
 import java.time.LocalDate
 
 data class TreatmentMatch(
