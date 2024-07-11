@@ -260,22 +260,22 @@ class CohortStatusResolverTest {
         assertThat(interpretedCohortStatus.slotsAvailable).isEqualTo(hasSlotsAvailable)
     }
 
-    private fun cohortDefinitionConfig(vararg trialStatusCohortIds: Int) =
-        TestCohortDefinitionConfigFactory.MINIMAL.copy(externalCohortIds = trialStatusCohortIds.map(Int::toString).toSet())
+    private fun cohortDefinitionConfig(vararg trialStatusCohortIds: String) =
+        TestCohortDefinitionConfigFactory.MINIMAL.copy(externalCohortIds = trialStatusCohortIds.toSet())
 
     companion object {
-        private const val PARENT_1_OPEN_WITH_SLOTS_COHORT_ID = 1
-        private const val PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID = 2
-        private const val CHILD_OPEN_WITH_SLOTS_COHORT_ID = 3
-        private const val CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID = 4
-        private const val CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID = 5
-        private const val ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID = 6
-        private const val CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID = 6
-        private const val DOES_NOT_EXIST_COHORT_ID = 7
-        private const val GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = 8
-        private const val PARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = 9
-        private const val GRANDPARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = 10
-        private const val CHILD_OF_GRANDPARENT_OPEN_WITH_SLOTS_COHORT_ID = 11
+        private const val PARENT_1_OPEN_WITH_SLOTS_COHORT_ID = "1"
+        private const val PARENT_2_CLOSED_WITHOUT_SLOTS_COHORT_ID = "2"
+        private const val CHILD_OPEN_WITH_SLOTS_COHORT_ID = "3"
+        private const val CHILD_OPEN_WITHOUT_SLOTS_COHORT_ID = "4"
+        private const val CHILD_CLOSED_WITHOUT_SLOTS_COHORT_ID = "5"
+        private const val ANOTHER_CHILD_OPEN_WITH_SLOTS_COHORT_ID = "6"
+        private const val CHILD_FOR_PARENT_2_OPEN_WITH_SLOTS_COHORT_ID = "6"
+        private const val DOES_NOT_EXIST_COHORT_ID = "7"
+        private const val GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = "8"
+        private const val PARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = "9"
+        private const val GRANDPARENT_FOR_GRANDCHILD_OPEN_WITH_SLOTS_COHORT_ID = "10"
+        private const val CHILD_OF_GRANDPARENT_OPEN_WITH_SLOTS_COHORT_ID = "11"
 
         private fun createTestEntries(): List<TrialStatusEntry> {
             val parentOpenWithSlots =
