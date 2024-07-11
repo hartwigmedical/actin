@@ -23,8 +23,28 @@
             <artifactId>orange-datamodel</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>actin-transvar</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>actin-pave-lite</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
         </dependency>
 
         <dependency>

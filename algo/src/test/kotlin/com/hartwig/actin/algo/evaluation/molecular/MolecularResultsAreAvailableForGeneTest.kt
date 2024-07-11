@@ -10,8 +10,8 @@ import com.hartwig.actin.molecular.datamodel.TestMolecularFactory.freeTextPriorM
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.junit.Test
@@ -170,7 +170,7 @@ class MolecularResultsAreAvailableForGeneTest {
             MolecularResultsAreAvailableForGene("ALK")
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
-                        listOf(TestPanelRecordFactory.empty().copy(archerPanelExtraction = ArcherPanelExtraction()))
+                        listOf(TestPanelRecordFactory.empty().copy(panelExtraction = ArcherPanelExtraction()))
                     )
                 )
         )
@@ -190,7 +190,7 @@ class MolecularResultsAreAvailableForGeneTest {
 
     private fun archerPanelWithVariantForGene(gene: String) =
         TestPanelRecordFactory.empty()
-            .copy(archerPanelExtraction = ArcherPanelExtraction(variants = listOf(ArcherVariantExtraction(gene, "c.1A>T"))))
+            .copy(panelExtraction = ArcherPanelExtraction(variants = listOf(PanelVariantExtraction(gene, "c.1A>T"))))
 
     @Test
     fun `Should fail for Archer if gene is not tested in panel`() {
@@ -212,7 +212,7 @@ class MolecularResultsAreAvailableForGeneTest {
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
-                            TestPanelRecordFactory.empty().copy(genericPanelExtraction = GenericPanelExtraction(GenericPanelType.AVL))
+                            TestPanelRecordFactory.empty().copy(panelExtraction = GenericPanelExtraction(GenericPanelType.AVL))
                         )
                     )
                 )

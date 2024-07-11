@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 
-open class MolecularInterpreter<I, O, T : MolecularTest<*>>(
+open class MolecularInterpreter<I, O, T : MolecularTest>(
     private val extractor: MolecularExtractor<I, O>,
     private val annotator: MolecularAnnotator<O, T>,
     val inputPredicate: (I) -> Boolean = { true }

@@ -9,9 +9,9 @@ class HasPreviouslyParticipatedInTrial : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.oncologicalHistory.any { it.isTrial }) {
-            EvaluationFactory.pass("Has participated in trial")
+            EvaluationFactory.pass("Has previously participated in other trial")
         } else {
-            EvaluationFactory.fail("Has not participated in trial")
+            EvaluationFactory.fail("Has not participated in other trial")
         }
     }
 }

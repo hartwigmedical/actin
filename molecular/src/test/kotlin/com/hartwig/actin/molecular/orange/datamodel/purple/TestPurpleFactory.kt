@@ -19,7 +19,6 @@ import com.hartwig.hmftools.datamodel.purple.PurpleLikelihoodMethod
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
-import org.apache.logging.log4j.util.Strings
 
 object TestPurpleFactory {
 
@@ -49,8 +48,8 @@ object TestPurpleFactory {
 
     fun driverBuilder(): ImmutablePurpleDriver.Builder {
         return ImmutablePurpleDriver.builder()
-            .gene(Strings.EMPTY)
-            .transcript(Strings.EMPTY)
+            .gene("")
+            .transcript("")
             .type(PurpleDriverType.MUTATION)
             .driverLikelihood(0.0)
             .likelihoodMethod(PurpleLikelihoodMethod.NONE)
@@ -59,19 +58,18 @@ object TestPurpleFactory {
 
     fun variantBuilder(): ImmutablePurpleVariant.Builder {
         return ImmutablePurpleVariant.builder()
-            .reported(true)
             .type(PurpleVariantType.SNP)
-            .gene(Strings.EMPTY)
-            .chromosome(Strings.EMPTY)
+            .gene("")
+            .chromosome("")
             .position(0)
-            .ref(Strings.EMPTY)
-            .alt(Strings.EMPTY)
+            .ref("")
+            .alt("")
             .adjustedCopyNumber(0.0)
             .variantCopyNumber(0.0)
             .hotspot(HotspotType.NON_HOTSPOT)
             .subclonalLikelihood(0.0)
             .biallelic(false)
-            .canonicalImpact(transcriptImpactBuilder().build())
+            .canonicalImpact(transcriptImpactBuilder().reported(true).build())
             .worstCodingEffect(PurpleCodingEffect.NONE)
             .tumorDepth(ImmutablePurpleAllelicDepth.builder().totalReadCount(0).alleleReadCount(0).build())
             .adjustedVAF(0.0)
@@ -82,31 +80,33 @@ object TestPurpleFactory {
 
     fun transcriptImpactBuilder(): ImmutablePurpleTranscriptImpact.Builder {
         return ImmutablePurpleTranscriptImpact.builder()
-            .transcript(Strings.EMPTY)
-            .hgvsCodingImpact(Strings.EMPTY)
-            .hgvsProteinImpact(Strings.EMPTY)
+            .transcript("")
+            .hgvsCodingImpact("")
+            .hgvsProteinImpact("")
             .inSpliceRegion(false)
             .codingEffect(PurpleCodingEffect.UNDEFINED)
+            .reported(false)
     }
 
     fun gainLossBuilder(): ImmutablePurpleGainLoss.Builder {
         return ImmutablePurpleGainLoss.builder()
-            .gene(Strings.EMPTY)
+            .gene("")
             .interpretation(CopyNumberInterpretation.FULL_LOSS)
             .minCopies(0.0)
             .maxCopies(0.0)
-            .chromosome(Strings.EMPTY)
-            .chromosomeBand(Strings.EMPTY)
-            .transcript(Strings.EMPTY)
+            .chromosome("")
+            .chromosomeBand("")
+            .transcript("")
             .isCanonical(true)
     }
 
     fun geneCopyNumberBuilder(): ImmutablePurpleGeneCopyNumber.Builder {
         return ImmutablePurpleGeneCopyNumber.builder()
-            .gene(Strings.EMPTY)
-            .chromosome(Strings.EMPTY)
-            .chromosomeBand(Strings.EMPTY)
+            .gene("")
+            .chromosome("")
+            .chromosomeBand("")
             .minCopyNumber(0.0)
+            .maxCopyNumber(0.0)
             .minMinorAlleleCopyNumber(0.0)
     }
 

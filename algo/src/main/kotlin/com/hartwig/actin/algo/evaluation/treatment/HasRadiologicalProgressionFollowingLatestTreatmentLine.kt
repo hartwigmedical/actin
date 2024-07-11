@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 class HasRadiologicalProgressionFollowingLatestTreatmentLine : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined(
+        return EvaluationFactory.recoverableUndetermined(
             "Radiological progression following latest treatment line currently cannot be evaluated",
             "Undetermined radiological progression following latest treatment line"
         )

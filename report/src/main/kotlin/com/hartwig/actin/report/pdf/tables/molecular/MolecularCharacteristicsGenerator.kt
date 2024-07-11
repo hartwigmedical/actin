@@ -18,7 +18,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
 
     override fun contents(): Table {
         val colWidth = width / 10
-        val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)
+        val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)
 
         listOf("Purity", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })
@@ -122,7 +122,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             return Formats.VALUE_NOT_AVAILABLE
         } else {
             val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
-            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
+            return pharmacoEntry.haplotypes.joinToString(", ") { "${it.toHaplotypeString()} (${it.function})" }
         }
     }
 

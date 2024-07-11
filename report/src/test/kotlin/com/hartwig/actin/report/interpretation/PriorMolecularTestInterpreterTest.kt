@@ -5,8 +5,11 @@ import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherVariantExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.assertj.core.api.Assertions.assertThat
@@ -42,9 +45,9 @@ class PriorMolecularTestInterpreterTest {
             MolecularHistory(
                 listOf(
                     TestPanelRecordFactory.empty().copy(
-                        archerPanelExtraction = ArcherPanelExtraction(
-                            variants = listOf(ArcherVariantExtraction("ALK", "c.2240_2254del")),
-                            fusions = emptyList(),
+                        panelExtraction = ArcherPanelExtraction(
+                            variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
+                            fusions = listOf(ArcherFusionExtraction("ALK")),
                             skippedExons = emptyList()
                         )
                     )
@@ -54,7 +57,8 @@ class PriorMolecularTestInterpreterTest {
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
                 type = "Archer", results = listOf(
-                    PriorMolecularTestResultInterpretation(grouping = "ALK", details = "c.2240_2254del"),
+                    PriorMolecularTestResultInterpretation(grouping = "Variants", details = "ALK c.2240_2254del"),
+                    PriorMolecularTestResultInterpretation(grouping = "Fusions", details = "ALK fusion"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "ROS1"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "RET"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "MET"),
@@ -68,18 +72,32 @@ class PriorMolecularTestInterpreterTest {
     }
 
     @Test
-    fun `Should interpret generic panel tests based on implied negatives`() {
+    fun `Should interpret generic panel tests based on variants, fusions, exon deletions and implied negatives`() {
         val result = interpreter.interpret(
             MolecularHistory(
-                listOf(TestPanelRecordFactory.empty().copy(genericPanelExtraction = GenericPanelExtraction(GenericPanelType.AVL)))
+                listOf(
+                    TestPanelRecordFactory.empty().copy(
+                        panelExtraction =
+                        GenericPanelExtraction(
+                            GenericPanelType.AVL,
+                            variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
+                            fusions = listOf(GenericFusionExtraction("EML4", "ALK")),
+                            exonDeletions = listOf(GenericExonDeletionExtraction("EGFR", 19)),
+                            genesWithNegativeResults = setOf("RET")
+                        )
+                    )
+                )
             )
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                type = "NGS Panel", results = listOf(
-                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "EGFR"),
+                type = "AvL panel", results = listOf(
+                    PriorMolecularTestResultInterpretation(grouping = "Variants", details = "ALK c.2240_2254del"),
+                    PriorMolecularTestResultInterpretation(grouping = "Fusions", details = "EML4-ALK fusion"),
+                    PriorMolecularTestResultInterpretation(grouping = "Exon deletions", details = "EGFR exon 19 deletion"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "BRAF"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "KRAS"),
+                    PriorMolecularTestResultInterpretation(grouping = "Negative", details = "RET"),
                 )
             )
         )

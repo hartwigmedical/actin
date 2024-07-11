@@ -5,15 +5,15 @@ import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.Driver
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
 import com.hartwig.actin.molecular.datamodel.orange.immunology.HlaAllele
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
@@ -44,23 +44,23 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withMolecularTests(molecularTests: List<MolecularTest<*>>): PatientRecord {
+    fun withMolecularTests(molecularTests: List<MolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular) + molecularTests))
     }
 
-    fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest<*>>): PatientRecord {
+    fun withMolecularTestsAndNoOrangeMolecular(molecularTests: List<MolecularTest>): PatientRecord {
         return base.copy(molecularHistory = MolecularHistory(molecularTests))
     }
 
-    fun withMolecularTest(molecularTest: MolecularTest<*>): PatientRecord {
+    fun withMolecularTest(molecularTest: MolecularTest): PatientRecord {
         return withMolecularTests(listOf(molecularTest))
     }
 
-    fun withVariant(variant: ExtendedVariant): PatientRecord {
+    fun withVariant(variant: Variant): PatientRecord {
         return withDriver(variant)
     }
 
-    fun withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad: Boolean?, vararg variants: ExtendedVariant): PatientRecord {
+    fun withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad: Boolean?, vararg variants: Variant): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(hasHighTumorMutationalLoad = hasHighTumorMutationalLoad),
@@ -71,7 +71,7 @@ internal object MolecularTestFactory {
 
     fun withHasTumorMutationalLoadAndVariantAndDisruption(
         hasHighTumorMutationalLoad: Boolean?,
-        variant: ExtendedVariant,
+        variant: Variant,
         disruption: Disruption
     ): PatientRecord {
         return withMolecularRecord(
@@ -100,7 +100,7 @@ internal object MolecularTestFactory {
         return withDriver(disruption)
     }
 
-    fun withFusion(fusion: ExtendedFusion): PatientRecord {
+    fun withFusion(fusion: Fusion): PatientRecord {
         return withDriver(fusion)
     }
 
@@ -131,7 +131,7 @@ internal object MolecularTestFactory {
     fun withExperimentTypeAndContainingTumorCellsAndPriorTest(
         type: ExperimentType,
         containsTumorCells: Boolean,
-        priorTest: MolecularTest<*>
+        priorTest: MolecularTest
     ): PatientRecord {
         return base.copy(
             molecularHistory = MolecularHistory(
@@ -140,7 +140,7 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withMicrosatelliteInstabilityAndVariant(isMicrosatelliteUnstable: Boolean?, variant: ExtendedVariant): PatientRecord {
+    fun withMicrosatelliteInstabilityAndVariant(isMicrosatelliteUnstable: Boolean?, variant: Variant): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(isMicrosatelliteUnstable = isMicrosatelliteUnstable), variant
         )
@@ -171,7 +171,7 @@ internal object MolecularTestFactory {
 
     fun withHomologousRepairDeficiencyAndVariant(
         isHomologousRepairDeficient: Boolean?,
-        variant: ExtendedVariant
+        variant: Variant
     ): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), variant
@@ -205,10 +205,28 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun withHomologousRepairDeficiencyAndVariantAndDisruption(
+        isHomologousRepairDeficient: Boolean?,
+        disruption: Disruption,
+        variant: Variant
+    ): PatientRecord {
+        return withMolecularRecord(
+            baseMolecular.copy(characteristics = baseMolecular.characteristics.copy(isHomologousRepairDeficient = isHomologousRepairDeficient), drivers = baseMolecular.drivers.copy(variants = setOf(variant), disruptions = setOf(disruption))
+        ))
+    }
+
     fun withTumorMutationalBurden(tumorMutationalBurden: Double?): PatientRecord {
         return withMolecularRecord(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(tumorMutationalBurden = tumorMutationalBurden)
+            )
+        )
+    }
+
+    fun withIsMicrosatelliteUnstable(microsatelliteStatus: Boolean?): PatientRecord {
+        return withMolecularRecord(
+            baseMolecular.copy(
+                characteristics = baseMolecular.characteristics.copy(isMicrosatelliteUnstable = microsatelliteStatus)
             )
         )
     }
@@ -247,7 +265,7 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun addingTestFromPriorMolecular(patientRecord: PatientRecord, priorMolecular: List<MolecularTest<*>>): PatientRecord {
+    fun addingTestFromPriorMolecular(patientRecord: PatientRecord, priorMolecular: List<MolecularTest>): PatientRecord {
         return patientRecord.copy(
             molecularHistory = MolecularHistory(
                 patientRecord.molecularHistory.molecularTests + priorMolecular
@@ -261,11 +279,11 @@ internal object MolecularTestFactory {
 
     private fun withCharacteristicsAndDriver(characteristics: MolecularCharacteristics, driver: Driver?): PatientRecord {
         val drivers = when (driver) {
-            is ExtendedVariant -> baseMolecular.drivers.copy(variants = setOf(driver))
+            is Variant -> baseMolecular.drivers.copy(variants = setOf(driver))
             is CopyNumber -> baseMolecular.drivers.copy(copyNumbers = setOf(driver))
             is HomozygousDisruption -> baseMolecular.drivers.copy(homozygousDisruptions = setOf(driver))
             is Disruption -> baseMolecular.drivers.copy(disruptions = setOf(driver))
-            is ExtendedFusion -> baseMolecular.drivers.copy(fusions = setOf(driver))
+            is Fusion -> baseMolecular.drivers.copy(fusions = setOf(driver))
             else -> baseMolecular.drivers
         }
         return withMolecularRecord(baseMolecular.copy(characteristics = characteristics, drivers = drivers))

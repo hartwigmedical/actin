@@ -48,13 +48,14 @@ internal object MedicationTestFactory {
     fun medication(
         name: String = "",
         dosage: Dosage = Dosage(),
+        startDate: LocalDate? = null,
         stopDate: LocalDate? = null,
         qtProlongatingRisk: QTProlongatingRisk = QTProlongatingRisk.NONE,
         atc: AtcClassification? = null,
         isSelfCare: Boolean = false
     ): Medication {
         return TestMedicationFactory.createMinimal().copy(
-            name = name, dosage = dosage, stopDate = stopDate, qtProlongatingRisk = qtProlongatingRisk, atc = atc, isSelfCare = isSelfCare
+            name = name, dosage = dosage, startDate = startDate, stopDate = stopDate, qtProlongatingRisk = qtProlongatingRisk, atc = atc, isSelfCare = isSelfCare
         )
     }
 

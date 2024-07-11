@@ -1,14 +1,24 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
+import com.hartwig.actin.algo.datamodel.EvaluationResult
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD
+import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
+import com.hartwig.actin.clinical.interpretation.LabMeasurement
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class LabEvaluationTest {
+
+    private val refDate = LocalDate.of(2024, 7, 5)
+    private val minValidDate = refDate.minusDays(90)
+    private val measurement = LabMeasurement.CREATININE
+    private val labValue = LabTestFactory.create(LabMeasurement.CREATININE, value = 100.0, refDate, refLimitUp = 100.0)
 
     @Test
     fun `Should return cannot be determined result for minimum LLN evaluation when reference limit not provided`() {
@@ -85,5 +95,54 @@ class LabEvaluationTest {
         val overrideRefLimitUp: Double = LabEvaluation.REF_LIMIT_UP_OVERRIDES[firstCode]!!
         val value: LabValue = LabTestFactory.create(value = 1.8 * overrideRefLimitUp).copy(code = firstCode)
         assertThat(LabEvaluation.evaluateVersusMaxULN(value, 2.0)).isEqualTo(WITHIN_THRESHOLD)
+    }
+
+    // Tests for fun isValid
+    @Test
+    fun `Should return true if lab value is valid`() {
+        assertThat(LabEvaluation.isValid(labValue, measurement, minValidDate)).isTrue()
+    }
+
+    @Test
+    fun `Should return false if lab value is null`() {
+        assertThat(LabEvaluation.isValid(null, measurement, minValidDate)).isFalse()
+    }
+
+    @Test
+    fun `Should return false if lab value unit is different from default unit`() {
+        val value = labValue.copy(unit = LabUnit.GRAMS)
+        assertThat(LabEvaluation.isValid(value, measurement, minValidDate)).isFalse()
+    }
+
+    @Test
+    fun `Should return false if lab value date is before minimal valid date`() {
+        val value = labValue.copy(date = minValidDate.minusDays(1))
+        assertThat(LabEvaluation.isValid(value, measurement, minValidDate)).isFalse()
+    }
+
+    //Tests for fun evaluateInvalidLabValue
+    @Test
+    fun `Should evaluate to undetermined with specific message if lab value is null`(){
+        val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, null, minValidDate)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly("No measurement found for ${measurement.display}")
+    }
+
+    @Test
+    fun `Should evaluate to undetermined with specific message if lab value unit is different from default`(){
+        val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(unit = LabUnit.GRAMS), minValidDate)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly(
+            "Unexpected unit specified for ${measurement.display}: ${LabUnit.GRAMS}"
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined with specific message if lab value is too old`() {
+        val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(date = minValidDate.minusDays(1)), minValidDate)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly(
+            "Most recent measurement too old for ${measurement.display}"
+        )
     }
 }

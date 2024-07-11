@@ -6,7 +6,7 @@ data class TranscriptImpact(
     val hgvsProteinImpact: String,
     val affectedCodon: Int? = null,
     val affectedExon: Int? = null,
-    val isSpliceRegion: Boolean,
+    val isSpliceRegion: Boolean?,
     val effects: Set<VariantEffect> = emptySet(),
     val codingEffect: CodingEffect? = null
 ) : Comparable<TranscriptImpact> {

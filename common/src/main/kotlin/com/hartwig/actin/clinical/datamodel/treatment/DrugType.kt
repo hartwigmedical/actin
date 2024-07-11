@@ -24,6 +24,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     ANTI_CD9_ANTIBODY(TreatmentCategory.TARGETED_THERAPY, "anti-CD9 antibody"),
     ANTI_CEACAM5(TreatmentCategory.TARGETED_THERAPY, "anti-CEACAM5"),
     ANTI_CLDN6_CAR_T(TreatmentCategory.IMMUNOTHERAPY, "anti-CLDN6 CAR-T"),
+    ANTI_DLL3(TreatmentCategory.TARGETED_THERAPY, "anti-DLL3"),
     ANTI_ESTROGEN(TreatmentCategory.HORMONE_THERAPY, "anti-estrogen"),
     ANTI_KLK2(TreatmentCategory.TARGETED_THERAPY, "anti-KLK2"),
     ANTI_LAG_3(TreatmentCategory.IMMUNOTHERAPY, "anti-LAG-3"),
@@ -111,7 +112,10 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     IDO1_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "IDO1 inhibitor"),
     IL_15_CYTOKINE(TreatmentCategory.IMMUNOTHERAPY, "IL-15 cytokine"),
     IL_2_CYTOKINE(TreatmentCategory.IMMUNOTHERAPY, "IL-2 cytokine"),
+    IMMTAC(TreatmentCategory.TARGETED_THERAPY, "ImmTAC"),
+    IMMUNE_AGONIST(TreatmentCategory.IMMUNOTHERAPY),
     IMMUNE_CHECKPOINT_INHIBITOR(TreatmentCategory.IMMUNOTHERAPY),
+    IMMUNOMODULATOR(TreatmentCategory.IMMUNOTHERAPY),
     KIT_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KIT inhibitor"),
     KIT_TYROSINE_KINASE_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KIT TKI"),
     KRAS_G12C_INHIBITOR(TreatmentCategory.TARGETED_THERAPY, "KRAS G12C inhibitor"),
@@ -161,6 +165,7 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
     STEROID(TreatmentCategory.SUPPORTIVE_TREATMENT),
     TAXANE(TreatmentCategory.CHEMOTHERAPY),
     THYMIDINE_PHOSPHORYLASE_INHIBITOR(TreatmentCategory.CHEMOTHERAPY),
+    TDO_INHIBITOR(TreatmentCategory.IMMUNOTHERAPY, "TDO inhibitor"),
     TLR_AGONIST(TreatmentCategory.IMMUNOTHERAPY, "TLR agonist"),
     TOPO1_INHIBITOR(TreatmentCategory.CHEMOTHERAPY, "TOPO1 inhibitor"),
     TOPO2_INHIBITOR(TreatmentCategory.CHEMOTHERAPY, "TOPO2 inhibitor"),
@@ -178,5 +183,87 @@ enum class DrugType(override val category: TreatmentCategory, private val displa
 
     override fun display(): String {
         return display ?: toString().replace("_", " ").lowercase()
+    }
+
+    companion object {
+        val NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES = mapOf(
+            "ALK" to setOf(
+                ALK_INHIBITOR,
+                ALK_TYROSINE_KINASE_INHIBITOR,
+                ALK_INHIBITOR_GEN_1,
+                ALK_INHIBITOR_GEN_2,
+                ALK_INHIBITOR_GEN_3
+            ),
+            "EGFR" to setOf(
+                EGFR_INHIBITOR,
+                EGFR_EXON_20_INS_TARGETED_THERAPY,
+                EGFR_C797X_TKI,
+                EGFR_INHIBITOR_GEN_1,
+                EGFR_INHIBITOR_GEN_2,
+                EGFR_INHIBITOR_GEN_3,
+                EGFR_EXON_20_INS_TARGETED_THERAPY,
+                EGFR_TYROSINE_KINASE_INHIBITOR
+            ),
+            "MET" to setOf(
+                MET_INHIBITOR,
+                MET_TYROSINE_KINASE_INHIBITOR
+            ),
+            "RET" to setOf(
+                RET_INHIBITOR,
+                RET_TYROSINE_KINASE_INHIBITOR
+            ),
+            "ROS1" to setOf(
+                ROS1_INHIBITOR,
+                ROS1_TYROSINE_KINASE_INHIBITOR
+            ),
+            "BRAF" to setOf(
+                BRAF_INHIBITOR,
+                BRAF_TYROSINE_KINASE_INHIBITOR
+            ),
+            "NTRK1" to setOf(
+                TRK_RECEPTOR_INHIBITOR,
+                TRK_TYROSINE_KINASE_INHIBITOR
+            ),
+            "NTRK2" to setOf(
+                TRK_RECEPTOR_INHIBITOR,
+                TRK_TYROSINE_KINASE_INHIBITOR
+            ),
+            "NTRK3" to setOf(
+                TRK_RECEPTOR_INHIBITOR,
+                TRK_TYROSINE_KINASE_INHIBITOR
+            )
+        )
+
+        val RAS_MEK_MAPK_DIRECTLY_TARGETING_DRUG_SET = setOf(
+            KRAS_G12C_INHIBITOR,
+            BRAF_INHIBITOR,
+            BRAF_TYROSINE_KINASE_INHIBITOR,
+            MEK_INHIBITOR,
+            MEK1_INHIBITOR,
+            MEK2_INHIBITOR
+        )
+
+        val RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET = setOf(
+            ERBB2_INHIBITOR,
+            HER2_INHIBITOR,
+            HER2_ANTIBODY,
+            HER3_ANTIBODY,
+            HER_INHIBITOR,
+            HER_TYROSINE_KINASE_INHIBITOR,
+            PDGFR_INHIBITOR,
+            PDGFRA_INHIBITOR,
+            PDGFRB_INHIBITOR,
+            PDGFR_TYROSINE_KINASE_INHIBITOR,
+            PDGFRA_TYROSINE_KINASE_INHIBITOR,
+            PDGFRB_TYROSINE_KINASE_INHIBITOR,
+            FGFR_INHIBITOR,
+            FGFR1_INHIBITOR,
+            FGFR2_INHIBITOR,
+            FGFR3_INHIBITOR,
+            FGFR_TYROSINE_KINASE_INHIBITOR,
+            FGFR1_TYROSINE_KINASE_INHIBITOR,
+            FGFR2_TYROSINE_KINASE_INHIBITOR,
+            FGFR3_TYROSINE_KINASE_INHIBITOR
+        )
     }
 }

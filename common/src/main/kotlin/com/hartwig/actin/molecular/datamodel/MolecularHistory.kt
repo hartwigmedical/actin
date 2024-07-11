@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtractio
 import java.time.LocalDate
 
 data class MolecularHistory(
-    val molecularTests: List<MolecularTest<*>>
+    val molecularTests: List<MolecularTest>
 ) {
     fun allIHCTests(): List<PriorMolecularTest> {
         return molecularTests.filterIsInstance<IHCMolecularTest>().map { it.test }
@@ -22,11 +22,11 @@ data class MolecularHistory(
     }
 
     fun allArcherPanels(): List<ArcherPanelExtraction> {
-        return molecularTests.filterIsInstance<PanelRecord>().mapNotNull { it.archerPanelExtraction }
+        return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<ArcherPanelExtraction>()
     }
 
     fun allGenericPanels(): List<GenericPanelExtraction> {
-        return molecularTests.filterIsInstance<PanelRecord>().mapNotNull { it.genericPanelExtraction }
+        return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<GenericPanelExtraction>()
     }
 
     fun allOtherTests(): List<OtherPriorMolecularTest> {

@@ -7,20 +7,22 @@ import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 
 class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction {
 
-    override fun evaluate(molecular: MolecularRecord): Evaluation {
+    override fun genes() = listOf(gene)
+
+    override fun evaluate(test: MolecularTest): Evaluation {
         val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()
         val inactivationEventsGainOfFunction: MutableSet<String> = mutableSetOf()
-        val evidenceSource = molecular.evidenceSource
+        val evidenceSource = test.evidenceSource
 
-        val drivers = molecular.drivers
+        val drivers = test.drivers
         sequenceOf(
             drivers.homozygousDisruptions.asSequence(),
             drivers.copyNumbers.asSequence().filter { it.type == CopyNumberType.LOSS }
@@ -46,13 +48,14 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
         val inactivationSubclonalVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
-        val hasHighMutationalLoad = molecular.characteristics.hasHighTumorMutationalLoad
+        val hasHighMutationalLoad = test.characteristics.hasHighTumorMutationalLoad
         for (variant in drivers.variants) {
             if (variant.gene == gene && INACTIVATING_CODING_EFFECTS.contains(variant.canonicalImpact.codingEffect)) {
                 if (!variant.isReportable) {
                     inactivationEventsThatAreUnreportable.add(variant.event)
                 } else {
-                    val phaseGroups: Set<Int>? = variant.phaseGroups
+                    val extendedVariant = variant.extendedVariantDetails
+                    val phaseGroups: Set<Int>? = extendedVariant?.phaseGroups
                     if (phaseGroups != null) {
                         if (phaseGroups.none { evaluatedPhaseGroups.contains(it) }) {
                             eventsThatMayBeTransPhased.add(variant.event)
@@ -67,21 +70,22 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
                                 || variant.proteinEffect == ProteinEffect.GAIN_OF_FUNCTION_PREDICTED)
                         if (variant.geneRole == GeneRole.ONCO) {
                             inactivationEventsNoTSG.add(variant.event)
-                        } else if (!variant.isBiallelic) {
+                        } else if (extendedVariant?.isBiallelic == false) {
                             inactivationHighDriverNonBiallelicVariants.add(variant.event)
                         } else if (isGainOfFunction) {
                             inactivationEventsGainOfFunction.add(variant.event)
-                        } else if (variant.clonalLikelihood < CLONAL_CUTOFF) {
+                        } else if (extendedVariant?.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true) {
                             inactivationSubclonalVariants.add(variant.event)
                         } else {
                             inactivationEventsThatQualify.add(variant.event)
                         }
-                    } else if (hasHighMutationalLoad == null || !hasHighMutationalLoad) {
-                        if (variant.isBiallelic) {
-                            reportableNonDriverBiallelicVariantsOther.add(variant.event)
-                        } else {
-                            reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
-                        }
+                    } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && extendedVariant?.isBiallelic == true) {
+                        reportableNonDriverBiallelicVariantsOther.add(variant.event)
+                    } else if (
+                        (variant.gene in MolecularConstants.HRD_GENES && test.characteristics.isHomologousRepairDeficient == true)
+                        || (variant.gene in MolecularConstants.MSI_GENES && test.characteristics.isMicrosatelliteUnstable == true)
+                    ) {
+                        reportableNonDriverNonBiallelicVariantsOther.add(variant.event)
                     }
                 }
             }
@@ -117,8 +121,10 @@ class GeneIsInactivated(private val gene: String) : MolecularEvaluationFunction 
             evidenceSource
         )
 
-        return potentialWarnEvaluation
-            ?: EvaluationFactory.fail("No inactivation event(s) detected for gene $gene", "No $gene inactivation")
+        return potentialWarnEvaluation ?: EvaluationFactory.fail(
+            "No inactivation event(s) detected for gene $gene",
+            "No $gene inactivation"
+        )
     }
 
     private fun evaluatePotentialWarns(

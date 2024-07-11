@@ -9,14 +9,14 @@ import org.junit.Test
 
 class EvaluatedCohortFactoryTest {
     @Test
-    fun shouldCreateEvaluatedCohortsFromMinimalMatch() {
-        val cohorts = create(TestTreatmentMatchFactory.createMinimalTreatmentMatch())
+    fun `Should create evaluated cohorts from minimal match`() {
+        val cohorts = create(TestTreatmentMatchFactory.createMinimalTreatmentMatch(), false)
         assertThat(cohorts).isEmpty()
     }
 
     @Test
-    fun shouldCreateEvaluatedCohortsFromProperMatch() {
-        val cohorts = create(TestTreatmentMatchFactory.createProperTreatmentMatch())
+    fun `Should create evaluated cohorts from proper match`() {
+        val cohorts = create(TestTreatmentMatchFactory.createProperTreatmentMatch(), false)
         assertThat(cohorts).hasSize(5)
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
@@ -25,23 +25,23 @@ class EvaluatedCohortFactoryTest {
         assertThat(trial1cohortA.isPotentiallyEligible).isTrue
         assertThat(trial1cohortA.isOpen).isTrue
         assertThat(trial1cohortA.hasSlotsAvailable).isFalse
-        assertThat(trial1cohortA.warnings).isNotEmpty
-        assertThat(trial1cohortA.fails).isEmpty()
+        assertThat(trial1cohortA.warnings).isEmpty()
+        assertThat(trial1cohortA.fails).isNotEmpty()
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
         assertThat(trial1cohortB.molecularEvents).isEmpty()
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
         assertThat(trial1cohortB.isOpen).isTrue
         assertThat(trial1cohortB.hasSlotsAvailable).isTrue
-        assertThat(trial1cohortB.warnings).isNotEmpty
-        assertThat(trial1cohortB.fails).isEmpty()
+        assertThat(trial1cohortB.warnings).isEmpty()
+        assertThat(trial1cohortB.fails).isNotEmpty()
 
         val trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C")
         assertThat(trial1cohortC.molecularEvents).isEmpty()
         assertThat(trial1cohortC.isPotentiallyEligible).isFalse
         assertThat(trial1cohortC.isOpen).isFalse
         assertThat(trial1cohortC.hasSlotsAvailable).isFalse
-        assertThat(trial1cohortC.warnings).isNotEmpty
+        assertThat(trial1cohortC.warnings).isEmpty()
         assertThat(trial1cohortC.fails).isNotEmpty
 
         val trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A")
@@ -63,7 +63,7 @@ class EvaluatedCohortFactoryTest {
     }
 
     @Test
-    fun canEvaluateTrialsWithoutCohort() {
+    fun `Should evaluate trials without cohort`() {
         val trialMatchWithoutCohort = TrialMatch(
             identification = TrialIdentification(
                 trialId = "test",
@@ -78,15 +78,22 @@ class EvaluatedCohortFactoryTest {
         )
 
         val treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch().copy(trialMatches = listOf(trialMatchWithoutCohort))
-        val cohorts = create(treatmentMatch)
+        val cohorts = create(treatmentMatch, false)
         assertThat(cohorts).hasSize(1)
     }
 
-    companion object {
-        private fun findByAcronymAndCohort(
-            evaluatedCohorts: List<EvaluatedCohort>, acronymToFind: String, cohortToFind: String?
-        ): EvaluatedCohort {
-            return evaluatedCohorts.first { it.acronym == acronymToFind && it.cohort == cohortToFind }
-        }
+    @Test
+    fun `Should filter trials on SOC exhaustion and tumor type`() {
+        val treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
+        val cohortsWithoutFiltering = create(treatmentMatch, false)
+        assertThat(cohortsWithoutFiltering).hasSize(5)
+        val cohortsWithFiltering = create(treatmentMatch, true)
+        assertThat(cohortsWithFiltering).hasSize(2)
+    }
+
+    private fun findByAcronymAndCohort(
+        evaluatedCohorts: List<EvaluatedCohort>, acronymToFind: String, cohortToFind: String?
+    ): EvaluatedCohort {
+        return evaluatedCohorts.first { it.acronym == acronymToFind && it.cohort == cohortToFind }
     }
 }

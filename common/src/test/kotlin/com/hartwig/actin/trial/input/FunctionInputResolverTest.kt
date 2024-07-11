@@ -23,6 +23,8 @@ import com.hartwig.actin.trial.input.single.ManyGenes
 import com.hartwig.actin.trial.input.single.ManyIntents
 import com.hartwig.actin.trial.input.single.ManyIntentsOneInteger
 import com.hartwig.actin.trial.input.single.ManySpecificTreatmentsTwoIntegers
+import com.hartwig.actin.trial.input.single.OneCyp
+import com.hartwig.actin.trial.input.single.OneCypOneInteger
 import com.hartwig.actin.trial.input.single.OneGene
 import com.hartwig.actin.trial.input.single.OneGeneManyCodons
 import com.hartwig.actin.trial.input.single.OneGeneManyProteinImpacts
@@ -37,9 +39,11 @@ import com.hartwig.actin.trial.input.single.OneIntegerOneString
 import com.hartwig.actin.trial.input.single.OneMedicationCategory
 import com.hartwig.actin.trial.input.single.OneSpecificTreatmentOneInteger
 import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyDrugs
+import com.hartwig.actin.trial.input.single.OneTreatmentCategoryManyTypesManyDrugs
 import com.hartwig.actin.trial.input.single.TwoDoubles
 import com.hartwig.actin.trial.input.single.TwoIntegers
 import com.hartwig.actin.trial.input.single.TwoIntegersManyStrings
+import com.hartwig.actin.trial.input.single.TwoStrings
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
 import org.junit.Test
@@ -51,7 +55,7 @@ class FunctionInputResolverTest {
 
     @Test
     fun `Should determine input validity for every rule`() {
-        for (rule in EligibilityRule.values()) {
+        for (rule in EligibilityRule.entries) {
             assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isNotNull()
         }
     }
@@ -285,6 +289,29 @@ class FunctionInputResolverTest {
     }
 
     @Test
+    fun `Should resolve functions with one treatment category many types many drugs input`() {
+        val rule = firstOfType(FunctionInput.ONE_TREATMENT_CATEGORY_MANY_TYPES_MANY_DRUGS)
+        val category = TreatmentCategory.CHEMOTHERAPY
+        val drugNames = listOf("CAPECITABINE", "OXALIPLATIN")
+        val types = "${DrugType.ALKYLATING_AGENT};${DrugType.ANTIMETABOLITE}"
+        val valid = create(rule, listOf(category.display(), types, drugNames.joinToString(";")))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+
+        val treatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        val expected = OneTreatmentCategoryManyTypesManyDrugs(
+            category = category,
+            types = setOf(DrugType.ALKYLATING_AGENT, DrugType.ANTIMETABOLITE),
+            drugs = drugNames.map { treatmentDatabase.findDrugByName(it)!! }.toSet()
+        )
+        assertThat(resolver.createOneTreatmentCategoryManyTypesManyDrugsInput(valid)).isEqualTo(expected)
+
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a treatment category", types, drugNames.joinToString(";"))))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category, types, drugNames.joinToString(";"), "1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(category, drugNames.joinToString(";"))))!!).isFalse
+    }
+
+    @Test
     fun `Should resolve functions with many drugs input`() {
         val rule = firstOfType(FunctionInput.MANY_DRUGS)
         val drugNames = listOf("CAPECITABINE", "OXALIPLATIN")
@@ -337,6 +364,17 @@ class FunctionInputResolverTest {
         assertThat(resolver.createOneStringInput(valid)).isEqualTo("0045")
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("012", "234")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with two string inputs`() {
+        val rule = firstOfType(FunctionInput.TWO_STRINGS)
+        val valid = create(rule, listOf("string1", "string2"))
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createTwoStringsInput(valid)).isEqualTo(TwoStrings("string1", "string2"))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("1")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf(1, 2)))!!).isFalse
     }
 
     @Test
@@ -722,8 +760,37 @@ class FunctionInputResolverTest {
         assertThat(resolver.hasValidInputs(create(rule, listOf(manyCategoriesString, "1")))).isFalse
     }
 
+    @Test
+    fun `Should resolve functions with one cyp input`() {
+        val resolver = createTestResolver()
+        val rule = firstOfType(FunctionInput.ONE_CYP)
+        val cyp = "3A4"
+        val valid = create(rule, listOf(cyp))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+
+        val expected = OneCyp(cyp)
+        assertThat(resolver.createOneCypInput(valid)).isEqualTo(expected)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("not a cyp")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("3A", "33")))).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one cyp and one integer input`() {
+        val resolver = createTestResolver()
+        val rule = firstOfType(FunctionInput.ONE_CYP_ONE_INTEGER)
+        val valid = create(rule, listOf("3A4", "1"))
+        assertThat(resolver.hasValidInputs(valid)).isTrue
+
+        assertThat(resolver.createOneCypOneIntegerInput(valid)).isEqualTo(OneCypOneInteger("3A4", 1))
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("3A4", "1", "2")))).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("CYP3A4", "1")))).isFalse
+    }
+
     private fun firstOfType(input: FunctionInput): EligibilityRule {
-        return EligibilityRule.values().find { it.input == input }
+        return EligibilityRule.entries.find { it.input == input }
             ?: throw IllegalStateException("Could not find single rule requiring input: $input")
     }
 

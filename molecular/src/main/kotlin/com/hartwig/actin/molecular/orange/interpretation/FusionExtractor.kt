@@ -1,9 +1,11 @@
 package com.hartwig.actin.molecular.orange.interpretation
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.sort.driver.FusionComparator
 import com.hartwig.hmftools.datamodel.linx.FusionLikelihoodType
@@ -13,7 +15,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
 internal class FusionExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(linx: LinxRecord): MutableSet<ExtendedFusion> {
+    fun extract(linx: LinxRecord): MutableSet<Fusion> {
         return linx.allSomaticFusions().filter { fusion ->
             val included = geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())
             if (!included && fusion.reported()) {
@@ -25,20 +27,22 @@ internal class FusionExtractor(private val geneFilter: GeneFilter) {
             included
         }
             .map { fusion ->
-                ExtendedFusion(
+                Fusion(
                     isReportable = fusion.reported(),
                     event = DriverEventFactory.fusionEvent(fusion),
                     driverLikelihood = determineDriverLikelihood(fusion),
                     evidence = ActionableEvidenceFactory.createNoEvidence(),
                     geneStart = fusion.geneStart(),
-                    geneTranscriptStart = fusion.geneTranscriptStart(),
-                    fusedExonUp = fusion.fusedExonUp(),
                     geneEnd = fusion.geneEnd(),
+                    geneTranscriptStart = fusion.geneTranscriptStart(),
                     geneTranscriptEnd = fusion.geneTranscriptEnd(),
-                    fusedExonDown = fusion.fusedExonDown(),
+                    driverType = determineDriverType(fusion),
                     proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                    driverType = determineDriverType(fusion)
+                    extendedFusionDetails = ExtendedFusionDetails(
+                        fusedExonUp = fusion.fusedExonUp(),
+                        fusedExonDown = fusion.fusedExonDown(),
+                        isAssociatedWithDrugResistance = null,
+                    )
                 )
             }
             .toSortedSet(FusionComparator())

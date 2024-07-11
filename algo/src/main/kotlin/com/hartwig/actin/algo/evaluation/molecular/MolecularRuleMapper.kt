@@ -14,6 +14,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
+            EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X to anyGeneHasActivatingMutationCreator(),
             EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_CODONS_Y to geneHasActivatingMutationIgnoringSomeCodonsCreator(),
@@ -30,6 +31,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
             EligibilityRule.MSI_SIGNATURE to isMicrosatelliteUnstableCreator,
             EligibilityRule.HRD_SIGNATURE to isHomologousRepairDeficientCreator,
+            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_BRCA to isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA,
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
@@ -39,6 +41,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_KNOWN_HPV_STATUS to hasKnownHPVStatusCreator(),
             EligibilityRule.OVEREXPRESSION_OF_GENE_X to geneIsOverexpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_GENE_X to geneIsNotExpressedCreator(),
+            EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to genesMeetSpecificMRNAExpressionRequirementsCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
@@ -59,8 +62,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
+            EligibilityRule.MMR_STATUS_IS_AVAILABLE to mmrStatusIsAvailableCreator(),
             EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to nsclcDriverGeneStatusesAreAvailableCreator(),
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
+            EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator()
         )
     }
 
@@ -192,6 +197,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         get() = FunctionCreator { IsMicrosatelliteUnstable() }
     private val isHomologousRepairDeficientCreator: FunctionCreator
         get() = FunctionCreator { IsHomologousRepairDeficient() }
+    private val isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA: FunctionCreator
+        get() = FunctionCreator { IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA() }
 
     private fun hasSufficientTumorMutationalBurdenCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
@@ -242,6 +249,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneIsNotExpressedCreator(): FunctionCreator {
         return FunctionCreator { GeneIsNotExpressed() }
+    }
+
+    private fun genesMeetSpecificMRNAExpressionRequirementsCreator(): FunctionCreator {
+        return FunctionCreator { GenesMeetSpecificMRNAExpressionRequirements() }
     }
 
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
@@ -375,6 +386,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun mmrStatusIsAvailableCreator(): FunctionCreator {
+        return FunctionCreator { MmrStatusIsAvailable() }
+    }
+
     private fun nsclcDriverGeneStatusesAreAvailableCreator(): FunctionCreator {
         return FunctionCreator { function: EligibilityFunction ->
             NsclcDriverGeneStatusesAreAvailable()
@@ -383,6 +398,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasEgfrPaccMutationCreator(): FunctionCreator {
         return FunctionCreator { GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_VARIANT_LIST) }
+    }
+
+    private fun hasCoDeletionOfChromosomeArmsCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val (chromosome1, chromosome2) = functionInputResolver().createTwoStringsInput(function)
+            HasCodeletionOfChromosomeArms(chromosome1, chromosome2)
+        }
     }
 
     private val EGFR_PACC_VARIANT_LIST =

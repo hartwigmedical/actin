@@ -1,11 +1,15 @@
 package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.PatientRecordJson
+import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.serialization.ClinicalRecordJson
+import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.orange.PatientRecordJson
+import com.hartwig.actin.molecular.datamodel.MolecularTest
+import com.hartwig.actin.molecular.driverlikelihood.DndsDatabase
+import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
@@ -13,19 +17,22 @@ import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
+import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
+import com.hartwig.actin.tools.pave.PaveLite
+import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ActionableEventsLoader
 import com.hartwig.serve.datamodel.KnownEvents
 import com.hartwig.serve.datamodel.KnownEventsLoader
 import com.hartwig.serve.datamodel.RefGenome
-import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
 
@@ -35,13 +42,40 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         LOGGER.info("Loading clinical json from {}", config.clinicalJson)
         val clinical = ClinicalRecordJson.read(config.clinicalJson)
 
-        val orangeMolecularRecord = if (config.orangeJson != null) {
+        val tumorDoids = clinical.tumor.doids.orEmpty().toSet()
+        if (tumorDoids.isEmpty()) {
+            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId)
+        } else {
+            LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
+        }
 
+        LOGGER.info("Loading DOID tree from {}", config.doidJson)
+        val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
+        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+
+        val orangeMolecularTests = interpretOrangeRecord(config, doidEntry, tumorDoids)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, clinical.priorMolecularTests, doidEntry, tumorDoids)
+
+        val history = MolecularHistory(orangeMolecularTests + clinicalMolecularTests)
+        MolecularHistoryPrinter.printRecord(history)
+
+        val patientRecord = PatientRecordFactory.fromInputs(clinical, history)
+        PatientRecordJson.write(patientRecord, config.outputDirectory)
+
+        LOGGER.info("Done!")
+    }
+
+    private fun interpretOrangeRecord(
+        config: MolecularInterpreterConfig,
+        doidEntry: DoidEntry,
+        tumorDoids: Set<String>
+    ): List<MolecularTest> {
+        return if (config.orangeJson != null) {
             LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
             val orange = OrangeJson.getInstance().read(config.orangeJson)
 
             LOGGER.info("Loading evidence database for ORANGE")
-            val (knownEvents, evidenceDatabase) = loadEvidence(clinical, orange.refGenomeVersion())
+            val (knownEvents, evidenceDatabase) = loadEvidence(orange.refGenomeVersion(), doidEntry, tumorDoids)
 
             LOGGER.info("Interpreting ORANGE record")
             val geneFilter = GeneFilterFactory.createFromKnownGenes(knownEvents.genes())
@@ -52,21 +86,47 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         } else {
             emptyList()
         }
-        LOGGER.info("Loading evidence database for prior molecular tests")
-        val (_, evidenceDatabase) = loadEvidence(clinical, OrangeRefGenomeVersion.V37)
-        LOGGER.info("Interpreting prior molecular tests")
-        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(evidenceDatabase).process(clinical.priorMolecularTests)
+    }
 
-        val history = MolecularHistory(orangeMolecularRecord + clinicalMolecularTests)
-        MolecularHistoryPrinter.printRecord(history)
-        val patientRecord = PatientRecordFactory.fromInputs(clinical, history)
-        PatientRecordJson.write(patientRecord, config.outputDirectory)
+    private fun interpretClinicalMolecularTests(
+        config: MolecularInterpreterConfig,
+        priorMolecularTests: List<PriorMolecularTest>,
+        doidEntry: DoidEntry,
+        tumorDoids: Set<String>
+    ): List<MolecularTest> {
+        LOGGER.info("Loading evidence database for clinical molecular tests")
+        val (_, evidenceDatabase) = loadEvidence(OrangeRefGenomeVersion.V37, doidEntry, tumorDoids)
 
-        LOGGER.info("Done!")
+        LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
+        val ensemblDataCache = EnsemblDataLoader.load(config.ensemblCachePath, com.hartwig.actin.tools.ensemblcache.RefGenome.V37)
+
+        LOGGER.info(
+            "Loading dnds database for driver likelihood annotation from " +
+                    "${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}"
+        )
+        val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
+
+        LOGGER.info("Interpreting clinical molecular tests")
+        val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
+            evidenceDatabase,
+            GeneDriverLikelihoodModel(dndsDatabase),
+            TransvarVariantAnnotatorFactory.withRefGenome(
+                com.hartwig.actin.tools.ensemblcache.RefGenome.V37,
+                config.referenceGenomeFastaPath,
+                ensemblDataCache
+            ),
+            PaveLite(ensemblDataCache, false)
+
+        ).process(priorMolecularTests)
+        LOGGER.info(" Completed interpretation of {} clinical molecular tests", clinicalMolecularTests.size)
+
+        return clinicalMolecularTests
     }
 
     private fun loadEvidence(
-        clinical: ClinicalRecord, orangeRefGenomeVersion: OrangeRefGenomeVersion
+        orangeRefGenomeVersion: OrangeRefGenomeVersion,
+        doidEntry: DoidEntry,
+        tumorDoids: Set<String>
     ): Pair<KnownEvents, EvidenceDatabase> {
         val serveRefGenomeVersion = toServeRefGenomeVersion(orangeRefGenomeVersion)
         val serveDirectoryWithGenome = "${config.serveDirectory}/${serveRefGenomeVersion.name.lowercase().replace("v", "")}"
@@ -74,30 +134,19 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             serveDirectoryWithGenome,
             serveRefGenomeVersion
         )
-        val evidenceDatabase = loadEvidenceDatabase(serveDirectoryWithGenome, config.doidJson, serveRefGenomeVersion, knownEvents, clinical)
+        val evidenceDatabase = loadEvidenceDatabase(serveDirectoryWithGenome, doidEntry, serveRefGenomeVersion, knownEvents, tumorDoids)
         return Pair(knownEvents, evidenceDatabase)
     }
 
     private fun loadEvidenceDatabase(
         serveDirectoryWithGenome: String,
-        doidJson: String,
+        doidEntry: DoidEntry,
         serveRefGenomeVersion: RefGenome,
         knownEvents: KnownEvents,
-        clinical: ClinicalRecord
+        tumorDoids: Set<String>
     ): EvidenceDatabase {
         val actionableEvents = ActionableEventsLoader.readFromDir(serveDirectoryWithGenome, serveRefGenomeVersion)
 
-        val tumorDoids = clinical.tumor.doids.orEmpty().toSet()
-        if (tumorDoids.isEmpty()) {
-            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", clinical.patientId)
-        } else {
-            LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
-        }
-
-        LOGGER.info("Loading DOID tree from {}", doidJson)
-        val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
-
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         return EvidenceDatabaseFactory.create(knownEvents, actionableEvents, doidEntry, tumorDoids)
     }
 
@@ -115,7 +164,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
-        const val APPLICATION: String = "ACTIN ORANGE Interpreter"
+        const val APPLICATION: String = "ACTIN Molecular Interpreter"
         private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion
     }
 }

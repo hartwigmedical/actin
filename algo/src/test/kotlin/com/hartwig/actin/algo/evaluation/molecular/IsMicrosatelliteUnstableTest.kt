@@ -3,12 +3,12 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -106,7 +106,12 @@ class IsMicrosatelliteUnstableTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
-                    true, TestVariantFactory.createMinimal().copy(gene = "other gene", isReportable = true, isBiallelic = false)
+                    true,
+                    TestVariantFactory.createMinimal().copy(
+                        gene = "other gene",
+                        isReportable = true,
+                        extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = false)
+                    )
                 )
             )
         )
@@ -128,9 +133,27 @@ class IsMicrosatelliteUnstableTest {
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Undetermined MSI status")
     }
 
-    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): ExtendedVariant {
+    @Test
+    fun `Should return undetermined when MSI variant with allelic status unknown`() {
+        val evaluation = function.evaluate(
+            MolecularTestFactory.withMicrosatelliteInstabilityAndVariant(
+                null,
+                TestVariantFactory.createMinimal().copy(gene = msiGene, isReportable = true)
+            )
+        )
+        assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(evaluation.undeterminedSpecificMessages).containsExactly(
+            "Unknown microsatellite instability (MSI) status but drivers with unknown allelic status in MSI genes: " +
+                    "MLH1 are detected - an MSI test may be recommended"
+        )
+        assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Unknown MSI status but drivers drivers with unknown allelic status in MSI genes")
+    }
+
+    private fun msiVariant(isReportable: Boolean = false, isBiallelic: Boolean = false): Variant {
         return TestVariantFactory.createMinimal().copy(
-            gene = msiGene, isReportable = isReportable, isBiallelic = isBiallelic
+            gene = msiGene,
+            isReportable = isReportable,
+            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
         )
     }
 }

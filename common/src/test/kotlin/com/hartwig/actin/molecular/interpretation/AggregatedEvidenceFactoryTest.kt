@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.interpretation
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
@@ -11,7 +12,6 @@ import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFact
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVirusFactory
 import com.hartwig.actin.molecular.datamodel.evidence.TestActionableEvidenceFactory
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -133,7 +133,7 @@ class AggregatedEvidenceFactoryTest {
         return TestMolecularFactory.createMinimalTestMolecularRecord().copy(characteristics = characteristics)
     }
 
-    private fun withDrivers(drivers: MolecularDrivers): MolecularRecord {
+    private fun withDrivers(drivers: Drivers): MolecularRecord {
         return TestMolecularFactory.createMinimalTestMolecularRecord().copy(drivers = drivers)
     }
 

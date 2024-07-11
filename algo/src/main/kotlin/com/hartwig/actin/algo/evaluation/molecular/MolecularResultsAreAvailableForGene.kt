@@ -33,19 +33,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
                     "OncoAct tumor NGS panel results available for $gene"
                 )
             } else {
-                EvaluationFactory.warn("OncoAct tumor NGS panel has been successfully performed but cannot verify that gene $gene was included",
-                    "Unsure if gene $gene results are available within performed OncoAct tumor NGS panel")
+                EvaluationFactory.warn(
+                    "OncoAct tumor NGS panel has been successfully performed but cannot verify that gene $gene was included",
+                    "Unsure if gene $gene results are available within performed OncoAct tumor NGS panel"
+                )
             }
         }
 
-        if (isGeneTestedInPanel(ExperimentType.ARCHER, record.molecularHistory)) {
-            return EvaluationFactory.pass(
-                "Archer panel has been performed and molecular results are available for gene $gene",
-                "Archer panel results available for $gene"
-            )
-        }
-
-        if (isGeneTestedInPanel(ExperimentType.GENERIC_PANEL, record.molecularHistory)) {
+        if (isGeneTestedInPanel(record.molecularHistory)) {
             return EvaluationFactory.pass(
                 "Panel has been performed and molecular results are available for gene $gene",
                 "Panel results available for $gene"
@@ -58,8 +53,10 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
 
         return when {
             conclusivePriorIHCTestsForGene.isNotEmpty() -> {
-                EvaluationFactory.pass("$gene has been tested in a prior IHC test",
-                    "$gene tested before")
+                EvaluationFactory.pass(
+                    "$gene has been tested in a prior IHC test",
+                    "$gene tested before"
+                )
             }
 
             orangeMolecular != null && orangeMolecular.type == ExperimentType.WHOLE_GENOME && !orangeMolecular.containsTumorCells -> {
@@ -89,11 +86,7 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
         }
     }
 
-    private fun isGeneTestedInPanel(type: ExperimentType, molecularHistory: MolecularHistory): Boolean {
-        return when (type) {
-            ExperimentType.ARCHER -> molecularHistory.allArcherPanels().any { gene in it.testedGenes() }
-            ExperimentType.GENERIC_PANEL -> molecularHistory.allGenericPanels().any { gene in it.testedGenes() }
-            else -> throw IllegalStateException("Unexpected experiment type $type")
-        }
+    private fun isGeneTestedInPanel(molecularHistory: MolecularHistory): Boolean {
+        return molecularHistory.allPanels().any { it.testsGene(gene) }
     }
 }

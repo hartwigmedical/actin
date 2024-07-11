@@ -100,42 +100,42 @@ class CharacteristicsExtractorTest {
         assertThat(unknown.hasHighTumorMutationalLoad).isNull()
     }
 
+    private fun withHomologousRepairStatus(hrStatus: ChordStatus): OrangeRecord {
+        return ImmutableOrangeRecord.builder()
+            .from(TestOrangeFactory.createMinimalTestOrangeRecord())
+            .chord(
+                ImmutableChordRecord.builder()
+                    .hrStatus(hrStatus)
+                    .brca1Value(0.0)
+                    .brca2Value(0.0)
+                    .hrdValue(0.0)
+                    .hrdType("")
+                    .build()
+            )
+            .build()
+    }
+
+    private fun withMicrosatelliteStatus(microsatelliteStatus: PurpleMicrosatelliteStatus): OrangeRecord {
+        return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder().microsatelliteStatus(microsatelliteStatus).build())
+    }
+
+    private fun withTumorLoadStatus(tumorLoadStatus: PurpleTumorMutationalStatus): OrangeRecord {
+        return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder().tumorMutationalLoadStatus(tumorLoadStatus).build())
+    }
+
+    private fun createTestExtractor(): CharacteristicsExtractor {
+        return CharacteristicsExtractor()
+    }
+
+    private fun withPurpleCharacteristics(characteristics: PurpleCharacteristics): OrangeRecord {
+        val base = TestOrangeFactory.createMinimalTestOrangeRecord()
+        return ImmutableOrangeRecord.builder()
+            .from(base)
+            .purple(ImmutablePurpleRecord.builder().from(base.purple()).characteristics(characteristics).build())
+            .build()
+    }
+
     companion object {
         private const val EPSILON = 1.0E-10
-
-        private fun withHomologousRepairStatus(hrStatus: ChordStatus): OrangeRecord {
-            return ImmutableOrangeRecord.builder()
-                .from(TestOrangeFactory.createMinimalTestOrangeRecord())
-                .chord(
-                    ImmutableChordRecord.builder()
-                        .hrStatus(hrStatus)
-                        .brca1Value(0.0)
-                        .brca2Value(0.0)
-                        .hrdValue(0.0)
-                        .hrdType("")
-                        .build()
-                )
-                .build()
-        }
-
-        private fun withMicrosatelliteStatus(microsatelliteStatus: PurpleMicrosatelliteStatus): OrangeRecord {
-            return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder().microsatelliteStatus(microsatelliteStatus).build())
-        }
-
-        private fun withTumorLoadStatus(tumorLoadStatus: PurpleTumorMutationalStatus): OrangeRecord {
-            return withPurpleCharacteristics(TestPurpleFactory.characteristicsBuilder().tumorMutationalLoadStatus(tumorLoadStatus).build())
-        }
-
-        private fun createTestExtractor(): CharacteristicsExtractor {
-            return CharacteristicsExtractor()
-        }
-
-        private fun withPurpleCharacteristics(characteristics: PurpleCharacteristics): OrangeRecord {
-            val base = TestOrangeFactory.createMinimalTestOrangeRecord()
-            return ImmutableOrangeRecord.builder()
-                .from(base)
-                .purple(ImmutablePurpleRecord.builder().from(base.purple()).characteristics(characteristics).build())
-                .build()
-        }
     }
 }

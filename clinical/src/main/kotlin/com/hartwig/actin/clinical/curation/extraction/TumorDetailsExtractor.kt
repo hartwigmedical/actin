@@ -42,14 +42,21 @@ class TumorDetailsExtractor(
             )
         }
 
+        val hasBrainOrGliomaTumor = primaryTumorDetails.primaryTumorLocation == "Brain" ||
+                primaryTumorDetails.primaryTumorType == "Glioma"
+
         val tumorDetails = primaryTumorDetails.copy(
             biopsyLocation = biopsyCuration?.config()?.location,
             stage = questionnaire.stage,
             hasMeasurableDisease = questionnaire.hasMeasurableDisease,
-            hasBrainLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions),
-            hasActiveBrainLesions = questionnaire.hasActiveBrainLesions,
-            hasCnsLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.CNS, questionnaire.hasCnsLesions),
-            hasActiveCnsLesions = questionnaire.hasActiveCnsLesions,
+            hasBrainLesions = if (hasBrainOrGliomaTumor) {
+                false
+            } else determineLesionPresence(lesionsToCheck, LesionLocationCategory.BRAIN, questionnaire.hasBrainLesions),
+            hasActiveBrainLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveBrainLesions,
+            hasCnsLesions = if (hasBrainOrGliomaTumor) {
+                false
+            } else determineLesionPresence(lesionsToCheck, LesionLocationCategory.CNS, questionnaire.hasCnsLesions),
+            hasActiveCnsLesions = if (hasBrainOrGliomaTumor) false else questionnaire.hasActiveCnsLesions,
             hasBoneLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.BONE, questionnaire.hasBoneLesions),
             hasLiverLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.LIVER, questionnaire.hasLiverLesions),
             hasLungLesions = determineLesionPresence(lesionsToCheck, LesionLocationCategory.LUNG),

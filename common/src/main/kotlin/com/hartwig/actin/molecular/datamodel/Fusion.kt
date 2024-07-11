@@ -1,12 +1,27 @@
 package com.hartwig.actin.molecular.datamodel
 
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.sort.driver.FusionComparator
 
-interface Fusion: Driver {
-    val geneStart: String
-    val geneEnd: String
-    override val isReportable: Boolean
-    override val event: String
-    override val driverLikelihood: DriverLikelihood?
-    override val evidence: ActionableEvidence
+data class Fusion(
+    val geneStart: String,
+    val geneEnd: String,
+    val geneTranscriptStart: String,
+    val geneTranscriptEnd: String,
+    val driverType: FusionDriverType,
+    val proteinEffect: ProteinEffect,
+    val extendedFusionDetails: ExtendedFusionDetails? = null,
+    override val isReportable: Boolean,
+    override val event: String,
+    override val driverLikelihood: DriverLikelihood?,
+    override val evidence: ActionableEvidence,
+) : Driver, Comparable<Fusion> {
+    override fun compareTo(other: Fusion): Int {
+        return FusionComparator().compare(this, other)
+    }
+
+    fun extendedFusionOrThrow() = extendedFusionDetails
+        ?: throw IllegalStateException("Fusion is expected to have extended properties. Is this an orange-based molecular record?")
 }

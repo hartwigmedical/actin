@@ -15,13 +15,15 @@ enum class ConfigurationProfile {
 data class ReportConfiguration(
     val includeOverviewWithClinicalHistorySummary: Boolean = false,
     val includeMolecularDetailsChapter: Boolean = true,
+    val showIneligibleTrialsInSummary: Boolean = false,
     val showSOCLiteratureEfficacyEvidence: Boolean = false,
     val showEligibleSOCTreatmentSummary: Boolean = false,
     val showMolecularSummary: Boolean = true,
     val showOtherOncologicalHistoryInSummary: Boolean = true,
     val showPatientHeader: Boolean = true,
     val showRelevantNonOncologicalHistoryInSummary: Boolean = true,
-    val showApprovedTreatmentsInSummary: Boolean = true
+    val showApprovedTreatmentsInSummary: Boolean = true,
+    val filterOnSOCExhaustionAndTumorType: Boolean = false,
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
@@ -62,11 +64,13 @@ data class EnvironmentConfiguration(
                     report = rawConfig.report.copy(
                         includeOverviewWithClinicalHistorySummary = true,
                         includeMolecularDetailsChapter = false,
+                        showIneligibleTrialsInSummary = true,
                         showApprovedTreatmentsInSummary = false,
                         showSOCLiteratureEfficacyEvidence = true,
                         showEligibleSOCTreatmentSummary = true,
                         showMolecularSummary = false,
-                        showPatientHeader = false
+                        showPatientHeader = false,
+                        filterOnSOCExhaustionAndTumorType = true
                     )
                 )
 

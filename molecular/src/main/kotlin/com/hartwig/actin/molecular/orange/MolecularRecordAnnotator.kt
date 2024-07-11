@@ -2,20 +2,22 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Drivers
+import com.hartwig.actin.molecular.datamodel.Fusion
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.Variant
+import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.FusionMatchCriteria
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
-import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 
 class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) : MolecularAnnotator<MolecularRecord, MolecularRecord> {
@@ -28,41 +30,45 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateCharacteristics(characteristics: MolecularCharacteristics): MolecularCharacteristics {
-        return characteristics.copy(
-            microsatelliteEvidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForMicrosatelliteStatus(characteristics.isMicrosatelliteUnstable)
-            ),
-            homologousRepairEvidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForHomologousRepairStatus(characteristics.isHomologousRepairDeficient)
-            ),
-            tumorMutationalBurdenEvidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForTumorMutationalBurdenStatus(characteristics.hasHighTumorMutationalBurden)
-            ),
-            tumorMutationalLoadEvidence = ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForTumorMutationalLoadStatus(characteristics.hasHighTumorMutationalLoad)
-            ),
-        )
+        return with(characteristics) {
+            copy(
+                microsatelliteEvidence = createEvidenceForNullableMatch(
+                    isMicrosatelliteUnstable, evidenceDatabase::evidenceForMicrosatelliteStatus
+                ),
+                homologousRepairEvidence = createEvidenceForNullableMatch(
+                    isHomologousRepairDeficient, evidenceDatabase::evidenceForHomologousRepairStatus
+                ),
+                tumorMutationalBurdenEvidence = createEvidenceForNullableMatch(
+                    hasHighTumorMutationalBurden, evidenceDatabase::evidenceForTumorMutationalBurdenStatus
+                ),
+                tumorMutationalLoadEvidence = createEvidenceForNullableMatch(
+                    hasHighTumorMutationalLoad, evidenceDatabase::evidenceForTumorMutationalLoadStatus
+                )
+            )
+        }
     }
 
-    private fun annotateDrivers(drivers: MolecularDrivers): MolecularDrivers {
+    private fun createEvidenceForNullableMatch(
+        nullableCharacteristic: Boolean?, lookUpEvidence: (Boolean) -> ActionabilityMatch
+    ): ActionableEvidence? {
+        return nullableCharacteristic?.let { characteristic -> ActionableEvidenceFactory.create(lookUpEvidence(characteristic)) }
+    }
+
+    private fun annotateDrivers(drivers: Drivers): Drivers {
         return drivers.copy(
             variants = drivers.variants.map { annotateVariant(it) }.toSet(),
             copyNumbers = drivers.copyNumbers.map { annotateCopyNumber(it) }.toSet(),
             homozygousDisruptions = drivers.homozygousDisruptions.map { annotateHomozygousDisruption(it) }.toSet(),
             disruptions = drivers.disruptions.map { annotateDisruption(it) }.toSet(),
             fusions = drivers.fusions.map { annotateFusion(it) }.toSet(),
-            viruses = drivers.viruses.map { annotateViruse(it) }.toSet()
+            viruses = drivers.viruses.map { annotateVirus(it) }.toSet()
         )
     }
 
 
-    private fun annotateVariant(variant: ExtendedVariant): ExtendedVariant {
+    private fun annotateVariant(variant: Variant): Variant {
         val evidence = if (variant.driverLikelihood == DriverLikelihood.HIGH) {
-            ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForVariant(
-                    createCriteria(variant)
-                )
-            )!!
+            ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(createCriteria(variant)))
         } else {
             ActionableEvidenceFactory.createNoEvidence()
         }
@@ -79,7 +85,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun createCriteria(variant: ExtendedVariant) = VariantMatchCriteria(
+    private fun createCriteria(variant: Variant) = VariantMatchCriteria(
         gene = variant.gene,
         chromosome = variant.chromosome,
         position = variant.position,
@@ -91,7 +97,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     )
 
     private fun annotateCopyNumber(copyNumber: CopyNumber): CopyNumber {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))!!
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))
         val alteration = GeneAlterationFactory.convertAlteration(
             copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber)
         )
@@ -105,7 +111,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateHomozygousDisruption(homozygousDisruption: HomozygousDisruption): HomozygousDisruption {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption))!!
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForHomozygousDisruption(homozygousDisruption))
         val alteration = GeneAlterationFactory.convertAlteration(
             homozygousDisruption.gene, evidenceDatabase.geneAlterationForHomozygousDisruption(homozygousDisruption)
         )
@@ -119,7 +125,7 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
     }
 
     private fun annotateDisruption(disruption: Disruption): Disruption {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(disruption))!!
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForBreakend(disruption))
         val alteration = GeneAlterationFactory.convertAlteration(
             disruption.gene, evidenceDatabase.geneAlterationForBreakend(disruption)
         )
@@ -132,13 +138,8 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         )
     }
 
-    private fun annotateFusion(fusion: ExtendedFusion): ExtendedFusion {
-        val evidence =
-            ActionableEvidenceFactory.create(
-                evidenceDatabase.evidenceForFusion(
-                    createFusionCriteria(fusion)
-                )
-            )!!
+    private fun annotateFusion(fusion: Fusion): Fusion {
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForFusion(createFusionCriteria(fusion)))
         val knownFusion = evidenceDatabase.lookupKnownFusion(createFusionCriteria(fusion))
 
         val proteinEffect = if (knownFusion == null) ProteinEffect.UNKNOWN else {
@@ -149,19 +150,21 @@ class MolecularRecordAnnotator(private val evidenceDatabase: EvidenceDatabase) :
         return fusion.copy(
             evidence = evidence,
             proteinEffect = proteinEffect,
-            isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
+            extendedFusionDetails = fusion.extendedFusionOrThrow().copy(
+                isAssociatedWithDrugResistance = isAssociatedWithDrugResistance,
+            ),
         )
     }
 
-    private fun createFusionCriteria(fusion: ExtendedFusion) = FusionMatchCriteria(
+    private fun createFusionCriteria(fusion: Fusion) = FusionMatchCriteria(
         isReportable = fusion.isReportable,
         geneStart = fusion.geneStart,
         geneEnd = fusion.geneEnd,
         driverType = fusion.driverType
     )
 
-    private fun annotateViruse(virus: Virus): Virus {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))!!
+    private fun annotateVirus(virus: Virus): Virus {
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVirus(virus))
         return virus.copy(evidence = evidence)
     }
 }

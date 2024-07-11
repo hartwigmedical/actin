@@ -1,30 +1,27 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
+import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularTest
-import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import java.time.LocalDate
 
 data class PanelRecord(
-    val archerPanelExtraction: ArcherPanelExtraction? = null,
-    val genericPanelExtraction: GenericPanelExtraction? = null,
+    val panelExtraction: PanelExtraction,
     override val type: ExperimentType,
     override val date: LocalDate? = null,
-    override val drivers: PanelDrivers,
+    override val drivers: Drivers,
     override val characteristics: MolecularCharacteristics = MolecularCharacteristics(),
     override val evidenceSource: String,
-) : MolecularTest<PanelDrivers> {
+) : MolecularTest {
 
-    fun testedGenes() = archerPanelExtraction?.testedGenes() ?: genericPanelExtraction?.testedGenes() ?: emptySet()
+    fun testedGenes() = panelExtraction.testedGenes()
 
     override fun testsGene(gene: String): Boolean {
         return testedGenes().contains(gene)
     }
 
     fun events(): Set<PanelEvent> {
-        return archerPanelExtraction?.events()?.toSet() ?: genericPanelExtraction?.events()?.toSet() ?: emptySet()
+        return panelExtraction.events()
     }
-
 }

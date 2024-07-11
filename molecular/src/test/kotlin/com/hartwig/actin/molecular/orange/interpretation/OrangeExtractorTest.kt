@@ -17,9 +17,9 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class OrangeExtractorTest {
 
@@ -125,8 +125,10 @@ class OrangeExtractorTest {
     fun `Should throw exception on germline disruption present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
-            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
-                .withGermlineHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()))
+            .withLinx(
+                ImmutableLinxRecord.copyOf(proper.linx())
+                    .withGermlineHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build())
+            )
         val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
@@ -135,8 +137,10 @@ class OrangeExtractorTest {
     fun `Should throw exception on germline breakend present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
-            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
-                .withAllGermlineBreakends(TestLinxFactory.breakendBuilder().gene("gene 1").build()))
+            .withLinx(
+                ImmutableLinxRecord.copyOf(proper.linx())
+                    .withAllGermlineBreakends(TestLinxFactory.breakendBuilder().gene("gene 1").build())
+            )
         val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
@@ -145,8 +149,10 @@ class OrangeExtractorTest {
     fun `Should throw exception on germline SV present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record: OrangeRecord = ImmutableOrangeRecord.copyOf(proper)
-            .withLinx(ImmutableLinxRecord.copyOf(proper.linx())
-                .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build()))
+            .withLinx(
+                ImmutableLinxRecord.copyOf(proper.linx())
+                    .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build())
+            )
         val interpreter = createTestInterpreter()
         interpreter.interpret(record)
     }
@@ -187,21 +193,23 @@ class OrangeExtractorTest {
         interpreter.interpret(record)
     }
 
-    companion object {
-        private fun orangeRecordWithQCStatus(status: PurpleQCStatus): OrangeRecord {
-            return orangeRecordWithQCStatuses(setOf(status))
-        }
+    private fun orangeRecordWithQCStatus(status: PurpleQCStatus): OrangeRecord {
+        return orangeRecordWithQCStatuses(setOf(status))
+    }
 
-        private fun orangeRecordWithQCStatuses(statuses: Set<PurpleQCStatus>): OrangeRecord {
-            val minimal = TestOrangeFactory.createMinimalTestOrangeRecord()
-            return ImmutableOrangeRecord.copyOf(minimal)
-                .withPurple(ImmutablePurpleRecord.copyOf(minimal.purple())
-                    .withFit(ImmutablePurpleFit.copyOf(minimal.purple().fit())
-                        .withQc(TestPurpleFactory.purpleQCBuilder().addAllStatus(statuses).build())))
-        }
+    private fun orangeRecordWithQCStatuses(statuses: Set<PurpleQCStatus>): OrangeRecord {
+        val minimal = TestOrangeFactory.createMinimalTestOrangeRecord()
+        return ImmutableOrangeRecord.copyOf(minimal)
+            .withPurple(
+                ImmutablePurpleRecord.copyOf(minimal.purple())
+                    .withFit(
+                        ImmutablePurpleFit.copyOf(minimal.purple().fit())
+                            .withQc(TestPurpleFactory.purpleQCBuilder().addAllStatus(statuses).build())
+                    )
+            )
+    }
 
-        private fun createTestInterpreter(): OrangeExtractor {
-            return OrangeExtractor(TestGeneFilterFactory.createAlwaysValid())
-        }
+    private fun createTestInterpreter(): OrangeExtractor {
+        return OrangeExtractor(TestGeneFilterFactory.createAlwaysValid())
     }
 }

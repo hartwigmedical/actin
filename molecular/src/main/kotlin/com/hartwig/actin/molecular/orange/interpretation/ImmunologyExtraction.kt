@@ -7,6 +7,7 @@ import com.hartwig.hmftools.datamodel.hla.LilacRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 
 internal object ImmunologyExtraction {
+
     const val LILAC_QC_PASS: String = "PASS"
 
     fun extract(record: OrangeRecord): MolecularImmunology {

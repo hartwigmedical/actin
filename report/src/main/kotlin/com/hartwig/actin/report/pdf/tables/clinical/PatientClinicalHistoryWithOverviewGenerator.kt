@@ -2,9 +2,13 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.EvaluatedCohortsInterpreter
+import com.hartwig.actin.report.interpretation.MolecularDriverEntry
+import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
+import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
@@ -15,7 +19,7 @@ import com.hartwig.actin.report.pdf.util.Tables.createFixedWidthCols
 import com.itextpdf.layout.element.Table
 
 class PatientClinicalHistoryWithOverviewGenerator(
-    private val report: Report, private val keyWidth: Float, val valueWidth: Float
+    private val report: Report, private val cohorts: List<EvaluatedCohort>, private val keyWidth: Float, val valueWidth: Float
 ) : TableGenerator {
 
     override fun title(): String {
@@ -122,13 +126,9 @@ class PatientClinicalHistoryWithOverviewGenerator(
         }
     }
 
-    private fun geneToDrivers(variants: Set<ExtendedVariant>, geneToFind: String): String {
-        val drivers = if (variants.none { it.gene == geneToFind }) {
-            "Wild-type"
-        } else {
-            variants.filter { it.gene == geneToFind }.joinToString { it.canonicalImpact.hgvsProteinImpact }
-        }
-        return "$geneToFind: $drivers"
+    private fun geneToDrivers(drivers: List<MolecularDriverEntry>, geneToFind: String): String {
+        val events = drivers.filter { it.eventName.contains(geneToFind) }.joinToString { it.displayedName }
+        return events.ifEmpty { "$geneToFind: No reportable events" }
     }
 
     private fun msStatus(molecular: MolecularRecord): String {
@@ -145,7 +145,7 @@ class PatientClinicalHistoryWithOverviewGenerator(
 
     private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>?, gene: String): String {
         val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN
-        return pharmacoEntry.haplotypes.joinToString(", ") { "${it.name} (${it.function})" }
+        return pharmacoEntry.haplotypes.joinToString(", ") { "${it.toHaplotypeString()} (${it.function})" }
     }
 
     private fun findPharmacoEntry(pharmaco: Set<PharmacoEntry>?, geneToFind: String): PharmacoEntry? {
@@ -153,7 +153,11 @@ class PatientClinicalHistoryWithOverviewGenerator(
     }
 
     private fun molecularResults(molecular: MolecularRecord): String {
-        val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(molecular.drivers.variants, it) }
+        val molecularDriversInterpreter =
+            MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
+        val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)
+        val driverEntries = factory.create()
+        val drivers = listOf("KRAS", "NRAS", "BRAF", "HER2").map { geneToDrivers(driverEntries, it) }
         return (drivers + msStatus(molecular)).joinToString(", ")
     }
 }

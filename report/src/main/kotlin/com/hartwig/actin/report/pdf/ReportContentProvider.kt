@@ -4,7 +4,6 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEv
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.AggregatedEvidenceInterpreter
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
@@ -29,6 +28,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenera
 import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -56,7 +56,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EfficacyEvidenceChapter(report, include = report.config.showSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
-            TrialMatchingChapter(report, enableExtendedMode),
+            TrialMatchingChapter(report, enableExtendedMode, report.config.showIneligibleTrialsInSummary),
             TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
         ).filter(ReportChapter::include)
     }
@@ -76,10 +76,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     fun provideSummaryTables(keyWidth: Float, valueWidth: Float, contentWidth: Float): List<TableGenerator> {
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
         val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
-            PatientClinicalHistoryWithOverviewGenerator(report, keyWidth, valueWidth)
+            PatientClinicalHistoryWithOverviewGenerator(report, cohorts, keyWidth, valueWidth)
         } else {
             PatientClinicalHistoryGenerator(report, false, keyWidth, valueWidth)
         }
@@ -105,7 +105,15 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             openCohortsWithSlotsGenerator,
             openCohortsWithoutSlotsGenerator,
             dutchTrialGenerator,
-            nonDutchTrialGenerator
+            nonDutchTrialGenerator,
+            if (report.config.showIneligibleTrialsInSummary) {
+                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+                    cohorts,
+                    report.treatmentMatch.trialSource,
+                    contentWidth,
+                    enableExtendedMode
+                )
+            } else null
         )
     }
 
@@ -115,11 +123,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         if (molecular == null) {
             return Pair(null, null)
         } else {
-            val externalEligibleTrials = AggregatedEvidenceInterpreter.filterAndGroupExternalTrialsByNctIdAndEvents(
-                AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches
-            )
             val externalTrialSummarizer = ExternalTrialSummarizer()
-            val externalTrialSummary = externalTrialSummarizer.summarize(externalEligibleTrials, evaluated)
+            val externalTrialSummary = externalTrialSummarizer.summarize(
+                AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent,
+                report.treatmentMatch.trialMatches,
+                evaluated
+            )
             return Pair(
                 if (externalTrialSummary.dutchTrials.isNotEmpty()) {
                     EligibleDutchExternalTrialsGenerator(

@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.orange.interpretation
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin
 import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
-import com.hartwig.actin.molecular.orange.interpretation.ActionableEvidenceFactory.createNoEvidence
+import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory.createNoEvidence
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
@@ -29,6 +29,7 @@ internal class CharacteristicsExtractor() {
             predictedTumorOrigin = predictedTumorOrigin,
             isMicrosatelliteUnstable = isMicrosatelliteUnstable,
             microsatelliteEvidence = createNoEvidence(),
+            homologousRepairScore = homologousRepairScore,
             isHomologousRepairDeficient = isHomologousRepairDeficient,
             homologousRepairEvidence = createNoEvidence(),
             tumorMutationalBurden = purple.characteristics().tumorMutationalBurdenPerMb(),
@@ -36,13 +37,11 @@ internal class CharacteristicsExtractor() {
             tumorMutationalBurdenEvidence = createNoEvidence(),
             tumorMutationalLoad = purple.characteristics().tumorMutationalLoad(),
             hasHighTumorMutationalLoad = hasHighTumorMutationalLoad,
-            tumorMutationalLoadEvidence = createNoEvidence(),
-            homologousRepairScore = homologousRepairScore
+            tumorMutationalLoadEvidence = createNoEvidence()
         )
     }
 
     companion object {
-
         private fun isMSI(microsatelliteStatus: PurpleMicrosatelliteStatus): Boolean? {
             return when (microsatelliteStatus) {
                 PurpleMicrosatelliteStatus.MSI -> true
@@ -80,7 +79,15 @@ internal class CharacteristicsExtractor() {
         }
 
         private fun determineCupPrediction(cuppaPrediction: CuppaPrediction): CupPrediction {
-            // TODO (KZ): the classifiers are nullable in the CuppaPrediction class, is there a sane default or should we error out?
+            if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
+                cuppaPrediction.featureClassifier() == null
+            ) {
+                throw IllegalStateException(
+                    "CUPPA classifiers are not supposed to be missing at this point " +
+                            "in cuppa prediction: $cuppaPrediction"
+                )
+            }
+
             return CupPrediction(
                 cancerType = cuppaPrediction.cancerType(),
                 likelihood = cuppaPrediction.likelihood(),

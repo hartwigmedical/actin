@@ -38,6 +38,12 @@ class HasLimitedPDL1ByIHCTest {
     }
 
     @Test
+    fun `Should fail when test value is smaller then or equal to maximum value`() {
+        val test = IHCMolecularTest(pdl1Test.copy(scoreValuePrefix = ValueComparison.SMALLER_THAN_OR_EQUAL, scoreValue = 2.0))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(test))))
+    }
+
+    @Test
     fun `Should fail when test value has non-matching prefix`() {
         val priorTests = listOf(IHCMolecularTest(pdl1Test.copy(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 1.0)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(priorTests)))

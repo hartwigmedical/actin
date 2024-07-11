@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.Evaluation
-import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
@@ -9,27 +8,22 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 
 class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
+
+    override fun genes() = listOf(gene)
 
     override fun evaluate(molecularHistory: MolecularHistory): Evaluation {
 
         val orangeMolecular = molecularHistory.latestOrangeMolecularRecord()
         val orangeMolecularEvaluation = if (orangeMolecular != null) findMatchingFusionsInOrangeMolecular(orangeMolecular) else null
-        val panelEvaluation = findMatchingFusionsInPanels(molecularHistory)
+        val panelEvaluation = molecularHistory.allPanels().mapNotNull { findMatchingFusionsInPanels(it) }
 
-        val groupedEvaluationsByResult = listOfNotNull(orangeMolecularEvaluation, panelEvaluation)
-            .groupBy { evaluation -> evaluation.result }
-            .mapValues { entry ->
-                entry.value.reduce { acc, y -> acc.addMessagesAndEvents(y) }
-            }
-        return groupedEvaluationsByResult[EvaluationResult.PASS]
-            ?: groupedEvaluationsByResult[EvaluationResult.WARN]
-            ?: groupedEvaluationsByResult[EvaluationResult.FAIL]
-            ?: EvaluationFactory.undetermined("Gene $gene not tested in molecular data", "Gene $gene not tested")
+        return MolecularEvaluation.combine(listOfNotNull(orangeMolecularEvaluation) + panelEvaluation)
     }
 
-    private fun findMatchingFusionsInOrangeMolecular(molecular: MolecularRecord): Evaluation {
+    private fun findMatchingFusionsInOrangeMolecular(molecular: MolecularRecord): MolecularEvaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihoodWithGainOfFunction: MutableSet<String> = mutableSetOf()
@@ -69,10 +63,12 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
         }
 
         if (matchingFusions.isNotEmpty()) {
-            return EvaluationFactory.pass(
-                "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
-                "Fusion(s) detected in gene $gene",
-                inclusionEvents = matchingFusions
+            return MolecularEvaluation(
+                molecular, EvaluationFactory.pass(
+                    "Fusion(s) ${concat(matchingFusions)} detected in gene $gene",
+                    "Fusion(s) detected in gene $gene",
+                    inclusionEvents = matchingFusions
+                )
             )
         }
 
@@ -84,7 +80,12 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
             evidenceSource
         )
 
-        return potentialWarnEvaluation ?: EvaluationFactory.fail("No fusion detected with gene $gene", "No fusion in gene $gene")
+        return MolecularEvaluation(
+            molecular, (potentialWarnEvaluation ?: EvaluationFactory.fail(
+                "No fusion detected with gene $gene",
+                "No fusion in gene $gene"
+            ))
+        )
     }
 
     private fun evaluatePotentialWarns(
@@ -123,24 +124,24 @@ class HasFusionInGene(private val gene: String) : MolecularEvaluationFunction {
         )
     }
 
-    private fun findMatchingFusionsInPanels(molecularHistory: MolecularHistory): Evaluation? {
-        val matchedFusions = molecularHistory.allPanels()
-            .flatMap { it.events() }
+    private fun findMatchingFusionsInPanels(panel: PanelRecord): MolecularEvaluation? {
+        val matchedFusions = panel.events()
             .filter { it.impactsGene(gene) }
             .map { it.display() }
             .toSet()
 
         if (matchedFusions.isNotEmpty()) {
-            return EvaluationFactory.pass(
-                "Fusion(s) ${concat(matchedFusions)} detected in gene $gene in panel(s)",
-                "Fusion(s) detected in gene $gene",
-                inclusionEvents = matchedFusions
+            return MolecularEvaluation(
+                panel, EvaluationFactory.pass(
+                    "Fusion(s) ${concat(matchedFusions)} detected in gene $gene in panel(s)",
+                    "Fusion(s) detected in gene $gene",
+                    inclusionEvents = matchedFusions
+                )
             )
         }
 
-        val isGeneTested = molecularHistory.allGenericPanels().any { gene in it.testedGenes() }
-        return if (isGeneTested) {
-            EvaluationFactory.fail("No fusion detected with gene $gene in panel(s)", "No fusion in gene $gene")
+        return if (panel.testsGene(gene)) {
+            MolecularEvaluation(panel, EvaluationFactory.fail("No fusion detected with gene $gene in panel(s)", "No fusion in gene $gene"))
         } else {
             null
         }

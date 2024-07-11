@@ -10,11 +10,10 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
 import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusion
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedFusionDetails
+import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariantDetails
 import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
 import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
-import com.hartwig.actin.molecular.datamodel.orange.driver.MolecularDrivers
 import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
 import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
 import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
@@ -80,7 +79,7 @@ object TestMolecularFactory {
     }
 
     fun createExhaustiveTestMolecularHistory(): MolecularHistory {
-        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord()))
+        return MolecularHistory(listOf(createExhaustiveTestMolecularRecord(), TestPanelRecordFactory.empty()))
     }
 
     private fun createMinimalTestCharacteristics(): MolecularCharacteristics {
@@ -143,9 +142,10 @@ object TestMolecularFactory {
         )
     }
 
-    private fun createMinimalMolecularDrivers() = MolecularDrivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
+    private fun createMinimalMolecularDrivers() =
+        Drivers(emptySet(), emptySet(), emptySet(), emptySet(), emptySet(), emptySet())
 
-    fun createProperTestDrivers(): MolecularDrivers {
+    fun createProperTestDrivers(): Drivers {
         return createMinimalMolecularDrivers().copy(
             variants = setOf(
                 createProperVariant()
@@ -179,7 +179,7 @@ object TestMolecularFactory {
         isAssociatedWithDrugResistance = null
     )
 
-    fun createProperVariant() = ExtendedVariant(
+    fun createProperVariant() = Variant(
         chromosome = "7",
         position = 140453136,
         ref = "T",
@@ -193,11 +193,15 @@ object TestMolecularFactory {
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
         isAssociatedWithDrugResistance = true,
         type = VariantType.SNV,
-        variantCopyNumber = 4.1,
-        totalCopyNumber = 6.0,
-        isBiallelic = false,
+        extendedVariantDetails = ExtendedVariantDetails(
+            variantCopyNumber = 4.1,
+            totalCopyNumber = 6.0,
+            isBiallelic = false,
+            otherImpacts = emptySet(),
+            phaseGroups = null,
+            clonalLikelihood = 1.0
+        ),
         isHotspot = true,
-        clonalLikelihood = 1.0,
         canonicalImpact = TranscriptImpact(
             transcriptId = "ENST00000288602",
             hgvsCodingImpact = "c.1799T>A",
@@ -207,9 +211,7 @@ object TestMolecularFactory {
             effects = setOf(VariantEffect.MISSENSE),
             codingEffect = CodingEffect.MISSENSE,
             affectedExon = null
-        ),
-        otherImpacts = emptySet(),
-        phaseGroups = null
+        )
     )
 
     private fun createProperTestImmunology(): MolecularImmunology {
@@ -223,19 +225,19 @@ object TestMolecularFactory {
         return setOf(
             PharmacoEntry(
                 gene = "DPYD",
-                haplotypes = setOf(Haplotype(name = "*1_HOM", function = "Normal function")),
+                haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = "Normal function")),
             ),
             PharmacoEntry(
                 gene = "UGT1A1",
                 haplotypes = setOf(
-                    Haplotype(name = "*1_HET", function = "Normal function"),
-                    Haplotype(name = "*28_HET", function = "Reduced function"),
+                    Haplotype(allele = "*1", alleleCount = 1, function = "Normal function"),
+                    Haplotype(allele = "*28", alleleCount = 1, function = "Reduced function"),
                 )
             )
         )
     }
 
-    private fun createExhaustiveTestDrivers(): MolecularDrivers {
+    private fun createExhaustiveTestDrivers(): Drivers {
         val proper = createProperTestDrivers()
         return proper.copy(
             copyNumbers = proper.copyNumbers + CopyNumber(
@@ -284,20 +286,22 @@ object TestMolecularFactory {
                 isAssociatedWithDrugResistance = null,
                 clusterGroup = 0
             ),
-            fusions = proper.fusions + ExtendedFusion(
+            fusions = proper.fusions + Fusion(
                 isReportable = true,
                 event = "EML4 - ALK fusion",
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestActionableEvidenceFactory.createExhaustive(),
                 geneStart = "EML4",
                 geneTranscriptStart = "ENST00000318522",
-                fusedExonUp = 6,
                 geneEnd = "ALK",
                 geneTranscriptEnd = "ENST00000389048",
-                fusedExonDown = 20,
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 driverType = FusionDriverType.KNOWN_PAIR,
-                isAssociatedWithDrugResistance = null
+                extendedFusionDetails = ExtendedFusionDetails(
+                    fusedExonUp = 6,
+                    fusedExonDown = 20,
+                    isAssociatedWithDrugResistance = null
+                )
             ),
             viruses = proper.viruses + Virus(
                 isReportable = true,
@@ -313,7 +317,7 @@ object TestMolecularFactory {
     }
 
     fun freeTextPriorMolecularFusionRecord(geneStart: String, geneEnd: String) = TestPanelRecordFactory.empty().copy(
-        genericPanelExtraction =
+        panelExtraction =
         GenericPanelExtraction(
             fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
             panelType = GenericPanelType.FREE_TEXT

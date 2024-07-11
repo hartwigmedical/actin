@@ -117,7 +117,7 @@ class HasFusionInGeneTest {
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(
                         TestPanelRecordFactory.empty()
-                            .copy(archerPanelExtraction = ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(MATCHING_GENE))))
+                            .copy(panelExtraction = ArcherPanelExtraction(fusions = listOf(ArcherFusionExtraction(MATCHING_GENE))))
                     )
                 )
             )
@@ -125,7 +125,7 @@ class HasFusionInGeneTest {
     }
 
     @Test
-    fun `Should aggregate fusions found in both Orange molecular and panels`() {
+    fun `Should prefer pass result from Orange molecular when fusion found in both Orange molecular and panels`() {
         val evaluation = function.evaluate(
             addingTestFromPriorMolecular(
                 MolecularTestFactory.withFusion(matchingFusion),
@@ -134,7 +134,7 @@ class HasFusionInGeneTest {
         )
 
         assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passSpecificMessages.size).isEqualTo(2)
+        assertThat(evaluation.passSpecificMessages).containsExactly("Fusion(s)  detected in gene gene A")
     }
 
     @Test

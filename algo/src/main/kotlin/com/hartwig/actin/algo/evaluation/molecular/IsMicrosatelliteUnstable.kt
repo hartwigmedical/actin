@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
-import com.hartwig.actin.molecular.datamodel.orange.driver.ExtendedVariant
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 
 class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
@@ -16,9 +15,12 @@ class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
 
     override fun evaluate(molecular: MolecularRecord): Evaluation {
         val drivers = molecular.drivers
-        val (biallelicMsiVariants, nonBiallelicMsiVariants) = drivers.variants
+        val msiVariants = drivers.variants
             .filter { variant -> variant.gene in MSI_GENES && variant.isReportable }
-            .partition(ExtendedVariant::isBiallelic)
+
+        val biallelicMsiVariants = msiVariants.filter { it.extendedVariantDetails?.isBiallelic == true }
+        val nonBiallelicMsiVariants = msiVariants.filter { it.extendedVariantDetails?.isBiallelic == false }
+        val unknownBiallelicMsiVariants = msiVariants.filter { it.extendedVariantDetails?.isBiallelic == null }
 
         val msiCopyNumbers = drivers.copyNumbers.filter { it.gene in MSI_GENES && it.type == CopyNumberType.LOSS }
         val msiHomozygousDisruptions = drivers.homozygousDisruptions.filter { it.gene in MSI_GENES }
@@ -26,6 +28,8 @@ class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
 
         val msiDisruptions = drivers.disruptions.filter { it.gene in MSI_GENES && it.isReportable }
         val msiGenesWithNonBiallelicDriver = genesFrom(nonBiallelicMsiVariants, msiDisruptions)
+
+        val msiGenesWithUnknownBiallelicDriver = genesFrom(unknownBiallelicMsiVariants)
 
         return when (molecular.characteristics.isMicrosatelliteUnstable) {
             null -> {
@@ -40,6 +44,12 @@ class IsMicrosatelliteUnstable : MolecularEvaluationFunction {
                         "Unknown microsatellite instability (MSI) status but non-biallelic drivers in MSI genes: "
                                 + Format.concat(msiGenesWithNonBiallelicDriver) + " are detected - an MSI test may be recommended",
                         "Unknown MSI status but non-biallelic drivers in MSI genes"
+                    )
+                } else if (msiGenesWithUnknownBiallelicDriver.isNotEmpty()) {
+                    EvaluationFactory.undetermined(
+                        "Unknown microsatellite instability (MSI) status but drivers with unknown allelic status in MSI genes: "
+                                + Format.concat(msiGenesWithUnknownBiallelicDriver) + " are detected - an MSI test may be recommended",
+                        "Unknown MSI status but drivers drivers with unknown allelic status in MSI genes"
                     )
                 } else {
                     EvaluationFactory.fail("Unknown microsatellite instability (MSI) status", "Unknown MSI status")

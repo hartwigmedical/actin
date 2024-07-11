@@ -1,81 +1,86 @@
 ## ACTIN-Molecular
 
-ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. In addition, the data is written to a
-per-sample JSON file. Currently, ACTIN-Molecular only supports interpretation
-of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular
-results as produced by [HMF Platinum](https://github.com/hartwigmedical/platinum).
-
-The ORANGE interpreter application requires Java 11+ and can be run as follows:
+ACTIN-Molecular interprets molecular results and maps these results to the datamodel described below. The interpreted molecular data
+is combined with the clinical data to produce a single comprehensive patient record JSON file. ACTIN-Molecular supports interpretation
+of [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange) molecular results as produced
+by [HMF Platinum](https://github.com/hartwigmedical/platinum) as well as molecular testing made available via the patient's clinical data.
+The molecular interpreter application requires Java 11+ and can be run as follows:
 
 ```
-java -cp actin.jar com.hartwig.actin.molecular.orange.OrangeInterpreterApplicationKt \
-   -orange_json /path/to/orange.json \
-   -serve_directory /path/to/serve_directory \
-   -known_genes_tsv /path/to/known_genes.tsv \
+java -cp actin.jar com.hartwig.actin.molecular.MolecularInterpreterApplicationKt \
    -clinical_json /path/to/actin_clinical.json \
+   -serve_directory /path/to/serve_directory \
+   -doid_json /path/to/doid.json \
    -output_directory /path/to/where/molecular_json_file_is_written
 ```
 
-An optional `log_debug` parameter can be provided to generate extra logging.
+Optionally, the following arguments can be passed as follows:
+
+| Argument    | Example Value        | Details                                                                 | 
+|-------------|----------------------|-------------------------------------------------------------------------|
+| orange_json | /path/to/orange.json | The path to ORANGE json in case an ORANGE record exists for the patient |
+| log_debug   |                      | If this parameter is set, additional logs will be written to stdout.    |
 
 The following assumptions are made about the inputs:
 
+- The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical).
 - The ORANGE JSON is the JSON output from [ORANGE](https://github.com/hartwigmedical/hmftools/tree/master/orange).
 - The SERVE directory is the output of [SERVE](https://github.com/hartwigmedical/serve/tree/master/algo) and is used for annotation and
   interpretation of the genomic findings.
-- The known genes is a TSV file with gene and geneRole columns. An example can be
-  found [here](https://github.com/hartwigmedical/actin/blob/master/common/src/test/resources/known_genes/example_known_genes.tsv).
-    - This resource file will be moved into SERVE in the future.
-- The clinical JSON is the output of [ACTIN Clinical](https://github.com/hartwigmedical/actin/tree/master/clinical). This file is used to
-  extract
-  the primary tumor DOIDs, which are used to determine whether evidence is on-label or off-label.
 
 ## ACTIN Molecular Datamodel
 
-### Molecular data
+### Molecular History
 
-Overall, a molecular record belongs to a `sampleId` (which belongs to a `patientId`) and has the following datamodel:
+The molecular history represents all molecular testing done for a patient. This includes WGS results, large targeted panels, archer, small
+panel results and IHC tests. The history is modeled as a list of molecular tests, each with a type and date.
 
-### 1 molecular base data
+### Molecular test
 
-| Field                | Example Value | Details                                                                                                                                    |
-|----------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| type                 | WGS           | The type of molecular experiment done, either `WGS` or `PANEL`                                                                             |
-| refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                    |
-| date                 | 2022-01-14    | The date on which the molecular results were obtained                                                                                      |
-| evidenceSource       | CKB_EVIDENCE  | The name of the provider of the evidence. Currently always `CKB_EVIDENCE`                                                                  |
-| externalTrialSource  | CKB_TRIAL     | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `CKB_TRIAL` |
-| containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                              |
-| hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                             |
+The molecular test is a common interface used to process results from ORANGE and other molecular testing. It is extended
+by the molecular record, panel record and IHC test.
 
-### 1 molecular characteristics
+#### 1 molecular test interface
 
-| Field                         | Example Value      | Details                                                                                                              |
-|-------------------------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
-| purity                        | 78%                | The percentage of cells in the sequenced biopsy that originated from the tumor                                       |
-| ploidy                        | 3.1                | The average number of copies of any chromosome in the tumor                                                          |
-| predictedTumorType            | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood                               |
-| isMicrosatelliteUnstable      | false              | If true, sample is considered microsatellite unstable. Should be empty in case experiment does not determine MSI     |
-| microsatelliteEvidence        | See evidence below | The evidence determined for the microsatellite status of specific tumor sample                                       |                                        
-| isHomologousRepairDeficient   | false              | If true, sample is considered homologous repair deficient. Should be empty in case experiment does not determine HRD |
-| homologousRepairEvidence      | See evidence below | The evidence determined for the homologous repair status of specific tumor sample                                    |                                     
-| tumorMutationalBurden         | 14.2               | Number of mutations in the genome per Mb. Should be empty in case experiment does not determine TMB                  |
-| hasHighTumorMutationalBurden  | true               | If true, sample is considered to have a high tumor mutational burden (otherwise, low)                                |
-| tumorMutationalBurdenEvidence | See evidence below | The evidence determined for the tumor mutational burden status of specific tumor sample.                             |
-| tumorMutationalLoad           | 115                | Number of missense mutations across the genome. Should be empty in case experiment does not determine TML            |
-| hasHighTumorMutationalLoad    | false              | If true, sample is considered to have a high tumor mutational load (otherwise, low)                                  |
-| tumorMutationalLoadEvidence   | See evidence below | The evidence determined for the tumor mutational load of specific tumor sample                                       |
+| Field           | Example Value             | Details                                                                   |
+|-----------------|---------------------------|---------------------------------------------------------------------------|
+| type            | WGS                       | The type of molecular experiment done                                     | 
+| date            | 2022-01-14                | The date on which the molecular results were obtained                     |
+| drivers         | See drivers below         |                                                                           |
+| characteristics | See characteristics below |                                                                           |
+| evidenceSource  | CKB_EVIDENCE              | The name of the provider of the evidence. Currently always `CKB_EVIDENCE` |
 
-### N driver events
+#### 1 molecular characteristics
+
+Note that all individual characteristics are expected to be null for tests that don't determine the specific characteristic.
+
+| Field                         | Example Value      | Details                                                                                 |
+|-------------------------------|--------------------|-----------------------------------------------------------------------------------------|
+| purity                        | 78%                | The percentage of cells in the sequenced biopsy that originated from the tumor          |
+| ploidy                        | 3.1                | The average number of copies of any chromosome in the tumor                             |
+| predictedTumorOrigin          | Melanoma (87%)     | The tumor type of origin predicted based on the molecular data along with a likelihood  |
+| isMicrosatelliteUnstable      | false              | If true, sample is considered microsatellite unstable                                   |
+| microsatelliteEvidence        | See evidence below | The evidence determined for the microsatellite status of specific tumor sample          |                                        
+| homologousRepairScore         | 0.5                | The probability of this sample being HR deficient                                       |
+| isHomologousRepairDeficient   | false              | If true, sample is considered homologous repair deficient                               |
+| homologousRepairEvidence      | See evidence below | The evidence determined for the homologous repair status of specific tumor sample       |                                     
+| tumorMutationalBurden         | 14.2               | Number of mutations in the genome per Mb                                                |
+| hasHighTumorMutationalBurden  | true               | If true, sample is considered to have a high tumor mutational burden (otherwise, low)   |
+| tumorMutationalBurdenEvidence | See evidence below | The evidence determined for the tumor mutational burden status of specific tumor sample |
+| tumorMutationalLoad           | 115                | Number of missense mutations across the genome                                          |
+| hasHighTumorMutationalLoad    | false              | If true, sample is considered to have a high tumor mutational load (otherwise, low)     |
+| tumorMutationalLoadEvidence   | See evidence below | The evidence determined for the tumor mutational load of specific tumor sample          |
+
+#### N molecular drivers
 
 Every potential driver event has the following fields ('general driver fields'):
 
-| Field            | Example Value      | Details                                                                                                              |
-|------------------|--------------------|----------------------------------------------------------------------------------------------------------------------|
-| isReportable     | true               | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a report             |
-| event            | BRAF V600E         | A human readable string summarizing the driver event                                                                 |
-| driverLikelihood | HIGH               | An optional field that indicates the likelihood that the event is a driver (either `HIGH`, `MEDIUM`, `LOW` or empty) |
-| evidence         | See evidence below | The evidence determined for this driver in the specific tumor sample                                                 |
+| Field            | Example Value      | Details                                                                                                                |
+|------------------|--------------------|------------------------------------------------------------------------------------------------------------------------|
+| isReportable     | true               | Indicates whether this driver event is considered relevant enough to be explicitly mentioned in a clinical report      |
+| event            | BRAF V600E         | A human readable string summarizing the driver event                                                                   |
+| driverLikelihood | HIGH               | An optional field that indicates the likelihood of the mutation being a driver (either `HIGH`, `MEDIUM`, `LOW` if set) |
+| evidence         | See evidence below | The evidence determined for this driver in the specific tumor sample                                                   |
 
 Furthermore, every gene driver event is assigned the following fields ('gene driver fields'):
 
@@ -86,21 +91,31 @@ Furthermore, every gene driver event is assigned the following fields ('gene dri
 | proteinEffect                  | GAIN_OF_FUNCTION | The effect the specific driver has on the gene (one of `UNKNOWN`, `AMBIGIOUS`, `NO_EFFECT`, `NO_EFFECT_PREDICTED`, `LOSS_OF_FUNCTION`, `LOSS_OF_FUNCTION_PREDICTED`, `GAIN_OF_FUNCTION`, `GAIN_OF_FUNCTION_PREDICTED`) |
 | isAssociatedWithDrugResistance | true             | An optional boolean indicating the specific driver event is associated with some form of drug resistance                                                                                                               |
 
-### N variants
+#### N variants
 
-In addition to the driver fields, the following data is captured for all detected variants:
+In addition to the (gene) driver fields, the following data is captured for all detected variants:
+
+| Field                  | Example Value | Details                                                                 |
+|------------------------|---------------|-------------------------------------------------------------------------|
+| chromosome             | 1             | The chromosome in which the event was detected                          |
+| position               | 41206120      | Genomic position in respect to chromosome and ref genome                |
+| ref                    | A             | The base(s) as found in the reference genome at this position           |
+| alt                    | G             | The base(s) as found in the sample analyzed                             |
+| type                   | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)           |
+| isHotspot              | true          | Indicates whether this specific variant is a known (pathogenic) hotspot |
+| canonicalImpact        | See impact    | The impact of this variant on the canonical transcript of the gene      |
+| extendedVariantDetails | See below     | Optional field with extended details on the variant                     | 
+
+Depending on the type of molecular test, more details may be available for a variant as follows:
 
 | Field             | Example Value | Details                                                                                             |
 |-------------------|---------------|-----------------------------------------------------------------------------------------------------|
-| type              | SNV           | The type of variant (one of `SNV`, `MNV`, `INSERT`, `DELETE`)                                       |
-| variantCopyNumber | 3.8           | The number of copies of this variant in the tumor                                                   |
+| variantCopyNumber | 2.3           | The number of copies of this variant in the tumor                                                   |
 | totalCopyNumber   | 4.0           | The total number of copies in the tumor on the variant genomic position                             |
 | isBiallelic       | false         | Indicates whether all alleles in the tumor are affected by this variant or not                      |
-| isHotspot         | true          | Indicates whether this specific variant is a known (pathogenic) hotspot                             | 
-| clonalLikelihood  | 100%          | Likelihood that the variant exists in every tumor cell (is clonal)                                  |
 | phaseGroups       | 1, 2          | The phasing groups this variant belongs to. Variants that are phased share at least one phase group |
-| canonicalImpact   | See impact    | The impact of this variant on the canonical transcript of the gene                                  |
-| otherImpacts      | See impact    | A set of impacts on transcripts other than the canonical transcript of the gene                     | 
+| otherImpacts      | See impact    | The impact of this variant on other (non-canonical) transcripts of the gene                         | 
+| clonalLikelihood  | 100%          | Likelihood that the variant exists in every tumor cell (hence: is clonal)                           |
 
 The following data is captured as impact of a variant on a specific transcript:
 
@@ -117,7 +132,7 @@ The following data is captured as impact of a variant on a specific transcript:
 
 #### N copy numbers
 
-In addition to the driver fields, the following data is captured per copy number:
+In addition to the (gene) driver fields, the following data is captured per copy number:
 
 | Field     | Example Value | Details                                                                        |
 |-----------|---------------|--------------------------------------------------------------------------------|
@@ -127,11 +142,11 @@ In addition to the driver fields, the following data is captured per copy number
 
 #### N homozygous disruptions
 
-For homozygous disruptions, no additional data is captured beyond the driver fields.
+For homozygous disruptions, no additional data is captured beyond the (gene) driver fields.
 
 #### N disruptions
 
-In addition to the driver fields, the following data is captured per disruption:
+In addition to the (gene) driver fields, the following data is captured per disruption:
 
 | Field                 | Example Value | Details                                                                                                        |
 |-----------------------|---------------|----------------------------------------------------------------------------------------------------------------|
@@ -146,17 +161,23 @@ In addition to the driver fields, the following data is captured per disruption:
 
 In addition to the general driver fields, the following data is captured per fusion:
 
-| Field                          | Example Value    | Details                                                                         |
-|--------------------------------|------------------|---------------------------------------------------------------------------------|
-| geneStart                      | EML4             | The gene that makes up the 5' part of the fusion                                |
-| geneTranscriptStart            | ENST001          | The ensembl ID of the transcript that makes up the 5' part of the fusion        |
-| fusedExonUp                    | 10               | The last exon of the 5' gene included in the fusion                             |
-| geneEnd                        | ALK              | The gene that makes up the 3' part of the fusion                                |
-| geneTranscriptEnd              | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion        |
-| fusedExonDown                  | 22               | The first exon of the 3' gene included in the fusion                            |
-| driverType                     | KNOWN_PAIR       | The type of driver fusion                                                       |
-| proteinEffect                  | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                                |
-| isAssociatedWithDrugResistance | null             | Optional field, indicates whether the fusion is associated with drug resistance |
+| Field                 | Example Value    | Details                                                                  |
+|-----------------------|------------------|--------------------------------------------------------------------------|
+| geneStart             | EML4             | The gene that makes up the 5' part of the fusion                         |
+| geneTranscriptStart   | ENST001          | The ensembl ID of the transcript that makes up the 5' part of the fusion |
+| geneEnd               | ALK              | The gene that makes up the 3' part of the fusion                         |
+| geneTranscriptEnd     | ENST002          | The ensembl ID of the transcript that makes up the 3' part of the fusion |
+| driverType            | KNOWN_PAIR       | The type of driver fusion                                                |
+| proteinEffect         | GAIN_OF_FUNCTION | The type of protein effect of the fusion product                         |
+| extendedFusionDetails | see below        | Optional field, see below                                                |
+
+Depending on the type of molecular test, more details may be available for a fusion as follows:
+
+| Field                          | Example Value | Details                                                                         |
+|--------------------------------|---------------|---------------------------------------------------------------------------------|
+| isAssociatedWithDrugResistance | true          | Optional field, indicates whether the fusion is associated with drug resistance |
+| fusedExonUp                    | 10            | The last exon of the 5' gene included in the fusion                             |
+| fusedExonDown                  | 22            | The first exon of the 3' gene included in the fusion                            |
 
 #### N viruses
 
@@ -169,6 +190,22 @@ In addition to the general driver fields, the following data is captured per vir
 | isReliable   | false                        | Boolean indicated whether the virus has reliably been found and could be considered a driver | 
 | integrations | 3                            | Number of integrations of detected virus in the tumor sample                                 |
 
+### Molecular record
+
+Overall, a molecular record belongs to a `sampleId` (which belongs to a `patientId`). The molecular record supports all fields from
+molecular test, but adds several additional fields which can be extracted from the comprehensive results created by Hartwig WGS and ORANGE.
+
+### 1 molecular base data
+
+| Field                | Example Value | Details                                                                                                                                    |
+|----------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| refGenomeVersion     | V37           | The version of the reference genome used throughout the analysis, either `V37` or `V38`                                                    |
+| externalTrialSource  | CKB_TRIAL     | The name of the provider of external trials (which are trials that may not be known in ACTIN trial database). Currently always `CKB_TRIAL` |
+| containsTumorCells   | true          | If false, implies that the tumor cell percentage in the biopsy was lower than the lowest detectable threshold                              |
+| isContaminated       | false         | If true, significant contamination with other (human) samples has been detected in the analysed sample                                     |  
+| hasSufficientPurity  | true          | If false, a `WARN_LOW_PURITY` has been raised by the molecular pipeline                                                                    |                                                                   | 
+| hasSufficientQuality | true          | If false, implies that the quality of the sample was not sufficient (e.g. too much DNA damage)                                             |
+
 #### N HLA alleles (with a single `isReliable` boolean indicating whether the HLA results are reliable)
 
 | Field               | Example Value | Details                                                                              |
@@ -177,7 +214,7 @@ In addition to the general driver fields, the following data is captured per vir
 | tumorCopyNumber     | 1.2           | The number of copies of this HLA allele in the tumor sample.                         |
 | hasSomaticMutations | false         | A boolean indicating whether any mutations have occurred in this allele in the tumor |
 
-#### N pharmaco
+#### N pharmacogenomic entries
 
 | Field             | Example Value   | Details                                             |
 |-------------------|-----------------|-----------------------------------------------------|
@@ -205,8 +242,28 @@ Evidence is assigned to molecular driver events and characteristics using the fo
 
 The interpretation of ORANGE to the ACTIN datamodel consists of two parts:
 
-1. Annotating all mutations and various characteristics in ORANGE with additional gene annotation and clinical evidence.
+1. Generic annotating of all mutations and various characteristics in ORANGE with additional gene annotation and clinical evidence.
 2. Mapping all fields, annotated mutations and annotated characteristics to the ACTIN datamodel.
+
+### Integration of non-ORANGE molecular results
+
+Molecular results which are not ORANGE are interpreted from the clinical data, using the prior molecular test list. These results are
+normalized and integrated into the molecular history, which can be processed by downstream rules without specific knowledge about what type
+of test was done. This integration process is documented in the diagram below.
+
+Note: IHC tests are not included below as they do not provide molecular events which can be annotated. They follow a similar path, but
+have no annotation step, and cannot be used in molecular rules requiring drivers.
+
+![Integrating Molecular Data](integrating_molecular_data.png)
+
+The flow of data from provider to rule evaluation follows these steps:
+
+- An extractor transforms the data into a data model which more easily supports annotation.
+- An annotator adds evidence (see [Evidence annotation](#evidence-annotation)). In the case of panel tests not extracted from ORANGE
+  results, we also add genomic position and driver likelihood.
+- The annotators produce either a PanelRecord or MolecularRecord. These both conform to the MolecularTest interface and are combined in a
+  single list in the molecular history.
+- Molecular rules can then evaluate the molecular history.
 
 #### 1. Annotation of mutations and characteristics
 
@@ -237,9 +294,8 @@ Do note that gene matching only ever populates the `geneRole` field. Any gene-le
 
 #### Evidence annotation
 
-Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes from `CKB_EVIDENCE`
-except for
-external trials which is populated by `CKB_TRIAL`. The evidence annotations occur in the following order:
+Every (potential) molecular driver and characteristic is annotated with evidence from SERVE. In practice all evidence comes
+from `CKB_EVIDENCE` except for external trials which is populated by `CKB_TRIAL`. The evidence annotations occur in the following order:
 
 1. Collect all on-label and off-label applicable evidences that match with the driver / characteristic
 2. Map the evidences to the ACTIN evidence datamodel (above).
@@ -247,7 +303,7 @@ external trials which is populated by `CKB_TRIAL`. The evidence annotations occu
 Evidence is considered on-label in case the applicable evidence tumor DOID is equal to or a parent of the patient's tumor doids, and none of
 the patient's tumor DOIDs (or parents thereof) is blacklisted by the evidence.
 
-Evidence from SERVE is collected per driver / characteristic according as follows:
+Evidence from SERVE is collected per driver / characteristic as follows:
 
 | Driver / Characteristic        | Evidence collected                                                                                                                                                                                                                        |
 |--------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -294,16 +350,18 @@ The ACTIN datamodel is created from the ORANGE data according to below.
 
 Molecular base data:
 
-| Field                | Mapping                                        |
-|----------------------|------------------------------------------------|
-| sampleId             | The ORANGE field `sampleId`                    |
-| type                 | Hard-coded to `WGS`                            |
-| refGenomeVersion     | Extracted from ORANGE field `refGenomeVersion` | 
-| date                 | The ORANGE field `experimentDate`              |
-| evidenceSource       | Hard-coded to `CKB_EVIDENCE`                   |
-| externalTrialSource  | Hard-coded to `CKB_TRIAL`                      |
-| containsTumorCells   | The PURPLE field `containsTumorCells`          |
-| hasSufficientQuality | The PURPLE field `hasSufficientQuality`        |
+| Field                | Mapping                                                               |
+|----------------------|-----------------------------------------------------------------------|
+| sampleId             | The ORANGE field `sampleId`                                           |
+| type                 | Extracted from ORANGE field `experimentType`                          |
+| refGenomeVersion     | Extracted from ORANGE field `refGenomeVersion`                        | 
+| date                 | The ORANGE field `samplingDate`                                       |
+| evidenceSource       | Hard-coded to `CKB_EVIDENCE`                                          |
+| externalTrialSource  | Hard-coded to `CKB_TRIAL`                                             |
+| containsTumorCells   | TRUE in case `FAIL_NO_TUMOR` is one of the purple QC states           |
+| isContaminated       | TRUE in case `FAIL_CONTAMINATED` is one of the purple QC states       |
+| hasSufficientPurity  | TRUE in case `WARN_LOW_PURITY` is *not* present in purple QC states   |
+| hasSufficientQuality | Derived field, TRUE in case containsTumorCells and not isContaminated |
 
 Molecular characteristics:
 
@@ -313,6 +371,7 @@ Molecular characteristics:
 | ploidy                       | The PURPLE field `ploidy`                                       | 
 | predictedTumorOrigin         | The CUPPA best cancer-type prediction along with the likelihood |
 | isMicrosatelliteUnstable     | The interpretation of PURPLE `microsatelliteStabilityStatus`    |
+| homologousRepairScore        | The CHORD field `hrdValue`                                      |
 | isHomologousRepairDeficient  | The interpretation of CHORD `hrStatus`                          |
 | tumorMutationalBurden        | The PURPLE field `tumorMutationalBurden`                        |
 | hasHighTumorMutationalBurden | The interpretation of PURPLE `tumorMutationalBurdenStatus`      |
@@ -344,7 +403,3 @@ The HLA entries are extracted from LILAC as follows:
   , `somaticSplice` or `somaticInframeIndel` is non-zero
 
 The pharmacogenomics entries are extracted from PEACH.
-
-### Version History and Download Links
-
-- Upcoming (first release) 
