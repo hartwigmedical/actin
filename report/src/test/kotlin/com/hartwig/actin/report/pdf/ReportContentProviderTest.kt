@@ -23,6 +23,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -164,7 +165,8 @@ class ReportContentProviderTest {
             EligibleActinTrialsGenerator::class,
             EligibleActinTrialsGenerator::class,
             EligibleDutchExternalTrialsGenerator::class,
-            EligibleOtherCountriesExternalTrialsGenerator::class
+            EligibleOtherCountriesExternalTrialsGenerator::class,
+            IneligibleActinTrialsGenerator::class
         )
     }
 }

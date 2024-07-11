@@ -51,6 +51,8 @@ class EfficacyEvidenceDetailsGenerator(
         } else {
             table.addCell(Cells.createKey("None"))
         }
+        table.addCell(Cells.createValue("Therapies: "))
+        table.addCell(Cells.createKey(annotation.treatments.joinToString(", ") { it.name }))
         table.addCell(Cells.createValue("Patient characteristics: "))
         table.addCell(Cells.createKey(""))
         return table
@@ -110,6 +112,7 @@ class EfficacyEvidenceDetailsGenerator(
         endPointsById.values.filter { endPoint -> endPoint.type == endPointType && endPoint.derivedMetrics.isNotEmpty() }
             .flatMap { endPoint ->
                 val otherEndpoint = endPointsById[endPoint.derivedMetrics.first().relativeMetricId]
+                val pValue = endPoint.derivedMetrics.first().pValue ?: NA
                 listOf(
                     "${endPoint.name} (95% CI)",
                     "${endPoint.value} ${formatConfidenceInterval(endPoint.confidenceInterval)}",
@@ -117,7 +120,11 @@ class EfficacyEvidenceDetailsGenerator(
                             formatConfidenceInterval(otherEndpoint?.confidenceInterval),
                     "${endPoint.derivedMetrics.first().value} " +
                             formatConfidenceInterval(endPoint.derivedMetrics.first().confidenceInterval),
-                    "p = ${endPoint.derivedMetrics.first().pValue}"
+                    if (pValue.startsWith("<")) {
+                        "p $pValue"
+                    } else {
+                        "p = $pValue"
+                    }
                 )
             }
             .forEach { table.addCell(Cells.createContent(it)) }

@@ -127,7 +127,9 @@ object TestTreatmentMatchFactory {
                     )
                 )
             ) to unrecoverable(
-                EvaluationResult.UNDETERMINED, "Could not be determined if patient has exhausted SOC", "Undetermined SOC exhaustion"
+                EvaluationResult.FAIL,
+                "Patient has not exhausted SOC (remaining options capecitabine)",
+                "Patient has not exhausted SOC (remaining options capecitabine)"
             )
         )
     }

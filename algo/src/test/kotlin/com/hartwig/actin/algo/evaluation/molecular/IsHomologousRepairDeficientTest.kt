@@ -35,6 +35,15 @@ class IsHomologousRepairDeficientTest {
             )
         )
         assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                    null,
+                    TestVariantFactory.createMinimal().copy(isReportable = true, gene = hrdGene)
+                )
+            )
+        )
+        assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(true, hrdVariant(isReportable = true, isBiallelic = false))

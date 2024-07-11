@@ -12,19 +12,19 @@ import com.hartwig.actin.algo.ckb.json.CkbTrialReference
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
 import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.efficacy.AnalysisGroup
 import com.hartwig.actin.efficacy.ConfidenceInterval
 import com.hartwig.actin.efficacy.DerivedMetric
 import com.hartwig.actin.efficacy.EfficacyEntry
-import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.efficacy.EndPoint
 import com.hartwig.actin.efficacy.EndPointType
 import com.hartwig.actin.efficacy.EndPointUnit
+import com.hartwig.actin.efficacy.PatientPopulation
 import com.hartwig.actin.efficacy.TimeOfMetastases
 import com.hartwig.actin.efficacy.TrialReference
 import com.hartwig.actin.efficacy.ValuePercentage
 import com.hartwig.actin.efficacy.VariantRequirement
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 
 class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
@@ -118,8 +118,8 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
                 patientsWithWho2 = patientPopulation.nEcog2?.toInt(),
                 patientsWithWho3 = patientPopulation.nEcog3?.toInt(),
                 patientsWithWho4 = patientPopulation.nEcog4?.toInt(),
-                patientsWithWho0to1 = if (!patientPopulation.nEcog0.isNullOrEmpty() && !patientPopulation.nEcog1.isNullOrEmpty()) patientPopulation.nEcog0to1?.toInt() else null,
-                patientsWithWho1to2 = if (!patientPopulation.nEcog1.isNullOrEmpty() && !patientPopulation.nEcog2.isNullOrEmpty()) patientPopulation.nEcog1to2?.toInt() else null,
+                patientsWithWho0to1 = if (patientPopulation.nEcog0.isNullOrEmpty() && patientPopulation.nEcog1.isNullOrEmpty()) patientPopulation.nEcog0to1?.toInt() else null,
+                patientsWithWho1to2 = if (patientPopulation.nEcog1.isNullOrEmpty() && patientPopulation.nEcog2.isNullOrEmpty()) patientPopulation.nEcog1to2?.toInt() else null,
                 patientsPerPrimaryTumorLocation = patientPopulation.nLocalizationPrimaryTumor?.let { convertPrimaryTumorLocation(it) },
                 mutations = patientPopulation.otherMutations, //TODO: convert to map once CKB has made notation consistent
                 patientsWithPrimaryTumorRemovedComplete = patientPopulation.nPrimaryTumorRemovedComplete?.toInt(),

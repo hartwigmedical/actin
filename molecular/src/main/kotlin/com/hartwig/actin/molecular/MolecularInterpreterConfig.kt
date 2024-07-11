@@ -27,11 +27,11 @@ data class MolecularInterpreterConfig(
             options.addOption(ORANGE_JSON, true, "(Optional) path of the ORANGE json to be interpreted")
             options.addOption(SERVE_DIRECTORY, true, "Path towards the SERVE directory containing known and actionable events")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
-            options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
             options.addOption(ONCO_DNDS_DATABASE_PATH, true, "Path to DNDS values for ONCO genes")
             options.addOption(TSG_DNDS_DATABASE_PATH, true, "Path to DNDS values for TSG genes")
             options.addOption(REFERENCE_GENOME_FASTA_PATH, true, "Path to reference genome fasta file")
             options.addOption(ENSEMBL_CACHE_PATH, true, "Path to ensemble data cache directory")
+            options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
         }
@@ -46,11 +46,11 @@ data class MolecularInterpreterConfig(
                 orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 oncoDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, ONCO_DNDS_DATABASE_PATH),
                 tsgDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, TSG_DNDS_DATABASE_PATH),
                 referenceGenomeFastaPath = ApplicationConfig.nonOptionalFile(cmd, REFERENCE_GENOME_FASTA_PATH),
-                ensemblCachePath = ApplicationConfig.nonOptionalDir(cmd, ENSEMBL_CACHE_PATH)
+                ensemblCachePath = ApplicationConfig.nonOptionalDir(cmd, ENSEMBL_CACHE_PATH),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
             )
         }
 
@@ -60,11 +60,11 @@ data class MolecularInterpreterConfig(
         private const val ORANGE_JSON: String = "orange_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
         private const val DOID_JSON: String = "doid_json"
-        private const val OUTPUT_DIRECTORY: String = "output_directory"
         private const val ONCO_DNDS_DATABASE_PATH: String = "onco_dnds_database_path"
         private const val TSG_DNDS_DATABASE_PATH: String = "tsg_dnds_database_path"
         private const val REFERENCE_GENOME_FASTA_PATH = "ref_genome_fasta_file"
         private const val ENSEMBL_CACHE_PATH = "ensembl_data_dir"
+        private const val OUTPUT_DIRECTORY: String = "output_directory"
         private const val LOG_DEBUG: String = "log_debug"
     }
 }

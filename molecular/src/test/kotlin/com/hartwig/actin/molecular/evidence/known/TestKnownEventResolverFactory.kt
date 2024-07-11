@@ -5,10 +5,6 @@ import com.hartwig.serve.datamodel.KnownEvents
 
 object TestKnownEventResolverFactory {
 
-    fun createEmpty(): KnownEventResolver {
-        return KnownEventResolver(ImmutableKnownEvents.builder().build(), mutableSetOf())
-    }
-
     fun createProper(): KnownEventResolver {
         val knownEvents: KnownEvents = ImmutableKnownEvents.builder()
             .addHotspots(TestServeKnownFactory.hotspotBuilder().build())
