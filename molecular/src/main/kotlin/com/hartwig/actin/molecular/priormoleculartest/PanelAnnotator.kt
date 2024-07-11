@@ -106,7 +106,9 @@ class PanelAnnotator(
             chromosome = transcriptPositionAndVariationAnnotation.chromosome(),
             ref = transcriptPositionAndVariationAnnotation.ref(),
             alt = transcriptPositionAndVariationAnnotation.alt(),
-            position = transcriptPositionAndVariationAnnotation.position()
+            position = transcriptPositionAndVariationAnnotation.position(),
+            type = variantType(transcriptPositionAndVariationAnnotation),
+            codingEffect = codingEffect(transcriptPositionAndVariationAnnotation)
         )
         val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
         val geneAlteration = GeneAlterationFactory.convertAlteration(
