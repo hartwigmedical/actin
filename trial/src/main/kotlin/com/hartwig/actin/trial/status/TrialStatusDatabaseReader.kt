@@ -33,7 +33,7 @@ class TrialStatusDatabaseReader(private val trialStatusEntryReader: TrialStatusE
         return ignoreStudies
     }
 
-    private fun readUnmappedCohorts(tsv: String): Set<Int> {
+    private fun readUnmappedCohorts(tsv: String): Set<String> {
         val unmappedCohorts = UnmappedCohortFile.read(tsv)
         LOGGER.info(" Read {} unmapped cohorts from {}", unmappedCohorts.size, tsv)
         return unmappedCohorts

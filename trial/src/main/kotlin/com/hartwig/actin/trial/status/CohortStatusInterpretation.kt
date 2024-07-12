@@ -5,5 +5,5 @@ import com.hartwig.actin.trial.config.CohortDefinitionValidationError
 data class CohortStatusInterpretation(
     val status: InterpretedCohortStatus?,
     val cohortDefinitionErrors: List<CohortDefinitionValidationError>,
-    val ctcDatabaseValidationErrors: List<TrialStatusDatabaseValidationError>
+    val trialDatabaseValidationErrors: List<TrialStatusDatabaseValidationError>
 )
