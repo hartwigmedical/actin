@@ -28,7 +28,7 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(MolecularLoaderApplication::class.java)
-        const val APPLICATION = "ACTIN Molecular Loader"
+        const val APPLICATION = "ACTIN Shared Data Loader"
         private val VERSION = MolecularLoaderApplication::class.java.getPackage().implementationVersion
     }
 }
