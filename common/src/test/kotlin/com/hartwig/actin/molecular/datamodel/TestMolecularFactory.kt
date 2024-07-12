@@ -320,7 +320,7 @@ object TestMolecularFactory {
         panelExtraction =
         GenericPanelExtraction(
             fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
-            panelType = GenericPanelType.FREE_TEXT
+            panelType = GenericPanelType.FREE_TEXT.toString()
         )
     )
 }

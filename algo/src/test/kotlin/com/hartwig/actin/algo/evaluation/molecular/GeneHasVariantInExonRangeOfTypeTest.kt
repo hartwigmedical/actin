@@ -26,7 +26,7 @@ private const val TARGET_GENE = "gene A"
 private val FREETEXT_PANEL_WITH_EXON_DELETION = TestPanelRecordFactory.empty().copy(
     panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
-        panelType = GenericPanelType.FREE_TEXT,
+        panelType = GenericPanelType.FREE_TEXT.toString(),
         variants = emptyList(),
         fusions = emptyList(),
         exonDeletions = listOf(
@@ -44,7 +44,7 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
     ),
     panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
-        panelType = GenericPanelType.FREE_TEXT,
+        panelType = GenericPanelType.FREE_TEXT.toString(),
         variants = listOf(
             PanelVariantExtraction(
                 gene = TARGET_GENE,
@@ -58,7 +58,7 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
 private val EMPTY_AVL_PANEL = TestPanelRecordFactory.empty().copy(
     type = ExperimentType.GENERIC_PANEL, panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
-        panelType = GenericPanelType.AVL,
+        panelType = GenericPanelType.AVL.toString(),
         variants = emptyList(),
         fusions = emptyList()
     )

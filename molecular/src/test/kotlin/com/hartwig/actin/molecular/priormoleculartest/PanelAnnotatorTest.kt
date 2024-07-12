@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
-import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
@@ -58,7 +57,7 @@ class PanelAnnotatorTest {
         every { run(GENE, TRANSCRIPT, POSITION) } returns null
     }
 
-    private val annotator = PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paveLite)
+    private val annotator = PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paveLite)
 
     @Test
     fun `Should return empty annotation when no matches found`() {

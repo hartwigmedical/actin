@@ -79,7 +79,7 @@ class PriorMolecularTestInterpreterTest {
                     TestPanelRecordFactory.empty().copy(
                         panelExtraction =
                         GenericPanelExtraction(
-                            GenericPanelType.AVL,
+                            GenericPanelType.AVL.toString(),
                             variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
                             fusions = listOf(GenericFusionExtraction("EML4", "ALK")),
                             exonDeletions = listOf(GenericExonDeletionExtraction("EGFR", 19)),

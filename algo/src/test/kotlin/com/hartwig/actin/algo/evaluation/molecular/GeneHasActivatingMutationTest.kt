@@ -290,7 +290,7 @@ class GeneHasActivatingMutationTest {
         )
 
         private val AVL_PANEL_WITH_ACTIVATING_VARIANT = GenericPanelExtraction(
-            panelType = GenericPanelType.AVL,
+            panelType = GenericPanelType.AVL.toString(),
             variants = listOf(
                 PanelVariantExtraction(gene = GENE, hgvsCodingImpact = "c.1A>T"),
             ),

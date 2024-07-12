@@ -212,7 +212,7 @@ class MolecularResultsAreAvailableForGeneTest {
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
-                            TestPanelRecordFactory.empty().copy(panelExtraction = GenericPanelExtraction(GenericPanelType.AVL))
+                            TestPanelRecordFactory.empty().copy(panelExtraction = GenericPanelExtraction(GenericPanelType.AVL.toString()))
                         )
                     )
                 )
