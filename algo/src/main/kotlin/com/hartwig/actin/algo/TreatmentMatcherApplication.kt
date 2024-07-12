@@ -22,10 +22,10 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.io.IOException
 import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
+
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
@@ -65,8 +65,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             environmentConfiguration.algo
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
-        val match = TreatmentMatcher.create(resources, trials, evidenceEntries)
-            .evaluateAndAnnotateMatchesForPatient(patient)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries).evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)
@@ -80,7 +79,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
     }
 }
 
-@Throws(IOException::class)
 fun main(args: Array<String>) {
     val options: Options = TreatmentMatcherConfig.createOptions()
     try {
