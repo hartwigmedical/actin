@@ -1,6 +1,6 @@
 package com.hartwig.actin.personalized.datamodel
 
-data class SubPopulation(
+data class Population(
     val name: String,
     val patientCountByMeasurementType: Map<MeasurementType, Int>
 )

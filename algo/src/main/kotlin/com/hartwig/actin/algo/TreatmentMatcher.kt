@@ -26,7 +26,7 @@ class TreatmentMatcher(
 
         val (standardOfCareMatches, personalizedDataAnalysis) = if (recommendationEngine.standardOfCareCanBeEvaluatedForPatient(patient)) {
             val evaluatedTreatments = recommendationEngine.standardOfCareEvaluatedTreatments(patient)
-            val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it, patient).interpret() }
+            val personalizedDataAnalysis = personalizationDataPath?.let { PersonalizedDataInterpreter.create(it).interpret(patient) }
             Pair(
                 evaluatedTreatmentAnnotator.annotate(evaluatedTreatments, personalizedDataAnalysis?.treatmentAnalyses),
                 personalizedDataAnalysis

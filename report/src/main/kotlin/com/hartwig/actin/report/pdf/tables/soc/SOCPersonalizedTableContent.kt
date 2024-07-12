@@ -62,15 +62,15 @@ class SOCPersonalizedTableContent(val headers: List<String>, val rows: List<List
             measurementType: MeasurementType,
             createTableElement: (Measurement) -> TableElement
         ): SOCPersonalizedTableContent {
-            val headers = listOf("") + analysis.subPopulations.map { pop ->
+            val headers = listOf("") + analysis.populations.map { pop ->
                 pop.name + (pop.patientCountByMeasurementType[measurementType]?.let { " (n=$it)" } ?: "")
             }
             val rows = analysis.treatmentAnalyses.filter { (treatmentGroup, _) ->
                 treatmentGroup.memberTreatmentNames.any(eligibleTreatments::contains)
             }
                 .map { (treatmentGroup, measurementsByType) ->
-                    val rowValues = analysis.subPopulations.map { subPopulation ->
-                        createTableElement(measurementsByType[measurementType]!![subPopulation.name]!!)
+                    val rowValues = analysis.populations.map { population ->
+                        createTableElement(measurementsByType[measurementType]!![population.name]!!)
                     }
                     listOf(TableElement.regular(treatmentGroup.display)) + rowValues
                 }

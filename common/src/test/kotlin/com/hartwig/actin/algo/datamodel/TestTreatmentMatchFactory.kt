@@ -7,7 +7,7 @@ import com.hartwig.actin.efficacy.TestExtendedEvidenceEntryFactory
 import com.hartwig.actin.personalized.datamodel.Measurement
 import com.hartwig.actin.personalized.datamodel.MeasurementType
 import com.hartwig.actin.personalized.datamodel.PersonalizedDataAnalysis
-import com.hartwig.actin.personalized.datamodel.SubPopulation
+import com.hartwig.actin.personalized.datamodel.Population
 import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
 import com.hartwig.actin.personalized.datamodel.TreatmentGroup
 import com.hartwig.actin.trial.datamodel.CohortMetadata
@@ -295,10 +295,10 @@ object TestTreatmentMatchFactory {
             )
         )
 
-        val subPopulations = populationPfsAndDecision.map { (name, _, _) ->
-            SubPopulation(name, MeasurementType.entries.associateWith { 1000 })
+        val populations = populationPfsAndDecision.map { (name, _, _) ->
+            Population(name, MeasurementType.entries.associateWith { 1000 })
         }
 
-        return PersonalizedDataAnalysis(treatmentAnalyses, subPopulations)
+        return PersonalizedDataAnalysis(treatmentAnalyses, populations)
     }
 }

@@ -30,7 +30,7 @@ class RealWorldPFSOutcomesGenerator(
                 when {
                     it.value.isNaN() -> TableElement.regular("-")
 
-                    it.numPatients <= MIN_PATIENT_COUNT -> TableElement.regular("n≤$MIN_PATIENT_COUNT")
+                    it.numPatients <= MIN_PATIENT_COUNT -> TableElement.regular(NA)
 
                     else -> with(it) {
                         val iqrString = iqr?.takeUnless(Double::isNaN)?.let { ", IQR: " + Formats.singleDigitNumber(it) } ?: ""
