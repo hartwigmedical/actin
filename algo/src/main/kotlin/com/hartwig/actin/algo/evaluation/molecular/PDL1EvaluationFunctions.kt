@@ -12,20 +12,8 @@ import com.hartwig.actin.doid.DoidModel
 
 object PDL1EvaluationFunctions {
 
-    fun evaluateLimitedPDL1byIHC(
-        record: PatientRecord, measure: String?, maxPDL1: Double, doidModel: DoidModel?
-    ): Evaluation {
-        return evaluatePDL1byIHC(record, measure, maxPDL1, doidModel, true)
-    }
-
-    fun evaluateSufficientPDL1byIHC(
-        record: PatientRecord, measure: String?, minPDL1: Double, doidModel: DoidModel?
-    ): Evaluation {
-        return evaluatePDL1byIHC(record, measure, minPDL1, doidModel, false)
-    }
-
-    private fun evaluatePDL1byIHC(
-        record: PatientRecord, measure: String?, PDL1Reference: Double, doidModel: DoidModel?, evaluateMaxPDL1: Boolean
+    fun evaluatePDL1byIHC(
+        record: PatientRecord, measure: String?, pdl1Reference: Double, doidModel: DoidModel?, evaluateMaxPDL1: Boolean
     ): Evaluation {
         val priorMolecularTests = record.molecularHistory.allIHCTests()
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
@@ -34,8 +22,12 @@ object PDL1EvaluationFunctions {
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
                 val roundedScore = Math.round(scoreValue).toDouble()
-                if (evaluateMaxPDL1) evaluateVersusMaxValue(roundedScore, ihcTest.scoreValuePrefix, PDL1Reference)
-                else evaluateVersusMinValue(roundedScore, ihcTest.scoreValuePrefix, PDL1Reference)
+                if (evaluateMaxPDL1) {
+                    evaluateVersusMaxValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
+                }
+                else {
+                    evaluateVersusMinValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
+                }
             }
         }.toSet()
 
@@ -45,17 +37,17 @@ object PDL1EvaluationFunctions {
         return when {
             EvaluationResult.PASS in testEvaluations && EvaluationResult.FAIL in testEvaluations -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if PD-L1 expression $comparatorMessage $PDL1Reference - conflicting PD-L1 results"
+                    "Undetermined if PD-L1 expression $comparatorMessage $pdl1Reference - conflicting PD-L1 results"
                 )
             }
             EvaluationResult.PASS in testEvaluations -> {
                 EvaluationFactory.pass(
-                    "PD-L1 expression$measureMessage $comparatorMessage $PDL1Reference",
-                    "PD-L1 expression $comparatorMessage $PDL1Reference"
+                    "PD-L1 expression$measureMessage $comparatorMessage $pdl1Reference",
+                    "PD-L1 expression $comparatorMessage $pdl1Reference"
                 )
             }
             EvaluationResult.FAIL in testEvaluations -> {
-                val messageEnding = (if (evaluateMaxPDL1) "exceeds " else "below ") + PDL1Reference
+                val messageEnding = (if (evaluateMaxPDL1) "exceeds " else "below ") + pdl1Reference
                 EvaluationFactory.fail(
                     "PD-L1 expression$measureMessage $messageEnding",
                     "PD-L1 expression $messageEnding"
@@ -63,9 +55,9 @@ object PDL1EvaluationFunctions {
             }
             EvaluationResult.UNDETERMINED in testEvaluations -> {
                 val testMessage = pdl1TestsWithRequestedMeasurement
-                    .joinToString(",") { test -> "${test.let { "${it.scoreValuePrefix} " }}${test.scoreValue}" }
+                    .joinToString(", ") { "${it.scoreValuePrefix} ${it.scoreValue}" }
                 EvaluationFactory.undetermined(
-                    "Undetermined if PD-L1 expression ($testMessage) $comparatorMessage $PDL1Reference"
+                    "Undetermined if PD-L1 expression ($testMessage) $comparatorMessage $pdl1Reference"
                 )
             }
             pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {

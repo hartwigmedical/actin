@@ -10,6 +10,6 @@ class HasLimitedPDL1ByIHC(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return PDL1EvaluationFunctions.evaluateLimitedPDL1byIHC(record, measure, maxPDL1, doidModel)
+        return PDL1EvaluationFunctions.evaluatePDL1byIHC(record, measure, maxPDL1, doidModel, evaluateMaxPDL1 = true)
     }
 }

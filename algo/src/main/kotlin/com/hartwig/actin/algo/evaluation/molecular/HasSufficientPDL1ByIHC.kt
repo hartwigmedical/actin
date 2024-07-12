@@ -9,6 +9,6 @@ class HasSufficientPDL1ByIHC (
     private val measure: String?, private val minPDL1: Double, private val doidModel: DoidModel? = null) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return PDL1EvaluationFunctions.evaluateSufficientPDL1byIHC(record, measure, minPDL1, doidModel)
+        return PDL1EvaluationFunctions.evaluatePDL1byIHC(record, measure, minPDL1, doidModel, evaluateMaxPDL1 = false)
     }
 }
