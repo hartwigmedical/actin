@@ -9,7 +9,8 @@ enum class ExperimentType(private val display: String) : Displayable {
     GENERIC_PANEL("NGS Panel"),
     IHC("IHC"),
     OTHER("Other"),
-    CDX("CDx");
+    LIQUID_CDX("Liquid CDx"),
+    FOUNDATION_CDX("Foundation CDx");
 
     override fun display(): String {
         return display

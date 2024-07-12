@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel.archer
 
+import com.hartwig.actin.molecular.datamodel.panel.McgiAmplification
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
@@ -10,10 +11,14 @@ data class ArcherPanelExtraction(
     override val variants: List<PanelVariantExtraction> = emptyList(),
     val fusions: List<ArcherFusionExtraction> = emptyList(),
     val skippedExons: List<ArcherSkippedExonsExtraction> = emptyList(),
+    override val amplifications: List<McgiAmplification> = emptyList(),
     override val date: LocalDate? = null,
     override val msi: Boolean? = null,
     override val tmb: Double? = null
 ) : PanelExtraction {
+
+    override val panelType = "Archer"
+
     override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + ARCHER_ALWAYS_TESTED_GENES
     }

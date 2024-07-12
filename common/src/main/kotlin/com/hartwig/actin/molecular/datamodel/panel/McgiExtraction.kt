@@ -8,14 +8,15 @@ data class McgiAmplification(val gene: String, val chromosome: String) : PanelEv
     }
 
     override fun display(): String {
-        return "amp $gene chr$chromosome"
+        return "$gene chr$chromosome amplified"
     }
 }
 
 data class McgiExtraction(
+    override val panelType: String,
     override val date: LocalDate?,
     override val variants: List<PanelVariantExtraction>,
-    val amplifications: List<McgiAmplification>,
+    override val amplifications: List<McgiAmplification>,
     override val msi: Boolean?,
     override val tmb: Double?,
 ) : PanelExtraction {

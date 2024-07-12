@@ -64,7 +64,8 @@ class StandardTumorDetailsExtractor(
         lymphNodeLesionsCount = countLesions(lesions, LesionLocationCategory.LYMPH_NODE),
         hasCnsLesions = hasLesions(lesions, LesionLocationCategory.CNS),
         cnsLesionsCount = countLesions(lesions, LesionLocationCategory.CNS),
-        otherLesions = lesions.filter { lesion -> lesion.ignore.not() }.filter { lesion -> lesion.category == null }
+        otherLesions = lesions.filter { lesion -> lesion.ignore.not() }
+            .filter { lesion -> lesion.category == null || lesion.category == LesionLocationCategory.LYMPH_NODE }
             .map { lesion -> lesion.location },
         hasMeasurableDisease = ehrPatientRecord.tumorDetails.measurableDisease,
         doids = emptySet()

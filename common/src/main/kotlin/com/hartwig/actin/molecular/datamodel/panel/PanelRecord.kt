@@ -12,7 +12,7 @@ data class PanelRecord(
     override val date: LocalDate? = null,
     override val drivers: Drivers,
     override val characteristics: MolecularCharacteristics = MolecularCharacteristics(),
-    override val evidenceSource: String,
+    override val evidenceSource: String, override val hasSufficientQuality: Boolean = true,
 ) : MolecularTest {
 
     fun testedGenes() = panelExtraction.testedGenes()

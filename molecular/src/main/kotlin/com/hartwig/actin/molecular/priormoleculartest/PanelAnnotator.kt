@@ -6,11 +6,15 @@ import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.GeneAlteration
+import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
@@ -28,7 +32,6 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 class PanelAnnotator(
-    private val experimentType: ExperimentType,
     private val evidenceDatabase: EvidenceDatabase,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
     private val transcriptAnnotator: VariantAnnotator,
@@ -55,6 +58,31 @@ class PanelAnnotator(
             }
         }
 
+        val annotatedAmplifications = input.amplifications.map {
+            CopyNumber(
+                gene = it.gene,
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+                isReportable = true,
+                event = it.display(),
+                driverLikelihood = DriverLikelihood.HIGH,
+                evidence = ActionableEvidenceFactory.createNoEvidence(),
+                type = CopyNumberType.FULL_GAIN,
+                minCopies = 4,
+                maxCopies = 4
+            )
+        }.map {
+            val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(it))
+            val geneAlteration = GeneAlterationFactory.convertAlteration(it.gene, evidenceDatabase.geneAlterationForCopyNumber(it))
+            it.copy(
+                evidence = evidence,
+                geneRole = geneAlteration.geneRole,
+                proteinEffect = geneAlteration.proteinEffect,
+                isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+            )
+        }
+
         val variantsByGene = annotatedVariants.groupBy { it.gene }
         val variantsWithDriverLikelihoodModel = variantsByGene.map {
             val geneRole = it.value.map { variant -> variant.geneRole }.first()
@@ -70,12 +98,22 @@ class PanelAnnotator(
 
         return PanelRecord(
             panelExtraction = input,
-            type = experimentType,
+            type = experimentType(input.panelType),
             date = input.date,
-            drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet()),
-            characteristics = MolecularCharacteristics(isMicrosatelliteUnstable = input.msi, tumorMutationalBurden = input.tmb),
+            drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet(), copyNumbers = annotatedAmplifications.toSet()),
+            characteristics = MolecularCharacteristics(
+                isMicrosatelliteUnstable = input.msi,
+                tumorMutationalBurden = input.tmb,
+                hasHighTumorMutationalBurden = input.tmb?.let { it > 10.0 }),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
         )
+    }
+
+    private fun experimentType(panelType: String) = when {
+        panelType.contains("Archer") -> ExperimentType.ARCHER
+        panelType.contains("FoundationOne CDx") -> ExperimentType.FOUNDATION_CDX
+        panelType.contains("Liquid CDx") -> ExperimentType.LIQUID_CDX
+        else -> ExperimentType.GENERIC_PANEL
     }
 
     private fun externalAnnotation(it: PanelVariantExtraction): com.hartwig.actin.tools.variant.Variant? {

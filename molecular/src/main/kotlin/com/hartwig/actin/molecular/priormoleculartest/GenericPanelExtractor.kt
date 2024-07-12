@@ -44,7 +44,14 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtrac
                     }")
                 }
 
-                GenericPanelExtraction(type, fusions, exonDeletions, geneWithNegativeResults, variants, date)
+                GenericPanelExtraction(
+                    panelType = type.toString(),
+                    fusions = fusions,
+                    exonDeletions = exonDeletions,
+                    genesWithNegativeResults = geneWithNegativeResults,
+                    variants = variants,
+                    date = date
+                )
             }
     }
 

@@ -32,7 +32,8 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>(
             ExperimentType.ARCHER -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
             ExperimentType.GENERIC_PANEL -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
             ExperimentType.OTHER -> gson.fromJson(jsonObject, OtherPriorMolecularTest::class.java)
-            ExperimentType.CDX -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
+            ExperimentType.LIQUID_CDX -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
+            ExperimentType.FOUNDATION_CDX -> PanelRecordAdapter(gson).fromJsonTree(jsonObject)
         }
     }
 }

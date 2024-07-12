@@ -13,6 +13,7 @@ interface MolecularTest {
     val drivers: Drivers
     val characteristics: MolecularCharacteristics
     val evidenceSource: String
+    val hasSufficientQuality: Boolean
 
     fun testsGene(gene: String): Boolean
 }
@@ -27,6 +28,7 @@ data class IHCMolecularTest(
     override val drivers = Drivers()
     override val characteristics = MolecularCharacteristics()
     override val evidenceSource = NONE
+    override val hasSufficientQuality = true
 
     override fun testsGene(gene: String) = test.measure == gene
 }
@@ -39,6 +41,7 @@ data class OtherPriorMolecularTest(
     override val drivers = Drivers()
     override val characteristics = MolecularCharacteristics()
     override val evidenceSource = NONE
+    override val hasSufficientQuality = true
 
     override fun testsGene(gene: String) = test.measure == gene
 }

@@ -12,7 +12,7 @@ data class MolecularRecord(
     val containsTumorCells: Boolean,
     val isContaminated: Boolean,
     val hasSufficientPurity: Boolean,
-    val hasSufficientQuality: Boolean,
+    override val hasSufficientQuality: Boolean,
     val immunology: MolecularImmunology,
     val pharmaco: Set<PharmacoEntry>,
     override val type: ExperimentType,

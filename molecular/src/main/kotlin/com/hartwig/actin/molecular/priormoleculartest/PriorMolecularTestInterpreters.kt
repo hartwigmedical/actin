@@ -6,7 +6,6 @@ import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.MolecularInterpreter
 import com.hartwig.actin.molecular.datamodel.ARCHER_FP_LUNG_TARGET
 import com.hartwig.actin.molecular.datamodel.AVL_PANEL
-import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularTest
@@ -46,7 +45,7 @@ private class ArcherInterpreter(
 ) :
     MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
         isArcher()
     )
 
@@ -64,7 +63,7 @@ private class GenericPanelInterpreter(
 ) :
     MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         GenericPanelExtractor(),
-        PanelAnnotator(ExperimentType.GENERIC_PANEL, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
         isGeneric()
     )
 
@@ -76,7 +75,7 @@ private class McgiPanelInterpreter(
 ) :
     MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         McgiExtractor(),
-        PanelAnnotator(ExperimentType.CDX, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
         isMcgi()
     )
 
