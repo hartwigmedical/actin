@@ -25,6 +25,14 @@ class PDL1EvaluationFunctionsTest{
     private val pdl1Test = MolecularTestFactory.priorMolecularTest(test = "IHC", item = "PD-L1", measure = MEASURE)
 
     @Test
+    fun `Should evaluate to undetermined if some PD-L1 tests are passing and others failing`(){
+        val record = MolecularTestFactory.withMolecularTests(
+            listOf(IHCMolecularTest(pdl1Test.copy(scoreValue = 1.0)), IHCMolecularTest(pdl1Test.copy(scoreValue = 3.0)))
+        )
+        evaluateBoth(EvaluationResult.UNDETERMINED, record)
+    }
+
+    @Test
     fun `Should fail with no prior tests`() {
         val record = MolecularTestFactory.withMolecularTests(emptyList())
         evaluateBoth(EvaluationResult.FAIL, record)
