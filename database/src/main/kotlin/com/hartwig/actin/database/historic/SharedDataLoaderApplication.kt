@@ -1,6 +1,5 @@
 package com.hartwig.actin.database.historic
 
-import com.hartwig.actin.database.dao.DatabaseAccess
 import com.hartwig.actin.database.molecular.MolecularLoaderApplication
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -20,25 +19,28 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
         val patients = File(config.sharedDataDirectory).list()!!.map {
             LOGGER.info(" Processing {}", it)
 
-            val clinical = findClinicalJson(it)
-            val molecular = findMolecularJson(it)
-            val treatmentMatch = findTreatmentMatchJson(it)
+            val clinicalJson = findClinicalJson(it)
+            val molecularJson = findMolecularJson(it)
+            val treatmentMatchJson = findTreatmentMatchJson(it)
 
-            if (!clinical.exists()) {
-                LOGGER.warn("Clinical file does not exist: {}", clinical)
+            if (!clinicalJson.exists()) {
+                LOGGER.warn("Clinical file does not exist: {}", clinicalJson)
+            } else {
+                val clinical = HistoricClinicalDeserializer.deserialize(clinicalJson)
+                LOGGER.info(clinical)
             }
 
-            if (!molecular.exists()) {
-                LOGGER.warn("Molecular file does not exist: {}", molecular)
+            if (!molecularJson.exists()) {
+                LOGGER.warn("Molecular file does not exist: {}", molecularJson)
             }
 
-            if (!treatmentMatch.exists()) {
-                LOGGER.warn("Treatment match file does not exist: {}", treatmentMatch)
+            if (!treatmentMatchJson.exists()) {
+                LOGGER.warn("Treatment match file does not exist: {}", treatmentMatchJson)
             }
             "1"
         }
 
-        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
+//        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
         LOGGER.info("Done!")
     }
@@ -56,14 +58,13 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
     }
 
     private fun sharedPath(directory: String): String {
-        return config.sharedDataDirectory + File.pathSeparator + directory + File.pathSeparator + BASE_PATH + File.pathSeparator
+        return config.sharedDataDirectory + File.separator + directory + File.separator + "actin" + File.separator + "1" + File.separator
     }
 
     companion object {
         val LOGGER: Logger = LogManager.getLogger(MolecularLoaderApplication::class.java)
         const val APPLICATION = "ACTIN Shared Data Loader"
 
-        private val BASE_PATH = "actin" + File.pathSeparator + "1"
         private val VERSION = MolecularLoaderApplication::class.java.getPackage().implementationVersion
     }
 }
