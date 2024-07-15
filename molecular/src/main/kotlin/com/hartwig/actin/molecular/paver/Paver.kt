@@ -222,11 +222,11 @@ class Paver(private val config: PaverConfig) {
     }
 }
 
-private fun chromToIndex(chrom: String): Int {
-    return when (chrom) {
+fun chromToIndex(chrom: String): Int {
+    return when (val cleanedChrom = chrom.replace("chr", "")) {
         "X" -> 23
         "Y" -> 24
         "MT" -> 25
-        else -> chrom.toInt()
+        else -> cleanedChrom.toInt()
     }
 }

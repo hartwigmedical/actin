@@ -46,4 +46,11 @@ class PaverTest {
         assertThat(response.impact.canonicalCodingEffect).isEqualTo(CodingEffect.MISSENSE)
         assertThat(response.impact.spliceRegion).isEqualTo(false)
     }
+
+    @Test
+    fun `Should convert chromosome to numeric index`() {
+        assertThat(chromToIndex("1")).isEqualTo(1)
+        assertThat(chromToIndex("chr1")).isEqualTo(1)
+        assertThat(chromToIndex("X")).isEqualTo(23)
+    }
 }

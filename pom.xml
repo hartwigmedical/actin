@@ -342,7 +342,7 @@
                 <type>test-jar</type>
             </dependency>
             <dependency>
-                <!-- PAVE uses and older htsjdk than actin-tools. Since only the PAVE version
+                <!-- PAVE depends on an older htsjdk than actin-tools. Since only the PAVE version
                   is used at runtime, force that version here -->
                 <groupId>com.github.samtools</groupId>
                 <artifactId>htsjdk</artifactId>

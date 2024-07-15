@@ -6,6 +6,5 @@ data class PaveQuery(
     val position: Int,
     val ref: String,
     val alt: String,
-    val transcript: String? = null,
 )
 
