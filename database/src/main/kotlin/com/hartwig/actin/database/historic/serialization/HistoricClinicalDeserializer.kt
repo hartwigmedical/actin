@@ -112,11 +112,11 @@ object HistoricClinicalDeserializer {
             hasCnsLesions = Json.optionalBool(tumor, "hasCnsLesions"),
             cnsLesionsCount = null,
             hasActiveCnsLesions = Json.optionalBool(tumor, "hasActiveCnsLesions"),
-            hasBoneLesions = Json.optionalBool(tumor, "hasBoneLesions"),
+            hasBoneLesions = Json.nullableBool(tumor, "hasBoneLesions"),
             boneLesionsCount = null,
-            hasLiverLesions = Json.optionalBool(tumor, "hasLiverLesions"),
+            hasLiverLesions = Json.nullableBool(tumor, "hasLiverLesions"),
             liverLesionsCount = null,
-            hasLungLesions = Json.optionalBool(tumor, "hasLungLesions"),
+            hasLungLesions = Json.nullableBool(tumor, "hasLungLesions"),
             lungLesionsCount = null,
             hasLymphNodeLesions = null,
             lymphNodeLesionsCount = null,
@@ -128,7 +128,7 @@ object HistoricClinicalDeserializer {
     private fun extractClinicalStatus(clinical: JsonObject): ClinicalStatus {
         val clinicalStatus: JsonObject = Json.`object`(clinical, "clinicalStatus")
         return ClinicalStatus(
-            who = null,
+            who = Json.nullableInteger(clinicalStatus, "who"),
             infectionStatus = null,
             ecg = null,
             lvef = null,
