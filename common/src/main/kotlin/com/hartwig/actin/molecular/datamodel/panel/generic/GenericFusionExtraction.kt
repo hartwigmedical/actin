@@ -6,6 +6,7 @@ data class GenericFusionExtraction(
     val geneStart: String,
     val geneEnd: String,
 ) : PanelEvent {
+
     companion object {
         fun parseFusion(text: String): GenericFusionExtraction {
             val parts = text.trim().split("::")

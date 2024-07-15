@@ -10,6 +10,7 @@ import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
 import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
@@ -28,6 +29,7 @@ import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenera
 import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
+import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
 import org.apache.logging.log4j.LogManager
 
 class ReportContentProvider(private val report: Report, private val enableExtendedMode: Boolean = false) {
@@ -51,11 +53,14 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         return listOf(
             SummaryChapter(report),
+            PersonalizedEvidenceChapter(
+                report, include = report.config.showSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
+            ),
             MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
             EfficacyEvidenceChapter(report, include = report.config.showSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
-            TrialMatchingChapter(report, enableExtendedMode),
+            TrialMatchingChapter(report, enableExtendedMode, report.config.showIneligibleTrialsInSummary),
             TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
         ).filter(ReportChapter::include)
     }
@@ -75,10 +80,10 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     }
 
     fun provideSummaryTables(keyWidth: Float, valueWidth: Float, contentWidth: Float): List<TableGenerator> {
-        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch)
+        val cohorts = EvaluatedCohortFactory.create(report.treatmentMatch, report.config.filterOnSOCExhaustionAndTumorType)
 
         val clinicalHistoryGenerator = if (report.config.includeOverviewWithClinicalHistorySummary) {
-            PatientClinicalHistoryWithOverviewGenerator(report, keyWidth, valueWidth)
+            PatientClinicalHistoryWithOverviewGenerator(report, cohorts, keyWidth, valueWidth)
         } else {
             PatientClinicalHistoryGenerator(report, false, keyWidth, valueWidth)
         }
@@ -104,7 +109,15 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             openCohortsWithSlotsGenerator,
             openCohortsWithoutSlotsGenerator,
             dutchTrialGenerator,
-            nonDutchTrialGenerator
+            nonDutchTrialGenerator,
+            if (report.config.showIneligibleTrialsInSummary) {
+                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+                    cohorts,
+                    report.treatmentMatch.trialSource,
+                    contentWidth,
+                    enableExtendedMode
+                )
+            } else null
         )
     }
 
@@ -115,7 +128,11 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             return Pair(null, null)
         } else {
             val externalTrialSummarizer = ExternalTrialSummarizer()
-            val externalTrialSummary = externalTrialSummarizer.summarize(AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, report.treatmentMatch.trialMatches, evaluated)
+            val externalTrialSummary = externalTrialSummarizer.summarize(
+                AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent,
+                report.treatmentMatch.trialMatches,
+                evaluated
+            )
             return Pair(
                 if (externalTrialSummary.dutchTrials.isNotEmpty()) {
                     EligibleDutchExternalTrialsGenerator(

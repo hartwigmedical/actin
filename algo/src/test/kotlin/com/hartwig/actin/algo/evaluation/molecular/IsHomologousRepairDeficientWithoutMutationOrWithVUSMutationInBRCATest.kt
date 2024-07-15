@@ -3,13 +3,14 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
+import com.hartwig.actin.molecular.datamodel.Variant
 import com.hartwig.actin.molecular.datamodel.driver.TestCopyNumberFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
-import com.hartwig.actin.molecular.datamodel.Variant
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
@@ -128,6 +129,21 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
     }
 
     @Test
+    fun `Should ignore variants with allelic status is unknown in BRCA1`() {
+        val result = function.evaluate(
+            MolecularTestFactory.withHomologousRepairDeficiencyAndVariant(
+                true,
+                TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isHotspot = true)
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.WARN,
+            result
+        )
+        assertThat(result.warnSpecificMessages).containsExactly("Homologous repair deficiency (HRD) status detected, without drivers in HR genes")
+    }
+
+    @Test
     fun `Should warn when HRD and disruption of BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
@@ -186,7 +202,7 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
                     true,
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true),
-                    hrdVariant("RAD51C", true, true,true)
+                    hrdVariant("RAD51C", true, true, true)
                 )
             )
         )
@@ -224,7 +240,11 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCATest {
         driverLikelihood: DriverLikelihood = DriverLikelihood.LOW,
     ): Variant {
         return TestVariantFactory.createMinimal().copy(
-            gene = gene, isReportable = isReportable, isHotspot = isHotspot, driverLikelihood = driverLikelihood, extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
+            gene = gene,
+            isReportable = isReportable,
+            isHotspot = isHotspot,
+            driverLikelihood = driverLikelihood,
+            extendedVariantDetails = TestVariantFactory.createMinimalExtended().copy(isBiallelic = isBiallelic)
         )
     }
 }

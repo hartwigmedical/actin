@@ -43,12 +43,6 @@ class CohortStatusInterpreterTest {
         assertThat(status.slotsAvailable).isFalse
     }
 
-    @Test(expected = NumberFormatException::class)
-    fun `Should throw exception on unexpected non integer cohort id`() {
-        val unexpected = createWithExternalCohortIDs("this is unexpected")
-        evaluate(unexpected)
-    }
-
     companion object {
         private fun evaluate(cohortConfig: CohortDefinitionConfig): InterpretedCohortStatus? {
             return CohortStatusInterpreter.interpret(listOf(), cohortConfig).status

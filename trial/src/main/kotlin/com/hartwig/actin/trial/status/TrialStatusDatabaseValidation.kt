@@ -17,8 +17,8 @@ data class IgnoreValidationError(override val config: String, override val messa
     }
 }
 
-data class TrialStatusUnmappedValidationError(override val config: Int, override val message: String) : ValidationError<Int> {
-    override fun configFormat(config: Int): String {
+data class TrialStatusUnmappedValidationError(override val config: String, override val message: String) : ValidationError<String> {
+    override fun configFormat(config: String): String {
         return "cohort id=${config}"
     }
 }

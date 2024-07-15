@@ -27,7 +27,7 @@ object TestTrialStatusDatabaseFactory {
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_1,
             studyStatus = TrialStatus.OPEN,
-            cohortId = 1,
+            cohortId = "1",
             cohortName = "Cohort A-1",
             cohortStatus = TrialStatus.CLOSED,
             cohortSlotsNumberAvailable = 0
@@ -38,7 +38,7 @@ object TestTrialStatusDatabaseFactory {
             studyAcronym = "Acronym-" + TestTrialData.TEST_TRIAL_METC_1,
             studyTitle = "Title-" + TestTrialData.TEST_TRIAL_METC_1,
             studyStatus = TrialStatus.OPEN,
-            cohortId = 2,
+            cohortId = "2",
             cohortName = "Cohort A-2",
             cohortStatus = TrialStatus.OPEN,
             cohortSlotsNumberAvailable = 5,

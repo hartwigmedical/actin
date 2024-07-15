@@ -12,6 +12,7 @@ import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Fallback
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.algo.evaluation.othercondition.HasPotentialSymptomaticHypercalcemia
 import com.hartwig.actin.algo.evaluation.othercondition.OtherConditionFunctionFactory
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
@@ -52,6 +53,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_ALBUMIN_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.ALBUMIN),
             EligibilityRule.HAS_ASAT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ASPARTATE_AMINOTRANSFERASE),
             EligibilityRule.HAS_ALAT_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALANINE_AMINOTRANSFERASE),
+            EligibilityRule.HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT to hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(),
             EligibilityRule.HAS_ALP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_ALP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALKALINE_PHOSPHATASE),
             EligibilityRule.HAS_TOTAL_BILIRUBIN_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.TOTAL_BILIRUBIN),
@@ -104,6 +106,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_POTENTIAL_HYPOKALEMIA to hasPotentialHypokalemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOMAGNESEMIA to hasPotentialHypomagnesemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOCALCEMIA to hasPotentialHypocalcemiaCreator(),
+            EligibilityRule.HAS_POTENTIAL_SYMPTOMATIC_HYPERCALCEMIA to hasPotentialSymptomaticHypercalcemiaCreator(),
             EligibilityRule.HAS_SERUM_TESTOSTERONE_NG_PER_DL_OF_AT_MOST_X to undeterminedLabValueCreator("serum testosterone"),
             EligibilityRule.HAS_CORTISOL_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.CORTISOL),
             EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.ALPHA_FETOPROTEIN),
@@ -176,6 +179,16 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasLimitedPTTCreator(): FunctionCreator {
         return FunctionCreator { HasLimitedPTT() }
+    }
+
+    private fun hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(): FunctionCreator {
+        return FunctionCreator { function: EligibilityFunction ->
+            val maxULNWithoutLiverMetastases = functionInputResolver().createTwoDoublesInput(function).double1
+            val maxULNWithLiverMetastases = functionInputResolver().createTwoDoublesInput(function).double2
+            HasLimitedAsatAndAlatDependingOnLiverMetastases(
+                maxULNWithoutLiverMetastases, maxULNWithLiverMetastases, minValidLabDate(), minPassLabDate()
+            )
+        }
     }
 
     private fun hasLimitedBilirubinPercentageCreator(): FunctionCreator {
@@ -260,6 +273,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             )
             Or(listOf(calciumBelowLLN, hasHadPriorHypocalcemia))
         }
+    }
+
+    private fun hasPotentialSymptomaticHypercalcemiaCreator(): FunctionCreator {
+        return FunctionCreator { HasPotentialSymptomaticHypercalcemia(minValidLabDate()) }
     }
 
     private fun createLabEvaluator(measurement: LabMeasurement, function: LabEvaluationFunction): EvaluationFunction {

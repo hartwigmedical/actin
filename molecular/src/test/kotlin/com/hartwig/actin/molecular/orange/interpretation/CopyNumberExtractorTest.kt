@@ -168,10 +168,8 @@ class CopyNumberExtractorTest {
         assertThat(copyNumbers.first().minCopies).isEqualTo(4)
     }
 
-    companion object {
-        private fun findByGene(copyNumbers: Iterable<CopyNumber>, geneToFind: String): CopyNumber {
-            return copyNumbers.find { it.gene == geneToFind }
-                ?: throw IllegalStateException("Could not find copy number for gene: $geneToFind")
-        }
+    private fun findByGene(copyNumbers: Iterable<CopyNumber>, geneToFind: String): CopyNumber {
+        return copyNumbers.find { it.gene == geneToFind }
+            ?: throw IllegalStateException("Could not find copy number for gene: $geneToFind")
     }
 }
