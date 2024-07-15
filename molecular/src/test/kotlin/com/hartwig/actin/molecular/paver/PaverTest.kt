@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.paver
 
-import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
@@ -45,7 +44,7 @@ class PaverTest {
         assertThat(response.impact.gene).isEqualTo("gene1")
         assertThat(response.impact.hgvsCodingImpact).isEqualTo("c.6A>C")
         assertThat(response.impact.hgvsProteinImpact).isEqualTo("p.Lys2Asn")
-        assertThat(response.impact.canonicalCodingEffect).isEqualTo(CodingEffect.MISSENSE)
+        assertThat(response.impact.canonicalCodingEffect).isEqualTo(PaveCodingEffect.MISSENSE)
         assertThat(response.impact.spliceRegion).isEqualTo(false)
     }
 

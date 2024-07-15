@@ -1,7 +1,5 @@
 package com.hartwig.actin.molecular.paver
 
-import com.hartwig.actin.molecular.datamodel.CodingEffect
-import com.hartwig.actin.molecular.datamodel.VariantEffect
 import com.hartwig.actin.tools.validation.VCFWriterFactory
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder
 import com.hartwig.hmftools.pave.PaveApplication
@@ -110,11 +108,11 @@ class Paver(private val config: PaverConfig) {
             gene = parts[0],
             transcript = parts[1],
             canonicalEffect = parts[2],
-            canonicalCodingEffect = interpretCodingEffect(parts[3]),
+            canonicalCodingEffect = PaveCodingEffect.fromString(parts[3]),
             spliceRegion = interpretSpliceRegion(parts[4]),
             hgvsCodingImpact = parts[5],
             hgvsProteinImpact = parts[6],
-            worstCodingEffect = interpretCodingEffect(parts[8]),
+            worstCodingEffect = PaveCodingEffect.fromString(parts[8]),
             genesAffected = parts[9].toInt(),
         )
     }
@@ -142,19 +140,6 @@ class Paver(private val config: PaverConfig) {
             }
     }
 
-    private fun interpretCodingEffect(codingEffect: String): CodingEffect {
-        return when (codingEffect) {
-            "NONSENSE_OR_FRAMESHIFT" -> CodingEffect.NONSENSE_OR_FRAMESHIFT
-            "SPLICE" -> CodingEffect.SPLICE
-            "MISSENSE" -> CodingEffect.MISSENSE
-            "SYNONYMOUS" -> CodingEffect.SYNONYMOUS
-            else -> {
-                logger.warn("Unexpected coding effect, using NONE: {}", codingEffect)
-                CodingEffect.NONE
-            }
-        }
-    }
-
     private fun interpretSpliceRegion(spliceRegion: String): Boolean {
         return when (spliceRegion) {
             "true" -> true
@@ -166,41 +151,13 @@ class Paver(private val config: PaverConfig) {
         }
     }
 
-    private fun interpretVariantEffects(variantEffects: String): List<VariantEffect> {
+    private fun interpretVariantEffects(variantEffects: String): List<PaveVariantEffect> {
         if (variantEffects.isEmpty()) {
             return emptyList()
         }
 
         return variantEffects.split("&")
-            .map { interpretVariantEffect(it) }
-    }
-
-    private fun interpretVariantEffect(variantEffect: String): VariantEffect {
-        return when (variantEffect) {
-            "stop_gained" -> VariantEffect.STOP_GAINED
-            "stop_lost" -> VariantEffect.STOP_LOST
-            "start_lost" -> VariantEffect.START_LOST
-            "frameshift" -> VariantEffect.FRAMESHIFT
-            "splice_acceptor_variant" -> VariantEffect.SPLICE_ACCEPTOR
-            "splice_donor_variant" -> VariantEffect.SPLICE_DONOR
-            "inframe_insertion" -> VariantEffect.INFRAME_INSERTION
-            "inframe_deletion" -> VariantEffect.INFRAME_DELETION
-            "missense_variant" -> VariantEffect.MISSENSE
-            "phased_missense" -> VariantEffect.PHASED_MISSENSE
-            "phased_inframe_insertion" -> VariantEffect.PHASED_INFRAME_INSERTION
-            "phased_inframe_deletion" -> VariantEffect.PHASED_INFRAME_DELETION
-            "synonymous_variant" -> VariantEffect.SYNONYMOUS
-            "phased_synonymous" -> VariantEffect.PHASED_SYNONYMOUS
-            "intron_variant" -> VariantEffect.INTRONIC
-            "5_prime_UTR_variant" -> VariantEffect.FIVE_PRIME_UTR
-            "3_prime_UTR_variant" -> VariantEffect.THREE_PRIME_UTR
-            "upstream_gene_variant" -> VariantEffect.UPSTREAM_GENE
-            "non_coding_transcript_exon_variant" -> VariantEffect.NON_CODING_TRANSCRIPT
-            else -> {
-                logger.warn("Unexpected variant effect, using OTHER: {}", variantEffect)
-                VariantEffect.OTHER
-            }
-        }
+            .map { PaveVariantEffect.fromString(it) }
     }
 
     private fun generateRunId(): String {
