@@ -1,6 +1,8 @@
-package com.hartwig.actin.database.historic
+package com.hartwig.actin.database.historic.serialization
 
 import com.google.common.collect.Sets
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
@@ -24,6 +26,7 @@ import com.hartwig.actin.clinical.datamodel.Toxicity
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.util.json.Json
 import org.apache.logging.log4j.LogManager
@@ -93,37 +96,55 @@ object HistoricClinicalDeserializer {
             primaryTumorExtraDetails = Json.optionalString(tumor, "primaryTumorExtraDetails"),
             doids = Json.array(tumor, "doids").map { it.asString }.toCollection(Sets.newHashSet()),
             stage = Json.optionalString(tumor, "stage")?.let { TumorStage.valueOf(it) },
-            derivedStages = null,
-            hasMeasurableDisease = null,
-            hasBrainLesions = null,
+            derivedStages = null, // TODO (KD): Could reuse TumorStageDeriver here.
+            hasMeasurableDisease = Json.optionalBool(tumor, "hasMeasurableDisease"),
+            hasBrainLesions = Json.optionalBool(tumor, "hasBrainLesions"),
             brainLesionsCount = null,
-            hasActiveBrainLesions = null,
-            hasCnsLesions = null,
+            hasActiveBrainLesions = Json.optionalBool(tumor, "hasActiveBrainLesions"),
+            hasCnsLesions = Json.optionalBool(tumor, "hasCnsLesions"),
             cnsLesionsCount = null,
-            hasActiveCnsLesions = null,
-            hasBoneLesions = null,
+            hasActiveCnsLesions = Json.optionalBool(tumor, "hasActiveCnsLesions"),
+            hasBoneLesions = Json.optionalBool(tumor, "hasBoneLesions"),
             boneLesionsCount = null,
-            hasLiverLesions = null,
+            hasLiverLesions = Json.optionalBool(tumor, "hasLiverLesions"),
             liverLesionsCount = null,
-            hasLungLesions = null,
+            hasLungLesions = Json.optionalBool(tumor, "hasLungLesions"),
             lungLesionsCount = null,
             hasLymphNodeLesions = null,
             lymphNodeLesionsCount = null,
-            otherLesions = null,
-            biopsyLocation = null
+            otherLesions = Json.optionalStringList(tumor, "otherLesions"),
+            biopsyLocation = Json.optionalString(tumor, "biopsyLocation")
         )
     }
 
-    private fun tumorStage(optionalTumorStageString: String?): TumorStage? {
-        return optionalTumorStageString?.let { TumorStage.valueOf(optionalTumorStageString) }
-    }
-
     private fun extractClinicalStatus(clinical: JsonObject): ClinicalStatus {
-        return ClinicalStatus()
+        val clinicalStatus: JsonObject = Json.`object`(clinical, "clinicalStatus")
+        return ClinicalStatus(
+            who = null,
+            infectionStatus = null,
+            ecg = null,
+            lvef = null,
+            hasComplications = null
+        )
     }
 
     private fun extractOncologicalHistory(clinical: JsonObject): List<TreatmentHistoryEntry> {
-        return listOf()
+        val priorTumorTreatments: JsonArray = Json.array(clinical, "priorTumorTreatments")
+        return priorTumorTreatments.mapNotNull { toTreatmentHistoryEntry(it) }
+    }
+
+    private fun toTreatmentHistoryEntry(priorTumorTreatmentElement: JsonElement): TreatmentHistoryEntry {
+        val priorTumorTreatment: JsonObject = priorTumorTreatmentElement.asJsonObject
+        return TreatmentHistoryEntry(
+            treatments = extractTreatments(priorTumorTreatment)
+        )
+    }
+
+    private fun extractTreatments(priorTumorTreatment: JsonObject): Set<Treatment> {
+        // TODO (KD) : Map to treatments.
+        return setOf(
+
+        )
     }
 
     private fun extractPriorSecondPrimaries(clinical: JsonObject): List<PriorSecondPrimary> {

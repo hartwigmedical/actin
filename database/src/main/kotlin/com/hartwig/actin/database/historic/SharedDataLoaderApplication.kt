@@ -1,5 +1,6 @@
 package com.hartwig.actin.database.historic
 
+import com.hartwig.actin.database.historic.serialization.HistoricClinicalDeserializer
 import com.hartwig.actin.database.molecular.MolecularLoaderApplication
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
