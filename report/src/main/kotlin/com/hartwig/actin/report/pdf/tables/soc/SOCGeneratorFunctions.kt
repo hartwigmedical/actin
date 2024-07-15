@@ -83,7 +83,7 @@ object SOCGeneratorFunctions {
                     treatment.generalPfs?.run {
                         if (numPatients <= MIN_PATIENT_COUNT) NA else {
                             val iqrString = if (iqr != null && iqr != Double.NaN) {
-                                " (IQR: $iqr)"
+                                ", IQR: $iqr"
                             } else ""
                             value.toString() + iqrString
                         }

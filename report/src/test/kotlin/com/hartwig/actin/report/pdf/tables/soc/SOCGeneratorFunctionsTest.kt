@@ -86,7 +86,7 @@ class SOCGeneratorFunctionsTest {
             "t1",
             "No literature efficacy evidence available yet",
             "no data, not recommended",
-            "103.0 (IQR: 100.0)",
+            "103.0, IQR: 100.0",
             "t3",
             "No literature efficacy evidence available yet",
             "lab value out of range",
