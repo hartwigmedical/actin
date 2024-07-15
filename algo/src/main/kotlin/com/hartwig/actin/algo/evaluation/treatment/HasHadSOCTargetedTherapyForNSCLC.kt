@@ -17,7 +17,7 @@ class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: List<String>) 
             TreatmentCategory.TARGETED_THERAPY,
             { historyEntry -> historyEntry.matchesTypeFromSet(drugTypeSet) }
         )
-        val matches = treatmentSummary.specificMatches.joinToString { it.treatmentDisplay()}
+        val matches = treatmentSummary.specificMatches.joinToString { it.treatmentDisplay() }
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {

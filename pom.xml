@@ -22,6 +22,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <actin-personalization.version>0.1.0</actin-personalization.version>
         <serve.version>4.0.1</serve.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
         <actin-transvar.version>0.2.2</actin-transvar.version>
@@ -105,6 +106,10 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <source>11</source>
+                        <target>11</target>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -181,6 +186,17 @@
             </dependency>
 
             <dependency>
+                <groupId>com.hartwig.actin.personalization</groupId>
+                <artifactId>similarity</artifactId>
+                <version>${actin-personalization.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>com.hartwig.serve</groupId>
                 <artifactId>datamodel</artifactId>
                 <version>${serve.version}</version>
@@ -202,7 +218,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <artifactId>kotlin-stdlib</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>

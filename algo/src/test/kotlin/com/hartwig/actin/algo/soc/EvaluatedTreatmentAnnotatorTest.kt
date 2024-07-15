@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.interpretation
+package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment

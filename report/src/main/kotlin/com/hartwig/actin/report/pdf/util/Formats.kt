@@ -19,10 +19,12 @@ object Formats {
     private val NON_HIGHLIGHT_VALUES = setOf(VALUE_COMING_SOON)
     const val DATE_UNKNOWN = "Date unknown"
     private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
-    private val TWO_DIGIT_FORMAT = DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-    private val SINGLE_DIGIT_FORMAT = DecimalFormat("#.#", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-    private val NO_DIGIT_FORMAT = DecimalFormat("#", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-    private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
+    private val DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+    private val TWO_DIGIT_FORMAT = DecimalFormat("#.##", DECIMAL_FORMAT_SYMBOLS)
+    private val SINGLE_DIGIT_FORMAT = DecimalFormat("#.#", DECIMAL_FORMAT_SYMBOLS)
+    private val NO_DIGIT_FORMAT = DecimalFormat("#", DECIMAL_FORMAT_SYMBOLS)
+    private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DECIMAL_FORMAT_SYMBOLS)
+    private val SINGLE_DIGIT_PERCENTAGE_FORMAT = DecimalFormat("#.#'%'", DECIMAL_FORMAT_SYMBOLS)
 
     fun twoDigitNumber(number: Double): String {
         return TWO_DIGIT_FORMAT.format(number)
@@ -38,6 +40,10 @@ object Formats {
 
     fun percentage(number: Double): String {
         return PERCENTAGE_FORMAT.format(number * 100)
+    }
+
+    fun singleDigitPercentage(number: Double): String {
+        return SINGLE_DIGIT_PERCENTAGE_FORMAT.format(number * 100)
     }
 
     @JvmOverloads

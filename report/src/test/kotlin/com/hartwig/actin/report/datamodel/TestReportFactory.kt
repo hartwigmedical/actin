@@ -4,6 +4,7 @@ import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.TestTreatmentMatchFactory
 import com.hartwig.actin.clinical.datamodel.TestClinicalFactory
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.configuration.ReportConfiguration
 
 object TestReportFactory {
@@ -35,5 +36,9 @@ object TestReportFactory {
             patientRecord = PatientRecordFactory.fromInputs(TestClinicalFactory.createExhaustiveTestClinicalRecord(), null),
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch()
         )
+    }
+
+    fun createExhaustiveCRCTestReport(): Report {
+        return createExhaustiveTestReport().copy(config = EnvironmentConfiguration.create(null, "CRC").report)
     }
 }

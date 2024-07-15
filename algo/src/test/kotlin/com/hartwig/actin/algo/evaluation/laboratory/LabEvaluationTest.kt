@@ -9,9 +9,9 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationR
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.interpretation.LabMeasurement
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 class LabEvaluationTest {
 
@@ -122,14 +122,14 @@ class LabEvaluationTest {
 
     //Tests for fun evaluateInvalidLabValue
     @Test
-    fun `Should evaluate to undetermined with specific message if lab value is null`(){
+    fun `Should evaluate to undetermined with specific message if lab value is null`() {
         val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, null, minValidDate)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedSpecificMessages).containsExactly("No measurement found for ${measurement.display}")
     }
 
     @Test
-    fun `Should evaluate to undetermined with specific message if lab value unit is different from default`(){
+    fun `Should evaluate to undetermined with specific message if lab value unit is different from default`() {
         val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(unit = LabUnit.GRAMS), minValidDate)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedSpecificMessages).containsExactly(

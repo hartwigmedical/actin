@@ -111,7 +111,8 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
     }
 
     private fun checkValidity(
-        mostRecent: LabValue?, measurement: LabMeasurement): Boolean {
+        mostRecent: LabValue?, measurement: LabMeasurement
+    ): Boolean {
         return isValid(mostRecent, measurement, minValidLabDate) && mostRecent?.date?.isAfter(minPassLabDate) == true
     }
 
