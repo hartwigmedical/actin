@@ -29,7 +29,7 @@ class WGSSummaryGenerator(
         return String.format(
             ApplicationConfig.LOCALE,
             "%s of %s (%s)",
-            molecular.type.display(),
+            molecular.experimentType.display(),
             patientRecord.patientId,
             date(molecular.date)
         )

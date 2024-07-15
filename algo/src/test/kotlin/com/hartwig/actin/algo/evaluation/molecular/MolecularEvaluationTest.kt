@@ -47,9 +47,9 @@ class MolecularEvaluationTest {
         combineAndAssert(
             EvaluationFactory.pass("pass combined", inclusionEvents = setOf(PANEL_EVENT, panelEvent2)),
             MolecularEvaluation(TestMolecularFactory.createMinimalTestMolecularRecord(), FAIL_ORANGE),
-            MolecularEvaluation(TestPanelRecordFactory.empty().copy(type = ExperimentType.ARCHER), PASS_PANEL),
+            MolecularEvaluation(TestPanelRecordFactory.empty().copy(experimentType = ExperimentType.PANEL), PASS_PANEL),
             MolecularEvaluation(
-                TestPanelRecordFactory.empty().copy(type = ExperimentType.GENERIC_PANEL),
+                TestPanelRecordFactory.empty().copy(experimentType = ExperimentType.PANEL),
                 PASS_PANEL.copy(inclusionMolecularEvents = setOf(panelEvent2))
             )
         )

@@ -8,7 +8,8 @@ const val AVL_PANEL = "AvL Panel"
 const val FREE_TEXT_PANEL = "Freetext"
 
 interface MolecularTest {
-    val type: ExperimentType
+    val experimentType: ExperimentType
+    val testType: String?
     val date: LocalDate?
     val drivers: Drivers
     val characteristics: MolecularCharacteristics
@@ -23,7 +24,8 @@ private const val NONE = "none"
 data class IHCMolecularTest(
     val test: PriorMolecularTest
 ) : MolecularTest {
-    override val type = ExperimentType.IHC
+    override val experimentType = ExperimentType.IHC
+    override val testType = null
     override val date = test.measureDate
     override val drivers = Drivers()
     override val characteristics = MolecularCharacteristics()
@@ -36,7 +38,8 @@ data class IHCMolecularTest(
 data class OtherPriorMolecularTest(
     val test: PriorMolecularTest
 ) : MolecularTest {
-    override val type = ExperimentType.OTHER
+    override val experimentType = ExperimentType.OTHER
+    override val testType = null
     override val date = test.measureDate
     override val drivers = Drivers()
     override val characteristics = MolecularCharacteristics()

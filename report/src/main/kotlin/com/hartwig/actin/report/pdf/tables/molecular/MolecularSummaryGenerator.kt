@@ -24,7 +24,7 @@ class MolecularSummaryGenerator(
 
         for (molecularTest in patientRecord.molecularHistory.molecularTests.sortedBy { it.date }) {
             if (molecularTest.hasSufficientQuality) {
-                if (molecularTest.type != ExperimentType.WHOLE_GENOME) {
+                if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     LOGGER.warn("Generating WGS results for non-WGS sample")
                 }
                 val wgsGenerator = WGSSummaryGenerator(patientRecord, molecularTest, cohorts, keyWidth, valueWidth)
@@ -32,7 +32,7 @@ class MolecularSummaryGenerator(
                 table.addCell(Cells.create(wgsGenerator.contents()))
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
-                noRecent.addCell(Cells.createKey(molecularTest.type.display() + " results"))
+                noRecent.addCell(Cells.createKey(molecularTest.experimentType.display() + " results"))
                 noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
                 table.addCell(Cells.create(noRecent))
             }

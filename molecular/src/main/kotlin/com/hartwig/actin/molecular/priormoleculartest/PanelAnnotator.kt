@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
+import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
@@ -30,6 +31,8 @@ import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+
+private const val TMB_HIGH_CUTOFF = 10.0
 
 class PanelAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
@@ -58,30 +61,7 @@ class PanelAnnotator(
             }
         }
 
-        val annotatedAmplifications = input.amplifications.map {
-            CopyNumber(
-                gene = it.gene,
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null,
-                isReportable = true,
-                event = it.display(),
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = ActionableEvidenceFactory.createNoEvidence(),
-                type = CopyNumberType.FULL_GAIN,
-                minCopies = 4,
-                maxCopies = 4
-            )
-        }.map {
-            val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(it))
-            val geneAlteration = GeneAlterationFactory.convertAlteration(it.gene, evidenceDatabase.geneAlterationForCopyNumber(it))
-            it.copy(
-                evidence = evidence,
-                geneRole = geneAlteration.geneRole,
-                proteinEffect = geneAlteration.proteinEffect,
-                isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
-            )
-        }
+        val annotatedAmplifications = input.amplifications.map { inferredCopyNumber(it) }.map { annotatedInferredCopyNumber(it) }
 
         val variantsByGene = annotatedVariants.groupBy { it.gene }
         val variantsWithDriverLikelihoodModel = variantsByGene.map {
@@ -98,23 +78,42 @@ class PanelAnnotator(
 
         return PanelRecord(
             panelExtraction = input,
-            type = experimentType(input.panelType),
+            experimentType = ExperimentType.PANEL,
+            testType = input.panelType,
             date = input.date,
             drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet(), copyNumbers = annotatedAmplifications.toSet()),
             characteristics = MolecularCharacteristics(
                 isMicrosatelliteUnstable = input.msi,
                 tumorMutationalBurden = input.tmb,
-                hasHighTumorMutationalBurden = input.tmb?.let { it > 10.0 }),
+                hasHighTumorMutationalBurden = input.tmb?.let { it > TMB_HIGH_CUTOFF }),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
         )
     }
 
-    private fun experimentType(panelType: String) = when {
-        panelType.contains("Archer") -> ExperimentType.ARCHER
-        panelType.contains("FoundationOne CDx") -> ExperimentType.FOUNDATION_CDX
-        panelType.contains("Liquid CDx") -> ExperimentType.LIQUID_CDX
-        else -> ExperimentType.GENERIC_PANEL
+    private fun annotatedInferredCopyNumber(it: CopyNumber): CopyNumber {
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(it))
+        val geneAlteration = GeneAlterationFactory.convertAlteration(it.gene, evidenceDatabase.geneAlterationForCopyNumber(it))
+        return it.copy(
+            evidence = evidence,
+            geneRole = geneAlteration.geneRole,
+            proteinEffect = geneAlteration.proteinEffect,
+            isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance
+        )
     }
+
+    private fun inferredCopyNumber(it: PanelAmplificationExtraction) = CopyNumber(
+        gene = it.gene,
+        geneRole = GeneRole.UNKNOWN,
+        proteinEffect = ProteinEffect.UNKNOWN,
+        isAssociatedWithDrugResistance = null,
+        isReportable = true,
+        event = it.display(),
+        driverLikelihood = DriverLikelihood.HIGH,
+        evidence = ActionableEvidenceFactory.createNoEvidence(),
+        type = CopyNumberType.FULL_GAIN,
+        minCopies = 6,
+        maxCopies = 6
+    )
 
     private fun externalAnnotation(it: PanelVariantExtraction): com.hartwig.actin.tools.variant.Variant? {
         val externalVariantAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)

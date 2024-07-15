@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
-import com.hartwig.actin.molecular.datamodel.panel.McgiExtraction
+import com.hartwig.actin.molecular.datamodel.panel.mcgi.McgiExtraction
 
 private const val PLOIDY_FACTOR = 3.0
 

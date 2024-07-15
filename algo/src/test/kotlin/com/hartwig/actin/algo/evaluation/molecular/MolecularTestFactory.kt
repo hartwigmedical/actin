@@ -105,11 +105,11 @@ internal object MolecularTestFactory {
     }
 
     fun withExperimentTypeAndContainingTumorCells(type: ExperimentType, containsTumorCells: Boolean): PatientRecord {
-        return withMolecularRecord(baseMolecular.copy(type = type, containsTumorCells = containsTumorCells))
+        return withMolecularRecord(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells))
     }
 
     fun withExperimentTypeAndCopyNumber(type: ExperimentType, copyNumber: CopyNumber): PatientRecord {
-        return withMolecularRecord(withDriver(copyNumber).molecularHistory.latestOrangeMolecularRecord()?.copy(type = type))
+        return withMolecularRecord(withDriver(copyNumber).molecularHistory.latestOrangeMolecularRecord()?.copy(experimentType = type))
     }
 
     fun withHlaAllele(hlaAllele: HlaAllele): PatientRecord {
@@ -135,7 +135,7 @@ internal object MolecularTestFactory {
     ): PatientRecord {
         return base.copy(
             molecularHistory = MolecularHistory(
-                listOf(baseMolecular.copy(type = type, containsTumorCells = containsTumorCells), priorTest)
+                listOf(baseMolecular.copy(experimentType = type, containsTumorCells = containsTumorCells), priorTest)
             )
         )
     }

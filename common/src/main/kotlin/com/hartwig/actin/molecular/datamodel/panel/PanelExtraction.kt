@@ -7,7 +7,7 @@ interface PanelExtraction {
     val tmb: Double?
     val msi: Boolean?
     val variants: List<PanelVariantExtraction>
-    val amplifications: List<McgiAmplification>
+    val amplifications: List<PanelAmplificationExtraction>
     val date: LocalDate?
 
     fun testedGenes(): Set<String>

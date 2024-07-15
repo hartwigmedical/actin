@@ -48,7 +48,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
         table.addCell(Cells.createEmpty())
         report.patientRecord.molecularHistory.latestOrangeMolecularRecord()?.let { molecular ->
             table.addCell(
-                Cells.createTitle("${molecular.type.display()} (${molecular.sampleId}, ${date(molecular.date)})")
+                Cells.createTitle("${molecular.experimentType.display()} (${molecular.sampleId}, ${date(molecular.date)})")
             )
             if (molecular.hasSufficientQualityButLowPurity()) {
                 table.addCell(Cells.createContentNoBorder("Low tumor purity (${molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"}) indicating that potential (subclonal) DNA aberrations might not have been detected & predicted tumor origin results may be less reliable"))

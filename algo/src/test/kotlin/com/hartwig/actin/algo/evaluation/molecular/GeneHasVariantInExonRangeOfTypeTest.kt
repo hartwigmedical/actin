@@ -56,7 +56,7 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
 )
 
 private val EMPTY_AVL_PANEL = TestPanelRecordFactory.empty().copy(
-    type = ExperimentType.GENERIC_PANEL, panelExtraction = GenericPanelExtraction(
+    experimentType = ExperimentType.PANEL, panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
         panelType = GenericPanelType.AVL.toString(),
         variants = emptyList(),

@@ -7,9 +7,7 @@ class GenericPanelExtractionTestRecord {
 
     @Test
     fun `Should identify tested genes`() {
-        val genericPanel = GenericPanelExtraction(
-            GenericPanelType.AVL.toString()
-        )
+        val genericPanel = GenericPanelExtraction(panelType = "AvL")
 
         assertThat(genericPanel.testedGenes()).isEqualTo(GENERIC_PANEL_ALWAYS_TESTED_GENES)
     }

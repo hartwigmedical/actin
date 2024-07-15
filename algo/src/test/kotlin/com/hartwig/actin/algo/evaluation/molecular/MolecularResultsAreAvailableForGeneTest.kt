@@ -39,7 +39,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
-                    ExperimentType.WHOLE_GENOME, true
+                    ExperimentType.HARTWIG_WHOLE_GENOME, true
                 )
             )
         )
@@ -51,7 +51,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
-                    ExperimentType.WHOLE_GENOME, false
+                    ExperimentType.HARTWIG_WHOLE_GENOME, false
                 )
             )
         )
@@ -63,7 +63,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
-                    ExperimentType.TARGETED, true
+                    ExperimentType.HARTWIG_TARGETED, true
                 )
             )
         )
@@ -75,7 +75,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
-                    ExperimentType.TARGETED, false
+                    ExperimentType.HARTWIG_TARGETED, false
                 )
             )
         )
@@ -86,7 +86,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.TARGETED, geneCopyNumber1)
+                MolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.HARTWIG_TARGETED, geneCopyNumber1)
             )
         )
     }
@@ -96,7 +96,7 @@ class MolecularResultsAreAvailableForGeneTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.TARGETED, geneCopyNumber2)
+                MolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.HARTWIG_TARGETED, geneCopyNumber2)
             )
         )
     }
@@ -107,7 +107,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-                    ExperimentType.WHOLE_GENOME,
+                    ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
                     OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 1", impliesIndeterminate = true))
                 )
@@ -121,7 +121,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-                    ExperimentType.WHOLE_GENOME,
+                    ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
                     IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "gene 1", impliesIndeterminate = false))
                 )
@@ -155,7 +155,7 @@ class MolecularResultsAreAvailableForGeneTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-                    ExperimentType.WHOLE_GENOME,
+                    ExperimentType.HARTWIG_WHOLE_GENOME,
                     false,
                     OtherPriorMolecularTest(MolecularTestFactory.priorMolecularTest(item = "gene 2", impliesIndeterminate = false))
                 )
@@ -212,7 +212,8 @@ class MolecularResultsAreAvailableForGeneTest {
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
-                            TestPanelRecordFactory.empty().copy(panelExtraction = GenericPanelExtraction(GenericPanelType.AVL.toString()))
+                            TestPanelRecordFactory.empty()
+                                .copy(panelExtraction = GenericPanelExtraction(panelType = GenericPanelType.AVL.toString()))
                         )
                     )
                 )

@@ -35,7 +35,7 @@ object TestMolecularFactory {
         return MolecularRecord(
             patientId = TestPatientFactory.TEST_PATIENT,
             sampleId = TestPatientFactory.TEST_SAMPLE,
-            type = ExperimentType.WHOLE_GENOME,
+            experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
             refGenomeVersion = RefGenomeVersion.V37,
             evidenceSource = "",
             externalTrialSource = "",

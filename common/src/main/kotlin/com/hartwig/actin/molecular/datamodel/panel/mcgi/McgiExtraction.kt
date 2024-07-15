@@ -1,22 +1,17 @@
-package com.hartwig.actin.molecular.datamodel.panel
+package com.hartwig.actin.molecular.datamodel.panel.mcgi
 
+import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelEvent
+import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
 
-data class McgiAmplification(val gene: String, val chromosome: String) : PanelEvent {
-    override fun impactsGene(gene: String): Boolean {
-        return gene == this.gene
-    }
-
-    override fun display(): String {
-        return "$gene chr$chromosome amplified"
-    }
-}
 
 data class McgiExtraction(
     override val panelType: String,
     override val date: LocalDate?,
     override val variants: List<PanelVariantExtraction>,
-    override val amplifications: List<McgiAmplification>,
+    override val amplifications: List<PanelAmplificationExtraction>,
     override val msi: Boolean?,
     override val tmb: Double?,
 ) : PanelExtraction {
