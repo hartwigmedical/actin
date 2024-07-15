@@ -13,19 +13,26 @@ import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
+import com.hartwig.actin.clinical.datamodel.Dosage
 import com.hartwig.actin.clinical.datamodel.Gender
 import com.hartwig.actin.clinical.datamodel.Intolerance
+import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.datamodel.Medication
 import com.hartwig.actin.clinical.datamodel.PatientDetails
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
+import com.hartwig.actin.clinical.datamodel.QTProlongatingRisk
 import com.hartwig.actin.clinical.datamodel.Surgery
+import com.hartwig.actin.clinical.datamodel.SurgeryStatus
 import com.hartwig.actin.clinical.datamodel.Toxicity
+import com.hartwig.actin.clinical.datamodel.ToxicitySource
 import com.hartwig.actin.clinical.datamodel.TumorDetails
 import com.hartwig.actin.clinical.datamodel.TumorStage
+import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.VitalFunction
+import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.util.json.Json
@@ -34,6 +41,7 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.FileReader
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 object HistoricClinicalDeserializer {
 
@@ -136,7 +144,13 @@ object HistoricClinicalDeserializer {
     private fun toTreatmentHistoryEntry(priorTumorTreatmentElement: JsonElement): TreatmentHistoryEntry {
         val priorTumorTreatment: JsonObject = priorTumorTreatmentElement.asJsonObject
         return TreatmentHistoryEntry(
-            treatments = extractTreatments(priorTumorTreatment)
+            treatments = extractTreatments(priorTumorTreatment),
+            startYear = null,
+            startMonth = null,
+            intents = null,
+            isTrial = false,
+            trialAcronym = null,
+            treatmentHistoryDetails = null
         )
     }
 
@@ -148,39 +162,161 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractPriorSecondPrimaries(clinical: JsonObject): List<PriorSecondPrimary> {
-        return listOf()
+        val priorSecondPrimaries: JsonArray = Json.array(clinical, "priorSecondPrimaries")
+        return priorSecondPrimaries.mapNotNull { toPriorSecondPrimary(it) }
+    }
+
+    private fun toPriorSecondPrimary(priorSecondPrimaryElement: JsonElement): PriorSecondPrimary {
+        val priorSecondPrimary: JsonObject = priorSecondPrimaryElement.asJsonObject
+        return PriorSecondPrimary(
+            tumorLocation = "",
+            tumorSubLocation = "",
+            tumorType = "",
+            tumorSubType = "",
+            doids = emptySet(),
+            diagnosedYear = null,
+            diagnosedMonth = null,
+            treatmentHistory = "",
+            lastTreatmentYear = null,
+            lastTreatmentMonth = null,
+            status = TumorStatus.UNKNOWN
+        )
     }
 
     private fun extractPriorOtherConditions(clinical: JsonObject): List<PriorOtherCondition> {
-        return listOf()
+        val priorOtherConditions: JsonArray = Json.array(clinical, "priorOtherConditions")
+        return priorOtherConditions.mapNotNull { toPriorOtherCondition(it) }
+    }
+
+    private fun toPriorOtherCondition(priorOtherConditionElement: JsonElement): PriorOtherCondition {
+        val priorOtherCondition: JsonObject = priorOtherConditionElement.asJsonObject
+        return PriorOtherCondition(
+            name = "",
+            year = null,
+            month = null,
+            doids = emptySet(),
+            category = "",
+            isContraindicationForTherapy = false
+        )
     }
 
     private fun extractPriorMolecularTest(clinical: JsonObject): List<PriorMolecularTest> {
-        return listOf()
+        val priorMolecularTests: JsonArray = Json.array(clinical, "priorMolecularTests")
+        return priorMolecularTests.mapNotNull { toPriorMolecularTest(it) }
+    }
+
+    private fun toPriorMolecularTest(priorMolecularTestElement: JsonElement): PriorMolecularTest {
+        val priorMolecularTest: JsonObject = priorMolecularTestElement.asJsonObject
+        return PriorMolecularTest(
+            test = "",
+            item = null,
+            measure = null,
+            measureDate = null,
+            scoreText = null,
+            scoreValuePrefix = null,
+            scoreValue = null,
+            scoreValueUnit = null,
+            impliesPotentialIndeterminateStatus = false
+        )
     }
 
     private fun extractComplications(clinical: JsonObject): List<Complication>? {
-        return listOf()
+        val complication: JsonArray? = Json.optionalArray(clinical, "complications")
+        return complication?.let { it -> it.mapNotNull { toComplication(it) } }
+    }
+
+    private fun toComplication(complicationElement: JsonElement): Complication {
+        val complication: JsonObject = complicationElement.asJsonObject
+        return Complication(
+            name = "",
+            categories = emptySet(),
+            year = null,
+            month = null
+        )
     }
 
     private fun extractLabValues(clinical: JsonObject): List<LabValue> {
-        return listOf()
+        val labValues: JsonArray = Json.array(clinical, "labValues")
+        return labValues.mapNotNull { toLabValue(it) }
+    }
+
+    private fun toLabValue(labValueElement: JsonElement): LabValue {
+        val labValue: JsonObject = labValueElement.asJsonObject
+        return LabValue(
+            date = LocalDate.of(1, 1, 1),
+            code = "",
+            name = "",
+            comparator = "",
+            value = 0.0,
+            unit = LabUnit.GRAMS_PER_MOLE,
+            refLimitLow = null,
+            refLimitUp = null,
+            isOutsideRef = null
+        )
     }
 
     private fun extractToxicities(clinical: JsonObject): List<Toxicity> {
-        return listOf()
+        val toxicities: JsonArray = Json.array(clinical, "toxicities")
+        return toxicities.mapNotNull { toToxicity(it) }
+    }
+
+    private fun toToxicity(toxicityElement: JsonElement): Toxicity {
+        val toxicity: JsonObject = toxicityElement.asJsonObject
+        return Toxicity(
+            name = "",
+            categories = emptySet(),
+            evaluatedDate = LocalDate.of(1, 1, 1),
+            source = ToxicitySource.EHR,
+            grade = null
+        )
     }
 
     private fun extractIntolerances(clinical: JsonObject): List<Intolerance> {
-        return listOf()
+        val intolerances: JsonArray = Json.array(clinical, "intolerances")
+        return intolerances.mapNotNull { toIntolerance(it) }
+    }
+
+    private fun toIntolerance(intoleranceElement: JsonElement): Intolerance {
+        val intolerance: JsonObject = intoleranceElement.asJsonObject
+        return Intolerance(
+            name = "",
+            doids = emptySet(),
+            category = null,
+            subcategories = null,
+            type = null,
+            clinicalStatus = null,
+            verificationStatus = null,
+            criticality = null,
+            treatmentCategories = null
+        )
     }
 
     private fun extractSurgeries(clinical: JsonObject): List<Surgery> {
-        return listOf()
+        val surgeries: JsonArray = Json.array(clinical, "surgeries")
+        return surgeries.mapNotNull { toSurgery(it) }
+    }
+
+    private fun toSurgery(surgeryElement: JsonElement): Surgery {
+        val surgery: JsonObject = surgeryElement.asJsonObject
+        return Surgery(
+            endDate = LocalDate.of(1, 1, 1),
+            status = SurgeryStatus.UNKNOWN
+        )
     }
 
     private fun extractBodyWeights(clinical: JsonObject): List<BodyWeight> {
-        return listOf()
+        val bodyWeights: JsonArray = Json.array(clinical, "bodyWeights")
+        return bodyWeights.mapNotNull { toBodyWeight(it) }
+    }
+
+    private fun toBodyWeight(bodyWeightElement: JsonElement): BodyWeight {
+        val bodyWeight: JsonObject = bodyWeightElement.asJsonObject
+        return BodyWeight(
+            date = LocalDateTime.of(1, 1, 1, 1, 1, 1),
+            value = 0.0,
+            unit = "",
+            valid = false
+        )
     }
 
     private fun extractBodyHeights(clinical: JsonObject): List<BodyHeight> {
@@ -188,15 +324,64 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractVitalFunctions(clinical: JsonObject): List<VitalFunction> {
-        return listOf()
+        val vitalFunctions: JsonArray = Json.array(clinical, "vitalFunctions")
+        return vitalFunctions.mapNotNull { toVitalFunction(it) }
+    }
+
+    private fun toVitalFunction(vitalFunctionElement: JsonElement): VitalFunction {
+        val vitalFunction: JsonObject = vitalFunctionElement.asJsonObject
+        return VitalFunction(
+            date = LocalDateTime.of(1, 1, 1, 1, 1, 1),
+            category = VitalFunctionCategory.OTHER,
+            subcategory = "",
+            value = 0.0,
+            unit = "",
+            valid = false
+        )
     }
 
     private fun extractBloodTransfusions(clinical: JsonObject): List<BloodTransfusion> {
-        return listOf()
+        val bloodTransfusions: JsonArray = Json.array(clinical, "bloodTransfusions")
+        return bloodTransfusions.mapNotNull { toBloodTransfusion(it) }
+    }
+
+    private fun toBloodTransfusion(bloodTransfusionElement: JsonElement): BloodTransfusion {
+        val bloodTransfusion: JsonObject = bloodTransfusionElement.asJsonObject
+        return BloodTransfusion(
+            date = LocalDate.of(1, 1, 1),
+            product = ""
+        )
     }
 
     private fun extractMedications(clinical: JsonObject): List<Medication>? {
-        return null
+        val medications: JsonArray? = Json.optionalArray(clinical, "medications")
+        return medications?.let { it -> it.mapNotNull { toMedication(it) } }
+    }
+
+    private fun toMedication(medicationElement: JsonElement): Medication {
+        val medication: JsonObject = medicationElement.asJsonObject
+        return Medication(
+            name = "",
+            status = null,
+            administrationRoute = null,
+            dosage = Dosage(
+                dosageMin = null,
+                dosageMax = null,
+                dosageUnit = null,
+                frequency = null,
+                frequencyUnit = null,
+                periodBetweenValue = null,
+                periodBetweenUnit = null,
+                ifNeeded = null
+            ),
+            startDate = null,
+            stopDate = null,
+            cypInteractions = emptyList(),
+            qtProlongatingRisk = QTProlongatingRisk.UNKNOWN,
+            atc = null,
+            isSelfCare = false,
+            isTrialMedication = false
+        )
     }
 
     private fun optionalDate(jsonDate: JsonObject): LocalDate? {
