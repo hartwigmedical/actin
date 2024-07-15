@@ -9,6 +9,7 @@ import org.junit.rules.TemporaryFolder
 
 private val REF_GENOME_FASTA = resourceOnClasspath("paver/ref_genome/ref_genome.fasta")
 private val ENSEMBL_DATA_DIR = resourceOnClasspath("paver/ensembl")
+private val DRIVER_GENE_PANEL = resourceOnClasspath("paver/DriverGenePanel.tsv")
 
 class PaverTest {
 
@@ -21,6 +22,7 @@ class PaverTest {
             ensemblDataDir = ENSEMBL_DATA_DIR,
             refGenomeFasta = REF_GENOME_FASTA,
             refGenomeVersion = "37",
+            driverGenePanel = DRIVER_GENE_PANEL,
             tempDir = tempDir.root.absolutePath
         )
 

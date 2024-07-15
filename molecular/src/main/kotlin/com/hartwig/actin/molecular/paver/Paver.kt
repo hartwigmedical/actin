@@ -36,6 +36,7 @@ class Paver(private val config: PaverConfig) {
             "-ensembl_data_dir", config.ensemblDataDir,
             "-ref_genome", config.refGenomeFasta,
             "-ref_genome_version", config.refGenomeVersion,
+            "-driver_gene_panel", config.driverGenePanel,
             "-output_dir", config.tempDir,
         ))
 
