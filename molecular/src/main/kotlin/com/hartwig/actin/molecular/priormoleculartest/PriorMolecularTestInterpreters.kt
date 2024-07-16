@@ -53,7 +53,7 @@ private fun isGeneric(): (PriorMolecularTest) -> Boolean =
     { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL }
 
 private fun isMcgi(): (PriorMolecularTest) -> Boolean =
-    { it.test.contains("CDx") }
+    { it.test.lowercase().startsWith("mcgi") }
 
 private class GenericPanelInterpreter(
     evidenceDatabase: EvidenceDatabase,
