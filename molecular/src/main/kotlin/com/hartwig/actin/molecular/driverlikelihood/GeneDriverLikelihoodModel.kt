@@ -18,9 +18,10 @@ class GeneDriverLikelihoodModel(private val dndsDatabase: DndsDatabase) {
                 ProteinEffect.LOSS_OF_FUNCTION_PREDICTED
             )
         }
+        val hasHotspot = variants.any { it.isHotspot }
         return if (variants.isEmpty()) {
             return null
-        } else if (hasGainOrLossOfFunction) {
+        } else if (hasGainOrLossOfFunction || hasHotspot) {
             return 1.0
         } else {
             handleVariantsOfUnknownSignificance(gene, geneRole, variants)

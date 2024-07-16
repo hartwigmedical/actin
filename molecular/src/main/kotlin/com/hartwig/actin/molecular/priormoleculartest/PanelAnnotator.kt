@@ -29,8 +29,6 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.pave.VariantTranscriptImpact
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
-import com.hartwig.serve.datamodel.range.KnownCodon
-import com.hartwig.serve.datamodel.range.KnownExon
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -55,9 +53,16 @@ class PanelAnnotator(
                     externalVariantAnnotation.position()
                 )
 
-                val (evidence, geneAlteration) = serveEvidence(it, externalVariantAnnotation)
+                val (evidence, serveGeneAlteration, geneAlteration) = serveEvidence(it, externalVariantAnnotation)
 
-                createVariantWithEvidence(it, evidence, geneAlteration, externalVariantAnnotation, transcriptImpactAnnotation)
+                createVariantWithEvidence(
+                    it,
+                    evidence,
+                    geneAlteration,
+                    serveGeneAlteration,
+                    externalVariantAnnotation,
+                    transcriptImpactAnnotation
+                )
             } else {
                 null
             }
@@ -138,7 +143,7 @@ class PanelAnnotator(
     private fun serveEvidence(
         it: PanelVariantExtraction,
         transcriptPositionAndVariationAnnotation: com.hartwig.actin.tools.variant.Variant
-    ): Pair<ActionableEvidence, GeneAlteration> {
+    ): Triple<ActionableEvidence, com.hartwig.serve.datamodel.common.GeneAlteration?, GeneAlteration> {
         val criteria = VariantMatchCriteria(
             isReportable = true,
             gene = it.gene,
@@ -150,16 +155,18 @@ class PanelAnnotator(
             codingEffect = codingEffect(transcriptPositionAndVariationAnnotation)
         )
         val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
+        val serveAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
         val geneAlteration = GeneAlterationFactory.convertAlteration(
-            it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
+            it.gene, serveAlteration
         )
-        return Pair(evidence, geneAlteration)
+        return Triple(evidence, serveAlteration, geneAlteration)
     }
 
     private fun createVariantWithEvidence(
         it: PanelVariantExtraction,
         evidence: ActionableEvidence,
         geneAlteration: GeneAlteration,
+        serveGeneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveAnnotation: VariantTranscriptImpact?
     ) = Variant(
@@ -171,7 +178,7 @@ class PanelAnnotator(
         geneRole = geneAlteration.geneRole,
         proteinEffect = geneAlteration.proteinEffect,
         isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-        isHotspot = geneAlteration is KnownHotspot || geneAlteration is KnownCodon || geneAlteration is KnownExon,
+        isHotspot = serveGeneAlteration is KnownHotspot,
         ref = transcriptAnnotation.ref(),
         alt = transcriptAnnotation.alt(),
         canonicalImpact = TranscriptImpact(

@@ -22,7 +22,7 @@ data class ReportConfiguration(
     val showOtherOncologicalHistoryInSummary: Boolean = true,
     val showPatientHeader: Boolean = true,
     val showRelevantNonOncologicalHistoryInSummary: Boolean = true,
-    val showApprovedTreatmentsInSummary: Boolean = false,
+    val showApprovedTreatmentsInSummary: Boolean = true,
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
 )
 

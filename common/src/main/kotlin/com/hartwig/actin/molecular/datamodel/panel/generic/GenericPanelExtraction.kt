@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
@@ -38,7 +39,7 @@ data class GenericPanelExtraction(
 
     private fun alwaysTestedGenes(): Set<String> {
         return when {
-            panelType.lowercase().contains("avl") -> GENERIC_PANEL_ALWAYS_TESTED_GENES
+            panelType == AVL_PANEL -> GENERIC_PANEL_ALWAYS_TESTED_GENES
             else -> emptySet()
         }
     }
