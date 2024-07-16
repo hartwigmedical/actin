@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
@@ -13,7 +14,6 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.junit.Test
 
 class MolecularResultsAreAvailableForGeneTest {
@@ -213,7 +213,7 @@ class MolecularResultsAreAvailableForGeneTest {
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
                             TestPanelRecordFactory.empty()
-                                .copy(panelExtraction = GenericPanelExtraction(panelType = GenericPanelType.AVL.toString()))
+                                .copy(panelExtraction = GenericPanelExtraction(panelType = AVL_PANEL))
                         )
                     )
                 )

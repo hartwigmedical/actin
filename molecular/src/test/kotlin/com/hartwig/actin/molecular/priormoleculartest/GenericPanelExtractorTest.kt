@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -32,7 +32,7 @@ class GenericPanelExtractorTest {
         val molecularTests = extractor.extract(priorMolecularTests)
 
         val expected = GenericPanelExtraction(
-            panelType = GenericPanelType.AVL.toString(),
+            panelType = "AVL",
             variants = listOf(PanelVariantExtraction(GENE, HGVS_CODING))
         )
         assertThat(molecularTests).containsExactly(expected)
@@ -44,7 +44,7 @@ class GenericPanelExtractorTest {
         val molecularTests = extractor.extract(priorMolecularTests)
 
         val expected = GenericPanelExtraction(
-            panelType = GenericPanelType.FREE_TEXT.toString(),
+            panelType = FREE_TEXT_PANEL,
             variants = emptyList(),
             fusions = listOf(GenericFusionExtraction(GENE_UP, GENE_DOWN))
         )
@@ -60,7 +60,7 @@ class GenericPanelExtractorTest {
         val molecularTests = extractor.extract(priorMolecularTests)
 
         val expected = GenericPanelExtraction(
-            panelType = GenericPanelType.FREE_TEXT.toString(),
+            panelType = FREE_TEXT_PANEL,
             variants = listOf(
                 PanelVariantExtraction(GENE, HGVS_CODING),
                 PanelVariantExtraction(GENE, HGVS_PROTEIN)
@@ -91,7 +91,7 @@ class GenericPanelExtractorTest {
         val molecularTests = extractor.extract(priorMolecularTests)
 
         val expected = GenericPanelExtraction(
-            panelType = GenericPanelType.FREE_TEXT.toString(),
+            panelType = FREE_TEXT_PANEL,
             genesWithNegativeResults = setOf(GENE)
         )
         assertThat(molecularTests).containsExactly(expected)

@@ -37,9 +37,9 @@ data class GenericPanelExtraction(
     }
 
     private fun alwaysTestedGenes(): Set<String> {
-        return when (panelType) {
-            GenericPanelType.FREE_TEXT.toString() -> emptySet()
-            else -> GENERIC_PANEL_ALWAYS_TESTED_GENES
+        return when {
+            panelType.lowercase().contains("avl") -> GENERIC_PANEL_ALWAYS_TESTED_GENES
+            else -> emptySet()
         }
     }
 

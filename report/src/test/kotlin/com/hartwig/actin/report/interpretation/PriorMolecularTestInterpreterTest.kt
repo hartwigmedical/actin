@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
@@ -11,7 +12,6 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -79,7 +79,7 @@ class PriorMolecularTestInterpreterTest {
                     TestPanelRecordFactory.empty().copy(
                         panelExtraction =
                         GenericPanelExtraction(
-                            panelType = GenericPanelType.AVL.toString(),
+                            panelType = AVL_PANEL,
                             variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
                             fusions = listOf(GenericFusionExtraction("EML4", "ALK")),
                             exonDeletions = listOf(GenericExonDeletionExtraction("EGFR", 19)),

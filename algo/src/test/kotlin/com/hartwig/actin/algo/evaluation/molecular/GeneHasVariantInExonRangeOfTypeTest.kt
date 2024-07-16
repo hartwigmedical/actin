@@ -3,8 +3,10 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.TestPatientFactory
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TEST_DATE
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
@@ -14,7 +16,6 @@ import com.hartwig.actin.molecular.datamodel.driver.TestVariantFactory
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,7 +27,7 @@ private const val TARGET_GENE = "gene A"
 private val FREETEXT_PANEL_WITH_EXON_DELETION = TestPanelRecordFactory.empty().copy(
     panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
-        panelType = GenericPanelType.FREE_TEXT.toString(),
+        panelType = FREE_TEXT_PANEL,
         variants = emptyList(),
         fusions = emptyList(),
         exonDeletions = listOf(
@@ -44,7 +45,7 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
     ),
     panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
-        panelType = GenericPanelType.FREE_TEXT.toString(),
+        panelType = FREE_TEXT_PANEL,
         variants = listOf(
             PanelVariantExtraction(
                 gene = TARGET_GENE,
@@ -58,7 +59,7 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
 private val EMPTY_AVL_PANEL = TestPanelRecordFactory.empty().copy(
     experimentType = ExperimentType.PANEL, panelExtraction = GenericPanelExtraction(
         date = TEST_DATE,
-        panelType = GenericPanelType.AVL.toString(),
+        panelType = AVL_PANEL,
         variants = emptyList(),
         fusions = emptyList()
     )
