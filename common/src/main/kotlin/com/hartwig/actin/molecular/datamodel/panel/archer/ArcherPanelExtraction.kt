@@ -14,7 +14,8 @@ data class ArcherPanelExtraction(
     override val amplifications: List<PanelAmplificationExtraction> = emptyList(),
     override val date: LocalDate? = null,
     override val msi: Boolean? = null,
-    override val tmb: Double? = null
+    override val tmb: Double? = null,
+    override val extractionClass: String = ArcherPanelExtraction::class.java.simpleName
 ) : PanelExtraction {
 
     override val panelType = "Archer"

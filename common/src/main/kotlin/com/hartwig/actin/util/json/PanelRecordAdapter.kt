@@ -10,6 +10,8 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
+import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
+import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.mcgi.McgiExtraction
 import java.time.LocalDate
 
@@ -28,10 +30,15 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
     override fun read(input: JsonReader): PanelRecord {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
         val experimentType = ExperimentType.valueOf(jsonObject.get("experimentType").asString)
-        val testType = jsonObject.get("testType").asString
-
-        val panelExtraction: PanelExtraction = when (experimentType) {
-            else -> gson.fromJson(jsonObject.get("panelExtraction"), McgiExtraction::class.java)
+        val testTypeJson = jsonObject.get("testType")
+        val testType = if (testTypeJson.isJsonNull) null else testTypeJson.asString
+        val panelExtractionJson = jsonObject.get("panelExtraction")
+        val panelExtractionClass = panelExtractionJson.asJsonObject.get("extractionClass").asString
+        val panelExtraction: PanelExtraction = when (panelExtractionClass) {
+            ArcherPanelExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, ArcherPanelExtraction::class.java)
+            McgiExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, ArcherPanelExtraction::class.java)
+            GenericPanelExtraction::class.java.simpleName -> gson.fromJson(panelExtractionJson, GenericPanelExtraction::class.java)
+            else -> throw IllegalArgumentException("Unsupported panel extraction $panelExtractionClass")
         }
 
         return PanelRecord(

@@ -14,6 +14,7 @@ data class McgiExtraction(
     override val amplifications: List<PanelAmplificationExtraction>,
     override val msi: Boolean?,
     override val tmb: Double?,
+    override val extractionClass: String = McgiExtraction::class.java.simpleName
 ) : PanelExtraction {
     override fun testedGenes(): Set<String> {
         return (variants.map { it.gene } + amplifications.map { it.gene }).toSet()

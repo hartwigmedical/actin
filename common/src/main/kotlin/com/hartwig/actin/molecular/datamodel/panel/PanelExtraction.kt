@@ -9,6 +9,7 @@ interface PanelExtraction {
     val variants: List<PanelVariantExtraction>
     val amplifications: List<PanelAmplificationExtraction>
     val date: LocalDate?
+    val extractionClass: String
 
     fun testedGenes(): Set<String>
     fun events(): Set<PanelEvent>

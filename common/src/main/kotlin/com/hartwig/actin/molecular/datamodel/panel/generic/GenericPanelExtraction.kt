@@ -17,7 +17,8 @@ data class GenericPanelExtraction(
     override val variants: List<PanelVariantExtraction> = emptyList(),
     override val date: LocalDate? = null,
     override val tmb: Double? = null,
-    override val msi: Boolean? = null
+    override val msi: Boolean? = null,
+    override val extractionClass: String = GenericPanelExtraction::class.java.simpleName
 ) : PanelExtraction {
     override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + alwaysTestedGenes() + genesWithNegativeResults
