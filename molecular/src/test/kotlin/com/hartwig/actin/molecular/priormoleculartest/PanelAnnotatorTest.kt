@@ -13,7 +13,10 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.molecular.paver.PaveCodingEffect
+import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
+import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
@@ -43,6 +46,30 @@ private val TRANSCRIPT_ANNOTATION =
     ImmutableVariant.builder().alt(ALT).ref(REF).transcript(TRANSCRIPT).chromosome(CHROMOSOME).position(POSITION)
         .hgvsProteinImpact(HGVS_PROTEIN).isSpliceRegion(false)
         .type(VariantType.SNV).codingEffect(CodingEffect.MISSENSE).isCanonical(true).build()
+private val PAVE_QUERY = PaveQuery(
+    id = "0",
+    chromosome = CHROMOSOME,
+    position = POSITION,
+    ref = REF,
+    alt = ALT,
+)
+
+private val PAVE_ANNOTATION = PaveResponse(
+    id = "0",
+    impact = PaveImpact(
+        gene = GENE,
+        transcript = TRANSCRIPT,
+        canonicalEffect = "canonicalEffect",
+        canonicalCodingEffect = PaveCodingEffect.MISSENSE,
+        spliceRegion = false,
+        hgvsCodingImpact = HGVS_CODING,
+        hgvsProteinImpact = HGVS_PROTEIN,
+        worstCodingEffect = PaveCodingEffect.MISSENSE,
+        genesAffected = 1,
+
+        ),
+    transcriptImpact = emptyList()
+)
 
 class PanelAnnotatorTest {
 
@@ -62,6 +89,7 @@ class PanelAnnotatorTest {
 
     private val paver = mockk<Paver> {
         every { run(any<List<PaveQuery>>()) } returns emptyList()
+        every { run(listOf(PAVE_QUERY)) } returns listOf(PAVE_ANNOTATION)
     }
 
     private val annotator = PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)

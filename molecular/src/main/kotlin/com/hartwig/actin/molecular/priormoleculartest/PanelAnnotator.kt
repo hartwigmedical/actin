@@ -42,65 +42,7 @@ class PanelAnnotator(
     MolecularAnnotator<PanelExtraction, PanelRecord> {
 
     override fun annotate(input: PanelExtraction): PanelRecord {
-        val v1 = annotatev1(input)
-        val v2 = annotatev2(input)
-
-        LOGGER.info("v1 {}", v1)
-        LOGGER.info("v2 {}", v2)
-        if (v1 != v2) {
-            LOGGER.error("v1 and v2 annotations are not equal")
-        } else {
-            LOGGER.info("wow v1 and v2 annotations are equal")
-        }
-
-        return v1
-    }
-
-    private fun annotatev1(input: PanelExtraction): PanelRecord {
-        val annotatedVariants = input.variants.mapNotNull {
-            val externalVariantAnnotation = externalAnnotation(it)
-
-            if (externalVariantAnnotation != null) {
-                val transcriptImpactAnnotation = paveLite.run(
-                    it.gene,
-                    externalVariantAnnotation.transcript(),
-                    externalVariantAnnotation.position()
-                )
-
-                val (evidence, geneAlteration) = serveEvidence(it, externalVariantAnnotation)
-
-                createVariantWithEvidence(it, evidence, geneAlteration, externalVariantAnnotation, transcriptImpactAnnotation)
-            } else {
-                null
-            }
-        }
-
-        val variantsByGene = annotatedVariants.groupBy { it.gene }
-        val variantsWithDriverLikelihoodModel = variantsByGene.map {
-            val geneRole = it.value.map { variant -> variant.geneRole }.first()
-            val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value)
-            likelihood to it.value
-        }.flatMap {
-            it.second.map { variant ->
-                variant.copy(
-                    driverLikelihood = DriverLikelihood.from(it.first)
-                )
-            }
-        }
-
-        return PanelRecord(
-            panelExtraction = input,
-            type = experimentType,
-            date = input.date,
-            drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet()),
-            characteristics = MolecularCharacteristics(),
-            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
-        )
-    }
-
-    private fun annotatev2(input: PanelExtraction): PanelRecord {
         val inputMap = input.variants.withIndex().associate { it.index.toString() to it.value }
-
         val transvarAnnotationsMap = inputMap.mapValues { (_, value) -> externalAnnotation(value) }
             .mapNotNull { if (it.value != null) it.key to it.value!! else null }
             .toMap()
@@ -134,7 +76,7 @@ class PanelAnnotator(
                     transvarAnnotation.position()
                 )
 
-                createVariantWithEvidencev2(
+                createVariantWithEvidence(
                     extraction,
                     evidence,
                     geneAlteration,
@@ -207,38 +149,6 @@ class PanelAnnotator(
     }
 
     private fun createVariantWithEvidence(
-        it: PanelVariantExtraction,
-        evidence: ActionableEvidence,
-        geneAlteration: GeneAlteration,
-        transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
-        paveLiteAnnotation: VariantTranscriptImpact?
-    ) = Variant(
-        isReportable = true,
-        event = "${it.gene} ${it.hgvsCodingImpact}",
-        driverLikelihood = DriverLikelihood.LOW,
-        evidence = evidence,
-        gene = it.gene,
-        geneRole = geneAlteration.geneRole,
-        proteinEffect = geneAlteration.proteinEffect,
-        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-        isHotspot = geneAlteration is KnownHotspot,
-        ref = transcriptAnnotation.ref(),
-        alt = transcriptAnnotation.alt(),
-        canonicalImpact = TranscriptImpact(
-            transcriptId = transcriptAnnotation.transcript(),
-            hgvsCodingImpact = it.hgvsCodingImpact,
-            hgvsProteinImpact = transcriptAnnotation.hgvsProteinImpact() ?: "",
-            isSpliceRegion = transcriptAnnotation.isSpliceRegion,
-            affectedExon = paveLiteAnnotation?.affectedExon(),
-            affectedCodon = paveLiteAnnotation?.affectedCodon(),
-            codingEffect = codingEffect(transcriptAnnotation),
-        ),
-        chromosome = transcriptAnnotation.chromosome(),
-        position = transcriptAnnotation.position(),
-        type = variantType2(transcriptAnnotation)
-    )
-
-    private fun createVariantWithEvidencev2(
         it: PanelVariantExtraction,
         evidence: ActionableEvidence,
         geneAlteration: GeneAlteration,
