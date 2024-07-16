@@ -63,6 +63,14 @@ object Json {
         return obj.get(field).asInt
     }
 
+    fun nullableDouble(obj: JsonObject, field: String): Double? {
+        return if (!isNull(obj, field)) double(obj, field) else null
+    }
+
+    fun double(obj: JsonObject, field: String): Double {
+        return obj.get(field).asDouble
+    }
+
     fun optionalBool(obj: JsonObject, field: String): Boolean? {
         return if (obj.has(field)) nullableBool(obj, field) else null
     }

@@ -19,6 +19,7 @@ import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
 import com.hartwig.actin.clinical.datamodel.Medication
+import com.hartwig.actin.clinical.datamodel.MedicationStatus
 import com.hartwig.actin.clinical.datamodel.PatientDetails
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
@@ -89,29 +90,29 @@ object HistoricClinicalDeserializer {
         return PatientDetails(
             gender = Gender.valueOf(Json.string(patient, "gender")),
             birthYear = Json.integer(patient, "birthYear"),
-            registrationDate = date(Json.`object`(patient, "registrationDate")),
-            questionnaireDate = optionalDate(Json.`object`(patient, "questionnaireDate"))
+            registrationDate = date(patient, "registrationDate"),
+            questionnaireDate = nullableDate(patient, "questionnaireDate")
         )
     }
 
     private fun extractTumorDetails(clinical: JsonObject): TumorDetails {
         val tumor: JsonObject = Json.`object`(clinical, "tumor")
         return TumorDetails(
-            primaryTumorLocation = Json.optionalString(tumor, "primaryTumorLocation"),
-            primaryTumorSubLocation = Json.optionalString(tumor, "primaryTumorSubLocation"),
-            primaryTumorType = Json.optionalString(tumor, "primaryTumorType"),
-            primaryTumorSubType = Json.optionalString(tumor, "primaryTumorSubType"),
-            primaryTumorExtraDetails = Json.optionalString(tumor, "primaryTumorExtraDetails"),
-            doids = Json.array(tumor, "doids").map { it.asString }.toCollection(Sets.newHashSet()),
-            stage = Json.optionalString(tumor, "stage")?.let { TumorStage.valueOf(it) },
+            primaryTumorLocation = Json.nullableString(tumor, "primaryTumorLocation"),
+            primaryTumorSubLocation = Json.nullableString(tumor, "primaryTumorSubLocation"),
+            primaryTumorType = Json.nullableString(tumor, "primaryTumorType"),
+            primaryTumorSubType = Json.nullableString(tumor, "primaryTumorSubType"),
+            primaryTumorExtraDetails = Json.nullableString(tumor, "primaryTumorExtraDetails"),
+            doids = Json.nullableArray(tumor, "doids")?.let { it -> it.map { it.asString }.toCollection(Sets.newHashSet()) },
+            stage = Json.nullableString(tumor, "stage")?.let { TumorStage.valueOf(it) },
             derivedStages = null, // TODO (KD): Could reuse TumorStageDeriver here.
-            hasMeasurableDisease = Json.optionalBool(tumor, "hasMeasurableDisease"),
-            hasBrainLesions = Json.optionalBool(tumor, "hasBrainLesions"),
+            hasMeasurableDisease = Json.nullableBool(tumor, "hasMeasurableDisease"),
+            hasBrainLesions = Json.nullableBool(tumor, "hasBrainLesions"),
             brainLesionsCount = null,
-            hasActiveBrainLesions = Json.optionalBool(tumor, "hasActiveBrainLesions"),
-            hasCnsLesions = Json.optionalBool(tumor, "hasCnsLesions"),
+            hasActiveBrainLesions = Json.nullableBool(tumor, "hasActiveBrainLesions"),
+            hasCnsLesions = Json.nullableBool(tumor, "hasCnsLesions"),
             cnsLesionsCount = null,
-            hasActiveCnsLesions = Json.optionalBool(tumor, "hasActiveCnsLesions"),
+            hasActiveCnsLesions = Json.nullableBool(tumor, "hasActiveCnsLesions"),
             hasBoneLesions = Json.nullableBool(tumor, "hasBoneLesions"),
             boneLesionsCount = null,
             hasLiverLesions = Json.nullableBool(tumor, "hasLiverLesions"),
@@ -120,8 +121,8 @@ object HistoricClinicalDeserializer {
             lungLesionsCount = null,
             hasLymphNodeLesions = null,
             lymphNodeLesionsCount = null,
-            otherLesions = Json.optionalStringList(tumor, "otherLesions"),
-            biopsyLocation = Json.optionalString(tumor, "biopsyLocation")
+            otherLesions = Json.nullableStringList(tumor, "otherLesions"),
+            biopsyLocation = Json.nullableString(tumor, "biopsyLocation")
         )
     }
 
@@ -243,15 +244,15 @@ object HistoricClinicalDeserializer {
     private fun toLabValue(labValueElement: JsonElement): LabValue {
         val labValue: JsonObject = labValueElement.asJsonObject
         return LabValue(
-            date = LocalDate.of(1, 1, 1),
-            code = "",
-            name = "",
-            comparator = "",
-            value = 0.0,
-            unit = LabUnit.GRAMS_PER_MOLE,
-            refLimitLow = null,
-            refLimitUp = null,
-            isOutsideRef = null
+            date = date(labValue, "date"),
+            code = Json.string(labValue, "code"),
+            name = Json.string(labValue, "name"),
+            comparator = Json.string(labValue, "comparator"),
+            value = Json.double(labValue, "value"),
+            unit = LabUnit.valueOf(Json.string(labValue, "unit")),
+            refLimitLow = Json.nullableDouble(labValue, "refLimitLow"),
+            refLimitUp = Json.nullableDouble(labValue, "refLimitUp"),
+            isOutsideRef = Json.nullableBool(labValue, "isOutsideRef")
         )
     }
 
@@ -279,15 +280,15 @@ object HistoricClinicalDeserializer {
     private fun toIntolerance(intoleranceElement: JsonElement): Intolerance {
         val intolerance: JsonObject = intoleranceElement.asJsonObject
         return Intolerance(
-            name = "",
-            doids = emptySet(),
-            category = null,
-            subcategories = null,
-            type = null,
-            clinicalStatus = null,
-            verificationStatus = null,
-            criticality = null,
-            treatmentCategories = null
+            name = Json.string(intolerance, "name"),
+            doids = HashSet(Json.stringList(intolerance, "doids")),
+            category = Json.nullableString(intolerance, "category"),
+            subcategories = Json.nullableStringList(intolerance, "subcategories")?.let { HashSet(it) },
+            type = Json.nullableString(intolerance, "type"),
+            clinicalStatus = Json.nullableString(intolerance, "clinicalStatus"),
+            verificationStatus = Json.nullableString(intolerance, "verificationStatus"),
+            criticality = Json.nullableString(intolerance, "criticality"),
+            treatmentCategories = null // TODO (KD) See if we can populate this field for older datamodels.
         )
     }
 
@@ -312,14 +313,15 @@ object HistoricClinicalDeserializer {
     private fun toBodyWeight(bodyWeightElement: JsonElement): BodyWeight {
         val bodyWeight: JsonObject = bodyWeightElement.asJsonObject
         return BodyWeight(
-            date = LocalDateTime.of(1, 1, 1, 1, 1, 1),
-            value = 0.0,
-            unit = "",
-            valid = false
+            date = toDateTime(date(bodyWeight, "date")),
+            value = Json.double(bodyWeight, "value"),
+            unit = Json.string(bodyWeight, "unit"),
+            valid = false // TODO (KD): See if we can populate this value.
         )
     }
 
     private fun extractBodyHeights(clinical: JsonObject): List<BodyHeight> {
+        // TODO (KD): See if we need to populate this field.
         return listOf()
     }
 
@@ -331,12 +333,12 @@ object HistoricClinicalDeserializer {
     private fun toVitalFunction(vitalFunctionElement: JsonElement): VitalFunction {
         val vitalFunction: JsonObject = vitalFunctionElement.asJsonObject
         return VitalFunction(
-            date = LocalDateTime.of(1, 1, 1, 1, 1, 1),
-            category = VitalFunctionCategory.OTHER,
-            subcategory = "",
-            value = 0.0,
-            unit = "",
-            valid = false
+            date = toDateTime(date(vitalFunction, "date")),
+            category = VitalFunctionCategory.valueOf(Json.string(vitalFunction, "category")),
+            subcategory = Json.string(vitalFunction, "subcategory"),
+            value = Json.double(vitalFunction, "value"),
+            unit = Json.string(vitalFunction, "unit"),
+            valid = false // TODO (KD): See if we can populate this field.
         )
     }
 
@@ -361,37 +363,42 @@ object HistoricClinicalDeserializer {
     private fun toMedication(medicationElement: JsonElement): Medication {
         val medication: JsonObject = medicationElement.asJsonObject
         return Medication(
-            name = "",
-            status = null,
-            administrationRoute = null,
+            name = Json.string(medication, "name"),
+            status = Json.nullableString(medication, "status")?.let { MedicationStatus.valueOf(it) },
+            administrationRoute = null, // TODO (KD): See if we can populate.
             dosage = Dosage(
-                dosageMin = null,
-                dosageMax = null,
-                dosageUnit = null,
-                frequency = null,
-                frequencyUnit = null,
-                periodBetweenValue = null,
-                periodBetweenUnit = null,
-                ifNeeded = null
+                dosageMin = Json.nullableDouble(medication, "dosageMin"),
+                dosageMax = Json.nullableDouble(medication, "dosageMax"),
+                dosageUnit = Json.nullableString(medication, "dosageUnit"),
+                frequency = Json.nullableDouble(medication, "frequency"),
+                frequencyUnit = Json.nullableString(medication, "frequencyUnit"),
+                periodBetweenValue = null, // TODO (KD): See if we can populate
+                periodBetweenUnit = null, // TODO (KD): See if we can populate
+                ifNeeded = Json.nullableBool(medication, "ifNeeded")
             ),
-            startDate = null,
-            stopDate = null,
-            cypInteractions = emptyList(),
-            qtProlongatingRisk = QTProlongatingRisk.UNKNOWN,
-            atc = null,
-            isSelfCare = false,
-            isTrialMedication = false
+            startDate = nullableDate(medication, "startDate"),
+            stopDate = nullableDate(medication, "stopDate"),
+            cypInteractions = emptyList(), // TODO (KD): See if we can populate
+            qtProlongatingRisk = QTProlongatingRisk.UNKNOWN, // TODO (KD): See if we can populate.
+            atc = null, // TODO (KD): See if we can populate
+            isSelfCare = false, // TODO (KD): See if we can populate
+            isTrialMedication = false // TODO (KD): See if we can populate.
         )
     }
 
-    private fun optionalDate(jsonDate: JsonObject): LocalDate? {
-        if (jsonDate.isJsonNull) {
+    private fun nullableDate(obj: JsonObject, field: String): LocalDate? {
+        if (obj.get(field).isJsonNull) {
             return null;
         }
-        return date(jsonDate)
+        return date(obj, field)
     }
 
-    private fun date(jsonDate: JsonObject): LocalDate {
+    private fun date(obj: JsonObject, field: String): LocalDate {
+        val jsonDate: JsonObject = Json.`object`(obj, field)
         return LocalDate.of(Json.integer(jsonDate, "year"), Json.integer(jsonDate, "month"), Json.integer(jsonDate, "day"))
+    }
+
+    private fun toDateTime(date: LocalDate): LocalDateTime {
+        return LocalDateTime.of(date.year, date.month, date.dayOfMonth, 0, 0)
     }
 }
