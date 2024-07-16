@@ -28,7 +28,7 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
                 LOGGER.warn("Clinical file does not exist: {}", clinicalJson)
             } else {
                 val clinical = HistoricClinicalDeserializer.deserialize(clinicalJson)
-                LOGGER.info(clinical)
+                LOGGER.info("  Produced {}", clinical)
             }
 
             if (!molecularJson.exists()) {
