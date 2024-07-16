@@ -9,8 +9,8 @@ import com.hartwig.actin.molecular.datamodel.panel.mcgi.McgiExtraction
 
 class McgiExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
     override fun extract(input: List<PriorMolecularTest>): List<PanelExtraction> {
-        return input.groupBy { it.measureDate }
-            .map { (date, results) ->
+        return input.groupBy { it.test to it.measureDate }
+            .map { (grouping, results) ->
                 val variants =
                     results.filter { it.scoreText == "variant" }.map { PanelVariantExtraction(it.item!!, it.measure!!) }
                 val amplification =
@@ -18,8 +18,8 @@ class McgiExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
                 val msi = results.filter { it.scoreText == "msi" }.map { it.measure?.toBoolean() }.firstOrNull()
                 val tmb = results.filter { it.scoreText == "tmb" }.map { it.measure?.toDouble() }.firstOrNull()
                 McgiExtraction(
-                    panelType = results.map { it.test }.first(),
-                    date = date,
+                    panelType = grouping.first,
+                    date = grouping.second,
                     variants = variants,
                     amplifications = amplification,
                     msi = msi,

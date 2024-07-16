@@ -25,7 +25,7 @@ class MolecularTestAdapter(private val gson: Gson) : TypeAdapter<MolecularTest>(
 
     override fun read(input: JsonReader): MolecularTest? {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
-        return when (ExperimentType.valueOf(jsonObject.get("type").asString)) {
+        return when (ExperimentType.valueOf(jsonObject.get("experimentType").asString)) {
             ExperimentType.HARTWIG_WHOLE_GENOME -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.HARTWIG_TARGETED -> gson.fromJson(jsonObject, MolecularRecord::class.java)
             ExperimentType.IHC -> gson.fromJson(jsonObject, IHCMolecularTest::class.java)

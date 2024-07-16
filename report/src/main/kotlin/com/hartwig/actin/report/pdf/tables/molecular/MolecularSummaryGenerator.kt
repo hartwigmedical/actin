@@ -2,8 +2,8 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.molecular.datamodel.ExperimentType
-import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
+import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -12,8 +12,8 @@ import org.apache.logging.log4j.LogManager
 
 class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
-    private val molecular: MolecularTest?,
-    private val cohorts: List<EvaluatedCohort>, private val keyWidth: Float, private val valueWidth: Float
+    private val cohorts: List<EvaluatedCohort>,
+    private val keyWidth: Float, private val valueWidth: Float
 ) : TableGenerator {
     override fun title(): String {
         return "Recent molecular results"
@@ -23,7 +23,7 @@ class MolecularSummaryGenerator(
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
 
         for (molecularTest in patientRecord.molecularHistory.molecularTests.sortedBy { it.date }) {
-            if (molecularTest.hasSufficientQuality) {
+            if (molecularTest.hasSufficientQuality && molecularTest.experimentType != ExperimentType.IHC) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     LOGGER.warn("Generating WGS results for non-WGS sample")
                 }
@@ -39,10 +39,10 @@ class MolecularSummaryGenerator(
         }
 
 
-        /*  val priorMolecularResultGenerator =
-              PriorMolecularResultGenerator(patientRecord.molecularHistory, keyWidth, valueWidth, PriorMolecularTestInterpreter())
-          table.addCell(Cells.createEmpty())
-          table.addCell(Cells.create(priorMolecularResultGenerator.contents()))*/
+        val priorMolecularResultGenerator =
+            PriorMolecularResultGenerator(patientRecord.molecularHistory, keyWidth, valueWidth, PriorMolecularTestInterpreter())
+        table.addCell(Cells.createEmpty())
+        table.addCell(Cells.create(priorMolecularResultGenerator.contents()))
         return table
     }
 

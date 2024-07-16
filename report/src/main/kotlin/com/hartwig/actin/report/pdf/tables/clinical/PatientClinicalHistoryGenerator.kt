@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
@@ -137,7 +136,7 @@ class PatientClinicalHistoryGenerator(
 
         private fun extractTreatmentString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
             val intentNames = treatmentHistoryEntry.intents
-                ?.filter { it != Intent.PALLIATIVE }
+         //       ?.filter { it != Intent.PALLIATIVE }
                 ?.map { it.name.lowercase() }
 
             val intentString = when {

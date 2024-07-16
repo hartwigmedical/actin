@@ -29,6 +29,8 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.pave.VariantTranscriptImpact
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
+import com.hartwig.serve.datamodel.range.KnownCodon
+import com.hartwig.serve.datamodel.range.KnownExon
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -169,7 +171,7 @@ class PanelAnnotator(
         geneRole = geneAlteration.geneRole,
         proteinEffect = geneAlteration.proteinEffect,
         isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-        isHotspot = geneAlteration is KnownHotspot,
+        isHotspot = geneAlteration is KnownHotspot || geneAlteration is KnownCodon || geneAlteration is KnownExon,
         ref = transcriptAnnotation.ref(),
         alt = transcriptAnnotation.alt(),
         canonicalImpact = TranscriptImpact(

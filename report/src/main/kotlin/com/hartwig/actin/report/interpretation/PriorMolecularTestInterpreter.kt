@@ -21,10 +21,6 @@ class PriorMolecularTestInterpreter {
 
     fun interpret(history: MolecularHistory): List<PriorMolecularTestInterpretation> {
         history.allIHCTests().forEach(::interpret)
-        history.allArcherPanels().forEach(::interpret)
-        history.allGenericPanels().forEach(::interpret)
-        history.allMcgiPanels().forEach(::interpret)
-        history.allOtherTests().forEach(::interpret)
         return interpretationBuilder.build()
     }
 

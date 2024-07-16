@@ -88,7 +88,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         return listOfNotNull(
             clinicalHistoryGenerator,
             if (report.config.showMolecularSummary) {
-                MolecularSummaryGenerator(report.patientRecord, molecular, cohorts, keyWidth, valueWidth)
+                MolecularSummaryGenerator(report.patientRecord, cohorts, keyWidth, valueWidth)
             } else null,
             if (report.config.showEligibleSOCTreatmentSummary) {
                 SOCEligibleApprovedTreatmentGenerator(report, contentWidth)
