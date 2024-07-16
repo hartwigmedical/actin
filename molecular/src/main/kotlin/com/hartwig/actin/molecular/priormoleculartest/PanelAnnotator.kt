@@ -20,6 +20,10 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
+import com.hartwig.actin.molecular.paver.PaveCodingEffect
+import com.hartwig.actin.molecular.paver.PaveQuery
+import com.hartwig.actin.molecular.paver.PaveResponse
+import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.pave.VariantTranscriptImpact
 import com.hartwig.actin.tools.variant.VariantAnnotator
@@ -32,11 +36,27 @@ class PanelAnnotator(
     private val evidenceDatabase: EvidenceDatabase,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
     private val transcriptAnnotator: VariantAnnotator,
+    private val paver: Paver,
     private val paveLite: PaveLite
 ) :
     MolecularAnnotator<PanelExtraction, PanelRecord> {
 
     override fun annotate(input: PanelExtraction): PanelRecord {
+        val v1 = annotatev1(input)
+        val v2 = annotatev2(input)
+
+        LOGGER.info("v1 {}", v1)
+        LOGGER.info("v2 {}", v2)
+        if (v1 != v2) {
+            LOGGER.error("v1 and v2 annotations are not equal")
+        } else {
+            LOGGER.info("wow v1 and v2 annotations are equal")
+        }
+
+        return v1
+    }
+
+    private fun annotatev1(input: PanelExtraction): PanelRecord {
         val annotatedVariants = input.variants.mapNotNull {
             val externalVariantAnnotation = externalAnnotation(it)
 
@@ -54,6 +74,77 @@ class PanelAnnotator(
                 null
             }
         }
+
+        val variantsByGene = annotatedVariants.groupBy { it.gene }
+        val variantsWithDriverLikelihoodModel = variantsByGene.map {
+            val geneRole = it.value.map { variant -> variant.geneRole }.first()
+            val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value)
+            likelihood to it.value
+        }.flatMap {
+            it.second.map { variant ->
+                variant.copy(
+                    driverLikelihood = DriverLikelihood.from(it.first)
+                )
+            }
+        }
+
+        return PanelRecord(
+            panelExtraction = input,
+            type = experimentType,
+            date = input.date,
+            drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet()),
+            characteristics = MolecularCharacteristics(),
+            evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
+        )
+    }
+
+    private fun annotatev2(input: PanelExtraction): PanelRecord {
+        val inputMap = input.variants.withIndex().associate { it.index.toString() to it.value }
+
+        val transvarAnnotationsMap = inputMap.mapValues { (_, value) -> externalAnnotation(value) }
+            .mapNotNull { if (it.value != null) it.key to it.value!! else null }
+            .toMap()
+
+        val paveQueries = transvarAnnotationsMap.map { (id, annotation) ->
+            PaveQuery(
+                id = id,
+                chromosome = annotation.chromosome(),
+                position = annotation.position(),
+                ref = annotation.ref(),
+                alt = annotation.alt()
+            )
+        }
+
+        val paveResponses = paver.run(paveQueries)
+        val responseMap = paveResponses.associateBy { it.id }
+
+        val annotatedVariants = transvarAnnotationsMap.map { (id, transvarAnnotation) ->
+            if (id !in responseMap) {
+                LOGGER.warn("Pave did not return a response for query $transvarAnnotation")
+                null
+            } else {
+                val paveResponse = responseMap[id]!!
+                val extraction = inputMap[id]!!
+
+                val (evidence, geneAlteration) = serveEvidence(extraction, transvarAnnotation)
+
+                val paveLiteAnnotations = paveLite.run(
+                    paveResponse.impact.gene,
+                    paveResponse.impact.transcript,
+                    transvarAnnotation.position()
+                )
+
+                createVariantWithEvidencev2(
+                    extraction,
+                    evidence,
+                    geneAlteration,
+                    transvarAnnotation,
+                    paveResponse,
+                    paveLiteAnnotations
+                )
+            }
+        }
+            .filterNotNull()
 
         val variantsByGene = annotatedVariants.groupBy { it.gene }
         val variantsWithDriverLikelihoodModel = variantsByGene.map {
@@ -120,7 +211,7 @@ class PanelAnnotator(
         evidence: ActionableEvidence,
         geneAlteration: GeneAlteration,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
-        paveAnnotation: VariantTranscriptImpact?
+        paveLiteAnnotation: VariantTranscriptImpact?
     ) = Variant(
         isReportable = true,
         event = "${it.gene} ${it.hgvsCodingImpact}",
@@ -138,9 +229,43 @@ class PanelAnnotator(
             hgvsCodingImpact = it.hgvsCodingImpact,
             hgvsProteinImpact = transcriptAnnotation.hgvsProteinImpact() ?: "",
             isSpliceRegion = transcriptAnnotation.isSpliceRegion,
-            affectedExon = paveAnnotation?.affectedExon(),
-            affectedCodon = paveAnnotation?.affectedCodon(),
+            affectedExon = paveLiteAnnotation?.affectedExon(),
+            affectedCodon = paveLiteAnnotation?.affectedCodon(),
             codingEffect = codingEffect(transcriptAnnotation),
+        ),
+        chromosome = transcriptAnnotation.chromosome(),
+        position = transcriptAnnotation.position(),
+        type = variantType2(transcriptAnnotation)
+    )
+
+    private fun createVariantWithEvidencev2(
+        it: PanelVariantExtraction,
+        evidence: ActionableEvidence,
+        geneAlteration: GeneAlteration,
+        transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
+        paveResponse: PaveResponse,
+        paveLiteAnnotation: VariantTranscriptImpact?
+    ) = Variant(
+        isReportable = true,
+        event = "${it.gene} ${it.hgvsCodingImpact}",
+        driverLikelihood = DriverLikelihood.LOW,
+        evidence = evidence,
+        gene = it.gene,
+        geneRole = geneAlteration.geneRole,
+        proteinEffect = geneAlteration.proteinEffect,
+        isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
+        isHotspot = geneAlteration is KnownHotspot,
+        ref = transcriptAnnotation.ref(),
+        alt = transcriptAnnotation.alt(),
+        canonicalImpact = TranscriptImpact(
+            transcriptId = paveResponse.impact.transcript,
+            // TODO: log if paveResponse.impact.hgvsCodingImpact/hgvsProteinImpact differs from extraction hgvs?
+            hgvsCodingImpact = paveResponse.impact.hgvsCodingImpact,
+            hgvsProteinImpact = paveResponse.impact.hgvsProteinImpact,
+            isSpliceRegion = paveResponse.impact.spliceRegion,
+            affectedExon = paveLiteAnnotation?.affectedExon(),
+            affectedCodon = paveLiteAnnotation?.affectedCodon(),
+            codingEffect = codingEffect2(paveResponse.impact.canonicalCodingEffect),
         ),
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
@@ -155,6 +280,22 @@ class PanelAnnotator(
         else -> VariantType.UNDEFINED
     }
 
+    private fun variantType2(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant): VariantType {
+        val ref = transcriptAnnotation.ref()
+        val alt = transcriptAnnotation.alt()
+        return if (ref.length == alt.length) {
+            if (ref.length == 1) {
+                VariantType.SNV
+            } else {
+                VariantType.MNV
+            }
+        } else if (ref.length > alt.length) {
+            VariantType.DELETE
+        } else {
+            VariantType.INSERT
+        }
+    }
+
     private fun codingEffect(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant) =
         when (transcriptAnnotation.codingEffect()) {
             com.hartwig.actin.tools.variant.CodingEffect.NONE -> CodingEffect.NONE
@@ -163,6 +304,15 @@ class PanelAnnotator(
             com.hartwig.actin.tools.variant.CodingEffect.SPLICE -> CodingEffect.SPLICE
             com.hartwig.actin.tools.variant.CodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
             else -> null
+        }
+
+    private fun codingEffect2(paveCodingEffect: PaveCodingEffect) =
+        when (paveCodingEffect) {
+            PaveCodingEffect.NONE -> CodingEffect.NONE
+            PaveCodingEffect.MISSENSE -> CodingEffect.MISSENSE
+            PaveCodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
+            PaveCodingEffect.SPLICE -> CodingEffect.SPLICE
+            PaveCodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
         }
 
     companion object {

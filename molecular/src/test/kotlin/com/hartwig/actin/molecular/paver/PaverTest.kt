@@ -37,7 +37,7 @@ class PaverTest {
 
         val paver = Paver(paverConfig)
 
-        val responses = paver.pave(queries)
+        val responses = paver.run(queries)
         assertThat(responses.size).isEqualTo(1)
         val response = responses.get(0)
         assertThat(response.id).isEqualTo("1")

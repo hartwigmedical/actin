@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
+import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 
@@ -42,11 +43,12 @@ private class ArcherInterpreter(
     evidenceDatabase: EvidenceDatabase,
     geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
     variantAnnotator: VariantAnnotator,
+    paver: Paver,
     paveLite: PaveLite
 ) :
     MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
+        PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
         isArcher()
     )
 
@@ -57,11 +59,12 @@ private class GenericPanelInterpreter(
     evidenceDatabase: EvidenceDatabase,
     geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
     variantAnnotator: VariantAnnotator,
+    paver: Paver,
     paveLite: PaveLite
 ) :
     MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         GenericPanelExtractor(),
-        PanelAnnotator(ExperimentType.GENERIC_PANEL, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
+        PanelAnnotator(ExperimentType.GENERIC_PANEL, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
         isGeneric()
     )
 
@@ -86,12 +89,13 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
             evidenceDatabase: EvidenceDatabase,
             geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
             variantAnnotator: VariantAnnotator,
+            paver: Paver,
             paveLite: PaveLite
         ) =
             PriorMolecularTestInterpreters(
                 setOf(
-                    ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
-                    GenericPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paveLite),
+                    ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+                    GenericPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
                     IHCInterpreter()
                 )
             )

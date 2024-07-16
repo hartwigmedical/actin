@@ -6,6 +6,8 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelRecord
 import com.hartwig.actin.molecular.driverlikelihood.GeneDriverLikelihoodModel
 import com.hartwig.actin.molecular.evidence.EvidenceDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
+import com.hartwig.actin.molecular.paver.PaveQuery
+import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.CodingEffect
 import com.hartwig.actin.tools.variant.ImmutableVariant
@@ -33,10 +35,13 @@ class PriorMolecularTestInterpretersTest {
     private val paveLite = mockk<PaveLite> {
         every { run(any(), any(), any()) } returns null
     }
+    private val paver = mockk<Paver> {
+        every { run(any<List<PaveQuery>>()) } returns emptyList()
+    }
 
     @Test
     fun `Should interpret list of molecular tests`() {
-        val interpreters = PriorMolecularTestInterpreters.create(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paveLite)
+        val interpreters = PriorMolecularTestInterpreters.create(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
         val priorMolecularTests = listOf(
             archerPriorMolecularVariantRecord(),
             avlPanelPriorMolecularVariantRecord(),

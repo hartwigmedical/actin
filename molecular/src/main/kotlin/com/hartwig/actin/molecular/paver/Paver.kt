@@ -19,7 +19,7 @@ import java.nio.file.Paths
 class Paver(private val config: PaverConfig) {
     private val logger: Logger = LogManager.getLogger(Paver::class.java)
 
-    fun pave(queries: List<PaveQuery>): List<PaveResponse> {
+    fun run(queries: List<PaveQuery>): List<PaveResponse> {
         val configBuilder = ConfigBuilder("Pave")
         PaveConfig.addConfig(configBuilder)
 

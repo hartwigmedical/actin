@@ -13,6 +13,8 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.molecular.paver.PaveQuery
+import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.CodingEffect
@@ -58,7 +60,11 @@ class PanelAnnotatorTest {
         every { run(GENE, TRANSCRIPT, POSITION) } returns null
     }
 
-    private val annotator = PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paveLite)
+    private val paver = mockk<Paver> {
+        every { run(any<List<PaveQuery>>()) } returns emptyList()
+    }
+
+    private val annotator = PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
 
     @Test
     fun `Should return empty annotation when no matches found`() {
