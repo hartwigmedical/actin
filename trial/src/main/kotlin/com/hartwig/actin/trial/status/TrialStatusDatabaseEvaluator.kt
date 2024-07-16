@@ -42,7 +42,7 @@ class TrialStatusDatabaseEvaluator(private val trialStatusDatabase: TrialStatusD
         return trialStatusDatabase.studyMETCsToIgnore.filter { !trialStatusStudyMETCs.contains(it) }
     }
 
-    internal fun extractUnusedUnmappedCohorts(): List<Int> {
+    internal fun extractUnusedUnmappedCohorts(): List<String> {
         val trialStatusCohortIds = trialStatusDatabase.entries.mapNotNull { it.cohortId }.toSet()
 
         return trialStatusDatabase.unmappedCohortIds.filter { !trialStatusCohortIds.contains(it) }

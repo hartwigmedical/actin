@@ -32,10 +32,10 @@ class TrialStatusDatabaseEvaluatorTest {
 
         val evaluatorWithUnused =
             TrialStatusDatabaseEvaluator(
-                TestTrialStatusDatabaseFactory.createMinimalTestTrialStatusDatabase().copy(unmappedCohortIds = setOf(1))
+                TestTrialStatusDatabaseFactory.createMinimalTestTrialStatusDatabase().copy(unmappedCohortIds = setOf("1"))
             )
         val unusedUnmappedCohortIds = evaluatorWithUnused.extractUnusedUnmappedCohorts()
-        assertThat(unusedUnmappedCohortIds).containsExactly(1)
+        assertThat(unusedUnmappedCohortIds).containsExactly("1")
 
         evaluatorWithUnused.evaluateDatabaseConfiguration()
     }

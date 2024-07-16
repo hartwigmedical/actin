@@ -47,7 +47,7 @@ internal object LabEvaluation {
         return value != null && value.unit == measurement.defaultUnit && !value.date.isBefore(minValidDate)
     }
 
-    fun evaluateInvalidLabValue(measurement: LabMeasurement, mostRecent: LabValue?, minValidDate: LocalDate) : Evaluation {
+    fun evaluateInvalidLabValue(measurement: LabMeasurement, mostRecent: LabValue?, minValidDate: LocalDate): Evaluation {
         return when {
             mostRecent == null -> {
                 EvaluationFactory.recoverableUndeterminedNoGeneral("No measurement found for ${measurement.display()}")

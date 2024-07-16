@@ -10,8 +10,13 @@ import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
 
 data class StandardOfCareConfig(
-    val patientJson: String, val doidJson: String, val atcTsv: String, val treatmentDirectory: String,
-    val runHistorically: Boolean, val overridesYaml: String?
+    val patientJson: String,
+    val doidJson: String,
+    val atcTsv: String,
+    val treatmentDirectory: String,
+    val runHistorically: Boolean,
+    val personalizationDataPath: String?,
+    val overridesYaml: String?
 ) {
     companion object {
         fun createOptions(): Options {
@@ -25,6 +30,7 @@ data class StandardOfCareConfig(
                 false,
                 "If set, runs the algo with a date just after the original patient registration date"
             )
+            options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
             options.addOption(OVERRIDES_YAML, true, "Path to optional configuration overrides YAML file")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             return options
@@ -46,6 +52,7 @@ data class StandardOfCareConfig(
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
+                personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDES_YAML)
             )
         }
@@ -58,5 +65,6 @@ data class StandardOfCareConfig(
         private const val RUN_HISTORICALLY = "run_historically"
         private const val LOG_DEBUG = "log_debug"
         private const val OVERRIDES_YAML = "overrides_yaml"
+        private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
     }
 }

@@ -46,12 +46,15 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         return listOf(
             SummaryChapter(report),
-            //  MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
-            //  EfficacyEvidenceChapter(report, include = report.config.showSOCLiteratureEfficacyEvidence),
-            //  ClinicalDetailsChapter(report),
-            //  EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
-            //  TrialMatchingChapter(report, enableExtendedMode, report.config.showIneligibleTrialsInSummary),
-            //  TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
+        /*    PersonalizedEvidenceChapter(
+                report, include = report.config.showSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
+            ),
+            MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
+            EfficacyEvidenceChapter(report, include = report.config.showSOCLiteratureEfficacyEvidence),
+            ClinicalDetailsChapter(report),
+            EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
+            TrialMatchingChapter(report, enableExtendedMode, report.config.showIneligibleTrialsInSummary),
+            TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)*/
         ).filter(ReportChapter::include)
     }
 
