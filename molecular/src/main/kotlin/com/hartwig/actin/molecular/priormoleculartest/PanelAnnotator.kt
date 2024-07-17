@@ -21,8 +21,10 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionableEvidenceFact
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.molecular.orange.interpretation.GeneAlterationFactory
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
+import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
+import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.pave.VariantTranscriptImpact
@@ -160,20 +162,43 @@ class PanelAnnotator(
         isHotspot = geneAlteration is KnownHotspot,
         ref = transcriptAnnotation.ref(),
         alt = transcriptAnnotation.alt(),
-        canonicalImpact = TranscriptImpact(
-            transcriptId = paveResponse.impact.transcript,
-            hgvsCodingImpact = paveResponse.impact.hgvsCodingImpact,
-            hgvsProteinImpact = paveResponse.impact.hgvsProteinImpact,
-            isSpliceRegion = paveResponse.impact.spliceRegion,
-            affectedExon = paveLiteAnnotation?.affectedExon(),
-            affectedCodon = paveLiteAnnotation?.affectedCodon(),
-            codingEffect = codingEffect2(paveResponse.impact.canonicalCodingEffect),
-        ),
-        otherImpacts = emptySet(), // TODO fill in with PAVE results
+        canonicalImpact = impactFromPave(paveResponse.impact, paveLiteAnnotation),
+        otherImpacts = paveResponse.transcriptImpact.map { impactFromPaveTranscript(it, paveLiteAnnotation) }.toSet(),
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
         type = variantType(transcriptAnnotation)
     )
+
+    private fun impactFromPave(impact: PaveImpact, paveLiteAnnotation: VariantTranscriptImpact?): TranscriptImpact {
+        return TranscriptImpact(
+            transcriptId = impact.transcript,
+            hgvsCodingImpact = impact.hgvsCodingImpact,
+            hgvsProteinImpact = impact.hgvsProteinImpact,
+            isSpliceRegion = impact.spliceRegion,
+            affectedExon = paveLiteAnnotation?.affectedExon(),
+            affectedCodon = paveLiteAnnotation?.affectedCodon(),
+            codingEffect = codingEffect(impact.canonicalCodingEffect),
+        )
+    }
+
+    private fun impactFromPaveTranscript(impact: PaveTranscriptImpact, paveLiteAnnotation: VariantTranscriptImpact?): TranscriptImpact {
+        // TODO
+        //  * should we filter on gene, in case the Pave response contains multiple genes?
+        //  * drop transcript impacts with coding effect of None?
+        return TranscriptImpact(
+            transcriptId = impact.transcript,
+            hgvsCodingImpact = impact.hgvsCodingImpact,
+            hgvsProteinImpact = impact.hgvsProteinImpact,
+            isSpliceRegion = impact.spliceRegion,
+            affectedExon = paveLiteAnnotation?.affectedExon(),
+            affectedCodon = paveLiteAnnotation?.affectedCodon(),
+            codingEffect = codingEffect(
+                impact.effects
+                    .map(PaveCodingEffect::fromPaveVariantEffect)
+                    .let(PaveCodingEffect::worstCodingEffect)
+            )
+        )
+    }
 
     private fun variantType(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant): VariantType {
         val ref = transcriptAnnotation.ref()
@@ -191,7 +216,7 @@ class PanelAnnotator(
         }
     }
 
-    private fun codingEffect2(paveCodingEffect: PaveCodingEffect) =
+    private fun codingEffect(paveCodingEffect: PaveCodingEffect) =
         when (paveCodingEffect) {
             PaveCodingEffect.NONE -> CodingEffect.NONE
             PaveCodingEffect.MISSENSE -> CodingEffect.MISSENSE

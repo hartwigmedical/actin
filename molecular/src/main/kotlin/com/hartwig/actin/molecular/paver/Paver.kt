@@ -134,7 +134,7 @@ class Paver(private val config: PaverConfig) {
                     geneName = it[1],
                     transcript = it[2],
                     effects = interpretVariantEffects(it[3]),
-                    spliceRegion = it[4],
+                    spliceRegion = interpretSpliceRegion(it[4]),
                     hgvsCodingImpact = it[5],
                     hgvsProteinImpact = it[6])
             }
@@ -145,8 +145,7 @@ class Paver(private val config: PaverConfig) {
             "true" -> true
             "false" -> false
             else -> {
-                logger.warn("Unexpected splice region value, using false: {}", spliceRegion)
-                false
+                throw RuntimeException("Unexpected splice region value: $spliceRegion")
             }
         }
     }

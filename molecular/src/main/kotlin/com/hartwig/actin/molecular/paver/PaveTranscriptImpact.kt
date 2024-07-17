@@ -5,7 +5,7 @@ data class PaveTranscriptImpact(
     val geneName: String,
     val transcript: String,
     val effects: List<PaveVariantEffect>,
-    val spliceRegion: String,
+    val spliceRegion: Boolean,
     val hgvsCodingImpact: String,
     val hgvsProteinImpact: String,
 )
