@@ -40,7 +40,8 @@ val PROPER_PANEL_VARIANT = Variant(
         effects = setOf(VariantEffect.MISSENSE),
         codingEffect = CodingEffect.MISSENSE,
         affectedExon = null
-    )
+    ),
+    otherImpacts = emptySet()
 )
 
 internal object MolecularHistoryFactory {

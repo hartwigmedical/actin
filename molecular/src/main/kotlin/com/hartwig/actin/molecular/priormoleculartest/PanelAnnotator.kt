@@ -162,7 +162,6 @@ class PanelAnnotator(
         alt = transcriptAnnotation.alt(),
         canonicalImpact = TranscriptImpact(
             transcriptId = paveResponse.impact.transcript,
-            // TODO: log if paveResponse.impact.hgvsCodingImpact/hgvsProteinImpact differs from extraction hgvs?
             hgvsCodingImpact = paveResponse.impact.hgvsCodingImpact,
             hgvsProteinImpact = paveResponse.impact.hgvsProteinImpact,
             isSpliceRegion = paveResponse.impact.spliceRegion,
@@ -170,6 +169,7 @@ class PanelAnnotator(
             affectedCodon = paveLiteAnnotation?.affectedCodon(),
             codingEffect = codingEffect2(paveResponse.impact.canonicalCodingEffect),
         ),
+        otherImpacts = emptySet(), // TODO fill in with PAVE results
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
         type = variantType(transcriptAnnotation)
