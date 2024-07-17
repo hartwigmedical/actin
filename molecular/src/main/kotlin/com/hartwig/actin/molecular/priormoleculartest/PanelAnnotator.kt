@@ -123,7 +123,7 @@ class PanelAnnotator(
     )
 
     private fun externalAnnotation(it: PanelVariantExtraction): com.hartwig.actin.tools.variant.Variant? {
-        val externalVariantAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)
+        val externalVariantAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsImpact)
 
         if (externalVariantAnnotation == null) {
             LOGGER.error("Unable to resolve variant '$it' in variant annotator. See prior warnings.")
@@ -171,7 +171,7 @@ class PanelAnnotator(
         paveAnnotation: VariantTranscriptImpact?
     ) = Variant(
         isReportable = true,
-        event = "${it.gene} ${it.hgvsCodingImpact}",
+        event = "${it.gene} ${it.hgvsImpact}",
         driverLikelihood = DriverLikelihood.LOW,
         evidence = evidence,
         gene = it.gene,
@@ -183,7 +183,7 @@ class PanelAnnotator(
         alt = transcriptAnnotation.alt(),
         canonicalImpact = TranscriptImpact(
             transcriptId = transcriptAnnotation.transcript(),
-            hgvsCodingImpact = it.hgvsCodingImpact,
+            hgvsCodingImpact = it.hgvsImpact,
             hgvsProteinImpact = transcriptAnnotation.hgvsProteinImpact() ?: "",
             isSpliceRegion = transcriptAnnotation.isSpliceRegion,
             affectedExon = paveAnnotation?.affectedExon(),

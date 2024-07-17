@@ -25,6 +25,7 @@ private val PRIOR_MOLECULAR_TEST =
         item = "EGFR",
         measure = "c.2573T>G",
         measureDate = LocalDate.parse("2024-03-25"),
+        scoreText = "variant",
         impliesPotentialIndeterminateStatus = false
     )
 private val EHR_OTHER_MOLECULAR_TEST =

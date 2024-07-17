@@ -77,7 +77,14 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
         return if (molecular.hasSufficientQuality) {
             listOf(
                 PredictedTumorOriginGenerator(molecular, contentWidth()),
-                MolecularDriversGenerator(report.treatmentMatch.trialSource, molecular, evaluated, report.treatmentMatch.trialMatches, contentWidth())
+                MolecularDriversGenerator(
+                    report.treatmentMatch.trialSource,
+                    molecular,
+                    evaluated,
+                    report.treatmentMatch.trialMatches,
+                    contentWidth(),
+                    report.config.countryOfResidence
+                )
             )
         } else emptyList()
     }

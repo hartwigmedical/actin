@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.FREE_TEXT_PANEL
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
@@ -32,7 +33,7 @@ class GenericPanelExtractorTest {
         val molecularTests = extractor.extract(priorMolecularTests)
 
         val expected = GenericPanelExtraction(
-            panelType = "AVL",
+            panelType = AVL_PANEL,
             variants = listOf(PanelVariantExtraction(GENE, HGVS_CODING))
         )
         assertThat(molecularTests).containsExactly(expected)

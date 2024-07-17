@@ -2,11 +2,9 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.panel.archer.ARCHER_ALWAYS_TESTED_GENES
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.mcgi.McgiExtraction
 import com.hartwig.actin.report.pdf.util.Formats
 import org.apache.logging.log4j.LogManager
 
@@ -21,6 +19,8 @@ class PriorMolecularTestInterpreter {
 
     fun interpret(history: MolecularHistory): List<PriorMolecularTestInterpretation> {
         history.allIHCTests().forEach(::interpret)
+        history.allArcherPanels().forEach(::interpret)
+        history.allGenericPanels().forEach(::interpret)
         return interpretationBuilder.build()
     }
 
@@ -66,21 +66,6 @@ class PriorMolecularTestInterpreter {
             test.panelType,
             test.testedGenes() - test.genesHavingResultsInPanel()
         )
-    }
-
-    private fun interpret(test: McgiExtraction) {
-        test.variants.forEach { interpretationBuilder.addInterpretation("MCGI", VARIANT_GROUPING, it.display()) }
-        test.amplifications.forEach { interpretationBuilder.addInterpretation("MCGI", "Amplifications", it.display()) }
-
-
-    }
-
-    private fun interpret(test: OtherPriorMolecularTest) {
-        val scoreText = test.test.scoreText
-        val item = test.test.item
-        if (scoreText != null && item != null) {
-            interpretationBuilder.addInterpretation(test.experimentType.display(), scoreText, item)
-        }
     }
 
     private fun interpretNegatives(type: String, negatives: Set<String> = emptySet()) {

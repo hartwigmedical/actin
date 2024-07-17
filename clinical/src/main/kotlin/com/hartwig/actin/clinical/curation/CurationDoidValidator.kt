@@ -16,7 +16,7 @@ class CurationDoidValidator(private val doidModel: DoidModel) {
         const val DISEASE_OF_CELLULAR_PROLIFERATION_DOID = "14566"
         private fun hasValidDoids(doids: Set<String>, doidModel: DoidModel, expectedParentDoid: String): Boolean {
             return if (doids.isEmpty()) {
-                true
+                false
             } else {
                 doids.all { doidModel.doidWithParents(it).contains(expectedParentDoid) }
             }

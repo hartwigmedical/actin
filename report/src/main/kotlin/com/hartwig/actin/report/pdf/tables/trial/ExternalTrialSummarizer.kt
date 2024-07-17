@@ -1,20 +1,28 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.algo.datamodel.TrialMatch
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 
 data class ExternalTrialSummary(
-    val dutchTrials: Map<String, Iterable<ExternalTrial>>,
-    val dutchTrialsFiltered: Int,
-    val otherCountryTrials: Map<String, Iterable<ExternalTrial>>,
-    val otherCountryTrialsFiltered: Int
+    val localTrials: Map<String, Iterable<ExternalTrial>>,
+    val localTrialsFiltered: Int,
+    val nonLocalTrials: Map<String, Iterable<ExternalTrial>>,
+    val nonLocalTrialsFiltered: Int
 )
 
-class ExternalTrialSummarizer {
+class ExternalTrialSummarizer(private val countryOfResidence: Country) {
 
-    fun summarize(externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>, trialMatches: List<TrialMatch>, evaluatedCohorts: List<EvaluatedCohort>): ExternalTrialSummary {
-        return filterMolecularCriteriaAlreadyPresent(filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches), evaluatedCohorts)
+    fun summarize(
+        externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
+        trialMatches: List<TrialMatch>,
+        evaluatedCohorts: List<EvaluatedCohort>
+    ): ExternalTrialSummary {
+        return filterMolecularCriteriaAlreadyPresent(
+            filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, trialMatches),
+            evaluatedCohorts
+        )
     }
 
     fun filterAndGroupExternalTrialsByNctIdAndEvents(
@@ -36,15 +44,15 @@ class ExternalTrialSummarizer {
     ): ExternalTrialSummary {
 
         val hospitalTrialMolecularEvents = hospitalLocalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()
-        val (dutchTrials, dutchTrialsFiltered) = filteredMolecularEvents(
+        val (localTrials, localTrialsFiltered) = filteredMolecularEvents(
             hospitalTrialMolecularEvents,
-            EligibleExternalTrialGeneratorFunctions.localTrials(externalEligibleTrials)
+            EligibleExternalTrialGeneratorFunctions.localTrials(externalEligibleTrials, countryOfResidence)
         )
-        val (otherTrials, otherTrialsFiltered) = filteredMolecularEvents(
-            hospitalTrialMolecularEvents + dutchTrials.keys.flatMap { splitMolecularEvents(it) },
-            EligibleExternalTrialGeneratorFunctions.nonLocalTrials(externalEligibleTrials)
+        val (nonLocalTrials, nonLocalTrialsFiltered) = filteredMolecularEvents(
+            hospitalTrialMolecularEvents + localTrials.keys.flatMap { splitMolecularEvents(it) },
+            EligibleExternalTrialGeneratorFunctions.nonLocalTrials(externalEligibleTrials, countryOfResidence)
         )
-        return ExternalTrialSummary(dutchTrials, dutchTrialsFiltered, otherTrials, otherTrialsFiltered)
+        return ExternalTrialSummary(localTrials, localTrialsFiltered, nonLocalTrials, nonLocalTrialsFiltered)
     }
 
     private fun filteredMolecularEvents(

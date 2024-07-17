@@ -6,8 +6,15 @@ import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
+import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
+import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingChapter
+import com.hartwig.actin.report.pdf.chapters.TrialMatchingDetailsChapter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
@@ -33,7 +40,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 Pair(false, false)
             }
 
-            report.config.showSOCLiteratureEfficacyEvidence -> {
+            report.config.includeSOCLiteratureEfficacyEvidence -> {
                 LOGGER.info("Including SOC literature details")
                 Pair(true, false)
             }
@@ -46,15 +53,15 @@ class ReportContentProvider(private val report: Report, private val enableExtend
 
         return listOf(
             SummaryChapter(report),
-        /*    PersonalizedEvidenceChapter(
-                report, include = report.config.showSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
+            PersonalizedEvidenceChapter(
+                report, include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
             MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
-            EfficacyEvidenceChapter(report, include = report.config.showSOCLiteratureEfficacyEvidence),
-            ClinicalDetailsChapter(report),
+            EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
+            ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
-            TrialMatchingChapter(report, enableExtendedMode, report.config.showIneligibleTrialsInSummary),
-            TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)*/
+            TrialMatchingChapter(report, enableExtendedMode, report.config.includeIneligibleTrialsInSummary),
+            TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
         ).filter(ReportChapter::include)
     }
 
@@ -86,22 +93,27 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val (openCohortsWithoutSlotsGenerator, _) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
 
-        val molecular = report.patientRecord.molecularHistory.molecularTests.first()
         val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.patientRecord, evaluated, contentWidth)
         return listOfNotNull(
             clinicalHistoryGenerator,
-            if (report.config.showMolecularSummary) {
+            if (report.config.includeMolecularSummary && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()) {
                 MolecularSummaryGenerator(report.patientRecord, cohorts, keyWidth, valueWidth)
             } else null,
-            if (report.config.showEligibleSOCTreatmentSummary) {
+            if (report.config.includeEligibleSOCTreatmentSummary) {
                 SOCEligibleApprovedTreatmentGenerator(report, contentWidth)
             } else null,
-            if (report.config.showApprovedTreatmentsInSummary) {
+            if (report.config.includeApprovedTreatmentsInSummary) {
                 EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth)
+            } else null,
+            if (report.config.includeTrialMatchingSummary) {
+                openCohortsWithSlotsGenerator
+            } else null,
+            if (report.config.includeTrialMatchingSummary) {
+                openCohortsWithoutSlotsGenerator
             } else null,
             dutchTrialGenerator,
             nonDutchTrialGenerator,
-            if (report.config.showIneligibleTrialsInSummary) {
+            if (report.config.includeIneligibleTrialsInSummary) {
                 IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
                     cohorts,
                     report.treatmentMatch.trialSource,
@@ -120,27 +132,27 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 .flatMap { it.entries }
                 .associate { it.toPair() }
 
-        val externalTrialSummarizer = ExternalTrialSummarizer()
+        val externalTrialSummarizer = ExternalTrialSummarizer(report.config.countryOfResidence)
         val externalTrialSummary = externalTrialSummarizer.summarize(
             externalEligibleTrials,
             report.treatmentMatch.trialMatches,
             evaluated
         )
         return Pair(
-            if (externalTrialSummary.dutchTrials.isNotEmpty()) {
+            if (externalTrialSummary.localTrials.isNotEmpty()) {
                 EligibleDutchExternalTrialsGenerator(
                     "CKB",
-                    externalTrialSummary.dutchTrials,
+                    externalTrialSummary.localTrials,
                     contentWidth,
-                    externalTrialSummary.dutchTrialsFiltered
+                    externalTrialSummary.localTrialsFiltered
                 )
             } else null,
-            if (externalTrialSummary.otherCountryTrials.isNotEmpty()) {
+            if (externalTrialSummary.nonLocalTrials.isNotEmpty()) {
                 EligibleOtherCountriesExternalTrialsGenerator(
                     "CKB",
-                    externalTrialSummary.otherCountryTrials,
+                    externalTrialSummary.nonLocalTrials,
                     contentWidth,
-                    externalTrialSummary.otherCountryTrialsFiltered
+                    externalTrialSummary.nonLocalTrialsFiltered
                 )
             } else null
         )
