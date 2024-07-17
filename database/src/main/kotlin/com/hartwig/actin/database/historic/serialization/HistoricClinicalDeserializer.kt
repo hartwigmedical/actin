@@ -8,13 +8,15 @@ import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.hartwig.actin.clinical.datamodel.BloodTransfusion
-import com.hartwig.actin.clinical.datamodel.BodyHeight
 import com.hartwig.actin.clinical.datamodel.BodyWeight
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.clinical.datamodel.ClinicalStatus
 import com.hartwig.actin.clinical.datamodel.Complication
 import com.hartwig.actin.clinical.datamodel.Dosage
+import com.hartwig.actin.clinical.datamodel.ECG
+import com.hartwig.actin.clinical.datamodel.ECGMeasure
 import com.hartwig.actin.clinical.datamodel.Gender
+import com.hartwig.actin.clinical.datamodel.InfectionStatus
 import com.hartwig.actin.clinical.datamodel.Intolerance
 import com.hartwig.actin.clinical.datamodel.LabUnit
 import com.hartwig.actin.clinical.datamodel.LabValue
@@ -34,8 +36,12 @@ import com.hartwig.actin.clinical.datamodel.TumorStage
 import com.hartwig.actin.clinical.datamodel.TumorStatus
 import com.hartwig.actin.clinical.datamodel.VitalFunction
 import com.hartwig.actin.clinical.datamodel.VitalFunctionCategory
+import com.hartwig.actin.clinical.datamodel.treatment.DrugTreatment
 import com.hartwig.actin.clinical.datamodel.treatment.Treatment
+import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentResponse
 import com.hartwig.actin.util.json.Json
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -53,24 +59,24 @@ object HistoricClinicalDeserializer {
         val clinicalObject: JsonObject = JsonParser.parseReader(reader).asJsonObject
 
         val clinicalRecord = ClinicalRecord(
-            extractPatientId(clinicalObject),
-            extractPatientDetails(clinicalObject),
-            extractTumorDetails(clinicalObject),
-            extractClinicalStatus(clinicalObject),
-            extractOncologicalHistory(clinicalObject),
-            extractPriorSecondPrimaries(clinicalObject),
-            extractPriorOtherConditions(clinicalObject),
-            extractPriorMolecularTest(clinicalObject),
-            extractComplications(clinicalObject),
-            extractLabValues(clinicalObject),
-            extractToxicities(clinicalObject),
-            extractIntolerances(clinicalObject),
-            extractSurgeries(clinicalObject),
-            extractBodyWeights(clinicalObject),
-            extractBodyHeights(clinicalObject),
-            extractVitalFunctions(clinicalObject),
-            extractBloodTransfusions(clinicalObject),
-            extractMedications(clinicalObject)
+            patientId = extractPatientId(clinicalObject),
+            patient = extractPatientDetails(clinicalObject),
+            tumor = extractTumorDetails(clinicalObject),
+            clinicalStatus = extractClinicalStatus(clinicalObject),
+            oncologicalHistory = extractOncologicalHistory(clinicalObject),
+            priorSecondPrimaries = extractPriorSecondPrimaries(clinicalObject),
+            priorOtherConditions = extractPriorOtherConditions(clinicalObject),
+            priorMolecularTests = extractPriorMolecularTest(clinicalObject),
+            complications = extractComplications(clinicalObject),
+            labValues = extractLabValues(clinicalObject),
+            toxicities = extractToxicities(clinicalObject),
+            intolerances = extractIntolerances(clinicalObject),
+            surgeries = extractSurgeries(clinicalObject),
+            bodyWeights = extractBodyWeights(clinicalObject),
+            bodyHeights = emptyList(),
+            vitalFunctions = extractVitalFunctions(clinicalObject),
+            bloodTransfusions = extractBloodTransfusions(clinicalObject),
+            medications = extractMedications(clinicalObject)
         )
 
         if (reader.peek() != JsonToken.END_DOCUMENT) {
@@ -105,7 +111,7 @@ object HistoricClinicalDeserializer {
             primaryTumorExtraDetails = Json.nullableString(tumor, "primaryTumorExtraDetails"),
             doids = Json.nullableArray(tumor, "doids")?.let { it -> it.map { it.asString }.toCollection(Sets.newHashSet()) },
             stage = Json.nullableString(tumor, "stage")?.let { TumorStage.valueOf(it) },
-            derivedStages = null, // TODO (KD): Could reuse TumorStageDeriver here.
+            derivedStages = null, // Could reuse TumorStageDeriver here?
             hasMeasurableDisease = Json.nullableBool(tumor, "hasMeasurableDisease"),
             hasBrainLesions = Json.nullableBool(tumor, "hasBrainLesions"),
             brainLesionsCount = null,
@@ -130,11 +136,37 @@ object HistoricClinicalDeserializer {
         val clinicalStatus: JsonObject = Json.`object`(clinical, "clinicalStatus")
         return ClinicalStatus(
             who = Json.nullableInteger(clinicalStatus, "who"),
-            infectionStatus = null,
-            ecg = null,
-            lvef = null,
+            infectionStatus = Json.nullableObject(clinicalStatus, "infectionStatus")?.let { extractInfectionStatus(it) },
+            ecg = Json.nullableObject(clinicalStatus, "ecg")?.let { extractECG(it) },
+            lvef = Json.nullableDouble(clinicalStatus, "lvef"),
             hasComplications = null
         )
+    }
+
+    private fun extractInfectionStatus(infectionStatus: JsonObject): InfectionStatus {
+        return InfectionStatus(
+            hasActiveInfection = Json.bool(infectionStatus, "hasActiveInfection"),
+            description = Json.nullableString(infectionStatus, "description")
+        )
+    }
+
+    private fun extractECG(ecg: JsonObject): ECG {
+        return ECG(
+            hasSigAberrationLatestECG = Json.bool(ecg, "hasSigAberrationLatestECG"),
+            aberrationDescription = Json.nullableString(ecg, "aberrationDescription"),
+            qtcfMeasure = extractQtcfMeasure(ecg),
+            jtcMeasure = null
+        )
+    }
+
+    private fun extractQtcfMeasure(ecg: JsonObject): ECGMeasure? {
+        val qtcfValue: Int? = Json.nullableInteger(ecg, "qtcfValue")
+        val qtcfUnit: String? = Json.nullableString(ecg, "qtcfUnit")
+        if (qtcfValue == null && qtcfUnit == null) {
+            return null
+        }
+
+        return ECGMeasure(qtcfValue, qtcfUnit)
     }
 
     private fun extractOncologicalHistory(clinical: JsonObject): List<TreatmentHistoryEntry> {
@@ -146,20 +178,50 @@ object HistoricClinicalDeserializer {
         val priorTumorTreatment: JsonObject = priorTumorTreatmentElement.asJsonObject
         return TreatmentHistoryEntry(
             treatments = extractTreatments(priorTumorTreatment),
-            startYear = null,
-            startMonth = null,
+            startYear = Json.nullableInteger(priorTumorTreatment, "startYear"),
+            startMonth = Json.nullableInteger(priorTumorTreatment, "startMonth"),
             intents = null,
-            isTrial = false,
-            trialAcronym = null,
-            treatmentHistoryDetails = null
+            isTrial = Json.nullableString(priorTumorTreatment, "trialAcronym") != null, // Note (KD): Assumption!
+            trialAcronym = Json.nullableString(priorTumorTreatment, "trialAcronym"),
+            treatmentHistoryDetails = extractTreatmentHistoryDetails(priorTumorTreatment)
         )
     }
 
     private fun extractTreatments(priorTumorTreatment: JsonObject): Set<Treatment> {
-        // TODO (KD) : Map to treatments.
         return setOf(
-
+            DrugTreatment(
+                name = Json.string(priorTumorTreatment, "name"),
+                drugs = emptySet(),
+                synonyms = emptySet(),
+                displayOverride = null,
+                isSystemic = Json.bool(priorTumorTreatment, "isSystemic"),
+                maxCycles = null
+            )
         )
+    }
+
+    private fun extractTreatmentHistoryDetails(priorTumorTreatment: JsonObject): TreatmentHistoryDetails {
+        return TreatmentHistoryDetails(
+            stopYear = Json.nullableInteger(priorTumorTreatment, "stopYear"),
+            stopMonth = Json.nullableInteger(priorTumorTreatment, "stopMonth"),
+            ongoingAsOf = null,
+            cycles = null,
+            bestResponse = Json.nullableString(priorTumorTreatment, "bestResponse")?.let { TreatmentResponse.valueOf(it) },
+            stopReason = Json.nullableString(priorTumorTreatment, "stopReason")?.let { toStopReason(it) },
+            stopReasonDetail = null,
+            switchToTreatments = null,
+            maintenanceTreatment = null,
+            toxicities = null,
+            bodyLocationCategories = null,
+            bodyLocations = null
+        )
+    }
+
+    private fun toStopReason(stopReasonString: String): StopReason {
+        return when (stopReasonString) {
+            "PD" -> StopReason.PROGRESSIVE_DISEASE
+            else -> StopReason.valueOf(stopReasonString)
+        }
     }
 
     private fun extractPriorSecondPrimaries(clinical: JsonObject): List<PriorSecondPrimary> {
@@ -170,17 +232,23 @@ object HistoricClinicalDeserializer {
     private fun toPriorSecondPrimary(priorSecondPrimaryElement: JsonElement): PriorSecondPrimary {
         val priorSecondPrimary: JsonObject = priorSecondPrimaryElement.asJsonObject
         return PriorSecondPrimary(
-            tumorLocation = "",
-            tumorSubLocation = "",
-            tumorType = "",
-            tumorSubType = "",
-            doids = emptySet(),
-            diagnosedYear = null,
-            diagnosedMonth = null,
-            treatmentHistory = "",
-            lastTreatmentYear = null,
-            lastTreatmentMonth = null,
-            status = TumorStatus.UNKNOWN
+            tumorLocation = Json.string(priorSecondPrimary, "tumorLocation"),
+            tumorSubLocation = Json.string(priorSecondPrimary, "tumorSubLocation"),
+            tumorType = Json.string(priorSecondPrimary, "tumorType"),
+            tumorSubType = Json.string(priorSecondPrimary, "tumorSubType"),
+            doids = HashSet(Json.stringList(priorSecondPrimary, "doids")),
+            diagnosedYear = Json.nullableInteger(priorSecondPrimary, "diagnosedYear"),
+            diagnosedMonth = Json.nullableInteger(priorSecondPrimary, "diagnosedMonth"),
+            treatmentHistory = Json.string(priorSecondPrimary, "treatmentHistory"),
+            lastTreatmentYear = Json.nullableInteger(priorSecondPrimary, "lastTreatmentYear"),
+            lastTreatmentMonth = Json.nullableInteger(priorSecondPrimary, "lastTreatmentMonth"),
+            status = Json.bool(priorSecondPrimary, "isActive").let {
+                if (it) {
+                    TumorStatus.ACTIVE
+                } else {
+                    TumorStatus.INACTIVE
+                }
+            }
         )
     }
 
@@ -192,12 +260,12 @@ object HistoricClinicalDeserializer {
     private fun toPriorOtherCondition(priorOtherConditionElement: JsonElement): PriorOtherCondition {
         val priorOtherCondition: JsonObject = priorOtherConditionElement.asJsonObject
         return PriorOtherCondition(
-            name = "",
-            year = null,
-            month = null,
-            doids = emptySet(),
-            category = "",
-            isContraindicationForTherapy = false
+            name = Json.string(priorOtherCondition, "name"),
+            year = Json.nullableInteger(priorOtherCondition, "year"),
+            month = Json.nullableInteger(priorOtherCondition, "month"),
+            doids = HashSet(Json.stringList(priorOtherCondition, "doids")),
+            category = Json.string(priorOtherCondition, "category"),
+            isContraindicationForTherapy = Json.bool(priorOtherCondition, "isContraindicationForTherapy")
         )
     }
 
@@ -209,14 +277,14 @@ object HistoricClinicalDeserializer {
     private fun toPriorMolecularTest(priorMolecularTestElement: JsonElement): PriorMolecularTest {
         val priorMolecularTest: JsonObject = priorMolecularTestElement.asJsonObject
         return PriorMolecularTest(
-            test = "",
-            item = null,
-            measure = null,
+            test = Json.string(priorMolecularTest, "test"),
+            item = Json.nullableString(priorMolecularTest, "item"),
+            measure = Json.nullableString(priorMolecularTest, "measure"),
             measureDate = null,
-            scoreText = null,
-            scoreValuePrefix = null,
-            scoreValue = null,
-            scoreValueUnit = null,
+            scoreText = Json.nullableString(priorMolecularTest, "scoreText"),
+            scoreValuePrefix = Json.nullableString(priorMolecularTest, "scoreValuePrefix"),
+            scoreValue = Json.nullableDouble(priorMolecularTest, "scoreValue"),
+            scoreValueUnit = Json.nullableString(priorMolecularTest, "scoreValueUnit"),
             impliesPotentialIndeterminateStatus = false
         )
     }
@@ -229,10 +297,10 @@ object HistoricClinicalDeserializer {
     private fun toComplication(complicationElement: JsonElement): Complication {
         val complication: JsonObject = complicationElement.asJsonObject
         return Complication(
-            name = "",
-            categories = emptySet(),
-            year = null,
-            month = null
+            name = Json.string(complication, "name"),
+            categories = HashSet(Json.stringList(complication, "categories")),
+            year = Json.nullableInteger(complication, "year"),
+            month = Json.nullableInteger(complication, "month")
         )
     }
 
@@ -264,11 +332,11 @@ object HistoricClinicalDeserializer {
     private fun toToxicity(toxicityElement: JsonElement): Toxicity {
         val toxicity: JsonObject = toxicityElement.asJsonObject
         return Toxicity(
-            name = "",
+            name = Json.string(toxicity, "name"),
             categories = emptySet(),
-            evaluatedDate = LocalDate.of(1, 1, 1),
-            source = ToxicitySource.EHR,
-            grade = null
+            evaluatedDate = date(toxicity, "evaluatedDate"),
+            source = ToxicitySource.valueOf(Json.string(toxicity, "source")),
+            grade = Json.nullableInteger(toxicity, "grade")
         )
     }
 
@@ -300,8 +368,8 @@ object HistoricClinicalDeserializer {
     private fun toSurgery(surgeryElement: JsonElement): Surgery {
         val surgery: JsonObject = surgeryElement.asJsonObject
         return Surgery(
-            endDate = LocalDate.of(1, 1, 1),
-            status = SurgeryStatus.UNKNOWN
+            endDate = date(surgery, "endDate"),
+            status = SurgeryStatus.valueOf(Json.string(surgery, "status"))
         )
     }
 
@@ -316,13 +384,8 @@ object HistoricClinicalDeserializer {
             date = toDateTime(date(bodyWeight, "date")),
             value = Json.double(bodyWeight, "value"),
             unit = Json.string(bodyWeight, "unit"),
-            valid = false // TODO (KD): See if we can populate this value.
+            valid = false
         )
-    }
-
-    private fun extractBodyHeights(clinical: JsonObject): List<BodyHeight> {
-        // TODO (KD): See if we need to populate this field.
-        return listOf()
     }
 
     private fun extractVitalFunctions(clinical: JsonObject): List<VitalFunction> {
@@ -338,7 +401,7 @@ object HistoricClinicalDeserializer {
             subcategory = Json.string(vitalFunction, "subcategory"),
             value = Json.double(vitalFunction, "value"),
             unit = Json.string(vitalFunction, "unit"),
-            valid = false // TODO (KD): See if we can populate this field.
+            valid = false
         )
     }
 
@@ -350,8 +413,8 @@ object HistoricClinicalDeserializer {
     private fun toBloodTransfusion(bloodTransfusionElement: JsonElement): BloodTransfusion {
         val bloodTransfusion: JsonObject = bloodTransfusionElement.asJsonObject
         return BloodTransfusion(
-            date = LocalDate.of(1, 1, 1),
-            product = ""
+            date = date(bloodTransfusion, "date"),
+            product = Json.string(bloodTransfusion, "product")
         )
     }
 
@@ -365,30 +428,30 @@ object HistoricClinicalDeserializer {
         return Medication(
             name = Json.string(medication, "name"),
             status = Json.nullableString(medication, "status")?.let { MedicationStatus.valueOf(it) },
-            administrationRoute = null, // TODO (KD): See if we can populate.
+            administrationRoute = null,
             dosage = Dosage(
                 dosageMin = Json.nullableDouble(medication, "dosageMin"),
                 dosageMax = Json.nullableDouble(medication, "dosageMax"),
                 dosageUnit = Json.nullableString(medication, "dosageUnit"),
                 frequency = Json.nullableDouble(medication, "frequency"),
                 frequencyUnit = Json.nullableString(medication, "frequencyUnit"),
-                periodBetweenValue = null, // TODO (KD): See if we can populate
-                periodBetweenUnit = null, // TODO (KD): See if we can populate
+                periodBetweenValue = null,
+                periodBetweenUnit = null,
                 ifNeeded = Json.nullableBool(medication, "ifNeeded")
             ),
             startDate = nullableDate(medication, "startDate"),
             stopDate = nullableDate(medication, "stopDate"),
-            cypInteractions = emptyList(), // TODO (KD): See if we can populate
-            qtProlongatingRisk = QTProlongatingRisk.UNKNOWN, // TODO (KD): See if we can populate.
-            atc = null, // TODO (KD): See if we can populate
-            isSelfCare = false, // TODO (KD): See if we can populate
-            isTrialMedication = false // TODO (KD): See if we can populate.
+            cypInteractions = emptyList(),
+            qtProlongatingRisk = QTProlongatingRisk.UNKNOWN,
+            atc = null,
+            isSelfCare = false,
+            isTrialMedication = false
         )
     }
 
     private fun nullableDate(obj: JsonObject, field: String): LocalDate? {
         if (obj.get(field).isJsonNull) {
-            return null;
+            return null
         }
         return date(obj, field)
     }

@@ -6,6 +6,10 @@ import com.google.gson.JsonObject
 
 object Json {
 
+    fun nullableObject(obj: JsonObject, field: String): JsonObject? {
+        return if (!isNull(obj, field)) `object`(obj, field) else null
+    }
+
     fun optionalObject(obj: JsonObject, field: String): JsonObject? {
         return if (obj.has(field)) `object`(obj, field) else null
     }
