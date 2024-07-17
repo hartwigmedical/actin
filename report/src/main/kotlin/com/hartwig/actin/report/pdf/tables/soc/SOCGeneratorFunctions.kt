@@ -60,15 +60,29 @@ object SOCGeneratorFunctions {
         }
     }
 
+    fun useShortAnnotation(treatmentName: String): String {
+        val replacements = mapOf(
+            "+bevacizumab" to "-b",
+            "+panitumumab" to "-p"
+        )
+
+        var simplifiedTreatment = treatmentName
+        replacements.forEach { (key, value) ->
+            simplifiedTreatment = simplifiedTreatment.replace(key, value)
+        }
+
+        return simplifiedTreatment
+    }
+
     fun approvedTreatmentCells(treatments: List<AnnotatedTreatmentMatch>): List<Cell> {
         return treatments.sortedWith(annotatedTreatmentComparator)
             .flatMap { treatment: AnnotatedTreatmentMatch ->
-                val nameCell = Cells.createContentBold(treatment.treatmentCandidate.treatment.name)
+                val nameCell = Cells.createContentBold(useShortAnnotation(treatment.treatmentCandidate.treatment.name))
 
                 val annotationsCell = if (treatment.annotations.isEmpty()) {
-                    Cells.createContent("No literature efficacy evidence available yet")
+                    Cells.createContent("Not available yet")
                 } else {
-                    val subTable = Tables.createFixedWidthCols(50f, 150f).setWidth(200f)
+                    val subTable = Tables.createFixedWidthCols(25f, 150f).setWidth(175f)
                     treatment.annotations.forEach { annotation -> addTreatmentAnnotationToTable(annotation, treatment, subTable) }
                     Cells.createContent(subTable)
                 }
@@ -90,7 +104,7 @@ object SOCGeneratorFunctions {
                     } ?: NA
                 )
 
-                sequenceOf(nameCell, annotationsCell, warningsCell, pfsCell)
+                sequenceOf(nameCell, annotationsCell, pfsCell, warningsCell)
             }
     }
 
