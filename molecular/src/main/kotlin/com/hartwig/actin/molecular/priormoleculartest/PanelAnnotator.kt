@@ -119,13 +119,6 @@ class PanelAnnotator(
             return null
         }
 
-        if (!externalVariantAnnotation.isCanonical) {
-            LOGGER.error(
-                "Annotator deems variant '$it' as on the non-canonical transcript '${externalVariantAnnotation.transcript()}. " +
-                        "It cannot be annotated, filtering this variant from panel record"
-            )
-            return null
-        }
         return externalVariantAnnotation
     }
 
@@ -182,15 +175,7 @@ class PanelAnnotator(
         type = variantType(transcriptAnnotation)
     )
 
-    private fun variantType(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant) = when (transcriptAnnotation.type()) {
-        com.hartwig.actin.tools.variant.VariantType.SNV -> VariantType.SNV
-        com.hartwig.actin.tools.variant.VariantType.INS -> VariantType.INSERT
-        com.hartwig.actin.tools.variant.VariantType.DEL -> VariantType.DELETE
-        com.hartwig.actin.tools.variant.VariantType.MNV -> VariantType.MNV
-        else -> VariantType.UNDEFINED
-    }
-
-    private fun variantType2(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant): VariantType {
+    private fun variantType(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant): VariantType {
         val ref = transcriptAnnotation.ref()
         val alt = transcriptAnnotation.alt()
         return if (ref.length == alt.length) {
@@ -205,16 +190,6 @@ class PanelAnnotator(
             VariantType.INSERT
         }
     }
-
-    private fun codingEffect(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant) =
-        when (transcriptAnnotation.codingEffect()) {
-            com.hartwig.actin.tools.variant.CodingEffect.NONE -> CodingEffect.NONE
-            com.hartwig.actin.tools.variant.CodingEffect.MISSENSE -> CodingEffect.MISSENSE
-            com.hartwig.actin.tools.variant.CodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
-            com.hartwig.actin.tools.variant.CodingEffect.SPLICE -> CodingEffect.SPLICE
-            com.hartwig.actin.tools.variant.CodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
-            else -> null
-        }
 
     private fun codingEffect2(paveCodingEffect: PaveCodingEffect) =
         when (paveCodingEffect) {

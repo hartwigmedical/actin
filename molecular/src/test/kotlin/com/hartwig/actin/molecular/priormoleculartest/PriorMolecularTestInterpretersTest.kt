@@ -9,10 +9,8 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.variant.CodingEffect
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.actin.tools.variant.VariantType
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -28,8 +26,7 @@ class PriorMolecularTestInterpretersTest {
         every { evaluate(any(), any(), any()) } returns null
     }
     private val transvarAnnotator = mockk<VariantAnnotator> {
-        every { resolve(any(), any(), any()) } returns ImmutableVariant.builder().alt("G").ref("T").transcript("transcript")
-            .type(VariantType.SNV).isSpliceRegion(false).isCanonical(true).codingEffect(CodingEffect.MISSENSE)
+        every { resolve(any(), any(), any()) } returns ImmutableVariant.builder().alt("G").ref("T")
             .chromosome("1").position(1).build()
     }
     private val paveLite = mockk<PaveLite> {

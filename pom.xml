@@ -25,8 +25,8 @@
         <actin-personalization.version>0.1.0</actin-personalization.version>
         <serve.version>4.0.1</serve.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
-        <actin-transvar.version>0.2.2</actin-transvar.version>
-        <actin-pave-lite.version>0.2.2</actin-pave-lite.version>
+        <actin-transvar.version>0.3.0-beta.1</actin-transvar.version>
+        <actin-pave-lite.version>0.3.0-beta.1</actin-pave-lite.version>
         <pave.version>1.6</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->

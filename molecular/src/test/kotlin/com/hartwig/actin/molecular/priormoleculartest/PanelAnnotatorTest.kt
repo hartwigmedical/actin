@@ -20,10 +20,8 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.variant.CodingEffect
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.actin.tools.variant.VariantType
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
@@ -43,9 +41,7 @@ private val ARCHER_PANEL_WITH_VARIANT = ArcherPanelExtraction(variants = listOf(
 private val VARIANT_MATCH_CRITERIA =
     VariantMatchCriteria(isReportable = true, gene = GENE, chromosome = CHROMOSOME, ref = REF, alt = ALT, position = POSITION)
 private val TRANSCRIPT_ANNOTATION =
-    ImmutableVariant.builder().alt(ALT).ref(REF).transcript(TRANSCRIPT).chromosome(CHROMOSOME).position(POSITION)
-        .hgvsProteinImpact(HGVS_PROTEIN).isSpliceRegion(false)
-        .type(VariantType.SNV).codingEffect(CodingEffect.MISSENSE).isCanonical(true).build()
+    ImmutableVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
 private val PAVE_QUERY = PaveQuery(
     id = "0",
     chromosome = CHROMOSOME,
@@ -147,15 +143,6 @@ class PanelAnnotatorTest {
     @Test
     fun `Should filter variant on null output from transcript annotator`() {
         every { transvarAnnotator.resolve(GENE, null, HGVS_CODING) } returns null
-        assertThat(annotator.annotate(ARCHER_PANEL_WITH_VARIANT).drivers.variants).isEmpty()
-    }
-
-    @Test
-    fun `Should filter variant on non-canonical output from transcript annotator`() {
-        every { transvarAnnotator.resolve(GENE, null, HGVS_CODING) } returns mockk {
-            every { isCanonical } returns false
-            every { transcript() } returns TRANSCRIPT
-        }
         assertThat(annotator.annotate(ARCHER_PANEL_WITH_VARIANT).drivers.variants).isEmpty()
     }
 
