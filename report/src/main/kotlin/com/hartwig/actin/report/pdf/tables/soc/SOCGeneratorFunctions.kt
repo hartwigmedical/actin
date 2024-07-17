@@ -62,8 +62,8 @@ object SOCGeneratorFunctions {
 
     fun useShortAnnotation(treatmentName: String): String {
         val replacements = mapOf(
-            "+bevacizumab" to "-b",
-            "+panitumumab" to "-p"
+            "+BEVACIZUMAB" to "-B",
+            "+PANITUMUMAB" to "-P"
         )
 
         var simplifiedTreatment = treatmentName
