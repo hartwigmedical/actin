@@ -8,6 +8,7 @@ data class PaveImpact(
     val spliceRegion: Boolean,
     val hgvsCodingImpact: String,
     val hgvsProteinImpact: String,
+    val otherReportableEffects: String?,
     val worstCodingEffect: PaveCodingEffect,
     val genesAffected: Int,
 )

@@ -60,10 +60,10 @@ private val PAVE_ANNOTATION = PaveResponse(
         spliceRegion = false,
         hgvsCodingImpact = HGVS_CODING,
         hgvsProteinImpact = HGVS_PROTEIN,
+        otherReportableEffects = null,
         worstCodingEffect = PaveCodingEffect.MISSENSE,
-        genesAffected = 1,
-
-        ),
+        genesAffected = 1
+    ),
     transcriptImpact = emptyList()
 )
 

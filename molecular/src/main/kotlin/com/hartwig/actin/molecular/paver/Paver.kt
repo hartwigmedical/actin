@@ -100,10 +100,6 @@ class Paver(private val config: PaverConfig) {
             throw RuntimeException("Unexpected number of parts in PAVE impact field: ${parts.size}")
         }
 
-        if (parts[7] != null && parts[7].isNotEmpty()) {
-            logger.warn("Unexpected other reportable effects with no gene driver panel configured: {}", parts[7])
-        }
-
         return PaveImpact(
             gene = parts[0],
             transcript = parts[1],
@@ -112,6 +108,7 @@ class Paver(private val config: PaverConfig) {
             spliceRegion = interpretSpliceRegion(parts[4]),
             hgvsCodingImpact = parts[5],
             hgvsProteinImpact = parts[6],
+            otherReportableEffects = parts[7].ifEmpty { null },
             worstCodingEffect = PaveCodingEffect.fromString(parts[8]),
             genesAffected = parts[9].toInt(),
         )

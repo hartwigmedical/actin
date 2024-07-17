@@ -162,14 +162,18 @@ class PanelAnnotator(
         isHotspot = geneAlteration is KnownHotspot,
         ref = transcriptAnnotation.ref(),
         alt = transcriptAnnotation.alt(),
-        canonicalImpact = impactFromPave(paveResponse.impact, paveLiteAnnotation),
-        otherImpacts = paveResponse.transcriptImpact.map { impactFromPaveTranscript(it, paveLiteAnnotation) }.toSet(),
+        canonicalImpact = impact(paveResponse.impact, paveLiteAnnotation),
+        // TODO:
+        //  * should we filter out transcript impacts with coding effect of None?
+        //  * should we filter out transcript impact if its the same transcript as canonicalImpact?
+        //  * should we be loading in paveImpact.otherReportableEffects instead of mapping from pave transcript impacts, or maybe both?
+        otherImpacts = paveResponse.transcriptImpact.map { transcriptImpact(it, paveLiteAnnotation) }.toSet(),
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
         type = variantType(transcriptAnnotation)
     )
 
-    private fun impactFromPave(impact: PaveImpact, paveLiteAnnotation: VariantTranscriptImpact?): TranscriptImpact {
+    private fun impact(impact: PaveImpact, paveLiteAnnotation: VariantTranscriptImpact?): TranscriptImpact {
         return TranscriptImpact(
             transcriptId = impact.transcript,
             hgvsCodingImpact = impact.hgvsCodingImpact,
@@ -181,7 +185,7 @@ class PanelAnnotator(
         )
     }
 
-    private fun impactFromPaveTranscript(impact: PaveTranscriptImpact, paveLiteAnnotation: VariantTranscriptImpact?): TranscriptImpact {
+    private fun transcriptImpact(impact: PaveTranscriptImpact, paveLiteAnnotation: VariantTranscriptImpact?): TranscriptImpact {
         // TODO
         //  * should we filter on gene, in case the Pave response contains multiple genes?
         //  * drop transcript impacts with coding effect of None?
