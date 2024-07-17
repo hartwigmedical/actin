@@ -80,7 +80,7 @@ object HistoricClinicalDeserializer {
         )
 
         if (reader.peek() != JsonToken.END_DOCUMENT) {
-            LOGGER.warn("More data found in {} after reading main JSON object!", clinicalJson)
+            LOGGER.warn("More data found in {} after reading main clinical JSON object!", clinicalJson)
         }
 
         return clinicalRecord
@@ -356,7 +356,7 @@ object HistoricClinicalDeserializer {
             clinicalStatus = Json.nullableString(intolerance, "clinicalStatus"),
             verificationStatus = Json.nullableString(intolerance, "verificationStatus"),
             criticality = Json.nullableString(intolerance, "criticality"),
-            treatmentCategories = null // TODO (KD) See if we can populate this field for older datamodels.
+            treatmentCategories = null
         )
     }
 

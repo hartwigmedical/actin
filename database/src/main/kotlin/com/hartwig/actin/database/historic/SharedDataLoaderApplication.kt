@@ -1,7 +1,12 @@
 package com.hartwig.actin.database.historic
 
+import com.hartwig.actin.algo.datamodel.TreatmentMatch
+import com.hartwig.actin.clinical.datamodel.ClinicalRecord
+import com.hartwig.actin.database.dao.DatabaseAccess
 import com.hartwig.actin.database.historic.serialization.HistoricClinicalDeserializer
+import com.hartwig.actin.database.historic.serialization.HistoricMolecularDeserializer
 import com.hartwig.actin.database.molecular.MolecularLoaderApplication
+import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -17,31 +22,37 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
 
         LOGGER.info("Converting shared data records from {} to patient records", config.sharedDataDirectory)
-        val patients = File(config.sharedDataDirectory).list()!!.map {
-            LOGGER.info(" Processing {}", it)
+        val historicData: List<Triple<ClinicalRecord?, MolecularHistory?, TreatmentMatch?>> =
+            File(config.sharedDataDirectory).list()!!.map {
+                LOGGER.info(" Processing {}", it)
 
-            val clinicalJson = findClinicalJson(it)
-            val molecularJson = findMolecularJson(it)
-            val treatmentMatchJson = findTreatmentMatchJson(it)
+                val clinicalJson = findClinicalJson(it)
+                val molecularJson = findMolecularJson(it)
+//                val treatmentMatchJson = findTreatmentMatchJson(it)
 
-            if (!clinicalJson.exists()) {
-                LOGGER.warn("Clinical file does not exist: {}", clinicalJson)
-            } else {
-                val clinical = HistoricClinicalDeserializer.deserialize(clinicalJson)
-                LOGGER.info("  Produced {}", clinical)
+                val clinical: ClinicalRecord? =
+                    if (clinicalJson.exists()) HistoricClinicalDeserializer.deserialize(clinicalJson) else null
+
+                if (clinical == null) {
+                    LOGGER.warn("Clinical record could not be constructed for {} based on : {}", it, clinicalJson)
+                }
+
+                val molecular: MolecularHistory? =
+                    if (molecularJson.exists()) HistoricMolecularDeserializer.deserialize(molecularJson) else null
+                if (molecular == null) {
+                    LOGGER.warn("Molecular record could not be constructed for {} based on : {}", it, molecularJson)
+                }
+
+                Triple(clinical, molecular, null)
             }
 
-            if (!molecularJson.exists()) {
-                LOGGER.warn("Molecular file does not exist: {}", molecularJson)
-            }
+        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
-            if (!treatmentMatchJson.exists()) {
-                LOGGER.warn("Treatment match file does not exist: {}", treatmentMatchJson)
-            }
-            "1"
-        }
+        LOGGER.info("Writing clinical data for {} historic patients", historicData.size)
+        access.writeClinicalRecords(historicData.mapNotNull { it.first })
 
-//        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
+        LOGGER.info("Writing molecular data for {} historic patients", historicData.size)
+        historicData.mapNotNull { it -> it.second?.latestOrangeMolecularRecord()?.let { access.writeMolecularRecord(it) } }
 
         LOGGER.info("Done!")
     }
