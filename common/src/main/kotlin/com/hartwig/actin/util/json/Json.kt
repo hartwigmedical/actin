@@ -3,6 +3,7 @@ package com.hartwig.actin.util.json
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import java.time.LocalDate
 
 object Json {
 
@@ -86,6 +87,16 @@ object Json {
     fun bool(obj: JsonObject, field: String): Boolean {
         return obj.get(field).asBoolean
     }
+
+    fun nullableDate(obj: JsonObject, field: String): LocalDate? {
+        return if (!isNull(obj, field)) date(obj, field) else null
+    }
+
+    fun date(obj: JsonObject, field: String): LocalDate {
+        val jsonDate: JsonObject = `object`(obj, field)
+        return LocalDate.of(integer(jsonDate, "year"), integer(jsonDate, "month"), integer(jsonDate, "day"))
+    }
+
 
     private fun isNull(obj: JsonObject, field: String): Boolean {
         return obj.get(field).isJsonNull

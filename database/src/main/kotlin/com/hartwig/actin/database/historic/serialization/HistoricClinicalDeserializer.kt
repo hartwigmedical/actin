@@ -96,8 +96,8 @@ object HistoricClinicalDeserializer {
         return PatientDetails(
             gender = Gender.valueOf(Json.string(patient, "gender")),
             birthYear = Json.integer(patient, "birthYear"),
-            registrationDate = date(patient, "registrationDate"),
-            questionnaireDate = nullableDate(patient, "questionnaireDate")
+            registrationDate = Json.date(patient, "registrationDate"),
+            questionnaireDate = Json.nullableDate(patient, "questionnaireDate")
         )
     }
 
@@ -312,7 +312,7 @@ object HistoricClinicalDeserializer {
     private fun toLabValue(labValueElement: JsonElement): LabValue {
         val labValue: JsonObject = labValueElement.asJsonObject
         return LabValue(
-            date = date(labValue, "date"),
+            date = Json.date(labValue, "date"),
             code = Json.string(labValue, "code"),
             name = Json.string(labValue, "name"),
             comparator = Json.string(labValue, "comparator"),
@@ -334,7 +334,7 @@ object HistoricClinicalDeserializer {
         return Toxicity(
             name = Json.string(toxicity, "name"),
             categories = emptySet(),
-            evaluatedDate = date(toxicity, "evaluatedDate"),
+            evaluatedDate = Json.date(toxicity, "evaluatedDate"),
             source = ToxicitySource.valueOf(Json.string(toxicity, "source")),
             grade = Json.nullableInteger(toxicity, "grade")
         )
@@ -368,7 +368,7 @@ object HistoricClinicalDeserializer {
     private fun toSurgery(surgeryElement: JsonElement): Surgery {
         val surgery: JsonObject = surgeryElement.asJsonObject
         return Surgery(
-            endDate = date(surgery, "endDate"),
+            endDate = Json.date(surgery, "endDate"),
             status = SurgeryStatus.valueOf(Json.string(surgery, "status"))
         )
     }
@@ -381,7 +381,7 @@ object HistoricClinicalDeserializer {
     private fun toBodyWeight(bodyWeightElement: JsonElement): BodyWeight {
         val bodyWeight: JsonObject = bodyWeightElement.asJsonObject
         return BodyWeight(
-            date = toDateTime(date(bodyWeight, "date")),
+            date = toDateTime(Json.date(bodyWeight, "date")),
             value = Json.double(bodyWeight, "value"),
             unit = Json.string(bodyWeight, "unit"),
             valid = false
@@ -396,7 +396,7 @@ object HistoricClinicalDeserializer {
     private fun toVitalFunction(vitalFunctionElement: JsonElement): VitalFunction {
         val vitalFunction: JsonObject = vitalFunctionElement.asJsonObject
         return VitalFunction(
-            date = toDateTime(date(vitalFunction, "date")),
+            date = toDateTime(Json.date(vitalFunction, "date")),
             category = VitalFunctionCategory.valueOf(Json.string(vitalFunction, "category")),
             subcategory = Json.string(vitalFunction, "subcategory"),
             value = Json.double(vitalFunction, "value"),
@@ -413,7 +413,7 @@ object HistoricClinicalDeserializer {
     private fun toBloodTransfusion(bloodTransfusionElement: JsonElement): BloodTransfusion {
         val bloodTransfusion: JsonObject = bloodTransfusionElement.asJsonObject
         return BloodTransfusion(
-            date = date(bloodTransfusion, "date"),
+            date = Json.date(bloodTransfusion, "date"),
             product = Json.string(bloodTransfusion, "product")
         )
     }
@@ -439,26 +439,14 @@ object HistoricClinicalDeserializer {
                 periodBetweenUnit = null,
                 ifNeeded = Json.nullableBool(medication, "ifNeeded")
             ),
-            startDate = nullableDate(medication, "startDate"),
-            stopDate = nullableDate(medication, "stopDate"),
+            startDate = Json.nullableDate(medication, "startDate"),
+            stopDate = Json.nullableDate(medication, "stopDate"),
             cypInteractions = emptyList(),
             qtProlongatingRisk = QTProlongatingRisk.UNKNOWN,
             atc = null,
             isSelfCare = false,
             isTrialMedication = false
         )
-    }
-
-    private fun nullableDate(obj: JsonObject, field: String): LocalDate? {
-        if (obj.get(field).isJsonNull) {
-            return null
-        }
-        return date(obj, field)
-    }
-
-    private fun date(obj: JsonObject, field: String): LocalDate {
-        val jsonDate: JsonObject = Json.`object`(obj, field)
-        return LocalDate.of(Json.integer(jsonDate, "year"), Json.integer(jsonDate, "month"), Json.integer(jsonDate, "day"))
     }
 
     private fun toDateTime(date: LocalDate): LocalDateTime {
