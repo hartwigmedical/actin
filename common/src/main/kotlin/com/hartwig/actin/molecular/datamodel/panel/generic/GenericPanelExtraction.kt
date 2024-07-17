@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular.datamodel.panel.generic
 
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
+import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
@@ -7,12 +9,16 @@ import java.time.LocalDate
 val GENERIC_PANEL_ALWAYS_TESTED_GENES = setOf("EGFR", "BRAF", "KRAS")
 
 data class GenericPanelExtraction(
-    val panelType: GenericPanelType,
     val fusions: List<GenericFusionExtraction> = emptyList(),
     val exonDeletions: List<GenericExonDeletionExtraction> = emptyList(),
     val genesWithNegativeResults: Set<String> = emptySet(),
+    override val panelType: String,
+    override val amplifications: List<PanelAmplificationExtraction> = emptyList(),
     override val variants: List<PanelVariantExtraction> = emptyList(),
     override val date: LocalDate? = null,
+    override val tmb: Double? = null,
+    override val msi: Boolean? = null,
+    override val extractionClass: String = GenericPanelExtraction::class.java.simpleName
 ) : PanelExtraction {
     override fun testedGenes(): Set<String> {
         return genesHavingResultsInPanel() + alwaysTestedGenes() + genesWithNegativeResults
@@ -33,9 +39,9 @@ data class GenericPanelExtraction(
     }
 
     private fun alwaysTestedGenes(): Set<String> {
-        return when (panelType) {
-            GenericPanelType.FREE_TEXT -> emptySet()
-            else -> GENERIC_PANEL_ALWAYS_TESTED_GENES
+        return when {
+            panelType == AVL_PANEL -> GENERIC_PANEL_ALWAYS_TESTED_GENES
+            else -> emptySet()
         }
     }
 

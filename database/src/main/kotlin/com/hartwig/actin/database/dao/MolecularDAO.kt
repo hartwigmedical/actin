@@ -131,7 +131,7 @@ internal class MolecularDAO(private val context: DSLContext) {
             .values(
                 record.patientId,
                 sampleId,
-                record.type.toString(),
+                record.experimentType.toString(),
                 record.refGenomeVersion.toString(),
                 record.date,
                 record.evidenceSource,

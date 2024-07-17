@@ -61,7 +61,7 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.undeterminedGeneralMessages).containsExactly("Insufficient molecular data")
     }
 
-    private fun emptyArcher() = TestPanelRecordFactory.empty().copy(type = ExperimentType.ARCHER)
+    private fun emptyArcher() = TestPanelRecordFactory.empty().copy(experimentType = ExperimentType.PANEL)
 
     @Test
     fun `Should execute rule when ORANGE molecular data`() {

@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -11,7 +12,7 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 import java.util.function.Consumer
 
-class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, private val width: Float) : TableGenerator {
+class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, private val width: Float) : TableGenerator {
     override fun title(): String {
         return "General"
     }
@@ -20,7 +21,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         val colWidth = width / 10
         val table = Tables.createFixedWidthCols(colWidth, colWidth, colWidth, colWidth, colWidth, colWidth * 2, colWidth * 2)
 
-        listOf("Purity", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(
+        listOf("Purity", "TML Status", "TMB Status", "MS Stability", "HR Status").forEach(
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })
 
         listOf(
@@ -29,8 +30,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             createTMBStatusCell(),
             createMSStabilityCell(),
             createHRStatusCell(),
-            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "DPYD")),
-            Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "UGT1A1"))
+            // Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "DPYD")),
+            // Cells.createContent(createPeachSummaryForGene(molecular.pharmaco, "UGT1A1"))
         ).forEach { table.addCell(it) }
 
         return table
@@ -76,7 +77,11 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
         }
         val interpretation = if (hasHighTumorMutationalBurden) "High" else "Low"
         val value = interpretation + " (" + Formats.singleDigitNumber(tumorMutationalBurden) + ")"
-        val cell = if (molecular.hasSufficientQualityAndPurity()) Cells.createContent(value) else Cells.createContentWarn(value)
+        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
+        val cell =
+            if (wgsMolecular != null && wgsMolecular.hasSufficientQualityAndPurity()) Cells.createContent(value) else Cells.createContentWarn(
+                value
+            )
         if (hasHighTumorMutationalBurden) {
             cell.addStyle(Styles.tableHighlightStyle())
         }
@@ -108,7 +113,11 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
             Cells.createContentWarn(Formats.VALUE_NOT_AVAILABLE)
         } else {
             summaryString?.let { value: String ->
-                val cell = if (molecular.hasSufficientQualityAndPurity()) Cells.createContent(value) else Cells.createContentWarn(value)
+                val wgsMolecular = if (molecular is MolecularRecord) molecular else null
+                val cell =
+                    if (wgsMolecular != null && wgsMolecular.hasSufficientQualityAndPurity()) Cells.createContent(value) else Cells.createContentWarn(
+                        value
+                    )
                 if (true == shouldHighlight) {
                     cell.addStyle(Styles.tableHighlightStyle())
                 }
@@ -118,7 +127,8 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularRecord, 
     }
 
     private fun createPeachSummaryForGene(pharmaco: Set<PharmacoEntry>, gene: String): String {
-        if (molecular.isContaminated) {
+        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
+        if (wgsMolecular?.isContaminated == true) {
             return Formats.VALUE_NOT_AVAILABLE
         } else {
             val pharmacoEntry = findPharmacoEntry(pharmaco, gene) ?: return Formats.VALUE_UNKNOWN

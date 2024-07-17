@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter
@@ -24,7 +25,8 @@ class MolecularDriversGenerator(
     private val molecular: MolecularRecord,
     private val cohorts: List<EvaluatedCohort>,
     private val trialMatches: List<TrialMatch>,
-    private val width: Float
+    private val width: Float,
+    private val countryOfResidence: Country
 ) : TableGenerator {
 
     override fun title(): String {
@@ -45,10 +47,10 @@ class MolecularDriversGenerator(
 
         val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
 
-        val externalTrialSummarizer = ExternalTrialSummarizer()
+        val externalTrialSummarizer = ExternalTrialSummarizer(countryOfResidence)
         val externalTrialSummary = externalTrialSummarizer.summarize(AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, trialMatches, cohorts)
 
-        val externalTrialsPerEvents = mergeMapsOfSets(listOf(externalTrialSummary.dutchTrials, externalTrialSummary.otherCountryTrials))
+        val externalTrialsPerEvents = mergeMapsOfSets(listOf(externalTrialSummary.localTrials, externalTrialSummary.nonLocalTrials))
         val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrialsPerEvents)
 
         val factory = MolecularDriverEntryFactory(molecularDriversInterpreter)

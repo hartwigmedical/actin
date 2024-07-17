@@ -83,15 +83,16 @@ data class ProvidedTreatmentModification(
 @JacksonSerializable
 data class ProvidedMolecularTest(
     @JsonPropertyDescription("Type of test administered (eg. IHC)") val type: String,
-    @JsonPropertyDescription("Measured gene or proteint (eg. HER2)") val measure: String?,
+    @JsonPropertyDescription("Measured gene or protein(eg. HER2)") val measure: String?,
     @JsonPropertyDescription("Result of the test (eg. Negative/3+)") val result: String,
+    val resultType: String?,
     val resultDate: LocalDate,
 )
 
 @JacksonSerializable
 data class ProvidedPriorPrimary(
     @JsonPropertyDescription("Diagnosis date") val diagnosisDate: LocalDate?,
-    @JsonPropertyDescription("Tumor localization details (eg. Colon)") val tumorLocation: String,
+    @JsonPropertyDescription("Tumor localization is details (eg. Colon)") val tumorLocation: String,
     @JsonPropertyDescription("Tumor type details (eg. Carcinoma)") val tumorType: String,
     @JsonPropertyDescription("Observed status of tumor (eg. Active/Inactive") val status: String? = null,
     val statusDate: LocalDate? = null
@@ -101,7 +102,7 @@ data class ProvidedPriorPrimary(
 data class ProvidedPriorOtherCondition(
     @field:JsonDeserialize(using = RemoveNewlinesAndCarriageReturns::class)
     @JsonPropertyDescription("Name of condition (eg. Pancreatis)") val name: String,
-    @JsonPropertyDescription("Start date of condition") val startDate: LocalDate,
+    @JsonPropertyDescription("Start date of condition") val startDate: LocalDate? = null,
     @JsonPropertyDescription("End date of condition if applicable") val endDate: LocalDate? = null
 )
 

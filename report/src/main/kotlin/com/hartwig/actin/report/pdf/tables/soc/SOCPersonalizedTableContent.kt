@@ -10,7 +10,6 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.element.Text
-import java.lang.IllegalArgumentException
 
 const val FIRST_COLUMN_FRACTIONAL_WIDTH = 0.15
 

@@ -27,10 +27,12 @@ class StandardPriorOtherConditionsExtractor(
             )
             ExtractionResult(
                 curatedPriorOtherCondition.configs.mapNotNull { config ->
-                    config.priorOtherCondition?.copy(
-                        year = it.startDate.year,
-                        month = it.startDate.monthValue
-                    )
+                    it.startDate?.let { sourceStartDate ->
+                        config.priorOtherCondition?.copy(
+                            year = sourceStartDate.year,
+                            month = sourceStartDate.monthValue
+                        )
+                    } ?: config.priorOtherCondition
                 },
                 curatedPriorOtherCondition.extractionEvaluation
             )

@@ -4,7 +4,6 @@ import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.datamodel.PriorOtherCondition
 import com.hartwig.actin.clinical.datamodel.PriorSecondPrimary
 import com.hartwig.actin.clinical.datamodel.TumorStatus
-import com.hartwig.actin.clinical.datamodel.treatment.history.Intent
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.clinical.sort.PriorSecondPrimaryDiagnosedDateComparator
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
@@ -42,11 +41,11 @@ class PatientClinicalHistoryGenerator(
         val record = report.patientRecord
         return listOfNotNull(
             "Relevant systemic treatment history" to relevantSystemicPreTreatmentHistoryTable(record),
-            if (report.config.showOtherOncologicalHistoryInSummary || showDetails) {
+            if (report.config.includeOtherOncologicalHistoryInSummary || showDetails) {
                 "Relevant other oncological history" to relevantNonSystemicPreTreatmentHistoryTable(record)
             } else null,
             "Previous primary tumor" to secondPrimaryHistoryTable(record),
-            if (report.config.showRelevantNonOncologicalHistoryInSummary || showDetails) {
+            if (report.config.includeRelevantNonOncologicalHistoryInSummary || showDetails) {
                 "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
@@ -121,7 +120,6 @@ class PatientClinicalHistoryGenerator(
     }
 
     companion object {
-        private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 
         private fun extractDateRangeString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
             val startString = toDateString(treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
@@ -137,7 +135,6 @@ class PatientClinicalHistoryGenerator(
 
         private fun extractTreatmentString(treatmentHistoryEntry: TreatmentHistoryEntry): String {
             val intentNames = treatmentHistoryEntry.intents
-                ?.filter { it != Intent.PALLIATIVE }
                 ?.map { it.name.lowercase() }
 
             val intentString = when {
@@ -153,7 +150,6 @@ class PatientClinicalHistoryGenerator(
             val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails?.cycles?.let { if (it == 1) "$it cycle" else "$it cycles" }
 
             val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails?.stopReasonDetail
-                ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
 
             val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 
