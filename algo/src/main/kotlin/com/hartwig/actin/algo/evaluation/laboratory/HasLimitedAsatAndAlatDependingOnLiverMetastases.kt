@@ -35,8 +35,8 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
         val asatLimitEvaluation = evaluateMeasurement(mostRecentAsat, hasLiverMetastases)
         val alatLimitEvaluation = evaluateMeasurement(mostRecentAlat, hasLiverMetastases)
 
-        val alatWithinLiverMetastasisLimit = evaluateVersusMaxULN(mostRecentAlat!!, maxULNWithLiverMetastases) == WITHIN_THRESHOLD
-        val asatWithinLiverMetastasisLimit = evaluateVersusMaxULN(mostRecentAsat!!, maxULNWithLiverMetastases) == WITHIN_THRESHOLD
+        val alatWithinLiverMetastasisLimit = mostRecentAlat?.let { evaluateVersusMaxULN(it, maxULNWithLiverMetastases) == WITHIN_THRESHOLD }
+        val asatWithinLiverMetastasisLimit = mostRecentAsat?.let { evaluateVersusMaxULN(it, maxULNWithLiverMetastases) == WITHIN_THRESHOLD }
 
         val asatLabValueString = createLabValueString(ASPARTATE_AMINOTRANSFERASE, mostRecentAsat)
         val alatLabValueString = createLabValueString(ALANINE_AMINOTRANSFERASE, mostRecentAlat)
@@ -54,17 +54,19 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
 
             asatLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN && alatLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
                 val message = "ASAT ($asatLabValueString) and ALAT ($alatLabValueString) exceed maximum allowed value"
-                evaluateOutsideMargin(asatWithinLiverMetastasisLimit && alatWithinLiverMetastasisLimit, hasLiverMetastases, message)
+                evaluateOutsideMargin(
+                    asatWithinLiverMetastasisLimit == true && alatWithinLiverMetastasisLimit == true, hasLiverMetastases, message
+                )
             }
 
             asatLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
                 val message = "$asatLabValueString exceeds maximum of $asatReferenceString"
-                evaluateOutsideMargin(asatWithinLiverMetastasisLimit, hasLiverMetastases, message)
+                evaluateOutsideMargin(asatWithinLiverMetastasisLimit == true, hasLiverMetastases, message)
             }
 
             alatLimitEvaluation == EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
                 val message = "$alatLabValueString exceeds maximum of $alatReferenceString"
-                evaluateOutsideMargin(alatWithinLiverMetastasisLimit, hasLiverMetastases, message)
+                evaluateOutsideMargin(alatWithinLiverMetastasisLimit == true, hasLiverMetastases, message)
             }
 
             asatLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN && alatLimitEvaluation == EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
