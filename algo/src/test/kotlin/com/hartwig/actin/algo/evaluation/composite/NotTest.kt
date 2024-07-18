@@ -62,7 +62,7 @@ class NotTest {
     }
 
     @Test
-    fun `Should flip messages and molecular events for undetermined evaluation`() {
+    fun `Should retain messages and flip molecular events for undetermined evaluation`() {
         val undeterminedFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, true)
         val undetermined = undeterminedFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(undeterminedFunction).evaluate(TEST_PATIENT)
@@ -71,10 +71,10 @@ class NotTest {
         assertThat(result.inclusionMolecularEvents).isEqualTo(undetermined.exclusionMolecularEvents)
         assertThat(undetermined.exclusionMolecularEvents).isNotEmpty()
         assertThat(result.exclusionMolecularEvents).isEqualTo(undetermined.inclusionMolecularEvents)
-        assertThat(result.passSpecificMessages).isEqualTo(undetermined.failSpecificMessages)
-        assertThat(result.passGeneralMessages).isEqualTo(undetermined.failGeneralMessages)
-        assertThat(result.failSpecificMessages).isEqualTo(undetermined.passSpecificMessages)
-        assertThat(result.failGeneralMessages).isEqualTo(undetermined.passGeneralMessages)
+        assertThat(result.passSpecificMessages).isEqualTo(undetermined.passSpecificMessages)
+        assertThat(result.passGeneralMessages).isEqualTo(undetermined.passGeneralMessages)
+        assertThat(result.failSpecificMessages).isEqualTo(undetermined.failSpecificMessages)
+        assertThat(result.failGeneralMessages).isEqualTo(undetermined.failGeneralMessages)
         assertThat(result.undeterminedSpecificMessages).isEqualTo(undetermined.undeterminedSpecificMessages)
         assertThat(result.undeterminedGeneralMessages).isEqualTo(undetermined.undeterminedGeneralMessages)
         assertThat(result.warnSpecificMessages).isEqualTo(undetermined.warnSpecificMessages)
@@ -82,7 +82,7 @@ class NotTest {
     }
 
     @Test
-    fun `Should flip messages and molecular events for warn evaluation`() {
+    fun `Should retain messages and flip molecular events for warn evaluation`() {
         val warnFunction = CompositeTestFactory.create(EvaluationResult.WARN, true)
         val warn = warnFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(warnFunction).evaluate(TEST_PATIENT)
@@ -91,10 +91,10 @@ class NotTest {
         assertThat(result.inclusionMolecularEvents).isEqualTo(warn.exclusionMolecularEvents)
         assertThat(warn.exclusionMolecularEvents).isNotEmpty()
         assertThat(result.exclusionMolecularEvents).isEqualTo(warn.inclusionMolecularEvents)
-        assertThat(result.passSpecificMessages).isEqualTo(warn.failSpecificMessages)
-        assertThat(result.passGeneralMessages).isEqualTo(warn.failGeneralMessages)
-        assertThat(result.failSpecificMessages).isEqualTo(warn.passSpecificMessages)
-        assertThat(result.failGeneralMessages).isEqualTo(warn.passGeneralMessages)
+        assertThat(result.passSpecificMessages).isEqualTo(warn.passSpecificMessages)
+        assertThat(result.passGeneralMessages).isEqualTo(warn.passGeneralMessages)
+        assertThat(result.failSpecificMessages).isEqualTo(warn.failSpecificMessages)
+        assertThat(result.failGeneralMessages).isEqualTo(warn.failGeneralMessages)
         assertThat(result.undeterminedSpecificMessages).isEqualTo(warn.undeterminedSpecificMessages)
         assertThat(result.undeterminedGeneralMessages).isEqualTo(warn.undeterminedGeneralMessages)
         assertThat(result.warnSpecificMessages).isEqualTo(warn.warnSpecificMessages)

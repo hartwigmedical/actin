@@ -41,20 +41,20 @@ class Not(private val function: EvaluationFunction) : EvaluationFunction {
                 negatedResult = EvaluationResult.WARN
                 inclusionMolecularEvents = evaluation.exclusionMolecularEvents
                 exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-                passSpecificMessages = evaluation.failSpecificMessages
-                passGeneralMessages = evaluation.failGeneralMessages
-                failSpecificMessages = evaluation.passSpecificMessages
-                failGeneralMessages = evaluation.passGeneralMessages
+                passSpecificMessages = evaluation.passSpecificMessages
+                passGeneralMessages = evaluation.passGeneralMessages
+                failSpecificMessages = evaluation.failSpecificMessages
+                failGeneralMessages = evaluation.failGeneralMessages
             }
 
             EvaluationResult.UNDETERMINED -> {
                 negatedResult = EvaluationResult.UNDETERMINED
                 inclusionMolecularEvents = evaluation.exclusionMolecularEvents
                 exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-                passSpecificMessages = evaluation.failSpecificMessages
-                passGeneralMessages = evaluation.failGeneralMessages
-                failSpecificMessages = evaluation.passSpecificMessages
-                failGeneralMessages = evaluation.passGeneralMessages
+                passSpecificMessages = evaluation.passSpecificMessages
+                passGeneralMessages = evaluation.passGeneralMessages
+                failSpecificMessages = evaluation.failSpecificMessages
+                failGeneralMessages = evaluation.failGeneralMessages
             }
 
             EvaluationResult.NOT_EVALUATED -> {
@@ -65,6 +65,7 @@ class Not(private val function: EvaluationFunction) : EvaluationFunction {
                 passGeneralMessages = evaluation.failGeneralMessages
                 failSpecificMessages = evaluation.passSpecificMessages
                 failGeneralMessages = evaluation.passGeneralMessages
+
             }
 
             else -> {
