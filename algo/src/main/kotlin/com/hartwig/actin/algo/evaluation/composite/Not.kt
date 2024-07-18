@@ -27,7 +27,7 @@ class Not(private val function: EvaluationFunction) : EvaluationFunction {
                 failGeneralMessages = evaluation.passGeneralMessages
             }
 
-            EvaluationResult.FAIL -> {
+            in listOf(EvaluationResult.FAIL, EvaluationResult.WARN, EvaluationResult.UNDETERMINED, EvaluationResult.NOT_EVALUATED) -> {
                 negatedResult = EvaluationResult.PASS
                 inclusionMolecularEvents = evaluation.exclusionMolecularEvents
                 exclusionMolecularEvents = evaluation.inclusionMolecularEvents
