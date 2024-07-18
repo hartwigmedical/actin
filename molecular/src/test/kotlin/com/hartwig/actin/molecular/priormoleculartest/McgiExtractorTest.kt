@@ -5,7 +5,6 @@ import com.hartwig.actin.molecular.datamodel.panel.PanelAmplificationExtraction
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 
@@ -22,7 +21,7 @@ class McgiExtractorTest {
     @Test
     fun `Should return empty extraction when no tests`() {
         val result = extractor.extract(emptyList())
-        assertTrue(result.isEmpty())
+        assertThat(result).isEmpty()
     }
 
     @Test
@@ -40,13 +39,13 @@ class McgiExtractorTest {
     @Test
     fun `Should extract tmb from prior molecular tests`() {
         val result = extractor.extract(listOf(priorMolecularTest("1.0", "tmb")))
-        assertThat(result.first().tmb).isEqualTo(1.0)
+        assertThat(result.first().tumorMutationalBurden).isEqualTo(1.0)
     }
 
     @Test
     fun `Should extract msi from prior molecular tests`() {
         val result = extractor.extract(listOf(priorMolecularTest("true", "msi")))
-        assertThat(result.first().msi).isTrue()
+        assertThat(result.first().isMicrosatelliteUnstable).isTrue()
     }
 
     @Test
@@ -82,13 +81,14 @@ class McgiExtractorTest {
         assertThat(result[2].amplifications).containsExactly(PanelAmplificationExtraction(GENE, chromosome3))
     }
 
-    private fun priorMolecularTest(measure: String, type: String, test: String = PANEL_TYPE, date: LocalDate = TEST_DATE) = PriorMolecularTest(
-        test = test,
-        item = GENE,
-        measure = measure,
-        measureDate = date,
-        scoreText = type,
-        impliesPotentialIndeterminateStatus = false
-    )
+    private fun priorMolecularTest(measure: String, type: String, test: String = PANEL_TYPE, date: LocalDate = TEST_DATE) =
+        PriorMolecularTest(
+            test = test,
+            item = GENE,
+            measure = measure,
+            measureDate = date,
+            scoreText = type,
+            impliesPotentialIndeterminateStatus = false
+        )
 
 }

@@ -50,7 +50,7 @@ internal object MolecularHistoryFactory {
             molecularTests = listOf(
                 archerPanelRecord(
                     ArcherPanelExtraction(
-                        variants = listOf(PanelVariantExtraction(gene = gene, hgvsImpact = hgvsCodingImpact))
+                        variants = listOf(PanelVariantExtraction(gene = gene, hgvsCodingOrProteinImpact = hgvsCodingImpact))
                     )
                 ).copy(
                     drivers = Drivers(

@@ -111,7 +111,7 @@ object AggregatedEvidenceFactory {
         )
     }
 
-    private fun <T> mergeMapsOfSets(mapsOfSets: List<Map<String, Set<T>>>): Map<String, Set<T>> {
+    fun <T> mergeMapsOfSets(mapsOfSets: List<Map<String, Set<T>>>): Map<String, Set<T>> {
         return mapsOfSets
             .flatMap { it.entries }
             .groupBy({ it.key }, { it.value })

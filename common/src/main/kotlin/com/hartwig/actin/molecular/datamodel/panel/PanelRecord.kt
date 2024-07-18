@@ -9,12 +9,11 @@ import java.time.LocalDate
 data class PanelRecord(
     val panelExtraction: PanelExtraction,
     override val experimentType: ExperimentType,
-    override val testType: String? = null,
+    override val testTypeDisplay: String? = null,
     override val date: LocalDate? = null,
     override val drivers: Drivers,
     override val characteristics: MolecularCharacteristics = MolecularCharacteristics(),
-    override val evidenceSource: String,
-    override val hasSufficientQuality: Boolean = true,
+    override val evidenceSource: String
 ) : MolecularTest {
 
     fun testedGenes() = panelExtraction.testedGenes()

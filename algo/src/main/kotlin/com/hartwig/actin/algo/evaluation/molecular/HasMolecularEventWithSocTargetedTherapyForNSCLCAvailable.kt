@@ -10,7 +10,7 @@ class HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(private val genes
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationFunctions = createEvaluationFunctions(genesToIgnore)
-        return Or(evaluationFunctions).evaluate(record)
+        return Or(evaluationFunctions).evaluate(record).copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
     }
 
     private fun createEvaluationFunctions(genesToIgnore: Set<String>): List<EvaluationFunction> =

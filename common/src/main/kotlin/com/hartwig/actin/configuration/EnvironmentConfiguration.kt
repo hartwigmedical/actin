@@ -27,7 +27,7 @@ data class ReportConfiguration(
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val includeClinicalDetailsChapter: Boolean = true,
     val includeTrialMatchingSummary: Boolean = true,
-    val countryOfResidence: Country = Country.NETHERLANDS
+    val homeCountry: Country = Country.NETHERLANDS
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"

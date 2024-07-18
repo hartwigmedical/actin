@@ -1,8 +1,10 @@
 package com.hartwig.actin.molecular.priormoleculartest
 
+import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
@@ -17,10 +19,7 @@ import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.variant.CodingEffect
-import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.actin.tools.variant.VariantType
 import com.hartwig.serve.datamodel.EvidenceDirection
 import com.hartwig.serve.datamodel.EvidenceLevel
 import com.hartwig.serve.datamodel.Knowledgebase
@@ -28,6 +27,11 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import com.hartwig.actin.tools.variant.CodingEffect as ActinToolsCodingEffect
+import com.hartwig.actin.tools.variant.ImmutableVariant as ActinToolsVariant
+import com.hartwig.actin.tools.variant.VariantType as ActinToolsVariantType
+import com.hartwig.serve.datamodel.common.GeneRole as ServeGeneRole
+import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
 
 private const val ALT = "T"
 private const val REF = "G"
@@ -45,17 +49,17 @@ private val VARIANT_MATCH_CRITERIA =
         ref = REF,
         alt = ALT,
         position = POSITION,
-        codingEffect = com.hartwig.actin.molecular.datamodel.CodingEffect.MISSENSE,
-        type = com.hartwig.actin.molecular.datamodel.VariantType.SNV
+        codingEffect = CodingEffect.MISSENSE,
+        type = VariantType.SNV
     )
 private val TRANSCRIPT_ANNOTATION =
-    ImmutableVariant.builder().alt(ALT).ref(REF).transcript(TRANSCRIPT).chromosome(CHROMOSOME).position(POSITION)
+    ActinToolsVariant.builder().alt(ALT).ref(REF).transcript(TRANSCRIPT).chromosome(CHROMOSOME).position(POSITION)
         .hgvsProteinImpact(HGVS_PROTEIN).isSpliceRegion(false)
-        .type(VariantType.SNV).codingEffect(CodingEffect.MISSENSE).isCanonical(true).build()
+        .type(ActinToolsVariantType.SNV).codingEffect(ActinToolsCodingEffect.MISSENSE).isCanonical(true).build()
 
 private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
-    .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)
-    .withProteinEffect(com.hartwig.serve.datamodel.common.ProteinEffect.GAIN_OF_FUNCTION)
+    .withGeneRole(ServeGeneRole.ONCO)
+    .withProteinEffect(ServeProteinEffect.GAIN_OF_FUNCTION)
 
 private val ACTIONABILITY_MATCH = ActionabilityMatch(
     onLabelEvents = listOf(
@@ -118,13 +122,13 @@ class PanelAnnotatorTest {
         val annotatedVariant = annotated.drivers.variants.first()
         assertThat(annotatedVariant.canonicalImpact.transcriptId).isEqualTo(TRANSCRIPT)
         assertThat(annotatedVariant.canonicalImpact.hgvsCodingImpact).isEqualTo(HGVS_CODING)
-        assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(com.hartwig.actin.molecular.datamodel.CodingEffect.MISSENSE)
+        assertThat(annotatedVariant.canonicalImpact.codingEffect).isEqualTo(CodingEffect.MISSENSE)
         assertThat(annotatedVariant.canonicalImpact.hgvsProteinImpact).isEqualTo(HGVS_PROTEIN)
         assertThat(annotatedVariant.chromosome).isEqualTo(CHROMOSOME)
         assertThat(annotatedVariant.position).isEqualTo(POSITION)
         assertThat(annotatedVariant.ref).isEqualTo(REF)
         assertThat(annotatedVariant.alt).isEqualTo(ALT)
-        assertThat(annotatedVariant.type).isEqualTo(com.hartwig.actin.molecular.datamodel.VariantType.SNV)
+        assertThat(annotatedVariant.type).isEqualTo(VariantType.SNV)
         assertThat(annotatedVariant.isHotspot).isTrue()
     }
 

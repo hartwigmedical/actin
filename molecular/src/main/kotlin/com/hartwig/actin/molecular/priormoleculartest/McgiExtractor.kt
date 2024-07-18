@@ -14,19 +14,31 @@ class McgiExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
         return input.groupBy { it.test to it.measureDate }
             .map { (grouping, results) ->
                 val variants =
-                    results.filter { it.scoreText == "variant" }.map { PanelVariantExtraction(it.item!!, it.measure!!) }
+                    results.filter { it.scoreText == "variant" }.mapNotNull(::nullSafeItemAndMeasure)
+                        .map { PanelVariantExtraction(it.first, it.second) }
                 val amplification =
-                    results.filter { it.scoreText == "amplification" }.map { PanelAmplificationExtraction(it.item!!, it.measure!!) }
-                val msi = results.filter { it.scoreText == "msi" }.map { it.measure?.toBoolean() }.firstOrNull()
-                val tmb = results.filter { it.scoreText == "tmb" }.map { it.measure?.toDouble() }.firstOrNull()
+                    results.filter { it.scoreText == "amplification" }.mapNotNull(::nullSafeItemAndMeasure)
+                        .map { PanelAmplificationExtraction(it.first, it.second) }
+                val msi = results.firstOrNull { it.scoreText == "msi" }?.let { it.measure?.toBoolean() }
+                val tmb = results.firstOrNull { it.scoreText == "tmb" }?.let { it.measure?.toDouble() }
                 McgiExtraction(
                     panelType = grouping.first.replace(MCGI_PREFIX, ""),
                     date = grouping.second,
                     variants = variants,
                     amplifications = amplification,
-                    msi = msi,
-                    tmb = tmb
+                    isMicrosatelliteUnstable = msi,
+                    tumorMutationalBurden = tmb
                 )
             }
+    }
+
+    private fun nullSafeItemAndMeasure(it: PriorMolecularTest): Pair<String, String>? {
+        val item = it.item
+        val measure = it.measure
+        return if (item != null && measure != null) {
+            item to measure
+        } else {
+            null
+        }
     }
 }

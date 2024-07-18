@@ -31,6 +31,7 @@ import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import com.hartwig.serve.datamodel.common.GeneAlteration as ServeGeneAlteration
 
 private const val TMB_HIGH_CUTOFF = 10.0
 
@@ -53,12 +54,12 @@ class PanelAnnotator(
                     externalVariantAnnotation.position()
                 )
 
-                val (evidence, serveGeneAlteration, geneAlteration) = serveEvidence(it, externalVariantAnnotation)
-
+                val criteria = variantMatchCriteria(it, externalVariantAnnotation)
+                val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
                 createVariantWithEvidence(
                     it,
-                    evidence,
-                    geneAlteration,
+                    ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria)),
+                    GeneAlterationFactory.convertAlteration(it.gene, serveGeneAlteration),
                     serveGeneAlteration,
                     externalVariantAnnotation,
                     transcriptImpactAnnotation
@@ -68,7 +69,7 @@ class PanelAnnotator(
             }
         }
 
-        val annotatedAmplifications = input.amplifications.map { inferredCopyNumber(it) }.map { annotatedInferredCopyNumber(it) }
+        val annotatedAmplifications = input.amplifications.map(::inferredCopyNumber).map(::annotatedInferredCopyNumber)
 
         val variantsByGene = annotatedVariants.groupBy { it.gene }
         val variantsWithDriverLikelihoodModel = variantsByGene.map {
@@ -86,21 +87,36 @@ class PanelAnnotator(
         return PanelRecord(
             panelExtraction = input,
             experimentType = ExperimentType.PANEL,
-            testType = input.panelType,
+            testTypeDisplay = input.panelType,
             date = input.date,
             drivers = Drivers(variants = variantsWithDriverLikelihoodModel.toSet(), copyNumbers = annotatedAmplifications.toSet()),
             characteristics = MolecularCharacteristics(
-                isMicrosatelliteUnstable = input.msi,
-                tumorMutationalBurden = input.tmb,
-                hasHighTumorMutationalBurden = input.tmb?.let { it > TMB_HIGH_CUTOFF }),
+                isMicrosatelliteUnstable = input.isMicrosatelliteUnstable,
+                tumorMutationalBurden = input.tumorMutationalBurden,
+                hasHighTumorMutationalBurden = input.tumorMutationalBurden?.let { it > TMB_HIGH_CUTOFF }),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display()
         )
     }
 
-    private fun annotatedInferredCopyNumber(it: CopyNumber): CopyNumber {
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(it))
-        val geneAlteration = GeneAlterationFactory.convertAlteration(it.gene, evidenceDatabase.geneAlterationForCopyNumber(it))
-        return it.copy(
+    private fun variantMatchCriteria(
+        it: PanelVariantExtraction,
+        externalVariantAnnotation: com.hartwig.actin.tools.variant.Variant
+    ) = VariantMatchCriteria(
+        isReportable = true,
+        gene = it.gene,
+        chromosome = externalVariantAnnotation.chromosome(),
+        ref = externalVariantAnnotation.ref(),
+        alt = externalVariantAnnotation.alt(),
+        position = externalVariantAnnotation.position(),
+        type = variantType(externalVariantAnnotation),
+        codingEffect = codingEffect(externalVariantAnnotation)
+    )
+
+    private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
+        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForCopyNumber(copyNumber))
+        val geneAlteration =
+            GeneAlterationFactory.convertAlteration(copyNumber.gene, evidenceDatabase.geneAlterationForCopyNumber(copyNumber))
+        return copyNumber.copy(
             evidence = evidence,
             geneRole = geneAlteration.geneRole,
             proteinEffect = geneAlteration.proteinEffect,
@@ -108,13 +124,13 @@ class PanelAnnotator(
         )
     }
 
-    private fun inferredCopyNumber(it: PanelAmplificationExtraction) = CopyNumber(
-        gene = it.gene,
+    private fun inferredCopyNumber(panelAmplificationExtraction: PanelAmplificationExtraction) = CopyNumber(
+        gene = panelAmplificationExtraction.gene,
         geneRole = GeneRole.UNKNOWN,
         proteinEffect = ProteinEffect.UNKNOWN,
         isAssociatedWithDrugResistance = null,
         isReportable = true,
-        event = it.display(),
+        event = panelAmplificationExtraction.display(),
         driverLikelihood = DriverLikelihood.HIGH,
         evidence = ActionableEvidenceFactory.createNoEvidence(),
         type = CopyNumberType.FULL_GAIN,
@@ -122,17 +138,18 @@ class PanelAnnotator(
         maxCopies = 6
     )
 
-    private fun externalAnnotation(it: PanelVariantExtraction): com.hartwig.actin.tools.variant.Variant? {
-        val externalVariantAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsImpact)
+    private fun externalAnnotation(panelVariantExtraction: PanelVariantExtraction): com.hartwig.actin.tools.variant.Variant? {
+        val externalVariantAnnotation =
+            transcriptAnnotator.resolve(panelVariantExtraction.gene, null, panelVariantExtraction.hgvsCodingOrProteinImpact)
 
         if (externalVariantAnnotation == null) {
-            LOGGER.error("Unable to resolve variant '$it' in variant annotator. See prior warnings.")
+            LOGGER.error("Unable to resolve variant '$panelVariantExtraction' in variant annotator. See prior warnings.")
             return null
         }
 
         if (!externalVariantAnnotation.isCanonical) {
             LOGGER.error(
-                "Annotator deems variant '$it' as on the non-canonical transcript '${externalVariantAnnotation.transcript()}. " +
+                "Annotator deems variant '$panelVariantExtraction' as on the non-canonical transcript '${externalVariantAnnotation.transcript()}. " +
                         "It cannot be annotated, filtering this variant from panel record"
             )
             return null
@@ -140,38 +157,16 @@ class PanelAnnotator(
         return externalVariantAnnotation
     }
 
-    private fun serveEvidence(
-        it: PanelVariantExtraction,
-        transcriptPositionAndVariationAnnotation: com.hartwig.actin.tools.variant.Variant
-    ): Triple<ActionableEvidence, com.hartwig.serve.datamodel.common.GeneAlteration?, GeneAlteration> {
-        val criteria = VariantMatchCriteria(
-            isReportable = true,
-            gene = it.gene,
-            chromosome = transcriptPositionAndVariationAnnotation.chromosome(),
-            ref = transcriptPositionAndVariationAnnotation.ref(),
-            alt = transcriptPositionAndVariationAnnotation.alt(),
-            position = transcriptPositionAndVariationAnnotation.position(),
-            type = variantType(transcriptPositionAndVariationAnnotation),
-            codingEffect = codingEffect(transcriptPositionAndVariationAnnotation)
-        )
-        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
-        val serveAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
-        val geneAlteration = GeneAlterationFactory.convertAlteration(
-            it.gene, serveAlteration
-        )
-        return Triple(evidence, serveAlteration, geneAlteration)
-    }
-
     private fun createVariantWithEvidence(
         it: PanelVariantExtraction,
         evidence: ActionableEvidence,
         geneAlteration: GeneAlteration,
-        serveGeneAlteration: com.hartwig.serve.datamodel.common.GeneAlteration?,
+        serveGeneAlteration: ServeGeneAlteration?,
         transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
         paveAnnotation: VariantTranscriptImpact?
     ) = Variant(
         isReportable = true,
-        event = "${it.gene} ${it.hgvsImpact}",
+        event = "${it.gene} ${it.hgvsCodingOrProteinImpact}",
         driverLikelihood = DriverLikelihood.LOW,
         evidence = evidence,
         gene = it.gene,
@@ -183,7 +178,7 @@ class PanelAnnotator(
         alt = transcriptAnnotation.alt(),
         canonicalImpact = TranscriptImpact(
             transcriptId = transcriptAnnotation.transcript(),
-            hgvsCodingImpact = it.hgvsImpact,
+            hgvsCodingImpact = it.hgvsCodingOrProteinImpact,
             hgvsProteinImpact = transcriptAnnotation.hgvsProteinImpact() ?: "",
             isSpliceRegion = transcriptAnnotation.isSpliceRegion,
             affectedExon = paveAnnotation?.affectedExon(),

@@ -30,7 +30,7 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
     override fun read(input: JsonReader): PanelRecord {
         val jsonObject = JsonParser.parseReader(input).asJsonObject
         val experimentType = ExperimentType.valueOf(jsonObject.get("experimentType").asString)
-        val testTypeJson = jsonObject.get("testType")
+        val testTypeJson = jsonObject.get("testTypeDisplay")
         val testType = if (testTypeJson.isJsonNull) null else testTypeJson.asString
         val panelExtractionJson = jsonObject.get("panelExtraction")
         val panelExtractionClass = panelExtractionJson.asJsonObject.get("extractionClass").asString
@@ -43,7 +43,7 @@ class PanelRecordAdapter(private val gson: Gson) : TypeAdapter<PanelRecord>() {
 
         return PanelRecord(
             panelExtraction = panelExtraction,
-            testType = testType,
+            testTypeDisplay = testType,
             experimentType = experimentType,
             date = gson.fromJson(jsonObject.get("date"), LocalDate::class.java),
             drivers = gson.fromJson(jsonObject.get("drivers"), Drivers::class.java),

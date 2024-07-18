@@ -59,7 +59,7 @@ class GenericPanelExtractor : MolecularExtractor<PriorMolecularTest, PanelExtrac
 
     private fun parseVariant(priorMolecularTest: PriorMolecularTest): PanelVariantExtraction {
         return if (priorMolecularTest.item != null && priorMolecularTest.measure != null) {
-            PanelVariantExtraction(gene = priorMolecularTest.item!!, hgvsImpact = priorMolecularTest.measure!!)
+            PanelVariantExtraction(gene = priorMolecularTest.item!!, hgvsCodingOrProteinImpact = priorMolecularTest.measure!!)
         } else {
             throw IllegalArgumentException(
                 "Expected item and measure for variant but got ${priorMolecularTest.item} and ${priorMolecularTest.measure}"
