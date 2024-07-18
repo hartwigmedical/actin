@@ -6,6 +6,6 @@ data class PanelAmplificationExtraction(val gene: String, val chromosome: String
     }
 
     override fun display(): String {
-        return "$gene chr$chromosome amplified"
+        return "$gene amp"
     }
 }

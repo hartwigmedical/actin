@@ -26,7 +26,7 @@ class MolecularDriversGenerator(
     private val cohorts: List<EvaluatedCohort>,
     private val trialMatches: List<TrialMatch>,
     private val width: Float,
-    private val countryOfResidence: Country
+    private val homeCountry: Country
 ) : TableGenerator {
 
     override fun title(): String {
@@ -47,7 +47,7 @@ class MolecularDriversGenerator(
 
         val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, EvaluatedCohortsInterpreter.fromEvaluatedCohorts(cohorts))
 
-        val externalTrialSummarizer = ExternalTrialSummarizer(countryOfResidence)
+        val externalTrialSummarizer = ExternalTrialSummarizer(homeCountry)
         val externalTrialSummary = externalTrialSummarizer.summarize(AggregatedEvidenceFactory.create(molecular).externalEligibleTrialsPerEvent, trialMatches, cohorts)
 
         val externalTrialsPerEvents = mergeMapsOfSets(listOf(externalTrialSummary.localTrials, externalTrialSummary.nonLocalTrials))

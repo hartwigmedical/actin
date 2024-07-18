@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
 import com.hartwig.actin.report.interpretation.PriorMolecularTestInterpreter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
@@ -22,8 +23,10 @@ class MolecularSummaryGenerator(
     override fun contents(): Table {
         val table = Tables.createSingleColWithWidth(keyWidth + valueWidth)
 
-        for (molecularTest in patientRecord.molecularHistory.molecularTests.sortedBy { it.date }) {
-            if (molecularTest.hasSufficientQuality && molecularTest.experimentType != ExperimentType.IHC) {
+        for (molecularTest in patientRecord.molecularHistory.molecularTests.sortedBy { it.date }
+            .filter { it.experimentType != ExperimentType.IHC }) {
+            val wgsMolecularRecord = molecularTest as? MolecularRecord
+            if (wgsMolecularRecord?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     LOGGER.warn("Generating WGS results for non-WGS sample")
                 }

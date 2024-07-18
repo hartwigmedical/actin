@@ -49,7 +49,7 @@ private val FREETEXT_PANEL_WITH_VARIANT = TestPanelRecordFactory.empty().copy(
         variants = listOf(
             PanelVariantExtraction(
                 gene = TARGET_GENE,
-                hgvsImpact = "c.10A>T",
+                hgvsCodingOrProteinImpact = "c.10A>T",
             ),
         ),
         fusions = emptyList()

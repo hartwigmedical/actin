@@ -92,7 +92,7 @@ data class ProvidedMolecularTest(
 @JacksonSerializable
 data class ProvidedPriorPrimary(
     @JsonPropertyDescription("Diagnosis date") val diagnosisDate: LocalDate?,
-    @JsonPropertyDescription("Tumor localization is details (eg. Colon)") val tumorLocation: String,
+    @JsonPropertyDescription("Tumor localization details (eg. Colon)") val tumorLocation: String,
     @JsonPropertyDescription("Tumor type details (eg. Carcinoma)") val tumorType: String,
     @JsonPropertyDescription("Observed status of tumor (eg. Active/Inactive") val status: String? = null,
     val statusDate: LocalDate? = null

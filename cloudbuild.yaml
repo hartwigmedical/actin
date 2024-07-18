@@ -6,7 +6,7 @@ steps:
 
   - id: 'Maven build using cache'
     name: 'eu.gcr.io/hmf-build/maven-cache'
-    args: [ '-T 1C deploy -DskipTests --batch-mode' ]
+    args: [ '-T 1C deploy --batch-mode' ]
 
   - id: 'Build and push the molecular image with tag'
     name: 'eu.gcr.io/hmf-build/docker-tag'

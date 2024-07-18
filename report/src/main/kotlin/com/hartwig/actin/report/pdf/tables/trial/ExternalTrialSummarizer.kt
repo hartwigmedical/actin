@@ -12,7 +12,7 @@ data class ExternalTrialSummary(
     val nonLocalTrialsFiltered: Int
 )
 
-class ExternalTrialSummarizer(private val countryOfResidence: Country) {
+class ExternalTrialSummarizer(private val homeCountry: Country) {
 
     fun summarize(
         externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
@@ -46,11 +46,11 @@ class ExternalTrialSummarizer(private val countryOfResidence: Country) {
         val hospitalTrialMolecularEvents = hospitalLocalEvaluatedCohorts.flatMap { e -> e.molecularEvents }.toSet()
         val (localTrials, localTrialsFiltered) = filteredMolecularEvents(
             hospitalTrialMolecularEvents,
-            EligibleExternalTrialGeneratorFunctions.localTrials(externalEligibleTrials, countryOfResidence)
+            EligibleExternalTrialGeneratorFunctions.localTrials(externalEligibleTrials, homeCountry)
         )
         val (nonLocalTrials, nonLocalTrialsFiltered) = filteredMolecularEvents(
             hospitalTrialMolecularEvents + localTrials.keys.flatMap { splitMolecularEvents(it) },
-            EligibleExternalTrialGeneratorFunctions.nonLocalTrials(externalEligibleTrials, countryOfResidence)
+            EligibleExternalTrialGeneratorFunctions.nonLocalTrials(externalEligibleTrials, homeCountry)
         )
         return ExternalTrialSummary(localTrials, localTrialsFiltered, nonLocalTrials, nonLocalTrialsFiltered)
     }

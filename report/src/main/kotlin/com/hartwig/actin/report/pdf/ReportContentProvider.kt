@@ -26,7 +26,7 @@ import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
-import com.hartwig.actin.report.pdf.tables.trial.EligibleDutchExternalTrialsGenerator
+import com.hartwig.actin.report.pdf.tables.trial.EligibleLocalExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleOtherCountriesExternalTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.ExternalTrialSummarizer
 import com.hartwig.actin.report.pdf.tables.trial.IneligibleActinTrialsGenerator
@@ -54,7 +54,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         return listOf(
             SummaryChapter(report),
             PersonalizedEvidenceChapter(
-                report, include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
+                report,
+                include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
             MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
@@ -128,28 +129,32 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         patientRecord: PatientRecord, evaluated: List<EvaluatedCohort>, contentWidth: Float
     ): Pair<TableGenerator?, TableGenerator?> {
         val externalEligibleTrials =
-            patientRecord.molecularHistory.molecularTests.map { AggregatedEvidenceFactory.create(it).externalEligibleTrialsPerEvent }
-                .flatMap { it.entries }
-                .associate { it.toPair() }
+            AggregatedEvidenceFactory.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
+                AggregatedEvidenceFactory.create(
+                    it
+                ).externalEligibleTrialsPerEvent
+            })
 
-        val externalTrialSummarizer = ExternalTrialSummarizer(report.config.countryOfResidence)
+        val externalTrialSummarizer = ExternalTrialSummarizer(report.config.homeCountry)
         val externalTrialSummary = externalTrialSummarizer.summarize(
             externalEligibleTrials,
             report.treatmentMatch.trialMatches,
             evaluated
         )
+        val allEvidenceSources = patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.toSet()
         return Pair(
             if (externalTrialSummary.localTrials.isNotEmpty()) {
-                EligibleDutchExternalTrialsGenerator(
-                    "CKB",
+                EligibleLocalExternalTrialsGenerator(
+                    allEvidenceSources,
                     externalTrialSummary.localTrials,
                     contentWidth,
-                    externalTrialSummary.localTrialsFiltered
+                    externalTrialSummary.localTrialsFiltered,
+                    report.config.homeCountry
                 )
             } else null,
             if (externalTrialSummary.nonLocalTrials.isNotEmpty()) {
                 EligibleOtherCountriesExternalTrialsGenerator(
-                    "CKB",
+                    allEvidenceSources,
                     externalTrialSummary.nonLocalTrials,
                     contentWidth,
                     externalTrialSummary.nonLocalTrialsFiltered

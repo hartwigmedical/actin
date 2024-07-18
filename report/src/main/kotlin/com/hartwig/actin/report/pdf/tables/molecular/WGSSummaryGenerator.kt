@@ -24,12 +24,13 @@ class WGSSummaryGenerator(
 ) : TableGenerator {
     private val summarizer: MolecularDriversSummarizer =
         MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
+    private val wgsMolecular = molecular as? MolecularRecord
 
     override fun title(): String {
         return String.format(
             ApplicationConfig.LOCALE,
             "%s of %s (%s)",
-            molecular.testType,
+            molecular.testTypeDisplay,
             patientRecord.patientId,
             date(molecular.date)
         )
@@ -40,7 +41,7 @@ class WGSSummaryGenerator(
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         table.addCell(Cells.createKey("Biopsy location"))
         table.addCell(biopsySummary())
-        if (true) {
+        if (wgsMolecular?.hasSufficientQuality == true) {
             table.addCell(Cells.createKey("Molecular tissue of origin prediction"))
             table.addCell(tumorOriginPredictionCell())
             table.addCell(Cells.createKey("Tumor mutational load / burden"))
@@ -98,10 +99,9 @@ class WGSSummaryGenerator(
 
     private fun tumorOriginPrediction(): String {
         val predictedTumorOrigin = molecular.characteristics.predictedTumorOrigin
-        val wgsMolecular = if (molecular is MolecularRecord) molecular else null
-        return if (wgsMolecular != null && TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && wgsMolecular.hasSufficientQualityButLowPurity()) {
+        return if (TumorOriginInterpreter.hasConfidentPrediction(predictedTumorOrigin) && wgsMolecular?.hasSufficientQualityButLowPurity() == true) {
             TumorOriginInterpreter.interpret(predictedTumorOrigin)
-        } else if (molecular.hasSufficientQuality && predictedTumorOrigin != null) {
+        } else if (wgsMolecular?.hasSufficientQuality == true && predictedTumorOrigin != null) {
             val predictionsMeetingThreshold = TumorOriginInterpreter.predictionsToDisplay(predictedTumorOrigin)
             if (predictionsMeetingThreshold.isEmpty()) {
                 String.format(

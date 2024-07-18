@@ -16,8 +16,8 @@ data class GenericPanelExtraction(
     override val amplifications: List<PanelAmplificationExtraction> = emptyList(),
     override val variants: List<PanelVariantExtraction> = emptyList(),
     override val date: LocalDate? = null,
-    override val tmb: Double? = null,
-    override val msi: Boolean? = null,
+    override val tumorMutationalBurden: Double? = null,
+    override val isMicrosatelliteUnstable: Boolean? = null,
     override val extractionClass: String = GenericPanelExtraction::class.java.simpleName
 ) : PanelExtraction {
     override fun testedGenes(): Set<String> {
@@ -39,10 +39,7 @@ data class GenericPanelExtraction(
     }
 
     private fun alwaysTestedGenes(): Set<String> {
-        return when {
-            panelType == AVL_PANEL -> GENERIC_PANEL_ALWAYS_TESTED_GENES
-            else -> emptySet()
-        }
+        return if (panelType == AVL_PANEL) GENERIC_PANEL_ALWAYS_TESTED_GENES else emptySet()
     }
 
     fun genesHavingResultsInPanel(): Set<String> {

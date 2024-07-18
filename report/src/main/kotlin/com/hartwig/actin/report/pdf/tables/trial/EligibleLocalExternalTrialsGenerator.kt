@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.molecular.datamodel.evidence.Country
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -9,16 +10,18 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
-class EligibleDutchExternalTrialsGenerator(
-    private val source: String,
+class EligibleLocalExternalTrialsGenerator(
+    private val sources: Set<String>,
     private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
     private val width: Float,
-    private val filteredCount: Int
+    private val filteredCount: Int,
+    private val homeCountry: Country
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
-            "%s trials potentially eligible based on molecular results which are potentially recruiting in New England (%d)",
-            source,
+            "%s trials potentially eligible based on molecular results which are potentially recruiting locally in %s (%d)",
+            sources.joinToString(),
+            homeCountry.display(),
             externalTrialsPerEvent.values.flatten().size
         )
     }

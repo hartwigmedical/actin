@@ -12,8 +12,8 @@ data class McgiExtraction(
     override val date: LocalDate?,
     override val variants: List<PanelVariantExtraction>,
     override val amplifications: List<PanelAmplificationExtraction>,
-    override val msi: Boolean?,
-    override val tmb: Double?,
+    override val isMicrosatelliteUnstable: Boolean?,
+    override val tumorMutationalBurden: Double?,
     override val extractionClass: String = McgiExtraction::class.java.simpleName
 ) : PanelExtraction {
     override fun testedGenes(): Set<String> {

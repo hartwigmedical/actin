@@ -13,8 +13,8 @@ data class ArcherPanelExtraction(
     override val variants: List<PanelVariantExtraction> = emptyList(),
     override val amplifications: List<PanelAmplificationExtraction> = emptyList(),
     override val date: LocalDate? = null,
-    override val msi: Boolean? = null,
-    override val tmb: Double? = null,
+    override val isMicrosatelliteUnstable: Boolean? = null,
+    override val tumorMutationalBurden: Double? = null,
     override val extractionClass: String = ArcherPanelExtraction::class.java.simpleName
 ) : PanelExtraction {
 
@@ -29,12 +29,12 @@ data class ArcherPanelExtraction(
     }
 
     fun genesWithFusions(): Set<String> {
-        return fusions.flatMap { listOf(it.gene) }.toSet()
+        return fusions.map { it.gene }.toSet()
     }
 
     override fun events() = (variants + fusions + skippedExons).toSet()
 
     private fun genesHavingResultsInPanel(): Set<String> {
-        return genesWithVariants() + genesWithFusions() + skippedExons.map { it.gene }.toSet()
+        return genesWithVariants() + genesWithFusions() + skippedExons.map { it.gene }.toSet() + amplifications.map { it.gene }.toSet()
     }
 }
