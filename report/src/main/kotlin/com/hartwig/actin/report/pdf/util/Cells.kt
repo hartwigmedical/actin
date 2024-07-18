@@ -3,21 +3,16 @@ package com.hartwig.actin.report.pdf.util
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.report.pdf.util.Formats.styleForTableValue
-import com.itextpdf.kernel.geom.Rectangle
-import com.itextpdf.kernel.pdf.PdfArray
-import com.itextpdf.kernel.pdf.action.PdfAction
-import com.itextpdf.kernel.pdf.annot.PdfAnnotation
-import com.itextpdf.kernel.pdf.annot.PdfLinkAnnotation
 import com.itextpdf.layout.Style
 import com.itextpdf.layout.borders.Border
 import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.IBlockElement
-import com.itextpdf.layout.element.Link
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
 object Cells {
+
     fun create(element: IBlockElement): Cell {
         return create(element, 1)
     }
@@ -51,18 +46,6 @@ object Cells {
     fun createSubTitle(text: String): Cell {
         val cell = create(Paragraph(text))
         cell.addStyle(Styles.tableSubTitleStyle())
-        return cell
-    }
-
-    @Suppress("unused")
-    fun createHeaderTest(text: String): Cell {
-        // TODO (ACTIN-33) Clean up or actually use.
-        val la1 = PdfLinkAnnotation(Rectangle(0f, 0f, 0f, 0f)).setHighlightMode(PdfAnnotation.HIGHLIGHT_NONE)
-            .setAction(PdfAction.createJavaScript("app.alert('These are all trials!!')"))
-            .setBorder(PdfArray(intArrayOf(0, 0, 0))) as PdfLinkAnnotation
-        val link = Link(text, la1)
-        val cell = create(Paragraph("").add(link))
-        cell.addStyle(Styles.tableHeaderStyle())
         return cell
     }
 
@@ -118,12 +101,6 @@ object Cells {
     fun createContentWarn(text: String): Cell {
         val cell = createContent(text)
         cell.setFontColor(Styles.PALETTE_WARN)
-        return cell
-    }
-
-    fun createContentYesNo(yesNo: String): Cell {
-        val cell = createContent(yesNo)
-        cell.setFontColor(Formats.fontColorForYesNo(yesNo))
         return cell
     }
 
