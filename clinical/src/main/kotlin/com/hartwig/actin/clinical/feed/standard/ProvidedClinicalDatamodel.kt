@@ -87,6 +87,7 @@ data class ProvidedMolecularTest(
     @JsonPropertyDescription("Result of the test (eg. Negative/3+)") val result: String,
     val resultType: String?,
     val resultDate: LocalDate,
+    val variantAlleleFrequency: Double?
 )
 
 @JacksonSerializable

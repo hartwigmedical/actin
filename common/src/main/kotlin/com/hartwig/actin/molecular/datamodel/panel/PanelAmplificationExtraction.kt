@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.datamodel.panel
 
-data class PanelAmplificationExtraction(val gene: String, val chromosome: String) : PanelEvent {
+data class PanelAmplificationExtraction(val gene: String, val chromosome: String, val vaf: Double? = 0.0) : PanelEvent {
     override fun impactsGene(gene: String): Boolean {
         return gene == this.gene
     }
 
     override fun display(): String {
-        return "$gene chr$chromosome amplified"
+        return "$gene chr$chromosome"
     }
 }

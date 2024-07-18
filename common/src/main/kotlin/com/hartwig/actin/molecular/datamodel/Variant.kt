@@ -13,6 +13,7 @@ data class Variant(
     val canonicalImpact: TranscriptImpact,
     val extendedVariantDetails: ExtendedVariantDetails? = null,
     val isHotspot: Boolean,
+    override val vaf: Double?,
     override val isReportable: Boolean,
     override val event: String,
     override val driverLikelihood: DriverLikelihood?,

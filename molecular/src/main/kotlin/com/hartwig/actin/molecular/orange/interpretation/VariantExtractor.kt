@@ -61,6 +61,7 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     type = determineVariantType(variant),
                     isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
                     canonicalImpact = extractCanonicalImpact(variant),
+                    vaf = variant.adjustedVAF(),
                     extendedVariantDetails = ExtendedVariantDetails(
                         variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
                         totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),

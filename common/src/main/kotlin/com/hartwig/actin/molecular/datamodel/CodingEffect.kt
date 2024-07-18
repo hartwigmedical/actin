@@ -1,9 +1,15 @@
 package com.hartwig.actin.molecular.datamodel
 
-enum class CodingEffect {
-    NONSENSE_OR_FRAMESHIFT,
-    SPLICE,
-    MISSENSE,
-    SYNONYMOUS,
-    NONE
+import com.hartwig.actin.Displayable
+
+enum class CodingEffect(private val display: String) : Displayable {
+    NONSENSE_OR_FRAMESHIFT("Nonesense/Frameshift"),
+    SPLICE("Splice"),
+    MISSENSE("Missense"),
+    SYNONYMOUS("Synonymous"),
+    NONE("None");
+
+    override fun display(): String {
+        return display
+    }
 }

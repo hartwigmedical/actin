@@ -22,7 +22,7 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenera
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryWithOverviewGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.MolecularLongitudinalGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
@@ -54,7 +54,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         return listOf(
             SummaryChapter(report),
             PersonalizedEvidenceChapter(
-                report, include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
+                report,
+                include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
             MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
@@ -97,7 +98,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         return listOfNotNull(
             clinicalHistoryGenerator,
             if (report.config.includeMolecularSummary && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()) {
-                MolecularSummaryGenerator(report.patientRecord, cohorts, keyWidth, valueWidth)
+                MolecularLongitudinalGenerator(report.patientRecord.molecularHistory, contentWidth)
             } else null,
             if (report.config.includeEligibleSOCTreatmentSummary) {
                 SOCEligibleApprovedTreatmentGenerator(report, contentWidth)

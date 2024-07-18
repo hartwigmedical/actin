@@ -72,6 +72,12 @@ object Cells {
         return cell
     }
 
+    fun createHeaderWithPadding(text: String): Cell {
+        val cell = createHeader(text)
+        cell.setPadding(3f)
+        return cell
+    }
+
     fun createSpanningSubNote(text: String, table: Table): Cell {
         val cell = create(Paragraph(text), table.numberOfColumns)
         cell.addStyle(Styles.tableSubStyle())
@@ -88,6 +94,12 @@ object Cells {
         val cell = create(element)
         cell.addStyle(style)
         cell.setBorderTop(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
+        return cell
+    }
+
+    fun createContentWithPadding(text: String): Cell {
+        val cell = createContent(text)
+        cell.setPadding(3f)
         return cell
     }
 
