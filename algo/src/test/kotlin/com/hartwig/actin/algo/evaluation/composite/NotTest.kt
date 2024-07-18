@@ -12,7 +12,7 @@ import org.junit.Test
 class NotTest {
 
     @Test
-    fun canNegateEvaluation() {
+    fun `Should correctly negate evaluation result`() {
         assertEvaluation(EvaluationResult.FAIL, Not(TestEvaluationFunctionFactory.pass()).evaluate(TEST_PATIENT))
         assertEvaluation(EvaluationResult.PASS, Not(TestEvaluationFunctionFactory.fail()).evaluate(TEST_PATIENT))
         assertEvaluation(EvaluationResult.WARN, Not(TestEvaluationFunctionFactory.warn()).evaluate(TEST_PATIENT))
@@ -21,63 +21,79 @@ class NotTest {
     }
 
     @Test
-    fun canFlipMessagesAndMolecularEventsForPass() {
+    fun `Should flip messages and molecular events for pass evaluation`() {
         val passFunction = CompositeTestFactory.create(EvaluationResult.PASS, true)
         val passed = passFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(passFunction).evaluate(TEST_PATIENT)
-        assertThat(passed.recoverable).isEqualTo(result.recoverable)
-        assertThat(passed.inclusionMolecularEvents).isNotEmpty()
-        assertThat(result.exclusionMolecularEvents).isEqualTo(passed.inclusionMolecularEvents)
-        assertThat(passed.exclusionMolecularEvents).isNotEmpty()
-        assertThat(result.inclusionMolecularEvents).isEqualTo(passed.exclusionMolecularEvents)
-        assertThat(result.failSpecificMessages).isEqualTo(passed.passSpecificMessages)
-        assertThat(result.failGeneralMessages).isEqualTo(passed.passGeneralMessages)
-        assertThat(result.passSpecificMessages).isEqualTo(passed.failSpecificMessages)
-        assertThat(result.passGeneralMessages).isEqualTo(passed.failGeneralMessages)
-        assertThat(result.undeterminedSpecificMessages).isEqualTo(passed.undeterminedSpecificMessages)
-        assertThat(result.undeterminedGeneralMessages).isEqualTo(passed.undeterminedGeneralMessages)
-        assertThat(result.warnSpecificMessages).isEqualTo(passed.warnSpecificMessages)
-        assertThat(result.warnGeneralMessages).isEqualTo(passed.warnGeneralMessages)
+        assertMessagesAreFlipped(passed, result)
+        assertEventsAreFlipped(passed, result)
     }
 
     @Test
-    fun canFlipMessagesAndMolecularEventsForFail() {
+    fun `Should flip messages and molecular events for fail evaluation`() {
         val failFunction = CompositeTestFactory.create(EvaluationResult.FAIL, true)
         val failed = failFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(failFunction).evaluate(TEST_PATIENT)
-        assertThat(failed.recoverable).isEqualTo(result.recoverable)
-        assertThat(failed.inclusionMolecularEvents).isNotEmpty()
-        assertThat(result.exclusionMolecularEvents).isEqualTo(failed.inclusionMolecularEvents)
-        assertThat(failed.exclusionMolecularEvents).isNotEmpty()
-        assertThat(result.inclusionMolecularEvents).isEqualTo(failed.exclusionMolecularEvents)
-        assertThat(result.failSpecificMessages).isEqualTo(failed.passSpecificMessages)
-        assertThat(result.failGeneralMessages).isEqualTo(failed.passGeneralMessages)
-        assertThat(result.passSpecificMessages).isEqualTo(failed.failSpecificMessages)
-        assertThat(result.passGeneralMessages).isEqualTo(failed.failGeneralMessages)
-        assertThat(result.undeterminedSpecificMessages).isEqualTo(failed.undeterminedSpecificMessages)
-        assertThat(result.undeterminedGeneralMessages).isEqualTo(failed.undeterminedGeneralMessages)
-        assertThat(result.warnSpecificMessages).isEqualTo(failed.warnSpecificMessages)
-        assertThat(result.warnGeneralMessages).isEqualTo(failed.warnGeneralMessages)
+        assertMessagesAreFlipped(failed, result)
+        assertEventsAreFlipped(failed, result)
     }
 
     @Test
-    fun canRetainMessagesAndMolecularEventsForUndetermined() {
+    fun `Should retain messages and flip molecular events for undetermined evaluation`() {
         val undeterminedFunction = CompositeTestFactory.create(EvaluationResult.UNDETERMINED, true)
         val undetermined = undeterminedFunction.evaluate(TEST_PATIENT)
         val result: Evaluation = Not(undeterminedFunction).evaluate(TEST_PATIENT)
-        assertThat(undetermined.recoverable).isEqualTo(result.recoverable)
-        assertThat(undetermined.inclusionMolecularEvents).isNotEmpty()
-        assertThat(result.inclusionMolecularEvents).isEqualTo(undetermined.inclusionMolecularEvents)
-        assertThat(undetermined.exclusionMolecularEvents).isNotEmpty()
-        assertThat(result.exclusionMolecularEvents).isEqualTo(undetermined.exclusionMolecularEvents)
-        assertThat(result.passSpecificMessages).isEqualTo(undetermined.passSpecificMessages)
-        assertThat(result.passGeneralMessages).isEqualTo(undetermined.passGeneralMessages)
-        assertThat(result.failSpecificMessages).isEqualTo(undetermined.failSpecificMessages)
-        assertThat(result.failGeneralMessages).isEqualTo(undetermined.failGeneralMessages)
-        assertThat(result.undeterminedSpecificMessages).isEqualTo(undetermined.undeterminedSpecificMessages)
-        assertThat(result.undeterminedGeneralMessages).isEqualTo(undetermined.undeterminedGeneralMessages)
-        assertThat(result.warnSpecificMessages).isEqualTo(undetermined.warnSpecificMessages)
-        assertThat(result.warnGeneralMessages).isEqualTo(undetermined.warnGeneralMessages)
+        assertMessagesAreRetained(undetermined, result)
+        assertEventsAreFlipped(undetermined, result)
+    }
+
+    @Test
+    fun `Should retain messages and flip molecular events for warn evaluation`() {
+        val warnFunction = CompositeTestFactory.create(EvaluationResult.WARN, true)
+        val warn = warnFunction.evaluate(TEST_PATIENT)
+        val result: Evaluation = Not(warnFunction).evaluate(TEST_PATIENT)
+        assertMessagesAreRetained(warn, result)
+        assertEventsAreFlipped(warn, result)
+    }
+
+    @Test
+    fun `Should flip messages and molecular events for not evaluated evaluation`() {
+        val notEvaluatedEvaluation = CompositeTestFactory.create(EvaluationResult.NOT_EVALUATED, true)
+        val notEvaluated = notEvaluatedEvaluation.evaluate(TEST_PATIENT)
+        val result: Evaluation = Not(notEvaluatedEvaluation).evaluate(TEST_PATIENT)
+        assertMessagesAreFlipped(notEvaluated, result)
+        assertEventsAreFlipped(notEvaluated, result)
+    }
+
+    private fun assertMessagesAreFlipped(evaluation: Evaluation, negatedEvaluation: Evaluation) {
+        assertThat(evaluation.recoverable).isEqualTo(negatedEvaluation.recoverable)
+        assertThat(negatedEvaluation.passSpecificMessages).isEqualTo(evaluation.failSpecificMessages)
+        assertThat(negatedEvaluation.passGeneralMessages).isEqualTo(evaluation.failGeneralMessages)
+        assertThat(negatedEvaluation.failSpecificMessages).isEqualTo(evaluation.passSpecificMessages)
+        assertThat(negatedEvaluation.failGeneralMessages).isEqualTo(evaluation.passGeneralMessages)
+        assertThat(negatedEvaluation.undeterminedSpecificMessages).isEqualTo(evaluation.undeterminedSpecificMessages)
+        assertThat(negatedEvaluation.undeterminedGeneralMessages).isEqualTo(evaluation.undeterminedGeneralMessages)
+        assertThat(negatedEvaluation.warnSpecificMessages).isEqualTo(evaluation.warnSpecificMessages)
+        assertThat(negatedEvaluation.warnGeneralMessages).isEqualTo(evaluation.warnGeneralMessages)
+    }
+
+    private fun assertMessagesAreRetained(evaluation: Evaluation, negatedEvaluation: Evaluation) {
+        assertThat(evaluation.recoverable).isEqualTo(negatedEvaluation.recoverable)
+        assertThat(negatedEvaluation.passSpecificMessages).isEqualTo(evaluation.passSpecificMessages)
+        assertThat(negatedEvaluation.passGeneralMessages).isEqualTo(evaluation.passGeneralMessages)
+        assertThat(negatedEvaluation.failSpecificMessages).isEqualTo(evaluation.failSpecificMessages)
+        assertThat(negatedEvaluation.failGeneralMessages).isEqualTo(evaluation.failGeneralMessages)
+        assertThat(negatedEvaluation.undeterminedSpecificMessages).isEqualTo(evaluation.undeterminedSpecificMessages)
+        assertThat(negatedEvaluation.undeterminedGeneralMessages).isEqualTo(evaluation.undeterminedGeneralMessages)
+        assertThat(negatedEvaluation.warnSpecificMessages).isEqualTo(evaluation.warnSpecificMessages)
+        assertThat(negatedEvaluation.warnGeneralMessages).isEqualTo(evaluation.warnGeneralMessages)
+    }
+
+    private fun assertEventsAreFlipped(evaluation: Evaluation, negatedEvaluation: Evaluation) {
+        assertThat(evaluation.inclusionMolecularEvents).isNotEmpty()
+        assertThat(negatedEvaluation.inclusionMolecularEvents).isEqualTo(evaluation.exclusionMolecularEvents)
+        assertThat(evaluation.exclusionMolecularEvents).isNotEmpty()
+        assertThat(negatedEvaluation.exclusionMolecularEvents).isEqualTo(evaluation.inclusionMolecularEvents)
     }
 
     companion object {
