@@ -39,7 +39,6 @@ Every criterion evaluates to one of the following options:
 | FAIL            | The patient does not comply with the inclusion or exclusion criterion.                                                                   |
 | UNDETERMINED    | The data that is required to evaluate the inclusion or exclusion criterion is unavailable.                                               |
 | NOT_EVALUATED   | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. |
-| NOT_IMPLEMENTED | No algo has been implemented yet for this criterion.                                                                                     |
 
 #### Recoverable status
 
@@ -65,8 +64,8 @@ is as it is.
 Once all criteria are evaluated, the following algorithm determines whether a patient is potentially eligible for a trial:
 
 1. For every cohort within a trial, the patient is considered potentially eligible for that cohort in case none of the cohort-specific
-   criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED`.
-2. A patient is eligible for a trial in case none of its overall criteria evaluated to unrecoverable `FAIL` or `NOT_IMPLEMENTED` and the
+   criteria evaluated to unrecoverable `FAIL`.
+2. A patient is eligible for a trial in case none of its overall criteria evaluated to unrecoverable `FAIL` and the
    trial
    either has no cohorts defined or has at least one cohort that is considered potentially eligible.
 
