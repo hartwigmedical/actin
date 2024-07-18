@@ -144,7 +144,6 @@ class TrialMatchingDetailsChapter(private val report: Report, override val inclu
         table.addHeaderCell(Cells.createHeader("Reference"))
         table.addHeaderCell(Cells.createHeader("Evaluation"))
         val references = evaluations.keys.sortedWith(CriterionReferenceComparator()).distinct()
-        addEvaluationsOfType(table, references, evaluations, EvaluationResult.NOT_IMPLEMENTED)
         addEvaluationsOfType(table, references, evaluations, EvaluationResult.FAIL)
         if (!displayFailOnly) {
             addEvaluationsOfType(table, references, evaluations, EvaluationResult.WARN)
