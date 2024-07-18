@@ -9,88 +9,32 @@ class Not(private val function: EvaluationFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluation: Evaluation = function.evaluate(record)
-        val negatedResult: EvaluationResult
-        val inclusionMolecularEvents: Set<String>
-        val exclusionMolecularEvents: Set<String>
-        val passSpecificMessages: Set<String>
-        val passGeneralMessages: Set<String>
-        val failSpecificMessages: Set<String>
-        val failGeneralMessages: Set<String>
-        when (evaluation.result) {
-            EvaluationResult.PASS -> {
-                negatedResult = EvaluationResult.FAIL
-                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
+
+        return if (evaluation.result in listOf(EvaluationResult.PASS, EvaluationResult.FAIL, EvaluationResult.NOT_EVALUATED)) {
+            swapEvaluationMessagesAndMolecularEventsWithResult(evaluation, evaluation.result)
+        } else {
+            evaluation.copy(
+                inclusionMolecularEvents = evaluation.exclusionMolecularEvents,
                 exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-                passSpecificMessages = evaluation.failSpecificMessages
-                passGeneralMessages = evaluation.failGeneralMessages
-                failSpecificMessages = evaluation.passSpecificMessages
-                failGeneralMessages = evaluation.passGeneralMessages
-            }
-
-            EvaluationResult.FAIL -> {
-                negatedResult = EvaluationResult.PASS
-                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
-                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-                passSpecificMessages = evaluation.failSpecificMessages
-                passGeneralMessages = evaluation.failGeneralMessages
-                failSpecificMessages = evaluation.passSpecificMessages
-                failGeneralMessages = evaluation.passGeneralMessages
-            }
-
-            EvaluationResult.WARN -> {
-                negatedResult = EvaluationResult.WARN
-                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
-                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-                passSpecificMessages = evaluation.passSpecificMessages
-                passGeneralMessages = evaluation.passGeneralMessages
-                failSpecificMessages = evaluation.failSpecificMessages
-                failGeneralMessages = evaluation.failGeneralMessages
-            }
-
-            EvaluationResult.UNDETERMINED -> {
-                negatedResult = EvaluationResult.UNDETERMINED
-                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
-                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-                passSpecificMessages = evaluation.passSpecificMessages
-                passGeneralMessages = evaluation.passGeneralMessages
-                failSpecificMessages = evaluation.failSpecificMessages
-                failGeneralMessages = evaluation.failGeneralMessages
-            }
-
-            EvaluationResult.NOT_EVALUATED -> {
-                negatedResult = EvaluationResult.NOT_EVALUATED
-                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
-                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
-                passSpecificMessages = evaluation.failSpecificMessages
-                passGeneralMessages = evaluation.failGeneralMessages
-                failSpecificMessages = evaluation.passSpecificMessages
-                failGeneralMessages = evaluation.passGeneralMessages
-
-            }
-
-            else -> {
-                negatedResult = evaluation.result
-                inclusionMolecularEvents = evaluation.inclusionMolecularEvents
-                exclusionMolecularEvents = evaluation.exclusionMolecularEvents
-                passSpecificMessages = evaluation.passSpecificMessages
-                passGeneralMessages = evaluation.passGeneralMessages
-                failSpecificMessages = evaluation.failSpecificMessages
-                failGeneralMessages = evaluation.failGeneralMessages
-            }
+            )
         }
-        return Evaluation(
+    }
+
+    private fun swapEvaluationMessagesAndMolecularEventsWithResult(evaluation: Evaluation, result: EvaluationResult): Evaluation {
+        val negatedResult = when (result) {
+            EvaluationResult.PASS -> EvaluationResult.FAIL
+            EvaluationResult.FAIL -> EvaluationResult.PASS
+            else -> result
+        }
+
+        return evaluation.copy(
             result = negatedResult,
-            recoverable = evaluation.recoverable,
-            inclusionMolecularEvents = inclusionMolecularEvents,
-            exclusionMolecularEvents = exclusionMolecularEvents,
-            passSpecificMessages = passSpecificMessages,
-            passGeneralMessages = passGeneralMessages,
-            warnSpecificMessages = evaluation.warnSpecificMessages,
-            warnGeneralMessages = evaluation.warnGeneralMessages,
-            undeterminedSpecificMessages = evaluation.undeterminedSpecificMessages,
-            undeterminedGeneralMessages = evaluation.undeterminedGeneralMessages,
-            failSpecificMessages = failSpecificMessages,
-            failGeneralMessages = failGeneralMessages
+            inclusionMolecularEvents = evaluation.exclusionMolecularEvents,
+            exclusionMolecularEvents = evaluation.inclusionMolecularEvents,
+            passSpecificMessages = evaluation.failSpecificMessages,
+            passGeneralMessages = evaluation.failGeneralMessages,
+            failSpecificMessages = evaluation.passSpecificMessages,
+            failGeneralMessages = evaluation.passGeneralMessages,
         )
     }
 }
