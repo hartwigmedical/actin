@@ -164,9 +164,9 @@ class PanelAnnotator(
         alt = transcriptAnnotation.alt(),
         canonicalImpact = impact(paveResponse.impact, paveLiteAnnotation),
         // TODO:
-        //  * should we filter out transcript impacts with coding effect of None?
+        //  * should we filter out transcript impacts with coding effect of None? Synonymous?
         //  * should we filter out transcript impact if its the same transcript as canonicalImpact?
-        //  * should we be loading in paveImpact.otherReportableEffects instead of mapping from pave transcript impacts, or maybe both?
+        //  * should we filter on gene, in case the Pave response contains multiple genes?
         otherImpacts = paveResponse.transcriptImpact.map { transcriptImpact(it, paveLiteAnnotation) }.toSet(),
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
@@ -186,9 +186,6 @@ class PanelAnnotator(
     }
 
     private fun transcriptImpact(impact: PaveTranscriptImpact, paveLiteAnnotation: VariantTranscriptImpact?): TranscriptImpact {
-        // TODO
-        //  * should we filter on gene, in case the Pave response contains multiple genes?
-        //  * drop transcript impacts with coding effect of None?
         return TranscriptImpact(
             transcriptId = impact.transcript,
             hgvsCodingImpact = impact.hgvsCodingImpact,
