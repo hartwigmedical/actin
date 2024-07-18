@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
+import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.paver.PaverConfig
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
@@ -111,7 +112,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val paverConfig = PaverConfig(
             ensemblDataDir = config.ensemblCachePath,
             refGenomeFasta = config.referenceGenomeFastaPath,
-            refGenomeVersion = "37",
+            refGenomeVersion = PaveRefGenomeVersion.V37,
             driverGenePanel = config.driverGenePanelPath,
             tempDir = config.tempDir
         )

@@ -20,7 +20,7 @@ class PaverTest {
         val paverConfig = PaverConfig(
             ensemblDataDir = ENSEMBL_DATA_DIR,
             refGenomeFasta = REF_GENOME_FASTA,
-            refGenomeVersion = "37",
+            refGenomeVersion = PaveRefGenomeVersion.V37,
             driverGenePanel = DRIVER_GENE_PANEL,
             tempDir = tempDir.root.absolutePath
         )

@@ -33,7 +33,7 @@ class Paver(private val config: PaverConfig) {
             "-vcf_file", paveVcfQueryFile,
             "-ensembl_data_dir", config.ensemblDataDir,
             "-ref_genome", config.refGenomeFasta,
-            "-ref_genome_version", config.refGenomeVersion,
+            "-ref_genome_version", config.refGenomeVersion.display(),
             "-driver_gene_panel", config.driverGenePanel,
             "-output_dir", config.tempDir,
         ))
