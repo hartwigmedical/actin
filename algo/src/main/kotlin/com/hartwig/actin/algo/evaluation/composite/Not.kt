@@ -27,8 +27,38 @@ class Not(private val function: EvaluationFunction) : EvaluationFunction {
                 failGeneralMessages = evaluation.passGeneralMessages
             }
 
-            in listOf(EvaluationResult.FAIL, EvaluationResult.WARN, EvaluationResult.UNDETERMINED, EvaluationResult.NOT_EVALUATED) -> {
+            EvaluationResult.FAIL -> {
                 negatedResult = EvaluationResult.PASS
+                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
+                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
+                passSpecificMessages = evaluation.failSpecificMessages
+                passGeneralMessages = evaluation.failGeneralMessages
+                failSpecificMessages = evaluation.passSpecificMessages
+                failGeneralMessages = evaluation.passGeneralMessages
+            }
+
+            EvaluationResult.WARN -> {
+                negatedResult = EvaluationResult.WARN
+                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
+                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
+                passSpecificMessages = evaluation.failSpecificMessages
+                passGeneralMessages = evaluation.failGeneralMessages
+                failSpecificMessages = evaluation.passSpecificMessages
+                failGeneralMessages = evaluation.passGeneralMessages
+            }
+
+            EvaluationResult.UNDETERMINED -> {
+                negatedResult = EvaluationResult.UNDETERMINED
+                inclusionMolecularEvents = evaluation.exclusionMolecularEvents
+                exclusionMolecularEvents = evaluation.inclusionMolecularEvents
+                passSpecificMessages = evaluation.failSpecificMessages
+                passGeneralMessages = evaluation.failGeneralMessages
+                failSpecificMessages = evaluation.passSpecificMessages
+                failGeneralMessages = evaluation.passGeneralMessages
+            }
+
+            EvaluationResult.NOT_EVALUATED -> {
+                negatedResult = EvaluationResult.NOT_EVALUATED
                 inclusionMolecularEvents = evaluation.exclusionMolecularEvents
                 exclusionMolecularEvents = evaluation.inclusionMolecularEvents
                 passSpecificMessages = evaluation.failSpecificMessages
