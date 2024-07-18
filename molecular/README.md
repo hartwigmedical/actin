@@ -403,3 +403,14 @@ The HLA entries are extracted from LILAC as follows:
   , `somaticSplice` or `somaticInframeIndel` is non-zero
 
 The pharmacogenomics entries are extracted from PEACH.
+
+## Test Data
+
+A tiny reference genome and corresponding Ensembl data cache is provided. This reference fasta requires additional metadata files to
+be created, when updating this reference genome perform the following steps in the folder containing the fasta file:
+
+```bash
+$ rm refsequence.dict
+$ samtools faidx refsequence.fasta
+$ gatk CreateSequenceDictionary -R refsequence.fasta
+```
