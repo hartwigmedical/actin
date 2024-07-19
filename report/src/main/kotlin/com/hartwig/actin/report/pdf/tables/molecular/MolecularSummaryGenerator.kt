@@ -25,8 +25,7 @@ class MolecularSummaryGenerator(
 
         for (molecularTest in patientRecord.molecularHistory.molecularTests.sortedBy { it.date }
             .filter { it.experimentType != ExperimentType.IHC }) {
-            val wgsMolecularRecord = molecularTest as? MolecularRecord
-            if (wgsMolecularRecord?.hasSufficientQuality != false) {
+            if ((molecularTest as? MolecularRecord)?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     LOGGER.warn("Generating WGS results for non-WGS sample")
                 }
