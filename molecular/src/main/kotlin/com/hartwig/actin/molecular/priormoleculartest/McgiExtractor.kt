@@ -32,9 +32,9 @@ class McgiExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> {
             }
     }
 
-    private fun nullSafeItemAndMeasure(it: PriorMolecularTest): Pair<String, String>? {
-        val item = it.item
-        val measure = it.measure
+    private fun nullSafeItemAndMeasure(test: PriorMolecularTest): Pair<String, String>? {
+        val item = test.item
+        val measure = test.measure
         return if (item != null && measure != null) {
             item to measure
         } else {

@@ -130,9 +130,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
     ): Pair<TableGenerator?, TableGenerator?> {
         val externalEligibleTrials =
             AggregatedEvidenceFactory.mergeMapsOfSets(patientRecord.molecularHistory.molecularTests.map {
-                AggregatedEvidenceFactory.create(
-                    it
-                ).externalEligibleTrialsPerEvent
+                AggregatedEvidenceFactory.create(it).externalEligibleTrialsPerEvent
             })
 
         val externalTrialSummarizer = ExternalTrialSummarizer(report.config.homeCountry)
