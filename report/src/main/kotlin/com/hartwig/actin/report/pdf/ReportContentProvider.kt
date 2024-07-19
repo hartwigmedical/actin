@@ -24,6 +24,7 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryWithOv
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistoryGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.MolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
@@ -100,6 +101,9 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             clinicalHistoryGenerator,
             if (report.config.includeMolecularSummary && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()) {
                 LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularHistory, contentWidth)
+            } else null,
+            if (report.config.includeMolecularSummary && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()) {
+                MolecularClinicalEvidenceGenerator(report.patientRecord.molecularHistory, contentWidth)
             } else null,
             if (report.config.includeEligibleSOCTreatmentSummary) {
                 SOCEligibleApprovedTreatmentGenerator(report, contentWidth)
