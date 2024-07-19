@@ -141,7 +141,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             evaluated
         )
         val allEvidenceSources =
-            patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it == NO_EVIDENCE_SOURCE }.toSet()
+            patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it != NO_EVIDENCE_SOURCE }.toSet()
         return Pair(
             if (externalTrialSummary.localTrials.isNotEmpty()) {
                 EligibleLocalExternalTrialsGenerator(
