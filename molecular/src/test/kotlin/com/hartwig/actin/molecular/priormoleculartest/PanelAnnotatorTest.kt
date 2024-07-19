@@ -160,12 +160,17 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should filter transcript impacts from non canonical gene`() {
+    fun `Should filter out transcript impacts from non canonical gene`() {
         // TODO
     }
 
     @Test
-    fun `Should filter impacts from canonical transcript`() {
+    fun `Should filter out transcript impact from canonical transcript`() {
+        // TODO
+    }
+
+    @Test
+    fun `Should annotate all transcripts with paveLite`() {
         // TODO
     }
 
