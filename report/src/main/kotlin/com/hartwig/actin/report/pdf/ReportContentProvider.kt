@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
+import com.hartwig.actin.molecular.datamodel.NO_EVIDENCE_SOURCE
 import com.hartwig.actin.molecular.interpretation.AggregatedEvidenceFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluatedCohort
@@ -139,7 +140,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             report.treatmentMatch.trialMatches,
             evaluated
         )
-        val allEvidenceSources = patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.toSet()
+        val allEvidenceSources =
+            patientRecord.molecularHistory.molecularTests.map { it.evidenceSource }.filter { it == NO_EVIDENCE_SOURCE }.toSet()
         return Pair(
             if (externalTrialSummary.localTrials.isNotEmpty()) {
                 EligibleLocalExternalTrialsGenerator(

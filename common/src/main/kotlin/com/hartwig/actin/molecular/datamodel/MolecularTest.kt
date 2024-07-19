@@ -18,7 +18,7 @@ interface MolecularTest {
     fun testsGene(gene: String): Boolean
 }
 
-private const val NONE = "none"
+const val NO_EVIDENCE_SOURCE = "none"
 
 data class IHCMolecularTest(
     val test: PriorMolecularTest
@@ -28,7 +28,7 @@ data class IHCMolecularTest(
     override val date = test.measureDate
     override val drivers = Drivers()
     override val characteristics = MolecularCharacteristics()
-    override val evidenceSource = NONE
+    override val evidenceSource = NO_EVIDENCE_SOURCE
 
     override fun testsGene(gene: String) = test.measure == gene
 }
@@ -41,7 +41,7 @@ data class OtherPriorMolecularTest(
     override val date = test.measureDate
     override val drivers = Drivers()
     override val characteristics = MolecularCharacteristics()
-    override val evidenceSource = NONE
+    override val evidenceSource = NO_EVIDENCE_SOURCE
 
     override fun testsGene(gene: String) = test.measure == gene
 }
