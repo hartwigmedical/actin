@@ -159,6 +159,16 @@ class PanelAnnotatorTest {
         assertThat(annotatedVariant.canonicalImpact.affectedCodon).isEqualTo(2)
     }
 
+    @Test
+    fun `Should filter transcript impacts from non canonical gene`() {
+        // TODO
+    }
+
+    @Test
+    fun `Should filter impacts from canonical transcript`() {
+        // TODO
+    }
+
     private fun setupGeneAlteration() {
         every { evidenceDatabase.geneAlterationForVariant(VARIANT_MATCH_CRITERIA) } returns TestServeKnownFactory.hotspotBuilder().build()
             .withGeneRole(com.hartwig.serve.datamodel.common.GeneRole.ONCO)

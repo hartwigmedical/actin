@@ -20,6 +20,7 @@ class Paver(private val ensemblDataDir: String,
             private val refGenomeVersion: PaveRefGenomeVersion,
             private val driverGenePanel: String,
             private val tempDir: String) {
+
     private val logger: Logger = LogManager.getLogger(Paver::class.java)
 
     fun run(queries: List<PaveQuery>): List<PaveResponse> {
