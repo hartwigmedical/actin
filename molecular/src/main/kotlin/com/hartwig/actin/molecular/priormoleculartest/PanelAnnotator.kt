@@ -50,8 +50,7 @@ class PanelAnnotator(
         val variantExtractions = indexVariantExtractionsToUniqueIds(input.variants)
         val transvarVariants = resolveVariants(variantExtractions)
         val paveAnnotations = annotateWithPave(transvarVariants)
-        val paveLiteAnnotations = annotateWithPaveLite(transvarVariants, paveAnnotations)
-        val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions, paveLiteAnnotations)
+        val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions)
         val variantsWithDriverLikelihoodModel = annotateWithDriverLikelihood(variantsWithEvidence)
 
         return PanelRecord(
@@ -107,11 +106,9 @@ class PanelAnnotator(
 
     private fun annotateWithEvidence(indexToTransvarVariant: Map<String, TransvarVariant>,
                                      indexToPaveResponse: Map<String, PaveResponse>,
-                                     indexedToVariantExtractions: Map<String, PanelVariantExtraction>,
-                                     indexToPaveLiteAnnotation: Map<String, PaveLiteAnnotation>): List<Variant> {
+                                     indexedToVariantExtractions: Map<String, PanelVariantExtraction>): List<Variant> {
         return indexToTransvarVariant.map { (id, transvarAnnotation) ->
             val paveResponse = indexToPaveResponse[id]!!
-            val paveLiteAnnotation = indexToPaveLiteAnnotation[id]!!
             val extraction = indexedToVariantExtractions[id]!!
             val (evidence, geneAlteration) = serveEvidence(extraction, transvarAnnotation)
             createVariantWithEvidence(
@@ -119,8 +116,7 @@ class PanelAnnotator(
                 evidence,
                 geneAlteration,
                 transvarAnnotation,
-                paveResponse,
-                paveLiteAnnotation
+                paveResponse
             )
         }
     }
@@ -175,8 +171,7 @@ class PanelAnnotator(
         evidence: ActionableEvidence,
         geneAlteration: GeneAlteration,
         transcriptAnnotation: TransvarVariant,
-        paveResponse: PaveResponse,
-        paveLiteAnnotation: PaveLiteAnnotation
+        paveResponse: PaveResponse
     ) = Variant(
         isReportable = true,
         event = "${it.gene} ${it.hgvsCodingImpact}",
@@ -196,14 +191,23 @@ class PanelAnnotator(
         isHotspot = geneAlteration is KnownHotspot || geneAlteration is KnownCodon,
         ref = transcriptAnnotation.ref(),
         alt = transcriptAnnotation.alt(),
-        canonicalImpact = impact(paveResponse.impact, paveLiteAnnotation),
-        otherImpacts = otherImpacts(paveResponse, paveLiteAnnotation),
+
+
+        canonicalImpact = impact(paveResponse.impact, transcriptAnnotation),
+        otherImpacts = otherImpacts(paveResponse, transcriptAnnotation),
         chromosome = transcriptAnnotation.chromosome(),
         position = transcriptAnnotation.position(),
         type = variantType(transcriptAnnotation)
     )
 
-    private fun impact(impact: PaveImpact, paveLiteAnnotation: PaveLiteAnnotation?): TranscriptImpact {
+    private fun impact(impact: PaveImpact, transvarVariant: TransvarVariant): TranscriptImpact {
+
+        val paveLiteAnnotation = paveLite.run(
+            impact.gene,
+            impact.transcript,
+            transvarVariant.position()
+        )
+
         return TranscriptImpact(
             transcriptId = impact.transcript,
             hgvsCodingImpact = impact.hgvsCodingImpact,
@@ -212,6 +216,35 @@ class PanelAnnotator(
             affectedExon = paveLiteAnnotation?.affectedExon(),
             affectedCodon = paveLiteAnnotation?.affectedCodon(),
             codingEffect = codingEffect(impact.canonicalCodingEffect),
+        )
+    }
+
+    private fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptImpact> {
+        return paveResponse.transcriptImpact
+            .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.transcript }
+            .map { transcriptImpact(it, transvarVariant) }
+            .toSet()
+    }
+
+    private fun transcriptImpact(impact: PaveTranscriptImpact, transvarVariant: TransvarVariant): TranscriptImpact {
+        val paveLiteAnnotation = paveLite.run(
+            impact.gene,
+            impact.transcript,
+            transvarVariant.position()
+        )
+
+        return TranscriptImpact(
+            transcriptId = impact.transcript,
+            hgvsCodingImpact = impact.hgvsCodingImpact,
+            hgvsProteinImpact = impact.hgvsProteinImpact,
+            isSpliceRegion = impact.spliceRegion,
+            affectedExon = paveLiteAnnotation?.affectedExon(),
+            affectedCodon = paveLiteAnnotation?.affectedCodon(),
+            codingEffect = codingEffect(
+                impact.effects
+                    .map(PaveCodingEffect::fromPaveVariantEffect)
+                    .let(PaveCodingEffect::worstCodingEffect)
+            )
         )
     }
 
@@ -231,41 +264,17 @@ class PanelAnnotator(
         }
     }
 
+    private fun codingEffect(paveCodingEffect: PaveCodingEffect): CodingEffect {
+        return when (paveCodingEffect) {
+            PaveCodingEffect.NONE -> CodingEffect.NONE
+            PaveCodingEffect.MISSENSE -> CodingEffect.MISSENSE
+            PaveCodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
+            PaveCodingEffect.SPLICE -> CodingEffect.SPLICE
+            PaveCodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
+        }
+    }
+
     companion object {
         val LOGGER: Logger = LogManager.getLogger(PanelAnnotator::class.java)
-    }
-}
-
-private fun otherImpacts(paveResponse: PaveResponse, paveLiteAnnotation: PaveLiteAnnotation): Set<TranscriptImpact> {
-    return paveResponse.transcriptImpact
-        .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.transcript }
-        .map { transcriptImpact(it, paveLiteAnnotation) }
-        .toSet()
-}
-
-private fun transcriptImpact(impact: PaveTranscriptImpact, paveLiteAnnotation: PaveLiteAnnotation?): TranscriptImpact {
-    return TranscriptImpact(
-        transcriptId = impact.transcript,
-        hgvsCodingImpact = impact.hgvsCodingImpact,
-        hgvsProteinImpact = impact.hgvsProteinImpact,
-        isSpliceRegion = impact.spliceRegion,
-        // this is wrong! need paveLite for each transcript
-        affectedExon = paveLiteAnnotation?.affectedExon(),
-        affectedCodon = paveLiteAnnotation?.affectedCodon(),
-        codingEffect = codingEffect(
-            impact.effects
-                .map(PaveCodingEffect::fromPaveVariantEffect)
-                .let(PaveCodingEffect::worstCodingEffect)
-        )
-    )
-}
-
-private fun codingEffect(paveCodingEffect: PaveCodingEffect): CodingEffect {
-    return when (paveCodingEffect) {
-        PaveCodingEffect.NONE -> CodingEffect.NONE
-        PaveCodingEffect.MISSENSE -> CodingEffect.MISSENSE
-        PaveCodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
-        PaveCodingEffect.SPLICE -> CodingEffect.SPLICE
-        PaveCodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
     }
 }
