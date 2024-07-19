@@ -29,10 +29,6 @@ data class MolecularHistory(
         return molecularTests.filterIsInstance<PanelRecord>().map { it.panelExtraction }.filterIsInstance<GenericPanelExtraction>()
     }
 
-    fun allOtherTests(): List<OtherPriorMolecularTest> {
-        return molecularTests.filterIsInstance<OtherPriorMolecularTest>()
-    }
-
     fun latestOrangeMolecularRecord(): MolecularRecord? {
         return allOrangeMolecularRecords()
             .maxByOrNull { it.date ?: LocalDate.MIN }

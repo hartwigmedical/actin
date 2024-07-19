@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.interpretation
 
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
-import com.hartwig.actin.molecular.datamodel.MolecularRecord
+import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.util.MolecularCharacteristicEvents
 import org.apache.logging.log4j.LogManager
@@ -11,7 +11,7 @@ object AggregatedEvidenceFactory {
 
     private val LOGGER = LogManager.getLogger(AggregatedEvidenceFactory::class.java)
 
-    fun create(molecular: MolecularRecord): AggregatedEvidence {
+    fun create(molecular: MolecularTest): AggregatedEvidence {
         return mergeAggregatedEvidenceList(
             aggregateCharacteristicsEvidence(molecular.characteristics) + aggregateDriverEvidence(molecular.drivers)
         )
@@ -111,7 +111,7 @@ object AggregatedEvidenceFactory {
         )
     }
 
-    private fun <T> mergeMapsOfSets(mapsOfSets: List<Map<String, Set<T>>>): Map<String, Set<T>> {
+    fun <T> mergeMapsOfSets(mapsOfSets: List<Map<String, Set<T>>>): Map<String, Set<T>> {
         return mapsOfSets
             .flatMap { it.entries }
             .groupBy({ it.key }, { it.value })

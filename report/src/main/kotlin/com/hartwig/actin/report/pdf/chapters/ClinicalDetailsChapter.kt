@@ -8,7 +8,7 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
+class ClinicalDetailsChapter(private val report: Report, override val include: Boolean) : ReportChapter {
     override fun name(): String {
         return "Clinical Details"
     }
@@ -29,7 +29,7 @@ class ClinicalDetailsChapter(private val report: Report) : ReportChapter {
         val valueWidth = contentWidth - keyWidth - 10
 
         val generators = ReportContentProvider(report).provideClinicalDetailsTables(keyWidth, valueWidth, contentWidth)
-        
+
         for (i in generators.indices) {
             val generator = generators[i]
             table.addCell(Cells.createTitle(generator.title()))

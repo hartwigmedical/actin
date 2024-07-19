@@ -17,14 +17,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
         }
 
         val orangeMolecular = record.molecularHistory.latestOrangeMolecularRecord()
-        if (orangeMolecular != null && orangeMolecular.type == ExperimentType.WHOLE_GENOME && orangeMolecular.containsTumorCells) {
+        if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && orangeMolecular.containsTumorCells) {
             return EvaluationFactory.pass(
                 "WGS has successfully been performed so molecular results are available for gene $gene",
                 "WGS results available for $gene"
             )
         }
 
-        if (orangeMolecular != null && orangeMolecular.type == ExperimentType.TARGETED && orangeMolecular.containsTumorCells) {
+        if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED && orangeMolecular.containsTumorCells) {
             val geneIsTested = orangeMolecular.drivers.copyNumbers
                 .any { it.gene == gene }
             return if (geneIsTested) {
@@ -59,14 +59,14 @@ class MolecularResultsAreAvailableForGene(private val gene: String) : Evaluation
                 )
             }
 
-            orangeMolecular != null && orangeMolecular.type == ExperimentType.WHOLE_GENOME && !orangeMolecular.containsTumorCells -> {
+            orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && !orangeMolecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had WGS but biopsy contained no tumor cells",
                     "WGS performed containing $gene, but sample purity was too low"
                 )
             }
 
-            orangeMolecular != null && orangeMolecular.type == ExperimentType.TARGETED && !orangeMolecular.containsTumorCells -> {
+            orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED && !orangeMolecular.containsTumorCells -> {
                 EvaluationFactory.undetermined(
                     "Patient has had OncoAct tumor NGS panel but biopsy contained too little tumor cells",
                     "OncoAct tumor NGS panel performed containing $gene, but sample purity was too low"

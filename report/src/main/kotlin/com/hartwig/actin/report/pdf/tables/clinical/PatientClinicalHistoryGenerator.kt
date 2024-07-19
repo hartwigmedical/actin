@@ -42,11 +42,11 @@ class PatientClinicalHistoryGenerator(
         val record = report.patientRecord
         return listOfNotNull(
             "Relevant systemic treatment history" to relevantSystemicPreTreatmentHistoryTable(record),
-            if (report.config.showOtherOncologicalHistoryInSummary || showDetails) {
+            if (report.config.includeOtherOncologicalHistoryInSummary || showDetails) {
                 "Relevant other oncological history" to relevantNonSystemicPreTreatmentHistoryTable(record)
             } else null,
             "Previous primary tumor" to secondPrimaryHistoryTable(record),
-            if (report.config.showRelevantNonOncologicalHistoryInSummary || showDetails) {
+            if (report.config.includeRelevantNonOncologicalHistoryInSummary || showDetails) {
                 "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }

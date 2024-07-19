@@ -53,7 +53,7 @@ class ArcherExtractor : MolecularExtractor<PriorMolecularTest, PanelExtraction> 
                 if (!unknownResults.isNullOrEmpty()) {
                     throw IllegalArgumentException("Unknown results in Archer: ${unknownResults.map { "${it.item} ${it.measure}" }}")
                 }
-                ArcherPanelExtraction(variants, fusions, exonSkips, date)
+                ArcherPanelExtraction(variants = variants, fusions = fusions, skippedExons = exonSkips, date = date)
             }
     }
 

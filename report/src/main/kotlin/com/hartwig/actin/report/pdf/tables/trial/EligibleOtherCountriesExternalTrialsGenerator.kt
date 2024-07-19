@@ -10,15 +10,15 @@ import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
 class EligibleOtherCountriesExternalTrialsGenerator(
-    private val source: String,
+    private val sources: Set<String>,
     private val externalTrialsPerEvent: Map<String, Iterable<ExternalTrial>>,
     private val width: Float,
     private val filteredCount: Int
 ) : TableGenerator {
     override fun title(): String {
         return String.format(
-            "%s trials potentially eligible based on molecular results which are potentially recruiting outside the Netherlands (%d)",
-            source,
+            "%s trials potentially eligible based on molecular results which are potentially recruiting internationally (%d)",
+            sources.joinToString(),
             externalTrialsPerEvent.values.flatten().size
         )
     }
