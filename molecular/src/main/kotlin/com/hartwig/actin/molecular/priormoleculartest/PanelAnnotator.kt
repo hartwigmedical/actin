@@ -32,7 +32,6 @@ import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.range.KnownCodon
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import com.hartwig.actin.tools.pave.VariantTranscriptImpact as PaveLiteAnnotation
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator as VariantResolver
 
@@ -90,18 +89,6 @@ class PanelAnnotator(
         }
 
         return paveResponses
-    }
-
-    private fun annotateWithPaveLite(indexToTransvarVariant: Map<String, TransvarVariant>,
-                                     indexToPaveResponse: Map<String, PaveResponse>): Map<String, PaveLiteAnnotation> {
-        return indexToTransvarVariant.mapValues { (id, transvarAnnotation) ->
-            val paveResponse = indexToPaveResponse[id]!!
-            paveLite.run(
-                paveResponse.impact.gene,
-                paveResponse.impact.transcript,
-                transvarAnnotation.position()
-            ) ?: throw IllegalStateException("PaveLite did not return a response for query $transvarAnnotation")
-        }
     }
 
     private fun annotateWithEvidence(indexToTransvarVariant: Map<String, TransvarVariant>,
@@ -206,15 +193,16 @@ class PanelAnnotator(
             impact.gene,
             impact.transcript,
             transvarVariant.position()
-        )
+        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
+
 
         return TranscriptImpact(
             transcriptId = impact.transcript,
             hgvsCodingImpact = impact.hgvsCodingImpact,
             hgvsProteinImpact = impact.hgvsProteinImpact,
             isSpliceRegion = impact.spliceRegion,
-            affectedExon = paveLiteAnnotation?.affectedExon(),
-            affectedCodon = paveLiteAnnotation?.affectedCodon(),
+            affectedExon = paveLiteAnnotation.affectedExon(),
+            affectedCodon = paveLiteAnnotation.affectedCodon(),
             codingEffect = codingEffect(impact.canonicalCodingEffect),
         )
     }
@@ -231,15 +219,15 @@ class PanelAnnotator(
             impact.gene,
             impact.transcript,
             transvarVariant.position()
-        )
+        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
 
         return TranscriptImpact(
             transcriptId = impact.transcript,
             hgvsCodingImpact = impact.hgvsCodingImpact,
             hgvsProteinImpact = impact.hgvsProteinImpact,
             isSpliceRegion = impact.spliceRegion,
-            affectedExon = paveLiteAnnotation?.affectedExon(),
-            affectedCodon = paveLiteAnnotation?.affectedCodon(),
+            affectedExon = paveLiteAnnotation.affectedExon(),
+            affectedCodon = paveLiteAnnotation.affectedCodon(),
             codingEffect = codingEffect(
                 impact.effects
                     .map(PaveCodingEffect::fromPaveVariantEffect)
