@@ -66,14 +66,14 @@ class PanelAnnotator(
         return variants.withIndex().associate { it.index.toString() to it.value }
     }
 
-    private fun resolveVariants(indexedToVariantExtractions: Map<String, PanelVariantExtraction>): Map<String, TransvarVariant> {
-        return indexedToVariantExtractions.mapValues { (_, value) -> externalAnnotation(value) }
+    private fun resolveVariants(variantExtractions: Map<String, PanelVariantExtraction>): Map<String, TransvarVariant> {
+        return variantExtractions.mapValues { (_, value) -> externalAnnotation(value) }
             .mapNotNull { if (it.value != null) it.key to it.value!! else null }
             .toMap()
     }
 
-    private fun annotateWithPave(transvarAnnotationsMap: Map<String, TransvarVariant>): Map<String, PaveResponse> {
-        val paveQueries = transvarAnnotationsMap.map { (id, annotation) ->
+    private fun annotateWithPave(transvarVariants: Map<String, TransvarVariant>): Map<String, PaveResponse> {
+        val paveQueries = transvarVariants.map { (id, annotation) ->
             PaveQuery(
                 id = id,
                 chromosome = annotation.chromosome(),
@@ -84,19 +84,19 @@ class PanelAnnotator(
         }
 
         val paveResponses = paver.run(paveQueries).associateBy { it.id }
-        if (transvarAnnotationsMap.keys != paveResponses.keys) {
+        if (transvarVariants.keys != paveResponses.keys) {
             throw IllegalStateException("Pave did not return a response for all queries")
         }
 
         return paveResponses
     }
 
-    private fun annotateWithEvidence(indexToTransvarVariant: Map<String, TransvarVariant>,
-                                     indexToPaveResponse: Map<String, PaveResponse>,
-                                     indexedToVariantExtractions: Map<String, PanelVariantExtraction>): List<Variant> {
-        return indexToTransvarVariant.map { (id, transvarAnnotation) ->
-            val paveResponse = indexToPaveResponse[id]!!
-            val extraction = indexedToVariantExtractions[id]!!
+    private fun annotateWithEvidence(transvarVariants: Map<String, TransvarVariant>,
+                                     paveAnnotations: Map<String, PaveResponse>,
+                                     variantExtractions: Map<String, PanelVariantExtraction>): List<Variant> {
+        return transvarVariants.map { (id, transvarAnnotation) ->
+            val paveResponse = paveAnnotations[id]!!
+            val extraction = variantExtractions[id]!!
             val (evidence, geneAlteration) = serveEvidence(extraction, transvarAnnotation)
             createVariantWithEvidence(
                 extraction,
@@ -187,23 +187,23 @@ class PanelAnnotator(
         type = variantType(transcriptAnnotation)
     )
 
-    private fun impact(impact: PaveImpact, transvarVariant: TransvarVariant): TranscriptImpact {
+    private fun impact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptImpact {
 
         val paveLiteAnnotation = paveLite.run(
-            impact.gene,
-            impact.transcript,
+            paveImpact.gene,
+            paveImpact.transcript,
             transvarVariant.position()
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
 
 
         return TranscriptImpact(
-            transcriptId = impact.transcript,
-            hgvsCodingImpact = impact.hgvsCodingImpact,
-            hgvsProteinImpact = impact.hgvsProteinImpact,
-            isSpliceRegion = impact.spliceRegion,
+            transcriptId = paveImpact.transcript,
+            hgvsCodingImpact = paveImpact.hgvsCodingImpact,
+            hgvsProteinImpact = paveImpact.hgvsProteinImpact,
+            isSpliceRegion = paveImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
-            codingEffect = codingEffect(impact.canonicalCodingEffect),
+            codingEffect = codingEffect(paveImpact.canonicalCodingEffect),
         )
     }
 
@@ -214,31 +214,31 @@ class PanelAnnotator(
             .toSet()
     }
 
-    private fun transcriptImpact(impact: PaveTranscriptImpact, transvarVariant: TransvarVariant): TranscriptImpact {
+    private fun transcriptImpact(paveTranscriptImpact: PaveTranscriptImpact, transvarVariant: TransvarVariant): TranscriptImpact {
         val paveLiteAnnotation = paveLite.run(
-            impact.gene,
-            impact.transcript,
+            paveTranscriptImpact.gene,
+            paveTranscriptImpact.transcript,
             transvarVariant.position()
         ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
 
         return TranscriptImpact(
-            transcriptId = impact.transcript,
-            hgvsCodingImpact = impact.hgvsCodingImpact,
-            hgvsProteinImpact = impact.hgvsProteinImpact,
-            isSpliceRegion = impact.spliceRegion,
+            transcriptId = paveTranscriptImpact.transcript,
+            hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
+            hgvsProteinImpact = paveTranscriptImpact.hgvsProteinImpact,
+            isSpliceRegion = paveTranscriptImpact.spliceRegion,
             affectedExon = paveLiteAnnotation.affectedExon(),
             affectedCodon = paveLiteAnnotation.affectedCodon(),
             codingEffect = codingEffect(
-                impact.effects
+                paveTranscriptImpact.effects
                     .map(PaveCodingEffect::fromPaveVariantEffect)
                     .let(PaveCodingEffect::worstCodingEffect)
             )
         )
     }
 
-    private fun variantType(transcriptAnnotation: TransvarVariant): VariantType {
-        val ref = transcriptAnnotation.ref()
-        val alt = transcriptAnnotation.alt()
+    private fun variantType(transvarVariant: TransvarVariant): VariantType {
+        val ref = transvarVariant.ref()
+        val alt = transvarVariant.alt()
         return if (ref.length == alt.length) {
             if (ref.length == 1) {
                 VariantType.SNV
