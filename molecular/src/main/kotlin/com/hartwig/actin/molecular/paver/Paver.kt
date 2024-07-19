@@ -6,7 +6,6 @@ import com.hartwig.hmftools.pave.PaveApplication
 import com.hartwig.hmftools.pave.PaveConfig
 import htsjdk.samtools.reference.IndexedFastaSequenceFile
 import htsjdk.tribble.AbstractFeatureReader
-import htsjdk.tribble.readers.LineIterator
 import htsjdk.variant.variantcontext.Allele
 import htsjdk.variant.variantcontext.VariantContext
 import htsjdk.variant.variantcontext.VariantContextBuilder
@@ -16,7 +15,11 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.nio.file.Paths
 
-class Paver(private val config: PaverConfig) {
+class Paver(private val ensemblDataDir: String,
+            private val refGenomeFasta: String,
+            private val refGenomeVersion: PaveRefGenomeVersion,
+            private val driverGenePanel: String,
+            private val tempDir: String) {
     private val logger: Logger = LogManager.getLogger(Paver::class.java)
 
     fun run(queries: List<PaveQuery>): List<PaveResponse> {
@@ -31,11 +34,11 @@ class Paver(private val config: PaverConfig) {
 
         configBuilder.checkAndParseCommandLine(arrayOf(
             "-vcf_file", paveVcfQueryFile,
-            "-ensembl_data_dir", config.ensemblDataDir,
-            "-ref_genome", config.refGenomeFasta,
-            "-ref_genome_version", config.refGenomeVersion.display(),
-            "-driver_gene_panel", config.driverGenePanel,
-            "-output_dir", config.tempDir,
+            "-ensembl_data_dir", ensemblDataDir,
+            "-ref_genome", refGenomeFasta,
+            "-ref_genome_version", refGenomeVersion.display(),
+            "-driver_gene_panel", driverGenePanel,
+            "-output_dir", tempDir,
         ))
 
         val paveApplication = PaveApplication(configBuilder)
@@ -53,7 +56,7 @@ class Paver(private val config: PaverConfig) {
 
     private fun buildPaveInputVcf(vcfFile: String, queries: List<PaveQuery>) {
         logger.debug("Writing {} variants to {}", queries.size, vcfFile)
-        val refSequence: IndexedFastaSequenceFile = IndexedFastaSequenceFile(File(config.refGenomeFasta))
+        val refSequence = IndexedFastaSequenceFile(File(refGenomeFasta))
         val writer = VCFWriterFactory.openIndexedVCFWriter(vcfFile, refSequence);
 
         val sortedQueries = queries.sortedWith(
@@ -77,8 +80,7 @@ class Paver(private val config: PaverConfig) {
     }
 
     private fun loadPaveOutputVcf(paveVcfFile: String): List<PaveResponse> {
-        val reader =
-            AbstractFeatureReader.getFeatureReader<VariantContext, LineIterator>(paveVcfFile, VCFCodec(), false)
+        val reader = AbstractFeatureReader.getFeatureReader(paveVcfFile, VCFCodec(), false)
 
         val response = mutableListOf<PaveResponse>()
         for (variant in reader) {
@@ -91,69 +93,13 @@ class Paver(private val config: PaverConfig) {
     }
 
     private fun extractPaveImpact(variant: VariantContext): PaveImpact {
-        val parts = variant.getAttributeAsStringList("IMPACT", "")
-        if (parts == null || parts.isEmpty()) {
-            throw RuntimeException("Missing PAVE impact field")
-        }
-
-        if (parts.size != 10) {
-            throw RuntimeException("Unexpected number of parts in PAVE impact field: ${parts.size}")
-        }
-
-        return PaveImpact(
-            gene = parts[0],
-            transcript = parts[1],
-            canonicalEffect = parts[2],
-            canonicalCodingEffect = PaveCodingEffect.fromString(parts[3]),
-            spliceRegion = interpretSpliceRegion(parts[4]),
-            hgvsCodingImpact = parts[5],
-            hgvsProteinImpact = parts[6],
-            otherReportableEffects = parts[7].ifEmpty { null },
-            worstCodingEffect = PaveCodingEffect.fromString(parts[8]),
-            genesAffected = parts[9].toInt(),
-        )
+        val impact = variant.getAttributeAsStringList("IMPACT", "")
+        return parsePaveImpact(impact)
     }
 
     private fun extractPaveTranscriptImpact(variant: VariantContext): List<PaveTranscriptImpact> {
         val impacts = variant.getAttributeAsStringList("PAVE_TI", "")
-        if (impacts == null || impacts.isEmpty()) {
-            throw RuntimeException("Missing PAVE_TI field")
-        }
-
-        return impacts.map { it.split("|") }
-            .map {
-                if (it.size != 7) {
-                    throw RuntimeException("Unexpected number of parts in PAVE_TI field: ${it.size}")
-                }
-
-                PaveTranscriptImpact(
-                    gene = it[0],
-                    geneName = it[1],
-                    transcript = it[2],
-                    effects = interpretVariantEffects(it[3]),
-                    spliceRegion = interpretSpliceRegion(it[4]),
-                    hgvsCodingImpact = it[5],
-                    hgvsProteinImpact = it[6])
-            }
-    }
-
-    private fun interpretSpliceRegion(spliceRegion: String): Boolean {
-        return when (spliceRegion) {
-            "true" -> true
-            "false" -> false
-            else -> {
-                throw RuntimeException("Unexpected splice region value: $spliceRegion")
-            }
-        }
-    }
-
-    private fun interpretVariantEffects(variantEffects: String): List<PaveVariantEffect> {
-        if (variantEffects.isEmpty()) {
-            return emptyList()
-        }
-
-        return variantEffects.split("&")
-            .map { PaveVariantEffect.fromString(it) }
+        return parsePaveTranscriptImpact(impacts)
     }
 
     private fun generateRunId(): String {
@@ -164,15 +110,79 @@ class Paver(private val config: PaverConfig) {
     }
 
     private fun paveVcfQueryFilename(runId: String): String {
-        return Paths.get(config.tempDir, "actin-$runId.vcf.gz").toString()
+        return Paths.get(tempDir, "actin-$runId.vcf.gz").toString()
     }
 
     private fun paveVcfResponseFilename(runId: String): String {
-        return Paths.get(config.tempDir, "actin-$runId.pave.vcf.gz").toString()
+        return Paths.get(tempDir, "actin-$runId.pave.vcf.gz").toString()
     }
 
     private fun indexForVcf(vcfFilename: String): String {
         return "$vcfFilename.tbi"
+    }
+}
+
+fun parsePaveImpact(impact: List<String>?): PaveImpact {
+    if (impact.isNullOrEmpty()) {
+        throw RuntimeException("Missing PAVE impact field")
+    }
+
+    if (impact.size != 10) {
+        throw RuntimeException("Unexpected number of parts in PAVE impact field: ${impact.size}")
+    }
+
+    return PaveImpact(
+        gene = impact[0],
+        transcript = impact[1],
+        canonicalEffect = impact[2],
+        canonicalCodingEffect = PaveCodingEffect.valueOf(impact[3]),
+        spliceRegion = interpretSpliceRegion(impact[4]),
+        hgvsCodingImpact = impact[5],
+        hgvsProteinImpact = impact[6],
+        otherReportableEffects = impact[7].ifEmpty { null },
+        worstCodingEffect = PaveCodingEffect.valueOf(impact[8]),
+        genesAffected = impact[9].toInt(),
+    )
+}
+
+fun parsePaveTranscriptImpact(impacts: List<String>?): List<PaveTranscriptImpact> {
+    if (impacts.isNullOrEmpty()) {
+        throw RuntimeException("Missing PAVE_TI field")
+    }
+
+    return impacts.map { it.split("|") }
+        .map {
+            if (it.size != 7) {
+                throw RuntimeException("Unexpected number of parts in PAVE_TI field: ${it.size}")
+            }
+
+            PaveTranscriptImpact(
+                gene = it[0],
+                geneName = it[1],
+                transcript = it[2],
+                effects = interpretVariantEffects(it[3]),
+                spliceRegion = interpretSpliceRegion(it[4]),
+                hgvsCodingImpact = it[5],
+                hgvsProteinImpact = it[6])
+        }
+}
+
+private fun interpretVariantEffects(variantEffects: String): List<PaveVariantEffect> {
+    if (variantEffects.isEmpty()) {
+        return emptyList()
+    }
+
+    return variantEffects.split("&")
+        .map { PaveVariantEffect.fromString(it) }
+}
+
+fun interpretSpliceRegion(spliceRegion: String): Boolean {
+    return when (spliceRegion) {
+        "true" -> true
+        "false" -> false
+        else -> {
+            throw RuntimeException("Unexpected splice region value: $spliceRegion")
+        }
     }
 }
 

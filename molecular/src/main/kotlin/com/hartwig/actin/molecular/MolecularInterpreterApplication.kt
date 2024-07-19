@@ -17,7 +17,6 @@ import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.molecular.paver.PaverConfig
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
@@ -109,14 +108,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
         val dndsDatabase = DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
 
-        val paverConfig = PaverConfig(
-            ensemblDataDir = config.ensemblCachePath,
-            refGenomeFasta = config.referenceGenomeFastaPath,
-            refGenomeVersion = PaveRefGenomeVersion.V37,
-            driverGenePanel = config.driverGenePanelPath,
-            tempDir = config.tempDir
-        )
-
         LOGGER.info("Interpreting clinical molecular tests")
         val clinicalMolecularTests = PriorMolecularTestInterpreters.create(
             evidenceDatabase,
@@ -126,7 +117,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 config.referenceGenomeFastaPath,
                 ensemblDataCache
             ),
-            Paver(paverConfig),
+            Paver(config.ensemblCachePath, config.referenceGenomeFastaPath, PaveRefGenomeVersion.V37,
+                config.driverGenePanelPath, config.tempDir),
             PaveLite(ensemblDataCache, false)
 
         ).process(priorMolecularTests)

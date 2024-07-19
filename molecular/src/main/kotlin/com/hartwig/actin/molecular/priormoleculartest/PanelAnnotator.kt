@@ -28,80 +28,29 @@ import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.pave.VariantTranscriptImpact
-import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.serve.datamodel.hotspot.KnownHotspot
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import com.hartwig.actin.tools.variant.Variant as TransvarVariant
+import com.hartwig.actin.tools.variant.VariantAnnotator as VariantResolver
 
 class PanelAnnotator(
     private val experimentType: ExperimentType,
     private val evidenceDatabase: EvidenceDatabase,
     private val geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
-    private val transcriptAnnotator: VariantAnnotator,
+    private val variantResolver: VariantResolver,
     private val paver: Paver,
     private val paveLite: PaveLite
 ) :
     MolecularAnnotator<PanelExtraction, PanelRecord> {
 
     override fun annotate(input: PanelExtraction): PanelRecord {
-        val inputMap = input.variants.withIndex().associate { it.index.toString() to it.value }
-        val transvarAnnotationsMap = inputMap.mapValues { (_, value) -> externalAnnotation(value) }
-            .mapNotNull { if (it.value != null) it.key to it.value!! else null }
-            .toMap()
-
-        val paveQueries = transvarAnnotationsMap.map { (id, annotation) ->
-            PaveQuery(
-                id = id,
-                chromosome = annotation.chromosome(),
-                position = annotation.position(),
-                ref = annotation.ref(),
-                alt = annotation.alt()
-            )
-        }
-
-        val paveResponses = paver.run(paveQueries)
-        val responseMap = paveResponses.associateBy { it.id }
-
-        val annotatedVariants = transvarAnnotationsMap.map { (id, transvarAnnotation) ->
-            if (id !in responseMap) {
-                LOGGER.warn("Pave did not return a response for query $transvarAnnotation")
-                null
-            } else {
-                val paveResponse = responseMap[id]!!
-                val extraction = inputMap[id]!!
-
-                val (evidence, geneAlteration) = serveEvidence(extraction, transvarAnnotation)
-
-                val paveLiteAnnotations = paveLite.run(
-                    paveResponse.impact.gene,
-                    paveResponse.impact.transcript,
-                    transvarAnnotation.position()
-                )
-
-                createVariantWithEvidence(
-                    extraction,
-                    evidence,
-                    geneAlteration,
-                    transvarAnnotation,
-                    paveResponse,
-                    paveLiteAnnotations
-                )
-            }
-        }
-            .filterNotNull()
-
-        val variantsByGene = annotatedVariants.groupBy { it.gene }
-        val variantsWithDriverLikelihoodModel = variantsByGene.map {
-            val geneRole = it.value.map { variant -> variant.geneRole }.first()
-            val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value)
-            likelihood to it.value
-        }.flatMap {
-            it.second.map { variant ->
-                variant.copy(
-                    driverLikelihood = DriverLikelihood.from(it.first)
-                )
-            }
-        }
+        val variantExtractions = indexVariantExtractionsToUniqueIds(input.variants)
+        val transvarVariants = resolveVariants(variantExtractions)
+        val paveAnnotations = annotateWithPave(transvarVariants)
+        val paveLiteAnnotations = annotateWithPaveLite(transvarVariants, paveAnnotations)
+        val variantsWithEvidence = annotateWithEvidence(transvarVariants, paveAnnotations, variantExtractions, paveLiteAnnotations)
+        val variantsWithDriverLikelihoodModel = annotateWithDriverLikelihood(variantsWithEvidence)
 
         return PanelRecord(
             panelExtraction = input,
@@ -113,8 +62,84 @@ class PanelAnnotator(
         )
     }
 
-    private fun externalAnnotation(it: PanelVariantExtraction): com.hartwig.actin.tools.variant.Variant? {
-        val externalVariantAnnotation = transcriptAnnotator.resolve(it.gene, null, it.hgvsCodingImpact)
+    private fun indexVariantExtractionsToUniqueIds(variants: List<PanelVariantExtraction>): Map<String, PanelVariantExtraction> {
+        return variants.withIndex().associate { it.index.toString() to it.value }
+    }
+
+    private fun resolveVariants(indexedToVariantExtractions: Map<String, PanelVariantExtraction>): Map<String, TransvarVariant> {
+        return indexedToVariantExtractions.mapValues { (_, value) -> externalAnnotation(value) }
+            .mapNotNull { if (it.value != null) it.key to it.value!! else null }
+            .toMap()
+    }
+
+    private fun annotateWithPave(transvarAnnotationsMap: Map<String, TransvarVariant>): Map<String, PaveResponse> {
+        val paveQueries = transvarAnnotationsMap.map { (id, annotation) ->
+            PaveQuery(
+                id = id,
+                chromosome = annotation.chromosome(),
+                position = annotation.position(),
+                ref = annotation.ref(),
+                alt = annotation.alt()
+            )
+        }
+
+        val paveResponses = paver.run(paveQueries).associateBy { it.id }
+        if (transvarAnnotationsMap.keys != paveResponses.keys) {
+            throw IllegalStateException("Pave did not return a response for all queries")
+        }
+
+        return paveResponses
+    }
+
+    private fun annotateWithPaveLite(indexToTransvarVariant: Map<String, TransvarVariant>,
+                                     indexToPaveResponse: Map<String, PaveResponse>): Map<String, VariantTranscriptImpact> {
+        return indexToTransvarVariant.mapValues { (id, transvarAnnotation) ->
+            val paveResponse = indexToPaveResponse[id]!!
+            paveLite.run(
+                paveResponse.impact.gene,
+                paveResponse.impact.transcript,
+                transvarAnnotation.position()
+            ) ?: throw IllegalStateException("PaveLite did not return a response for query $transvarAnnotation")
+        }
+    }
+
+    private fun annotateWithEvidence(indexToTransvarVariant: Map<String, TransvarVariant>,
+                                     indexToPaveResponse: Map<String, PaveResponse>,
+                                     indexedToVariantExtractions: Map<String, PanelVariantExtraction>,
+                                     indexToPaveLiteAnnotation: Map<String, VariantTranscriptImpact>): List<Variant> {
+        return indexToTransvarVariant.map { (id, transvarAnnotation) ->
+            val paveResponse = indexToPaveResponse[id]!!
+            val paveLiteAnnotation = indexToPaveLiteAnnotation[id]!!
+            val extraction = indexedToVariantExtractions[id]!!
+            val (evidence, geneAlteration) = serveEvidence(extraction, transvarAnnotation)
+            createVariantWithEvidence(
+                extraction,
+                evidence,
+                geneAlteration,
+                transvarAnnotation,
+                paveResponse,
+                paveLiteAnnotation
+            )
+        }
+    }
+
+    private fun annotateWithDriverLikelihood(annotatedVariants: List<Variant>): List<Variant> {
+        val variantsByGene = annotatedVariants.groupBy { it.gene }
+        return variantsByGene.map {
+            val geneRole = it.value.map { variant -> variant.geneRole }.first()
+            val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value)
+            likelihood to it.value
+        }.flatMap {
+            it.second.map { variant ->
+                variant.copy(
+                    driverLikelihood = DriverLikelihood.from(it.first)
+                )
+            }
+        }
+    }
+
+    private fun externalAnnotation(it: PanelVariantExtraction): TransvarVariant? {
+        val externalVariantAnnotation = variantResolver.resolve(it.gene, null, it.hgvsCodingImpact)
 
         if (externalVariantAnnotation == null) {
             LOGGER.error("Unable to resolve variant '$it' in variant annotator. See prior warnings.")
@@ -126,7 +151,7 @@ class PanelAnnotator(
 
     private fun serveEvidence(
         it: PanelVariantExtraction,
-        transcriptPositionAndVariationAnnotation: com.hartwig.actin.tools.variant.Variant
+        transcriptPositionAndVariationAnnotation: TransvarVariant
     ): Pair<ActionableEvidence, GeneAlteration> {
         val criteria = VariantMatchCriteria(
             isReportable = true,
@@ -147,7 +172,7 @@ class PanelAnnotator(
         it: PanelVariantExtraction,
         evidence: ActionableEvidence,
         geneAlteration: GeneAlteration,
-        transcriptAnnotation: com.hartwig.actin.tools.variant.Variant,
+        transcriptAnnotation: TransvarVariant,
         paveResponse: PaveResponse,
         paveLiteAnnotation: VariantTranscriptImpact?
     ) = Variant(
@@ -201,7 +226,7 @@ class PanelAnnotator(
         )
     }
 
-    private fun variantType(transcriptAnnotation: com.hartwig.actin.tools.variant.Variant): VariantType {
+    private fun variantType(transcriptAnnotation: TransvarVariant): VariantType {
         val ref = transcriptAnnotation.ref()
         val alt = transcriptAnnotation.alt()
         return if (ref.length == alt.length) {

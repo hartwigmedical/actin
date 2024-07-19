@@ -8,14 +8,6 @@ enum class PaveCodingEffect(private val rank: Int) {
     NONE(0);
 
     companion object {
-        fun fromString(text: String): PaveCodingEffect {
-            return try {
-                valueOf(text)
-            } catch (e: IllegalArgumentException) {
-                throw IllegalArgumentException("Unknown PAVE coding effect: $text")
-            }
-        }
-
         fun worstCodingEffect(effects: List<PaveCodingEffect>): PaveCodingEffect {
             return effects.maxByOrNull { it.rank } ?: NONE
         }

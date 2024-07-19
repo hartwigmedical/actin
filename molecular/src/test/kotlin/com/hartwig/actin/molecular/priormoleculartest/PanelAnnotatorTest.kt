@@ -49,6 +49,8 @@ private val PAVE_QUERY = PaveQuery(
     ref = REF,
     alt = ALT,
 )
+private val PAVE_LITE_ANNOTATION =
+    ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(1).build()
 
 private val PAVE_ANNOTATION = PaveResponse(
     id = "0",
@@ -80,7 +82,7 @@ class PanelAnnotatorTest {
         every { resolve(GENE, null, HGVS_CODING) } returns TRANSCRIPT_ANNOTATION
     }
     private val paveLite = mockk<PaveLite> {
-        every { run(GENE, TRANSCRIPT, POSITION) } returns null
+        every { run(GENE, TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
     }
 
     private val paver = mockk<Paver> {
