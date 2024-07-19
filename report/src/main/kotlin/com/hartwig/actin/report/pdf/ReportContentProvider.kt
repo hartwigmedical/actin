@@ -24,6 +24,7 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryWithOv
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistoryGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleApprovedTreatmentGenerator
@@ -96,9 +97,13 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
 
         val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.patientRecord, evaluated, contentWidth)
+        val hasMolecular = report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
         return listOfNotNull(
             clinicalHistoryGenerator,
-            if (report.config.includeMolecularSummary && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()) {
+            if (report.config.includeMolecularSummary && hasMolecular) {
+                MolecularSummaryGenerator(report.patientRecord, cohorts, keyWidth, valueWidth)
+            } else null,
+            if (report.config.includeLongitudinalMolecularSummary && hasMolecular) {
                 LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularHistory, contentWidth)
             } else null,
             if (report.config.includeEligibleSOCTreatmentSummary) {

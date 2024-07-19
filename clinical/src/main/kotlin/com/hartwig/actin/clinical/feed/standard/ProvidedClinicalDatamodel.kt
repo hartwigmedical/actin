@@ -86,7 +86,7 @@ data class ProvidedMolecularTest(
     @JsonPropertyDescription("Measured gene or protein(eg. HER2)") val measure: String?,
     @JsonPropertyDescription("Result of the test (eg. Negative/3+)") val result: String,
     val resultType: String?,
-    val resultDate: LocalDate
+    val resultDate: LocalDate,
 )
 
 @JacksonSerializable
