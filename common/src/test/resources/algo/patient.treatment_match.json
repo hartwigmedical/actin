@@ -89,7 +89,7 @@
                 }
               },
               {
-                "result": "NOT_IMPLEMENTED",
+                "result": "FAIL",
                 "recoverable": false,
                 "inclusionMolecularEvents": [
                 ],

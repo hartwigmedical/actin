@@ -27,6 +27,8 @@ data class ReportConfiguration(
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val includeClinicalDetailsChapter: Boolean = true,
     val includeTrialMatchingSummary: Boolean = true,
+    val includeLongitudinalMolecularSummary: Boolean = false,
+    val includeMolecularClinicalEvidenceSummary: Boolean = false,
     val homeCountry: Country = Country.NETHERLANDS
 )
 

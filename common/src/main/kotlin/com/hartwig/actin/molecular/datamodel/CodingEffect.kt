@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.datamodel
 import com.hartwig.actin.Displayable
 
 enum class CodingEffect(private val display: String) : Displayable {
-    NONSENSE_OR_FRAMESHIFT("Nonesense/Frameshift"),
+    NONSENSE_OR_FRAMESHIFT("Nonsense/Frameshift"),
     SPLICE("Splice"),
     MISSENSE("Missense"),
     SYNONYMOUS("Synonymous"),
