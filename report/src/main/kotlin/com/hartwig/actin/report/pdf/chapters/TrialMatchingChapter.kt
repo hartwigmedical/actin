@@ -12,7 +12,8 @@ import com.itextpdf.layout.Document
 class TrialMatchingChapter(
     private val report: Report,
     private val enableExtendedMode: Boolean,
-    private val showIneligibleTrialsInSummary: Boolean
+    private val showIneligibleTrialsInSummary: Boolean,
+    override val include: Boolean
 ) : ReportChapter {
     override fun name(): String {
         return "Trial Matching Summary"

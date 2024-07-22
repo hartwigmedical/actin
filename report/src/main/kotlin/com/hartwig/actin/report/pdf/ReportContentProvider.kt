@@ -64,7 +64,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
-            TrialMatchingChapter(report, enableExtendedMode, report.config.includeIneligibleTrialsInSummary),
+            TrialMatchingChapter(
+                report,
+                enableExtendedMode,
+                report.config.includeIneligibleTrialsInSummary,
+                include = report.config.includeTrialMatchingSummary
+            ),
             TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
         ).filter(ReportChapter::include)
     }
@@ -171,7 +176,6 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             } else null
         )
     }
-
 
     companion object {
         private val LOGGER = LogManager.getLogger(ReportContentProvider::class.java)
