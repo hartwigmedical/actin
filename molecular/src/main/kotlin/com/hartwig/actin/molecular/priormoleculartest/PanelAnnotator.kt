@@ -207,7 +207,7 @@ class PanelAnnotator(
         )
     }
 
-    private fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptImpact> {
+    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptImpact> {
         return paveResponse.transcriptImpact
             .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.transcript }
             .map { transcriptImpact(it, transvarVariant) }

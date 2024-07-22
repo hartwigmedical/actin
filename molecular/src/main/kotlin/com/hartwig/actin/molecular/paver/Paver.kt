@@ -158,8 +158,8 @@ fun parsePaveTranscriptImpact(impacts: List<String>?): List<PaveTranscriptImpact
             }
 
             PaveTranscriptImpact(
-                gene = it[0],
-                geneName = it[1],
+                geneId = it[0],
+                gene = it[1],
                 transcript = it[2],
                 effects = interpretVariantEffects(it[3]),
                 spliceRegion = interpretSpliceRegion(it[4]),

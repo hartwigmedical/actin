@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.paver
 
 data class PaveTranscriptImpact(
+    val geneId: String,
     val gene: String,
-    val geneName: String,
     val transcript: String,
     val effects: List<PaveVariantEffect>,
     val spliceRegion: Boolean,

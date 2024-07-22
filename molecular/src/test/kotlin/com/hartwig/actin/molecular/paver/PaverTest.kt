@@ -57,8 +57,8 @@ class PaverTest {
                     genesAffected = 1
                 ),
                 transcriptImpact = listOf(PaveTranscriptImpact(
-                    gene = "gene_id1",
-                    geneName = "gene1",
+                    geneId = "gene_id1",
+                    gene = "gene1",
                     transcript = "trans1",
                     effects = listOf(PaveVariantEffect.MISSENSE),
                     spliceRegion = false,
@@ -85,8 +85,8 @@ class PaverTest {
                     genesAffected = 1
                 ),
                 transcriptImpact = listOf(PaveTranscriptImpact(
-                    gene = "gene_id1",
-                    geneName = "gene1",
+                    geneId = "gene_id1",
+                    gene = "gene1",
                     transcript = "trans1",
                     effects = listOf(PaveVariantEffect.SPLICE_DONOR, PaveVariantEffect.SYNONYMOUS),
                     spliceRegion = true,
@@ -149,8 +149,8 @@ class PaverTest {
 
         assertThat(parsed).isEqualTo(listOf(
             PaveTranscriptImpact(
-                gene = "gene_id",
-                geneName = "gene_name",
+                geneId = "gene_id",
+                gene = "gene_name",
                 transcript = "transcript",
                 effects = listOf(PaveVariantEffect.FRAMESHIFT, PaveVariantEffect.STOP_GAINED),
                 spliceRegion = false,
