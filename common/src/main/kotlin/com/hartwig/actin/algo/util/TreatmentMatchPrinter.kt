@@ -46,7 +46,6 @@ class TreatmentMatchPrinter(private val printer: DatamodelPrinter) {
         printer.print("# $typeOfRules with FAIL evaluation: " + evaluationSummary.failedCount)
         printer.print("# $typeOfRules with UNDETERMINED evaluation: " + evaluationSummary.undeterminedCount)
         printer.print("# $typeOfRules which have not been evaluated: " + evaluationSummary.notEvaluatedCount)
-        printer.print("# $typeOfRules which have not been implemented: " + evaluationSummary.nonImplementedCount)
     }
 
     private fun cohortString(eligibleTrialMap: Map<TrialIdentification, List<CohortMetadata>>): String {

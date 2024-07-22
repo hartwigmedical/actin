@@ -33,7 +33,8 @@ class StandardMolecularTestExtractor(
                 item = it.measure,
                 measure = it.result,
                 measureDate = it.resultDate,
-                impliesPotentialIndeterminateStatus = false
+                impliesPotentialIndeterminateStatus = false,
+                scoreText = it.resultType
             )
         }
 

@@ -21,7 +21,6 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
         } else if (evaluation.result == EvaluationResult.WARN) {
             return evaluation.copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
         }
-        val notImplementedMessages = if (evaluation.result == EvaluationResult.NOT_IMPLEMENTED) setOf("not implemented") else emptySet()
 
         return Evaluation(
             result = EvaluationResult.PASS,
@@ -30,11 +29,11 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
             exclusionMolecularEvents = emptySet(),
             passSpecificMessages = (
                     evaluation.passSpecificMessages + evaluation.warnSpecificMessages + evaluation.undeterminedSpecificMessages
-                            + evaluation.failSpecificMessages + notImplementedMessages
+                            + evaluation.failSpecificMessages
                     ),
             passGeneralMessages = (
                     evaluation.passGeneralMessages + evaluation.warnGeneralMessages + evaluation.undeterminedGeneralMessages
-                            + evaluation.failGeneralMessages + notImplementedMessages
+                            + evaluation.failGeneralMessages
                     )
         )
     }

@@ -23,9 +23,6 @@ object EvaluationSummarizer {
                 EvaluationResult.NOT_EVALUATED -> {
                     EvaluationSummary(count = 1, notEvaluatedCount = 1)
                 }
-                EvaluationResult.NOT_IMPLEMENTED -> {
-                    EvaluationSummary(count = 1, nonImplementedCount = 1)
-                }
             }
         }.fold(EvaluationSummary(), EvaluationSummary::plus)
     }

@@ -9,9 +9,9 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson.fromJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.read
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson.toJson
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.io.File
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.io.File
 
 class TreatmentMatchJsonTest {
 

@@ -9,7 +9,7 @@ import com.hartwig.actin.molecular.datamodel.ExperimentType
 class CanProvideFreshSampleForFurtherAnalysis : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return if (record.molecularHistory.latestOrangeMolecularRecord()?.type != ExperimentType.WHOLE_GENOME) {
+        return if (record.molecularHistory.latestOrangeMolecularRecord()?.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
             EvaluationFactory.recoverableUndetermined(
                 "Can't determine whether patient can provide fresh sample for FFPE analysis without WGS",
                 "Unknown if fresh sample available for FFPE analysis"

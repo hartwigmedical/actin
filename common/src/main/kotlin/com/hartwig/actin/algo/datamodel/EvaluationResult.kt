@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.datamodel
 
 enum class EvaluationResult {
-    NOT_IMPLEMENTED,
     FAIL,
     WARN,
     UNDETERMINED,

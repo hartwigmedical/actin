@@ -29,7 +29,7 @@ private val trialMatches = listOf(
 
 class ExternalTrialSummarizerTest {
 
-    private val externalTrialSummarizer = ExternalTrialSummarizer()
+    private val externalTrialSummarizer = ExternalTrialSummarizer(Country.NETHERLANDS)
 
     @Test
     fun `Should correctly group trials with identical nctIds combining all events of these trials`() {
@@ -66,7 +66,9 @@ class ExternalTrialSummarizerTest {
     @Test
     fun `Should return unchanged external trial map when trialMatches is empty`() {
         val externalTrialsPerEvent = mapOf("event1" to listOf(externalTrial(1), externalTrial(2)))
-        assertThat(externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, emptyList())).isEqualTo(externalTrialsPerEvent)
+        assertThat(externalTrialSummarizer.filterAndGroupExternalTrialsByNctIdAndEvents(externalTrialsPerEvent, emptyList())).isEqualTo(
+            externalTrialsPerEvent
+        )
     }
 
     @Test
@@ -78,10 +80,10 @@ class ExternalTrialSummarizerTest {
             )
         val externalTrialSummary =
             externalTrialSummarizer.filterMolecularCriteriaAlreadyPresent(externalEligibleTrials, emptyList())
-        assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(TMB_TARGET)
-        assertThat(externalTrialSummary.otherCountryTrials).containsOnlyKeys(EGFR_TARGET)
-        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
-        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.localTrials).containsOnlyKeys(TMB_TARGET)
+        assertThat(externalTrialSummary.nonLocalTrials).containsOnlyKeys(EGFR_TARGET)
+        assertThat(externalTrialSummary.localTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.nonLocalTrialsFiltered).isEqualTo(0)
     }
 
     @Test
@@ -92,10 +94,10 @@ class ExternalTrialSummarizerTest {
             )
         val externalTrialSummary =
             externalTrialSummarizer.filterMolecularCriteriaAlreadyPresent(externalEligibleTrials, listOf(evaluatedCohortTMB()))
-        assertThat(externalTrialSummary.dutchTrials).isEmpty()
-        assertThat(externalTrialSummary.otherCountryTrials).isEmpty()
-        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(1)
-        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(1)
+        assertThat(externalTrialSummary.localTrials).isEmpty()
+        assertThat(externalTrialSummary.nonLocalTrials).isEmpty()
+        assertThat(externalTrialSummary.localTrialsFiltered).isEqualTo(1)
+        assertThat(externalTrialSummary.nonLocalTrialsFiltered).isEqualTo(1)
     }
 
     @Test
@@ -106,10 +108,10 @@ class ExternalTrialSummarizerTest {
             )
         val externalTrialSummary =
             externalTrialSummarizer.filterMolecularCriteriaAlreadyPresent(externalEligibleTrials, emptyList())
-        assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(TMB_TARGET)
-        assertThat(externalTrialSummary.otherCountryTrials).isEmpty()
-        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
-        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(1)
+        assertThat(externalTrialSummary.localTrials).containsOnlyKeys(TMB_TARGET)
+        assertThat(externalTrialSummary.nonLocalTrials).isEmpty()
+        assertThat(externalTrialSummary.localTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.nonLocalTrialsFiltered).isEqualTo(1)
     }
 
     @Test
@@ -121,10 +123,10 @@ class ExternalTrialSummarizerTest {
             )
         val externalTrialSummary =
             externalTrialSummarizer.filterMolecularCriteriaAlreadyPresent(externalEligibleTrials, emptyList())
-        assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(TMB_TARGET)
-        assertThat(externalTrialSummary.otherCountryTrials).containsOnlyKeys(EGFR_TARGET)
-        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
-        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.localTrials).containsOnlyKeys(TMB_TARGET)
+        assertThat(externalTrialSummary.nonLocalTrials).containsOnlyKeys(EGFR_TARGET)
+        assertThat(externalTrialSummary.localTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.nonLocalTrialsFiltered).isEqualTo(0)
     }
 
     @Test
@@ -137,10 +139,10 @@ class ExternalTrialSummarizerTest {
             )
         val externalTrialSummary =
             externalTrialSummarizer.filterMolecularCriteriaAlreadyPresent(externalEligibleTrials, emptyList())
-        assertThat(externalTrialSummary.dutchTrials).containsOnlyKeys(combinedTarget)
-        assertThat(externalTrialSummary.otherCountryTrials).isEmpty()
-        assertThat(externalTrialSummary.dutchTrialsFiltered).isEqualTo(0)
-        assertThat(externalTrialSummary.otherCountryTrialsFiltered).isEqualTo(1)
+        assertThat(externalTrialSummary.localTrials).containsOnlyKeys(combinedTarget)
+        assertThat(externalTrialSummary.nonLocalTrials).isEmpty()
+        assertThat(externalTrialSummary.localTrialsFiltered).isEqualTo(0)
+        assertThat(externalTrialSummary.nonLocalTrialsFiltered).isEqualTo(1)
     }
 
     private fun externalTrial(id: Int) =
