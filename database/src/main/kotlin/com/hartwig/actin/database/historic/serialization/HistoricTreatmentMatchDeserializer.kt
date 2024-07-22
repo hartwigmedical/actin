@@ -1,15 +1,22 @@
 package com.hartwig.actin.database.historic.serialization
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
+import com.hartwig.actin.algo.datamodel.CohortMatch
+import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
+import com.hartwig.actin.algo.datamodel.TrialMatch
+import com.hartwig.actin.trial.datamodel.CohortMetadata
+import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.TrialIdentification
+import com.hartwig.actin.util.json.Json
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.FileReader
-import java.time.LocalDate
 
 object HistoricTreatmentMatchDeserializer {
 
@@ -21,11 +28,11 @@ object HistoricTreatmentMatchDeserializer {
 
         val treatmentMatch = TreatmentMatch(
             patientId = "",
-            sampleId = "",
+            sampleId = Json.string(treatmentMatchObject, "sampleId"),
             trialSource = "",
-            referenceDate = LocalDate.of(1, 1, 1),
-            referenceDateIsLive = true,
-            trialMatches = listOf(),
+            referenceDate = Json.date(treatmentMatchObject, "referenceDate"),
+            referenceDateIsLive = Json.bool(treatmentMatchObject, "referenceDateIsLive"),
+            trialMatches = Json.array(treatmentMatchObject, "trialMatches").mapNotNull { extractTrialMatch(it) },
             standardOfCareMatches = null,
             personalizedDataAnalysis = null
         )
@@ -35,5 +42,52 @@ object HistoricTreatmentMatchDeserializer {
         }
 
         return treatmentMatch
+    }
+
+    private fun extractTrialMatch(trialMatchElement: JsonElement): TrialMatch {
+        val trialMatch = trialMatchElement.asJsonObject
+
+        return TrialMatch(
+            identification = extractIdentification(Json.`object`(trialMatch, "identification")),
+            isPotentiallyEligible = Json.bool(trialMatch, "isPotentiallyEligible"),
+            evaluations = korneelFixIt(trialMatch),
+            cohorts = Json.array(trialMatch, "cohorts").mapNotNull { extractCohortMatch(it) }
+        )
+    }
+
+    private fun extractIdentification(identification: JsonObject): TrialIdentification {
+        return TrialIdentification(
+            trialId = Json.string(identification, "trialId"),
+            open = Json.bool(identification, "open"),
+            acronym = Json.string(identification, "acronym"),
+            title = Json.string(identification, "title"),
+            nctId = null,
+            phase = null
+        )
+    }
+
+    private fun korneelFixIt(trialMatch: JsonObject): Map<Eligibility, Evaluation> {
+        return mapOf()
+
+    }
+
+    private fun extractCohortMatch(cohortMatchElement: JsonElement): CohortMatch {
+        val cohortMatch = cohortMatchElement.asJsonObject
+        return CohortMatch(
+            metadata = extractCohortMetadata(Json.`object`(cohortMatch, "metadata")),
+            isPotentiallyEligible = false,
+            evaluations = mapOf()
+        )
+    }
+
+    private fun extractCohortMetadata(cohortMetadata: JsonObject): CohortMetadata {
+        return CohortMetadata(
+            cohortId = "",
+            evaluable = false,
+            open = false,
+            slotsAvailable = false,
+            blacklist = false,
+            description = ""
+        )
     }
 }
