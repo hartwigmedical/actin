@@ -102,7 +102,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val (openCohortsWithoutSlotsGenerator, _) =
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
 
-        val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.patientRecord, evaluated, contentWidth)
+        val (localTrialGenerator, nonLocalTrialGenerator) = externalTrials(report.patientRecord, evaluated, contentWidth)
         val hasMolecular = report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
         return listOfNotNull(
             clinicalHistoryGenerator,
@@ -127,8 +127,8 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             if (report.config.includeTrialMatchingSummary) {
                 openCohortsWithoutSlotsGenerator
             } else null,
-            dutchTrialGenerator,
-            nonDutchTrialGenerator,
+            localTrialGenerator,
+            nonLocalTrialGenerator,
             if (report.config.includeIneligibleTrialsInSummary) {
                 IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
                     cohorts,
