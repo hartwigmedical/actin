@@ -20,6 +20,7 @@ const val CHECKED = "X"
 const val UNCHECKED = ""
 
 class MolecularClinicalEvidenceGenerator(val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
+
     override fun title(): String {
         return "Clinical evidence"
     }

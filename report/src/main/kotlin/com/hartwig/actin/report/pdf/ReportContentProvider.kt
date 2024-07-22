@@ -10,7 +10,10 @@ import com.hartwig.actin.report.interpretation.EvaluatedCohortFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.EfficacyEvidenceDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.ExternalTrialChapter
+import com.hartwig.actin.report.pdf.chapters.LongitudinalMolecularHistoryChapter
 import com.hartwig.actin.report.pdf.chapters.MolecularDetailsChapter
+import com.hartwig.actin.report.pdf.chapters.MolecularEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.PersonalizedEvidenceChapter
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.chapters.SummaryChapter
@@ -23,8 +26,6 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenera
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryWithOverviewGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistoryGenerator
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
@@ -61,9 +62,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 include = report.config.includeSOCLiteratureEfficacyEvidence && report.treatmentMatch.personalizedDataAnalysis != null
             ),
             MolecularDetailsChapter(report, include = report.config.includeMolecularDetailsChapter),
+            LongitudinalMolecularHistoryChapter(report, include = report.config.includeLongitudinalMolecularChapter),
             EfficacyEvidenceChapter(report, include = report.config.includeSOCLiteratureEfficacyEvidence),
             ClinicalDetailsChapter(report, include = report.config.includeClinicalDetailsChapter),
             EfficacyEvidenceDetailsChapter(report, include = includeEfficacyEvidenceDetailsChapter),
+            MolecularEvidenceChapter(report, include = report.config.includeMolecularEvidenceChapter),
+            ExternalTrialChapter(report, include = !report.config.includeExternalTrialsInSummary),
             TrialMatchingChapter(
                 report,
                 enableExtendedMode,
@@ -109,12 +113,6 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             if (report.config.includeMolecularSummary && hasMolecular) {
                 MolecularSummaryGenerator(report.patientRecord, cohorts, keyWidth, valueWidth)
             } else null,
-            if (report.config.includeLongitudinalMolecularSummary && hasMolecular) {
-                LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularHistory, contentWidth)
-            } else null,
-            if (report.config.includeMolecularClinicalEvidenceSummary && hasMolecular) {
-                MolecularClinicalEvidenceGenerator(report.patientRecord.molecularHistory, contentWidth)
-            } else null,
             if (report.config.includeEligibleSOCTreatmentSummary) {
                 SOCEligibleApprovedTreatmentGenerator(report, contentWidth)
             } else null,
@@ -127,8 +125,12 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             if (report.config.includeTrialMatchingSummary) {
                 openCohortsWithoutSlotsGenerator
             } else null,
-            localTrialGenerator,
-            nonLocalTrialGenerator,
+            if (report.config.includeExternalTrialsInSummary) {
+                localTrialGenerator
+            } else null,
+            if (report.config.includeExternalTrialsInSummary) {
+                nonLocalTrialGenerator
+            } else null,
             if (report.config.includeIneligibleTrialsInSummary) {
                 IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
                     cohorts,
@@ -148,7 +150,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 AggregatedEvidenceFactory.create(it).externalEligibleTrialsPerEvent
             })
 
-        val externalTrialSummarizer = ExternalTrialSummarizer(report.config.homeCountry)
+        val externalTrialSummarizer = ExternalTrialSummarizer(report.config.countryOfReference)
         val externalTrialSummary = externalTrialSummarizer.summarize(
             externalEligibleTrials,
             report.treatmentMatch.trialMatches,
@@ -163,7 +165,7 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                     externalTrialSummary.localTrials,
                     contentWidth,
                     externalTrialSummary.localTrialsFiltered,
-                    report.config.homeCountry
+                    report.config.countryOfReference
                 )
             } else null,
             if (externalTrialSummary.nonLocalTrials.isNotEmpty()) {

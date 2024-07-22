@@ -5,8 +5,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.hartwig.actin.molecular.datamodel.evidence.Country
-import java.io.File
 import org.apache.logging.log4j.LogManager
+import java.io.File
 
 enum class ConfigurationProfile {
     STANDARD,
@@ -27,9 +27,10 @@ data class ReportConfiguration(
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val includeClinicalDetailsChapter: Boolean = true,
     val includeTrialMatchingSummary: Boolean = true,
-    val includeLongitudinalMolecularSummary: Boolean = false,
-    val includeMolecularClinicalEvidenceSummary: Boolean = false,
-    val homeCountry: Country = Country.NETHERLANDS
+    val includeExternalTrialsInSummary: Boolean = true,
+    val includeLongitudinalMolecularChapter: Boolean = false,
+    val includeMolecularEvidenceChapter: Boolean = false,
+    val countryOfReference: Country = Country.NETHERLANDS
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"

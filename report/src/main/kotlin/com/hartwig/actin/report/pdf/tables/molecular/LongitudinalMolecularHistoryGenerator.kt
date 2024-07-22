@@ -11,6 +11,7 @@ import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
 class LongitudinalMolecularHistoryGenerator(private val molecularHistory: MolecularHistory, private val width: Float) : TableGenerator {
+
     override fun title(): String {
         return "Molecular history"
     }
@@ -18,7 +19,10 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
     override fun contents(): Table {
         val sortedAndFilteredTests = molecularHistory.molecularTests.filter { it.experimentType != ExperimentType.IHC }.sortedBy { it.date }
         val driverSet =
-            molecularHistory.molecularTests.map { it to (it.drivers.variants + it.drivers.fusions + it.drivers.viruses + it.drivers.copyNumbers + it.drivers.disruptions) }
+            molecularHistory.molecularTests.map {
+                it to (it.drivers.variants + it.drivers.fusions +
+                        it.drivers.viruses + it.drivers.copyNumbers + it.drivers.disruptions)
+            }
 
         val testByDriver = driverSet.flatMap { it.second.map { d -> d to it } }.groupBy { it.first.event }
             .mapValues { it.value.map { v -> v.second.first } }
@@ -28,8 +32,8 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         val columnWidth = width / columnCount
         val table = Tables.createFixedWidthCols(*IntRange(1, columnCount).map { columnWidth }.toFloatArray())
 
-        table.addHeaderCell(Cells.createHeader("Event"))
-        table.addHeaderCell(Cells.createHeader("Description"))
+        table.addHeaderCell(Cells.createHeader("Mutation"))
+        table.addHeaderCell(Cells.createHeader("Interpretation"))
         table.addHeaderCell(Cells.createHeader("Driver likelihood"))
 
         for (test in sortedAndFilteredTests) {
