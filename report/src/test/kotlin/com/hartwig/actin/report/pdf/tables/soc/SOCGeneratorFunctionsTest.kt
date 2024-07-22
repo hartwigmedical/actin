@@ -63,9 +63,9 @@ class SOCGeneratorFunctionsTest {
 
     @Test
     fun `Should use short treatment name annotation`() {
-        assertThat(SOCGeneratorFunctions.useShortAnnotation("FOLFOX+BEVACIZUMAB")).isEqualTo("FOLFOX-B")
-        assertThat(SOCGeneratorFunctions.useShortAnnotation("FOLFOX+PANITUMUMAB")).isEqualTo("FOLFOX-P")
-        assertThat(SOCGeneratorFunctions.useShortAnnotation("FOLFOX")).isEqualTo("FOLFOX")
+        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX+BEVACIZUMAB")).isEqualTo("FOLFOX-B")
+        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX+PANITUMUMAB")).isEqualTo("FOLFOX-P")
+        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX")).isEqualTo("FOLFOX")
     }
 
     @Test

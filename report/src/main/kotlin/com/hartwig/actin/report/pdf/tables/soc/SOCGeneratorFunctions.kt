@@ -60,24 +60,18 @@ object SOCGeneratorFunctions {
         }
     }
 
-    fun useShortAnnotation(treatmentName: String): String {
+    fun abbreviate(treatmentName: String): String {
         val replacements = mapOf(
             "+BEVACIZUMAB" to "-B",
             "+PANITUMUMAB" to "-P"
         )
-
-        var simplifiedTreatment = treatmentName
-        replacements.forEach { (key, value) ->
-            simplifiedTreatment = simplifiedTreatment.replace(key, value)
-        }
-
-        return simplifiedTreatment
+        return replacements.entries.fold(treatmentName) { acc, (key, value) -> acc.replace(key, value) }
     }
 
     fun approvedTreatmentCells(treatments: List<AnnotatedTreatmentMatch>): List<Cell> {
         return treatments.sortedWith(annotatedTreatmentComparator)
             .flatMap { treatment: AnnotatedTreatmentMatch ->
-                val nameCell = Cells.createContentBold(useShortAnnotation(treatment.treatmentCandidate.treatment.name))
+                val nameCell = Cells.createContentBold(abbreviate(treatment.treatmentCandidate.treatment.name))
 
                 val annotationsCell = if (treatment.annotations.isEmpty()) {
                     Cells.createContent("Not available yet")
