@@ -36,7 +36,7 @@ object HistoricMolecularDeserializer {
             hasSufficientQuality = false,
             immunology = extractImmunology(molecularObject),
             pharmaco = extractPharmaco(molecularObject),
-            type = ExperimentType.WHOLE_GENOME,
+            experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
             date = null,
             drivers = extractDrivers(molecularObject),
             characteristics = extractCharacteristics(molecularObject),
