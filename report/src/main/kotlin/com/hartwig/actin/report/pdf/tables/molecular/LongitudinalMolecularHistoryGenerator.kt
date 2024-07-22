@@ -46,13 +46,23 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
                 }
             }
         }
-        characteristicRow(table, sortedAndFilteredTests, "TMB") { it.characteristics.tumorMutationalBurden?.toString() ?: "" }
+        characteristicRow(table, sortedAndFilteredTests, "TMB") {
+            it.characteristics.tumorMutationalBurden?.toString() ?: ""
+        }
         characteristicRow(
             table,
             sortedAndFilteredTests,
             "MSI"
-        ) { if (it.characteristics.isMicrosatelliteUnstable == false) "Stable" else "Unstable" }
+        ) {
+            msiText(it)
+        }
         return makeWrapping(table)
+    }
+
+    private fun msiText(it: MolecularTest) = when (it.characteristics.isMicrosatelliteUnstable) {
+        false -> "Stable"
+        true -> "Unstable"
+        null -> ""
     }
 
     private fun characteristicRow(
@@ -65,8 +75,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         table.addCell(Cells.createContent(""))
         table.addCell(Cells.createContent(""))
         for (test in sortedAndFilteredTests) {
-            val text = contentProvider.invoke(test)
-            table.addCell(Cells.createContent(text))
+            table.addCell(Cells.createContent(contentProvider.invoke(test)))
         }
     }
 

@@ -105,32 +105,40 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 cohorts,
                 keyWidth,
                 valueWidth
-            ).takeIf { report.config.includeMolecularSummary && hasMolecular },
+            ).takeIf {
+                report.config.includeMolecularSummary && hasMolecular
+            },
             LongitudinalMolecularHistoryGenerator(
                 report.patientRecord.molecularHistory,
                 contentWidth
-            ).takeIf { report.config.includeLongitudinalMolecularSummary && hasMolecular },
-            SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf { report.config.includeEligibleSOCTreatmentSummary },
+            ).takeIf {
+                report.config.includeLongitudinalMolecularSummary && hasMolecular
+            },
+            SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
+                report.config.includeEligibleSOCTreatmentSummary
+            },
             EligibleApprovedTreatmentGenerator(
                 report.patientRecord,
                 contentWidth
-            ).takeIf { report.config.includeApprovedTreatmentsInSummary },
-            if (report.config.includeTrialMatchingSummary) {
-                openCohortsWithSlotsGenerator
-            } else null,
-            if (report.config.includeTrialMatchingSummary) {
-                openCohortsWithoutSlotsGenerator
-            } else null,
+            ).takeIf {
+                report.config.includeApprovedTreatmentsInSummary
+            },
+            openCohortsWithSlotsGenerator.takeIf {
+                report.config.includeTrialMatchingSummary
+            },
+            openCohortsWithoutSlotsGenerator.takeIf {
+                report.config.includeTrialMatchingSummary
+            },
             dutchTrialGenerator,
             nonDutchTrialGenerator,
-            if (report.config.includeIneligibleTrialsInSummary) {
-                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
-                    cohorts,
-                    report.treatmentMatch.trialSource,
-                    contentWidth,
-                    enableExtendedMode
-                )
-            } else null
+            IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+                cohorts,
+                report.treatmentMatch.trialSource,
+                contentWidth,
+                enableExtendedMode
+            ).takeIf {
+                report.config.includeIneligibleTrialsInSummary
+            }
         )
     }
 

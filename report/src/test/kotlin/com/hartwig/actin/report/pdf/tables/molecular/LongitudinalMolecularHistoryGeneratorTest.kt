@@ -19,78 +19,70 @@ class LongitudinalMolecularHistoryGeneratorTest {
 
     @Test
     fun `Should create table with header with column for each test`() {
-        val result =
-            LongitudinalMolecularHistoryGenerator(MolecularHistory(listOf(FIRST_TEST, SECOND_TEST)), 1f)
+        val result = LongitudinalMolecularHistoryGenerator(MolecularHistory(listOf(FIRST_TEST, SECOND_TEST)), 1f)
         assertThat(result.title()).isEqualTo("Molecular history")
-        val contentTable = getWrappedTable(result)
-        assertThat(getCellContents(contentTable.header, 0, 0)).isEqualTo("Event")
-        assertThat(getCellContents(contentTable.header, 0, 1)).isEqualTo("Description")
-        assertThat(getCellContents(contentTable.header, 0, 2)).isEqualTo("Driver likelihood")
-        assertThat(getCellContents(contentTable.header, 0, 3)).isEqualTo("2024-07-21\nHartwig WGS")
-        assertThat(getCellContents(contentTable.header, 0, 4)).isEqualTo("2024-07-22\nHartwig WGS")
+        assertRow(
+            getWrappedTable(result).header,
+            0,
+            "Event",
+            "Description",
+            "Driver likelihood",
+            "2024-07-21\nHartwig WGS",
+            "2024-07-22\nHartwig WGS"
+        )
     }
 
     @Test
     fun `Should create row for each variant and mark as detected in correct tests`() {
-        val result =
-            LongitudinalMolecularHistoryGenerator(
-                MolecularHistory(
-                    listOf(
-                        FIRST_TEST.copy(drivers = Drivers(variants = setOf(VARIANT))),
-                        SECOND_TEST
-                    )
-                ), 1f
-            )
-        val contentTable = getWrappedTable(result)
-        assertThat(getCellContents(contentTable, 0, 0)).isEqualTo("BRAF V600E")
-        assertThat(getCellContents(contentTable, 0, 1)).isEqualTo("Missense\nGain of function\nHotspot")
-        assertThat(getCellContents(contentTable, 0, 2)).isEqualTo("High")
-        assertThat(getCellContents(contentTable, 0, 3)).isEqualTo("Detected")
-        assertThat(getCellContents(contentTable, 0, 4)).isEqualTo("Not detected")
+        val result = LongitudinalMolecularHistoryGenerator(
+            MolecularHistory(
+                listOf(
+                    FIRST_TEST.copy(drivers = Drivers(variants = setOf(VARIANT))), SECOND_TEST
+                )
+            ), 1f
+        )
+        assertRow(getWrappedTable(result), 0, "BRAF V600E", "Missense\nGain of function\nHotspot", "High", "Detected", "Not detected")
     }
 
     @Test
     fun `Should create row for TMB and assign value to the correct test`() {
-        val result =
-            LongitudinalMolecularHistoryGenerator(
-                MolecularHistory(
-                    listOf(
-                        FIRST_TEST.copy(characteristics = MolecularCharacteristics(tumorMutationalBurden = 1.0)),
-                        SECOND_TEST.copy(characteristics = MolecularCharacteristics(tumorMutationalBurden = 2.0))
-                    )
-                ), 1f
-            )
-        val contentTable = getWrappedTable(result)
-        assertThat(getCellContents(contentTable, 0, 0)).isEqualTo("TMB")
-        assertThat(getCellContents(contentTable, 0, 1)).isEqualTo("")
-        assertThat(getCellContents(contentTable, 0, 2)).isEqualTo("")
-        assertThat(getCellContents(contentTable, 0, 3)).isEqualTo("1.0")
-        assertThat(getCellContents(contentTable, 0, 4)).isEqualTo("2.0")
+        val result = LongitudinalMolecularHistoryGenerator(
+            MolecularHistory(
+                listOf(
+                    FIRST_TEST.copy(characteristics = MolecularCharacteristics(tumorMutationalBurden = 1.0)),
+                    SECOND_TEST.copy(characteristics = MolecularCharacteristics(tumorMutationalBurden = 2.0))
+                )
+            ), 1f
+        )
+        assertRow(getWrappedTable(result), 0, "TMB", "", "", "1.0", "2.0")
     }
 
     @Test
     fun `Should create row for MSI and assign value to the correct test`() {
-        val result =
-            LongitudinalMolecularHistoryGenerator(
-                MolecularHistory(
-                    listOf(
-                        FIRST_TEST.copy(characteristics = MolecularCharacteristics(isMicrosatelliteUnstable = false)),
-                        SECOND_TEST.copy(characteristics = MolecularCharacteristics(isMicrosatelliteUnstable = true))
+        val result = LongitudinalMolecularHistoryGenerator(
+            MolecularHistory(
+                listOf(
+                    FIRST_TEST.copy(characteristics = MolecularCharacteristics(isMicrosatelliteUnstable = false)),
+                    SECOND_TEST.copy(characteristics = MolecularCharacteristics(isMicrosatelliteUnstable = true)),
+                    SECOND_TEST.copy(
+                        date = SECOND_TEST.date?.plusDays(1), characteristics = MolecularCharacteristics()
                     )
-                ), 1f
-            )
-        val contentTable = getWrappedTable(result)
-        assertThat(getCellContents(contentTable, 1, 0)).isEqualTo("MSI")
-        assertThat(getCellContents(contentTable, 1, 1)).isEqualTo("")
-        assertThat(getCellContents(contentTable, 1, 2)).isEqualTo("")
-        assertThat(getCellContents(contentTable, 1, 3)).isEqualTo("Stable")
-        assertThat(getCellContents(contentTable, 1, 4)).isEqualTo("Unstable")
+                )
+            ), 1f
+        )
+        assertRow(getWrappedTable(result), 1, "MSI", "", "", "Stable", "Unstable", "")
     }
 }
 
-private fun getWrappedTable(result: LongitudinalMolecularHistoryGenerator) =
-    (result.contents().getCell(0, 0).children[0] as Table)
+private fun getWrappedTable(result: LongitudinalMolecularHistoryGenerator) = result.contents().getCell(0, 0).children[0] as Table
 
 private fun getCellContents(table: Table, row: Int, column: Int) =
     ((table.getCell(row, column).children[0] as Paragraph).children[0] as Text).text
+
+private fun assertRow(contentTable: Table, row: Int, vararg columns: String) {
+    for ((index, column) in columns.withIndex()) {
+        assertThat(getCellContents(contentTable, row, index)).isEqualTo(column)
+    }
+}
+
 
