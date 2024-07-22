@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.clinical.datamodel.PriorMolecularTest
+import com.hartwig.actin.molecular.datamodel.AVL_PANEL
 import com.hartwig.actin.molecular.datamodel.IHCMolecularTest
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
-import com.hartwig.actin.molecular.datamodel.OtherPriorMolecularTest
 import com.hartwig.actin.molecular.datamodel.TestPanelRecordFactory
 import com.hartwig.actin.molecular.datamodel.panel.PanelVariantExtraction
 import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherFusionExtraction
@@ -11,7 +11,6 @@ import com.hartwig.actin.molecular.datamodel.panel.archer.ArcherPanelExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericExonDeletionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -79,7 +78,7 @@ class PriorMolecularTestInterpreterTest {
                     TestPanelRecordFactory.empty().copy(
                         panelExtraction =
                         GenericPanelExtraction(
-                            GenericPanelType.AVL,
+                            panelType = AVL_PANEL,
                             variants = listOf(PanelVariantExtraction("ALK", "c.2240_2254del")),
                             fusions = listOf(GenericFusionExtraction("EML4", "ALK")),
                             exonDeletions = listOf(GenericExonDeletionExtraction("EGFR", 19)),
@@ -91,38 +90,13 @@ class PriorMolecularTestInterpreterTest {
         )
         assertThat(result).containsExactly(
             PriorMolecularTestInterpretation(
-                type = "AvL panel", results = listOf(
+                type = AVL_PANEL, results = listOf(
                     PriorMolecularTestResultInterpretation(grouping = "Variants", details = "ALK c.2240_2254del"),
                     PriorMolecularTestResultInterpretation(grouping = "Fusions", details = "EML4-ALK fusion"),
                     PriorMolecularTestResultInterpretation(grouping = "Exon deletions", details = "EGFR exon 19 deletion"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "BRAF"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "KRAS"),
                     PriorMolecularTestResultInterpretation(grouping = "Negative", details = "RET"),
-                )
-            )
-        )
-    }
-
-    @Test
-    fun `Should interpret other molecular tests based on their curated test`() {
-        val result = interpreter.interpret(
-            MolecularHistory(
-                listOf(
-                    OtherPriorMolecularTest(
-                        test = PriorMolecularTest(
-                            test = "Freetext",
-                            item = "ALK",
-                            scoreText = "Positive",
-                            impliesPotentialIndeterminateStatus = false
-                        )
-                    )
-                )
-            )
-        )
-        assertThat(result).containsExactly(
-            PriorMolecularTestInterpretation(
-                type = "Other", results = listOf(
-                    PriorMolecularTestResultInterpretation(grouping = "Positive", details = "ALK"),
                 )
             )
         )

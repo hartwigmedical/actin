@@ -51,7 +51,7 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
 
         fun isPotentiallyEligible(evaluations: Iterable<Evaluation>): Boolean {
             return evaluations.none {
-                !it.recoverable && (it.result == EvaluationResult.FAIL || it.result == EvaluationResult.NOT_IMPLEMENTED)
+                !it.recoverable && (it.result == EvaluationResult.FAIL)
             }
         }
     }

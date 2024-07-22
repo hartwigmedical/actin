@@ -23,7 +23,6 @@ import com.hartwig.actin.molecular.datamodel.orange.pharmaco.Haplotype
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericFusionExtraction
 import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelExtraction
-import com.hartwig.actin.molecular.datamodel.panel.generic.GenericPanelType
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -35,7 +34,7 @@ object TestMolecularFactory {
         return MolecularRecord(
             patientId = TestPatientFactory.TEST_PATIENT,
             sampleId = TestPatientFactory.TEST_SAMPLE,
-            type = ExperimentType.WHOLE_GENOME,
+            experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
             refGenomeVersion = RefGenomeVersion.V37,
             evidenceSource = "",
             externalTrialSource = "",
@@ -320,7 +319,7 @@ object TestMolecularFactory {
         panelExtraction =
         GenericPanelExtraction(
             fusions = listOf(GenericFusionExtraction(geneStart, geneEnd)),
-            panelType = GenericPanelType.FREE_TEXT
+            panelType = FREE_TEXT_PANEL
         )
     )
 }

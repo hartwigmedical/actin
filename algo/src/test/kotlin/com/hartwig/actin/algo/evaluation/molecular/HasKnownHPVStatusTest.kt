@@ -18,7 +18,7 @@ class HasKnownHPVStatusTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndContainingTumorCells(
-                    ExperimentType.WHOLE_GENOME, true
+                    ExperimentType.HARTWIG_WHOLE_GENOME, true
                 )
             )
         )
@@ -27,7 +27,7 @@ class HasKnownHPVStatusTest {
     @Test
     fun `Should resolve to undetermined if WGS does not contain enough tumor cells and no correct test in prior molecular tests `() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-            ExperimentType.WHOLE_GENOME, false, IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something"))
+            ExperimentType.HARTWIG_WHOLE_GENOME, false, IHCMolecularTest(MolecularTestFactory.priorMolecularTest(test = "IHC", item = "Something"))
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
@@ -35,7 +35,7 @@ class HasKnownHPVStatusTest {
     @Test
     fun `Should resolve to undetermined if no WGS has been performed and correct test is in priorMolecularTest with indeterminate status`() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-            ExperimentType.WHOLE_GENOME, false, IHCMolecularTest(
+            ExperimentType.HARTWIG_WHOLE_GENOME, false, IHCMolecularTest(
                 MolecularTestFactory.priorMolecularTest(
                     test = "IHC", item = "HPV", impliesIndeterminate = true
                 )
@@ -47,7 +47,7 @@ class HasKnownHPVStatusTest {
     @Test
     fun `Should pass if WGS does not contain enough tumor cells but correct test is in priorMolecularTest`() {
         val record = MolecularTestFactory.withExperimentTypeAndContainingTumorCellsAndPriorTest(
-            ExperimentType.WHOLE_GENOME, false, IHCMolecularTest(
+            ExperimentType.HARTWIG_WHOLE_GENOME, false, IHCMolecularTest(
                 MolecularTestFactory.priorMolecularTest(
                     test = "IHC", item = "HPV", impliesIndeterminate = false
                 )

@@ -48,12 +48,15 @@ private class ArcherInterpreter(
 ) :
     MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         ArcherExtractor(),
-        PanelAnnotator(ExperimentType.ARCHER, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
         isArcher()
     )
 
 private fun isGeneric(): (PriorMolecularTest) -> Boolean =
     { it.test == AVL_PANEL || it.test == FREE_TEXT_PANEL }
+
+private fun isMcgi(): (PriorMolecularTest) -> Boolean =
+    { it.test.lowercase().contains("cdx") }
 
 private class GenericPanelInterpreter(
     evidenceDatabase: EvidenceDatabase,
@@ -64,8 +67,21 @@ private class GenericPanelInterpreter(
 ) :
     MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
         GenericPanelExtractor(),
-        PanelAnnotator(ExperimentType.GENERIC_PANEL, evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
         isGeneric()
+    )
+
+private class McgiPanelInterpreter(
+    evidenceDatabase: EvidenceDatabase,
+    geneDriverLikelihoodModel: GeneDriverLikelihoodModel,
+    variantAnnotator: VariantAnnotator,
+    paver: Paver,
+    paveLite: PaveLite
+) :
+    MolecularInterpreter<PriorMolecularTest, PanelExtraction, PanelRecord>(
+        McgiExtractor(),
+        PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
+        isMcgi()
     )
 
 private fun isIHC(): (PriorMolecularTest) -> Boolean {
@@ -96,7 +112,8 @@ class PriorMolecularTestInterpreters(private val pipelines: Set<MolecularInterpr
                 setOf(
                     ArcherInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
                     GenericPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite),
-                    IHCInterpreter()
+                    IHCInterpreter(),
+                    McgiPanelInterpreter(evidenceDatabase, geneDriverLikelihoodModel, variantAnnotator, paver, paveLite)
                 )
             )
     }

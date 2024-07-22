@@ -22,9 +22,8 @@ class PriorMolecularResultGenerator(
             val sortedInterpretation = interpreter.interpret(molecularHistory).sortedBy {
                 when (it.type) {
                     ExperimentType.IHC.display() -> 0
-                    ExperimentType.ARCHER.display() -> 1
-                    ExperimentType.GENERIC_PANEL.display() -> 2
-                    ExperimentType.OTHER.display() -> 3
+                    ExperimentType.PANEL.display() -> 1
+                    ExperimentType.OTHER.display() -> 2
                     else -> 4
                 }
             }
