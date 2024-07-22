@@ -46,8 +46,7 @@ class ExternalTrialChapter(private val report: Report, override val include: Boo
         val generators = listOfNotNull(localTrialGenerator, nonLocalTrialGenerator)
 
         generators.forEachIndexed { i, generator ->
-            // TODO (KD): Make sure subtitle doesn't double-up with title.
-            //table.addCell(Cells.createSubTitle(generator.title()))
+            table.addCell(Cells.createSubTitle(generator.title()))
             table.addCell(Cells.create(generator.contents()))
             if (i < generators.size - 1) {
                 table.addCell(Cells.createEmpty())
