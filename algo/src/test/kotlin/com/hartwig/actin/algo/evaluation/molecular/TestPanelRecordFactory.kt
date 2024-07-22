@@ -17,7 +17,7 @@ object TestPanelRecordFactory {
             date = TEST_DATE,
             characteristics = MolecularCharacteristics(),
             evidenceSource = "",
-            type = ExperimentType.ARCHER,
+            experimentType = ExperimentType.PANEL,
             panelExtraction = ArcherPanelExtraction()
         )
 }

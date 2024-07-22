@@ -7,6 +7,7 @@ import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.font.PdfFontFactory
 import com.itextpdf.layout.Style
+import com.itextpdf.layout.borders.SolidBorder
 import java.io.IOException
 
 object Styles {
@@ -22,6 +23,7 @@ object Styles {
     val PALETTE_YES_OR_NO_NO = DeviceRgb(231, 85, 85)
     val PALETTE_YES_OR_NO_UNCLEAR = DeviceRgb(85, 85, 85)
     val PALETTE_WARN = PALETTE_EVALUATION_WARN
+    val BORDER = SolidBorder(PALETTE_MID_GREY, 0.25f)
 
     private const val FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf"
     private const val FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf"

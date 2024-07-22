@@ -19,13 +19,13 @@ class EligibleExternalTrialGeneratorFunctionsTest {
 
     @Test
     fun `Should return map of lists containing Dutch trials`() {
-        assertThat(EligibleExternalTrialGeneratorFunctions.dutchTrials(externalTrialsByEvent))
+        assertThat(EligibleExternalTrialGeneratorFunctions.localTrials(externalTrialsByEvent, Country.NETHERLANDS))
             .isEqualTo(mapOf("event1" to listOf(externalTrial1), "event2" to listOf(externalTrial3)))
     }
 
     @Test
     fun `Should return map of lists containing non-Dutch trials`() {
-        assertThat(EligibleExternalTrialGeneratorFunctions.nonDutchTrials(externalTrialsByEvent))
+        assertThat(EligibleExternalTrialGeneratorFunctions.nonLocalTrials(externalTrialsByEvent, Country.NETHERLANDS))
             .isEqualTo(mapOf("event1" to listOf(externalTrial2), "event3" to listOf(externalTrial4)))
     }
 }

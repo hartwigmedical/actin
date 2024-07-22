@@ -25,7 +25,7 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
         return MolecularRecord(
             patientId = toPatientId(record.sampleId()),
             sampleId = record.sampleId(),
-            type = determineExperimentType(record.experimentType()),
+            experimentType = determineExperimentType(record.experimentType()),
             refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
             date = record.samplingDate(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
@@ -78,11 +78,11 @@ class OrangeExtractor(private val geneFilter: GeneFilter) : MolecularExtractor<O
         fun determineExperimentType(experimentType: ExperimentType?): com.hartwig.actin.molecular.datamodel.ExperimentType {
             return when (experimentType) {
                 ExperimentType.TARGETED -> {
-                    com.hartwig.actin.molecular.datamodel.ExperimentType.TARGETED
+                    com.hartwig.actin.molecular.datamodel.ExperimentType.HARTWIG_TARGETED
                 }
 
                 ExperimentType.WHOLE_GENOME -> {
-                    com.hartwig.actin.molecular.datamodel.ExperimentType.WHOLE_GENOME
+                    com.hartwig.actin.molecular.datamodel.ExperimentType.HARTWIG_WHOLE_GENOME
                 }
 
                 null -> throw IllegalStateException("Experiment type is required but was null")

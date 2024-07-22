@@ -201,7 +201,7 @@ internal object TumorTestFactory {
     }
 
     fun withMolecularExperimentType(type: ExperimentType): PatientRecord {
-        return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(type = type))))
+        return base.copy(molecularHistory = MolecularHistory(listOf(baseMolecular.copy(experimentType = type))))
     }
 
     fun withPriorMolecularTestsAndDoids(priorMolecularTests: List<MolecularTest>, doids: Set<String>?): PatientRecord {

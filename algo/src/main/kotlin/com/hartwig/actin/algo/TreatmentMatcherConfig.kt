@@ -18,6 +18,7 @@ data class TreatmentMatcherConfig(
     val doidJson: String,
     val atcTsv: String,
     val extendedEfficacyJson: String,
+    val personalizationDataPath: String?,
     val outputDirectory: String,
     val runHistorically: Boolean,
     val overridesYaml: String?
@@ -33,6 +34,7 @@ data class TreatmentMatcherConfig(
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
             options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
             options.addOption(EXTENDED_EFFICACY_JSON, true, "Path to JSON file containing extended efficacy evidence")
+            options.addOption(PERSONALIZATION_DATA_PATH, true, "Path to personalization data file")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where the matcher output will be written to")
             options.addOption(
                 RUN_HISTORICALLY,
@@ -66,10 +68,11 @@ data class TreatmentMatcherConfig(
                 trialDatabaseDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
-                runHistorically = runHistorically,
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),
+                personalizationDataPath = ApplicationConfig.optionalFile(cmd, PERSONALIZATION_DATA_PATH),
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                runHistorically = runHistorically,
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
@@ -81,6 +84,7 @@ data class TreatmentMatcherConfig(
         private const val DOID_JSON = "doid_json"
         private const val ATC_TSV = "atc_tsv"
         private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
+        private const val PERSONALIZATION_DATA_PATH = "personalization_data_path"
         private const val OUTPUT_DIRECTORY = "output_directory"
         private const val RUN_HISTORICALLY = "run_historically"
         private const val TRIAL_SOURCE = "trial_source"

@@ -11,6 +11,7 @@ object GsonSerializer {
         // If we don't register an explicit type adapter for LocalDate, GSON using reflection internally to create serialize these objects
         return GsonBuilder().serializeNulls()
             .enableComplexMapKeySerialization()
+            .serializeSpecialFloatingPointValues()
             .registerTypeAdapter(LocalDateTime::class.java, GsonLocalDateTimeAdapter())
             .registerTypeAdapter(LocalDate::class.java, GsonLocalDateAdapter())
             .registerTypeHierarchyAdapter(Set::class.java, GsonSetAdapter<Any>())

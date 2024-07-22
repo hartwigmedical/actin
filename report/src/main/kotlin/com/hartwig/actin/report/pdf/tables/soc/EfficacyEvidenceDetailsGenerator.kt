@@ -120,7 +120,11 @@ class EfficacyEvidenceDetailsGenerator(
                             formatConfidenceInterval(otherEndpoint?.confidenceInterval),
                     "${endPoint.derivedMetrics.first().value} " +
                             formatConfidenceInterval(endPoint.derivedMetrics.first().confidenceInterval),
-                    if (pValue.startsWith("<")) {"p $pValue"} else {"p = $pValue"}
+                    if (pValue.startsWith("<")) {
+                        "p $pValue"
+                    } else {
+                        "p = $pValue"
+                    }
                 )
             }
             .forEach { table.addCell(Cells.createContent(it)) }

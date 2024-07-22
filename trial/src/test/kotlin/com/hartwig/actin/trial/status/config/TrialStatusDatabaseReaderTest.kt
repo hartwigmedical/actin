@@ -30,8 +30,8 @@ class TrialStatusDatabaseReaderTest {
             assertThat(entry1.studyAcronym).isEqualTo("StudyWithCohort")
             assertThat(entry1.studyTitle).isEqualTo("This is a study with cohort")
             assertThat(entry1.studyStatus).isEqualTo(TrialStatus.OPEN)
-            assertThat((entry1.cohortId as Int).toLong()).isEqualTo(1)
-            assertThat((entry1.cohortParentId as Int).toLong()).isEqualTo(2)
+            assertThat((entry1.cohortId as String).toLong()).isEqualTo(1)
+            assertThat((entry1.cohortParentId as String).toLong()).isEqualTo(2)
             assertThat(entry1.cohortName).isEqualTo("Cohort A")
             assertThat(entry1.cohortStatus).isEqualTo(TrialStatus.CLOSED)
             assertThat((entry1.cohortSlotsNumberAvailable as Int).toLong()).isEqualTo(5)
@@ -59,9 +59,9 @@ class TrialStatusDatabaseReaderTest {
             assertThat(studyMETCsToIgnore.contains("METC 1")).isTrue
         }
 
-        private fun assertUnmappedCohortIds(unmappedCohortIds: Set<Int>) {
+        private fun assertUnmappedCohortIds(unmappedCohortIds: Set<String>) {
             assertThat(unmappedCohortIds).hasSize(1)
-            assertThat(unmappedCohortIds.contains(1)).isTrue
+            assertThat(unmappedCohortIds.contains("1")).isTrue
         }
 
         private fun assertStudiesNotInTrialStatusDatabase(studiesNotInTrialStatusDatabase: Set<String>) {

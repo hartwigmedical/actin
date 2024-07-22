@@ -26,9 +26,9 @@ data class MolecularEvaluation(
                 .groupBy { evaluation -> evaluation.evaluation.result }
 
             val evaluationComparator = Comparator.comparing<MolecularEvaluation, Int> {
-                when (it.test.type) {
-                    ExperimentType.WHOLE_GENOME -> 1
-                    ExperimentType.TARGETED -> 2
+                when (it.test.experimentType) {
+                    ExperimentType.HARTWIG_WHOLE_GENOME -> 1
+                    ExperimentType.HARTWIG_TARGETED -> 2
                     else -> 3
                 }
             }
@@ -44,9 +44,9 @@ data class MolecularEvaluation(
         }
 
         private fun isOrangeResult(it: List<MolecularEvaluation>) =
-            it.first().test.type in setOf(
-                ExperimentType.WHOLE_GENOME,
-                ExperimentType.TARGETED
+            it.first().test.experimentType in setOf(
+                ExperimentType.HARTWIG_WHOLE_GENOME,
+                ExperimentType.HARTWIG_TARGETED
             )
 
     }
