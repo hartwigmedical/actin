@@ -37,7 +37,7 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
         )
         val evaluation = function.evaluate(withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnGeneralMessages).containsExactly("Probable prior immunotherapy related adverse events")
+        assertThat(evaluation.warnGeneralMessages).containsExactly("Patient may have experienced immunotherapy related adverse events")
     }
 
     @Test
@@ -49,15 +49,16 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
             )
         )
         val intolerance = Intolerance(
-            "Nivolumab induced pneumonitis",
-            setOf(DoidConstants.DRUG_ALLERGY_DOID), "", setOf(""), "", "", "", "", setOf(TreatmentCategory.IMMUNOTHERAPY)
+            name = "Nivolumab induced pneumonitis",
+            doids = setOf(DoidConstants.DRUG_ALLERGY_DOID),
+            treatmentCategories = setOf(TreatmentCategory.IMMUNOTHERAPY)
         )
         val base = createMinimalTestWGSPatientRecord()
         val record = base.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnGeneralMessages).containsExactly(
-            "Probable prior immunotherapy related adverse events (Nivolumab induced pneumonitis)"
+            "Patient may have experienced immunotherapy related adverse events (Nivolumab induced pneumonitis)"
         )
     }
 
