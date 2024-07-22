@@ -32,7 +32,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
         val columnWidth = width / columnCount
         val table = Tables.createFixedWidthCols(*IntRange(1, columnCount).map { columnWidth }.toFloatArray())
 
-        table.addHeaderCell(Cells.createHeader("Mutation"))
+        table.addHeaderCell(Cells.createHeader("Event"))
         table.addHeaderCell(Cells.createHeader("Interpretation"))
         table.addHeaderCell(Cells.createHeader("Driver likelihood"))
 
