@@ -46,22 +46,31 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
                 }
             }
         }
-        table.addCell(Cells.createContent("TMB"))
-        table.addCell(Cells.createContent(""))
-        table.addCell(Cells.createContent(""))
-        for (test in sortedAndFilteredTests) {
-            table.addCell(Cells.createContent(test.characteristics.tumorMutationalBurden?.toString() ?: ""))
-        }
-        table.addCell(Cells.createContent("MSI"))
-        table.addCell(Cells.createContent(""))
-        table.addCell(Cells.createContent(""))
-        for (test in sortedAndFilteredTests) {
-            table.addCell(Cells.createContent(if (test.characteristics.isMicrosatelliteUnstable == false) "Stable" else "Unstable"))
-        }
+        characteristicRow(table, sortedAndFilteredTests, "TMB") { it.characteristics.tumorMutationalBurden?.toString() ?: "" }
+        characteristicRow(
+            table,
+            sortedAndFilteredTests,
+            "MSI"
+        ) { if (it.characteristics.isMicrosatelliteUnstable == false) "Stable" else "Unstable" }
         return makeWrapping(table)
     }
 
+    private fun characteristicRow(
+        table: Table,
+        sortedAndFilteredTests: List<MolecularTest>,
+        name: String,
+        contentProvider: (MolecularTest) -> String
+    ) {
+        table.addCell(Cells.createContent(name))
+        table.addCell(Cells.createContent(""))
+        table.addCell(Cells.createContent(""))
+        for (test in sortedAndFilteredTests) {
+            val text = contentProvider.invoke(test)
+            table.addCell(Cells.createContent(text))
+        }
+    }
+
     private fun testDisplay(test: MolecularTest): String {
-        return "${test.date}\n ${test.testTypeDisplay ?: test.experimentType.display()}"
+        return "${test.date}\n${test.testTypeDisplay ?: test.experimentType.display()}"
     }
 }
