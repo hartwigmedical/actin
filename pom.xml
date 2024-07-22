@@ -189,12 +189,6 @@
                 <groupId>com.hartwig.actin.personalization</groupId>
                 <artifactId>similarity</artifactId>
                 <version>${actin-personalization.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-stdlib</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.serve</groupId>
