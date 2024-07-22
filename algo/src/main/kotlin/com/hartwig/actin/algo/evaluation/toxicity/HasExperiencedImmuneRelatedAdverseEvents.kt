@@ -14,15 +14,19 @@ class HasExperiencedImmuneRelatedAdverseEvents internal constructor() : Evaluati
         val stopReasonUnknown = immunotherapyTreatmentsByStopReason.keys == setOf(null)
         val hasHadImmunoTherapyWithStopReasonToxicity = StopReason.TOXICITY in immunotherapyTreatmentsByStopReason
 
-        val hasImmunotherapyAllergies = record.intolerances.any {
-            TreatmentCategory.IMMUNOTHERAPY in (it.treatmentCategories ?: emptySet())
+        val immunoTherapyAllergies = record.intolerances.filter {
+            it.treatmentCategories?.contains(TreatmentCategory.IMMUNOTHERAPY) ?: false
         }
 
         return when {
-            hasHadImmunoTherapyWithStopReasonToxicity || hasImmunotherapyAllergies -> {
+            hasHadImmunoTherapyWithStopReasonToxicity || immunoTherapyAllergies.isNotEmpty() -> {
+                val allergyString = immunoTherapyAllergies.takeIf { it.isNotEmpty() }
+                    ?.joinToString(", ", prefix = " (", postfix = ")") { it.name }
+                    ?: ""
+
                 EvaluationFactory.warn(
-                    "Patient may have experienced immunotherapy related adverse events",
-                    "Probable prior immunotherapy related adverse events"
+                    "Patient may have experienced immunotherapy related adverse events$allergyString",
+                    "Probable prior immunotherapy related adverse events$allergyString"
                 )
             }
 
