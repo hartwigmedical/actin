@@ -75,17 +75,18 @@ class PanelAnnotator(
     }
 
     private fun variantMatchCriteria(
-        it: PanelVariantExtraction,
-        externalVariantAnnotation: com.hartwig.actin.tools.variant.Variant
+        panelVariantExtraction: PanelVariantExtraction,
+        transvarVariant: TransvarVariant,
+        paveResonse: PaveResponse
     ) = VariantMatchCriteria(
         isReportable = true,
-        gene = it.gene,
-        chromosome = externalVariantAnnotation.chromosome(),
-        ref = externalVariantAnnotation.ref(),
-        alt = externalVariantAnnotation.alt(),
-        position = externalVariantAnnotation.position(),
-        type = variantType(externalVariantAnnotation),
-        codingEffect = codingEffect(externalVariantAnnotation)
+        gene = panelVariantExtraction.gene,
+        chromosome = transvarVariant.chromosome(),
+        ref = transvarVariant.ref(),
+        alt = transvarVariant.alt(),
+        position = transvarVariant.position(),
+        type = variantType(transvarVariant),
+        codingEffect = codingEffect(paveResonse.impact.canonicalCodingEffect)
     )
 
     private fun annotatedInferredCopyNumber(copyNumber: CopyNumber): CopyNumber {
@@ -119,7 +120,7 @@ class PanelAnnotator(
     }
 
     private fun resolveVariants(variantExtractions: Map<String, PanelVariantExtraction>): Map<String, TransvarVariant> {
-        return variantExtractions.mapValues { (_, value) -> externalAnnotation(value) }
+        return variantExtractions.mapValues { (_, value) -> transvarAnnotation(value) }
             .mapNotNull { if (it.value != null) it.key to it.value!! else null }
             .toMap()
     }
@@ -149,16 +150,20 @@ class PanelAnnotator(
         return transvarVariants.map { (id, transvarAnnotation) ->
             val paveResponse = paveAnnotations[id]!!
             val extraction = variantExtractions[id]!!
-            val (evidence, geneAlteration) = serveEvidence(extraction, transvarAnnotation)
+
+            val criteria = variantMatchCriteria(extraction, transvarAnnotation, paveResponse)
+            val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
+            val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
+            val geneAlteration = GeneAlterationFactory.convertAlteration(extraction.gene, serveGeneAlteration)
+
             createVariantWithEvidence(
                 extraction,
                 evidence,
                 geneAlteration,
+                serveGeneAlteration,
                 transvarAnnotation,
                 paveResponse
             )
-
-
         }
     }
 
@@ -177,10 +182,9 @@ class PanelAnnotator(
         }
     }
 
-    // TODO rename to something about transvar
-    private fun externalAnnotation(panelVariantExtraction: PanelVariantExtraction): TransvarVariant? {
+    private fun transvarAnnotation(panelVariantExtraction: PanelVariantExtraction): TransvarVariant? {
         val externalVariantAnnotation =
-            variantResolver.resolve(panelVariantExtraction.gene, null, panelVariantExtraction.hgvsCodingImpact)
+            variantResolver.resolve(panelVariantExtraction.gene, null, panelVariantExtraction.hgvsCodingOrProteinImpact)
 
         if (externalVariantAnnotation == null) {
             LOGGER.error("Unable to resolve variant '$panelVariantExtraction' in variant annotator. See prior warnings.")
@@ -188,39 +192,6 @@ class PanelAnnotator(
         }
 
         return externalVariantAnnotation
-    }
-
-    private fun serveEvidence(
-        it: PanelVariantExtraction,
-        transcriptPositionAndVariationAnnotation: TransvarVariant
-    ): Pair<ActionableEvidence, GeneAlteration> {
-
-        val criteria = variantMatchCriteria(it, externalVariantAnnotation)
-        val serveGeneAlteration = evidenceDatabase.geneAlterationForVariant(criteria)
-        return createVariantWithEvidence(
-            it,
-            ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria)),
-            GeneAlterationFactory.convertAlteration(it.gene, serveGeneAlteration),
-            serveGeneAlteration,
-            externalVariantAnnotation,
-            transcriptImpactAnnotation
-        )
-
-
-
-//        val criteria = VariantMatchCriteria(
-//            isReportable = true,
-//            gene = it.gene,
-//            chromosome = transcriptPositionAndVariationAnnotation.chromosome(),
-//            ref = transcriptPositionAndVariationAnnotation.ref(),
-//            alt = transcriptPositionAndVariationAnnotation.alt(),
-//            position = transcriptPositionAndVariationAnnotation.position()
-//        )
-//        val evidence = ActionableEvidenceFactory.create(evidenceDatabase.evidenceForVariant(criteria))
-//        val geneAlteration = GeneAlterationFactory.convertAlteration(
-//            it.gene, evidenceDatabase.geneAlterationForVariant(criteria)
-//        )
-//        return Pair(evidence, geneAlteration)
     }
 
     private fun createVariantWithEvidence(
@@ -246,8 +217,7 @@ class PanelAnnotator(
             else -> ProteinEffect.NO_EFFECT
         },
         isAssociatedWithDrugResistance = geneAlteration.isAssociatedWithDrugResistance,
-//        isHotspot = geneAlteration is KnownHotspot || geneAlteration is KnownCodon,  // TODO short this out
-        isHotspot = serveGeneAlteration is KnownHotspot,
+        isHotspot = serveGeneAlteration is KnownHotspot || serveGeneAlteration is KnownCodon,
         ref = transcriptAnnotation.ref(),
         alt = transcriptAnnotation.alt(),
 

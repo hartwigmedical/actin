@@ -4,8 +4,8 @@ import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
-import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
@@ -34,10 +34,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.actin.tools.variant.ImmutableVariant as ImmmutableTransvarVariant
-import com.hartwig.actin.tools.variant.CodingEffect as ActinToolsCodingEffect
 import com.hartwig.actin.tools.variant.ImmutableVariant as ActinToolsVariant
-import com.hartwig.actin.tools.variant.VariantType as ActinToolsVariantType
 import com.hartwig.serve.datamodel.common.GeneRole as ServeGeneRole
 import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
 
@@ -66,7 +63,7 @@ private val VARIANT_MATCH_CRITERIA =
         type = VariantType.SNV
     )
 private val TRANSCRIPT_ANNOTATION =
-        ActinToolsVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
+    ActinToolsVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
 
 private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withGeneRole(ServeGeneRole.ONCO)
@@ -78,7 +75,7 @@ private val ACTIONABILITY_MATCH = ActionabilityMatch(
             .withDirection(EvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
 )
-//    ImmmutableTransvarVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
+
 private val PAVE_QUERY = PaveQuery(
     id = "0",
     chromosome = CHROMOSOME,
@@ -199,7 +196,7 @@ class PanelAnnotatorTest {
                 PaveTranscriptImpact(
                     geneId = OTHER_GENE_ID,
                     gene = OTHER_GENE,
-                    transcript = OTHER_TRANSCRIPT,
+                    transcript = OTHER_GENE_TRANSCRIPT,
                     effects = listOf(),
                     spliceRegion = false,
                     hgvsCodingImpact = HGVS_CODING,
