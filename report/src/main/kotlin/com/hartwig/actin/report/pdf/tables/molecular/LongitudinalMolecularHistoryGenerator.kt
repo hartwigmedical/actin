@@ -6,7 +6,6 @@ import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.pdf.util.Tables.makeWrapping
 import com.itextpdf.layout.element.Table
 
@@ -17,16 +16,15 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
 
     override fun contents(): Table {
         val sortedAndFilteredTests = molecularHistory.molecularTests.filter { it.experimentType != ExperimentType.IHC }.sortedBy { it.date }
-        val driverSet =
-            molecularHistory.molecularTests.map { it to (it.drivers.variants + it.drivers.fusions + it.drivers.viruses + it.drivers.copyNumbers + it.drivers.disruptions) }
+        val testsWithDrivers =
+            molecularHistory.molecularTests.map { it to with(it.drivers) { variants + fusions + viruses + copyNumbers + disruptions } }
 
-        val testByDriver = driverSet.flatMap { it.second.map { d -> d to it } }.groupBy { it.first.event }
-            .mapValues { it.value.map { v -> v.second.first } }
+        val testsByDriverEvent = testsWithDrivers.flatMap { (test, drivers) -> drivers.map { d -> d.event to test } }
+            .groupBy({ (event, _) -> event }, { (_, test) -> test })
 
-        val allDrivers = driverSet.flatMap { it.second }.toSet()
+        val allDrivers = testsWithDrivers.flatMap { it.second }.toSet()
         val columnCount = 3 + sortedAndFilteredTests.size
-        val columnWidth = width / columnCount
-        val table = Tables.createFixedWidthCols(*IntRange(1, columnCount).map { columnWidth }.toFloatArray())
+        val table = Table(columnCount).setWidth(width)
 
         table.addHeaderCell(Cells.createHeader("Event"))
         table.addHeaderCell(Cells.createHeader("Description"))
@@ -41,7 +39,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
             table.addCell(Cells.createContent(LongitudinalVariantInterpretation.interpret(driver as GeneAlteration)))
             table.addCell(Cells.createContent(driver.driverLikelihood.toString()))
             for (test in sortedAndFilteredTests) {
-                if (testByDriver[driver.event]?.contains(test) == true) {
+                if (testsByDriverEvent[driver.event]?.contains(test) == true) {
                     table.addCell(Cells.createContent("Detected"))
                 } else {
                     table.addCell(Cells.createContent("Not detected"))

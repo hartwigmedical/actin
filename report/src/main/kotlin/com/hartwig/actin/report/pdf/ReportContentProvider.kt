@@ -100,18 +100,21 @@ class ReportContentProvider(private val report: Report, private val enableExtend
         val hasMolecular = report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
         return listOfNotNull(
             clinicalHistoryGenerator,
-            if (report.config.includeMolecularSummary && hasMolecular) {
-                MolecularSummaryGenerator(report.patientRecord, cohorts, keyWidth, valueWidth)
-            } else null,
-            if (report.config.includeLongitudinalMolecularSummary && hasMolecular) {
-                LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularHistory, contentWidth)
-            } else null,
-            if (report.config.includeEligibleSOCTreatmentSummary) {
-                SOCEligibleApprovedTreatmentGenerator(report, contentWidth)
-            } else null,
-            if (report.config.includeApprovedTreatmentsInSummary) {
-                EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth)
-            } else null,
+            MolecularSummaryGenerator(
+                report.patientRecord,
+                cohorts,
+                keyWidth,
+                valueWidth
+            ).takeIf { report.config.includeMolecularSummary && hasMolecular },
+            LongitudinalMolecularHistoryGenerator(
+                report.patientRecord.molecularHistory,
+                contentWidth
+            ).takeIf { report.config.includeLongitudinalMolecularSummary && hasMolecular },
+            SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf { report.config.includeEligibleSOCTreatmentSummary },
+            EligibleApprovedTreatmentGenerator(
+                report.patientRecord,
+                contentWidth
+            ).takeIf { report.config.includeApprovedTreatmentsInSummary },
             if (report.config.includeTrialMatchingSummary) {
                 openCohortsWithSlotsGenerator
             } else null,
