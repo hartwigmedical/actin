@@ -50,7 +50,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
     }
 
     private fun extractPopulations(analysis: PersonalAnalysis): List<Population> {
-        return analysis.subPopulations.map { population ->
+        return analysis.populations.map { population ->
             Population(
                 population.name,
                 population.patientsByMeasurementType.entries.map { (measurementType, patients) ->
