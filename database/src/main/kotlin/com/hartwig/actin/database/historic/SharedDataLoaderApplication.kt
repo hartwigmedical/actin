@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.clinical.datamodel.ClinicalRecord
 import com.hartwig.actin.database.historic.serialization.HistoricClinicalDeserializer
 import com.hartwig.actin.database.historic.serialization.HistoricMolecularDeserializer
+import com.hartwig.actin.database.historic.serialization.HistoricTreatmentMatchDeserializer
 import com.hartwig.actin.database.molecular.MolecularLoaderApplication
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import org.apache.commons.cli.DefaultParser
@@ -27,11 +28,10 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
 
                 val clinicalJson = findClinicalJson(it)
                 val molecularJson = findMolecularJson(it)
-//                val treatmentMatchJson = findTreatmentMatchJson(it)
+                val treatmentMatchJson = findTreatmentMatchJson(it)
 
                 val clinical: ClinicalRecord? =
                     if (clinicalJson.exists()) HistoricClinicalDeserializer.deserialize(clinicalJson) else null
-
                 if (clinical == null) {
                     LOGGER.warn("Clinical record could not be constructed for {} based on : {}", it, clinicalJson)
                 }
@@ -42,7 +42,13 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
                     LOGGER.warn("Molecular record could not be constructed for {} based on : {}", it, molecularJson)
                 }
 
-                Triple(clinical, molecular, null)
+                val treatmentMatch: TreatmentMatch? =
+                    if (treatmentMatchJson.exists()) HistoricTreatmentMatchDeserializer.deserialize(treatmentMatchJson) else null
+                if (treatmentMatch == null) {
+                    LOGGER.warn("Treatment match record could not be constructed for {} based on : {}", it, treatmentMatchJson)
+                }
+
+                Triple(clinical, molecular, treatmentMatch)
             }
 
 //        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
