@@ -27,7 +27,7 @@ object HistoricTreatmentMatchDeserializer {
         val treatmentMatchObject: JsonObject = JsonParser.parseReader(reader).asJsonObject
 
         val treatmentMatch = TreatmentMatch(
-            patientId = "",
+            patientId = extractPatientId(treatmentMatchObject),
             sampleId = Json.string(treatmentMatchObject, "sampleId"),
             trialSource = "",
             referenceDate = Json.date(treatmentMatchObject, "referenceDate"),
@@ -42,6 +42,11 @@ object HistoricTreatmentMatchDeserializer {
         }
 
         return treatmentMatch
+    }
+
+    private fun extractPatientId(treatmentMatch: JsonObject): String {
+        val sample: String = Json.string(treatmentMatch, "sampleId")
+        return sample.substring(0, 12)
     }
 
     private fun extractTrialMatch(trialMatchElement: JsonElement): TrialMatch {
@@ -73,6 +78,7 @@ object HistoricTreatmentMatchDeserializer {
 
     private fun extractCohortMatch(cohortMatchElement: JsonElement): CohortMatch {
         val cohortMatch = cohortMatchElement.asJsonObject
+
         return CohortMatch(
             metadata = extractCohortMetadata(Json.`object`(cohortMatch, "metadata")),
             isPotentiallyEligible = false,
@@ -82,12 +88,12 @@ object HistoricTreatmentMatchDeserializer {
 
     private fun extractCohortMetadata(cohortMetadata: JsonObject): CohortMetadata {
         return CohortMetadata(
-            cohortId = "",
-            evaluable = false,
-            open = false,
-            slotsAvailable = false,
-            blacklist = false,
-            description = ""
+            cohortId = Json.string(cohortMetadata, "cohortId"),
+            evaluable = true,
+            open = Json.bool(cohortMetadata, "open"),
+            slotsAvailable = Json.bool(cohortMetadata, "slotsAvailable"),
+            blacklist = Json.bool(cohortMetadata, "blacklist"),
+            description = Json.string(cohortMetadata, "description")
         )
     }
 }
