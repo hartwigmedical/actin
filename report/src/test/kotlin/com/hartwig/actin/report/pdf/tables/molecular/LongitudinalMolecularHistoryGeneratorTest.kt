@@ -4,9 +4,8 @@ import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.TestMolecularFactory
-import com.itextpdf.layout.element.Paragraph
-import com.itextpdf.layout.element.Table
-import com.itextpdf.layout.element.Text
+import com.hartwig.actin.report.pdf.assertRow
+import com.hartwig.actin.report.pdf.getWrappedTable
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -71,17 +70,6 @@ class LongitudinalMolecularHistoryGeneratorTest {
             ), 1f
         )
         assertRow(getWrappedTable(result), 1, "MSI", "", "", "Stable", "Unstable", "")
-    }
-}
-
-private fun getWrappedTable(result: LongitudinalMolecularHistoryGenerator) = result.contents().getCell(0, 0).children[0] as Table
-
-private fun getCellContents(table: Table, row: Int, column: Int) =
-    ((table.getCell(row, column).children[0] as Paragraph).children[0] as Text).text
-
-private fun assertRow(contentTable: Table, row: Int, vararg columns: String) {
-    for ((index, column) in columns.withIndex()) {
-        assertThat(getCellContents(contentTable, row, index)).isEqualTo(column)
     }
 }
 
