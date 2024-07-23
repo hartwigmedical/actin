@@ -7,16 +7,16 @@ import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
 
 object LongitudinalVariantInterpretation {
 
-     fun interpret(driver: GeneAlteration): String {
-        val mutationType = when (driver) {
+    fun interpret(driver: GeneAlteration): String {
+        val mutationTypeText = when (driver) {
             is Variant -> driver.canonicalImpact.codingEffect?.display() ?: ""
             is CopyNumber -> if (driver.type.isGain) "Amplification" else "Deletion"
-            else -> ""
+            else -> null
         }
-        val proteinEffect = proteinEffect(driver)?.let { "\n$it" } ?: ""
-        val isHotspot = if ((driver as? Variant)?.isHotspot == true) "\nHotspot" else ""
-        val isVUS = if (proteinEffect.isEmpty() && isHotspot.isEmpty() && driver !is CopyNumber) "\nVUS" else ""
-        return "$mutationType$proteinEffect$isHotspot$isVUS"
+        val proteinEffectText = proteinEffect(driver)
+        val hotspotText = if ((driver as? Variant)?.isHotspot == true) "Hotspot" else null
+        val vusText = if (proteinEffectText == null && hotspotText == null && driver !is CopyNumber) "VUS" else null
+        return listOfNotNull(mutationTypeText, proteinEffectText, hotspotText, vusText).joinToString("\n")
     }
 
     private fun proteinEffect(driver: GeneAlteration): String? {

@@ -24,17 +24,9 @@ class LongitudinalMolecularHistoryChapter(private val report: Report, override v
 
     private fun addLongitudinalMolecularHistoryTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generators =
-            listOf(LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularHistory, contentWidth()))
-
-        generators.forEachIndexed { i, generator ->
-            // TODO (KD): Make sure subtitle doesn't double-up with title.
-            //table.addCell(Cells.createSubTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
-            if (i < generators.size - 1) {
-                table.addCell(Cells.createEmpty())
-            }
-        }
+        val generator = LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularHistory, contentWidth())
+        table.addCell(Cells.createSubTitle(generator.title()))
+        table.addCell(Cells.create(generator.contents()))
         document.add(table)
     }
 }

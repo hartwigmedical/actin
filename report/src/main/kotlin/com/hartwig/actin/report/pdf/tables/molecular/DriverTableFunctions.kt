@@ -12,5 +12,5 @@ object DriverTableFunctions {
     }
 
     fun allDrivers(molecularHistory: MolecularHistory): List<Pair<MolecularTest, Set<Driver>>> =
-        molecularHistory.molecularTests.map { it to (it.drivers.variants + it.drivers.fusions + it.drivers.viruses + it.drivers.copyNumbers + it.drivers.disruptions) }
+        molecularHistory.molecularTests.map { it to with(it.drivers) { variants + fusions + viruses + copyNumbers + disruptions } }
 }
