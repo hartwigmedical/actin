@@ -12,6 +12,7 @@ import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
+import com.hartwig.actin.util.json.Json
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
@@ -26,8 +27,8 @@ object HistoricMolecularDeserializer {
         val molecularObject: JsonObject = JsonParser.parseReader(reader).asJsonObject
 
         val molecularTest = MolecularRecord(
-            patientId = "",
-            sampleId = "",
+            patientId = extractPatientId(molecularObject),
+            sampleId = Json.string(molecularObject, "sampleId"),
             refGenomeVersion = RefGenomeVersion.V37,
             externalTrialSource = "",
             containsTumorCells = false,
@@ -37,7 +38,7 @@ object HistoricMolecularDeserializer {
             immunology = extractImmunology(molecularObject),
             pharmaco = extractPharmaco(molecularObject),
             experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
-            date = null,
+            date = Json.date(molecularObject, "date"),
             drivers = extractDrivers(molecularObject),
             characteristics = extractCharacteristics(molecularObject),
             evidenceSource = ""
@@ -48,6 +49,11 @@ object HistoricMolecularDeserializer {
         }
 
         return MolecularHistory(listOf(molecularTest))
+    }
+
+    private fun extractPatientId(molecular: JsonObject): String {
+        val sample: String = Json.string(molecular, "sampleId")
+        return sample.substring(0, 12)
     }
 
     private fun extractImmunology(molecularObject: JsonObject): MolecularImmunology {
