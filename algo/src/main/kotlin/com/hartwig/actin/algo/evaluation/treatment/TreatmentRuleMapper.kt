@@ -12,7 +12,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to isNotEligibleForCurativeTreatmentCreator(),
+            EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to FunctionCreator { IsNotEligibleForCurativeTreatment() },
             EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to isEligibleForPalliativeRadiotherapyCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_LOCO_REGIONAL_THERAPY to isEligibleForLocoRegionalTherapyCreator(),
@@ -78,20 +78,16 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_COMPLETE_RESECTION to hasHadCompleteResectionCreator(),
             EligibilityRule.HAS_HAD_PARTIAL_RESECTION to hasHadPartialResectionCreator(),
             EligibilityRule.HAS_HAD_RESECTION_WITHIN_X_WEEKS to hasHadResectionWithinWeeksCreator(),
-            EligibilityRule.HAS_HAD_LIVER_RESECTION to hasHadLiverResectionCreator(),
-            EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS to hasHadLocalHepaticTherapyWithinWeeksCreator(),
-            EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to hasHadIntratumoralInjectionTreatmentCreator(),
+            EligibilityRule.HAS_HAD_LIVER_RESECTION to FunctionCreator { HasHadLiverResection() },
+            EligibilityRule.HAS_HAD_LOCAL_HEPATIC_THERAPY_WITHIN_X_WEEKS to FunctionCreator { HasHadLocalHepaticTherapyWithinWeeks() },
+            EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to FunctionCreator { HasHadIntratumoralInjectionTreatment() },
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to hasLimitedCumulativeAnthracyclineExposureCreator(),
-            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL to hasPreviouslyParticipatedInCurrentTrialCreator(),
-            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to hasPreviouslyParticipatedInTrialCreator(),
-            EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to isNotParticipatingInAnotherTrialCreator(),
-            EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to hasReceivedSystemicTherapyforBrainMetastasesCreator(),
-            EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to hasHadBrainRadiationTherapyCreator(),
+            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to FunctionCreator { HasPreviouslyParticipatedInTrial() },
+            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X to hasPreviouslyParticipatedInSpecificTrialCreator(),
+            EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to FunctionCreator { IsNotParticipatingInAnotherTrial() },
+            EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to FunctionCreator { HasReceivedSystemicTherapyForBrainMetastases() },
+            EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to FunctionCreator { HasHadBrainRadiationTherapy() },
         )
-    }
-
-    private fun isNotEligibleForCurativeTreatmentCreator(): FunctionCreator {
-        return FunctionCreator { IsNotEligibleForCurativeTreatment() }
     }
 
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
@@ -559,39 +555,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadLiverResectionCreator(): FunctionCreator {
-        return FunctionCreator { HasHadLiverResection() }
-    }
-
-    private fun hasHadLocalHepaticTherapyWithinWeeksCreator(): FunctionCreator {
-        return FunctionCreator { HasHadLocalHepaticTherapyWithinWeeks() }
-    }
-
-    private fun hasHadIntratumoralInjectionTreatmentCreator(): FunctionCreator {
-        return FunctionCreator { HasHadIntratumoralInjectionTreatment() }
-    }
-
     private fun hasLimitedCumulativeAnthracyclineExposureCreator(): FunctionCreator {
         return FunctionCreator { HasLimitedCumulativeAnthracyclineExposure(doidModel()) }
     }
 
-    private fun hasPreviouslyParticipatedInCurrentTrialCreator(): FunctionCreator {
-        return FunctionCreator { HasPreviouslyParticipatedInCurrentTrial() }
-    }
-
-    private fun hasPreviouslyParticipatedInTrialCreator(): FunctionCreator {
-        return FunctionCreator { HasPreviouslyParticipatedInTrial() }
-    }
-
-    private fun isNotParticipatingInAnotherTrialCreator(): FunctionCreator {
-        return FunctionCreator { IsNotParticipatingInAnotherTrial() }
-    }
-
-    private fun hasReceivedSystemicTherapyforBrainMetastasesCreator(): FunctionCreator {
-        return FunctionCreator { HasReceivedSystemicTherapyForBrainMetastases() }
-    }
-
-    private fun hasHadBrainRadiationTherapyCreator(): FunctionCreator {
-        return FunctionCreator { HasHadBrainRadiationTherapy() }
+    private fun hasPreviouslyParticipatedInSpecificTrialCreator(): FunctionCreator {
+        return FunctionCreator { function ->
+            HasPreviouslyParticipatedInTrial(functionInputResolver().createOneStringInput(function))
+        }
     }
 }
