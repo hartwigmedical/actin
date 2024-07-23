@@ -27,67 +27,67 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     private fun hasAtLeastCertainAgeCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minAge: Int = functionInputResolver().createOneIntegerInput(function)
             HasAtLeastCertainAge(referenceDateProvider().year(), minAge)
         }
     }
 
     private val isMaleCreator: FunctionCreator
-        get() = FunctionCreator { IsMale() }
+        get() = { IsMale() }
     private val isFemaleCreator: FunctionCreator
-        get() = FunctionCreator { IsFemale() }
+        get() = { IsFemale() }
 
     private fun hasMaximumWHOStatusCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maximumWHO = functionInputResolver().createOneIntegerInput(function)
             HasMaximumWHOStatus(maximumWHO)
         }
     }
 
     private fun hasWHOStatusCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction? ->
+        return { function: EligibilityFunction? ->
             val requiredWHO = functionInputResolver().createOneIntegerInput(function!!)
             HasWHOStatus(requiredWHO)
         }
     }
 
     private fun hasMinimumKarnofskyScoreCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minScore = functionInputResolver().createOneIntegerInput(function)
             HasMinimumLanskyKarnofskyScore(PerformanceScore.KARNOFSKY, minScore)
         }
     }
 
     private fun hasMinimumLanskyScoreCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minScore = functionInputResolver().createOneIntegerInput(function)
             HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, minScore)
         }
     }
 
     private fun canGiveAdequateInformedConsentCreator(): FunctionCreator {
-        return FunctionCreator { CanGiveAdequateInformedConsent() }
+        return { CanGiveAdequateInformedConsent() }
     }
 
     private val isInvolvedInStudyProceduresCreator: FunctionCreator
-        get() = FunctionCreator { IsInvolvedInStudyProcedures() }
+        get() = { IsInvolvedInStudyProcedures() }
 
     private fun usesTobaccoProductsCreator(): FunctionCreator {
-        return FunctionCreator { UsesTobaccoProducts() }
+        return { UsesTobaccoProducts() }
     }
 
     private fun hasSufficientLifeExpectancyCreator(): FunctionCreator {
-        return FunctionCreator { HasSufficientLifeExpectancy() }
+        return { HasSufficientLifeExpectancy() }
     }
 
     private fun willParticipateInTrialInCountryCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val country = functionInputResolver().createOneStringInput(function)
             WillParticipateInTrialInCountry(country)
         }
     }
 
     private val isLegallyInstitutionalizedCreator: FunctionCreator
-        get() = FunctionCreator { IsLegallyInstitutionalized() }
+        get() = { IsLegallyInstitutionalized() }
 }

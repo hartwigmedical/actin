@@ -24,63 +24,57 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     }
 
     private fun hasPotentialSignificantHeartDiseaseCreator(): FunctionCreator {
-        return FunctionCreator { HasPotentialSignificantHeartDisease(doidModel()) }
+        return { HasPotentialSignificantHeartDisease(doidModel()) }
     }
 
     private fun hasECGAberrationCreator(): FunctionCreator {
-        return FunctionCreator { HasECGAberration() }
+        return { HasECGAberration() }
     }
 
     private fun hasSufficientLVEFCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minLVEF = functionInputResolver().createOneDoubleInput(function)
             HasSufficientLVEF(minLVEF)
         }
     }
 
     private fun hasLimitedQTCFCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             ECGMeasureEvaluationFunctions.hasLimitedQTCF(
-                functionInputResolver().createOneDoubleInput(
-                    function
-                )
+                functionInputResolver().createOneDoubleInput(function)
             )
         }
     }
 
     private fun hasSufficientQTCFCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             ECGMeasureEvaluationFunctions.hasSufficientQTCF(
-                functionInputResolver().createOneDoubleInput(
-                    function
-                )
+                functionInputResolver().createOneDoubleInput(function)
             )
         }
     }
 
     private fun hasSufficientJTcCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             ECGMeasureEvaluationFunctions.hasSufficientJTc(
-                functionInputResolver().createOneDoubleInput(
-                    function
-                )
+                functionInputResolver().createOneDoubleInput(function)
             )
         }
     }
 
     private fun hasLongQTSyndromeCreator(): FunctionCreator {
-        return FunctionCreator { HasLongQTSyndrome(doidModel()) }
+        return { HasLongQTSyndrome(doidModel()) }
     }
 
     private fun hasNormalCardiacFunctionByMUGAOrTTECreator(): FunctionCreator {
-        return FunctionCreator { HasNormalCardiacFunctionByMUGAOrTTE() }
+        return { HasNormalCardiacFunctionByMUGAOrTTE() }
     }
 
     private fun hasFamilyHistoryOfIdiopathicSuddenDeathCreator(): FunctionCreator {
-        return FunctionCreator { HasFamilyHistoryOfIdiopathicSuddenDeath() }
+        return { HasFamilyHistoryOfIdiopathicSuddenDeath() }
     }
 
     private fun hasFamilyHistoryOfLongQTSyndromeCreator(): FunctionCreator {
-        return FunctionCreator { HasFamilyHistoryOfLongQTSyndrome() }
+        return { HasFamilyHistoryOfLongQTSyndrome() }
     }
 }
