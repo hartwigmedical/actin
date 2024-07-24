@@ -52,16 +52,21 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
                 Triple(clinical, molecular, treatmentMatch)
             }
 
-        val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
+        if (config.writeDataToDb) {
+            LOGGER.info("Connecting to {}", config.dbUrl)
+            val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
-        LOGGER.info("Writing clinical data for {} historic patients", historicData.size)
-        access.writeClinicalRecords(historicData.mapNotNull { it.first })
+            LOGGER.info("Writing clinical data for {} historic patients", historicData.size)
+            access.writeClinicalRecords(historicData.mapNotNull { it.first })
 
-        LOGGER.info("Writing molecular data for {} historic patients", historicData.size)
-        historicData.mapNotNull { it -> it.second?.latestOrangeMolecularRecord()?.let { access.writeMolecularRecord(it) } }
+            LOGGER.info("Writing molecular data for {} historic patients", historicData.size)
+            historicData.mapNotNull { it -> it.second?.latestOrangeMolecularRecord()?.let { access.writeMolecularRecord(it) } }
 
-        LOGGER.info("Writing treatment match data for {} historic patients", historicData.size)
-        historicData.mapNotNull { it -> it.third?.let { access.writeTreatmentMatch(it) } }
+            LOGGER.info("Writing treatment match data for {} historic patients", historicData.size)
+            historicData.mapNotNull { it -> it.third?.let { access.writeTreatmentMatch(it) } }
+        } else {
+            LOGGER.info("Skipping database writing")
+        }
 
         LOGGER.info("Done!")
     }

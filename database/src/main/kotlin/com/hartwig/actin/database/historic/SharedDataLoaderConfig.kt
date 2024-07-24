@@ -10,6 +10,7 @@ import org.apache.logging.log4j.core.config.Configurator
 
 data class SharedDataLoaderConfig(
     val sharedDataDirectory: String,
+    val writeDataToDb: Boolean,
     override val dbUser: String,
     override val dbPass: String,
     override val dbUrl: String
@@ -19,6 +20,7 @@ data class SharedDataLoaderConfig(
         fun createOptions(): Options {
             val options = Options()
             options.addOption(SHARED_DATA_DIRECTORY, true, "Directory containing the shared data to be loaded")
+            options.addOption(WRITE_DATA_TO_DB, false, "If flag is set, data is written to SQL")
             options.addOption(DB_USER, true, "Database username")
             options.addOption(DB_PASS, true, "Database password")
             options.addOption(DB_URL, true, "Database url")
@@ -34,6 +36,7 @@ data class SharedDataLoaderConfig(
 
             return SharedDataLoaderConfig(
                 sharedDataDirectory = ApplicationConfig.nonOptionalDir(cmd, SHARED_DATA_DIRECTORY),
+                writeDataToDb = cmd.hasOption(WRITE_DATA_TO_DB),
                 dbUser = ApplicationConfig.nonOptionalValue(cmd, DB_USER),
                 dbPass = ApplicationConfig.nonOptionalValue(cmd, DB_PASS),
                 dbUrl = ApplicationConfig.nonOptionalValue(cmd, DB_URL)
@@ -42,6 +45,7 @@ data class SharedDataLoaderConfig(
 
         private val LOGGER = LogManager.getLogger(SharedDataLoaderConfig::class.java)
         private const val SHARED_DATA_DIRECTORY = "shared_data_directory"
+        private const val WRITE_DATA_TO_DB = "write_data_to_db"
         private const val DB_USER = "db_user"
         private const val DB_PASS = "db_pass"
         private const val DB_URL = "db_url"
