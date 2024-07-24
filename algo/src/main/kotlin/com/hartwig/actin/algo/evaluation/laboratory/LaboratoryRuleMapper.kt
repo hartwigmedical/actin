@@ -194,10 +194,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasLimitedBilirubinPercentageCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxPercentage = functionInputResolver().createOneDoubleInput(function)
-            createLabEvaluator(
-                LabMeasurement.DIRECT_BILIRUBIN,
-                HasLimitedBilirubinPercentageOfTotal(maxPercentage, minValidLabDate())
-            )
+            createLabEvaluator(LabMeasurement.DIRECT_BILIRUBIN, HasLimitedBilirubinPercentageOfTotal(maxPercentage, minValidLabDate()))
         }
     }
 
@@ -206,17 +203,12 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             val minCreatinineClearance = functionInputResolver().createOneDoubleInput(function)
             val measurement = retrieveForMethod(method)
             val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
-            val main = createLabEvaluator(
-                measurement,
-                HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit)
-            )
+            val main = createLabEvaluator(measurement, HasSufficientLabValue(minCreatinineClearance, measurement, measurement.defaultUnit))
+            
             val fallback = createLabEvaluator(
                 LabMeasurement.CREATININE,
                 HasSufficientDerivedCreatinineClearance(
-                    referenceDateProvider().year(),
-                    method,
-                    minCreatinineClearance,
-                    minimalDateWeightMeasurements
+                    referenceDateProvider().year(), method, minCreatinineClearance, minimalDateWeightMeasurements
                 )
             )
             Fallback(main, fallback)

@@ -33,32 +33,25 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientLVEFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minLVEF = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientLVEF(minLVEF)
+            HasSufficientLVEF(functionInputResolver().createOneDoubleInput(function))
         }
     }
 
     private fun hasLimitedQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ECGMeasureEvaluationFunctions.hasLimitedQTCF(
-                functionInputResolver().createOneDoubleInput(function)
-            )
+            ECGMeasureEvaluationFunctions.hasLimitedQTCF(functionInputResolver().createOneDoubleInput(function))
         }
     }
 
     private fun hasSufficientQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ECGMeasureEvaluationFunctions.hasSufficientQTCF(
-                functionInputResolver().createOneDoubleInput(function)
-            )
+            ECGMeasureEvaluationFunctions.hasSufficientQTCF(functionInputResolver().createOneDoubleInput(function))
         }
     }
 
     private fun hasSufficientJTcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ECGMeasureEvaluationFunctions.hasSufficientJTc(
-                functionInputResolver().createOneDoubleInput(function)
-            )
+            ECGMeasureEvaluationFunctions.hasSufficientJTc(functionInputResolver().createOneDoubleInput(function))
         }
     }
 

@@ -4,15 +4,19 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.trial.datamodel.EligibilityFunction
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to anyGeneHasDriverEventWithApprovedTherapyCreator(),
-            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(),
-            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
+            EligibilityRule.DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
+                    { AnyGeneHasDriverEventWithApprovedTherapy() },
+            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC to
+                    { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet()) },
+            EligibilityRule.HAS_MOLECULAR_EVENT_WITH_SOC_TARGETED_THERAPY_AVAILABLE_IN_NSCLC_EXCLUDING_ANY_GENE_X to
+                    hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(),
@@ -29,52 +33,45 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.FUSION_IN_GENE_X to hasFusionInGeneCreator(),
             EligibilityRule.WILDTYPE_OF_GENE_X to geneIsWildTypeCreator(),
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
-            EligibilityRule.MSI_SIGNATURE to isMicrosatelliteUnstableCreator,
-            EligibilityRule.HRD_SIGNATURE to isHomologousRepairDeficientCreator,
-            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_BRCA to isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA,
+            EligibilityRule.MSI_SIGNATURE to { IsMicrosatelliteUnstable() },
+            EligibilityRule.HRD_SIGNATURE to { IsHomologousRepairDeficient() },
+            EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_BRCA to
+                    { IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA() },
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
             EligibilityRule.TML_OF_AT_LEAST_X to hasSufficientTumorMutationalLoadCreator(),
             EligibilityRule.TML_BETWEEN_X_AND_Y to hasCertainTumorMutationalLoadCreator(),
             EligibilityRule.HAS_HLA_TYPE_X to hasSpecificHLATypeCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
-            EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to hasHomozygousDPYDDeficiencyCreator(),
-            EligibilityRule.HAS_KNOWN_HPV_STATUS to hasKnownHPVStatusCreator(),
-            EligibilityRule.OVEREXPRESSION_OF_GENE_X to geneIsOverexpressedCreator(),
-            EligibilityRule.NON_EXPRESSION_OF_GENE_X to geneIsNotExpressedCreator(),
-            EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to genesMeetSpecificMRNAExpressionRequirementsCreator(),
+            EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency() },
+            EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
+            EligibilityRule.OVEREXPRESSION_OF_GENE_X to { GeneIsOverexpressed() },
+            EligibilityRule.NON_EXPRESSION_OF_GENE_X to { GeneIsNotExpressed() },
+            EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to { GenesMeetSpecificMRNAExpressionRequirements() },
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC to proteinIsExpressedByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_EXACTLY_Y to proteinHasExactExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_LEAST_Y to proteinHasSufficientExpressionByIHCCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIHCCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByCPSByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByCPSByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByTPSByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_MOST_X to hasLimitedPDL1ByTAPByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByTPSByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByICByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByTCByIHCCreator(),
-            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_LEAST_X to hasSufficientPDL1ByTAPByIHCCreator(),
-            EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to hasAvailablePDL1StatusCreator(),
-            EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to hasPSMAPositivePETScanCreator(),
-            EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to molecularResultsAreGenerallyAvailableCreator(),
+            EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIHCCreator(),
+            EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIHCCreator(),
+            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIHCCreator("CPS"),
+            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIHCCreator("CPS"),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIHCCreator("TPS", doidModel()),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIHCCreator("TPS", doidModel()),
+            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIHCCreator("TAP"),
+            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIHCCreator("TAP"),
+            EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIHCCreator("IC"),
+            EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIHCCreator("TC"),
+            EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to { HasAvailablePDL1Status() },
+            EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to { HasPSMAPositivePETScan() },
+            EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to { MolecularResultsAreGenerallyAvailable() },
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_GENE_X to molecularResultsAreAvailableForGeneCreator(),
             EligibilityRule.MOLECULAR_TEST_MUST_HAVE_BEEN_DONE_FOR_PROMOTER_OF_GENE_X to molecularResultsAreAvailableForPromoterOfGeneCreator(),
-            EligibilityRule.MMR_STATUS_IS_AVAILABLE to mmrStatusIsAvailableCreator(),
-            EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to nsclcDriverGeneStatusesAreAvailableCreator(),
+            EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable() },
+            EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to { NsclcDriverGeneStatusesAreAvailable() },
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
             EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator()
         )
-    }
-
-    private fun anyGeneHasDriverEventWithApprovedTherapyCreator(): FunctionCreator {
-        return { AnyGeneHasDriverEventWithApprovedTherapy() }
-    }
-
-    private fun hasMolecularEventWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
-        return { HasMolecularEventWithSocTargetedTherapyForNSCLCAvailable(emptySet()) }
     }
 
     private fun hasMolecularEventExcludingSomeGeneWithSocTargetedTherapyForNSCLCAvailableCreator(): FunctionCreator {
@@ -86,15 +83,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneIsActivatedOrAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            Or(listOf(GeneHasActivatingMutation(gene.geneName, codonsToIgnore = null), GeneIsAmplified(gene.geneName, null)))
+            val gene = functionInputResolver().createOneGeneInput(function).geneName
+            Or(listOf(GeneHasActivatingMutation(gene, codonsToIgnore = null), GeneIsAmplified(gene, null)))
         }
     }
 
     private fun geneIsInactivatedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            GeneIsInactivated(gene.geneName)
+            GeneIsInactivated(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
@@ -114,9 +110,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneHasVariantWithAnyProteinImpactsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneManyProteinImpactsInput(
-                function
-            )
+            val input = functionInputResolver().createOneGeneManyProteinImpactsInput(function)
             GeneHasVariantWithProteinImpact(input.geneName, input.proteinImpacts)
         }
     }
@@ -130,38 +124,34 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneHasVariantInExonCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasVariantInExonRangeOfType(input.geneName, input.integer, input.integer, null)
+            val (gene, exon) = functionInputResolver().createOneGeneOneIntegerInput(function)
+            GeneHasVariantInExonRangeOfType(gene, exon, exon, null)
         }
     }
 
     private fun geneHasVariantInExonRangeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneTwoIntegersInput(function)
-            GeneHasVariantInExonRangeOfType(input.geneName, input.integer1, input.integer2, null)
+            val (gene, minExon, maxExon) = functionInputResolver().createOneGeneTwoIntegersInput(function)
+            GeneHasVariantInExonRangeOfType(gene, minExon, maxExon, null)
         }
     }
 
     private fun geneHasVariantInExonOfTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneOneIntegerOneVariantTypeInput(
-                function
-            )
-            GeneHasVariantInExonRangeOfType(input.geneName, input.integer, input.integer, input.variantType)
+            val (gene, exon, variantType) = functionInputResolver().createOneGeneOneIntegerOneVariantTypeInput(function)
+            GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType)
         }
     }
 
     private fun geneHasUTR3LossCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            GeneHasUTR3Loss(gene.geneName)
+            GeneHasUTR3Loss(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
     private fun geneIsAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            GeneIsAmplified(gene.geneName, null)
+            GeneIsAmplified(functionInputResolver().createOneGeneInput(function).geneName, null)
         }
     }
 
@@ -174,15 +164,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasFusionInGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            HasFusionInGene(gene.geneName)
+            HasFusionInGene(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
     private fun geneIsWildTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            GeneIsWildType(gene.geneName)
+            GeneIsWildType(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
@@ -192,13 +180,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             GeneHasSpecificExonSkipping(input.geneName, input.integer)
         }
     }
-
-    private val isMicrosatelliteUnstableCreator: FunctionCreator
-        get() = { IsMicrosatelliteUnstable() }
-    private val isHomologousRepairDeficientCreator: FunctionCreator
-        get() = { IsHomologousRepairDeficient() }
-    private val isHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA: FunctionCreator
-        get() = { IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA() }
 
     private fun hasSufficientTumorMutationalBurdenCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
@@ -235,54 +216,29 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHomozygousDPYDDeficiencyCreator(): FunctionCreator {
-        return { HasHomozygousDPYDDeficiency() }
-    }
-
-    private fun hasKnownHPVStatusCreator(): FunctionCreator {
-        return { HasKnownHPVStatus() }
-    }
-
-    private fun geneIsOverexpressedCreator(): FunctionCreator {
-        return { GeneIsOverexpressed() }
-    }
-
-    private fun geneIsNotExpressedCreator(): FunctionCreator {
-        return { GeneIsNotExpressed() }
-    }
-
-    private fun genesMeetSpecificMRNAExpressionRequirementsCreator(): FunctionCreator {
-        return { GenesMeetSpecificMRNAExpressionRequirements() }
-    }
-
     private fun proteinIsExpressedByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneStringInput(function)
-            ProteinIsExpressedByIHC(gene)
+            ProteinIsExpressedByIHC(functionInputResolver().createOneStringInput(function))
         }
     }
 
     private fun proteinHasExactExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(input.string, input.integer)
+            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
+            ProteinHasExactExpressionByIHC(protein, expressionLevel)
         }
     }
 
     private fun proteinHasSufficientExpressionByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            ProteinHasExactExpressionByIHC(input.string, input.integer)
+            val (expressionLevel, protein) = functionInputResolver().createOneStringOneIntegerInput(function)
+            ProteinHasSufficientExpressionByIHC(protein, expressionLevel)
         }
     }
 
     private fun proteinIsWildTypeByIHCCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsWildTypeByIHC(
-                functionInputResolver().createOneStringInput(
-                    function
-                )
-            )
+            ProteinIsWildTypeByIHC(functionInputResolver().createOneStringInput(function))
         }
     }
 
@@ -290,109 +246,43 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { ProteinHasLimitedExpressionByIHCCreator() }
     }
 
-    private fun hasSufficientPDL1ByIHCCreator(): FunctionCreator {
+    private fun hasSufficientPDL1ByMeasureByIHCCreator(measure: String? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val minPDL1 = functionInputResolver().createOneIntegerInput(function)
-            HasSufficientPDL1ByIHC(null, minPDL1.toDouble())
+            HasSufficientPDL1ByIHC(measure, minPDL1.toDouble())
         }
     }
 
-    private fun hasLimitedPDL1ByIHCCreator(): FunctionCreator {
+    private fun hasLimitedPDL1ByMeasureByIHCCreator(measure: String? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxPDL1 = functionInputResolver().createOneIntegerInput(function)
-            HasLimitedPDL1ByIHC(null, maxPDL1.toDouble())
+            HasLimitedPDL1ByIHC(measure, maxPDL1.toDouble())
         }
     }
 
-    private fun hasSufficientPDL1ByCPSByIHCCreator(): FunctionCreator {
+    private fun hasSufficientPDL1ByDoubleMeasureByIHCCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minPDL1 = functionInputResolver().createOneIntegerInput(function)
-            HasSufficientPDL1ByIHC("CPS", minPDL1.toDouble())
+            val minPDL1 = functionInputResolver().createOneDoubleInput(function)
+            HasSufficientPDL1ByIHC(measure, minPDL1, doidModel)
         }
     }
 
-    private fun hasLimitedPDL1ByCPSByIHCCreator(): FunctionCreator {
+    private fun hasLimitedPDL1ByDoubleMeasureByIHCCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxPDL1 = functionInputResolver().createOneIntegerInput(function)
-            HasLimitedPDL1ByIHC("CPS", maxPDL1.toDouble())
+            val maxPDL1 = functionInputResolver().createOneDoubleInput(function)
+            HasLimitedPDL1ByIHC(measure, maxPDL1, doidModel)
         }
-    }
-
-    private fun hasLimitedPDL1ByTPSByIHCCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val maxPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
-            HasLimitedPDL1ByIHC("TPS", maxPDL1Percentage, doidModel())
-        }
-    }
-
-    private fun hasLimitedPDL1ByTAPByIHCCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val maxPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
-            HasLimitedPDL1ByIHC("TAP", maxPDL1Percentage, doidModel())
-        }
-    }
-
-    private fun hasSufficientPDL1ByTPSByIHCCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientPDL1ByIHC("TPS", minPDL1Percentage, doidModel())
-        }
-    }
-
-    private fun hasSufficientPDL1ByICByIHCCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientPDL1ByIHC("IC", minPDL1Percentage)
-        }
-    }
-
-    private fun hasSufficientPDL1ByTCByIHCCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientPDL1ByIHC("TC", minPDL1Percentage)
-        }
-    }
-
-    private fun hasSufficientPDL1ByTAPByIHCCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            val minPDL1Percentage = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientPDL1ByIHC("TAP", minPDL1Percentage)
-        }
-    }
-
-    private fun hasAvailablePDL1StatusCreator(): FunctionCreator {
-        return { HasAvailablePDL1Status() }
-    }
-
-    private fun hasPSMAPositivePETScanCreator(): FunctionCreator {
-        return { HasPSMAPositivePETScan() }
-    }
-
-    private fun molecularResultsAreGenerallyAvailableCreator(): FunctionCreator {
-        return { MolecularResultsAreGenerallyAvailable() }
     }
 
     private fun molecularResultsAreAvailableForGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            MolecularResultsAreAvailableForGene(gene.geneName)
+            MolecularResultsAreAvailableForGene(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
     private fun molecularResultsAreAvailableForPromoterOfGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function)
-            MolecularResultsAreAvailableForPromoterOfGene(gene.geneName)
-        }
-    }
-
-    private fun mmrStatusIsAvailableCreator(): FunctionCreator {
-        return { MmrStatusIsAvailable() }
-    }
-
-    private fun nsclcDriverGeneStatusesAreAvailableCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            NsclcDriverGeneStatusesAreAvailable()
+            MolecularResultsAreAvailableForPromoterOfGene(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
