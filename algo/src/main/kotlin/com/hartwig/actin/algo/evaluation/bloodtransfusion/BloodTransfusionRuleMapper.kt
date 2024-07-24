@@ -17,15 +17,14 @@ class BloodTransfusionRuleMapper(resources: RuleMappingResources) : RuleMapper(r
     }
 
     private fun requiresRegularHematopoieticSupportCreator(atcTree: AtcTree): FunctionCreator {
-        return FunctionCreator {
-            val minDate = referenceDateProvider().date().minusMonths(2)
-            val maxDate = referenceDateProvider().date().plusMonths(2)
-            RequiresRegularHematopoieticSupport(atcTree, minDate, maxDate)
+        return {
+            val date = referenceDateProvider().date()
+            RequiresRegularHematopoieticSupport(atcTree, date.minusMonths(2), date.plusMonths(2))
         }
     }
 
     private fun hasHadRecentBloodTransfusion(product: TransfusionProduct): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxAgeWeeks = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusWeeks(maxAgeWeeks.toLong())
             HasHadRecentBloodTransfusion(product, minDate)

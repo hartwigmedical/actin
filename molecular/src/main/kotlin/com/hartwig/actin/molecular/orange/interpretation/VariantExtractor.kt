@@ -61,12 +61,12 @@ internal class VariantExtractor(private val geneFilter: GeneFilter) {
                     type = determineVariantType(variant),
                     isHotspot = variant.hotspot() == HotspotType.HOTSPOT,
                     canonicalImpact = extractCanonicalImpact(variant),
+                    otherImpacts = extractOtherImpacts(variant),
                     extendedVariantDetails = ExtendedVariantDetails(
                         variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
                         totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
                         isBiallelic = variant.biallelic(),
                         phaseGroups = variant.localPhaseSets()?.toSet(),
-                        otherImpacts = extractOtherImpacts(variant),
                         clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     ),
                 )

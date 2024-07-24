@@ -23,10 +23,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <serve.version>4.0.1</serve.version>
-        <actin-personalization.version>0.1.0</actin-personalization.version>
+        <actin-personalization.version>0.3.0</actin-personalization.version>
         <orange-datamodel.version>2.6.0</orange-datamodel.version>
-        <actin-transvar.version>0.2.2</actin-transvar.version>
-        <actin-pave-lite.version>0.2.2</actin-pave-lite.version>
+        <actin-transvar.version>0.3.0</actin-transvar.version>
+        <actin-pave-lite.version>0.3.0</actin-pave-lite.version>
+        <pave.version>1.6</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
@@ -46,6 +47,7 @@
         <itext.version>7.2.4</itext.version>
 
         <kotlin.version>2.0.0</kotlin.version>
+        <kotlin.compiler.apiVersion>2.0</kotlin.compiler.apiVersion>
         <kotlin.jvm.target>11</kotlin.jvm.target>
         <kotlin.code.style>official</kotlin.code.style>
 
@@ -125,6 +127,9 @@
                     <groupId>org.jetbrains.kotlin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <version>${kotlin.version}</version>
+                    <configuration>
+                        <apiVersion>${kotlin.compiler.apiVersion}</apiVersion>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.jooq</groupId>
@@ -189,12 +194,6 @@
                 <groupId>com.hartwig.actin.personalization</groupId>
                 <artifactId>similarity</artifactId>
                 <version>${actin-personalization.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kotlin-stdlib</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.serve</groupId>
@@ -215,6 +214,11 @@
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>actin-pave-lite</artifactId>
                 <version>${actin-pave-lite.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>pave</artifactId>
+                <version>${pave.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -350,6 +354,13 @@
                 <version>local-SNAPSHOT</version>
                 <scope>test</scope>
                 <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <!-- PAVE depends on an older htsjdk than actin-tools. Since only the PAVE version
+                  is used at runtime, force that version here -->
+                <groupId>com.github.samtools</groupId>
+                <artifactId>htsjdk</artifactId>
+                <version>2.23.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

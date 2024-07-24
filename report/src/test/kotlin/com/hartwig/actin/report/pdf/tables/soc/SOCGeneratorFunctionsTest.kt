@@ -54,11 +54,18 @@ class SOCGeneratorFunctionsTest {
         )
         assertThat(SOCGeneratorFunctions.createWhoString(population)).isEqualTo("0: 1, 1: 3, 1-2: 4, 2: 5, 4: 7")
     }
-   
+
     @Test
     fun `Should create empty WHO string for population with no WHO information`() {
         val population = patientPopulation(emptyList())
         assertThat(SOCGeneratorFunctions.createWhoString(population)).isEmpty()
+    }
+
+    @Test
+    fun `Should use short treatment name annotation`() {
+        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX+BEVACIZUMAB")).isEqualTo("FOLFOX-B")
+        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX+PANITUMUMAB")).isEqualTo("FOLFOX-P")
+        assertThat(SOCGeneratorFunctions.abbreviate("FOLFOX")).isEqualTo("FOLFOX")
     }
 
     @Test
@@ -80,17 +87,17 @@ class SOCGeneratorFunctionsTest {
         assertThat(cells).hasSize(12)
         assertThat(cells.map(::firstTextFromOneParagraphElement)).containsExactly(
             "t2",
-            "No literature efficacy evidence available yet",
-            "no data",
+            "Not available yet",
             "116.5",
+            "no data",
             "t1",
-            "No literature efficacy evidence available yet",
-            "no data, not recommended",
+            "Not available yet",
             "103.0, IQR: 100.0",
+            "no data, not recommended",
             "t3",
-            "No literature efficacy evidence available yet",
-            "lab value out of range",
-            NA
+            "Not available yet",
+            NA,
+            "lab value out of range"
         )
 
     }

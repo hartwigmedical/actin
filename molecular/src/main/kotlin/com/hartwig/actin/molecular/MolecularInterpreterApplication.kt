@@ -15,6 +15,8 @@ import com.hartwig.actin.molecular.evidence.EvidenceDatabaseFactory
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.interpretation.OrangeExtractor
+import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
+import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.priormoleculartest.PriorMolecularTestInterpreters
 import com.hartwig.actin.molecular.util.MolecularHistoryPrinter
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
@@ -115,6 +117,8 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 config.referenceGenomeFastaPath,
                 ensemblDataCache
             ),
+            Paver(config.ensemblCachePath, config.referenceGenomeFastaPath, PaveRefGenomeVersion.V37,
+                config.driverGenePanelPath, config.tempDir),
             PaveLite(ensemblDataCache, false)
 
         ).process(priorMolecularTests)
