@@ -70,9 +70,9 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report,
                 enableExtendedMode,
                 report.config.includeIneligibleTrialsInSummary,
-                externalTrialsOnly = !report.config.includeExternalTrialsInSummary,
+                externalTrialsOnly = report.config.includeOnlyExternalTrialsInTrialMatching,
                 this,
-                include = report.config.includeTrialMatchingSummary
+                include = report.config.includeTrialMatchingChapter
             ),
             TrialMatchingDetailsChapter(report, include = includeTrialMatchingDetailsChapter)
         ).filter(ReportChapter::include)
@@ -128,13 +128,13 @@ class ReportContentProvider(private val report: Report, private val enableExtend
                 report.config.includeApprovedTreatmentsInSummary
             },
             openCohortsWithSlotsGenerator.takeIf {
-                report.config.includeTrialMatchingSummary
+                report.config.includeTrialMatchingInSummary
             },
             openCohortsWithoutSlotsGenerator.takeIf {
-                report.config.includeTrialMatchingSummary
+                report.config.includeTrialMatchingInSummary
             },
-            localTrialGenerator,
-            nonLocalTrialGenerator,
+            localTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },
+            nonLocalTrialGenerator.takeIf { report.config.includeExternalTrialsInSummary },
             IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
                 cohorts,
                 report.treatmentMatch.trialSource,
