@@ -11,6 +11,7 @@ data class Variant(
     val alt: String,
     val type: VariantType,
     val canonicalImpact: TranscriptImpact,
+    val otherImpacts: Set<TranscriptImpact>,
     val extendedVariantDetails: ExtendedVariantDetails? = null,
     val isHotspot: Boolean,
     override val isReportable: Boolean,

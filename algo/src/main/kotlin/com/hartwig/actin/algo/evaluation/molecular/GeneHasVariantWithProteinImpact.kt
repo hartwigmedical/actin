@@ -40,7 +40,7 @@ class GeneHasVariantWithProteinImpact(private val gene: String, private val allo
                         }
                     }
                     if (variant.isReportable) {
-                        for (otherProteinImpact in toProteinImpacts(variant.extendedVariantDetails?.otherImpacts ?: emptySet())) {
+                        for (otherProteinImpact in toProteinImpacts(variant.otherImpacts)) {
                             if (otherProteinImpact == allowedProteinImpact) {
                                 reportableOtherVariantMatches.add(variant.event)
                                 reportableOtherProteinImpactMatches.add(allowedProteinImpact)
