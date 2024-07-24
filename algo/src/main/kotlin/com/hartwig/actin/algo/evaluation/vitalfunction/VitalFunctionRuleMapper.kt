@@ -23,49 +23,49 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     }
 
     private fun hasSufficientBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minMedianBloodPressure = functionInputResolver().createOneIntegerInput(function)
             HasSufficientBloodPressure(category, minMedianBloodPressure, minimumDateForVitalFunction())
         }
     }
 
     private fun hasLimitedBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxMedianBloodPressure = functionInputResolver().createOneIntegerInput(function)
             HasLimitedBloodPressure(category, maxMedianBloodPressure, minimumDateForVitalFunction())
         }
     }
 
     private fun hasSufficientPulseOximetryCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minMedianPulseOximetry = functionInputResolver().createOneDoubleInput(function)
             HasSufficientPulseOximetry(minMedianPulseOximetry, minimumDateForVitalFunction())
         }
     }
 
     private fun hasRestingHeartRateWithinBoundsCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val input = functionInputResolver().createTwoDoublesInput(function)
             HasRestingHeartRateWithinBounds(input.double1, input.double2, minimumDateForVitalFunction())
         }
     }
 
     private fun hasSufficientBodyWeightCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minBodyWeight = functionInputResolver().createOneDoubleInput(function)
             HasSufficientBodyWeight(minBodyWeight, minimumDateForBodyWeight())
         }
     }
 
     private fun hasLimitedBodyWeightCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxBodyWeight = functionInputResolver().createOneDoubleInput(function)
             HasLimitedBodyWeight(maxBodyWeight, minimumDateForBodyWeight())
         }
     }
 
     private fun hasBMIUpToLimitCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maximumBMI = functionInputResolver().createOneIntegerInput(function)
             HasBMIUpToLimit(maximumBMI, minimumDateForBodyWeight())
         }

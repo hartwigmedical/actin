@@ -20,7 +20,7 @@ class EvaluationFunctionFactory(
         return if (CompositeRules.isComposite(function.rule)) {
             createCompositeFunction(function)
         } else {
-            functionCreatorMap[function.rule]?.create(function) ?: throw NullPointerException(
+            functionCreatorMap[function.rule]?.invoke(function) ?: throw NullPointerException(
                 "Could not find function creator for rule ${function.rule}"
             )
         }

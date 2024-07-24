@@ -20,18 +20,18 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
     }
 
     private fun hasAnyComplicationCreator(): FunctionCreator {
-        return FunctionCreator { HasAnyComplication() }
+        return { HasAnyComplication() }
     }
 
     private fun hasSpecificComplicationCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
             HasSpecificComplication(termToFind)
         }
     }
 
     private fun hasComplicationOfCategoryCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val categoryToFind = functionInputResolver().createOneStringInput(function)
             HasComplicationOfCategory(categoryToFind)
         }
@@ -39,10 +39,10 @@ class ComplicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
 
     private fun hasPotentialUncontrolledTumorRelatedPainCreator(): FunctionCreator {
         val interpreter: MedicationStatusInterpreter = MedicationStatusInterpreterOnEvaluationDate(referenceDateProvider().date())
-        return FunctionCreator { HasPotentialUncontrolledTumorRelatedPain(interpreter) }
+        return { HasPotentialUncontrolledTumorRelatedPain(interpreter) }
     }
 
     private fun hasLeptomeningealDiseaseCreator(): FunctionCreator {
-        return FunctionCreator { HasLeptomeningealDisease() }
+        return { HasLeptomeningealDisease() }
     }
 }

@@ -25,59 +25,59 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     }
 
     private fun hasIntoleranceWithSpecificNameCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val termToFind = functionInputResolver().createOneStringInput(function)
             HasIntoleranceWithSpecificName(termToFind)
         }
     }
 
     private fun hasIntoleranceWithSpecificDoidTermCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val doidTermToFind = functionInputResolver().createOneDoidTermInput(function)
             HasIntoleranceWithSpecificDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToFind)!!)
         }
     }
 
     private fun hasIntoleranceToPlatinumCompoundsCreator(): FunctionCreator {
-        return FunctionCreator { HasIntoleranceToPlatinumCompounds() }
+        return { HasIntoleranceToPlatinumCompounds() }
     }
 
     private fun hasIntoleranceToTaxaneCreator(): FunctionCreator {
-        return FunctionCreator { HasIntoleranceToTaxanes() }
+        return { HasIntoleranceToTaxanes() }
     }
 
     private fun hasIntoleranceRelatedToStudyMedicationCreator(): FunctionCreator {
-        return FunctionCreator { HasIntoleranceRelatedToStudyMedication() }
+        return { HasIntoleranceRelatedToStudyMedication() }
     }
 
     private fun hasIntoleranceToPD1OrPDL1InhibitorsCreator(): FunctionCreator {
-        return FunctionCreator { HasIntoleranceForPD1OrPDL1Inhibitors(doidModel()) }
+        return { HasIntoleranceForPD1OrPDL1Inhibitors(doidModel()) }
     }
 
     private fun hasHistoryAnaphylaxisCreator(): FunctionCreator {
-        return FunctionCreator { HasHistoryOfAnaphylaxis() }
+        return { HasHistoryOfAnaphylaxis() }
     }
 
     private fun hasExperiencedImmuneRelatedAdverseEventsCreator(): FunctionCreator {
-        return FunctionCreator { HasExperiencedImmuneRelatedAdverseEvents() }
+        return { HasExperiencedImmuneRelatedAdverseEvents() }
     }
 
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val minGrade = functionInputResolver().createOneIntegerInput(function)
             HasToxicityWithGrade(minGrade, null, Sets.newHashSet(), resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire)
         }
     }
 
     private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerOneStringInput(function)
             HasToxicityWithGrade(input.integer, input.string, emptySet(), resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire)
         }
     }
 
     private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneIntegerManyStringsInput(function)
             HasToxicityWithGrade(
                 input.integer,
