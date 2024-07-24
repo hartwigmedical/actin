@@ -23,6 +23,7 @@ import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryGenera
 import com.hartwig.actin.report.pdf.tables.clinical.PatientClinicalHistoryWithOverviewGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SOCEligibleApprovedTreatmentGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleActinTrialsGenerator
@@ -96,33 +97,48 @@ class ReportContentProvider(private val report: Report, private val enableExtend
             EligibleActinTrialsGenerator.forOpenCohorts(cohorts, report.treatmentMatch.trialSource, contentWidth, slotsAvailable = false)
 
         val (dutchTrialGenerator, nonDutchTrialGenerator) = externalTrials(report.patientRecord, evaluated, contentWidth)
+        val hasMolecular = report.patientRecord.molecularHistory.molecularTests.isNotEmpty()
         return listOfNotNull(
             clinicalHistoryGenerator,
-            if (report.config.includeMolecularSummary && report.patientRecord.molecularHistory.molecularTests.isNotEmpty()) {
-                MolecularSummaryGenerator(report.patientRecord, cohorts, keyWidth, valueWidth)
-            } else null,
-            if (report.config.includeEligibleSOCTreatmentSummary) {
-                SOCEligibleApprovedTreatmentGenerator(report, contentWidth)
-            } else null,
-            if (report.config.includeApprovedTreatmentsInSummary) {
-                EligibleApprovedTreatmentGenerator(report.patientRecord, contentWidth)
-            } else null,
-            if (report.config.includeTrialMatchingSummary) {
-                openCohortsWithSlotsGenerator
-            } else null,
-            if (report.config.includeTrialMatchingSummary) {
-                openCohortsWithoutSlotsGenerator
-            } else null,
+            MolecularSummaryGenerator(
+                report.patientRecord,
+                cohorts,
+                keyWidth,
+                valueWidth
+            ).takeIf {
+                report.config.includeMolecularSummary && hasMolecular
+            },
+            LongitudinalMolecularHistoryGenerator(
+                report.patientRecord.molecularHistory,
+                contentWidth
+            ).takeIf {
+                report.config.includeLongitudinalMolecularSummary && hasMolecular
+            },
+            SOCEligibleApprovedTreatmentGenerator(report, contentWidth).takeIf {
+                report.config.includeEligibleSOCTreatmentSummary
+            },
+            EligibleApprovedTreatmentGenerator(
+                report.patientRecord,
+                contentWidth
+            ).takeIf {
+                report.config.includeApprovedTreatmentsInSummary
+            },
+            openCohortsWithSlotsGenerator.takeIf {
+                report.config.includeTrialMatchingSummary
+            },
+            openCohortsWithoutSlotsGenerator.takeIf {
+                report.config.includeTrialMatchingSummary
+            },
             dutchTrialGenerator,
             nonDutchTrialGenerator,
-            if (report.config.includeIneligibleTrialsInSummary) {
-                IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
-                    cohorts,
-                    report.treatmentMatch.trialSource,
-                    contentWidth,
-                    enableExtendedMode
-                )
-            } else null
+            IneligibleActinTrialsGenerator.fromEvaluatedCohorts(
+                cohorts,
+                report.treatmentMatch.trialSource,
+                contentWidth,
+                enableExtendedMode
+            ).takeIf {
+                report.config.includeIneligibleTrialsInSummary
+            }
         )
     }
 

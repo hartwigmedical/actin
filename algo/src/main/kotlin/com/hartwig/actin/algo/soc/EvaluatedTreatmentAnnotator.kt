@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.algo.datamodel.AnnotatedTreatmentMatch
 import com.hartwig.actin.algo.datamodel.EvaluatedTreatment
 import com.hartwig.actin.efficacy.EfficacyEntry
-import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_SUB_POPULATION_NAME
+import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_POPULATION_NAME
 import com.hartwig.actin.personalized.datamodel.MeasurementType
 import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
 
@@ -14,7 +14,7 @@ class EvaluatedTreatmentAnnotator(private val evidenceByTreatmentName: Map<Strin
     ): List<AnnotatedTreatmentMatch> {
         val pfsByTreatmentName = treatmentAnalyses?.flatMap { (treatmentGroup, measurementsByType) ->
             treatmentGroup.memberTreatmentNames.map { treatmentName ->
-                treatmentName to measurementsByType[MeasurementType.PROGRESSION_FREE_SURVIVAL]!![ALL_PATIENTS_SUB_POPULATION_NAME]
+                treatmentName to measurementsByType[MeasurementType.PROGRESSION_FREE_SURVIVAL]!![ALL_PATIENTS_POPULATION_NAME]
             }
         }?.toMap()
         

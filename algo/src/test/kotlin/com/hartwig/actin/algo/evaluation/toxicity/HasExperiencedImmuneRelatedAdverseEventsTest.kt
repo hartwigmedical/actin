@@ -11,6 +11,7 @@ import com.hartwig.actin.clinical.datamodel.treatment.Treatment
 import com.hartwig.actin.clinical.datamodel.treatment.TreatmentCategory
 import com.hartwig.actin.clinical.datamodel.treatment.history.StopReason
 import com.hartwig.actin.clinical.datamodel.treatment.history.TreatmentHistoryEntry
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasExperiencedImmuneRelatedAdverseEventsTest {
@@ -34,7 +35,9 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
                 treatments = setOf(treatment(TreatmentCategory.IMMUNOTHERAPY)), stopReason = StopReason.TOXICITY
             )
         )
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(withTreatmentHistory(treatments)))
+        val evaluation = function.evaluate(withTreatmentHistory(treatments))
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnGeneralMessages).containsExactly("Patient may have experienced immunotherapy related adverse events")
     }
 
     @Test
@@ -46,11 +49,17 @@ class HasExperiencedImmuneRelatedAdverseEventsTest {
             )
         )
         val intolerance = Intolerance(
-            "Nivolumab", setOf(DoidConstants.DRUG_ALLERGY_DOID), "", setOf(""), "", "", "", "", setOf(TreatmentCategory.IMMUNOTHERAPY)
+            name = "Nivolumab induced pneumonitis",
+            doids = setOf(DoidConstants.DRUG_ALLERGY_DOID),
+            treatmentCategories = setOf(TreatmentCategory.IMMUNOTHERAPY)
         )
         val base = createMinimalTestWGSPatientRecord()
         val record = base.copy(intolerances = listOf(intolerance), oncologicalHistory = treatments)
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
+        val evaluation = function.evaluate(record)
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnGeneralMessages).containsExactly(
+            "Patient may have experienced immunotherapy related adverse events (Nivolumab induced pneumonitis)"
+        )
     }
 
     @Test

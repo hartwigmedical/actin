@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientRecord
 import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
+import com.hartwig.actin.algo.evaluation.tumor.TumorTypeEvaluationFunctions
 import com.hartwig.actin.personalization.datamodel.LocationGroup
 import com.hartwig.actin.personalized.datamodel.Measurement
 import com.hartwig.actin.personalized.datamodel.MeasurementType
@@ -22,10 +23,9 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
             sequenceOf(
                 hasBrainLesions to LocationGroup.BRAIN,
                 hasLungLesions to LocationGroup.BRONCHUS_AND_LUNG,
-                // colon?
                 hasLymphNodeLesions to LocationGroup.LYMPH_NODES,
                 hasLiverLesions to LocationGroup.LIVER_AND_INTRAHEPATIC_BILE_DUCTS,
-                otherLesions?.any { it.contains("periton", ignoreCase = true) } to LocationGroup.RETROPERITONEUM_AND_PERITONEUM,
+                TumorTypeEvaluationFunctions.hasPeritonealMetastases(this) to LocationGroup.PERITONEUM,
             ).filter { it.first == true }.map { it.second }.toSet()
         }
 
@@ -50,7 +50,7 @@ class PersonalizedDataInterpreter(private val analyzer: PersonalizedDataAnalyzer
     }
 
     private fun extractPopulations(analysis: PersonalAnalysis): List<Population> {
-        return analysis.subPopulations.map { population ->
+        return analysis.populations.map { population ->
             Population(
                 population.name,
                 population.patientsByMeasurementType.entries.map { (measurementType, patients) ->
