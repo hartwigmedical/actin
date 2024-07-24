@@ -16,8 +16,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularHistory: Molecu
 
     override fun contents(): Table {
         val sortedAndFilteredTests = molecularHistory.molecularTests.filter { it.experimentType != ExperimentType.IHC }.sortedBy { it.date }
-        val testsWithDrivers =
-            molecularHistory.molecularTests.map { it to with(it.drivers) { variants + fusions + viruses + copyNumbers + disruptions } }
+        val testsWithDrivers = DriverTableFunctions.allDrivers(molecularHistory)
 
         val testsByDriverEvent = testsWithDrivers.flatMap { (test, drivers) -> drivers.map { d -> d.event to test } }
             .groupBy({ (event, _) -> event }, { (_, test) -> test })

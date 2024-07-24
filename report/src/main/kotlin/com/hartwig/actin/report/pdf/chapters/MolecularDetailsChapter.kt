@@ -83,7 +83,7 @@ class MolecularDetailsChapter(private val report: Report, override val include: 
                     evaluated,
                     report.treatmentMatch.trialMatches,
                     contentWidth(),
-                    report.config.homeCountry
+                    report.config.countryOfReference
                 )
             )
         } else emptyList()
