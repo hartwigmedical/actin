@@ -196,7 +196,6 @@ object TestMolecularFactory {
             variantCopyNumber = 4.1,
             totalCopyNumber = 6.0,
             isBiallelic = false,
-            otherImpacts = emptySet(),
             phaseGroups = null,
             clonalLikelihood = 1.0
         ),
@@ -210,7 +209,8 @@ object TestMolecularFactory {
             effects = setOf(VariantEffect.MISSENSE),
             codingEffect = CodingEffect.MISSENSE,
             affectedExon = null
-        )
+        ),
+        otherImpacts = emptySet(),
     )
 
     private fun createProperTestImmunology(): MolecularImmunology {

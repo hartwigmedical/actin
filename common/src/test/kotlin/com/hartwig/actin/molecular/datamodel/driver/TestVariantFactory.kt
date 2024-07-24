@@ -26,6 +26,7 @@ object TestVariantFactory {
             type = VariantType.SNV,
             isHotspot = false,
             canonicalImpact = TestTranscriptImpactFactory.createMinimal(),
+            otherImpacts = emptySet(),
         )
     }
 
@@ -35,7 +36,6 @@ object TestVariantFactory {
             variantCopyNumber = 0.0,
             totalCopyNumber = 0.0,
             isBiallelic = false,
-            otherImpacts = emptySet(),
             phaseGroups = null,
         )
     }
