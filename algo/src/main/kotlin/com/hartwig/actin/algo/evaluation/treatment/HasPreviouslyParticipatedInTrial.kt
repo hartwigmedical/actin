@@ -9,10 +9,19 @@ class HasPreviouslyParticipatedInTrial(private val acronym: String? = null) : Ev
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val acronymString = acronym?.let { " $it" } ?: ""
-        return if (record.oncologicalHistory.any { it.isTrial && (acronym == null || it.trialAcronym.equals(acronym, true)) }) {
-            EvaluationFactory.pass("Has previously participated in trial$acronymString")
-        } else {
-            EvaluationFactory.fail("Has not participated in trial$acronymString")
+        val trialEntries = record.oncologicalHistory.filter { it.isTrial }
+        return when {
+            (acronym == null && trialEntries.isNotEmpty()) || trialEntries.any { it.trialAcronym.equals(acronym, true) } -> {
+                EvaluationFactory.pass("Has previously participated in trial$acronymString")
+            }
+
+            trialEntries.any { it.trialAcronym == null } -> {
+                EvaluationFactory.undetermined("Previous trial participation but unknown if trial$acronymString")
+            }
+           
+            else -> {
+                EvaluationFactory.fail("Has not participated in trial$acronymString")
+            }
         }
     }
 }
