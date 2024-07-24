@@ -37,7 +37,7 @@ class MolecularClinicalEvidenceGeneratorTest {
     }
 
     @Test
-    fun `Should create many row for categories with more than 2 treatments`() {
+    fun `Should create 'many' row for categories with more than 2 treatments`() {
         val evidence =
             ActionableEvidence(
                 approvedTreatments = setOf("1", "2", "3"),
@@ -58,6 +58,4 @@ class MolecularClinicalEvidenceGeneratorTest {
     )
 
     private fun variant(evidence: ActionableEvidence) = TestMolecularFactory.createProperVariant().copy(evidence = evidence)
-
-
 }

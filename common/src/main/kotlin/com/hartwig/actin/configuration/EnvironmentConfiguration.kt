@@ -74,6 +74,7 @@ data class EnvironmentConfiguration(
                     report = rawConfig.report.copy(
                         includeOverviewWithClinicalHistorySummary = true,
                         includeMolecularDetailsChapter = false,
+                        includeIneligibleTrialsInSummary = true,
                         includeApprovedTreatmentsInSummary = false,
                         includeSOCLiteratureEfficacyEvidence = true,
                         includeEligibleSOCTreatmentSummary = true,
