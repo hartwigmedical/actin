@@ -226,7 +226,7 @@ object HistoricClinicalDeserializer {
             stopMonth = Json.nullableInteger(priorTumorTreatment, "stopMonth"),
             ongoingAsOf = null,
             cycles = null,
-            bestResponse = Json.nullableString(priorTumorTreatment, "bestResponse")?.let { TreatmentResponse.valueOf(it) },
+            bestResponse = Json.nullableString(priorTumorTreatment, "bestResponse")?.let { toTreatmentResponse(it) },
             stopReason = Json.nullableString(priorTumorTreatment, "stopReason")?.let { toStopReason(it) },
             stopReasonDetail = null,
             switchToTreatments = null,
@@ -238,11 +238,11 @@ object HistoricClinicalDeserializer {
     }
 
     private fun toStopReason(stopReasonString: String): StopReason {
-        return when (stopReasonString) {
-            "PD" -> StopReason.PROGRESSIVE_DISEASE
-            else -> StopReason.createFromString(stopReasonString)
-                ?: throw IllegalStateException("Could not convert stop reason string: $stopReasonString")
-        }
+        return StopReason.createFromString(stopReasonString) ?: StopReason.valueOf(stopReasonString)
+    }
+
+    private fun toTreatmentResponse(treatmentResponseString: String): TreatmentResponse {
+        return TreatmentResponse.createFromString(treatmentResponseString) ?: TreatmentResponse.valueOf(treatmentResponseString)
     }
 
     private fun extractPriorSecondPrimaries(clinical: JsonObject): List<PriorSecondPrimary> {
