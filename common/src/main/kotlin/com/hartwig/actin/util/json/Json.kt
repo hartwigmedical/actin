@@ -7,36 +7,36 @@ import java.time.LocalDate
 
 object Json {
 
-    fun nullableObject(obj: JsonObject, field: String): JsonObject? {
-        return if (!isNull(obj, field)) `object`(obj, field) else null
-    }
-
     fun optionalObject(obj: JsonObject, field: String): JsonObject? {
         return if (obj.has(field)) nullableObject(obj, field) else null
+    }
+
+    fun nullableObject(obj: JsonObject, field: String): JsonObject? {
+        return if (!isNull(obj, field)) `object`(obj, field) else null
     }
 
     fun `object`(obj: JsonObject, field: String): JsonObject {
         return obj.getAsJsonObject(field)
     }
 
-    fun nullableArray(obj: JsonObject, field: String): JsonArray? {
-        return if (!isNull(obj, field)) array(obj, field) else null
+    fun optionalArray(obj: JsonObject, field: String): JsonArray? {
+        return if (obj.has(field)) nullableArray(obj, field) else null
     }
 
-    fun optionalArray(obj: JsonObject, field: String): JsonArray? {
-        return if (obj.has(field)) array(obj, field) else null
+    fun nullableArray(obj: JsonObject, field: String): JsonArray? {
+        return if (!isNull(obj, field)) array(obj, field) else null
     }
 
     fun array(obj: JsonObject, field: String): JsonArray {
         return obj.getAsJsonArray(field)
     }
 
-    fun nullableStringList(obj: JsonObject, field: String): List<String>? {
-        return if (!isNull(obj, field)) stringList(obj, field) else null
-    }
-
     fun optionalStringList(obj: JsonObject, field: String): List<String>? {
         return if (obj.has(field)) stringList(obj, field) else null
+    }
+
+    fun nullableStringList(obj: JsonObject, field: String): List<String>? {
+        return if (!isNull(obj, field)) nullableStringList(obj, field) else null
     }
 
     fun stringList(obj: JsonObject, field: String): List<String> {
@@ -48,12 +48,12 @@ object Json {
         }
     }
 
-    fun nullableString(obj: JsonObject, field: String): String? {
-        return if (!isNull(obj, field)) string(obj, field) else null
+    fun optionalString(obj: JsonObject, field: String): String? {
+        return if (obj.has(field)) nullableString(obj, field) else null
     }
 
-    fun optionalString(obj: JsonObject, field: String): String? {
-        return if (obj.has(field)) string(obj, field) else null
+    fun nullableString(obj: JsonObject, field: String): String? {
+        return if (!isNull(obj, field)) string(obj, field) else null
     }
 
     fun string(obj: JsonObject, field: String): String {
