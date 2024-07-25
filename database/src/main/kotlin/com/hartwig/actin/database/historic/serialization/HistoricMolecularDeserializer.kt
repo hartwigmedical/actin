@@ -24,23 +24,23 @@ object HistoricMolecularDeserializer {
 
     fun deserialize(molecularJson: File): MolecularHistory {
         val reader = JsonReader(FileReader(molecularJson))
-        val molecularObject: JsonObject = JsonParser.parseReader(reader).asJsonObject
+        val molecular: JsonObject = JsonParser.parseReader(reader).asJsonObject
 
         val molecularTest = MolecularRecord(
-            patientId = extractPatientId(molecularObject),
-            sampleId = Json.string(molecularObject, "sampleId"),
-            refGenomeVersion = RefGenomeVersion.V37,
-            externalTrialSource = "",
-            containsTumorCells = false,
+            patientId = extractPatientId(molecular),
+            sampleId = Json.string(molecular, "sampleId"),
+            refGenomeVersion = RefGenomeVersion.valueOf(Json.string(molecular, "refGenomeVersion")),
+            externalTrialSource = Json.string(molecular, "externalTrialSource"),
+            containsTumorCells = Json.bool(molecular, "containsTumorCells"),
             isContaminated = false,
             hasSufficientPurity = false,
             hasSufficientQuality = false,
-            immunology = extractImmunology(molecularObject),
-            pharmaco = extractPharmaco(molecularObject),
+            immunology = extractImmunology(molecular),
+            pharmaco = extractPharmaco(molecular),
             experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
-            date = Json.date(molecularObject, "date"),
-            drivers = extractDrivers(molecularObject),
-            characteristics = extractCharacteristics(molecularObject),
+            date = Json.date(molecular, "date"),
+            drivers = extractDrivers(molecular),
+            characteristics = extractCharacteristics(molecular),
             evidenceSource = ""
         )
 
@@ -52,8 +52,12 @@ object HistoricMolecularDeserializer {
     }
 
     private fun extractPatientId(molecular: JsonObject): String {
-        val sample: String = Json.string(molecular, "sampleId")
-        return sample.substring(0, 12)
+        return if (molecular.has("patientId")) {
+            Json.string(molecular, "patientId")
+        } else {
+            val sample: String = Json.string(molecular, "sampleId")
+            return sample.substring(0, 12)
+        }
     }
 
     private fun extractImmunology(molecularObject: JsonObject): MolecularImmunology {
