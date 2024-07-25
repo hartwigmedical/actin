@@ -84,8 +84,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_INTRATUMORAL_INJECTION_TREATMENT to { HasHadIntratumoralInjectionTreatment() },
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to
                     { HasLimitedCumulativeAnthracyclineExposure(doidModel()) },
-            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_CURRENT_TRIAL to { HasPreviouslyParticipatedInCurrentTrial() },
             EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to { HasPreviouslyParticipatedInTrial() },
+            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X to hasPreviouslyParticipatedInSpecificTrialCreator(),
             EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_TRIAL to { IsNotParticipatingInAnotherTrial() },
             EligibilityRule.HAS_RECEIVED_SYSTEMIC_TREATMENT_FOR_BRAIN_METASTASES to { HasReceivedSystemicTherapyForBrainMetastases() },
             EligibilityRule.HAS_HAD_BRAIN_RADIATION_THERAPY to { HasHadBrainRadiationTherapy() },
@@ -470,6 +470,12 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val maxWeeksAgo = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusWeeks(maxWeeksAgo.toLong())
             HasHadRecentResection(minDate)
+        }
+    }
+
+    private fun hasPreviouslyParticipatedInSpecificTrialCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasPreviouslyParticipatedInTrial(functionInputResolver().createOneStringInput(function))
         }
     }
 }

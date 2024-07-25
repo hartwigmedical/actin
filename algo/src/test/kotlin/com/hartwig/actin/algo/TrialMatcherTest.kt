@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.datamodel.EvaluationTestFactory
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
+import com.hartwig.actin.clinical.datamodel.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.trial.datamodel.Eligibility
 import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TestTrialFactory
@@ -15,25 +16,39 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class TrialMatcherTest {
+    private val patient = TestPatientFactory.createProperTestPatientRecord()
+    private val trial = TestTrialFactory.createProperTestTrial()
+    private val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
 
     @Test
     fun `Should match trials on proper test data`() {
-        val patient = TestPatientFactory.createProperTestPatientRecord()
-        val trial = TestTrialFactory.createProperTestTrial()
-        val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
         val matches = matcher.determineEligibility(patient, listOf(trial))
         assertThat(matches).hasSize(1)
         assertTrialMatch(matches[0])
     }
 
     @Test
+    fun `Should warn when patient has previously participated in matched trial`() {
+        val patientWithPreviousTrialParticipation = patient.copy(
+            oncologicalHistory = patient.oncologicalHistory + treatmentHistoryEntry(
+                isTrial = true, trialAcronym = trial.identification.acronym
+            )
+        )
+        val matches = matcher.determineEligibility(patientWithPreviousTrialParticipation, listOf(trial))
+        assertThat(matches).hasSize(1)
+        assertThat(findEvaluationResultForRule(matches.first().evaluations, EligibilityRule.WARN_IF)).isEqualTo(EvaluationResult.WARN)
+    }
+
+    @Test
     fun `Should determine potential eligibility`() {
-        val evaluations = mutableListOf(EvaluationTestFactory.withResult(EvaluationResult.PASS))
+        val evaluations = listOf(EvaluationTestFactory.withResult(EvaluationResult.PASS))
         assertThat(TrialMatcher.isPotentiallyEligible(evaluations)).isTrue
-        evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.FAIL).copy(recoverable = true))
-        assertThat(TrialMatcher.isPotentiallyEligible(evaluations)).isTrue
-        evaluations.add(EvaluationTestFactory.withResult(EvaluationResult.FAIL).copy(recoverable = false))
-        assertThat(TrialMatcher.isPotentiallyEligible(evaluations)).isFalse
+
+        val recoverableFail = EvaluationTestFactory.withResult(EvaluationResult.FAIL).copy(recoverable = true)
+        assertThat(TrialMatcher.isPotentiallyEligible(evaluations + recoverableFail)).isTrue
+
+        val unrecoverableFail = EvaluationTestFactory.withResult(EvaluationResult.FAIL).copy(recoverable = false)
+        assertThat(TrialMatcher.isPotentiallyEligible(evaluations + unrecoverableFail)).isFalse
     }
 
     companion object {
@@ -42,10 +57,11 @@ class TrialMatcherTest {
         }
 
         private fun assertTrialMatch(trialMatch: TrialMatch) {
-            assertThat(trialMatch.evaluations).hasSize(1)
+            assertThat(trialMatch.evaluations).hasSize(2)
             assertThat(trialMatch.isPotentiallyEligible).isTrue
             assertThat(findEvaluationResultForRule(trialMatch.evaluations, EligibilityRule.IS_AT_LEAST_X_YEARS_OLD))
                 .isEqualTo(EvaluationResult.PASS)
+            assertThat(findEvaluationResultForRule(trialMatch.evaluations, EligibilityRule.WARN_IF)).isEqualTo(EvaluationResult.PASS)
             assertThat(trialMatch.cohorts).hasSize(3)
 
             val cohortA = findCohort(trialMatch.cohorts, "A")
