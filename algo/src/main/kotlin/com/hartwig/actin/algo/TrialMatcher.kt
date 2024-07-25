@@ -10,6 +10,8 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.sort.CohortMatchComparator
 import com.hartwig.actin.algo.sort.TrialMatchComparator
 import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.Trial
 import com.hartwig.actin.trial.sort.EligibilityComparator
 
@@ -17,7 +19,7 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
 
     fun determineEligibility(patient: PatientRecord, trials: List<Trial>): List<TrialMatch> {
         return trials.map { trial ->
-            val trialEvaluations = evaluateEligibility(patient, trial.generalEligibility)
+            val trialEvaluations = evaluateEligibility(patient, trial.generalEligibility + warnIfPreviouslyParticipatedInSameTrial(trial))
             val passesAllTrialEvaluations = isPotentiallyEligible(trialEvaluations.values)
             val cohortMatches = trial.cohorts.filter { it.metadata.evaluable }.map { cohort ->
                 val cohortEvaluations = evaluateEligibility(patient, cohort.eligibility)
@@ -42,6 +44,16 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
         return eligibility.sortedWith(EligibilityComparator()).associateWith {
             evaluationFunctionFactory.create(it.function).evaluate(patient)
         }
+    }
+
+    private fun warnIfPreviouslyParticipatedInSameTrial(trial: Trial): Eligibility {
+        val hasParticipatedInSameTrial = EligibilityFunction(
+            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X, listOf(trial.identification.acronym)
+        )
+        return Eligibility(
+            references = setOf(),
+            function = EligibilityFunction(EligibilityRule.WARN_IF, listOf(hasParticipatedInSameTrial))
+        )
     }
 
     companion object {

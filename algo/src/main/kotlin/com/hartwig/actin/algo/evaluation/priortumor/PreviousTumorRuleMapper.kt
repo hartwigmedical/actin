@@ -20,29 +20,29 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     }
 
     private fun hasActiveSecondMalignancyCreator(): FunctionCreator {
-        return FunctionCreator { HasActiveSecondMalignancy() }
+        return { HasActiveSecondMalignancy() }
     }
 
     private fun hasHistoryOfSecondMalignancyCreator(): FunctionCreator {
-        return FunctionCreator { HasHistoryOfSecondMalignancy() }
+        return { HasHistoryOfSecondMalignancy() }
     }
 
     private fun hasHistoryOfSecondMalignancyIgnoringSomeDoidsCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val doidTermsToIgnore = functionInputResolver().createManyDoidTermsInput(function)
             HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore, minDate = null)
         }
     }
 
     private fun hasHistoryOfSecondMalignancyWithDoidTermCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val doidTermToMatch = functionInputResolver().createOneDoidTermInput(function)
             HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch)!!)
         }
     }
 
     private fun hasHistoryOfSecondMalignancyWithinYearsCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val maxYears = functionInputResolver().createOneIntegerInput(function)
             val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
             HasHistoryOfSecondMalignancyWithinYears(minDate)
@@ -50,7 +50,7 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     }
 
     private fun hasHistoryOfSecondMalignancyWithinYearsIgnoringSomeDoidTermsCreator(): FunctionCreator {
-        return FunctionCreator { function: EligibilityFunction ->
+        return { function: EligibilityFunction ->
             val (maxYears, doidTermsToIgnore) = functionInputResolver().createOneIntegerManyDoidTermsInput(function)
             val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
             HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore, minDate)
