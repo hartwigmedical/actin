@@ -23,7 +23,7 @@ class ResistanceEvidenceMatcher {
                 event = actionableEvent.sourceEvent(),
                 isTested = null,
                 isFound = null,
-                resistanceLevel = actionableEvent.level().name,
+                resistanceLevel = actionableEvent.level().toString(),
                 evidenceUrls = actionableEvent.evidenceUrls()
             )
         }

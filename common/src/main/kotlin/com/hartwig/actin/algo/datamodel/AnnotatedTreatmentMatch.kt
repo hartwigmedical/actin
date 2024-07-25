@@ -8,7 +8,7 @@ data class AnnotatedTreatmentMatch(
     val evaluations: List<Evaluation>,
     val annotations: List<EfficacyEntry>,
     val generalPfs: Measurement? = null,
-    val resistanceEvidence: List<ResistanceEvidence>? = null,
+    val resistanceEvidence: List<ResistanceEvidence>,
 ) {
 
     fun eligible() = evaluations.none { it.result == EvaluationResult.FAIL }
