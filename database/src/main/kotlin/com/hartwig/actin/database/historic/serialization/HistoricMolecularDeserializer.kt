@@ -1,19 +1,35 @@
 package com.hartwig.actin.database.historic.serialization
 
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.hartwig.actin.molecular.datamodel.Drivers
 import com.hartwig.actin.molecular.datamodel.ExperimentType
+import com.hartwig.actin.molecular.datamodel.Fusion
+import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.MolecularCharacteristics
 import com.hartwig.actin.molecular.datamodel.MolecularHistory
 import com.hartwig.actin.molecular.datamodel.MolecularRecord
 import com.hartwig.actin.molecular.datamodel.PredictedTumorOrigin
+import com.hartwig.actin.molecular.datamodel.ProteinEffect
 import com.hartwig.actin.molecular.datamodel.RefGenomeVersion
+import com.hartwig.actin.molecular.datamodel.TranscriptImpact
+import com.hartwig.actin.molecular.datamodel.Variant
+import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.evidence.ExternalTrial
 import com.hartwig.actin.molecular.datamodel.orange.characteristics.CupPrediction
+import com.hartwig.actin.molecular.datamodel.orange.driver.CodingContext
+import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
+import com.hartwig.actin.molecular.datamodel.orange.driver.Disruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.DisruptionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.FusionDriverType
+import com.hartwig.actin.molecular.datamodel.orange.driver.HomozygousDisruption
+import com.hartwig.actin.molecular.datamodel.orange.driver.RegionType
+import com.hartwig.actin.molecular.datamodel.orange.driver.Virus
+import com.hartwig.actin.molecular.datamodel.orange.driver.VirusType
 import com.hartwig.actin.molecular.datamodel.orange.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.datamodel.orange.pharmaco.PharmacoEntry
 import com.hartwig.actin.util.json.Json
@@ -106,12 +122,117 @@ object HistoricMolecularDeserializer {
 
     private fun extractDrivers(drivers: JsonObject): Drivers {
         return Drivers(
-            variants = setOf(),
-            copyNumbers = emptySet(),
-            homozygousDisruptions = emptySet(),
-            disruptions = emptySet(),
-            fusions = emptySet(),
-            viruses = emptySet()
+            variants = HashSet(Json.array(drivers, "variants").map { extractVariant(it) }),
+            copyNumbers = extractCopyNumbers(drivers),
+            homozygousDisruptions = HashSet(Json.array(drivers, "homozygousDisruptions").map { extractHomozygousDisruption(it) }),
+            disruptions = HashSet(Json.array(drivers, "disruptions").map { extractDisruption(it) }),
+            fusions = HashSet(Json.array(drivers, "fusions").map { extractFusion(it) }),
+            viruses = HashSet(Json.array(drivers, "viruses").map { extractVirus(it) })
+        )
+    }
+
+    private fun extractVariant(variantElement: JsonElement): Variant {
+        val variant = variantElement.asJsonObject
+        return Variant(
+            chromosome = "",
+            position = 0,
+            ref = "",
+            alt = "",
+            type = VariantType.UNDEFINED,
+            canonicalImpact = extractCanonicalImpact(variant),
+            extendedVariantDetails = null,
+            isHotspot = false,
+            isReportable = true,
+            event = Json.string(variant, "event"),
+            driverLikelihood = null,
+            evidence = ActionableEvidence(),
+            gene = "",
+            geneRole = GeneRole.UNKNOWN,
+            proteinEffect = ProteinEffect.UNKNOWN,
+            isAssociatedWithDrugResistance = null
+        )
+    }
+
+    private fun extractCanonicalImpact(variant: JsonObject?): TranscriptImpact {
+        return TranscriptImpact(
+            transcriptId = "",
+            hgvsCodingImpact = "",
+            hgvsProteinImpact = "",
+            affectedCodon = null,
+            affectedExon = null,
+            isSpliceRegion = null,
+            effects = emptySet(),
+            codingEffect = null
+        )
+    }
+
+    private fun extractCopyNumbers(drivers: JsonObject): Set<CopyNumber> {
+        // TODO
+        return emptySet()
+    }
+
+    private fun extractHomozygousDisruption(homozygousDisruptionElement: JsonElement): HomozygousDisruption {
+        val homozygousDisruption = homozygousDisruptionElement.asJsonObject
+        return HomozygousDisruption(
+            isReportable = true,
+            event = "",
+            driverLikelihood = null,
+            evidence = ActionableEvidence(),
+            gene = "",
+            geneRole = GeneRole.UNKNOWN,
+            proteinEffect = ProteinEffect.UNKNOWN,
+            isAssociatedWithDrugResistance = null
+        )
+    }
+
+    private fun extractDisruption(disruptionElement: JsonElement): Disruption {
+        val disruption = disruptionElement.asJsonObject
+        return Disruption(
+            type = DisruptionType.SGL,
+            junctionCopyNumber = 0.0,
+            undisruptedCopyNumber = 0.0,
+            regionType = RegionType.UPSTREAM,
+            codingContext = CodingContext.NON_CODING,
+            clusterGroup = 0,
+            isReportable = false,
+            event = "",
+            driverLikelihood = null,
+            evidence = ActionableEvidence(),
+            gene = "",
+            geneRole = GeneRole.UNKNOWN,
+            proteinEffect = ProteinEffect.UNKNOWN,
+            isAssociatedWithDrugResistance = null
+        )
+    }
+
+    private fun extractFusion(fusionElement: JsonElement): Fusion {
+        val fusion = fusionElement.asJsonObject
+        return Fusion(
+            geneStart = "",
+            geneEnd = "",
+            geneTranscriptStart = "",
+            geneTranscriptEnd = "",
+            driverType = FusionDriverType.NONE,
+            proteinEffect = ProteinEffect.UNKNOWN,
+            extendedFusionDetails = null,
+            isReportable = true,
+            event = "",
+            driverLikelihood = null,
+            evidence = ActionableEvidence()
+        )
+    }
+
+    private fun extractVirus(virusElement: JsonElement): Virus {
+        val virus = virusElement.asJsonObject
+        return Virus(
+            name = "",
+            type = VirusType.OTHER,
+            isReliable = true,
+            integrations = 0,
+            isReportable = true,
+            event = "",
+            driverLikelihood = null,
+            evidence = ActionableEvidence()
         )
     }
 
