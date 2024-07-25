@@ -458,16 +458,7 @@ object HistoricClinicalDeserializer {
             name = Json.string(medication, "name"),
             status = Json.nullableString(medication, "status")?.let { MedicationStatus.valueOf(it) },
             administrationRoute = null,
-            dosage = Dosage(
-                dosageMin = Json.nullableDouble(medication, "dosageMin"),
-                dosageMax = Json.nullableDouble(medication, "dosageMax"),
-                dosageUnit = Json.nullableString(medication, "dosageUnit"),
-                frequency = Json.nullableDouble(medication, "frequency"),
-                frequencyUnit = Json.nullableString(medication, "frequencyUnit"),
-                periodBetweenValue = null,
-                periodBetweenUnit = null,
-                ifNeeded = Json.nullableBool(medication, "ifNeeded")
-            ),
+            dosage = extractDosage(medication),
             startDate = Json.nullableDate(medication, "startDate"),
             stopDate = Json.nullableDate(medication, "stopDate"),
             cypInteractions = emptyList(),
@@ -475,6 +466,21 @@ object HistoricClinicalDeserializer {
             atc = null,
             isSelfCare = false,
             isTrialMedication = false
+        )
+    }
+
+    private fun extractDosage(medication: JsonObject): Dosage {
+        val dosage = if (medication.has("dosage")) Json.`object`(medication, "dosage") else medication
+
+        return Dosage(
+            dosageMin = Json.nullableDouble(dosage, "dosageMin"),
+            dosageMax = Json.nullableDouble(dosage, "dosageMax"),
+            dosageUnit = Json.nullableString(dosage, "dosageUnit"),
+            frequency = Json.nullableDouble(dosage, "frequency"),
+            frequencyUnit = Json.nullableString(dosage, "frequencyUnit"),
+            periodBetweenValue = Json.optionalDouble(dosage, "periodBetweenValue"),
+            periodBetweenUnit = Json.optionalString(dosage, "periodBetweenUnit"),
+            ifNeeded = Json.nullableBool(dosage, "ifNeeded")
         )
     }
 
