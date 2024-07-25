@@ -1,5 +1,6 @@
 package com.hartwig.actin.database.historic.serialization
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -7,10 +8,13 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.hartwig.actin.algo.datamodel.CohortMatch
 import com.hartwig.actin.algo.datamodel.Evaluation
+import com.hartwig.actin.algo.datamodel.EvaluationResult
 import com.hartwig.actin.algo.datamodel.TreatmentMatch
 import com.hartwig.actin.algo.datamodel.TrialMatch
 import com.hartwig.actin.trial.datamodel.CohortMetadata
 import com.hartwig.actin.trial.datamodel.Eligibility
+import com.hartwig.actin.trial.datamodel.EligibilityFunction
+import com.hartwig.actin.trial.datamodel.EligibilityRule
 import com.hartwig.actin.trial.datamodel.TrialIdentification
 import com.hartwig.actin.util.json.Json
 import org.apache.logging.log4j.LogManager
@@ -55,7 +59,7 @@ object HistoricTreatmentMatchDeserializer {
         return TrialMatch(
             identification = extractIdentification(Json.`object`(trialMatch, "identification")),
             isPotentiallyEligible = Json.bool(trialMatch, "isPotentiallyEligible"),
-            evaluations = korneelFixIt(trialMatch),
+            evaluations = extractEvaluations(Json.array(trialMatch, "evaluations")),
             cohorts = Json.array(trialMatch, "cohorts").mapNotNull { extractCohortMatch(it) }
         )
     }
@@ -71,9 +75,25 @@ object HistoricTreatmentMatchDeserializer {
         )
     }
 
-    private fun korneelFixIt(trialMatch: JsonObject): Map<Eligibility, Evaluation> {
-        return mapOf()
+    private fun extractEvaluations(evaluations: JsonArray): Map<Eligibility, Evaluation> {
+        val evaluationMap = HashMap<Eligibility, Evaluation>()
+        for (evaluationElement in evaluations) {
+            val singleEvaluationArray = evaluationElement.asJsonArray
+            evaluationMap[extractEligibility(singleEvaluationArray.get(0).asJsonObject)] =
+                extractEvaluation(singleEvaluationArray.get(1).asJsonObject)
+        }
+        return evaluationMap
+    }
 
+    private fun extractEligibility(eligibility: JsonObject): Eligibility {
+        return Eligibility(references = setOf(), function = EligibilityFunction(EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X))
+    }
+
+    private fun extractEvaluation(evaluation: JsonObject): Evaluation {
+        return Evaluation(
+            result = EvaluationResult.NOT_EVALUATED,
+            recoverable = false
+        )
     }
 
     private fun extractCohortMatch(cohortMatchElement: JsonElement): CohortMatch {
