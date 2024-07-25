@@ -4,6 +4,7 @@ import com.hartwig.actin.molecular.datamodel.CodingEffect
 import com.hartwig.actin.molecular.datamodel.DriverLikelihood
 import com.hartwig.actin.molecular.datamodel.GeneRole
 import com.hartwig.actin.molecular.datamodel.ProteinEffect
+import com.hartwig.actin.molecular.datamodel.TranscriptImpact
 import com.hartwig.actin.molecular.datamodel.VariantType
 import com.hartwig.actin.molecular.datamodel.evidence.ActionableEvidence
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumber
@@ -17,6 +18,12 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatch
 import com.hartwig.actin.molecular.evidence.actionability.TestServeActionabilityFactory
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.evidence.matching.VariantMatchCriteria
+import com.hartwig.actin.molecular.paver.PaveCodingEffect
+import com.hartwig.actin.molecular.paver.PaveImpact
+import com.hartwig.actin.molecular.paver.PaveQuery
+import com.hartwig.actin.molecular.paver.PaveResponse
+import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
+import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
@@ -27,15 +34,18 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import com.hartwig.actin.tools.variant.CodingEffect as ActinToolsCodingEffect
 import com.hartwig.actin.tools.variant.ImmutableVariant as ActinToolsVariant
-import com.hartwig.actin.tools.variant.VariantType as ActinToolsVariantType
 import com.hartwig.serve.datamodel.common.GeneRole as ServeGeneRole
 import com.hartwig.serve.datamodel.common.ProteinEffect as ServeProteinEffect
 
 private const val ALT = "T"
 private const val REF = "G"
 private const val TRANSCRIPT = "transcript"
+private const val GENE_ID = "gene_id"
+private const val OTHER_TRANSCRIPT = "other_transcript"
+private const val OTHER_GENE = "other_gene"
+private const val OTHER_GENE_ID = "other_gene_id"
+private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val CHROMOSOME = "1"
 private const val POSITION = 1
 private val EMPTY_MATCH = ActionabilityMatch(emptyList(), emptyList())
@@ -53,9 +63,7 @@ private val VARIANT_MATCH_CRITERIA =
         type = VariantType.SNV
     )
 private val TRANSCRIPT_ANNOTATION =
-    ActinToolsVariant.builder().alt(ALT).ref(REF).transcript(TRANSCRIPT).chromosome(CHROMOSOME).position(POSITION)
-        .hgvsProteinImpact(HGVS_PROTEIN).isSpliceRegion(false)
-        .type(ActinToolsVariantType.SNV).codingEffect(ActinToolsCodingEffect.MISSENSE).isCanonical(true).build()
+    ActinToolsVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
 
 private val HOTSPOT = TestServeKnownFactory.hotspotBuilder().build()
     .withGeneRole(ServeGeneRole.ONCO)
@@ -66,6 +74,33 @@ private val ACTIONABILITY_MATCH = ActionabilityMatch(
         TestServeActionabilityFactory.geneBuilder().build().withSource(Knowledgebase.CKB_EVIDENCE).withLevel(EvidenceLevel.A)
             .withDirection(EvidenceDirection.RESPONSIVE)
     ), offLabelEvents = emptyList()
+)
+
+private val PAVE_QUERY = PaveQuery(
+    id = "0",
+    chromosome = CHROMOSOME,
+    position = POSITION,
+    ref = REF,
+    alt = ALT,
+)
+private val PAVE_LITE_ANNOTATION =
+    ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(1).build()
+
+private val PAVE_ANNOTATION = PaveResponse(
+    id = "0",
+    impact = PaveImpact(
+        gene = GENE,
+        transcript = TRANSCRIPT,
+        canonicalEffect = "canonicalEffect",
+        canonicalCodingEffect = PaveCodingEffect.MISSENSE,
+        spliceRegion = false,
+        hgvsCodingImpact = HGVS_CODING,
+        hgvsProteinImpact = HGVS_PROTEIN,
+        otherReportableEffects = null,
+        worstCodingEffect = PaveCodingEffect.MISSENSE,
+        genesAffected = 1
+    ),
+    transcriptImpact = emptyList()
 )
 
 class PanelAnnotatorTest {
@@ -81,10 +116,15 @@ class PanelAnnotatorTest {
         every { resolve(GENE, null, HGVS_CODING) } returns TRANSCRIPT_ANNOTATION
     }
     private val paveLite = mockk<PaveLite> {
-        every { run(GENE, TRANSCRIPT, POSITION) } returns null
+        every { run(GENE, TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
     }
 
-    private val annotator = PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paveLite)
+    private val paver = mockk<Paver> {
+        every { run(any<List<PaveQuery>>()) } returns emptyList()
+        every { run(listOf(PAVE_QUERY)) } returns listOf(PAVE_ANNOTATION)
+    }
+
+    private val annotator = PanelAnnotator(evidenceDatabase, geneDriverLikelihoodModel, transvarAnnotator, paver, paveLite)
 
     @Test
     fun `Should return empty annotation when no matches found`() {
@@ -139,15 +179,6 @@ class PanelAnnotatorTest {
     }
 
     @Test
-    fun `Should filter variant on non-canonical output from transcript annotator`() {
-        every { transvarAnnotator.resolve(GENE, null, HGVS_CODING) } returns mockk {
-            every { isCanonical } returns false
-            every { transcript() } returns TRANSCRIPT
-        }
-        assertThat(annotator.annotate(ARCHER_PANEL_WITH_VARIANT).drivers.variants).isEmpty()
-    }
-
-    @Test
     fun `Should annotate variants with affected exon and codon`() {
         setupGeneAlteration()
         every { paveLite.run(GENE, TRANSCRIPT, POSITION) } returns ImmutableVariantTranscriptImpact.builder().affectedExon(1)
@@ -156,6 +187,81 @@ class PanelAnnotatorTest {
         val annotatedVariant = annotated.drivers.variants.first()
         assertThat(annotatedVariant.canonicalImpact.affectedExon).isEqualTo(1)
         assertThat(annotatedVariant.canonicalImpact.affectedCodon).isEqualTo(2)
+    }
+
+    @Test
+    fun `Should exclude other transcript impacts from non canonical gene`() {
+        val complexPaveAnnotation = PAVE_ANNOTATION.copy(
+            transcriptImpact = listOf(
+                PaveTranscriptImpact(
+                    geneId = OTHER_GENE_ID,
+                    gene = OTHER_GENE,
+                    transcript = OTHER_GENE_TRANSCRIPT,
+                    effects = listOf(),
+                    spliceRegion = false,
+                    hgvsCodingImpact = HGVS_CODING,
+                    hgvsProteinImpact = HGVS_PROTEIN
+                )
+            )
+        )
+
+        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
+        assertThat(transcriptImpact).isEqualTo(emptySet<TranscriptImpact>())
+    }
+
+    @Test
+    fun `Should exclude other transcript impact from canonical transcript`() {
+        val complexPaveAnnotation = PAVE_ANNOTATION.copy(
+            transcriptImpact = listOf(
+                PaveTranscriptImpact(
+                    geneId = GENE_ID,
+                    gene = GENE,
+                    transcript = TRANSCRIPT,
+                    effects = listOf(),
+                    spliceRegion = false,
+                    hgvsCodingImpact = HGVS_CODING,
+                    hgvsProteinImpact = HGVS_PROTEIN
+                )
+            )
+        )
+
+        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
+        assertThat(transcriptImpact).isEqualTo(emptySet<TranscriptImpact>())
+    }
+
+    @Test
+    fun `Should annotate valid other transcripts with paveLite`() {
+        val complexPaveAnnotation = PAVE_ANNOTATION.copy(
+            transcriptImpact = listOf(
+                PaveTranscriptImpact(
+                    geneId = GENE_ID,
+                    gene = GENE,
+                    transcript = OTHER_TRANSCRIPT,
+                    effects = listOf(),
+                    spliceRegion = false,
+                    hgvsCodingImpact = HGVS_CODING,
+                    hgvsProteinImpact = HGVS_PROTEIN
+                )
+            )
+        )
+
+        every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
+
+        val transcriptImpact = annotator.otherImpacts(complexPaveAnnotation, TRANSCRIPT_ANNOTATION)
+        assertThat(transcriptImpact).isEqualTo(
+            setOf(
+                TranscriptImpact(
+                    transcriptId = OTHER_TRANSCRIPT,
+                    hgvsCodingImpact = HGVS_CODING,
+                    hgvsProteinImpact = HGVS_PROTEIN,
+                    affectedCodon = 1,
+                    affectedExon = 1,
+                    isSpliceRegion = false,
+                    effects = emptySet(),
+                    codingEffect = CodingEffect.NONE
+                )
+            )
+        )
     }
 
     @Test

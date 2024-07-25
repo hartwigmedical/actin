@@ -33,7 +33,7 @@ class GeneHasVariantInCodon(private val gene: String, private val codons: List<S
                         }
                     }
                     if (variant.isReportable) {
-                        for (otherImpact in variant.extendedVariantDetails?.otherImpacts ?: emptySet()) {
+                        for (otherImpact in variant.otherImpacts) {
                             if (isCodonMatch(otherImpact.affectedCodon, codon)) {
                                 reportableOtherVariantMatches.add(variant.event)
                                 reportableOtherCodonMatches.add(codon)

@@ -10,9 +10,8 @@ import com.hartwig.actin.trial.datamodel.Eligibility
 object EvaluatedCohortFactory {
     fun create(treatmentMatch: TreatmentMatch, filterOnSOCExhaustionAndTumorType: Boolean): List<EvaluatedCohort> {
         return filteredMatches(
-            treatmentMatch.trialMatches,
-            filterOnSOCExhaustionAndTumorType
-        ) { it.evaluations }.flatMap { trialMatch: TrialMatch ->
+            treatmentMatch.trialMatches, filterOnSOCExhaustionAndTumorType, TrialMatch::evaluations
+        ).flatMap { trialMatch: TrialMatch ->
             val trialWarnings = extractWarnings(trialMatch.evaluations)
             val trialFails = extractFails(trialMatch.evaluations)
             val trialInclusionEvents = extractInclusionEvents(trialMatch.evaluations)
@@ -38,7 +37,9 @@ object EvaluatedCohortFactory {
                     )
                 )
             } else {
-                filteredMatches(trialMatch.cohorts, filterOnSOCExhaustionAndTumorType) { it.evaluations }.map { cohortMatch: CohortMatch ->
+                filteredMatches(
+                    trialMatch.cohorts, filterOnSOCExhaustionAndTumorType, CohortMatch::evaluations
+                ).map { cohortMatch: CohortMatch ->
                     EvaluatedCohort(
                         trialId = trialId,
                         acronym = acronym,

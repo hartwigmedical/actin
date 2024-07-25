@@ -1,4 +1,5 @@
-FROM eclipse-temurin:11-jre
+# Pin to base version of eclipse-temurin that supports python2, needed for TransVar
+FROM eclipse-temurin:11-jre@sha256:7e474f2d1d3d1291c152d97ee3b9b6689b81e0d535326d8bfc680db35de0969b
 
 ARG VERSION=local-SNAPSHOT
 

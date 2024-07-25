@@ -18,12 +18,11 @@ class FunctionCreatorFactoryTest {
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("doid 1", doidTerm)
         val map = create(RuleMappingResourcesTestFactory.create(doidModel))
         val factory = ParameterizedFunctionTestFactory(doidTerm)
-        EligibilityRule.values().forEach { rule ->
+        EligibilityRule.entries.forEach { rule ->
             val function = factory.create(rule)
             if (!CompositeRules.isComposite(rule)) {
                 val creator = map[rule]
-                assertThat(creator).isNotNull
-                assertThat(creator!!.create(function)).isNotNull
+                assertThat(creator?.invoke(function)).isNotNull
             }
         }
     }

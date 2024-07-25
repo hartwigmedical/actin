@@ -47,7 +47,7 @@ class GeneHasVariantInExonRangeOfType(
                         .partition(Variant::isReportable)
 
                     val otherImpactMatches = if (!variant.isReportable) emptySet() else {
-                        setOfNotNull(variant.extendedVariantDetails?.otherImpacts?.find {
+                        setOfNotNull(variant.otherImpacts.find {
                             hasEffectInExonRange(
                                 it.affectedExon,
                                 minExon,

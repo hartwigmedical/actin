@@ -72,6 +72,7 @@ class SummaryChapter(private val report: Report) : ReportChapter {
             table.addCell(Cells.create(generator.contents()))
             if (i < generators.size - 1) {
                 table.addCell(Cells.createEmpty())
+                table.addCell(Cells.createEmpty())
             }
         }
         document.add(table)

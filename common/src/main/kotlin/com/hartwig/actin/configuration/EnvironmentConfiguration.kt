@@ -10,7 +10,8 @@ import org.apache.logging.log4j.LogManager
 
 enum class ConfigurationProfile {
     STANDARD,
-    CRC
+    CRC,
+    MCGI
 }
 
 data class ReportConfiguration(
@@ -24,11 +25,15 @@ data class ReportConfiguration(
     val includePatientHeader: Boolean = true,
     val includeRelevantNonOncologicalHistoryInSummary: Boolean = true,
     val includeApprovedTreatmentsInSummary: Boolean = true,
+    val includeTrialMatchingInSummary: Boolean = true,
+    val includeExternalTrialsInSummary: Boolean = true,
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val includeClinicalDetailsChapter: Boolean = true,
-    val includeTrialMatchingSummary: Boolean = true,
-    val includeLongitudinalMolecularSummary: Boolean = false,
-    val homeCountry: Country = Country.NETHERLANDS
+    val includeTrialMatchingChapter: Boolean = true,
+    val includeOnlyExternalTrialsInTrialMatching: Boolean = false,
+    val includeLongitudinalMolecularChapter: Boolean = false,
+    val includeMolecularEvidenceChapter: Boolean = false,
+    val countryOfReference: Country = Country.NETHERLANDS
 )
 
 const val EMC_TRIAL_SOURCE = "EMC"
@@ -76,6 +81,22 @@ data class EnvironmentConfiguration(
                         includeMolecularSummary = false,
                         includePatientHeader = false,
                         filterOnSOCExhaustionAndTumorType = true
+                    )
+                )
+
+                ConfigurationProfile.MCGI -> rawConfig.copy(
+                    report = rawConfig.report.copy(
+                        includeMolecularDetailsChapter = false,
+                        includeMolecularSummary = false,
+                        includeApprovedTreatmentsInSummary = false,
+                        includeTrialMatchingInSummary = false,
+                        includeClinicalDetailsChapter = false,
+                        includeTrialMatchingChapter = true,
+                        includeOnlyExternalTrialsInTrialMatching = true,
+                        includeExternalTrialsInSummary = false,
+                        includeLongitudinalMolecularChapter = true,
+                        includeMolecularEvidenceChapter = true,
+                        countryOfReference = Country.US
                     )
                 )
 
