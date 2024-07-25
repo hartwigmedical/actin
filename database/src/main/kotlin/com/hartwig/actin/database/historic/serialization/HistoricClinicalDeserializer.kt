@@ -87,8 +87,12 @@ object HistoricClinicalDeserializer {
     }
 
     private fun extractPatientId(clinical: JsonObject): String {
-        val sample: String = Json.string(clinical, "sampleId")
-        return sample.substring(0, 12)
+        return if (clinical.has("patientId")) {
+            Json.string(clinical, "patientId")
+        } else {
+            val sample: String = Json.string(clinical, "sampleId")
+            return sample.substring(0, 12)
+        }
     }
 
     private fun extractPatientDetails(clinical: JsonObject): PatientDetails {

@@ -466,8 +466,7 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_PLANNED_SURGERY(FunctionInput.NONE),
     HAS_HAD_CYTOREDUCTIVE_SURGERY(FunctionInput.NONE),
 
-    // TODO (KD): Remove below rules
-    //  Rules that were present in shared data
+    // Rules that were present in shared data (see also ACTIN-1106)
     IS_PARTICIPATING_IN_ANOTHER_TRIAL(null),
     HAS_LVEF_OF_AT_LEAST_X_IF_KNOWN(null),
     ACTIVATING_MUTATION_IN_GENE_X(null),
@@ -500,12 +499,6 @@ enum class EligibilityRule(val input: FunctionInput?) {
     HAS_SPINAL_CORD_COMPRESSION(null),
     HAS_BLADDER_OUTFLOW_OBSTRUCTION(null),
     HAS_URINARY_INCONTINENCE(null),
-    HAS_UNCONTROLLED_TUMOR_RELATED_PAIN(null)
-
-
-
-
-
-
-
+    HAS_UNCONTROLLED_TUMOR_RELATED_PAIN(null),
+    MEETS_COVID_19_VACCINATION_REQUIREMENTS(null)
 }
