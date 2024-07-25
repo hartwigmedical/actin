@@ -75,7 +75,7 @@ object HistoricMolecularDeserializer {
 
     private fun determineExperimentType(molecular: JsonObject): ExperimentType {
         return when (val type = Json.optionalString(molecular, "type")) {
-            "WGS", null -> ExperimentType.HARTWIG_WHOLE_GENOME
+            "WGS", "WHOLE_GENOME", null -> ExperimentType.HARTWIG_WHOLE_GENOME
             else -> ExperimentType.valueOf(type)
         }
     }
