@@ -82,24 +82,25 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
     }
 
     private fun findJson(patient: String, pattern: String): File? {
-        val basePath = latestSharedPath(patient)
-        for (i in 9 downTo 1) {
-            val sampleSuffix = if (i != 1) i else ""
-            val sampleAttempt = File(basePath + patient + "T" + sampleSuffix + "." + pattern + ".json")
-            if (sampleAttempt.exists()) {
-                return sampleAttempt
+        latestSharedPath(patient)?.let {
+            for (i in 9 downTo 1) {
+                val sampleSuffix = if (i != 1) i else ""
+                val sampleAttempt = File(it + patient + "T" + sampleSuffix + "." + pattern + ".json")
+                if (sampleAttempt.exists()) {
+                    return sampleAttempt
+                }
             }
-        }
 
-        val patientAttempt = File(latestSharedPath(patient) + patient + "." + pattern + ".json")
-        if (patientAttempt.exists()) {
-            return patientAttempt
+            val patientAttempt = File(latestSharedPath(patient) + patient + "." + pattern + ".json")
+            if (patientAttempt.exists()) {
+                return patientAttempt
+            }
         }
 
         return null
     }
 
-    private fun latestSharedPath(directory: String): String {
+    private fun latestSharedPath(directory: String): String? {
         val basePath = config.sharedDataDirectory + File.separator + directory + File.separator + "actin" + File.separator
         for (i in 9 downTo 1) {
             val actinPath = basePath + i + File.separator
@@ -107,7 +108,9 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
                 return actinPath
             }
         }
-        throw IllegalStateException("Could not find actual shared data path in $directory")
+
+        LOGGER.warn("  No ACTIN shared data path found in {}", directory)
+        return null
     }
 
     companion object {
