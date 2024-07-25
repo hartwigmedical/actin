@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.google.common.collect.Sets.union
 import com.hartwig.actin.algo.datamodel.Evaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
@@ -8,7 +9,8 @@ import com.hartwig.actin.molecular.datamodel.GeneAlteration
 import com.hartwig.actin.molecular.datamodel.MolecularTest
 import com.hartwig.actin.molecular.datamodel.orange.driver.CopyNumberType
 
-class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : MolecularEvaluationFunction {
+class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInGenesX(private val genesToFind: Set<String>) :
+    MolecularEvaluationFunction {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hrdGenesWithNonBiallelicHotspot: MutableSet<String> = mutableSetOf()
@@ -66,6 +68,16 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
             hrdGenesWithNonBiallelicNonHotspotHighDriver + hrdGenesWithNonBiallelicHotspot + hrdGenesWithNonHomozygousDisruption + hrdGenesWithNonBiallelicNonHotspotNonHighDriver
         val isHRD = test.characteristics.isHomologousRepairDeficient
 
+        val genesToFindWithNonHomozygousDisruption = genesInGenesToFind(hrdGenesWithNonHomozygousDisruption)
+        val genesToFindWithHomozygousDisruption = genesInGenesToFind(hrdGenesWithHomozygousDisruption)
+        val genesToFindWithNonBiallelicNonHotspotNonHighDriver = genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotNonHighDriver)
+        val genesToFindWithNonBiallelicNonHotspotHighDriver = genesInGenesToFind(hrdGenesWithNonBiallelicNonHotspotHighDriver)
+        val genesToFindWithBiallelicNonHotspotNonHighDriver = genesInGenesToFind(hrdGenesWithBiallelicNonHotspotNonHighDriver)
+        val genesToFindWithBiallelicNonHotspotHighDriver = genesInGenesToFind(hrdGenesWithBiallelicNonHotspotHighDriver)
+        val genesToFindWithDeletionOrPartialLoss = genesInGenesToFind(hrdGenesWithDeletionOrPartialLoss)
+        val genesToFindWithBiallelicHotspot = genesInGenesToFind(hrdGenesWithBiallelicHotspot)
+        val genesToFindWithNonBiallelicHotspot = genesInGenesToFind(hrdGenesWithNonBiallelicHotspot)
+
         return when {
             isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
@@ -97,52 +109,83 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
                 EvaluationFactory.fail("No homologous repair deficiency (HRD) detected", "Tumor is not HRD")
             }
 
-            containsBRCA(hrdGenesWithBiallelicHotspot) || containsBRCA(hrdGenesWithNonBiallelicHotspot) -> {
+            genesToFindWithBiallelicHotspot.isNotEmpty() || genesToFindWithNonBiallelicHotspot.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Homologous repair deficiency (HRD) detected with BRCA1/2 hotspot",
-                    "Tumor is HRD with BRCA1/2 hotspot"
+                    "Homologous repair deficiency (HRD) detected with ${
+                        concat(
+                            union(
+                                genesToFindWithNonBiallelicHotspot,
+                                genesToFindWithBiallelicHotspot
+                            )
+                        )
+                    } hotspot",
+                    "Tumor is HRD with ${concat(union(genesToFindWithNonBiallelicHotspot, genesToFindWithBiallelicHotspot))} hotspot"
                 )
             }
 
-            containsBRCA(hrdGenesWithDeletionOrPartialLoss) -> {
+            genesToFindWithDeletionOrPartialLoss.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Homologous repair deficiency (HRD) detected with deletion or partial loss in BRCA1/2",
-                    "Tumor is HRD with BRCA1/2 deletion or partial loss"
+                    "Homologous repair deficiency (HRD) detected with deletion or partial loss in ${
+                        concat(
+                            genesToFindWithDeletionOrPartialLoss
+                        )
+                    }",
+                    "Tumor is HRD with ${concat(genesToFindWithDeletionOrPartialLoss)} deletion or partial loss"
                 )
             }
 
-            containsBRCA(hrdGenesWithBiallelicNonHotspotHighDriver) -> {
+            genesToFindWithBiallelicNonHotspotHighDriver.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic high driver(s) in BRCA1/2 which could potentially be pathogenic",
-                    "Tumor is HRD with non-hotspot biallelic high driver(s) in BRCA1/2 which could be pathogenic",
+                    "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic high driver(s) in ${
+                        concat(
+                            genesToFindWithBiallelicNonHotspotHighDriver
+                        )
+                    } which could potentially be pathogenic",
+                    "Tumor is HRD with non-hotspot biallelic high driver(s) in ${concat(genesToFindWithBiallelicNonHotspotHighDriver)} which could be pathogenic",
                 )
             }
 
-            containsBRCA(hrdGenesWithBiallelicNonHotspotNonHighDriver) -> {
+            genesToFindWithBiallelicNonHotspotNonHighDriver.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic non-high driver(s) in BRCA1/2 which could potentially be pathogenic",
-                    "Tumor is HRD with non-hotspot biallelic non-high driver(s) in BRCA1/2 which could be pathogenic",
+                    "Homologous repair deficiency (HRD) detected, together with non-hotspot biallelic non-high driver(s) in ${
+                        concat(
+                            genesToFindWithBiallelicNonHotspotNonHighDriver
+                        )
+                    } which could potentially be pathogenic",
+                    "Tumor is HRD with non-hotspot biallelic non-high driver(s) in ${concat(genesToFindWithBiallelicNonHotspotNonHighDriver)} which could be pathogenic",
                 )
             }
 
-            containsBRCA(hrdGenesWithNonBiallelicNonHotspotHighDriver) -> {
+            genesToFindWithNonBiallelicNonHotspotHighDriver.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic high driver(s) in BRCA1/2 which could potentially be pathogenic",
-                    "Tumor is HRD with non-hotspot non-biallelic high driver(s) in BRCA1/2 which could be pathogenic",
+                    "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic high driver(s) in ${
+                        concat(
+                            genesToFindWithNonBiallelicNonHotspotHighDriver
+                        )
+                    } which could potentially be pathogenic",
+                    "Tumor is HRD with non-hotspot non-biallelic high driver(s) in ${concat(genesToFindWithNonBiallelicNonHotspotHighDriver)} which could be pathogenic",
                 )
             }
 
-            containsBRCA(hrdGenesWithNonBiallelicNonHotspotNonHighDriver) -> {
+            genesToFindWithNonBiallelicNonHotspotNonHighDriver.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic non-high driver(s) in BRCA1/2 which could potentially be pathogenic",
-                    "Tumor is HRD with non-hotspot non-biallelic non-high driver(s) in BRCA1/2 which could be pathogenic",
+                    "Homologous repair deficiency (HRD) detected, together with non-hotspot non-biallelic non-high driver(s) in ${
+                        concat(
+                            genesToFindWithNonBiallelicNonHotspotNonHighDriver
+                        )
+                    } which could potentially be pathogenic",
+                    "Tumor is HRD with non-hotspot non-biallelic non-high driver(s) in ${
+                        concat(
+                            genesToFindWithNonBiallelicNonHotspotNonHighDriver
+                        )
+                    } which could be pathogenic",
                 )
             }
 
-            containsBRCA(hrdGenesWithHomozygousDisruption) -> {
+            genesToFindWithHomozygousDisruption.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, with homozygous disruption in BRCA1/2",
-                    "Tumor is HRD with homozygous disruption in BRCA1/2",
+                    "Homologous repair deficiency (HRD) detected, with homozygous disruption in ${concat(genesToFindWithHomozygousDisruption)}",
+                    "Tumor is HRD with homozygous disruption in ${concat(genesToFindWithHomozygousDisruption)}",
                 )
             }
 
@@ -157,10 +200,14 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
                 )
             }
 
-            containsBRCA(hrdGenesWithNonHomozygousDisruption) -> {
+            genesToFindWithNonHomozygousDisruption.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Homologous repair deficiency (HRD) detected, with non-homozygous disruption in BRCA1/2",
-                    "Tumor is HRD with non-homozygous disruption in BRCA1/2",
+                    "Homologous repair deficiency (HRD) detected, with non-homozygous disruption in ${
+                        concat(
+                            genesToFindWithNonHomozygousDisruption
+                        )
+                    }",
+                    "Tumor is HRD with non-homozygous disruption in ${concat(genesToFindWithNonHomozygousDisruption)}",
                 )
             }
 
@@ -173,15 +220,15 @@ class IsHomologousRepairDeficientWithoutMutationOrWithVUSMutationInBRCA : Molecu
 
             else -> {
                 EvaluationFactory.pass(
-                    "Homologous repair deficiency (HRD) detected, without BRCA1/2 variants",
-                    "Tumor is HRD without any BRCA1/2 variants",
+                    "Homologous repair deficiency (HRD) detected, without variants in ${concat(genesToFind)}",
+                    "Tumor is HRD without any variants in ${concat(genesToFind)}",
                 )
             }
         }
     }
 
-    private fun containsBRCA(genes: Iterable<String>): Boolean {
-        return genes.any { MolecularConstants.BRCA_GENES.contains(it) }
+    private fun genesInGenesToFind(genes: Iterable<String>): Set<String> {
+        return genes.intersect(genesToFind)
     }
 
 }
