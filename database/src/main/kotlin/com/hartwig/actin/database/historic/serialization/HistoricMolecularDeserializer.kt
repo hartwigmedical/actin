@@ -74,46 +74,26 @@ object HistoricMolecularDeserializer {
     }
 
     private fun determineExperimentType(molecular: JsonObject): ExperimentType {
-        return if (molecular.has("type")) {
-            when (val type = Json.string(molecular, "type")) {
-                "WGS" -> ExperimentType.HARTWIG_WHOLE_GENOME
-                else -> ExperimentType.valueOf(type)
-            }
-        } else {
-            ExperimentType.HARTWIG_WHOLE_GENOME
+        return when (val type = Json.optionalString(molecular, "type")) {
+            "WGS", null -> ExperimentType.HARTWIG_WHOLE_GENOME
+            else -> ExperimentType.valueOf(type)
         }
     }
 
     private fun determineSufficientQuality(molecular: JsonObject): Boolean {
-        return if (molecular.has("hasReliableQuality")) {
-            Json.bool(molecular, "hasReliableQuality")
-        } else {
-            Json.bool(molecular, "hasSufficientQuality")
-        }
+        return Json.optionalBool(molecular, "hasReliableQuality") ?: Json.bool(molecular, "hasSufficientQuality")
     }
 
     private fun determinePatientId(molecular: JsonObject): String {
-        return if (molecular.has("patientId")) {
-            Json.string(molecular, "patientId")
-        } else {
-            val sample: String = Json.string(molecular, "sampleId")
-            return sample.substring(0, 12)
-        }
+        return Json.optionalString(molecular, "patientId") ?: Json.string(molecular, "sampleId").substring(0, 12)
     }
 
     private fun determineRefGenomeVersion(molecular: JsonObject): RefGenomeVersion {
-        return if (molecular.has("refGenomeVersion")) {
-            RefGenomeVersion.valueOf(Json.string(molecular, "refGenomeVersion"))
-        } else {
-            RefGenomeVersion.V37
-        }
+        return Json.optionalString(molecular, "refGenomeVersion")?.let(RefGenomeVersion::valueOf) ?: RefGenomeVersion.V37
     }
 
     private fun extractImmunology(molecularObject: JsonObject): MolecularImmunology {
-        return MolecularImmunology(
-            isReliable = false,
-            hlaAlleles = setOf()
-        )
+        return MolecularImmunology(isReliable = false, hlaAlleles = setOf())
     }
 
     private fun extractPharmaco(molecularObject: JsonObject): Set<PharmacoEntry> {
@@ -122,13 +102,17 @@ object HistoricMolecularDeserializer {
 
     private fun extractDrivers(drivers: JsonObject): Drivers {
         return Drivers(
-            variants = HashSet(Json.array(drivers, "variants").map { extractVariant(it) }),
+            variants = extractDriversFromField(drivers, "variants", ::extractVariant),
             copyNumbers = extractCopyNumbers(drivers),
-            homozygousDisruptions = HashSet(Json.array(drivers, "homozygousDisruptions").map { extractHomozygousDisruption(it) }),
-            disruptions = HashSet(Json.array(drivers, "disruptions").map { extractDisruption(it) }),
-            fusions = HashSet(Json.array(drivers, "fusions").map { extractFusion(it) }),
-            viruses = HashSet(Json.array(drivers, "viruses").map { extractVirus(it) })
+            homozygousDisruptions = extractDriversFromField(drivers, "homozygousDisruptions", ::extractHomozygousDisruption),
+            disruptions = extractDriversFromField(drivers, "disruptions", ::extractDisruption),
+            fusions = extractDriversFromField(drivers, "fusions", ::extractFusion),
+            viruses = extractDriversFromField(drivers, "viruses", ::extractVirus)
         )
+    }
+
+    private fun <T> extractDriversFromField(drivers: JsonObject, field: String, convertJson: (JsonElement) -> T): Set<T> {
+        return Json.array(drivers, field).map(convertJson).toSet()
     }
 
     private fun extractVariant(variantElement: JsonElement): Variant {
