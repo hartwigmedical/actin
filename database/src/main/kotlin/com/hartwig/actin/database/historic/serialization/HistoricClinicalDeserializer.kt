@@ -159,19 +159,35 @@ object HistoricClinicalDeserializer {
             hasSigAberrationLatestECG = Json.bool(ecg, "hasSigAberrationLatestECG"),
             aberrationDescription = Json.nullableString(ecg, "aberrationDescription"),
             qtcfMeasure = extractQtcfMeasure(ecg),
-            jtcMeasure = null
+            jtcMeasure = extractECGMeasureObject(Json.optionalObject(ecg, "jtcMeasure"))
         )
     }
 
     private fun extractQtcfMeasure(ecg: JsonObject): ECGMeasure? {
-        val qtcfValue: Int? = Json.nullableInteger(ecg, "qtcfValue")
-        val qtcfUnit: String? = Json.nullableString(ecg, "qtcfUnit")
-        if (qtcfValue == null && qtcfUnit == null) {
-            return null
-        }
+        if (ecg.has("qtcfMeasure")) {
+            return extractECGMeasureObject(Json.nullableObject(ecg, "qtcfMeasure"))
+        } else {
+            val qtcfValue: Int? = Json.nullableInteger(ecg, "qtcfValue")
+            val qtcfUnit: String? = Json.nullableString(ecg, "qtcfUnit")
+            if (qtcfValue == null && qtcfUnit == null) {
+                return null
+            }
 
-        return ECGMeasure(qtcfValue, qtcfUnit)
+            return ECGMeasure(qtcfValue, qtcfUnit)
+        }
     }
+
+    private fun extractECGMeasureObject(ecgObject: JsonObject?): ECGMeasure? {
+        return if (ecgObject != null) {
+            ECGMeasure(
+                value = Json.nullableInteger(ecgObject, "value"),
+                unit = Json.nullableString(ecgObject, "unit")
+            )
+        } else {
+            null
+        }
+    }
+
 
     private fun extractOncologicalHistory(clinical: JsonObject): List<TreatmentHistoryEntry> {
         val priorTumorTreatments: JsonArray = Json.array(clinical, "priorTumorTreatments")
@@ -224,7 +240,8 @@ object HistoricClinicalDeserializer {
     private fun toStopReason(stopReasonString: String): StopReason {
         return when (stopReasonString) {
             "PD" -> StopReason.PROGRESSIVE_DISEASE
-            else -> StopReason.valueOf(stopReasonString)
+            else -> StopReason.createFromString(stopReasonString)
+                ?: throw IllegalStateException("Could not convert stop reason string: $stopReasonString")
         }
     }
 
