@@ -6,11 +6,10 @@ import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.personalization.similarity.population.ALL_PATIENTS_POPULATION_NAME
 import com.hartwig.actin.personalized.datamodel.MeasurementType
 import com.hartwig.actin.personalized.datamodel.TreatmentAnalysis
-import com.hartwig.serve.datamodel.ActionableEvents
 
 class EvaluatedTreatmentAnnotator(
     private val evidenceByTreatmentName: Map<String, List<EfficacyEntry>>,
-    private val actionableEvents: ActionableEvents
+    private val resistanceEvidenceMatcher: ResistanceEvidenceMatcher
 ) {
 
     fun annotate(
@@ -21,14 +20,14 @@ class EvaluatedTreatmentAnnotator(
                 treatmentName to measurementsByType[MeasurementType.PROGRESSION_FREE_SURVIVAL]!![ALL_PATIENTS_POPULATION_NAME]
             }
         }?.toMap()
-        
+
         return evaluatedTreatments.map { evaluatedTreatment ->
             AnnotatedTreatmentMatch(
                 treatmentCandidate = evaluatedTreatment.treatmentCandidate,
                 evaluations = evaluatedTreatment.evaluations,
                 annotations = lookUp(evaluatedTreatment),
                 generalPfs = pfsByTreatmentName?.get(evaluatedTreatment.treatmentCandidate.treatment.name.lowercase()),
-                resistanceEvidence = ResistanceEvidenceMatcher().match(actionableEvents, evaluatedTreatment.treatmentCandidate.treatment)
+                resistanceEvidence = resistanceEvidenceMatcher.match(evaluatedTreatment.treatmentCandidate.treatment)
             )
         }
     }
@@ -38,7 +37,10 @@ class EvaluatedTreatmentAnnotator(
     }
 
     companion object {
-        fun create(efficacyEvidence: List<EfficacyEntry>, actionableEvents: ActionableEvents): EvaluatedTreatmentAnnotator {
+        fun create(
+            efficacyEvidence: List<EfficacyEntry>,
+            resistanceEvidenceMatcher: ResistanceEvidenceMatcher
+        ): EvaluatedTreatmentAnnotator {
             val evidenceByTreatmentName = efficacyEvidence
                 .flatMap { entry ->
                     entry.trialReferences
@@ -47,7 +49,7 @@ class EvaluatedTreatmentAnnotator(
                 }
                 .groupBy({ it.first }, { it.second })
 
-            return EvaluatedTreatmentAnnotator(evidenceByTreatmentName, actionableEvents)
+            return EvaluatedTreatmentAnnotator(evidenceByTreatmentName, resistanceEvidenceMatcher)
         }
     }
 }

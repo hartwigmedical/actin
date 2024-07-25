@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.soc.EvaluatedTreatmentAnnotator
 import com.hartwig.actin.algo.soc.PersonalizedDataInterpreter
 import com.hartwig.actin.algo.soc.RecommendationEngine
 import com.hartwig.actin.algo.soc.RecommendationEngineFactory
+import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.efficacy.EfficacyEntry
 import com.hartwig.actin.trial.datamodel.Trial
-import com.hartwig.serve.datamodel.ActionableEvents
 
 class TreatmentMatcher(
     private val trialMatcher: TrialMatcher,
@@ -53,14 +53,14 @@ class TreatmentMatcher(
             resources: RuleMappingResources,
             trials: List<Trial>,
             efficacyEvidence: List<EfficacyEntry>,
-            actionableEvents: ActionableEvents
+            resistanceEvidenceMatcher: ResistanceEvidenceMatcher
         ): TreatmentMatcher {
             return TreatmentMatcher(
                 TrialMatcher.create(resources),
                 RecommendationEngineFactory(resources).create(),
                 trials,
                 resources.referenceDateProvider,
-                EvaluatedTreatmentAnnotator.create(efficacyEvidence, actionableEvents),
+                EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
                 resources.algoConfiguration.trialSource,
                 resources.personalizationDataPath
             )

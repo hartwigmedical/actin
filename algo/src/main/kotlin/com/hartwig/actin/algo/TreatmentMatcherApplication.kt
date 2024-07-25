@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
+import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.DoidModelFactory
@@ -72,9 +73,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Loading evidence database for resistance evidence")
         val tumorDoids = patient.tumor.doids.orEmpty().toSet()
         val actionableEvents = loadEvidence(RefGenome.V37)
-
-        val match =
-            TreatmentMatcher.create(resources, trials, evidenceEntries, actionableEvents).evaluateAndAnnotateMatchesForPatient(patient)
+        val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(doidEntry, tumorDoids, actionableEvents)
+        val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
+            .evaluateAndAnnotateMatchesForPatient(patient)
 
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, config.outputDirectory)
