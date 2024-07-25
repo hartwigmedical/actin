@@ -274,14 +274,18 @@ object HistoricClinicalDeserializer {
             treatmentHistory = Json.string(priorSecondPrimary, "treatmentHistory"),
             lastTreatmentYear = Json.nullableInteger(priorSecondPrimary, "lastTreatmentYear"),
             lastTreatmentMonth = Json.nullableInteger(priorSecondPrimary, "lastTreatmentMonth"),
-            status = Json.bool(priorSecondPrimary, "isActive").let {
-                if (it) {
-                    TumorStatus.ACTIVE
-                } else {
-                    TumorStatus.INACTIVE
-                }
-            }
+            status = determinePriorSecondPrimaryStatus(priorSecondPrimary)
         )
+    }
+
+    private fun determinePriorSecondPrimaryStatus(priorSecondPrimary: JsonObject): TumorStatus {
+        return Json.optionalBool(priorSecondPrimary, "isActive")?.let {
+            if (it) {
+                TumorStatus.ACTIVE
+            } else {
+                TumorStatus.INACTIVE
+            }
+        } ?: TumorStatus.valueOf(Json.string(priorSecondPrimary, "status"))
     }
 
     private fun extractPriorOtherConditions(clinical: JsonObject): List<PriorOtherCondition> {
