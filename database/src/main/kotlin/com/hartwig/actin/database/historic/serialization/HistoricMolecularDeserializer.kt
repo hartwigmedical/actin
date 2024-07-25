@@ -43,11 +43,11 @@ object HistoricMolecularDeserializer {
             hasSufficientQuality = hasSufficientQuality,
             immunology = extractImmunology(molecular),
             pharmaco = extractPharmaco(molecular),
-            experimentType = ExperimentType.HARTWIG_WHOLE_GENOME,
+            experimentType = determineExperimentType(molecular),
             date = Json.date(molecular, "date"),
-            drivers = extractDrivers(molecular),
+            drivers = extractDrivers(Json.`object`(molecular, "drivers")),
             characteristics = extractCharacteristics(Json.`object`(molecular, "characteristics")),
-            evidenceSource = ""
+            evidenceSource = Json.optionalString(molecular, "evidenceSource") ?: "",
         )
 
         if (reader.peek() != JsonToken.END_DOCUMENT) {
@@ -55,6 +55,17 @@ object HistoricMolecularDeserializer {
         }
 
         return MolecularHistory(listOf(molecularTest))
+    }
+
+    private fun determineExperimentType(molecular: JsonObject): ExperimentType {
+        return if (molecular.has("type")) {
+            when (val type = Json.string(molecular, "type")) {
+                "WGS" -> ExperimentType.HARTWIG_WHOLE_GENOME
+                else -> ExperimentType.valueOf(type)
+            }
+        } else {
+            ExperimentType.HARTWIG_WHOLE_GENOME
+        }
     }
 
     private fun determineSufficientQuality(molecular: JsonObject): Boolean {
@@ -93,7 +104,7 @@ object HistoricMolecularDeserializer {
         return setOf()
     }
 
-    private fun extractDrivers(molecularObject: JsonObject): Drivers {
+    private fun extractDrivers(drivers: JsonObject): Drivers {
         return Drivers(
             variants = setOf(),
             copyNumbers = emptySet(),
@@ -112,14 +123,14 @@ object HistoricMolecularDeserializer {
             isMicrosatelliteUnstable = Json.nullableBool(characteristics, "isMicrosatelliteUnstable"),
             microsatelliteEvidence = extractEvidence(Json.optionalObject(characteristics, "microsatelliteEvidence")),
             homologousRepairScore = null,
-            isHomologousRepairDeficient = null,
-            homologousRepairEvidence = null,
-            tumorMutationalBurden = null,
-            hasHighTumorMutationalBurden = null,
-            tumorMutationalBurdenEvidence = null,
-            tumorMutationalLoad = null,
-            hasHighTumorMutationalLoad = null,
-            tumorMutationalLoadEvidence = null
+            isHomologousRepairDeficient = Json.nullableBool(characteristics, "isHomologousRepairDeficient"),
+            homologousRepairEvidence = extractEvidence(Json.optionalObject(characteristics, "homologousRepairEvidence")),
+            tumorMutationalBurden = Json.nullableDouble(characteristics, "tumorMutationalBurden"),
+            hasHighTumorMutationalBurden = Json.optionalBool(characteristics, "hasHighTumorMutationalBurde"),
+            tumorMutationalBurdenEvidence = extractEvidence(Json.optionalObject(characteristics, "tumorMutationalBurdenEvidence")),
+            tumorMutationalLoad = Json.nullableInteger(characteristics, "tumorMutationalLoad"),
+            hasHighTumorMutationalLoad = Json.optionalBool(characteristics, "hasHighTumorMutationalLoad"),
+            tumorMutationalLoadEvidence = extractEvidence(Json.optionalObject(characteristics, "tumorMutationalLoadEvidence"))
         )
     }
 
