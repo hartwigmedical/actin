@@ -73,7 +73,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         LOGGER.info("Loading evidence database for resistance evidence")
         val tumorDoids = patient.tumor.doids.orEmpty().toSet()
         val actionableEvents = loadEvidence(RefGenome.V37)
-        val resistanceEvidenceMatcher = ResistanceEvidenceMatcher(doidEntry, tumorDoids, actionableEvents)
+        val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(doidEntry, tumorDoids, actionableEvents)
         val match = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
             .evaluateAndAnnotateMatchesForPatient(patient)
 

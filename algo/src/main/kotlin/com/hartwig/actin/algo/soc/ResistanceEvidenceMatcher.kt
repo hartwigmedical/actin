@@ -45,6 +45,10 @@ class ResistanceEvidenceMatcher(
     }
 
     companion object {
+        fun create(doidEntry: DoidEntry, tumorDoids: Set<String>, actionableEvents: ActionableEvents): ResistanceEvidenceMatcher {
+            return ResistanceEvidenceMatcher(doidEntry, tumorDoids, actionableEvents)
+        }
+
         private fun isOnLabel(event: ActionableEvent, expandedTumorDoids: Set<String>): Boolean {
             if (!expandedTumorDoids.contains(event.applicableCancerType().doid())) {
                 return false
