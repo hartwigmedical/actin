@@ -44,7 +44,7 @@ object HistoricMolecularDeserializer {
 
     fun deserialize(molecularJson: File): MolecularHistory {
         val reader = JsonReader(FileReader(molecularJson))
-        val molecular: JsonObject = JsonParser.parseReader(reader).asJsonObject
+        val molecular = JsonParser.parseReader(reader).asJsonObject
 
         val hasSufficientQuality = determineSufficientQuality(molecular)
 
@@ -92,11 +92,11 @@ object HistoricMolecularDeserializer {
         return Json.optionalString(molecular, "refGenomeVersion")?.let(RefGenomeVersion::valueOf) ?: RefGenomeVersion.V37
     }
 
-    private fun extractImmunology(molecularObject: JsonObject): MolecularImmunology {
+    private fun extractImmunology(molecular: JsonObject): MolecularImmunology {
         return MolecularImmunology(isReliable = false, hlaAlleles = setOf())
     }
 
-    private fun extractPharmaco(molecularObject: JsonObject): Set<PharmacoEntry> {
+    private fun extractPharmaco(molecular: JsonObject): Set<PharmacoEntry> {
         return setOf()
     }
 
@@ -124,6 +124,7 @@ object HistoricMolecularDeserializer {
             alt = "",
             type = VariantType.UNDEFINED,
             canonicalImpact = extractCanonicalImpact(variant),
+            otherImpacts = emptySet(),
             extendedVariantDetails = null,
             isHotspot = false,
             isReportable = true,
@@ -137,7 +138,7 @@ object HistoricMolecularDeserializer {
         )
     }
 
-    private fun extractCanonicalImpact(variant: JsonObject?): TranscriptImpact {
+    private fun extractCanonicalImpact(variant: JsonObject): TranscriptImpact {
         return TranscriptImpact(
             transcriptId = "",
             hgvsCodingImpact = "",

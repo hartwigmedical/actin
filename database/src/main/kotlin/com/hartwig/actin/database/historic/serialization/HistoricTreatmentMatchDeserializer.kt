@@ -28,15 +28,15 @@ object HistoricTreatmentMatchDeserializer {
 
     fun deserialize(treatmentMatchJson: File): TreatmentMatch {
         val reader = JsonReader(FileReader(treatmentMatchJson))
-        val treatmentMatchObject: JsonObject = JsonParser.parseReader(reader).asJsonObject
+        val treatmentMatch = JsonParser.parseReader(reader).asJsonObject
 
-        val treatmentMatch = TreatmentMatch(
-            patientId = extractPatientId(treatmentMatchObject),
-            sampleId = Json.string(treatmentMatchObject, "sampleId"),
+        val treatmentMatchRecord = TreatmentMatch(
+            patientId = extractPatientId(treatmentMatch),
+            sampleId = Json.string(treatmentMatch, "sampleId"),
             trialSource = "",
-            referenceDate = Json.date(treatmentMatchObject, "referenceDate"),
-            referenceDateIsLive = Json.bool(treatmentMatchObject, "referenceDateIsLive"),
-            trialMatches = Json.array(treatmentMatchObject, "trialMatches").mapNotNull { extractTrialMatch(it) },
+            referenceDate = Json.date(treatmentMatch, "referenceDate"),
+            referenceDateIsLive = Json.bool(treatmentMatch, "referenceDateIsLive"),
+            trialMatches = Json.array(treatmentMatch, "trialMatches").mapNotNull { extractTrialMatch(it) },
             standardOfCareMatches = null,
             personalizedDataAnalysis = null
         )
@@ -45,12 +45,11 @@ object HistoricTreatmentMatchDeserializer {
             LOGGER.warn("More data found in {} after reading main molecular JSON object!", treatmentMatchJson)
         }
 
-        return treatmentMatch
+        return treatmentMatchRecord
     }
 
     private fun extractPatientId(treatmentMatch: JsonObject): String {
-        val sample: String = Json.string(treatmentMatch, "sampleId")
-        return sample.substring(0, 12)
+        return Json.string(treatmentMatch, "sampleId").substring(0, 12)
     }
 
     private fun extractTrialMatch(trialMatchElement: JsonElement): TrialMatch {
@@ -116,7 +115,6 @@ object HistoricTreatmentMatchDeserializer {
             }
         }
         LOGGER.warn("  Could not map eligibility rule '{}'", ruleString)
-        // TODO (KD) Make sure we can map all historic rules.
         return EligibilityRule.NOT
     }
 
