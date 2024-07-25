@@ -348,7 +348,7 @@ CREATE TABLE `variant`
     `canonicalHgvsProteinImpact` varchar(50) NOT NULL,
     `canonicalAffectedCodon` int,
     `canonicalAffectedExon` int,
-    `canonicalIsSpliceRegion` BOOLEAN NOT NULL,
+    `canonicalIsSpliceRegion` BOOLEAN,
     `canonicalEffects` varchar(250) NOT NULL,
     `canonicalCodingEffect` varchar(50),
     PRIMARY KEY (`id`)
