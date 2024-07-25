@@ -152,8 +152,8 @@ object HistoricTreatmentMatchDeserializer {
 
         return CohortMatch(
             metadata = extractCohortMetadata(Json.`object`(cohortMatch, "metadata")),
-            isPotentiallyEligible = false,
-            evaluations = mapOf()
+            isPotentiallyEligible = Json.bool(cohortMatch, "isPotentiallyEligible"),
+            evaluations = extractEvaluations(cohortMatch.get("evaluations")),
         )
     }
 
