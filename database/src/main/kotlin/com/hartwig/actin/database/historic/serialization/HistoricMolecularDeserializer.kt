@@ -232,7 +232,7 @@ object HistoricMolecularDeserializer {
             isHomologousRepairDeficient = Json.nullableBool(characteristics, "isHomologousRepairDeficient"),
             homologousRepairEvidence = extractEvidence(Json.optionalObject(characteristics, "homologousRepairEvidence")),
             tumorMutationalBurden = Json.nullableDouble(characteristics, "tumorMutationalBurden"),
-            hasHighTumorMutationalBurden = Json.optionalBool(characteristics, "hasHighTumorMutationalBurde"),
+            hasHighTumorMutationalBurden = Json.optionalBool(characteristics, "hasHighTumorMutationalBurden"),
             tumorMutationalBurdenEvidence = extractEvidence(Json.optionalObject(characteristics, "tumorMutationalBurdenEvidence")),
             tumorMutationalLoad = Json.nullableInteger(characteristics, "tumorMutationalLoad"),
             hasHighTumorMutationalLoad = Json.optionalBool(characteristics, "hasHighTumorMutationalLoad"),
