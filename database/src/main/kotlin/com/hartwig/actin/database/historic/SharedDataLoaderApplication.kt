@@ -31,22 +31,20 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
                 val molecularJson = findMolecularJson(it)
                 val treatmentMatchJson = findTreatmentMatchJson(it)
 
-                val clinical: ClinicalRecord? =
-                    if (clinicalJson.exists()) HistoricClinicalDeserializer.deserialize(clinicalJson) else null
+                val clinical: ClinicalRecord? = clinicalJson?.let { HistoricClinicalDeserializer.deserialize(clinicalJson) }
                 if (clinical == null) {
-                    LOGGER.warn("Clinical record could not be constructed for {} based on : {}", it, clinicalJson)
+                    LOGGER.warn("  Clinical record could not be constructed for {}", it)
                 }
 
-                val molecular: MolecularHistory? =
-                    if (molecularJson.exists()) HistoricMolecularDeserializer.deserialize(molecularJson) else null
+                val molecular: MolecularHistory? = molecularJson?.let { HistoricMolecularDeserializer.deserialize(molecularJson) }
                 if (molecular == null) {
-                    LOGGER.warn("Molecular record could not be constructed for {} based on : {}", it, molecularJson)
+                    LOGGER.warn("  Molecular record could not be constructed for {}", it)
                 }
 
                 val treatmentMatch: TreatmentMatch? =
-                    if (treatmentMatchJson.exists()) HistoricTreatmentMatchDeserializer.deserialize(treatmentMatchJson) else null
+                    treatmentMatchJson?.let { HistoricTreatmentMatchDeserializer.deserialize(treatmentMatchJson) }
                 if (treatmentMatch == null) {
-                    LOGGER.warn("Treatment match record could not be constructed for {} based on : {}", it, treatmentMatchJson)
+                    LOGGER.warn("  Treatment match record could not be constructed for {}", it)
                 }
 
                 Triple(clinical, molecular, treatmentMatch)
@@ -71,20 +69,45 @@ class SharedDataLoaderApplication(private val config: SharedDataLoaderConfig) {
         LOGGER.info("Done!")
     }
 
-    private fun findClinicalJson(directory: String): File {
-        return File(sharedPath(directory) + directory + "T.clinical.json")
+    private fun findClinicalJson(patient: String): File? {
+        return findJson(patient, "clinical")
     }
 
-    private fun findMolecularJson(directory: String): File {
-        return File(sharedPath(directory) + directory + "T.molecular.json")
+    private fun findMolecularJson(patient: String): File? {
+        return findJson(patient, "molecular")
     }
 
-    private fun findTreatmentMatchJson(directory: String): File {
-        return File(sharedPath(directory) + directory + "T.treatment_match.json")
+    private fun findTreatmentMatchJson(patient: String): File? {
+        return findJson(patient, "treatment_match")
     }
 
-    private fun sharedPath(directory: String): String {
-        return config.sharedDataDirectory + File.separator + directory + File.separator + "actin" + File.separator + "1" + File.separator
+    private fun findJson(patient: String, pattern: String): File? {
+        val basePath = latestSharedPath(patient)
+        for (i in 9 downTo 1) {
+            val sampleSuffix = if (i != 1) i else ""
+            val sampleAttempt = File(basePath + patient + "T" + sampleSuffix + "." + pattern + ".json")
+            if (sampleAttempt.exists()) {
+                return sampleAttempt
+            }
+        }
+
+        val patientAttempt = File(latestSharedPath(patient) + patient + "." + pattern + ".json")
+        if (patientAttempt.exists()) {
+            return patientAttempt
+        }
+
+        return null
+    }
+
+    private fun latestSharedPath(directory: String): String {
+        val basePath = config.sharedDataDirectory + File.separator + directory + File.separator + "actin" + File.separator
+        for (i in 9 downTo 1) {
+            val actinPath = basePath + i + File.separator
+            if (File(actinPath).isDirectory) {
+                return actinPath
+            }
+        }
+        throw IllegalStateException("Could not find actual shared data path in $directory")
     }
 
     companion object {
